@@ -39,6 +39,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to fetch API usage" });
     }
   });
+  
+  // Analytics dashboard endpoint
+  app.get('/api/analytics', async (req, res) => {
+    try {
+      const templateUsage = await storage.getTemplateUsageStats();
+      const toneUsage = await storage.getToneUsageStats();
+      const generationTrends = await storage.getGenerationTrends();
+      const popularProducts = await storage.getPopularProducts();
+      
+      res.json({
+        templateUsage,
+        toneUsage,
+        generationTrends,
+        popularProducts
+      });
+    } catch (error) {
+      console.error("Error fetching analytics data:", error);
+      res.status(500).json({ error: "Failed to fetch analytics data" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

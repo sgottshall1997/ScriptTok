@@ -306,7 +306,7 @@ export class MemStorage implements IStorage {
   }
   
   // API usage operations
-  async incrementApiUsage(): Promise<void> {
+  async incrementApiUsage(templateType?: string, tone?: string): Promise<void> {
     const today = new Date().toISOString().split('T')[0];
     const existingUsage = this.apiUsage.get(today);
     
@@ -323,6 +323,17 @@ export class MemStorage implements IStorage {
         count: 1
       };
       this.apiUsage.set(today, newUsage);
+    }
+    
+    // Track template and tone usage if provided
+    if (templateType) {
+      const currentTemplateCount = this.templateUsage.get(templateType) || 0;
+      this.templateUsage.set(templateType, currentTemplateCount + 1);
+    }
+    
+    if (tone) {
+      const currentToneCount = this.toneUsage.get(tone) || 0;
+      this.toneUsage.set(tone, currentToneCount + 1);
     }
   }
   
@@ -368,6 +379,58 @@ export class MemStorage implements IStorage {
     }
     
     return total;
+  }
+  
+  // Analytics operations
+  async getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>> {
+    const stats: Array<{templateType: string, count: number}> = [];
+    this.templateUsage.forEach((count, templateType) => {
+      stats.push({ templateType, count });
+    });
+    
+    // Sort by most used first
+    return stats.sort((a, b) => b.count - a.count);
+  }
+  
+  async getToneUsageStats(): Promise<Array<{tone: string, count: number}>> {
+    const stats: Array<{tone: string, count: number}> = [];
+    this.toneUsage.forEach((count, tone) => {
+      stats.push({ tone, count });
+    });
+    
+    // Sort by most used first
+    return stats.sort((a, b) => b.count - a.count);
+  }
+  
+  async getGenerationTrends(): Promise<Array<{date: string, count: number}>> {
+    const last30Days: Array<{date: string, count: number}> = [];
+    const today = new Date();
+    
+    // Create entries for the last 30 days
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateString = date.toISOString().split('T')[0];
+      
+      const usage = this.apiUsage.get(dateString);
+      last30Days.push({
+        date: dateString,
+        count: usage ? usage.count : 0
+      });
+    }
+    
+    // Sort by date ascending
+    return last30Days.sort((a, b) => a.date.localeCompare(b.date));
+  }
+  
+  async getPopularProducts(): Promise<Array<{product: string, count: number}>> {
+    const stats: Array<{product: string, count: number}> = [];
+    this.productUsage.forEach((count, product) => {
+      stats.push({ product, count });
+    });
+    
+    // Return top 10 products
+    return stats.sort((a, b) => b.count - a.count).slice(0, 10);
   }
 }
 
