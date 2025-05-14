@@ -172,7 +172,13 @@ export async function getTikTokTrending(): Promise<ScraperReturn> {
       
       if (products.length > 0) {
         console.log(`Successfully identified ${products.length} trending products from TikTok`);
-        return products;
+        return {
+          products,
+          status: {
+            status: 'active',
+            errorMessage: undefined
+          }
+        };
       }
     }
     
@@ -212,10 +218,22 @@ export async function getTikTokTrending(): Promise<ScraperReturn> {
         sourceUrl: item.sourceUrl || `https://tiktok.com/tag/${encodeURIComponent(item.title.replace(/\s+/g, ''))}`
       }));
 
-      return products;
+      return {
+        products,
+        status: {
+          status: 'gpt-fallback',
+          errorMessage: `Scraping failed: ${scrapingError instanceof Error ? scrapingError.message : 'Unknown error'}`
+        }
+      };
     } catch (openaiError) {
       console.error('OpenAI fallback also failed:', openaiError);
-      return [];
+      return {
+        products: [],
+        status: {
+          status: 'error',
+          errorMessage: `Scraping and GPT fallback failed: ${openaiError instanceof Error ? openaiError.message : 'Unknown error'}`
+        }
+      };
     }
   }
 }
