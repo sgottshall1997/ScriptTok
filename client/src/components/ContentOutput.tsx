@@ -1,8 +1,6 @@
 import { FC, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast";
 import { GenerationResponse } from "@/lib/types";
 
 interface ContentOutputProps {
@@ -11,84 +9,33 @@ interface ContentOutputProps {
 
 const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
   const contentRef = useRef<HTMLDivElement>(null);
-  const { toast } = useToast();
 
-  const handleCopy = () => {
+  const copyContent = () => {
     if (contentRef.current) {
-      // Get text content without HTML tags
-      const textToCopy = contentRef.current.innerText;
-      
-      navigator.clipboard.writeText(textToCopy)
-        .then(() => {
-          toast({
-            title: "Copied to clipboard",
-            description: "Content has been copied to your clipboard"
-          });
-        })
-        .catch((err) => {
-          toast({
-            title: "Copy failed",
-            description: "Could not copy content to clipboard",
-            variant: "destructive"
-          });
-          console.error("Copy failed", err);
-        });
+      const text = contentRef.current.innerText;
+      navigator.clipboard.writeText(text);
     }
   };
 
-  const handleDownload = () => {
-    if (!content) return;
-    
-    // Create text file
-    const element = document.createElement("a");
-    const file = new Blob([contentRef.current?.innerText || ""], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    
-    // Clean up product name for filename
-    const filename = content.product.replace(/[^a-z0-9]/gi, '_').toLowerCase();
-    element.download = `${filename}_${content.templateType}.txt`;
-    
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-    
-    toast({
-      title: "Downloaded",
-      description: "Content has been downloaded as a text file"
-    });
-  };
-
   return (
-    <Card className="shadow-xl bg-white/80 backdrop-blur-sm border border-gray-200">
-      <CardHeader className="bg-gradient-to-r from-blue-50 to-violet-50 rounded-t-lg border-b border-neutral-200 py-5 flex justify-between items-center">
-        <div>
-          <CardTitle className="text-gradient bg-gradient-to-r from-blue-600 to-violet-600 font-bold text-xl">Generated Content</CardTitle>
-          <p className="text-sm text-gray-700">Your AI-generated content for beauty affiliate marketing</p>
+    <Card className="shadow-md">
+      <CardHeader className="bg-slate-50 py-4 px-5 border-b flex flex-row items-center">
+        <div className="flex-1">
+          <CardTitle className="text-xl text-blue-900">
+            Generated Content
+          </CardTitle>
+          <p className="text-sm text-gray-600">AI-generated marketing text optimized for short videos</p>
         </div>
-        <div className="flex space-x-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleCopy}
-            disabled={!content}
-            title="Copy to clipboard"
-            className="hover:bg-blue-50 border-blue-200"
+        <div className="flex items-center space-x-2">
+          <Button 
+            variant="outline" 
+            className="flex items-center text-blue-700 border-blue-200 hover:bg-blue-50" 
+            onClick={copyContent}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
             </svg>
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleDownload}
-            disabled={!content}
-            title="Download as text"
-            className="hover:bg-violet-50 border-violet-200"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-            </svg>
+            Copy Text
           </Button>
         </div>
       </CardHeader>
@@ -202,33 +149,35 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
             )}
           </div>
         )}
-        <div
-          ref={contentRef}
-          className="min-h-[300px] prose prose-sm max-w-none content-output bg-white p-5 rounded-lg border border-gray-100 shadow-inner"
-        >
-          {content ? (
-            // Render HTML content safely
-            <div>
-            <div dangerouslySetInnerHTML={{ __html: content.content }} />
-            
-            {/* Simple estimated video length display */}
-            {content.videoDuration && (
-              <div className="mt-6 text-gray-600 text-base italic flex items-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+        
+        {/* Main content display */}
+        <div className="space-y-4">
+          <div
+            ref={contentRef}
+            className="min-h-[300px] prose prose-sm max-w-none content-output bg-white p-5 rounded-lg border border-gray-100 shadow-inner"
+          >
+            {content ? (
+              // Render HTML content safely
+              <div dangerouslySetInnerHTML={{ __html: content.content }} />
+            ) : (
+              // Empty state
+              <div className="p-8 text-center text-neutral-500 border border-dashed border-neutral-300 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                 </svg>
-                <span>Estimated Video Length: <strong>{content.videoDuration.seconds} seconds</strong></span>
+                <p className="text-lg font-medium text-gray-700">Ready to Create Content</p>
+                <p className="text-sm mt-2 text-gray-600">Select a product, template type, and tone, then click "GENERATE CONTENT"</p>
               </div>
             )}
           </div>
-          ) : (
-            // Empty state
-            <div className="p-8 text-center text-neutral-500 border border-dashed border-neutral-300 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+          
+          {/* Video duration estimate - simple version outside of content */}
+          {content && content.videoDuration && (
+            <div className="text-center text-gray-600 text-base flex items-center justify-center mt-3">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
-              <p className="text-lg font-medium text-gray-700">Ready to Create Content</p>
-              <p className="text-sm mt-2 text-gray-600">Select a product, template type, and tone, then click "GENERATE CONTENT"</p>
+              <span>Estimated Video Length: <strong>{content.videoDuration.seconds} seconds</strong></span>
             </div>
           )}
         </div>
