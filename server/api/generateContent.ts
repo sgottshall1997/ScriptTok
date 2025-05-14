@@ -3,6 +3,7 @@ import { z } from "zod";
 import { TEMPLATE_TYPES, TONE_OPTIONS } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
+import { CacheService } from "../services/cacheService";
 
 const router = Router();
 
@@ -13,9 +14,16 @@ const generateContentSchema = z.object({
   tone: z.enum(TONE_OPTIONS).default("friendly"),
 });
 
-// Simple in-memory cache for generation results
-const contentCache = new Map<string, { content: string; timestamp: number }>();
-const CACHE_TTL = 3600000; // Cache for 1 hour
+// Create a cache service for content generation
+interface CachedContent {
+  content: string;
+  generatedAt: number;
+}
+
+const contentCache = new CacheService<CachedContent>({
+  defaultTtl: 1000 * 60 * 60 * 24, // 24 hour cache
+  maxSize: 500 // Store up to 500 generations
+});
 
 router.post("/", async (req, res) => {
   try {
@@ -31,14 +39,25 @@ router.post("/", async (req, res) => {
     
     const { product, templateType, tone } = result.data;
     
-    // Check cache first (using product+templateType+tone as key)
-    const cacheKey = `${product}|${templateType}|${tone}`;
+    // Create cache parameters object
+    const cacheParams = {
+      product: product.toLowerCase().trim(),
+      templateType,
+      tone
+    };
+    
+    // Generate cache key from parameters
+    const cacheKey = contentCache.generateKey(cacheParams);
+    
+    // Check if we have a cached result
     const cached = contentCache.get(cacheKey);
     
     // If we have a valid cached result, return it
-    if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+    if (cached) {
       // Estimate video duration for cached content too
       const videoDuration = estimateVideoDuration(cached.content, tone, templateType);
+      
+      console.log(`Using cached content for ${product}, template: ${templateType}, tone: ${tone}`);
       
       return res.json({ 
         product, 
@@ -56,11 +75,13 @@ router.post("/", async (req, res) => {
     // Generate content using OpenAI
     const content = await generateContent(product, templateType, tone, trendingProducts);
     
-    // Store in cache
+    // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 
       content, 
-      timestamp: Date.now() 
+      generatedAt: Date.now() 
     });
+    
+    console.log(`Cached new content for ${product}, template: ${templateType}, tone: ${tone}`);
     
     // Save to database
     await storage.saveContentGeneration({
@@ -70,8 +91,8 @@ router.post("/", async (req, res) => {
       content
     });
     
-    // Increment API usage counter
-    await storage.incrementApiUsage();
+    // Increment API usage counter with template and tone tracking
+    await storage.incrementApiUsage(templateType, tone);
     
     // Estimate video duration
     const videoDuration = estimateVideoDuration(content, tone, templateType);

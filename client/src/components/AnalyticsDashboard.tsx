@@ -1,10 +1,34 @@
-import { FC, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useQuery } from "@tanstack/react-query";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
-import { Skeleton } from "@/components/ui/skeleton";
+import { FC, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+} from 'recharts';
 
+// Define analytics data shape
 interface AnalyticsData {
   templateUsage: Array<{templateType: string, count: number}>;
   toneUsage: Array<{tone: string, count: number}>;
@@ -12,169 +36,147 @@ interface AnalyticsData {
   popularProducts: Array<{product: string, count: number}>;
 }
 
-const COLORS = [
-  '#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', 
-  '#d0ed57', '#ffc658', '#ff8042', '#ff5252', '#da70d6'
-];
+// Color palette for charts
+const COLORS = ['#8884d8', '#83a6ed', '#8dd1e1', '#82ca9d', '#a4de6c', '#d0ed57', '#ffc658', '#ff8042', '#ff6b6b', '#c38cff'];
 
 const AnalyticsDashboard: FC = () => {
-  const [activeTab, setActiveTab] = useState("templates");
+  const [activeTab, setActiveTab] = useState('templates');
   
-  const { data, isLoading, error } = useQuery<AnalyticsData>({
+  // Fetch analytics data
+  const { data: analyticsData, isLoading } = useQuery<AnalyticsData>({
     queryKey: ['/api/analytics'],
-    staleTime: 60 * 1000, // 1 minute
+    retry: 1,
   });
   
+  // Loading state
   if (isLoading) {
     return (
-      <Card className="shadow-md">
-        <CardHeader className="bg-slate-50 py-4 px-5 border-b">
-          <CardTitle className="text-xl text-blue-900">
-            Analytics Dashboard
-          </CardTitle>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Analytics Dashboard</CardTitle>
+          <CardDescription>Loading analytics data...</CardDescription>
         </CardHeader>
-        <CardContent className="p-5">
-          <div className="space-y-4">
-            <Skeleton className="h-[400px] w-full" />
+        <CardContent className="h-[300px] flex items-center justify-center">
+          <div className="animate-pulse flex flex-col space-y-2 w-full">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-[250px] bg-gray-100 rounded w-full"></div>
           </div>
         </CardContent>
       </Card>
     );
   }
   
-  if (error) {
+  // Error/empty state
+  if (!analyticsData) {
     return (
-      <Card className="shadow-md">
-        <CardHeader className="bg-slate-50 py-4 px-5 border-b">
-          <CardTitle className="text-xl text-blue-900">
-            Analytics Dashboard
-          </CardTitle>
+      <Card className="w-full">
+        <CardHeader>
+          <CardTitle>Analytics Dashboard</CardTitle>
+          <CardDescription>No analytics data available yet</CardDescription>
         </CardHeader>
-        <CardContent className="p-5">
-          <div className="bg-red-50 p-4 rounded-lg border border-red-200 text-red-800">
-            Error loading analytics data. Please try again later.
-          </div>
+        <CardContent className="h-[300px] flex items-center justify-center text-center text-muted-foreground">
+          Generate some content to start seeing analytics
         </CardContent>
       </Card>
     );
   }
-  
-  // Prepare template usage data for visualization
-  const templateData = data?.templateUsage || [];
-  const toneData = data?.toneUsage || [];
-  const trendData = data?.generationTrends || [];
-  const productData = data?.popularProducts || [];
-  
-  // Format date for display
-  const formattedTrendData = trendData.map(item => ({
-    ...item,
-    date: new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
-  }));
-  
+
   return (
-    <Card className="shadow-md">
-      <CardHeader className="bg-slate-50 py-4 px-5 border-b">
-        <CardTitle className="text-xl text-blue-900">
-          Analytics Dashboard
-        </CardTitle>
+    <Card className="w-full">
+      <CardHeader>
+        <CardTitle>Analytics Dashboard</CardTitle>
+        <CardDescription>
+          Track your content generation patterns and usage trends
+        </CardDescription>
       </CardHeader>
-      <CardContent className="p-5">
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-          <TabsList className="grid grid-cols-4 gap-4">
+      <CardContent>
+        <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="templates">Template Usage</TabsTrigger>
-            <TabsTrigger value="tones">Tone Usage</TabsTrigger>
+            <TabsTrigger value="tones">Tone Preferences</TabsTrigger>
             <TabsTrigger value="trends">Generation Trends</TabsTrigger>
             <TabsTrigger value="products">Popular Products</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="templates" className="space-y-4">
-            <div className="bg-white p-4 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-medium mb-4 text-blue-900">Most Used Templates</h3>
-              <ResponsiveContainer width="100%" height={400}>
+          {/* Templates Tab */}
+          <TabsContent value="templates" className="mt-0">
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={templateData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 70 }}
+                  data={analyticsData.templateUsage}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis 
                     dataKey="templateType" 
-                    tick={{ fill: '#4b5563' }}
                     angle={-45}
                     textAnchor="end"
-                    height={80}
+                    height={60}
                   />
-                  <YAxis tick={{ fill: '#4b5563' }} />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#8884d8" name="Usage Count" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value: number) => [`${value} uses`, 'Usage']}
+                    labelFormatter={(label) => `Template: ${label}`}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="#8884d8" 
+                    radius={[4, 4, 0, 0]} 
+                    name="Usage"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>
           </TabsContent>
           
-          <TabsContent value="tones" className="space-y-4">
-            <div className="bg-white p-4 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-medium mb-4 text-blue-900">Tone Preferences</h3>
-              <div className="flex flex-col md:flex-row items-center">
-                <div className="w-full md:w-1/2 h-[400px]">
-                  <ResponsiveContainer width="100%" height={400}>
-                    <PieChart>
-                      <Pie
-                        data={toneData}
-                        cx="50%"
-                        cy="50%"
-                        labelLine={true}
-                        outerRadius={120}
-                        fill="#8884d8"
-                        dataKey="count"
-                        nameKey="tone"
-                        label={({ tone, percent }) => `${tone}: ${(percent * 100).toFixed(0)}%`}
-                      >
-                        {toneData.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                      </Pie>
-                      <Tooltip formatter={(value, name, props) => [value, 'Count']} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-                <div className="w-full md:w-1/2 pl-0 md:pl-8 mt-4 md:mt-0">
-                  <h4 className="text-base font-medium mb-2 text-gray-700">Tone Usage Breakdown</h4>
-                  <div className="space-y-2">
-                    {toneData.map((item, index) => (
-                      <div key={index} className="flex items-center">
-                        <div 
-                          className="w-4 h-4 rounded-full mr-2" 
-                          style={{ backgroundColor: COLORS[index % COLORS.length] }}
-                        />
-                        <span className="text-sm text-gray-600 flex-1">{item.tone}</span>
-                        <span className="text-sm font-medium">{item.count} uses</span>
-                      </div>
+          {/* Tones Tab */}
+          <TabsContent value="tones" className="mt-0">
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={analyticsData.toneUsage}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="count"
+                    nameKey="tone"
+                    label={(entry) => entry.tone}
+                  >
+                    {analyticsData.toneUsage.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                     ))}
-                  </div>
-                </div>
-              </div>
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value: number) => [`${value} uses`, 'Usage']}
+                    labelFormatter={(label) => `Tone: ${label}`}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
           </TabsContent>
           
-          <TabsContent value="trends" className="space-y-4">
-            <div className="bg-white p-4 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-medium mb-4 text-blue-900">Generation Trends (Last 30 Days)</h3>
-              <ResponsiveContainer width="100%" height={400}>
+          {/* Trends Tab */}
+          <TabsContent value="trends" className="mt-0">
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
                 <LineChart
-                  data={formattedTrendData}
-                  margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                  data={analyticsData.generationTrends}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 30 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fill: '#4b5563' }}
+                  <XAxis dataKey="date" />
+                  <YAxis />
+                  <Tooltip 
+                    formatter={(value: number) => [`${value} generations`, 'Count']}
+                    labelFormatter={(label) => `Date: ${label}`}
                   />
-                  <YAxis tick={{ fill: '#4b5563' }} />
-                  <Tooltip />
                   <Line 
                     type="monotone" 
                     dataKey="count" 
                     stroke="#8884d8" 
+                    strokeWidth={2}
                     activeDot={{ r: 8 }}
                     name="Generations"
                   />
@@ -183,25 +185,35 @@ const AnalyticsDashboard: FC = () => {
             </div>
           </TabsContent>
           
-          <TabsContent value="products" className="space-y-4">
-            <div className="bg-white p-4 rounded-lg border shadow-sm">
-              <h3 className="text-lg font-medium mb-4 text-blue-900">Top 10 Products</h3>
-              <ResponsiveContainer width="100%" height={400}>
+          {/* Products Tab */}
+          <TabsContent value="products" className="mt-0">
+            <div className="h-[300px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
                 <BarChart
-                  data={productData}
+                  data={analyticsData.popularProducts.slice(0, 10)} // Show top 10
                   layout="vertical"
-                  margin={{ top: 20, right: 30, left: 20, bottom: 10 }}
+                  margin={{ top: 20, right: 30, left: 100, bottom: 20 }}
                 >
                   <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" tick={{ fill: '#4b5563' }} />
+                  <XAxis type="number" />
                   <YAxis 
-                    dataKey="product" 
                     type="category" 
-                    tick={{ fill: '#4b5563' }}
-                    width={150}
+                    dataKey="product" 
+                    width={90}
+                    tickFormatter={(value) => 
+                      value.length > 15 ? `${value.substring(0, 15)}...` : value
+                    }
                   />
-                  <Tooltip />
-                  <Bar dataKey="count" fill="#82ca9d" name="Usage Count" />
+                  <Tooltip 
+                    formatter={(value: number) => [`${value} uses`, 'Usage']}
+                    labelFormatter={(label) => `Product: ${label}`}
+                  />
+                  <Bar 
+                    dataKey="count" 
+                    fill="#82ca9d" 
+                    radius={[0, 4, 4, 0]} 
+                    name="Usage"
+                  />
                 </BarChart>
               </ResponsiveContainer>
             </div>

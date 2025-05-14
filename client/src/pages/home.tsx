@@ -7,6 +7,7 @@ import ContentGenerator from "@/components/ContentGenerator";
 import ContentOutput from "@/components/ContentOutput";
 import RecentGenerations from "@/components/RecentGenerations";
 import ApiUsageComponent from "@/components/ApiUsage";
+import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import { GenerationResponse, TrendingProduct, ApiUsage, ContentGeneration, ScraperStatus } from "@/lib/types";
 import { convertContentGenerations, convertScraperStatuses } from "@/lib/type-converters";
 
@@ -102,6 +103,9 @@ export default function Home() {
               
               {/* Content Output */}
               <ContentOutput content={generatedContent} />
+              
+              {/* Analytics Dashboard */}
+              <AnalyticsDashboard />
               
               {/* Recent Generations */}
               <RecentGenerations 
