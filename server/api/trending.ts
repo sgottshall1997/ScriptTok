@@ -28,18 +28,22 @@ router.post("/refresh", async (req, res) => {
     await storage.clearTrendingProducts();
     
     // Save new trending products
-    for (const product of trendingData) {
-      await storage.saveTrendingProduct(product);
+    if (trendingData && trendingData.products && Array.isArray(trendingData.products)) {
+      for (const product of trendingData.products) {
+        await storage.saveTrendingProduct(product);
+      }
     }
     
     // Update scraper status
-    for (const scraper of trendingData.platforms) {
-      await storage.updateScraperStatus(scraper.name, scraper.status);
+    if (trendingData && trendingData.platforms && Array.isArray(trendingData.platforms)) {
+      for (const scraper of trendingData.platforms) {
+        await storage.updateScraperStatus(scraper.name, scraper.status);
+      }
     }
     
     res.json({ 
       success: true, 
-      count: trendingData.length,
+      count: trendingData?.products?.length || 0,
       message: "Trending products refreshed successfully" 
     });
   } catch (error) {

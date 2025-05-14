@@ -21,12 +21,16 @@ export async function getAmazonTrending(): Promise<InsertTrendingProduct[]> {
     });
 
     // Parse the response
-    const responseData = JSON.parse(completion.choices[0].message.content);
-    const products: InsertTrendingProduct[] = responseData.map((item: any) => ({
+    const content = completion.choices[0].message.content || "{}";
+    const responseData = JSON.parse(content);
+    // Check if the response is an array or if it has a products key
+    const productsArray = Array.isArray(responseData) ? responseData : (responseData.products || []);
+    
+    const products: InsertTrendingProduct[] = productsArray.map((item: any) => ({
       title: item.title,
       source: "amazon",
-      mentions: parseInt(item.mentions.replace(/[^0-9]/g, "")),
-      sourceUrl: item.sourceUrl
+      mentions: typeof item.mentions === 'string' ? parseInt(item.mentions.replace(/[^0-9]/g, "")) : (item.mentions || 10000),
+      sourceUrl: item.sourceUrl || `https://amazon.com/s?k=${encodeURIComponent(item.title)}`
     }));
 
     return products;

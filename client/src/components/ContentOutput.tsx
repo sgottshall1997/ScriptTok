@@ -59,41 +59,61 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
   };
 
   return (
-    <Card>
-      <CardHeader className="border-b border-neutral-200 py-5 flex justify-between items-center">
+    <Card className="shadow-xl bg-white/80 backdrop-blur-sm border border-gray-200">
+      <CardHeader className="bg-gradient-to-r from-blue-50 to-violet-50 rounded-t-lg border-b border-neutral-200 py-5 flex justify-between items-center">
         <div>
-          <CardTitle className="text-lg font-semibold">Generated Content</CardTitle>
-          <p className="text-sm text-muted-foreground">Your AI-generated content appears here</p>
+          <CardTitle className="text-gradient bg-gradient-to-r from-blue-600 to-violet-600 font-bold text-xl">Generated Content</CardTitle>
+          <p className="text-sm text-gray-700">Your AI-generated content for beauty affiliate marketing</p>
         </div>
         <div className="flex space-x-2">
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={handleCopy}
             disabled={!content}
             title="Copy to clipboard"
+            className="hover:bg-blue-50 border-blue-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
             </svg>
           </Button>
           <Button
-            variant="ghost"
+            variant="outline"
             size="sm"
             onClick={handleDownload}
             disabled={!content}
             title="Download as text"
+            className="hover:bg-violet-50 border-violet-200"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-violet-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
           </Button>
         </div>
       </CardHeader>
       <CardContent className="p-5">
+        {content && (
+          <div className="mb-3 p-2 rounded-lg bg-gray-50 border border-gray-200 flex flex-wrap gap-2">
+            <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
+              Product: {content.product}
+            </div>
+            <div className="px-3 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-medium">
+              Template: {content.templateType}
+            </div>
+            <div className="px-3 py-1 rounded-full bg-pink-100 text-pink-800 text-xs font-medium">
+              Tone: {content.tone}
+            </div>
+            {content.fromCache && (
+              <div className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
+                From Cache
+              </div>
+            )}
+          </div>
+        )}
         <div
           ref={contentRef}
-          className="min-h-[250px] prose prose-sm max-w-none content-output"
+          className="min-h-[300px] prose prose-sm max-w-none content-output bg-white p-5 rounded-lg border border-gray-100 shadow-inner"
         >
           {content ? (
             // Render HTML content safely
@@ -101,11 +121,11 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
           ) : (
             // Empty state
             <div className="p-8 text-center text-neutral-500 border border-dashed border-neutral-300 rounded-lg">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 mx-auto mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
               </svg>
-              <p className="text-sm">Generated content will appear here</p>
-              <p className="text-xs mt-2">Enter a product name and click "Generate Content" to get started</p>
+              <p className="text-lg font-medium text-gray-700">Ready to Create Content</p>
+              <p className="text-sm mt-2 text-gray-600">Select a product, template type, and tone, then click "GENERATE CONTENT"</p>
             </div>
           )}
         </div>
