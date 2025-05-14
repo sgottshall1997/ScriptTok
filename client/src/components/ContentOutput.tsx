@@ -116,15 +116,32 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
             {/* Video duration information - Only show if available */}
             {content.videoDuration && (
               <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-100 mb-3">
-                <h3 className="text-md font-medium text-indigo-900 mb-1">Video Duration Estimate</h3>
+                <div className="flex justify-between items-center mb-1">
+                  <h3 className="text-md font-medium text-indigo-900">Video Duration Estimate</h3>
+                  <span className="text-sm font-medium bg-green-100 text-green-800 px-3 py-1 rounded-full">
+                    Target: 30-60 seconds
+                  </span>
+                </div>
                 <div className="flex flex-wrap md:flex-nowrap gap-2 text-sm">
-                  <div className="bg-white rounded-lg px-3 py-2 shadow-sm border border-indigo-100 flex items-center flex-1">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className={`rounded-lg px-3 py-2 shadow-sm border flex items-center flex-1 ${
+                    content.videoDuration.seconds >= 30 && content.videoDuration.seconds <= 60 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-amber-50 border-amber-200'
+                  }`}>
+                    <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 mr-2 ${
+                      content.videoDuration.seconds >= 30 && content.videoDuration.seconds <= 60
+                        ? 'text-green-600'
+                        : 'text-amber-600'
+                    }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <div>
-                      <span className="font-bold text-indigo-700">{content.videoDuration.readableTime}</span>
-                      <span className="text-gray-600 ml-1 text-xs">minutes:seconds</span>
+                      <span className={`font-bold ${
+                        content.videoDuration.seconds >= 30 && content.videoDuration.seconds <= 60
+                          ? 'text-green-700'
+                          : 'text-amber-700'
+                      }`}>{content.videoDuration.readableTime}</span>
+                      <span className="ml-1 text-xs">minutes:seconds</span>
                     </div>
                   </div>
                   <div className="bg-white rounded-lg px-3 py-2 shadow-sm border border-indigo-100 flex items-center flex-1">
@@ -146,15 +163,40 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
                     </div>
                   </div>
                 </div>
+                
+                {/* Status message */}
                 {content.videoDuration.seconds < 30 && (
-                  <p className="text-amber-700 text-xs mt-2 bg-amber-50 p-2 rounded-lg border border-amber-100">
-                    <span className="font-semibold">Note:</span> Content is shorter than 30 seconds. Consider adding more details or choosing a different template for a full-length video.
-                  </p>
+                  <div className="mt-2 p-3 bg-amber-50 rounded-lg border border-amber-200 flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div>
+                      <p className="text-amber-800 text-sm font-medium">Content is shorter than the target range</p>
+                      <p className="text-amber-700 text-xs mt-1">Consider adding more details or choosing a different template to reach the minimum 30-second target for effective social media videos.</p>
+                    </div>
+                  </div>
                 )}
                 {content.videoDuration.seconds > 60 && (
-                  <p className="text-amber-700 text-xs mt-2 bg-amber-50 p-2 rounded-lg border border-amber-100">
-                    <span className="font-semibold">Note:</span> Content exceeds 60 seconds. Consider shortening or editing for optimal social media performance.
-                  </p>
+                  <div className="mt-2 p-3 bg-amber-50 rounded-lg border border-amber-200 flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <div>
+                      <p className="text-amber-800 text-sm font-medium">Content exceeds the target range</p>
+                      <p className="text-amber-700 text-xs mt-1">Consider shortening or editing for optimal social media performance. Most effective short-form videos stay under 60 seconds.</p>
+                    </div>
+                  </div>
+                )}
+                {content.videoDuration.seconds >= 30 && content.videoDuration.seconds <= 60 && (
+                  <div className="mt-2 p-3 bg-green-50 rounded-lg border border-green-200 flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    <div>
+                      <p className="text-green-800 text-sm font-medium">Perfect video length!</p>
+                      <p className="text-green-700 text-xs mt-1">This content is optimized for 30-60 second social media videos, the ideal length for engagement and audience retention.</p>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
