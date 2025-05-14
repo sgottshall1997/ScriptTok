@@ -14,6 +14,7 @@ export interface ContentGeneration {
   product: string;
   templateType: string;
   tone: string;
+  niche: string;
   content: string;
   createdAt: string;
 }
@@ -37,6 +38,7 @@ export interface GenerationFormData {
   product: string;
   templateType: string;
   tone: string;
+  niche: string;
 }
 
 export interface GenerationResponse {
