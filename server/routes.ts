@@ -4,12 +4,14 @@ import { storage } from "./storage";
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
 import { analyticsRouter } from "./api/analytics";
+import { templateTestRouter } from "./api/templateTest";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
   app.use('/api/generate', generateContentRouter);
   app.use('/api/trending', trendingRouter);
   app.use('/api/analytics', analyticsRouter);
+  app.use('/api/template-test', templateTestRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {
