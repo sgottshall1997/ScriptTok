@@ -88,7 +88,8 @@ async function loadNicheTemplates(niche: string): Promise<NicheTemplates> {
     
     // Try to load from JSON file first
     try {
-      const nicheFilePath = path.join(__dirname, 'niches', `${niche}.json`);
+      // Use absolute path to fix loading issues
+      const nicheFilePath = path.join(process.cwd(), 'server', 'prompts', 'niches', `${niche}.json`);
       console.log(`Looking for niche template file at: ${nicheFilePath}`);
       
       const fileContent = await fs.readFile(nicheFilePath, 'utf-8');
