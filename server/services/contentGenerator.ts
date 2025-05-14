@@ -2,6 +2,14 @@ import { openai } from './openai';
 import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption } from '@shared/constants';
 
+// Video duration estimation interface
+interface VideoDuration {
+  seconds: number;
+  readableTime: string;
+  wordCount: number;
+  pacing: 'slow' | 'moderate' | 'fast';
+}
+
 // Main content generation function
 export async function generateContent(
   product: string,
@@ -150,4 +158,70 @@ function getToneDescription(tone: ToneOption): string {
     default:
       return "informative";
   }
+}
+
+// Function to estimate video duration based on content
+export function estimateVideoDuration(content: string, tone: ToneOption, templateType: TemplateType): VideoDuration {
+  // Strip HTML tags to get clean text
+  const plainText = content.replace(/<[^>]*>?/gm, '');
+  
+  // Calculate word count
+  const words = plainText.trim().split(/\s+/).length;
+  
+  // Estimate words per minute based on tone and template
+  let wordsPerMinute = 150; // Default moderate pace
+  
+  // Adjust for tone - enthusiastic is faster, professional is slower
+  switch (tone) {
+    case 'enthusiastic':
+      wordsPerMinute = 180; // Faster pace
+      break;
+    case 'professional':
+      wordsPerMinute = 130; // Slower, more deliberate pace
+      break;
+    case 'minimalist':
+      wordsPerMinute = 160; // Slightly faster than moderate
+      break;
+    case 'friendly':
+    default:
+      wordsPerMinute = 150; // Moderate pace
+  }
+  
+  // Adjust for template type - captions are faster, detailed reviews slower
+  switch (templateType) {
+    case 'caption':
+      wordsPerMinute += 30; // Social media captions are read faster
+      break;
+    case 'original':
+    case 'pros-cons':
+      wordsPerMinute -= 10; // Detailed reviews need more time
+      break;
+    case 'comparison':
+      wordsPerMinute -= 20; // Comparisons need more explanation time
+      break;
+    case 'routine':
+      wordsPerMinute -= 15; // Routines need demonstration time
+      break;
+  }
+  
+  // Calculate seconds
+  const seconds = Math.round((words / wordsPerMinute) * 60);
+  
+  // Determine pacing category
+  let pacing: 'slow' | 'moderate' | 'fast';
+  if (wordsPerMinute < 140) pacing = 'slow';
+  else if (wordsPerMinute > 170) pacing = 'fast';
+  else pacing = 'moderate';
+  
+  // Format readable time (MM:SS)
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  const readableTime = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
+  
+  return {
+    seconds,
+    readableTime,
+    wordCount: words,
+    pacing
+  };
 }

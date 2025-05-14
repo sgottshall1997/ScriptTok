@@ -45,6 +45,12 @@ export interface GenerationResponse {
   tone: string;
   content: string;
   fromCache: boolean;
+  videoDuration: {
+    seconds: number;
+    readableTime: string;
+    wordCount: number;
+    pacing: 'slow' | 'moderate' | 'fast';
+  };
 }
 
 // Source branding colors for platforms
