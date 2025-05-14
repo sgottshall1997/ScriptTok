@@ -12,6 +12,7 @@ import {
   GenerationResponse 
 } from "@/lib/types";
 import NicheSelector from "./NicheSelector";
+import AffiliateLink from "./AffiliateLink";
 import { 
   trackNicheSelection, 
   trackTemplateSelection, 
@@ -40,6 +41,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   const [templateType, setTemplateType] = useState(initialTemplate || "seo_blog");
   const [tone, setTone] = useState("friendly");
   const [niche, setNiche] = useState(initialNiche);
+  const [productName, setProductName] = useState('');
   
   // State for template options based on selected niche
   const [templateOptions, setTemplateOptions] = useState([...UNIVERSAL_TEMPLATE_OPTIONS]);
@@ -150,9 +152,18 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
               placeholder="e.g. iPhone 15 Pro, Nike Air Max, La Mer Cream"
               className="w-full border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               defaultValue=""
+              onChange={(e) => setProductName(e.target.value)}
             />
             <p className="mt-1 text-xs text-gray-500">Enter the product name you want to generate content for</p>
           </div>
+          
+          {/* Amazon Affiliate Link */}
+          {niche && (
+            <AffiliateLink 
+              niche={niche} 
+              productName={productName}
+            />
+          )}
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
