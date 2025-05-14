@@ -14,22 +14,22 @@ export default function Home() {
   const [generatedContent, setGeneratedContent] = useState<GenerationResponse | null>(null);
 
   // Fetch scraper health
-  const { data: scraperHealth, isLoading: isLoadingScraperHealth } = useQuery({
+  const { data: scraperHealth = [], isLoading: isLoadingScraperHealth } = useQuery<ScraperStatus[]>({
     queryKey: ['/api/scraper-health'],
   });
 
   // Fetch trending products
-  const { data: trendingProducts, isLoading: isLoadingTrending } = useQuery({
+  const { data: trendingProducts = [], isLoading: isLoadingTrending } = useQuery<TrendingProduct[]>({
     queryKey: ['/api/trending'],
   });
 
   // Fetch API usage
-  const { data: apiUsage, isLoading: isLoadingApiUsage } = useQuery({
+  const { data: apiUsage = { today: 0, weekly: 0, monthly: 0, limit: 500 }, isLoading: isLoadingApiUsage } = useQuery<ApiUsage>({
     queryKey: ['/api/usage'],
   });
 
   // Fetch recent content generations
-  const { data: recentGenerations, isLoading: isLoadingGenerations } = useQuery({
+  const { data: recentGenerations = [], isLoading: isLoadingGenerations } = useQuery<ContentGeneration[]>({
     queryKey: ['/api/generate/recent'],
   });
 
@@ -84,6 +84,14 @@ export default function Home() {
             <p className="text-neutral-600">Generate trend-aware affiliate content for skincare and beauty products</p>
           </div>
           
+          {/* Trending Products - Full Width Section at Top */}
+          <div className="mb-6">
+            <TrendingProductsList 
+              products={trendingProducts || []} 
+              isLoading={isLoadingTrending}
+            />
+          </div>
+          
           {/* Main dashboard grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Left column */}
@@ -102,13 +110,7 @@ export default function Home() {
             </div>
             
             {/* Right column */}
-            <div className="space-y-6">
-              {/* Trending Products */}
-              <TrendingProductsList 
-                products={trendingProducts || []} 
-                isLoading={isLoadingTrending}
-              />
-              
+            <div className="space-y-6">              
               {/* Scraper Health */}
               <ScraperHealth 
                 scrapers={scraperHealth || []} 
