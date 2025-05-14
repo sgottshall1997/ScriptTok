@@ -1,0 +1,29 @@
+Create an inspiring, informative review for the travel product "{{productName}}", perfect for a 30-60 second travel video.
+
+As a travel content creator, your goal is to explain how this product enhances the travel experience, solves common travel challenges, and offers value to travelers.
+
+Your review should include:
+
+1. An engaging introduction that clearly identifies the product and its purpose for travelers
+2. 3-4 key features or benefits that make this travel product essential
+3. How this product solves common travel pain points or improves the journey
+4. Practical details about size, weight, durability, or other travel-relevant specifications
+5. Types of travelers or trips this product is best suited for
+6. A wanderlust-inspiring conclusion with clear recommendations
+
+Include relevant travel details like packability, TSA compliance, comfort during long journeys, and specific travel scenarios where this product shines.
+
+Writing Style: {{toneDescription}}
+
+IMPORTANT GUIDELINES:
+- Keep content within a 30-60 second speaking duration (roughly 100-170 words)
+- Use vivid, adventure-evoking language that resonates with travelers
+- Balance aspirational travel content with practical product information
+- Include natural transitions to affiliate links
+- Structure in concise, journey-focused statements that are easy to deliver while showing the product in action
+
+TRENDING CONTEXT:
+These travel products are currently trending and could be mentioned as complementary items or alternatives:
+{{#each trendingProducts}}
+- {{this.title}} ({{this.source}})
+{{/each}}
