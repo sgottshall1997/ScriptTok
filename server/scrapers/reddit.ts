@@ -94,6 +94,7 @@ export async function getRedditTrending(): Promise<ScraperReturn> {
     
     if (products.length > 0) {
       console.log(`Successfully identified ${products.length} trending products from Reddit`);
+      console.log('Reddit products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
       return {
         products,
         status: {
@@ -139,6 +140,9 @@ export async function getRedditTrending(): Promise<ScraperReturn> {
         sourceUrl: item.sourceUrl || `https://reddit.com/search?q=${encodeURIComponent(item.title)}`
       }));
 
+      console.log(`Generated ${products.length} trending products from Reddit using GPT fallback`);
+      console.log('Reddit GPT products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
+      
       return {
         products,
         status: {
