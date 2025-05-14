@@ -42,10 +42,13 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
       return;
     }
     
+    // Create a copy of the form data to use in the request
+    const requestData = { ...formData };
+    
     try {
       setIsGenerating(true);
       
-      const response = await apiRequest('POST', '/api/generate', formData);
+      const response = await apiRequest('POST', '/api/generate', requestData);
       const data: GenerationResponse = await response.json();
       
       onGenerate(data);
