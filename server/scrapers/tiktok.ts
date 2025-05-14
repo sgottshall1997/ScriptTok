@@ -22,12 +22,16 @@ export async function getTikTokTrending(): Promise<InsertTrendingProduct[]> {
     });
 
     // Parse the response
-    const responseData = JSON.parse(completion.choices[0].message.content);
-    const products: InsertTrendingProduct[] = responseData.map((item: any) => ({
+    const content = completion.choices[0].message.content || "{}";
+    const responseData = JSON.parse(content);
+    // Check if the response is an array, or if it has a key that contains the array
+    const productsArray = Array.isArray(responseData) ? responseData : (responseData.products || []);
+    
+    const products: InsertTrendingProduct[] = productsArray.map((item: any) => ({
       title: item.title,
       source: "tiktok",
-      mentions: parseInt(item.mentions.replace(/[^0-9]/g, "")),
-      sourceUrl: item.sourceUrl
+      mentions: typeof item.mentions === 'string' ? parseInt(item.mentions.replace(/[^0-9]/g, "")) : (item.mentions || 100000),
+      sourceUrl: item.sourceUrl || `https://tiktok.com/trend/${encodeURIComponent(item.title)}`
     }));
 
     return products;
