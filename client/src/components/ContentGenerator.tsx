@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, useState, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -14,26 +14,20 @@ interface ContentGeneratorProps {
 const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
-  const [formData, setFormData] = useState({
-    product: "",
-    templateType: "original",
-    tone: "friendly"
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  
+  // Using refs and state to store the form values
+  const productInputRef = useRef<HTMLInputElement>(null);
+  const [templateType, setTemplateType] = useState("original");
+  const [tone, setTone] = useState("friendly");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Get the product value directly from the ref
+    const productValue = productInputRef.current?.value.trim();
+    
     // Validate form
-    if (!formData.product.trim()) {
+    if (!productValue) {
       toast({
         title: "Product name required",
         description: "Please enter a product name to generate content",
@@ -42,8 +36,12 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
       return;
     }
     
-    // Create a copy of the form data to use in the request
-    const requestData = { ...formData };
+    // Create the request data
+    const requestData = {
+      product: productValue,
+      templateType,
+      tone
+    };
     
     try {
       setIsGenerating(true);
@@ -85,10 +83,10 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
             <Input
               id="product"
               name="product"
-              value={formData.product}
-              onChange={handleInputChange}
+              ref={productInputRef}
               placeholder="e.g. The Ordinary Niacinamide Serum"
               className="w-full border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
+              defaultValue=""
             />
             <p className="mt-1 text-xs text-gray-500">Enter the skincare or beauty product you want to generate content for</p>
           </div>
@@ -99,8 +97,8 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
                 Template Type
               </label>
               <Select 
-                value={formData.templateType} 
-                onValueChange={(value) => handleSelectChange("templateType", value)}
+                value={templateType} 
+                onValueChange={setTemplateType}
               >
                 <SelectTrigger id="template-type" className="w-full border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-100">
                   <SelectValue placeholder="Select template" />
@@ -121,8 +119,8 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
                 Content Tone
               </label>
               <Select
-                value={formData.tone}
-                onValueChange={(value) => handleSelectChange("tone", value)}
+                value={tone}
+                onValueChange={setTone}
               >
                 <SelectTrigger id="tone" className="w-full border-gray-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100">
                   <SelectValue placeholder="Select tone" />
