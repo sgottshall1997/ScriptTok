@@ -65,6 +65,9 @@ export class MemStorage implements IStorage {
     
     // Initialize scraper statuses
     this.initializeScraperStatuses();
+    
+    // Add initial trending products for demonstration
+    this.addInitialTrendingProducts();
   }
   
   private initializeScraperStatuses(): void {
@@ -76,6 +79,57 @@ export class MemStorage implements IStorage {
         lastCheck: new Date()
       };
       this.scraperStatuses.set(platform, status);
+    });
+  }
+  
+  private addInitialTrendingProducts(): void {
+    const initialProducts = [
+      {
+        title: "CeraVe Hydrating Cleanser",
+        source: "tiktok",
+        mentions: 980000,
+        sourceUrl: "https://tiktok.com/tag/cerave"
+      },
+      {
+        title: "The Ordinary Niacinamide 10% + Zinc 1%",
+        source: "instagram",
+        mentions: 840000,
+        sourceUrl: "https://instagram.com/explore/tags/theordinary"
+      },
+      {
+        title: "Drunk Elephant C-Firma Fresh Day Serum",
+        source: "youtube",
+        mentions: 720000,
+        sourceUrl: "https://youtube.com/results?search_query=drunk+elephant+serum"
+      },
+      {
+        title: "Summer Fridays Jet Lag Mask",
+        source: "reddit",
+        mentions: 530000,
+        sourceUrl: "https://reddit.com/r/SkincareAddiction"
+      },
+      {
+        title: "Paula's Choice 2% BHA Liquid Exfoliant",
+        source: "amazon",
+        mentions: 450000,
+        sourceUrl: "https://amazon.com/Paulas-Choice-SKIN-PERFECTING-Exfoliant/dp/B00949CTQQ/"
+      },
+      {
+        title: "La Roche-Posay Toleriane Double Repair Face Moisturizer",
+        source: "tiktok",
+        mentions: 380000,
+        sourceUrl: "https://tiktok.com/tag/laroche"
+      }
+    ];
+    
+    initialProducts.forEach(product => {
+      const id = this.trendingProductId++;
+      const trendingProduct: TrendingProduct = {
+        ...product,
+        id,
+        createdAt: new Date()
+      };
+      this.trendingProducts.set(id, trendingProduct);
     });
   }
   
