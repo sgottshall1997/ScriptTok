@@ -31,7 +31,7 @@ export function convertScraperStatus(backendStatus: BackendScraperStatus): Scrap
     lastCheck: typeof backendStatus.lastCheck === 'string'
       ? backendStatus.lastCheck
       : new Date(backendStatus.lastCheck).toISOString(),
-    errorMessage: backendStatus.errorMessage
+    errorMessage: backendStatus.errorMessage || undefined
   };
 }
 

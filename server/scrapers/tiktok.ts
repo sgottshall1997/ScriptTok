@@ -2,9 +2,11 @@ import { InsertTrendingProduct } from '@shared/schema';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { openai } from '../services/openai';
+import { ScraperReturn } from './index';
+import { ScraperStatusType } from '@shared/constants';
 
 // TikTok trending products scraper with web approach
-export async function getTikTokTrending(): Promise<InsertTrendingProduct[]> {
+export async function getTikTokTrending(): Promise<ScraperReturn> {
   // First try real TikTok data
   try {
     // Define popular TikTok skincare hashtags to search

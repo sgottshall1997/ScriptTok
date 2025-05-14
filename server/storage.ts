@@ -25,7 +25,7 @@ export interface IStorage {
   clearTrendingProducts(): Promise<void>;
   
   // Scraper status operations
-  updateScraperStatus(name: ScraperPlatform, status: ScraperStatusType): Promise<ScraperStatus>;
+  updateScraperStatus(name: ScraperPlatform, status: ScraperStatusType, errorMessage?: string): Promise<ScraperStatus>;
   getScraperStatus(): Promise<ScraperStatus[]>;
   
   // API usage operations
@@ -75,8 +75,9 @@ export class MemStorage implements IStorage {
       const status: ScraperStatus = {
         id: this.scraperStatusId++,
         name: platform,
-        status: 'operational',
-        lastCheck: new Date()
+        status: 'active',
+        lastCheck: new Date(),
+        errorMessage: null
       };
       this.scraperStatuses.set(platform, status);
     });
@@ -205,14 +206,19 @@ export class MemStorage implements IStorage {
   }
   
   // Scraper status operations
-  async updateScraperStatus(name: ScraperPlatform, status: ScraperStatusType): Promise<ScraperStatus> {
+  async updateScraperStatus(
+    name: ScraperPlatform, 
+    status: ScraperStatusType, 
+    errorMessage?: string
+  ): Promise<ScraperStatus> {
     const existingStatus = this.scraperStatuses.get(name);
     
     if (existingStatus) {
       const updatedStatus: ScraperStatus = {
         ...existingStatus,
         status,
-        lastCheck: new Date()
+        lastCheck: new Date(),
+        errorMessage: errorMessage || null
       };
       this.scraperStatuses.set(name, updatedStatus);
       return updatedStatus;
@@ -221,7 +227,8 @@ export class MemStorage implements IStorage {
         id: this.scraperStatusId++,
         name,
         status,
-        lastCheck: new Date()
+        lastCheck: new Date(),
+        errorMessage: errorMessage || null
       };
       this.scraperStatuses.set(name, newStatus);
       return newStatus;
