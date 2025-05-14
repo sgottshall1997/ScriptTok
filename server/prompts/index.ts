@@ -41,12 +41,12 @@ export async function generatePrompt(params: PromptParams): Promise<string> {
   let trendContext = '';
   if (trendingProducts?.length > 0) {
     const relevantProducts = trendingProducts
-      .filter(p => p.product !== productName)
+      .filter(p => p.title !== productName)
       .slice(0, 3);
       
     if (relevantProducts.length > 0) {
       trendContext = `\n\nFor context, these are some trending products in this space:\n` +
-        relevantProducts.map(p => `- ${p.product} (${p.platform})`).join('\n');
+        relevantProducts.map(p => `- ${p.title} (${p.source})`).join('\n');
     }
   }
   

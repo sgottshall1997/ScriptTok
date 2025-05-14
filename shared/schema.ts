@@ -54,6 +54,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
 
 export const insertContentGenerationSchema = createInsertSchema(contentGenerations).pick({
   product: true,
+  niche: true,
   templateType: true,
   tone: true,
   content: true,

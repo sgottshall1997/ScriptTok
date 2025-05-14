@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { TEMPLATE_TYPES, TONE_OPTIONS } from "@shared/constants";
+import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { CacheService } from "../services/cacheService";
@@ -12,6 +12,7 @@ const generateContentSchema = z.object({
   product: z.string().trim().min(1, "Product name is required"),
   templateType: z.enum(TEMPLATE_TYPES).default("original"),
   tone: z.enum(TONE_OPTIONS).default("friendly"),
+  niche: z.enum(NICHES).default("skincare"),
 });
 
 // Create a cache service for content generation
