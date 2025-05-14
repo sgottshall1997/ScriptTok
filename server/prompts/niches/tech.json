@@ -1,0 +1,19 @@
+{
+  "original": "As a technology specialist, write a detailed review of {product} in {tone}. Cover technical specifications, real-world performance, build quality, and comparative value. Address both novice and expert users. {trendContext}",
+  
+  "comparison": "Compare {product} with its top competitors in {tone}. Focus on hardware specs, software features, user experience, price-to-performance ratio, and long-term reliability. Use technical benchmarks where appropriate. {trendContext}",
+  
+  "caption": "Create a tech-focused social media caption for {product} in {tone}. Include key specs, one standout feature, and relevant tech hashtags. Keep it concise but informative for tech enthusiasts. {trendContext}",
+  
+  "pros_cons": "Analyze the technical strengths and weaknesses of {product} in {tone}. Start with specifications, then list specific pros (performance advantages, innovative features) and cons (limitations, areas for improvement) relevant to power users. {trendContext}",
+  
+  "routine": "Create a daily tech workflow incorporating {product} in {tone}. Include how this device integrates with other tech, productivity patterns, and efficiency gains when using this product. {trendContext}",
+  
+  "beginner_kit": "Create a beginner's guide to {product} in {tone}. Include setup instructions, essential accessories, first configurations, maintenance tips, and common troubleshooting solutions. {trendContext}",
+  
+  "demo_script": "Write a technical demonstration script for {product} in {tone}. Include unboxing, first boot, feature walkthrough, performance tests, and comparison to previous generation models. {trendContext}",
+  
+  "surprise_me": "Create unexpected content about {product} in {tone}. This could be unusual use cases, hidden features, creative hacks, or integration with surprising complementary products. {trendContext}",
+  
+  "top5_under25": "Create a list of essential tech accessories under $25 that pair well with {product} in {tone}. For each item, explain how it enhances the core product experience. {trendContext}"
+}
