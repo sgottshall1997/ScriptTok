@@ -1,9 +1,11 @@
 import { InsertTrendingProduct } from '@shared/schema';
 import axios from 'axios';
 import { openai } from '../services/openai';
+import { ScraperReturn } from './index';
+import { ScraperStatusType } from '@shared/constants';
 
 // Reddit trending products scraper
-export async function getRedditTrending(): Promise<InsertTrendingProduct[]> {
+export async function getRedditTrending(): Promise<ScraperReturn> {
   // First try real Reddit API
   try {
     // Define subreddits to check
@@ -92,7 +94,13 @@ export async function getRedditTrending(): Promise<InsertTrendingProduct[]> {
     
     if (products.length > 0) {
       console.log(`Successfully identified ${products.length} trending products from Reddit`);
-      return products;
+      return {
+        products,
+        status: {
+          status: 'active',
+          errorMessage: undefined
+        }
+      };
     }
     
     throw new Error('No products identified from Reddit content');
@@ -131,10 +139,22 @@ export async function getRedditTrending(): Promise<InsertTrendingProduct[]> {
         sourceUrl: item.sourceUrl || `https://reddit.com/search?q=${encodeURIComponent(item.title)}`
       }));
 
-      return products;
+      return {
+        products,
+        status: {
+          status: 'gpt-fallback',
+          errorMessage: `Scraping failed: ${scrapingError instanceof Error ? scrapingError.message : 'Unknown error'}`
+        }
+      };
     } catch (openaiError) {
       console.error('OpenAI fallback also failed:', openaiError);
-      return [];
+      return {
+        products: [],
+        status: {
+          status: 'error',
+          errorMessage: `Scraping and GPT fallback failed: ${openaiError instanceof Error ? openaiError.message : 'Unknown error'}`
+        }
+      };
     }
   }
 }

@@ -2,9 +2,11 @@ import { InsertTrendingProduct } from '@shared/schema';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { openai } from '../services/openai';
+import { ScraperReturn } from './index';
+import { ScraperStatusType } from '@shared/constants';
 
 // Instagram trending products scraper
-export async function getInstagramTrending(): Promise<InsertTrendingProduct[]> {
+export async function getInstagramTrending(): Promise<ScraperReturn> {
   // First try real Instagram data
   try {
     // Define popular skincare hashtags to search for
@@ -133,7 +135,13 @@ export async function getInstagramTrending(): Promise<InsertTrendingProduct[]> {
       
       if (products.length > 0) {
         console.log(`Successfully identified ${products.length} trending products from Instagram`);
-        return products;
+        return {
+          products,
+          status: {
+            status: 'active',
+            errorMessage: undefined
+          }
+        };
       }
     }
     
@@ -173,10 +181,22 @@ export async function getInstagramTrending(): Promise<InsertTrendingProduct[]> {
         sourceUrl: item.sourceUrl || `https://instagram.com/explore/tags/${encodeURIComponent(item.title)}`
       }));
 
-      return products;
+      return {
+        products,
+        status: {
+          status: 'gpt-fallback',
+          errorMessage: `Scraping failed: ${scrapingError instanceof Error ? scrapingError.message : 'Unknown error'}`
+        }
+      };
     } catch (openaiError) {
       console.error('OpenAI fallback also failed:', openaiError);
-      return [];
+      return {
+        products: [],
+        status: {
+          status: 'error',
+          errorMessage: `Scraping and GPT fallback failed: ${openaiError instanceof Error ? openaiError.message : 'Unknown error'}`
+        }
+      };
     }
   }
 }
