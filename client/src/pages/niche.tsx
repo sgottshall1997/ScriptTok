@@ -71,6 +71,7 @@ export default function NichePage() {
   const params = useParams<{ niche: string }>();
   const [generatedContent, setGeneratedContent] = useState<GenerationResponse | null>(null);
   const [isRefreshingTrends, setIsRefreshingTrends] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
   const { toast } = useToast();
 
   // Redirect to home if niche is invalid (but only if a niche is specified in the URL)
@@ -79,6 +80,19 @@ export default function NichePage() {
       window.location.href = "/";
     }
   }, [params.niche]);
+  
+  // Check for template parameter in URL
+  useEffect(() => {
+    // Parse URL search params to see if a template was specified
+    const searchParams = new URLSearchParams(window.location.search);
+    const templateParam = searchParams.get('template');
+    
+    if (templateParam) {
+      // Set the selected template to be passed to ContentGenerator
+      setSelectedTemplate(templateParam);
+      console.log('Template specified in URL:', templateParam);
+    }
+  }, []);
 
   // Get niche information for display
   const nicheInfo = params.niche ? getNicheInfo(params.niche) : {
@@ -185,6 +199,7 @@ export default function NichePage() {
           <ContentGenerator 
             onGenerate={handleContentGenerated} 
             initialNiche={params.niche as Niche}
+            initialTemplate={selectedTemplate}
           />
           
           {/* Content Output */}

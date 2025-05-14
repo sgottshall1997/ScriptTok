@@ -23,15 +23,21 @@ interface ContentGeneratorProps {
   onGenerate: (content: GenerationResponse) => void;
   onNicheChange?: (niche: string) => void;
   initialNiche?: string;
+  initialTemplate?: string;
 }
 
-const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange, initialNiche = '' }) => {
+const ContentGenerator: FC<ContentGeneratorProps> = ({ 
+  onGenerate, 
+  onNicheChange, 
+  initialNiche = '',
+  initialTemplate = ''
+}) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   
   // Using refs and state to store the form values
   const productInputRef = useRef<HTMLInputElement>(null);
-  const [templateType, setTemplateType] = useState("seo_blog");
+  const [templateType, setTemplateType] = useState(initialTemplate || "seo_blog");
   const [tone, setTone] = useState("friendly");
   const [niche, setNiche] = useState(initialNiche);
   

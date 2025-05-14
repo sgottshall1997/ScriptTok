@@ -134,6 +134,13 @@ const TemplateExplorerPage: React.FC = () => {
       return;
     }
 
+    // Track the event for analytics
+    trackEvent(
+      'navigate_to_generator', 
+      'template_explorer', 
+      `${selectedNiche}/${selectedTemplate}`
+    );
+
     // Navigate to the content generator page with niche and template pre-selected
     setLocation(`/niche/${selectedNiche}?template=${selectedTemplate}`);
   };
