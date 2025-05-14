@@ -22,9 +22,6 @@ interface TemplatePreviewProps {
   selected?: boolean;
 }
 
-// Type for Lucide React icons
-type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;
-
 export const TemplatePreview: React.FC<TemplatePreviewProps> = ({ 
   niche, 
   templateType,
@@ -49,31 +46,7 @@ export const TemplatePreview: React.FC<TemplatePreviewProps> = ({
   
   // Get the icon component based on the icon name from template metadata
   const IconComponent = React.useMemo(() => {
-    if (!data?.icon) {
-      return FileText;
-    }
-    
-    // Map the icon name to the appropriate Lucide icon
-    switch(data.icon.toLowerCase()) {
-      case 'test-tube': return TestTube;
-      case 'scale': return Scale;
-      case 'instagram': return Instagram;
-      case 'list-checks': return ListChecks;
-      case 'clock': return Clock;
-      case 'book-open': return BookOpen;
-      case 'video': return Video;
-      case 'badge-dollar-sign': return BadgeDollarSign;
-      case 'user': return User;
-      case 'sparkles': return Sparkles;
-      case 'trending-up': return TrendingUp;
-      case 'droplets': return Droplets;
-      case 'dollar-sign': return DollarSign;
-      case 'users': return Users;
-      case 'alert-triangle': return AlertTriangle;
-      case 'microscope': return Microscope;
-      case 'calendar': return Calendar;
-      default: return FileText;
-    }
+    return getIconByName(data?.icon);
   }, [data?.icon]);
   
   // Show loading state
