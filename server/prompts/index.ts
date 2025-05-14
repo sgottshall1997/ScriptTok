@@ -1,12 +1,19 @@
 /**
- * Modular Prompt System
+ * Enhanced Modular Prompt System
  * This is the main entry point for the modular prompt system that handles
  * different niches, templates, and tones.
  */
 
 import { TemplateType, ToneOption } from '@shared/constants';
 import { TrendingProduct } from '@shared/schema';
-import { loadPromptTemplates } from './templates';
+import { 
+  loadPromptTemplates, 
+  loadTemplateMetadata, 
+  loadNicheInfo,
+  getTemplateMetadata,
+  TemplateMetadata,
+  NicheInfo
+} from './templates';
 import { getToneDescription } from './tones';
 
 export interface PromptParams {
@@ -23,7 +30,7 @@ export interface PromptParams {
 export async function generatePrompt(params: PromptParams): Promise<string> {
   const { niche, productName, templateType, tone, trendingProducts = [] } = params;
   
-  // Load prompt templates (in a real implementation, this would be cached)
+  // Load prompt templates (uses cache after first load)
   const templates = await loadPromptTemplates();
   
   // Get the prompt template for this niche/template combination
@@ -57,6 +64,44 @@ export async function generatePrompt(params: PromptParams): Promise<string> {
     .replace(/{trendContext}/g, trendContext);
   
   return filledPrompt;
+}
+
+/**
+ * Get metadata for a specific template type and niche
+ * Used for UI display, template previews, etc.
+ */
+export async function getTemplateInfo(niche: string, templateType: TemplateType): Promise<TemplateMetadata | undefined> {
+  return getTemplateMetadata(niche, templateType);
+}
+
+/**
+ * Get information about a specific niche
+ * Used for UI display, niche selection, etc.
+ */
+export async function getNicheInfo(niche: string): Promise<NicheInfo | undefined> {
+  const nicheInfoMap = await loadNicheInfo();
+  return nicheInfoMap[niche];
+}
+
+/**
+ * Get all available template metadata for a specific niche
+ * Used for template selection UI
+ */
+export async function getAllTemplatesForNiche(niche: string): Promise<Record<string, TemplateMetadata>> {
+  const metadataMap = await loadTemplateMetadata();
+  const defaultMetadata = metadataMap['default'] || {};
+  const nicheMetadata = metadataMap[niche] || {};
+  
+  // Combine default and niche-specific templates, with niche-specific overriding defaults
+  return { ...defaultMetadata, ...nicheMetadata } as Record<string, TemplateMetadata>;
+}
+
+/**
+ * Get all available niche info
+ * Used for niche selection UI
+ */
+export async function getAllNicheInfo(): Promise<Record<string, NicheInfo>> {
+  return loadNicheInfo();
 }
 
 /**
