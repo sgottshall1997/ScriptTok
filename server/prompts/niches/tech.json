@@ -1,19 +1,100 @@
 {
-  "original": "As a technology specialist, write a detailed review of {product} in {tone}. Cover technical specifications, real-world performance, build quality, and comparative value. Address both novice and expert users. {trendContext}",
+  "niche_info": {
+    "name": "Technology & Gadgets",
+    "description": "Content for tech products, gadgets, software, and digital services",
+    "icon": "laptop",
+    "primary_color": "blue",
+    "secondary_color": "gray",
+    "keywords": ["smartphone", "laptop", "headphones", "smart home", "gaming", "camera", "wearable", "software"]
+  },
   
-  "comparison": "Compare {product} with its top competitors in {tone}. Focus on hardware specs, software features, user experience, price-to-performance ratio, and long-term reliability. Use technical benchmarks where appropriate. {trendContext}",
-  
-  "caption": "Create a tech-focused social media caption for {product} in {tone}. Include key specs, one standout feature, and relevant tech hashtags. Keep it concise but informative for tech enthusiasts. {trendContext}",
-  
-  "pros_cons": "Analyze the technical strengths and weaknesses of {product} in {tone}. Start with specifications, then list specific pros (performance advantages, innovative features) and cons (limitations, areas for improvement) relevant to power users. {trendContext}",
-  
-  "routine": "Create a daily tech workflow incorporating {product} in {tone}. Include how this device integrates with other tech, productivity patterns, and efficiency gains when using this product. {trendContext}",
-  
-  "beginner_kit": "Create a beginner's guide to {product} in {tone}. Include setup instructions, essential accessories, first configurations, maintenance tips, and common troubleshooting solutions. {trendContext}",
-  
-  "demo_script": "Write a technical demonstration script for {product} in {tone}. Include unboxing, first boot, feature walkthrough, performance tests, and comparison to previous generation models. {trendContext}",
-  
-  "surprise_me": "Create unexpected content about {product} in {tone}. This could be unusual use cases, hidden features, creative hacks, or integration with surprising complementary products. {trendContext}",
-  
-  "top5_under25": "Create a list of essential tech accessories under $25 that pair well with {product} in {tone}. For each item, explain how it enhances the core product experience. {trendContext}"
+  "templates": {
+    "original": {
+      "template": "As a technology specialist, write a detailed review of {product} in {tone}. Cover technical specifications, real-world performance, build quality, and comparative value. Address both novice and expert users. {trendContext}",
+      "title": "Tech Expert Review",
+      "description": "Comprehensive tech product analysis with specifications and benchmarks",
+      "icon": "cpu",
+      "exampleOutput": "The Dell XPS 15 (2025) represents the pinnacle of premium Windows laptops with its exceptional build quality and performance specs. Powered by Intel's latest 14th-gen i7-14700H processor (14 cores, 20 threads) and NVIDIA RTX 4070 graphics, this machine delivers exceptional performance for content creation and gaming. The standout 15.6-inch OLED display (3456x2160) offers 100% DCI-P3 color coverage, making it ideal for creative professionals."
+    },
+    
+    "comparison": {
+      "template": "Compare {product} with its top competitors in {tone}. Focus on hardware specs, software features, user experience, price-to-performance ratio, and long-term reliability. Use technical benchmarks where appropriate. {trendContext}",
+      "title": "Tech Product Comparison",
+      "description": "Side-by-side comparison of similar tech products",
+      "icon": "scale",
+      "exampleOutput": "When comparing the Apple MacBook Air M3 to the Dell XPS 13 and Microsoft Surface Laptop, key differences emerge. The MacBook Air offers superior battery life (18+ hours vs 10-12) and better performance-per-watt with its ARM-based architecture. Meanwhile, the Dell provides better connectivity options (USB-A, HDMI) and the Surface offers a touch display with pen support. For content creators, the MacBook's M3 chip delivers 40% faster video rendering. For business users needing Windows-only software, the XPS provides the best balance of performance and portability."
+    },
+    
+    "caption": {
+      "template": "Create a tech-focused social media caption for {product} in {tone}. Include key specs, one standout feature, and relevant tech hashtags. Keep it concise but informative for tech enthusiasts. {trendContext}",
+      "title": "Tech Social Caption",
+      "description": "Instagram-ready caption with technical expertise",
+      "icon": "instagram",
+      "exampleOutput": "Finally upgraded my workstation with the new ASUS ProArt PA329CV monitor and I'm blown away! 🤯 This 32\" 4K USB-C display with 100% sRGB color accuracy has completely transformed my photo editing workflow. Being able to daisy-chain two monitors while charging my MacBook through a single cable is pure setup goals! 💻 Who else is tired of cable management nightmares? #TechUpgrade #CreativeSetup #4KMonitor #ASUS #SetupTour"
+    },
+    
+    "pros_cons": {
+      "template": "Analyze the technical strengths and weaknesses of {product} in {tone}. Start with specifications, then list specific pros (performance advantages, innovative features) and cons (limitations, areas for improvement) relevant to power users. {trendContext}",
+      "title": "Tech Pros & Cons",
+      "description": "Balanced assessment of tech product strengths and weaknesses",
+      "icon": "list-checks",
+      "exampleOutput": "PROS: Exceptional battery life (15+ hours of real-world use), class-leading M3 performance for the size, silent fanless design, excellent keyboard and trackpad, premium aluminum build quality, impressive speakers for a 13\" laptop, seamless Apple ecosystem integration, highly portable at just 2.7 lbs. CONS: Limited port selection (just two Thunderbolt/USB-C ports), no user-upgradable components, 720p webcam is disappointing for the price point, macOS may require software adjustment for Windows users, higher starting price than similarly-equipped Windows alternatives."
+    },
+    
+    "routine": {
+      "template": "Create a daily tech workflow incorporating {product} in {tone}. Include how this device integrates with other tech, productivity patterns, and efficiency gains when using this product. {trendContext}",
+      "title": "Tech Workflow Integration",
+      "description": "How to integrate the product into your daily tech workflow",
+      "icon": "workflow",
+      "exampleOutput": "MY STREAMLINED WORKFLOW WITH THE IPAD PRO: 7:00 AM - Morning review: Using the iPad in portrait orientation with the Apple Pencil to annotate overnight emails and prioritize tasks in Notion. The iPad's instant-on feature saves 5-10 minutes compared to my previous laptop boot-up routine. 9:00 AM - Deep work: iPad connected to external monitor via USB-C, using Magic Keyboard and Logitech MX Master 3S for desktop-like experience. Using Stage Manager to keep reference materials visible alongside main work document. 12:00 PM - Lunch break planning: Quick detach from desktop setup to review afternoon schedule using iPad as secondary display for calendar via Sidecar with MacBook. 2:00 PM - Client meeting: Using iPad with Pencil for live note-taking in GoodNotes during Zoom calls, with ability to share sketches in real-time. 4:00 PM - Email processing: Using Split View with Mail and Calendar to schedule follow-ups while clearing inbox. 8:00 PM - Evening reading: Using iPad in tablet mode with True Tone display and Dark Mode to review industry publications with minimal eye strain."
+    },
+    
+    "beginner_kit": {
+      "template": "Create a beginner's guide to {product} in {tone}. Include setup instructions, essential accessories, first configurations, maintenance tips, and common troubleshooting solutions. {trendContext}",
+      "title": "Tech Beginner's Guide",
+      "description": "Comprehensive introduction to technology for beginners",
+      "icon": "book-open",
+      "exampleOutput": "BEGINNER'S GUIDE TO YOUR NEW MACBOOK AIR: INITIAL SETUP: 1) Press power button (top-right of keyboard) 2) Select language and region 3) Connect to WiFi 4) Sign in with or create Apple ID 5) Set up Touch ID with your fingerprint. ESSENTIAL FIRST STEPS: 1) System Preferences > Software Update (check for macOS updates) 2) App Store > Updates (update any pre-installed apps) 3) System Preferences > Trackpad (customize gesture controls) 4) Set up Time Machine backup with external drive. MUST-HAVE ACCESSORIES: 1) USB-C hub with HDMI and USB-A ports 2) Protective sleeve or case 3) Screen protector (optional). BASIC TROUBLESHOOTING: • If an app freezes: Command+Option+Escape to force quit • If system becomes unresponsive: Hold power button for 10 seconds to force restart • If battery life seems poor: Check Activity Monitor for high energy apps • If WiFi connection is unstable: Turn WiFi off/on or reset network settings."
+    },
+    
+    "demo_script": {
+      "template": "Write a technical demonstration script for {product} in {tone}. Include unboxing, first boot, feature walkthrough, performance tests, and comparison to previous generation models. {trendContext}",
+      "title": "Tech Demo Script",
+      "description": "Step-by-step product demonstration with expert insights",
+      "icon": "video",
+      "exampleOutput": "[INTRO] \"Today we're doing a complete walkthrough of the new iPhone 15 Pro Max - from unboxing to benchmarks, I'll show you everything you need to know.\" [UNBOXING] \"Apple has simplified the packaging this year - we see the phone immediately upon opening, with just a USB-C cable underneath. Notice there are no longer any plastic wrappings - part of Apple's environmental initiatives.\" [FIRST BOOT] \"Initial startup takes about 45 seconds. If you're coming from an older iPhone, you can use Quick Start for data transfer by bringing your old phone nearby.\" [FEATURE DEMO] \"The standout feature this year is the Action Button replacing the mute switch. Let me show you how to customize it in Settings > Action Button. You can set it to launch the camera, flashlight, or even custom shortcuts.\" [BENCHMARKS] \"In Geekbench 6, we're seeing single-core scores of 2,890 and multi-core of 7,195 - that's a 20% improvement over the iPhone 14 Pro Max and still ahead of any Android flagship.\" [CAMERA TEST] \"The new 48MP main sensor with pixel binning produces noticeably better low-light photos than the previous generation. Notice the improved detail in shadow areas and reduced noise.\""
+    },
+    
+    "surprise_me": {
+      "template": "Create unexpected content about {product} in {tone}. This could be unusual use cases, hidden features, creative hacks, or integration with surprising complementary products. {trendContext}",
+      "title": "Unexpected Tech Uses",
+      "description": "Creative and surprising ways to use technology",
+      "icon": "sparkles",
+      "exampleOutput": "5 UNEXPECTED WAYS TO USE YOUR IPAD PRO THAT APPLE NEVER TELLS YOU: 1) PROFESSIONAL TELEPROMPTER: Mount your iPad on a specialized teleprompter bracket ($35 on Amazon) facing a semi-transparent mirror, position it beneath your camera, and use the free Teleprompter Premium app to deliver flawless video presentations without breaking eye contact with viewers. 2) SMART HOME COMMAND CENTER: Use an inexpensive wall mount ($29) to permanently install your previous-generation iPad as a dedicated smart home control panel running the Home app in Kiosk mode. 3) SOUS CHEF'S SECRET: Place your iPad in a clear gallon ziplock bag for a completely waterproof, flour-proof kitchen assistant that can be operated through the plastic—perfect for messy cooking sessions. 4) DIY FILM SCANNER: Place old photo negatives or slides on iPad screen with pure white background, use a macro lens on your phone camera pointing down at the illuminated negative, and invert the colors in post for instant high-quality digital conversions of analog memories. 5) MUSIC PRODUCTION TACTILE CONTROL SURFACE: Apps like TouchOSC ($9.99) transform your iPad into a customizable MIDI controller with faders, knobs, and buttons that can control professional music software on your computer via WiFi."
+    },
+    
+    "top5_under25": {
+      "template": "Create a list of essential tech accessories under $25 that pair well with {product} in {tone}. For each item, explain how it enhances the core product experience. {trendContext}",
+      "title": "Budget Tech Accessories",
+      "description": "Top affordable accessories under $25",
+      "icon": "dollar-sign",
+      "exampleOutput": "5 MUST-HAVE ACCESSORIES UNDER $25 FOR YOUR NEW MACBOOK AIR: 1) Anker USB-C Hub ($23.99): Adds crucial HDMI output, USB-A ports, and SD card reader functionality in a compact package smaller than a credit card. Essential for connecting to external displays or using older peripherals. 2) MOSISO Neoprene Sleeve ($13.99): Provides excellent protection with water-resistant neoprene and a separate accessory pouch, all while adding minimal bulk. The precise fit prevents the laptop from shifting during transport. 3) UPPERCASE GhostCover Keyboard Protector ($12.95): Ultra-thin (0.12mm) silicone keyboard cover that preserves the typing experience while protecting against liquid spills and debris—critical since keyboard repairs cost $450+ out of warranty. 4) OWC Thunderbolt Cable Lock Adapter ($19.99): This ingenious security solution adds a standard Kensington lock slot to your Thunderbolt port, deterring theft without permanent modification. 5) ESR 20W USB-C Charger ($17.99): 30% smaller than Apple's charger but delivers the same 20W fast-charging capability. Perfect as a secondary charger for your bag that won't take up valuable outlet space."
+    },
+    
+    "tech_setup": {
+      "template": "Design an optimal desk setup or environment built around {product} in {tone}. Include complementary devices, ergonomic considerations, cable management, and productivity enhancements. {trendContext}",
+      "title": "Ultimate Tech Setup",
+      "description": "Complete environment design to maximize your tech experience",
+      "icon": "layout-dashboard",
+      "exampleOutput": "THE ULTIMATE MACBOOK PRO DESK SETUP FOR CREATIVE PROFESSIONALS: PRIMARY HARDWARE: • MacBook Pro 16\" positioned on a Rain Design mStand ($45) for improved ergonomics and thermal performance • LG UltraFine 27\" 5K display ($1,299) as primary monitor with P3 color gamut • Dell U2720Q as vertical secondary monitor for code/documents ($449) • CalDigit TS4 Thunderbolt dock ($399) connecting all peripherals via a single cable • Logitech MX Master 3S mouse and MX Keys keyboard for precise control • Audio-Technica ATH-M50x headphones for immersive sound. ERGONOMICS: • Fully Jarvis standing desk ($599) programmable to your preferred sitting/standing heights • Herman Miller Aeron chair ($1,495) for proper lumbar support • Ergonomic wrist rest with cooling gel • Monitor arms to position screens at eye level • Bias lighting behind monitors to reduce eye strain. CABLE MANAGEMENT: • J-channel cable raceway mounted under desk • Braided cables for durability and reduced tangling • Cable clips to keep frequently used cables accessible • Signum cable management tray to hide power strip and adapters. PRODUCTIVITY ENHANCEMENTS: • Elgato Stream Deck ($149) programmed with application-specific shortcuts • Wacom Intuos Pro tablet ($379) for precision photo editing • Under-desk headphone mount to save space • Desk mat for sound dampening and wrist comfort • Adjustable monitor light to reduce eye strain during evening work"
+    },
+    
+    "benchmarks": {
+      "template": "Create a detailed performance benchmark analysis for {product} in {tone}. Include synthetic tests, real-world performance scenarios, thermal analysis, and comparative results with similar-tier devices. {trendContext}",
+      "title": "Performance Benchmarks",
+      "description": "Detailed technical performance analysis and comparisons",
+      "icon": "bar-chart",
+      "exampleOutput": "COMPREHENSIVE BENCHMARK ANALYSIS: RTX 4080 GAMING LAPTOP\n\nSYNTHETIC BENCHMARKS:\n• 3DMark Time Spy: 13,875 (14% higher than RTX 4070 laptop, 8% lower than desktop RTX 4070)\n• 3DMark Port Royal (Ray Tracing): 8,436 (22% improvement over previous generation)\n• Cinebench R23 Multi-core: 15,240 points\n• Geekbench 6 Single/Multi: 2,640 / 16,470\n\nGAMING PERFORMANCE (1440p, Ultra settings):\n• Cyberpunk 2077 (Ray Tracing + DLSS Quality): 85 FPS avg\n• Red Dead Redemption 2: 104 FPS avg\n• CS2: 385 FPS avg\n• Flight Simulator 2024: 76 FPS avg\n\nCONTENT CREATION:\n• DaVinci Resolve 4K Export (10min): 5:42 (15% faster than previous gen)\n• Photoshop PugetBench: 1,250 points\n• Blender BMW render: 1:32 (GPU accelerated)\n\nTHERMAL ANALYSIS:\n• Peak CPU Temperature: 86°C under combined CPU/GPU load\n• Peak GPU Temperature: 78°C\n• Surface Temperatures: Keyboard center reaches 38°C, WASD area remains cooler at 32°C\n• Fan Noise: 46dB at maximum load, 28dB at idle\n\nPOWER & EFFICIENCY:\n• Battery Life (Productivity): 5.5 hours\n• Battery Life (Video Playback): 7.2 hours\n• AC Power Draw (Max Load): 245W\n• Performance on Battery: 65% of plugged-in performance"
+    }
+  }
 }
