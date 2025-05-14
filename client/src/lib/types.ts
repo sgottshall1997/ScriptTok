@@ -77,7 +77,16 @@ export const TEMPLATE_TYPE_OPTIONS = [
   { value: 'comparison', label: 'Product Comparison' },
   { value: 'caption', label: 'Social Media Caption' },
   { value: 'pros-cons', label: 'Pros & Cons' },
-  { value: 'routine', label: 'Skincare Routine' }
+  { value: 'routine', label: 'Skincare Routine' },
+  { value: 'beginner-kit', label: 'Beginner Skincare Kit' },
+  { value: 'demo-script', label: 'Product Demo Script' },
+  { value: 'drugstore-dupe', label: 'Drugstore Dupe' },
+  { value: 'personal-review', label: 'Personal Review' },
+  { value: 'surprise-me', label: 'Surprise Me (Creative)' },
+  { value: 'tiktok-breakdown', label: 'TikTok Trend Breakdown' },
+  { value: 'dry-skin-list', label: 'Dry Skin Products' },
+  { value: 'top-5-under-25', label: 'Top 5 Under $25' },
+  { value: 'influencer-caption', label: 'Influencer Caption' }
 ];
 
 // Tone options

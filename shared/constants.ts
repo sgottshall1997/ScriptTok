@@ -2,11 +2,20 @@
 
 // Template types for content generation
 export const TEMPLATE_TYPES = [
-  "original",      // Original review
-  "comparison",    // Product comparison
-  "caption",       // Social media caption
-  "pros-cons",     // Pros and cons list
-  "routine"        // Skincare routine
+  "original",            // Original review
+  "comparison",          // Product comparison
+  "caption",             // Social media caption
+  "pros-cons",           // Pros and cons list
+  "routine",             // Skincare routine
+  "beginner-kit",        // Beginner skincare kit
+  "demo-script",         // Product demo script
+  "drugstore-dupe",      // Drugstore dupe review
+  "personal-review",     // Personal product review
+  "surprise-me",         // Creative/unexpected content
+  "tiktok-breakdown",    // TikTok trend breakdown
+  "dry-skin-list",       // Dry skin product list
+  "top-5-under-25",      // Affordable options
+  "influencer-caption"   // Influencer-style caption
 ] as const;
 
 export type TemplateType = typeof TEMPLATE_TYPES[number];
