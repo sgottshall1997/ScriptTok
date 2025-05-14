@@ -38,13 +38,14 @@ router.post("/", async (req, res) => {
       });
     }
     
-    const { product, templateType, tone } = result.data;
+    const { product, templateType, tone, niche } = result.data;
     
     // Create cache parameters object
     const cacheParams = {
       product: product.toLowerCase().trim(),
       templateType,
-      tone
+      tone,
+      niche
     };
     
     // Generate cache key from parameters
@@ -64,6 +65,7 @@ router.post("/", async (req, res) => {
         product, 
         templateType, 
         tone, 
+        niche,
         content: cached.content,
         fromCache: true,
         videoDuration
@@ -74,7 +76,7 @@ router.post("/", async (req, res) => {
     const trendingProducts = await storage.getTrendingProducts();
     
     // Generate content using OpenAI
-    const content = await generateContent(product, templateType, tone, trendingProducts);
+    const content = await generateContent(product, templateType, tone, trendingProducts, niche);
     
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 
@@ -103,6 +105,7 @@ router.post("/", async (req, res) => {
       product,
       templateType,
       tone,
+      niche,
       content,
       fromCache: false,
       videoDuration
