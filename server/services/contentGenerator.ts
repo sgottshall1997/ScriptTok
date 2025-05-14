@@ -84,6 +84,18 @@ function getSystemPrompt(templateType: TemplateType, tone: ToneOption): string {
       break;
   }
   
+  // Add length requirement for 30-60 second videos
+  systemPrompt += " Your content should be optimized for 30-60 second social media videos.";
+  
+  // Add additional guidance based on tone
+  if (tone === "enthusiastic" || tone === "friendly") {
+    systemPrompt += " Keep sentences short and conversational for a natural flow when spoken.";
+  } else if (tone === "professional") {
+    systemPrompt += " Focus on 2-3 key points with clear explanations that can be delivered in under a minute.";
+  } else if (tone === "minimalist") {
+    systemPrompt += " Be concise but include all necessary information within the 30-60 second timeframe.";
+  }
+  
   systemPrompt += " Format your response with proper HTML for web display, using appropriate tags (h3, p, ul, li, etc) for structure.";
   
   return systemPrompt;
@@ -121,26 +133,26 @@ function createPrompt(
   tone: ToneOption, 
   trendContext: string
 ): string {
-  let basePrompt = `Create ${getToneDescription(tone)} content about "${product}". ${trendContext}\n\n`;
+  let basePrompt = `Create ${getToneDescription(tone)} content about "${product}" optimized for a 30-60 second social media video. ${trendContext}\n\n`;
   
   switch (templateType) {
     case "original":
-      return basePrompt + `Write a comprehensive review of this product covering its benefits, ingredients, and how to use it. Include a brief introduction, key benefits, usage recommendations, and a conclusion.`;
+      return basePrompt + `Write a concise review of this product focusing on 2-3 key benefits, main ingredients, and basic usage. Keep it short enough to be narrated in a 30-60 second video. Include a brief introduction, key points, and a quick conclusion.`;
       
     case "comparison":
-      return basePrompt + `Compare this product with 2-3 similar alternatives. Create a structured comparison that highlights differences in ingredients, efficacy, price, and best use cases. Include a comparison table and a final verdict.`;
+      return basePrompt + `Compare this product with 1-2 similar alternatives. Focus only on the most important differences that can be explained in a 30-60 second video. Highlight differences in 2-3 key areas like efficacy, value, or results. Keep it brief enough to fit in a short-form video.`;
       
     case "caption":
-      return basePrompt + `Create an engaging social media caption for this product that would perform well on Instagram/TikTok. Include relevant hashtags, emojis, and a call to action. Keep it authentic and persuasive.`;
+      return basePrompt + `Create a short, engaging social media caption for this product that would perform well on Instagram/TikTok and complement a 30-60 second video. Include 2-3 relevant hashtags, a few strategic emojis, and a brief call to action. Keep it authentic and concise.`;
       
     case "pros-cons":
-      return basePrompt + `Analyze the strengths and weaknesses of this product. Create a balanced review with clear pros and cons sections, followed by a final verdict. Focus on honest assessment that helps consumers make an informed decision.`;
+      return basePrompt + `Create a balanced list of 2-3 pros and 1-2 cons for this product. Keep each point brief and impactful - the entire content should be narrated in 30-60 seconds. Focus on the most important factors that would affect a purchase decision.`;
       
     case "routine":
-      return basePrompt + `Create a complete skincare routine that incorporates this product. Explain how to use it with other products, what products complement it, and when in the routine it should be applied. Include both morning and evening routines.`;
+      return basePrompt + `Create a simplified skincare routine that incorporates this product. Limit to 3-4 total steps that can be explained in a 30-60 second video. Focus on when and how to use this product for best results, with minimal details about complementary products.`;
       
     default:
-      return basePrompt + `Write helpful and engaging content about this product that educates and informs potential buyers.`;
+      return basePrompt + `Write helpful and engaging content about this product that educates and informs potential buyers. Keep it concise enough to be narrated in a 30-60 second video.`;
   }
 }
 
