@@ -91,6 +91,7 @@ router.post("/", async (req, res) => {
       product,
       templateType,
       tone,
+      niche,
       content
     });
     

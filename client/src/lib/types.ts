@@ -43,6 +43,7 @@ export interface GenerationResponse {
   product: string;
   templateType: string;
   tone: string;
+  niche: string;
   content: string;
   fromCache: boolean;
   videoDuration: {

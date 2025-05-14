@@ -47,6 +47,9 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
               <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
                 Product: {content.product}
               </div>
+              <div className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-medium">
+                Niche: {content.niche}
+              </div>
               <div className="px-3 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-medium">
                 Template: {content.templateType}
               </div>
