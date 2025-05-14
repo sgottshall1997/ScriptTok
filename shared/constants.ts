@@ -34,9 +34,11 @@ export type ScraperPlatform = typeof SCRAPER_PLATFORMS[number];
 
 // Status types for scraper health
 export const SCRAPER_STATUS_TYPES = [
-  "operational",
-  "degraded",
-  "down"
+  "active",           // Scraper is working with real data
+  "gpt-fallback",     // Using GPT due to scraping failure
+  "degraded",         // Partially working but with issues
+  "error",            // Complete failure with error
+  "rate-limited"      // Rate limited by the platform
 ] as const;
 
 export type ScraperStatusType = typeof SCRAPER_STATUS_TYPES[number];

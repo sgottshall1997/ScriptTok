@@ -27,10 +27,11 @@ export function convertContentGeneration(backendGen: BackendContentGeneration): 
 export function convertScraperStatus(backendStatus: BackendScraperStatus): ScraperStatus {
   return {
     ...backendStatus,
-    status: backendStatus.status as 'operational' | 'degraded' | 'down',
+    status: backendStatus.status as 'active' | 'gpt-fallback' | 'degraded' | 'error' | 'rate-limited',
     lastCheck: typeof backendStatus.lastCheck === 'string'
       ? backendStatus.lastCheck
-      : new Date(backendStatus.lastCheck).toISOString()
+      : new Date(backendStatus.lastCheck).toISOString(),
+    errorMessage: backendStatus.errorMessage
   };
 }
 
