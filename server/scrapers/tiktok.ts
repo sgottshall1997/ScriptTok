@@ -172,6 +172,7 @@ export async function getTikTokTrending(): Promise<ScraperReturn> {
       
       if (products.length > 0) {
         console.log(`Successfully identified ${products.length} trending products from TikTok`);
+        console.log('TikTok products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
         return {
           products,
           status: {
@@ -218,6 +219,9 @@ export async function getTikTokTrending(): Promise<ScraperReturn> {
         sourceUrl: item.sourceUrl || `https://tiktok.com/tag/${encodeURIComponent(item.title.replace(/\s+/g, ''))}`
       }));
 
+      console.log(`Generated ${products.length} trending products from TikTok using GPT fallback`);
+      console.log('TikTok GPT products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
+      
       return {
         products,
         status: {

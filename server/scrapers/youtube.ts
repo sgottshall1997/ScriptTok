@@ -164,6 +164,7 @@ export async function getYouTubeTrending(): Promise<ScraperReturn> {
       
       if (products.length > 0) {
         console.log(`Successfully identified ${products.length} trending products from YouTube`);
+        console.log('YouTube products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
         return {
           products,
           status: {
@@ -211,6 +212,9 @@ export async function getYouTubeTrending(): Promise<ScraperReturn> {
         sourceUrl: item.sourceUrl || `https://youtube.com/results?search_query=${encodeURIComponent(item.title)}`
       }));
 
+      console.log(`Generated ${products.length} trending products from YouTube using GPT fallback`);
+      console.log('YouTube GPT products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
+      
       return {
         products,
         status: {

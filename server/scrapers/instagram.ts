@@ -135,6 +135,7 @@ export async function getInstagramTrending(): Promise<ScraperReturn> {
       
       if (products.length > 0) {
         console.log(`Successfully identified ${products.length} trending products from Instagram`);
+        console.log('Instagram products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
         return {
           products,
           status: {
@@ -181,6 +182,9 @@ export async function getInstagramTrending(): Promise<ScraperReturn> {
         sourceUrl: item.sourceUrl || `https://instagram.com/explore/tags/${encodeURIComponent(item.title)}`
       }));
 
+      console.log(`Generated ${products.length} trending products from Instagram using GPT fallback`);
+      console.log('Instagram GPT products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
+      
       return {
         products,
         status: {

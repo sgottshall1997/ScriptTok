@@ -68,6 +68,7 @@ export async function getAmazonTrending(): Promise<ScraperReturn> {
     // If we successfully got products through scraping, return them
     if (products.length > 0) {
       console.log(`Successfully scraped ${products.length} products from Amazon`);
+      console.log('Amazon products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
       return { 
         products,
         status: {
