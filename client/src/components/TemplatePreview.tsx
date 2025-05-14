@@ -4,8 +4,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { LucideIcon } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
+import { getIconByName } from '@/lib/iconMapper';
 
 // Interface for template metadata from the API
 interface TemplateMetadata {
@@ -22,6 +21,9 @@ interface TemplatePreviewProps {
   onSelect?: () => void;
   selected?: boolean;
 }
+
+// Type for Lucide React icons
+type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;
 
 export const TemplatePreview: React.FC<TemplatePreviewProps> = ({ 
   niche, 
@@ -45,14 +47,33 @@ export const TemplatePreview: React.FC<TemplatePreviewProps> = ({
     refetchOnWindowFocus: false, 
   });
   
-  // Get the icon component based on the icon name
+  // Get the icon component based on the icon name from template metadata
   const IconComponent = React.useMemo(() => {
-    if (!data?.icon) return LucideIcons.FileText;
+    if (!data?.icon) {
+      return FileText;
+    }
     
-    // Try to find the icon in Lucide
-    const iconName = data.icon.charAt(0).toUpperCase() + data.icon.slice(1);
-    // Type assertion with unknown first to avoid type errors
-    return (LucideIcons as unknown as Record<string, LucideIcon>)[iconName] || LucideIcons.FileText;
+    // Map the icon name to the appropriate Lucide icon
+    switch(data.icon.toLowerCase()) {
+      case 'test-tube': return TestTube;
+      case 'scale': return Scale;
+      case 'instagram': return Instagram;
+      case 'list-checks': return ListChecks;
+      case 'clock': return Clock;
+      case 'book-open': return BookOpen;
+      case 'video': return Video;
+      case 'badge-dollar-sign': return BadgeDollarSign;
+      case 'user': return User;
+      case 'sparkles': return Sparkles;
+      case 'trending-up': return TrendingUp;
+      case 'droplets': return Droplets;
+      case 'dollar-sign': return DollarSign;
+      case 'users': return Users;
+      case 'alert-triangle': return AlertTriangle;
+      case 'microscope': return Microscope;
+      case 'calendar': return Calendar;
+      default: return FileText;
+    }
   }, [data?.icon]);
   
   // Show loading state

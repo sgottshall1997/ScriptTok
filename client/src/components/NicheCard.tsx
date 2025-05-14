@@ -5,8 +5,16 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { LucideIcon } from 'lucide-react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  FileText, 
+  Sparkles,
+  Laptop,
+  Shirt,
+  Dumbbell,
+  UtensilsCrossed,
+  Plane,
+  Cat
+} from 'lucide-react';
 import { Link } from 'wouter';
 
 // Interface for niche info from the API
@@ -24,6 +32,9 @@ interface NicheCardProps {
   selected?: boolean;
   compact?: boolean;
 }
+
+// Type for Lucide React icons
+type IconComponent = React.FC<React.SVGProps<SVGSVGElement>>;
 
 export const NicheCard: React.FC<NicheCardProps> = ({ 
   niche, 
@@ -46,13 +57,24 @@ export const NicheCard: React.FC<NicheCardProps> = ({
     refetchOnWindowFocus: false,
   });
   
-  // Get the icon component based on the icon name
+  // Get the icon component based on the niche type or icon name
   const IconComponent = React.useMemo(() => {
-    if (!data?.icon) return LucideIcons.FileText as LucideIcon;
+    if (!data?.icon) {
+      // Default icon if none specified
+      return FileText;
+    }
     
-    // Try to find the icon in Lucide
-    const iconName = data.icon.charAt(0).toUpperCase() + data.icon.slice(1);
-    return (LucideIcons as Record<string, LucideIcon>)[iconName] || LucideIcons.FileText;
+    // Map the icon name to the appropriate Lucide icon
+    switch(data.icon.toLowerCase()) {
+      case 'sparkles': return Sparkles;
+      case 'laptop': return Laptop;
+      case 'shirt': return Shirt;
+      case 'dumbbell': return Dumbbell;
+      case 'utensils': case 'utensilscrossed': return UtensilsCrossed;
+      case 'plane': return Plane;
+      case 'cat': case 'pet': return Cat;
+      default: return FileText;
+    }
   }, [data?.icon]);
   
   // Map color names to Tailwind classes
