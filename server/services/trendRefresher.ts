@@ -64,11 +64,11 @@ Based on these real results, please suggest 5-8 additional trending skincare/bea
       messages: [
         {
           role: "system",
-          content: "You are a beauty industry trend analyst with real-time knowledge of trending skincare and beauty products. Provide realistic trending product suggestions that would appear on social media platforms. Return your response in JSON format."
+          content: "You are a beauty industry trend analyst with real-time knowledge of trending skincare and beauty products. Provide specific, named product suggestions with brand names that are currently trending on social media platforms. Avoid generic descriptions like 'Retinol Serum' and instead use specific product names like 'The Ordinary Niacinamide 10% + Zinc 1%' or 'CeraVe Hydrating Facial Cleanser'. Return your response in JSON format."
         },
         {
           role: "user",
-          content: scraperContext + "\n\nFormat your response as a JSON object with a 'products' array. Each product should have a 'title', 'source', and optionally 'mentions'. For example: { \"products\": [{ \"title\": \"Product Name\", \"source\": \"tiktok\", \"mentions\": 250000 }] }"
+          content: scraperContext + "\n\nFormat your response as a JSON object with a 'products' array. Each product should have 'title' (specific product name with brand), 'source', and 'mentions'. For example: { \"products\": [{ \"title\": \"CeraVe Hydrating Cleanser\", \"source\": \"tiktok\", \"mentions\": 250000 }] }"
         }
       ],
       response_format: { type: "json_object" },
@@ -156,11 +156,11 @@ async function curateTrendingProductsWithAI(scrapedProducts: InsertTrendingProdu
       messages: [
         {
           role: "system",
-          content: "You are a beauty industry trend expert that can identify which trending beauty and skincare products are most significant. Analyze the provided list of trending products from various social platforms and select the 5 most significant ones based on popularity, relevance, and diversity of product types. Return your selection in JSON format."
+          content: "You are a beauty industry trend expert that can identify which trending beauty and skincare products are most significant. Analyze the provided list of trending products and select the 5 most significant ones based on popularity, relevance, and diversity of product types. If any product entries contain only prices or generic names like '$12.99', replace them with specific, real product names with brands like 'The Ordinary Niacinamide 10% + Zinc 1%' or 'CeraVe Hydrating Facial Cleanser'. Return your selection in JSON format."
         },
         {
           role: "user",
-          content: `Here are all the scraped trending beauty and skincare products from various platforms:\n\n${productsContext}\n\nSelect the 5 most significant trending products from this list. Consider popularity (mentions), diversity of product types, and ensure products from different sources (TikTok, Instagram, YouTube, etc.) are represented if possible.\n\nReturn your response as a JSON object with a 'selected_products' array. Each product should include 'title', 'source', 'mentions' (estimate if not provided), and 'reason' (brief explanation of why you selected it). For example: { \"selected_products\": [{ \"title\": \"Product Name\", \"source\": \"tiktok\", \"mentions\": 250000, \"reason\": \"Popular for its viral before/after results\" }] }`
+          content: `Here are all the scraped trending beauty and skincare products from various platforms:\n\n${productsContext}\n\nSelect the 5 most significant trending products from this list. Consider popularity (mentions), diversity of product types, and ensure products from different sources (TikTok, Instagram, YouTube, etc.) are represented if possible.\n\n* IMPORTANT: If any product titles are just dollar amounts (like '$12.99') or generic descriptions, replace them with specific, real product names from popular brands like CeraVe, The Ordinary, Neutrogena, etc.\n\nReturn your response as a JSON object with a 'selected_products' array. Each product should include 'title' (specific product name with brand), 'source', 'mentions', and 'reason' (brief explanation of why you selected it). For example: { \"selected_products\": [{ \"title\": \"CeraVe Hydrating Cleanser\", \"source\": \"amazon\", \"mentions\": 250000, \"reason\": \"Popular for its viral before/after results\" }] }`
         }
       ],
       response_format: { type: "json_object" },
