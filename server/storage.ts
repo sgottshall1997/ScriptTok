@@ -23,6 +23,7 @@ export interface IStorage {
   saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct>;
   getTrendingProducts(limit?: number): Promise<TrendingProduct[]>;
   clearTrendingProducts(): Promise<void>;
+  clearTrendingProductsByPlatform(platform: ScraperPlatform): Promise<void>;
   
   // Scraper status operations
   updateScraperStatus(name: ScraperPlatform, status: ScraperStatusType, errorMessage?: string): Promise<ScraperStatus>;
@@ -219,6 +220,20 @@ export class MemStorage implements IStorage {
   
   async clearTrendingProducts(): Promise<void> {
     this.trendingProducts.clear();
+  }
+  
+  async clearTrendingProductsByPlatform(platform: ScraperPlatform): Promise<void> {
+    // Filter out products from the specific platform
+    const productsToKeep = new Map<number, TrendingProduct>();
+    
+    this.trendingProducts.forEach((product, id) => {
+      if (product.source !== platform) {
+        productsToKeep.set(id, product);
+      }
+    });
+    
+    // Replace the current map with the filtered map
+    this.trendingProducts = productsToKeep;
   }
   
   // Scraper status operations
