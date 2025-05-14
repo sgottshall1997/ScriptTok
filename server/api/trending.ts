@@ -7,13 +7,16 @@ import { getTikTokTrending } from "../scrapers/tiktok";
 import { getYouTubeTrending } from "../scrapers/youtube";
 import { getInstagramTrending } from "../scrapers/instagram";
 import { getRedditTrending } from "../scrapers/reddit";
+import { getGoogleTrendingProducts } from "../scrapers/googleTrends";
+import { getRefreshedTrendingProducts } from "../services/trendRefresher";
 
 const router = Router();
 
 // Get all trending products
 router.get("/", async (req, res) => {
   try {
-    const trendingProducts = await storage.getTrendingProducts();
+    // Use the trend refresher service to get dynamically updated trending products
+    const trendingProducts = await getRefreshedTrendingProducts();
     res.json(trendingProducts);
   } catch (error) {
     console.error("Error fetching trending products:", error);
@@ -93,6 +96,9 @@ router.post("/refresh/:platform", async (req, res) => {
         break;
       case 'reddit':
         scraperResult = await getRedditTrending();
+        break;
+      case 'google-trends':
+        scraperResult = await getGoogleTrendingProducts();
         break;
       default:
         return res.status(400).json({ error: "Unsupported platform" });

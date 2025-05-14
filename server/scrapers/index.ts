@@ -83,8 +83,21 @@ export async function getAllTrendingProducts(): Promise<ScraperResults> {
     return 0;
   });
   
+  // Remove duplicate products (same title from different sources)
+  const uniqueProducts: InsertTrendingProduct[] = [];
+  const titleSet = new Set<string>();
+  
+  for (const product of allProducts) {
+    // Normalize title for comparison
+    const normalizedTitle = product.title.toLowerCase().trim();
+    if (!titleSet.has(normalizedTitle)) {
+      titleSet.add(normalizedTitle);
+      uniqueProducts.push(product);
+    }
+  }
+  
   // Limit to top products
-  const topProducts = allProducts.slice(0, 10);
+  const topProducts = uniqueProducts.slice(0, 10);
   
   return {
     products: topProducts,
