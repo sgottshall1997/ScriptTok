@@ -118,6 +118,15 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
               </div>
             ))}
           </div>
+        ) : !niche ? (
+          // State when no niche is selected yet
+          <div className="text-center py-10 bg-white rounded-lg border border-dashed border-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-blue-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+            </svg>
+            <p className="text-gray-700 text-lg font-medium mb-2">Select a content niche first</p>
+            <p className="text-gray-500">Choose a niche and click "Get Trends" to see relevant trending products</p>
+          </div>
         ) : products.length === 0 ? (
           // Empty state when no products at all
           <div className="text-center py-10 bg-white rounded-lg border border-dashed border-gray-300">
@@ -125,7 +134,7 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
             <p className="text-gray-700 text-lg font-medium mb-2">No trending products available</p>
-            <p className="text-gray-500">Click the refresh button below to fetch the latest beauty trends</p>
+            <p className="text-gray-500">Click the refresh button below to fetch the latest trends</p>
           </div>
         ) : filteredProducts.length === 0 ? (
           // Empty state when no products match the filter

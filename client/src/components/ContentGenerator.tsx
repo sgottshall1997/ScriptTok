@@ -106,16 +106,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange
       </CardHeader>
       <CardContent className="p-5">
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Content Niche Selection - Moved to top */}
-          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-            <label htmlFor="niche-selector" className="block text-sm font-medium text-teal-700 mb-2">
-              Content Niche
-            </label>
-            <div id="niche-selector" className="w-full">
-              <NicheSelector value={niche} onChange={setNiche} />
-            </div>
-            <p className="mt-1 text-xs text-gray-500">Select the industry or niche for your content</p>
-          </div>
+          {/* Content Niche Selection was moved to top level */}
 
           <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
             <label htmlFor="product" className="block text-sm font-medium text-blue-700 mb-2">
