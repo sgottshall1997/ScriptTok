@@ -1,11 +1,16 @@
-import { FC, useState, useRef } from "react";
+import { FC, useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { TEMPLATE_TYPE_OPTIONS, TONE_OPTIONS, GenerationResponse } from "@/lib/types";
+import { 
+  UNIVERSAL_TEMPLATE_OPTIONS, 
+  NICHE_TEMPLATE_MAP, 
+  TONE_OPTIONS, 
+  GenerationResponse 
+} from "@/lib/types";
 import NicheSelector from "./NicheSelector";
 
 interface ContentGeneratorProps {
@@ -18,9 +23,24 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
   
   // Using refs and state to store the form values
   const productInputRef = useRef<HTMLInputElement>(null);
-  const [templateType, setTemplateType] = useState("original");
+  const [templateType, setTemplateType] = useState("seo_blog");
   const [tone, setTone] = useState("friendly");
   const [niche, setNiche] = useState("skincare");
+  
+  // State for template options based on selected niche
+  const [templateOptions, setTemplateOptions] = useState([...UNIVERSAL_TEMPLATE_OPTIONS]);
+  
+  // Update template options when niche changes
+  useEffect(() => {
+    // Combine universal templates with niche-specific templates
+    const nicheSpecificOptions = NICHE_TEMPLATE_MAP[niche as keyof typeof NICHE_TEMPLATE_MAP] || [];
+    setTemplateOptions([
+      { label: "--- Universal Templates ---", value: "", disabled: true },
+      ...UNIVERSAL_TEMPLATE_OPTIONS,
+      { label: `--- ${niche.charAt(0).toUpperCase() + niche.slice(1)} Specific Templates ---`, value: "", disabled: true },
+      ...nicheSpecificOptions
+    ]);
+  }, [niche]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,6 +99,17 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
       </CardHeader>
       <CardContent className="p-5">
         <form className="space-y-4" onSubmit={handleSubmit}>
+          {/* Content Niche Selection - Moved to top */}
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+            <label htmlFor="niche-selector" className="block text-sm font-medium text-teal-700 mb-2">
+              Content Niche
+            </label>
+            <div id="niche-selector" className="w-full">
+              <NicheSelector value={niche} onChange={setNiche} />
+            </div>
+            <p className="mt-1 text-xs text-gray-500">Select the industry or niche for your content</p>
+          </div>
+
           <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
             <label htmlFor="product" className="block text-sm font-medium text-blue-700 mb-2">
               Product Name
@@ -94,16 +125,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
             <p className="mt-1 text-xs text-gray-500">Enter the product name you want to generate content for</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
-              <label htmlFor="niche-selector" className="block text-sm font-medium text-teal-700 mb-2">
-                Content Niche
-              </label>
-              <div id="niche-selector" className="w-full">
-                <NicheSelector value={niche} onChange={setNiche} />
-              </div>
-              <p className="mt-1 text-xs text-gray-500">Select the industry or niche for your content</p>
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             
             <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
               <label htmlFor="template-type" className="block text-sm font-medium text-violet-700 mb-2">
@@ -117,8 +139,12 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
                   <SelectValue placeholder="Select template" />
                 </SelectTrigger>
                 <SelectContent>
-                  {TEMPLATE_TYPE_OPTIONS.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
+                  {templateOptions.map((option) => (
+                    <SelectItem 
+                      key={option.value || `header-${option.label}`} 
+                      value={option.value}
+                      disabled={option.disabled}
+                    >
                       {option.label}
                     </SelectItem>
                   ))}
