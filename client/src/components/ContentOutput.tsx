@@ -208,7 +208,19 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
         >
           {content ? (
             // Render HTML content safely
+            <div>
             <div dangerouslySetInnerHTML={{ __html: content.content }} />
+            
+            {/* Simple estimated video length display */}
+            {content.videoDuration && (
+              <div className="mt-6 text-gray-600 text-base italic flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                <span>Estimated Video Length: <strong>{content.videoDuration.seconds} seconds</strong></span>
+              </div>
+            )}
+          </div>
           ) : (
             // Empty state
             <div className="p-8 text-center text-neutral-500 border border-dashed border-neutral-300 rounded-lg">
