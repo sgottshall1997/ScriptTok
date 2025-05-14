@@ -12,6 +12,12 @@ import {
   GenerationResponse 
 } from "@/lib/types";
 import NicheSelector from "./NicheSelector";
+import { 
+  trackNicheSelection, 
+  trackTemplateSelection, 
+  trackToneSelection, 
+  trackContentGeneration 
+} from "@/lib/analytics";
 
 interface ContentGeneratorProps {
   onGenerate: (content: GenerationResponse) => void;
