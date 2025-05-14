@@ -87,6 +87,15 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange
       
       onGenerate(data);
       
+      // Track content generation event in analytics
+      trackContentGeneration(
+        niche,
+        templateType,
+        tone,
+        productValue,
+        data.content.length
+      );
+      
       toast({
         title: "Content generated successfully",
         description: data.fromCache 
@@ -137,7 +146,11 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange
               </label>
               <Select 
                 value={templateType} 
-                onValueChange={setTemplateType}
+                onValueChange={(value) => {
+                  setTemplateType(value);
+                  // Track template selection in analytics
+                  trackTemplateSelection(value, niche);
+                }}
               >
                 <SelectTrigger id="template-type" className="w-full border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-100">
                   <SelectValue placeholder="Select template" />
@@ -177,7 +190,11 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange
               </label>
               <Select
                 value={tone}
-                onValueChange={setTone}
+                onValueChange={(value) => {
+                  setTone(value);
+                  // Track tone selection in analytics
+                  trackToneSelection(value, niche);
+                }}
               >
                 <SelectTrigger id="tone" className="w-full border-gray-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100">
                   <SelectValue placeholder="Select tone" />
