@@ -6,9 +6,9 @@ import ScraperHealth from "@/components/ScraperHealth";
 import ContentGenerator from "@/components/ContentGenerator";
 import ContentOutput from "@/components/ContentOutput";
 import RecentGenerations from "@/components/RecentGenerations";
-import ApiUsage from "@/components/ApiUsage";
-import { GenerationResponse, TrendingProduct, ApiUsageType } from "@/lib/types";
-import { ContentGeneration, ScraperStatus } from "@shared/schema";
+import ApiUsageComponent from "@/components/ApiUsage";
+import { GenerationResponse, TrendingProduct, ApiUsage } from "@/lib/types";
+import { convertContentGenerations, convertScraperStatuses } from "@/lib/type-converters";
 
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,7 +25,7 @@ export default function Home() {
   });
 
   // Fetch API usage
-  const { data: apiUsage = { today: 0, weekly: 0, monthly: 0, limit: 500 }, isLoading: isLoadingApiUsage } = useQuery<ApiUsageType>({
+  const { data: apiUsage = { today: 0, weekly: 0, monthly: 0, limit: 500 }, isLoading: isLoadingApiUsage } = useQuery<ApiUsage>({
     queryKey: ['/api/usage'],
   });
 
@@ -119,7 +119,7 @@ export default function Home() {
               />
               
               {/* API Usage */}
-              <ApiUsage 
+              <ApiUsageComponent 
                 usage={apiUsage || { today: 0, weekly: 0, monthly: 0, limit: 500 }} 
                 isLoading={isLoadingApiUsage}
               />
