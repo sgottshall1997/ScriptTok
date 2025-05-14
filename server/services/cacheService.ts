@@ -20,7 +20,7 @@ export class CacheService<T> {
   private config: CacheConfig;
   
   constructor(config?: Partial<CacheConfig>) {
-    this.cache = new Map();
+    this.cache = new Map<string, CacheEntry<T>>();
     this.config = {
       defaultTtl: 1000 * 60 * 60, // 1 hour default TTL
       maxSize: 100, // Default max 100 entries
@@ -91,11 +91,12 @@ export class CacheService<T> {
    */
   private cleanExpired(): void {
     const now = Date.now();
-    for (const [key, entry] of this.cache.entries()) {
+    // Use Array.from to avoid iterator issues
+    Array.from(this.cache.entries()).forEach(([key, entry]) => {
       if (entry.expiresAt <= now) {
         this.cache.delete(key);
       }
-    }
+    });
   }
   
   /**

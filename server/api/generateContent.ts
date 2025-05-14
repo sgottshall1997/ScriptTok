@@ -53,7 +53,7 @@ router.post("/", async (req, res) => {
     const cached = contentCache.get(cacheKey);
     
     // If we have a valid cached result, return it
-    if (cached) {
+    if (cached && cached.content) {
       // Estimate video duration for cached content too
       const videoDuration = estimateVideoDuration(cached.content, tone, templateType);
       

@@ -3,11 +3,13 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
+import { analyticsRouter } from "./api/analytics";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
   app.use('/api/generate', generateContentRouter);
   app.use('/api/trending', trendingRouter);
+  app.use('/api/analytics', analyticsRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {
@@ -40,25 +42,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Analytics dashboard endpoint
-  app.get('/api/analytics', async (req, res) => {
-    try {
-      const templateUsage = await storage.getTemplateUsageStats();
-      const toneUsage = await storage.getToneUsageStats();
-      const generationTrends = await storage.getGenerationTrends();
-      const popularProducts = await storage.getPopularProducts();
-      
-      res.json({
-        templateUsage,
-        toneUsage,
-        generationTrends,
-        popularProducts
-      });
-    } catch (error) {
-      console.error("Error fetching analytics data:", error);
-      res.status(500).json({ error: "Failed to fetch analytics data" });
-    }
-  });
+  // Analytics endpoints are now handled by analyticsRouter
 
   const httpServer = createServer(app);
   return httpServer;
