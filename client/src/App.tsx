@@ -17,7 +17,8 @@ function Router() {
   return (
     <Switch>
       {/* Add pages below */}
-      <Route path="/" component={Home} />
+      <Route path="/" component={() => <NichePage />} />
+      <Route path="/dashboard" component={Home} />
       <Route path="/niche/:niche" component={NichePage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />

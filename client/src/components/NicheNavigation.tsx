@@ -47,9 +47,9 @@ const NicheNavigation: FC<NicheNavigationProps> = ({ currentNiche }) => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
         <h3 className="text-lg font-semibold mb-3 text-gray-800">Niche Navigation</h3>
         <div className="flex flex-wrap gap-2">
-          <Link href="/">
+          <Link href="/dashboard">
             <span className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
-              location === "/" 
+              location === "/dashboard" 
                 ? "bg-gray-800 text-white" 
                 : "bg-gray-100 text-gray-800 hover:bg-gray-200"
             }`}>

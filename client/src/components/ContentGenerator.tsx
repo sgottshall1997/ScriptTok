@@ -25,7 +25,7 @@ interface ContentGeneratorProps {
   initialNiche?: string;
 }
 
-const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange, initialNiche = 'skincare' }) => {
+const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange, initialNiche = '' }) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   
@@ -66,6 +66,16 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange
       toast({
         title: "Product name required",
         description: "Please enter a product name to generate content",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Make sure a niche is selected
+    if (!niche) {
+      toast({
+        title: "Content niche required",
+        description: "Please select a niche for your content",
         variant: "destructive",
       });
       return;

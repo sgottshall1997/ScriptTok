@@ -81,7 +81,12 @@ export default function NichePage() {
   }, [params.niche]);
 
   // Get niche information for display
-  const nicheInfo = getNicheInfo(params.niche);
+  const nicheInfo = params.niche ? getNicheInfo(params.niche) : {
+    title: "Multi-Niche Content Generator",
+    description: "Select a niche to start creating AI-powered content specialized for your industry.",
+    bgClass: "from-indigo-50 to-blue-50",
+    textClass: "from-indigo-600 to-blue-600"
+  };
 
   // Fetch trending products
   const { data: trendingProducts = [], isLoading: isLoadingTrending } = useQuery<TrendingProduct[]>({
