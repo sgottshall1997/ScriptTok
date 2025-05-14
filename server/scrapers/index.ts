@@ -3,6 +3,7 @@ import { getRedditTrending } from './reddit';
 import { getYouTubeTrending } from './youtube';
 import { getInstagramTrending } from './instagram';
 import { getAmazonTrending } from './amazon';
+import { getGoogleTrendingProducts } from './googleTrends';
 import type { TrendingProduct, InsertTrendingProduct } from '@shared/schema';
 import { ScraperPlatform, SCRAPER_PLATFORMS, ScraperStatusType } from '@shared/constants';
 
@@ -39,7 +40,8 @@ export async function getAllTrendingProducts(): Promise<ScraperResults> {
     getRedditTrending(),
     getYouTubeTrending(),
     getInstagramTrending(),
-    getAmazonTrending()
+    getAmazonTrending(),
+    getGoogleTrendingProducts()
   ]);
   
   // Process each scraper's results

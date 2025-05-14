@@ -59,7 +59,8 @@ export const SOURCE_COLORS = {
   instagram: 'bg-indigo-100 text-indigo-800',
   youtube: 'bg-red-100 text-red-800',
   reddit: 'bg-purple-100 text-purple-800',
-  amazon: 'bg-amber-100 text-amber-800'
+  amazon: 'bg-amber-100 text-amber-800',
+  'google-trends': 'bg-blue-100 text-blue-800'
 };
 
 // Status colors for scraper health

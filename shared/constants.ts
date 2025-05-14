@@ -36,7 +36,8 @@ export const SCRAPER_PLATFORMS = [
   "instagram",
   "youtube",
   "reddit",
-  "amazon"
+  "amazon",
+  "google-trends"
 ] as const;
 
 export type ScraperPlatform = typeof SCRAPER_PLATFORMS[number];
