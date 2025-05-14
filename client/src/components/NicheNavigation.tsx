@@ -56,6 +56,16 @@ const NicheNavigation: FC<NicheNavigationProps> = ({ currentNiche }) => {
               🏠 Dashboard
             </span>
           </Link>
+          
+          <Link href="/templates">
+            <span className={`px-3 py-1.5 rounded-full text-sm font-medium transition-colors cursor-pointer ${
+              location === "/templates" 
+                ? "bg-gray-800 text-white" 
+                : "bg-emerald-100 text-emerald-800 hover:bg-emerald-200"
+            }`}>
+              📋 Template Explorer
+            </span>
+          </Link>
 
           {NICHES.map(niche => (
             <Link key={niche} href={`/niche/${niche}`}>

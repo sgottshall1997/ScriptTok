@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import NichePage from "@/pages/niche";
+import TemplateExplorerPage from "@/pages/template-explorer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
@@ -20,6 +21,7 @@ function Router() {
       <Route path="/" component={() => <NichePage />} />
       <Route path="/dashboard" component={Home} />
       <Route path="/niche/:niche" component={NichePage} />
+      <Route path="/templates" component={TemplateExplorerPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
