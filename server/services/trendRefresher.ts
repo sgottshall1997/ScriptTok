@@ -5,7 +5,7 @@
 
 import { openai } from './openai';
 import { storage } from '../storage';
-import { ScraperPlatform, ScraperStatusType } from '@shared/constants';
+import { ScraperPlatform, ScraperStatusType, SCRAPER_PLATFORMS } from '@shared/constants';
 import { InsertTrendingProduct } from '@shared/schema';
 import { getAllTrendingProducts } from '../scrapers';
 
@@ -114,11 +114,11 @@ Based on these real results, please suggest 5-8 additional trending skincare/bea
       messages: [
         {
           role: "system",
-          content: "You are a beauty industry trend analyst with real-time knowledge of trending skincare and beauty products. Provide realistic trending product suggestions that would appear on social media platforms."
+          content: "You are a beauty industry trend analyst with real-time knowledge of trending skincare and beauty products. Provide realistic trending product suggestions that would appear on social media platforms. Return your response in JSON format."
         },
         {
           role: "user",
-          content: scraperContext
+          content: scraperContext + "\n\nFormat your response as a JSON object with a 'products' array. Each product should have a 'title', 'source', and optionally 'mentions'. For example: { \"products\": [{ \"title\": \"Product Name\", \"source\": \"tiktok\", \"mentions\": 250000 }] }"
         }
       ],
       response_format: { type: "json_object" },
@@ -139,32 +139,46 @@ Based on these real results, please suggest 5-8 additional trending skincare/bea
       parsedContent.trending_products || 
       [];
     
+    console.log(`OpenAI generated ${trendingProducts.length} trending products`);
+    
     // Convert to our format with different sources
     const platforms: ScraperPlatform[] = ['tiktok', 'instagram', 'youtube', 'reddit', 'amazon', 'google-trends'];
     const results: InsertTrendingProduct[] = [];
     
     trendingProducts.forEach((product: any, index: number) => {
-      // Handle different input formats (string vs object)
-      const title = typeof product === 'string' ? product : product.title || product.name || 'Unknown Product';
-      const source = product.source || platforms[index % platforms.length];
-      const mentions = product.mentions || Math.floor(Math.random() * 500000) + 100000;
-      
-      // Get an appropriate URL for the source
-      let sourceUrl = `https://${source}.com`;
-      if (source === 'tiktok') sourceUrl = `https://tiktok.com/tag/${encodeURIComponent(title.split(' ')[0])}`;
-      else if (source === 'instagram') sourceUrl = `https://instagram.com/explore/tags/${encodeURIComponent(title.split(' ')[0])}`;
-      else if (source === 'youtube') sourceUrl = `https://youtube.com/results?search_query=${encodeURIComponent(title)}`;
-      else if (source === 'reddit') sourceUrl = 'https://reddit.com/r/SkincareAddiction';
-      else if (source === 'amazon') sourceUrl = `https://amazon.com/s?k=${encodeURIComponent(title)}`;
-      else if (source === 'google-trends') sourceUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(title)}`;
-      
-      results.push({
-        title,
-        source,
-        mentions,
-        sourceUrl
-      });
+      try {
+        // Handle different input formats (string vs object)
+        const title = typeof product === 'string' ? product : product.title || product.name || 'Unknown Product';
+        
+        // Ensure source is a valid platform
+        let source = product.source;
+        if (!source || !SCRAPER_PLATFORMS.includes(source as ScraperPlatform)) {
+          source = platforms[index % platforms.length];
+        }
+        
+        const mentions = product.mentions || Math.floor(Math.random() * 500000) + 100000;
+        
+        // Get an appropriate URL for the source
+        let sourceUrl = `https://${source}.com`;
+        if (source === 'tiktok') sourceUrl = `https://tiktok.com/tag/${encodeURIComponent(title.split(' ')[0])}`;
+        else if (source === 'instagram') sourceUrl = `https://instagram.com/explore/tags/${encodeURIComponent(title.split(' ')[0])}`;
+        else if (source === 'youtube') sourceUrl = `https://youtube.com/results?search_query=${encodeURIComponent(title)}`;
+        else if (source === 'reddit') sourceUrl = 'https://reddit.com/r/SkincareAddiction';
+        else if (source === 'amazon') sourceUrl = `https://amazon.com/s?k=${encodeURIComponent(title)}`;
+        else if (source === 'google-trends') sourceUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(title)}`;
+        
+        results.push({
+          title,
+          source,
+          mentions,
+          sourceUrl
+        });
+      } catch (productError) {
+        console.error('Error processing product from OpenAI:', productError);
+      }
     });
+    
+    console.log(`Successfully processed ${results.length} products from OpenAI`);
     
     return results;
   } catch (error) {

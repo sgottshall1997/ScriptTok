@@ -55,8 +55,7 @@ export async function getGoogleTrendingProducts(): Promise<ScraperReturn> {
       title: story.title,
       source: 'google-trends',
       mentions: story.formattedTraffic ? parseInt(story.formattedTraffic.replace(/[^0-9]/g, '')) : 1000 - (index * 100),
-      sourceUrl: story.shareUrl || 'https://trends.google.com',
-      createdAt: new Date().toISOString()
+      sourceUrl: story.shareUrl || 'https://trends.google.com'
     }));
 
     return {
@@ -78,11 +77,11 @@ export async function getGoogleTrendingProducts(): Promise<ScraperReturn> {
         messages: [
           {
             role: "system",
-            content: "You are a helpful assistant that provides realistic trending skincare and beauty products from Google Trends. Provide 5 trending beauty products that people would likely be searching for currently."
+            content: "You are a helpful assistant that provides realistic trending skincare and beauty products from Google Trends. Provide 5 trending beauty products in JSON format that people would likely be searching for currently."
           },
           {
             role: "user",
-            content: "Generate 5 realistic trending beauty/skincare products that would appear on Google Trends today. Include product names only, no description."
+            content: "Generate 5 realistic trending beauty/skincare products that would appear on Google Trends today. Return your response as a JSON object with a 'products' array. For example: { \"products\": [\"Product 1\", \"Product 2\", \"Product 3\", \"Product 4\", \"Product 5\"] }"
           }
         ],
         temperature: 0.7,
@@ -101,8 +100,7 @@ export async function getGoogleTrendingProducts(): Promise<ScraperReturn> {
         title: product,
         source: 'google-trends',
         mentions: 1000 - (index * 100), // Simulated trend strength
-        sourceUrl: 'https://trends.google.com',
-        createdAt: new Date().toISOString()
+        sourceUrl: 'https://trends.google.com'
       }));
       
       return {
