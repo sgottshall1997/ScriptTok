@@ -2,7 +2,7 @@ import { Router } from "express";
 import { z } from "zod";
 import { TEMPLATE_TYPES, TONE_OPTIONS } from "@shared/constants";
 import { storage } from "../storage";
-import { generateContent } from "../services/contentGenerator";
+import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 
 const router = Router();
 
@@ -37,12 +37,16 @@ router.post("/", async (req, res) => {
     
     // If we have a valid cached result, return it
     if (cached && (Date.now() - cached.timestamp < CACHE_TTL)) {
+      // Estimate video duration for cached content too
+      const videoDuration = estimateVideoDuration(cached.content, tone, templateType);
+      
       return res.json({ 
         product, 
         templateType, 
         tone, 
         content: cached.content,
-        fromCache: true 
+        fromCache: true,
+        videoDuration
       });
     }
     
@@ -69,13 +73,17 @@ router.post("/", async (req, res) => {
     // Increment API usage counter
     await storage.incrementApiUsage();
     
-    // Return generated content
+    // Estimate video duration
+    const videoDuration = estimateVideoDuration(content, tone, templateType);
+    
+    // Return generated content with video duration estimation
     res.json({
       product,
       templateType,
       tone,
       content,
-      fromCache: false
+      fromCache: false,
+      videoDuration
     });
   } catch (error) {
     console.error("Error generating content:", error);

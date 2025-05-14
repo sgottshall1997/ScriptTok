@@ -94,21 +94,68 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
       </CardHeader>
       <CardContent className="p-5">
         {content && (
-          <div className="mb-3 p-2 rounded-lg bg-gray-50 border border-gray-200 flex flex-wrap gap-2">
-            <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
-              Product: {content.product}
-            </div>
-            <div className="px-3 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-medium">
-              Template: {content.templateType}
-            </div>
-            <div className="px-3 py-1 rounded-full bg-pink-100 text-pink-800 text-xs font-medium">
-              Tone: {content.tone}
-            </div>
-            {content.fromCache && (
-              <div className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
-                From Cache
+          <div className="mb-4">
+            {/* Content metadata */}
+            <div className="mb-3 p-2 rounded-lg bg-gray-50 border border-gray-200 flex flex-wrap gap-2">
+              <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
+                Product: {content.product}
               </div>
-            )}
+              <div className="px-3 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-medium">
+                Template: {content.templateType}
+              </div>
+              <div className="px-3 py-1 rounded-full bg-pink-100 text-pink-800 text-xs font-medium">
+                Tone: {content.tone}
+              </div>
+              {content.fromCache && (
+                <div className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 text-xs font-medium">
+                  From Cache
+                </div>
+              )}
+            </div>
+            
+            {/* Video duration information */}
+            <div className="bg-indigo-50 rounded-lg p-3 border border-indigo-100 mb-3">
+              <h3 className="text-md font-medium text-indigo-900 mb-1">Video Duration Estimate</h3>
+              <div className="flex flex-wrap md:flex-nowrap gap-2 text-sm">
+                <div className="bg-white rounded-lg px-3 py-2 shadow-sm border border-indigo-100 flex items-center flex-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <span className="font-bold text-indigo-700">{content.videoDuration.readableTime}</span>
+                    <span className="text-gray-600 ml-1 text-xs">minutes:seconds</span>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg px-3 py-2 shadow-sm border border-indigo-100 flex items-center flex-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z" />
+                  </svg>
+                  <div>
+                    <span className="font-bold text-indigo-700">{content.videoDuration.pacing}</span>
+                    <span className="text-gray-600 ml-1 text-xs">speaking pace</span>
+                  </div>
+                </div>
+                <div className="bg-white rounded-lg px-3 py-2 shadow-sm border border-indigo-100 flex items-center flex-1">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-indigo-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                  </svg>
+                  <div>
+                    <span className="font-bold text-indigo-700">{content.videoDuration.wordCount}</span>
+                    <span className="text-gray-600 ml-1 text-xs">word count</span>
+                  </div>
+                </div>
+              </div>
+              {content.videoDuration.seconds < 30 && (
+                <p className="text-amber-700 text-xs mt-2 bg-amber-50 p-2 rounded-lg border border-amber-100">
+                  <span className="font-semibold">Note:</span> Content is shorter than 30 seconds. Consider adding more details or choosing a different template for a full-length video.
+                </p>
+              )}
+              {content.videoDuration.seconds > 60 && (
+                <p className="text-amber-700 text-xs mt-2 bg-amber-50 p-2 rounded-lg border border-amber-100">
+                  <span className="font-semibold">Note:</span> Content exceeds 60 seconds. Consider shortening or editing for optimal social media performance.
+                </p>
+              )}
+            </div>
           </div>
         )}
         <div
