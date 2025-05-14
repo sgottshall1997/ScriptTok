@@ -2,9 +2,11 @@ import { InsertTrendingProduct } from '@shared/schema';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 import { openai } from '../services/openai';
+import { ScraperReturn } from './index';
+import { ScraperStatusType } from '@shared/constants';
 
 // Amazon trending products scraper
-export async function getAmazonTrending(): Promise<InsertTrendingProduct[]> {
+export async function getAmazonTrending(): Promise<ScraperReturn> {
   // First try real scraping
   try {
     // Target URLs for beauty and skincare trending/bestsellers 
@@ -66,7 +68,13 @@ export async function getAmazonTrending(): Promise<InsertTrendingProduct[]> {
     // If we successfully got products through scraping, return them
     if (products.length > 0) {
       console.log(`Successfully scraped ${products.length} products from Amazon`);
-      return products;
+      return { 
+        products,
+        status: {
+          status: 'active',
+          errorMessage: undefined
+        }
+      };
     }
     
     throw new Error('Failed to extract products from Amazon HTML');
@@ -104,10 +112,22 @@ export async function getAmazonTrending(): Promise<InsertTrendingProduct[]> {
         sourceUrl: item.sourceUrl || `https://amazon.com/s?k=${encodeURIComponent(item.title)}`
       }));
 
-      return products;
+      return {
+        products,
+        status: {
+          status: 'gpt-fallback',
+          errorMessage: `Scraping failed: ${scrapingError.message}`
+        }
+      };
     } catch (openaiError) {
       console.error('OpenAI fallback also failed:', openaiError);
-      return [];
+      return {
+        products: [],
+        status: {
+          status: 'error',
+          errorMessage: `Scraping and GPT fallback failed: ${openaiError.message}`
+        }
+      };
     }
   }
 }

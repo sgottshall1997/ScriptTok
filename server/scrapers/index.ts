@@ -10,6 +10,16 @@ import { ScraperPlatform, SCRAPER_PLATFORMS, ScraperStatusType } from '@shared/c
 interface PlatformStatus {
   name: ScraperPlatform;
   status: ScraperStatusType;
+  errorMessage?: string;
+}
+
+// Interface for the scraper return type
+export interface ScraperReturn {
+  products: InsertTrendingProduct[];
+  status: {
+    status: ScraperStatusType;
+    errorMessage?: string;
+  };
 }
 
 // Interface for aggregated trending results
@@ -38,23 +48,25 @@ export async function getAllTrendingProducts(): Promise<ScraperResults> {
     
     if (result.status === 'fulfilled') {
       // Add products with source
-      const products = result.value.map(item => ({
+      const products = result.value.products.map(item => ({
         ...item,
         source: platform
       }));
       
       allProducts = [...allProducts, ...products];
       
-      // Add platform status as operational
+      // Get the platform status from the scraper result
       platforms.push({
         name: platform,
-        status: 'operational'
+        status: result.value.status.status,
+        errorMessage: result.value.status.errorMessage
       });
     } else {
-      // Add platform status as down
+      // Add platform status as error with the error message
       platforms.push({
         name: platform,
-        status: 'down'
+        status: 'error',
+        errorMessage: result.reason?.message || 'Unknown error'
       });
       
       console.error(`Error fetching from ${platform}:`, result.reason);

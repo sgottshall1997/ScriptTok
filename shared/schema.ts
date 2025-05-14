@@ -33,8 +33,9 @@ export const trendingProducts = pgTable("trending_products", {
 export const scraperStatus = pgTable("scraper_status", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
-  status: text("status").notNull(), // "operational", "degraded", "down"
+  status: text("status").notNull(), // "active", "gpt-fallback", "degraded", "error", "rate-limited"
   lastCheck: timestamp("last_check").defaultNow().notNull(),
+  errorMessage: text("error_message"),
 });
 
 // API usage schema
@@ -67,6 +68,7 @@ export const insertTrendingProductSchema = createInsertSchema(trendingProducts).
 export const insertScraperStatusSchema = createInsertSchema(scraperStatus).pick({
   name: true,
   status: true,
+  errorMessage: true,
 });
 
 export const insertApiUsageSchema = createInsertSchema(apiUsage).pick({
