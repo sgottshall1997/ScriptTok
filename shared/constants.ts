@@ -5,27 +5,49 @@ export const TEMPLATE_TYPES = [
   "original",            // Original review
   "comparison",          // Product comparison
   "caption",             // Social media caption
-  "pros-cons",           // Pros and cons list
+  "pros_cons",           // Pros and cons list
   "routine",             // Skincare routine
-  "beginner-kit",        // Beginner skincare kit
-  "demo-script",         // Product demo script
-  "drugstore-dupe",      // Drugstore dupe review
-  "personal-review",     // Personal product review
-  "surprise-me",         // Creative/unexpected content
-  "tiktok-breakdown",    // TikTok trend breakdown
-  "dry-skin-list",       // Dry skin product list
-  "top-5-under-25",      // Affordable options
-  "influencer-caption"   // Influencer-style caption
+  "beginner_kit",        // Beginner skincare kit
+  "demo_script",         // Product demo script
+  "drugstore_dupe",      // Drugstore dupe review
+  "personal_review",     // Personal product review
+  "surprise_me",         // Creative/unexpected content
+  "tiktok_breakdown",    // TikTok trend breakdown
+  "dry_skin_list",       // Dry skin product list
+  "top5_under25",        // Affordable options
+  "influencer_caption",  // Influencer-style caption
+  "recipe",              // Recipe featuring product
+  "packing_list"         // Travel packing list
 ] as const;
 
 export type TemplateType = typeof TEMPLATE_TYPES[number];
+
+// Supported content niches
+export const NICHES = [
+  "skincare",     // Skincare and beauty products
+  "tech",         // Technology and gadgets
+  "fashion",      // Clothing and accessories
+  "fitness",      // Fitness equipment and supplements
+  "food",         // Food and cooking products
+  "travel",       // Travel gear and accessories
+  "pet"           // Pet products and accessories
+] as const;
+
+export type Niche = typeof NICHES[number];
 
 // Tone options for generated content
 export const TONE_OPTIONS = [
   "friendly",      // Friendly & approachable
   "professional",  // Professional & expert
+  "casual",        // Casual & conversational
   "enthusiastic",  // Enthusiastic & excited
-  "minimalist"     // Minimalist & direct
+  "minimalist",    // Minimalist & direct
+  "luxurious",     // Elegant & sophisticated
+  "educational",   // Informative & educational
+  "humorous",      // Light-hearted & fun
+  "trendy",        // Trend-conscious & current
+  "scientific",    // Precise & analytical
+  "poetic"         // Artistic & expressive
 ] as const;
 
 export type ToneOption = typeof TONE_OPTIONS[number];

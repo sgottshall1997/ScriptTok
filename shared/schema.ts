@@ -13,6 +13,7 @@ export const users = pgTable("users", {
 export const contentGenerations = pgTable("content_generations", {
   id: serial("id").primaryKey(),
   product: text("product").notNull(),
+  niche: text("niche").notNull().default("skincare"),
   templateType: text("template_type").notNull(),
   tone: text("tone").notNull(),
   content: text("content").notNull(),
