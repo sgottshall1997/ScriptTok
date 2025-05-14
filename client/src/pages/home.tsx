@@ -14,6 +14,7 @@ import { convertContentGenerations, convertScraperStatuses } from "@/lib/type-co
 export default function Home() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<GenerationResponse | null>(null);
+  const [selectedNiche, setSelectedNiche] = useState("skincare"); // Default niche
 
   // Fetch scraper health
   const { data: scraperHealth = [], isLoading: isLoadingScraperHealth } = useQuery<ScraperStatus[]>({

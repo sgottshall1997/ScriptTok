@@ -15,6 +15,8 @@ import NicheSelector from "./NicheSelector";
 
 interface ContentGeneratorProps {
   onGenerate: (content: GenerationResponse) => void;
+  onNicheChange?: (niche: string) => void;
+  initialNiche?: string;
 }
 
 const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
@@ -34,10 +36,10 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
   useEffect(() => {
     // Combine universal templates with niche-specific templates
     const nicheSpecificOptions = NICHE_TEMPLATE_MAP[niche as keyof typeof NICHE_TEMPLATE_MAP] || [];
+    
+    // Create a new array without headers (we'll use rendering logic instead)
     setTemplateOptions([
-      { label: "--- Universal Templates ---", value: "", disabled: true },
       ...UNIVERSAL_TEMPLATE_OPTIONS,
-      { label: `--- ${niche.charAt(0).toUpperCase() + niche.slice(1)} Specific Templates ---`, value: "", disabled: true },
       ...nicheSpecificOptions
     ]);
   }, [niche]);
@@ -138,12 +140,26 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
                 <SelectTrigger id="template-type" className="w-full border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-100">
                   <SelectValue placeholder="Select template" />
                 </SelectTrigger>
-                <SelectContent>
-                  {templateOptions.map((option) => (
+                <SelectContent className="max-h-80">
+                  <div className="p-1 pt-2 text-xs font-semibold bg-neutral-50 text-neutral-500 uppercase">
+                    Universal Templates
+                  </div>
+                  {UNIVERSAL_TEMPLATE_OPTIONS.map((option) => (
                     <SelectItem 
-                      key={option.value || `header-${option.label}`} 
+                      key={option.value} 
                       value={option.value}
-                      disabled={option.disabled}
+                    >
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                  
+                  <div className="p-1 pt-2 text-xs font-semibold bg-neutral-50 text-neutral-500 uppercase">
+                    {niche.charAt(0).toUpperCase() + niche.slice(1)} Templates
+                  </div>
+                  {NICHE_TEMPLATE_MAP[niche as keyof typeof NICHE_TEMPLATE_MAP]?.map((option) => (
+                    <SelectItem 
+                      key={option.value} 
+                      value={option.value}
                     >
                       {option.label}
                     </SelectItem>

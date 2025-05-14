@@ -8,9 +8,33 @@ import { useToast } from "@/hooks/use-toast";
 interface TrendingProductsListProps {
   products: TrendingProduct[];
   isLoading: boolean;
+  niche?: string; // Optional niche filter
 }
 
-const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoading }) => {
+const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoading, niche }) => {
+  // Filter products by niche if provided
+  const filteredProducts = niche 
+    ? products.filter(product => {
+        // Logic to determine if product is relevant to niche
+        // For now, use a simple matching logic that can be improved later
+        const nicheKeywords: Record<string, string[]> = {
+          skincare: ['serum', 'cream', 'cleanser', 'mask', 'moisturizer', 'spf', 'sunscreen', 'facial', 'hydrating', 'exfoliating', 'collagen'],
+          tech: ['phone', 'laptop', 'gadget', 'device', 'smart', 'wireless', 'bluetooth', 'audio', 'charger', 'battery'],
+          fashion: ['cloth', 'wear', 'apparel', 'outfit', 'style', 'fashion', 'accessory', 'bag', 'shoe', 'jewelry'],
+          fitness: ['workout', 'fitness', 'exercise', 'protein', 'supplement', 'gym', 'muscle', 'training', 'vitamin', 'nutrition'],
+          food: ['food', 'kitchen', 'cooking', 'recipe', 'meal', 'baking', 'blender', 'mixer', 'grill', 'pan'],
+          travel: ['travel', 'luggage', 'backpack', 'outdoor', 'adventure', 'camping', 'hiking', 'portable', 'compact'],
+          pet: ['pet', 'dog', 'cat', 'animal', 'treat', 'toy', 'grooming', 'leash', 'collar', 'food']
+        };
+        
+        // If keywords exist for this niche, check if product title contains any of them
+        const keywords = nicheKeywords[niche as keyof typeof nicheKeywords] || [];
+        if (keywords.length === 0) return true; // If no keywords defined, include all products
+        
+        const productTitle = product.title.toLowerCase();
+        return keywords.some(keyword => productTitle.includes(keyword.toLowerCase()));
+      })
+    : products;
   const { toast } = useToast();
 
   const handleRefresh = async () => {
@@ -82,7 +106,7 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
             ))}
           </div>
         ) : products.length === 0 ? (
-          // Empty state
+          // Empty state when no products at all
           <div className="text-center py-10 bg-white rounded-lg border border-dashed border-gray-300">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -90,10 +114,19 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
             <p className="text-gray-700 text-lg font-medium mb-2">No trending products available</p>
             <p className="text-gray-500">Click the refresh button below to fetch the latest beauty trends</p>
           </div>
+        ) : filteredProducts.length === 0 ? (
+          // Empty state when no products match the filter
+          <div className="text-center py-10 bg-white rounded-lg border border-dashed border-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            <p className="text-gray-700 text-lg font-medium mb-2">No products found for {niche} niche</p>
+            <p className="text-gray-500">Try another niche or refresh to get more trending products</p>
+          </div>
         ) : (
-          // Trending products grid
+          // Trending products grid - using filteredProducts
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {products.slice(0, 6).map((product, index) => (
+            {filteredProducts.slice(0, 6).map((product, index) => (
               <div key={product.id} className="flex flex-col bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 <div className="flex items-center p-3 border-b border-gray-100">
                   <div className="bg-gradient-to-r from-blue-500 to-violet-500 text-white inline-flex items-center justify-center h-10 w-10 rounded-full flex-shrink-0 mr-3 shadow-sm">
