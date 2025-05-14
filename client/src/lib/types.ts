@@ -50,6 +50,8 @@ export interface GenerationResponse {
     readableTime: string;
     wordCount: number;
     pacing: 'slow' | 'moderate' | 'fast';
+    isIdealLength: boolean;
+    lengthFeedback: string;
   };
 }
 

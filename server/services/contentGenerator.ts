@@ -9,6 +9,8 @@ interface VideoDuration {
   readableTime: string;
   wordCount: number;
   pacing: 'slow' | 'moderate' | 'fast';
+  isIdealLength: boolean;
+  lengthFeedback: string;
 }
 
 // Main content generation function
@@ -111,10 +113,29 @@ export function estimateVideoDuration(content: string, tone: ToneOption, templat
   const remainingSeconds = seconds % 60;
   const readableTime = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
   
+  // Determine if this is an ideal length for social media (30-60 seconds)
+  const isIdealLength = seconds >= 30 && seconds <= 65; // Give a little extra buffer
+  
+  // Generate feedback based on length
+  let lengthFeedback = '';
+  if (seconds < 20) {
+    lengthFeedback = "Content is too short for effective engagement. Consider adding more details or examples.";
+  } else if (seconds < 30) {
+    lengthFeedback = "Content is slightly shorter than ideal. A few more details could improve engagement.";
+  } else if (seconds <= 60) {
+    lengthFeedback = "Perfect length for social media! This content hits the ideal 30-60 second sweet spot.";
+  } else if (seconds <= 90) {
+    lengthFeedback = "Content is slightly longer than ideal. Consider trimming some details for better engagement.";
+  } else {
+    lengthFeedback = "Content is too long for optimal social media engagement. Try to condense the main points.";
+  }
+  
   return {
     seconds,
     readableTime,
     wordCount: words,
-    pacing
+    pacing,
+    isIdealLength,
+    lengthFeedback
   };
 }

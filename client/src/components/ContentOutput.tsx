@@ -111,40 +111,44 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
                   </div>
                 </div>
                 
-                {/* Status message */}
-                {content.videoDuration.seconds < 30 && (
-                  <div className="mt-2 p-3 bg-amber-50 rounded-lg border border-amber-200 flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <div>
-                      <p className="text-amber-800 text-sm font-medium">Content is shorter than the target range</p>
-                      <p className="text-amber-700 text-xs mt-1">Consider adding more details or choosing a different template to reach the minimum 30-second target for effective social media videos.</p>
-                    </div>
+                {/* Dynamic status message based on isIdealLength */}
+                <div className={`mt-2 p-3 rounded-lg border flex items-start ${
+                  content.videoDuration.isIdealLength 
+                    ? 'bg-green-50 border-green-200' 
+                    : 'bg-amber-50 border-amber-200'
+                }`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className={`h-5 w-5 mr-2 mt-0.5 flex-shrink-0 ${
+                    content.videoDuration.isIdealLength 
+                      ? 'text-green-600' 
+                      : 'text-amber-600'
+                  }`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    {content.videoDuration.isIdealLength 
+                      ? <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      : <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    }
+                  </svg>
+                  <div>
+                    <p className={`text-sm font-medium ${
+                      content.videoDuration.isIdealLength 
+                        ? 'text-green-800' 
+                        : 'text-amber-800'
+                    }`}>
+                      {content.videoDuration.isIdealLength 
+                        ? 'Perfect video length!' 
+                        : content.videoDuration.seconds < 30 
+                          ? 'Content is shorter than the target range' 
+                          : 'Content exceeds the target range'
+                      }
+                    </p>
+                    <p className={`text-xs mt-1 ${
+                      content.videoDuration.isIdealLength 
+                        ? 'text-green-700' 
+                        : 'text-amber-700'
+                    }`}>
+                      {content.videoDuration.lengthFeedback}
+                    </p>
                   </div>
-                )}
-                {content.videoDuration.seconds > 60 && (
-                  <div className="mt-2 p-3 bg-amber-50 rounded-lg border border-amber-200 flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    <div>
-                      <p className="text-amber-800 text-sm font-medium">Content exceeds the target range</p>
-                      <p className="text-amber-700 text-xs mt-1">Consider shortening or editing for optimal social media performance. Most effective short-form videos stay under 60 seconds.</p>
-                    </div>
-                  </div>
-                )}
-                {content.videoDuration.seconds >= 30 && content.videoDuration.seconds <= 60 && (
-                  <div className="mt-2 p-3 bg-green-50 rounded-lg border border-green-200 flex items-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                    </svg>
-                    <div>
-                      <p className="text-green-800 text-sm font-medium">Perfect video length!</p>
-                      <p className="text-green-700 text-xs mt-1">This content is optimized for 30-60 second social media videos, the ideal length for engagement and audience retention.</p>
-                    </div>
-                  </div>
-                )}
+                </div>
               </div>
             )}
           </div>
