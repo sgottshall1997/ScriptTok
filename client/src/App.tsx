@@ -1,3 +1,4 @@
+import React, { lazy, Suspense } from 'react';
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -12,6 +13,14 @@ import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
 
+// Lazy load static pages
+const AboutPage = lazy(() => import('./pages/about'));
+const HowItWorksPage = lazy(() => import('./pages/how-it-works'));
+const FAQPage = lazy(() => import('./pages/faq'));
+const PrivacyPolicyPage = lazy(() => import('./pages/privacy'));
+const TermsPage = lazy(() => import('./pages/terms'));
+const ContactPage = lazy(() => import('./pages/contact'));
+
 function Router() {
   // Track page views when routes change
   useAnalytics();
@@ -23,6 +32,13 @@ function Router() {
       <Route path="/dashboard" component={Home} />
       <Route path="/niche/:niche" component={NichePage} />
       <Route path="/templates" component={TemplateExplorerPage} />
+      {/* Static pages */}
+      <Route path="/about" component={() => React.lazy(() => import('./pages/about'))} />
+      <Route path="/how-it-works" component={() => React.lazy(() => import('./pages/how-it-works'))} />
+      <Route path="/faq" component={() => React.lazy(() => import('./pages/faq'))} />
+      <Route path="/privacy" component={() => React.lazy(() => import('./pages/privacy'))} />
+      <Route path="/terms" component={() => React.lazy(() => import('./pages/terms'))} />
+      <Route path="/contact" component={() => React.lazy(() => import('./pages/contact'))} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
