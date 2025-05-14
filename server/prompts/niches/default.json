@@ -1,0 +1,115 @@
+{
+  "templates": {
+    "original": {
+      "template": "Write a detailed review of {product} in {tone}. Cover its key features, benefits, and who it is best for. {trendContext}",
+      "title": "Detailed Review",
+      "description": "A comprehensive product review with features, benefits, and user recommendations",
+      "icon": "star",
+      "exampleOutput": "The Hydra-Boost Moisturizer is an exceptional skincare product designed for those seeking intense hydration. This lightweight formula absorbs quickly without leaving a greasy residue, making it perfect for daily use under makeup or as part of your nighttime routine."
+    },
+    
+    "comparison": {
+      "template": "Write a comparison between {product} and similar products in its category. Use {tone} and highlight the unique selling points of each. {trendContext}",
+      "title": "Product Comparison",
+      "description": "Side-by-side comparison with similar products highlighting key differences",
+      "icon": "scale",
+      "exampleOutput": "When comparing the PowerTech X300 to similar gaming laptops like the RazerBook and MSI Stealth, several differences become apparent. The X300 offers superior battery life (10 hours vs 6-7) and better thermal management, while the competitors edge ahead in graphics performance."
+    },
+    
+    "caption": {
+      "template": "Create a social media caption for {product} in {tone}. The caption should be engaging and include relevant hashtags. {trendContext}",
+      "title": "Social Media Caption",
+      "description": "Engaging social media post with hashtags and call to action",
+      "icon": "instagram",
+      "exampleOutput": "Finally found THE solution to my morning routine chaos! 🙌 This @ProductName has literally saved me 20 minutes every day and my skin has never looked better! Who else struggles with skincare consistency? #SkincareTips #MorningRoutine #GlowUp"
+    },
+    
+    "pros_cons": {
+      "template": "List the main pros and cons of {product} in {tone}. Start with a brief overview, then provide bullet points for pros and cons. {trendContext}",
+      "title": "Pros and Cons Analysis",
+      "description": "Balanced analysis of advantages and disadvantages",
+      "icon": "list-checks",
+      "exampleOutput": "The AirPod Pro 2 offers industry-leading noise cancellation and seamless Apple ecosystem integration. However, the battery life remains average and the price point is higher than many competitors."
+    },
+    
+    "routine": {
+      "template": "Create a routine incorporating {product} in {tone}. Include step-by-step instructions and explain how this product enhances the routine. {trendContext}",
+      "title": "Complete Routine",
+      "description": "Step-by-step routine incorporating the product",
+      "icon": "clock",
+      "exampleOutput": "Morning Routine with Vitamin C Serum: 1) Cleanse with gentle cleanser 2) Apply toner 3) Apply 3-4 drops of Vitamin C Serum to face and neck 4) Allow 60 seconds to absorb 5) Apply moisturizer 6) Finish with sunscreen"
+    },
+    
+    "beginner_kit": {
+      "template": "Create a beginner's guide to using {product} in {tone}. Explain what it is, how to use it, and tips for beginners. {trendContext}",
+      "title": "Beginner's Guide",
+      "description": "Easy-to-follow guide for first-time users",
+      "icon": "book-open",
+      "exampleOutput": "New to retinol? Here's everything you need to know to get started safely. Retinol is a derivative of vitamin A that promotes cell turnover, but requires gradual introduction to avoid irritation..."
+    },
+    
+    "demo_script": {
+      "template": "Write a demonstration script for {product} in {tone}. The script should guide someone through showing how to use the product effectively. {trendContext}",
+      "title": "Demonstration Script",
+      "description": "Script for product demonstration video or presentation",
+      "icon": "video",
+      "exampleOutput": "INTRO: \"Hey everyone! Today I'm going to show you exactly how to use the new InstaCook Air Fryer to get perfect crispy results every time!\" [Hold up product] STEP 1: \"First, let's understand the control panel...\" [Close-up of controls]"
+    },
+    
+    "drugstore_dupe": {
+      "template": "Identify and compare affordable alternatives to {product} in {tone}. Explain how these dupes compare to the original product. {trendContext}",
+      "title": "Affordable Alternatives",
+      "description": "Budget-friendly alternatives with comparison",
+      "icon": "badge-dollar-sign",
+      "exampleOutput": "Looking for alternatives to the $95 Luxury Face Cream? The Cerave Moisturizing Cream ($16) contains many of the same ceramides and hyaluronic acid at a fraction of the price. While it lacks the fancy packaging and fragrance, it delivers comparable hydration results."
+    },
+    
+    "personal_review": {
+      "template": "Write a personal review of {product} in {tone}, using first-person perspective as if you've been using it for a month. {trendContext}",
+      "title": "Personal Experience Review",
+      "description": "First-person testimonial and experience with the product",
+      "icon": "user",
+      "exampleOutput": "I've been using the Mountain Trail Hiking Boots for the past month, covering over 60 miles of varied terrain. My honest thoughts? These boots required minimal break-in time and handled mud and rocks beautifully, but I noticed the waterproofing started to fail during my last rainy hike."
+    },
+    
+    "surprise_me": {
+      "template": "Create unique, creative content about {product} in {tone}. Think outside the box and make this content stand out. {trendContext}",
+      "title": "Creative Content",
+      "description": "Unique, unexpected content format for maximum engagement",
+      "icon": "sparkles",
+      "exampleOutput": "BREAKING NEWS: Local Shower Gel Becomes Town Hero! Residents report that the new AloeCalm Shower Gel has been single-handedly ending bad days across the city. Witnesses describe coming home stressed, stepping into the shower, and emerging as \"completely new people.\""
+    },
+    
+    "tiktok_breakdown": {
+      "template": "Create a script for a TikTok video about {product} in {tone}. The video should be 30-60 seconds and cover key points quickly. {trendContext}",
+      "title": "TikTok Script",
+      "description": "Short-form video script optimized for TikTok",
+      "icon": "video-icon",
+      "exampleOutput": "[Text on screen: Is this viral product worth it?] \"You guys won't believe what happened when I tried this... [dramatic pause] I've been using this for exactly 7 days now and... [transition] LOOK AT THE DIFFERENCE! Let me show you exactly how to use it...\""
+    },
+    
+    "dry_skin_list": {
+      "template": "Create a list of product recommendations including {product} for people with dry skin in {tone}. Explain why each product is beneficial. {trendContext}",
+      "title": "Dry Skin Recommendations",
+      "description": "Curated product list for people with dry skin",
+      "icon": "list",
+      "exampleOutput": "TOP 5 PRODUCTS FOR EXTREMELY DRY SKIN: 1. Hydration Barrier Cream: Creates a seal to prevent moisture loss 2. Hyaluronic Acid Serum: Draws moisture into deeper skin layers 3. Overnight Recovery Mask: Repairs skin barrier while you sleep..."
+    },
+    
+    "top5_under25": {
+      "template": "Create a \"Top 5 Products Under $25\" list including {product} in {tone}. Focus on the value and quality of each affordable product. {trendContext}",
+      "title": "Budget-Friendly Top 5",
+      "description": "Top 5 affordable products under $25",
+      "icon": "dollar-sign",
+      "exampleOutput": "You don't need to break the bank for quality products! Here are my top 5 beauty essentials under $25: 1. Hydrating Cleanser ($12.99): Removes makeup while maintaining skin barrier 2. Brightening Serum ($19.99): Vitamin C and niacinamide for glowing skin..."
+    },
+    
+    "influencer_caption": {
+      "template": "Write an influencer-style caption for {product} in {tone}. The caption should be personal, engaging, and include a call to action. {trendContext}",
+      "title": "Influencer Caption",
+      "description": "Engaging social media caption in popular influencer style",
+      "icon": "users",
+      "exampleOutput": "Literally OBSESSED with this new find! 😍 Been using @ProductName for just two weeks and my friends are already asking what I've changed in my routine! The secret? This little bottle packs a serious punch 💪 Drop a 💙 if you want me to show my whole routine using this game-changer! #Ad"
+    }
+  }
+}

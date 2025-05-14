@@ -1,27 +1,140 @@
 {
-  "original": "As a skincare specialist, write a detailed review of {product} in {tone}. Analyze key ingredients, skin benefit mechanisms, texture experience, absorption rate, scent profile, packaging functionality, and results timeline. Address different skin types and concerns. {trendContext}",
+  "niche_info": {
+    "name": "Skincare & Beauty",
+    "description": "Content for skincare products, beauty routines, and cosmetics",
+    "icon": "sparkles",
+    "primary_color": "pink",
+    "secondary_color": "purple",
+    "keywords": ["moisturizer", "serum", "cleanser", "exfoliant", "face mask", "retinol", "sunscreen", "anti-aging"]
+  },
   
-  "comparison": "Compare {product} with similar skincare items in {tone}. Analyze differences in ingredient lists, formulation philosophy, texture, skin feel, targeted concerns, price point, and efficacy for various skin types. {trendContext}",
-  
-  "caption": "Create a skincare-focused social media caption for {product} in {tone}. Include key active ingredients, skin benefits, application tips, and relevant skincare hashtags. Balance educational content with aspirational messaging. {trendContext}",
-  
-  "pros_cons": "Analyze the strengths and limitations of {product} in {tone}. Evaluate ingredient quality, formulation elegance, sensorial experience, packaging functionality, and results potential. Consider different skin types and potential sensitivities. {trendContext}",
-  
-  "routine": "Create a complete skincare routine incorporating {product} in {tone}. Include morning and evening sequences, correct application order, waiting times between products, and how this specific product enhances the overall effectiveness. {trendContext}",
-  
-  "beginner_kit": "Create a skincare starter guide featuring {product} in {tone}. Include basic skin science, complementary products, proper introduction schedule, patch testing instructions, and realistic expectations for beginners. {trendContext}",
-  
-  "demo_script": "Write a skincare demonstration for {product} in {tone}. Walk through texture analysis, application technique, and proper integration into routines for different skin types. Include tips for maximizing absorption and efficacy. {trendContext}",
-  
-  "drugstore_dupe": "Present {product} as an affordable alternative to a luxury skincare item in {tone}. Compare ingredient profiles, formulation similarities, texture, effectiveness, and cost savings while highlighting why this dupe delivers exceptional value. {trendContext}",
-  
-  "personal_review": "Share a personal skincare journey with {product} in {tone}. Detail initial skin concerns, introduction experience, sensorial qualities, short and long-term results observed, and how it compares to alternatives you've tried. {trendContext}",
-  
-  "tiktok_breakdown": "Create a TikTok-style breakdown of {product} in {tone}. Cover viral claims, ingredient reality check, dermatologist perspectives, and honest assessment of whether this trending product deserves the hype. {trendContext}",
-  
-  "dry_skin_list": "Create a curated product list for dry skin featuring {product} in {tone}. For each recommendation, explain how it addresses moisture barrier repair, hydration retention, comfort restoration, and long-term skin health. {trendContext}",
-  
-  "top5_under25": "Create a list of skincare essentials under $25 featuring {product} in {tone}. For each recommendation, highlight active ingredients, targeted concerns, and how it delivers luxury-level results at an accessible price point. {trendContext}",
-  
-  "influencer_caption": "Write an influencer-style caption for {product} in {tone}. Include personal skin journey context, specific benefits noticed, application ritual details, and authentic enthusiasm that balances promotional with educational content. {trendContext}"
+  "templates": {
+    "original": {
+      "template": "As a skincare specialist, write a detailed review of {product} in {tone}. Analyze key ingredients, skin benefit mechanisms, texture experience, absorption rate, scent profile, packaging functionality, and results timeline. Address different skin types and concerns. {trendContext}",
+      "title": "Skincare Specialist Review",
+      "description": "Expert analysis of skincare products with ingredient breakdown",
+      "icon": "test-tube",
+      "exampleOutput": "The Hyaluronic Acid Serum by GlowBrand is a lightweight, fast-absorbing formula that delivers intense hydration to multiple skin layers. The key ingredients include 2% hyaluronic acid in three molecular weights, glycerin, and niacinamide. The texture is gel-like but doesn't feel sticky, and it absorbs within 30 seconds without leaving residue."
+    },
+    
+    "comparison": {
+      "template": "Compare {product} with similar skincare items in {tone}. Analyze differences in ingredient lists, formulation philosophy, texture, skin feel, targeted concerns, price point, and efficacy for various skin types. {trendContext}",
+      "title": "Skincare Product Comparison",
+      "description": "Side-by-side comparison of similar skincare products",
+      "icon": "scale",
+      "exampleOutput": "When comparing CeraVe Hydrating Cleanser to Cetaphil Gentle Skin Cleanser, several key differences emerge. CeraVe contains ceramides and hyaluronic acid that help maintain the skin barrier, while Cetaphil focuses on a simpler formula that's less likely to cause reactions. CeraVe has a lotion-like texture, while Cetaphil has a more watery consistency."
+    },
+    
+    "caption": {
+      "template": "Create a skincare-focused social media caption for {product} in {tone}. Include key active ingredients, skin benefits, application tips, and relevant skincare hashtags. Balance educational content with aspirational messaging. {trendContext}",
+      "title": "Skincare Social Caption",
+      "description": "Instagram-ready caption with skincare expertise",
+      "icon": "instagram",
+      "exampleOutput": "Found my new holy grail serum! 💫 This vitamin C powerhouse has 15% pure L-ascorbic acid that brightens and protects against free radicals! I've been applying 3 drops each morning after cleansing and before moisturizer, and my dark spots are already fading after 3 weeks! Pro tip: Keep it in the fridge for extra cooling benefits ❄️ #VitaminCSerum #GlowingSkin #SkincareTips"
+    },
+    
+    "pros_cons": {
+      "template": "Analyze the strengths and limitations of {product} in {tone}. Evaluate ingredient quality, formulation elegance, sensorial experience, packaging functionality, and results potential. Consider different skin types and potential sensitivities. {trendContext}",
+      "title": "Skincare Pros & Cons",
+      "description": "Balanced assessment of skincare product strengths and weaknesses",
+      "icon": "list-checks",
+      "exampleOutput": "PROS: Contains clinically-proven 0.3% retinol, fragrance-free formula, airless pump prevents oxidation, visible results within 4-6 weeks, suitable for normal to dry skin. CONS: May cause initial irritation for sensitive skin, relatively high price point, contains silicones (problematic for some), requires consistent use for 12+ weeks for significant results."
+    },
+    
+    "routine": {
+      "template": "Create a complete skincare routine incorporating {product} in {tone}. Include morning and evening sequences, correct application order, waiting times between products, and how this specific product enhances the overall effectiveness. {trendContext}",
+      "title": "Complete Skincare Routine",
+      "description": "Morning and evening routines featuring the product",
+      "icon": "clock",
+      "exampleOutput": "MORNING ROUTINE WITH VITAMIN C SERUM: 1) Cleanse with gentle cleanser 2) Apply alcohol-free toner 3) *While skin is slightly damp, apply 3-4 drops of Vitamin C Serum to face and neck, avoiding eye area* 4) Wait 60 seconds before applying hyaluronic acid serum 5) Moisturizer 6) Sunscreen SPF 30+. EVENING ROUTINE: 1) Double cleanse 2) Chemical exfoliant (2-3x weekly) 3) Hydrating toner 4) Treatment serum 5) Moisturizer 6) Facial oil if needed"
+    },
+    
+    "beginner_kit": {
+      "template": "Create a skincare starter guide featuring {product} in {tone}. Include basic skin science, complementary products, proper introduction schedule, patch testing instructions, and realistic expectations for beginners. {trendContext}",
+      "title": "Skincare Beginner's Guide",
+      "description": "Comprehensive introduction to skincare for beginners",
+      "icon": "book-open",
+      "exampleOutput": "BEGINNER'S GUIDE TO RETINOL: Retinol is a vitamin A derivative that accelerates cell turnover, boosts collagen, and improves skin texture—but requires careful introduction. PATCH TEST: Apply a pea-sized amount behind your ear for 24 hours before facial use. SCHEDULE: Week 1-2: Apply once every 3 days, Week 3-4: Twice weekly, Week 5-6: Every other day, Week 7+: Consider daily use if no irritation. COMPLEMENTARY PRODUCTS: Gentle cleanser, basic moisturizer (no acids), and daily sunscreen (non-negotiable). EXPECTATIONS: Minor purging possible for 2-4 weeks; visible improvement in texture by week 6; significant results by 12 weeks."
+    },
+    
+    "demo_script": {
+      "template": "Write a skincare demonstration for {product} in {tone}. Walk through texture analysis, application technique, and proper integration into routines for different skin types. Include tips for maximizing absorption and efficacy. {trendContext}",
+      "title": "Skincare Demo Script",
+      "description": "Step-by-step product demonstration with expert tips",
+      "icon": "video",
+      "exampleOutput": "[INTRO] \"Today I'm demonstrating how to correctly use this peptide serum for maximum results.\" [TEXTURE ANALYSIS] \"Notice the lightweight milky consistency—this indicates water-soluble peptides that penetrate effectively.\" [APPLICATION] \"Start with clean, slightly damp skin. Dispense one pump and apply using gentle pressing motions, not rubbing. Focus extra product on fine lines and areas of concern. For dry skin types, apply while skin is more damp; for oily skin, ensure skin is almost completely dry before application.\""
+    },
+    
+    "drugstore_dupe": {
+      "template": "Present {product} as an affordable alternative to a luxury skincare item in {tone}. Compare ingredient profiles, formulation similarities, texture, effectiveness, and cost savings while highlighting why this dupe delivers exceptional value. {trendContext}",
+      "title": "Affordable Skincare Dupe",
+      "description": "Budget-friendly alternatives to expensive skincare products",
+      "icon": "badge-dollar-sign",
+      "exampleOutput": "THE $18 DUPE FOR $85 DRUNK ELEPHANT C-FIRMA: The Ordinary's Vitamin C Suspension 23% + HA Spheres 2% delivers the same concentration of L-ascorbic acid as the cult-favorite Drunk Elephant C-Firma at less than a quarter of the price. Both formulas use stabilized vitamin C, include molecular hydration factors, and deliver measurable brightening results within 2-3 weeks. Key similarities: anhydrous formula for stability, inclusion of antioxidant ferulic acid, and penetration enhancers. The main difference? Texture—The Ordinary's formula is grittier but allows for higher concentration without oxidation issues."
+    },
+    
+    "personal_review": {
+      "template": "Share a personal skincare journey with {product} in {tone}. Detail initial skin concerns, introduction experience, sensorial qualities, short and long-term results observed, and how it compares to alternatives you've tried. {trendContext}",
+      "title": "Personal Skincare Journey",
+      "description": "First-person experience with skincare product over time",
+      "icon": "user",
+      "exampleOutput": "MY 8-WEEK JOURNEY WITH DIFFERIN: I started using Differin 0.1% adapalene gel to address hormonal acne along my jawline and texture issues. Week 1: Expected the dreaded \"purge\" but only experienced mild dryness. Applied a pea-sized amount every third night, always over moisturizer. Week 3: Noticed initial clearing of smaller bumps but developed two deeper cysts—the purge had begun. Week 5: Turning point! Existing acne healed faster, and I went 10 days without new breakouts. Week 8: Jaw acne reduced by approximately 80%, and overall skin texture is noticeably smoother. Compared to the 2% salicylic acid treatment I used previously, Differin has provided deeper, more consistent results with less irritation."
+    },
+    
+    "tiktok_breakdown": {
+      "template": "Create a TikTok-style breakdown of {product} in {tone}. Cover viral claims, ingredient reality check, dermatologist perspectives, and honest assessment of whether this trending product deserves the hype. {trendContext}",
+      "title": "TikTok Skincare Analysis",
+      "description": "Viral skincare product assessment in TikTok format",
+      "icon": "trending-up",
+      "exampleOutput": "Is this $65 serum worth the hype? Let's break it down! [ON SCREEN TEXT: Ingredient Check] Claim #1: \"Fades dark spots in 2 weeks\" Reality: Contains 5% niacinamide and tranexamic acid—research shows minimum 8-12 weeks for visible results. Claim #2: \"Works for all skin types\" Reality: The 10% lactic acid concentration is too strong for sensitive skin types—derms recommend 5% max for sensitive skin. [ON SCREEN TEXT: Derm Perspectives] Three dermatologists on TikTok say it's good but overpriced. My verdict? Good formulation but overhyped results timeline—and there's a $28 alternative with nearly identical ingredients."
+    },
+    
+    "dry_skin_list": {
+      "template": "Create a curated product list for dry skin featuring {product} in {tone}. For each recommendation, explain how it addresses moisture barrier repair, hydration retention, comfort restoration, and long-term skin health. {trendContext}",
+      "title": "Dry Skin Solutions",
+      "description": "Curated product recommendations for dry skin types",
+      "icon": "droplets",
+      "exampleOutput": "TOP 5 PRODUCTS FOR SEVERELY DRY SKIN: 1. CeraVe Hydrating Cleanser: Non-foaming cleanser with ceramides that cleanses without disrupting the moisture barrier. 2. Laneige Cream Skin Toner: Hybrid toner-moisturizer that delivers immediate relief through panthenol and meadowfoam seed oil. 3. First Aid Beauty Ultra Repair Cream: Contains colloidal oatmeal for immediate itch relief plus ceramides and shea butter for deep restoration. 4. La Roche-Posay Cicaplast Baume B5: Occlusive formula with 5% panthenol that creates a moisture-sealing environment for overnight repair. 5. Vaseline: The gold-standard occlusive to apply as a final nighttime step over other hydrators, preventing 98% of transepidermal water loss."
+    },
+    
+    "top5_under25": {
+      "template": "Create a list of skincare essentials under $25 featuring {product} in {tone}. For each recommendation, highlight active ingredients, targeted concerns, and how it delivers luxury-level results at an accessible price point. {trendContext}",
+      "title": "Budget Skincare Finds",
+      "description": "Top affordable skincare products under $25",
+      "icon": "dollar-sign",
+      "exampleOutput": "TOP 5 SKINCARE GEMS UNDER $25: 1. The Ordinary Niacinamide 10% + Zinc 1% ($5.90): Luxury serums charge $50+ for the same active at lower concentrations. This regulates oil production while reducing pore appearance. 2. CosRx Snail Mucin Essence ($24): Korean dupe for $85 repair serums, delivering the same dewiness and barrier support through glycoproteins. 3. Neutrogena Hydroboost Gel Cream ($17.99): Rivals $65 water creams with similar hyaluronic acid complex and silicone-free gel matrix. 4. The Inkey List Retinol ($9.99): Delivers encapsulated retinol with squalane—similar delivery system to $85 luxury alternatives. 5. La Roche-Posay Anthelios Melt-In Sunscreen ($24.99): Uses the same advanced UV filters as $40+ premium sunscreens with identical protection factors and stability."
+    },
+    
+    "influencer_caption": {
+      "template": "Write an influencer-style caption for {product} in {tone}. Include personal skin journey context, specific benefits noticed, application ritual details, and authentic enthusiasm that balances promotional with educational content. {trendContext}",
+      "title": "Skincare Influencer Caption",
+      "description": "Authentic social media caption in influencer style",
+      "icon": "users",
+      "exampleOutput": "Your girl has been KEEPING A SECRET 🤫 (Sorry not sorry!) I've been testing this retinol serum for the past 6 weeks and my skin has literally TRANSFORMED! 👏 As someone who struggled with hormonal acne for years (you remember those crying selfies in 2021 😭), finding products that don't break me out is SO hard. But THIS! 💙 I apply two drops every other night after cleansing on COMPLETELY dry skin (crucial step!), wait 15 mins, then follow with my trusty moisturizer. The results? Zero active breakouts for 3 weeks straight (!!!) and those stubborn marks along my jawline? FINALLY fading! Have you tried retinol yet? Drop me a 💫 if you want my complete PM routine with this game-changer! #NotSponsored #JustObsessed"
+    },
+    
+    "skincare_myths": {
+      "template": "Debunk common skincare myths related to {product} in {tone}. Provide evidence-based explanations of misunderstandings and correct information based on dermatological research. Include practical advice for consumers. {trendContext}",
+      "title": "Skincare Myth Busters",
+      "description": "Evidence-based corrections to common skincare misconceptions",
+      "icon": "alert-triangle",
+      "exampleOutput": "MYTH: \"Hyaluronic acid serums work for everyone\" FACT: While hyaluronic acid (HA) is excellent at attracting moisture, it can actually worsen dryness in low-humidity environments (below 30%). This happens because HA pulls moisture from the deeper skin layers when insufficient water is available in the air. For desert climates or heated winter environments, always apply HA products to damp skin and immediately seal with a moisturizer containing emollients."
+    },
+    
+    "ingredient_spotlight": {
+      "template": "Create an educational breakdown of the key ingredients in {product} in {tone}. Explain each ingredient's function, benefits, potential concerns, and why they were likely included in the formulation. Include scientific context without being overwhelming. {trendContext}",
+      "title": "Ingredient Deep Dive",
+      "description": "Scientific analysis of key skincare ingredients",
+      "icon": "microscope",
+      "exampleOutput": "INGREDIENT SPOTLIGHT: Neutrogena Hydroboost Gel Cream\n\n• Hyaluronic Acid: A glycosaminoglycan that holds 1000x its weight in water. This formula uses both high and low molecular weight HA—the high MW creates surface hydration while low MW penetrates deeper. Concentration approximately 1-2% based on INCI listing.\n\n• Dimethicone: Silicon-based polymer creating a breathable, flexible film that prevents water loss while remaining non-comedogenic. Unlike occlusive petrolatum, it has a lightweight skin feel.\n\n• Glycerin: Natural humectant that works synergistically with HA by attracting water and enhancing the skin's natural moisturizing factors.\n\n• Cetearyl Olivate: Olive-derived emollient that improves skin compatibility and enhances the formula's spreadability without heaviness."
+    },
+    
+    "seasonal_routine": {
+      "template": "Create a seasonal skincare routine adjustment guide featuring {product} in {tone}. Explain how changing environmental factors impact skin needs and how to modify routine, application methods, and complementary products accordingly. {trendContext}",
+      "title": "Seasonal Skincare Adaptation",
+      "description": "How to adjust skincare routines for different seasons",
+      "icon": "calendar",
+      "exampleOutput": "TRANSITIONING YOUR SKINCARE FROM SUMMER TO FALL WITH RETINOL SERUM\n\nAs humidity drops and heaters turn on, your skin needs different support. Here's how to adapt:\n\n• CLEANSING: Switch from gel to cream cleanser to preserve natural oils\n• HYDRATION LAYERING: Add a hydrating toner before your retinol serum\n• RETINOL APPLICATION: During summer, you applied every other night. For fall, buffer with moisturizer first, then apply retinol, especially around the nose and mouth where seasonal dryness hits first\n• MOISTURIZER: Replace your lightweight summer lotion with a cream containing ceramides\n• SPECIFIC CONCERNS: Introduce a weekly hydrating mask to prevent the retinol-related flaking that becomes more apparent in drier weather"
+    }
+  }
 }
