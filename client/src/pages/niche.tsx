@@ -73,7 +73,7 @@ export default function NichePage() {
   const [isRefreshingTrends, setIsRefreshingTrends] = useState(false);
   const { toast } = useToast();
 
-  // Redirect to home if niche is invalid
+  // Redirect to home if niche is invalid (but only if a niche is specified in the URL)
   useEffect(() => {
     if (params.niche && !NICHES.includes(params.niche as Niche)) {
       window.location.href = "/";
@@ -102,7 +102,9 @@ export default function NichePage() {
       queryClient.invalidateQueries({ queryKey: ['/api/trending'] });
       
       toast({
-        title: `${params.niche.charAt(0).toUpperCase() + params.niche.slice(1)} trends refreshed`,
+        title: params.niche 
+          ? `${params.niche.charAt(0).toUpperCase() + params.niche.slice(1)} trends refreshed` 
+          : "Trending products refreshed",
         description: "The latest trending products have been fetched.",
       });
     } catch (error) {
@@ -120,7 +122,8 @@ export default function NichePage() {
     setGeneratedContent(response);
   };
 
-  if (!params.niche || !NICHES.includes(params.niche as Niche)) {
+  // Only redirect if niche is specified but invalid
+  if (params.niche && !NICHES.includes(params.niche as Niche)) {
     return <div>Loading...</div>;
   }
 
@@ -141,7 +144,11 @@ export default function NichePage() {
           <button 
             onClick={refreshTrendingProducts}
             disabled={isRefreshingTrends}
-            className={`px-5 py-2.5 rounded-md bg-gradient-to-r from-${params.niche === 'skincare' ? 'pink' : params.niche === 'tech' ? 'blue' : params.niche === 'fashion' ? 'purple' : params.niche === 'fitness' ? 'green' : params.niche === 'food' ? 'orange' : params.niche === 'travel' ? 'sky' : params.niche === 'pet' ? 'amber' : 'gray'}-600 to-${params.niche === 'skincare' ? 'purple' : params.niche === 'tech' ? 'cyan' : params.niche === 'fashion' ? 'pink' : params.niche === 'fitness' ? 'teal' : params.niche === 'food' ? 'yellow' : params.niche === 'travel' ? 'indigo' : params.niche === 'pet' ? 'orange' : 'gray'}-600 hover:opacity-90 text-white font-medium flex items-center transition-all shadow-md hover:shadow-lg`}
+            className={`px-5 py-2.5 rounded-md bg-gradient-to-r ${
+              !params.niche 
+                ? 'from-indigo-600 to-blue-600'
+                : `from-${params.niche === 'skincare' ? 'pink' : params.niche === 'tech' ? 'blue' : params.niche === 'fashion' ? 'purple' : params.niche === 'fitness' ? 'green' : params.niche === 'food' ? 'orange' : params.niche === 'travel' ? 'sky' : params.niche === 'pet' ? 'amber' : 'gray'}-600 to-${params.niche === 'skincare' ? 'purple' : params.niche === 'tech' ? 'cyan' : params.niche === 'fashion' ? 'pink' : params.niche === 'fitness' ? 'teal' : params.niche === 'food' ? 'yellow' : params.niche === 'travel' ? 'indigo' : params.niche === 'pet' ? 'orange' : 'gray'}-600`
+            } hover:opacity-90 text-white font-medium flex items-center transition-all shadow-md hover:shadow-lg`}
           >
             {isRefreshingTrends ? (
               <>
@@ -156,7 +163,7 @@ export default function NichePage() {
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
-                Get Latest {params.niche.charAt(0).toUpperCase() + params.niche.slice(1)} Trends
+                Get Latest {params.niche ? `${params.niche.charAt(0).toUpperCase() + params.niche.slice(1)} Trends` : "Trending Products"}
               </>
             )}
           </button>
