@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import ContentGenerator from "@/components/ContentGenerator";
 import ContentOutput from "@/components/ContentOutput";
 import TrendingProductsList from "@/components/TrendingProductsList";
+import NicheNavigation from "@/components/NicheNavigation";
 import { GenerationResponse, TrendingProduct } from "@/lib/types";
 import { NICHES } from "@shared/constants";
 import type { Niche } from "@shared/constants";
@@ -120,6 +121,9 @@ export default function NichePage() {
 
   return (
     <div className="px-4 py-6 md:px-6 lg:px-8 min-h-screen bg-gray-50">
+      {/* Niche Navigation */}
+      <NicheNavigation currentNiche={params.niche} />
+      
       {/* Header */}
       <div className={`rounded-lg bg-gradient-to-r ${nicheInfo.bgClass} p-8 mb-8 shadow-md border border-gray-200`}>
         <h1 className={`text-3xl font-bold text-gradient bg-gradient-to-r ${nicheInfo.textClass} mb-3`}>
