@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { TEMPLATE_TYPE_OPTIONS, TONE_OPTIONS, GenerationResponse } from "@/lib/types";
+import NicheSelector from "./NicheSelector";
 
 interface ContentGeneratorProps {
   onGenerate: (content: GenerationResponse) => void;
@@ -19,6 +20,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
   const productInputRef = useRef<HTMLInputElement>(null);
   const [templateType, setTemplateType] = useState("original");
   const [tone, setTone] = useState("friendly");
+  const [niche, setNiche] = useState("skincare");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,7 +42,8 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
     const requestData = {
       product: productValue,
       templateType,
-      tone
+      tone,
+      niche
     };
     
     try {
@@ -84,14 +87,24 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
               id="product"
               name="product"
               ref={productInputRef}
-              placeholder="e.g. The Ordinary Niacinamide Serum"
+              placeholder="e.g. iPhone 15 Pro, Nike Air Max, La Mer Cream"
               className="w-full border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
               defaultValue=""
             />
-            <p className="mt-1 text-xs text-gray-500">Enter the skincare or beauty product you want to generate content for</p>
+            <p className="mt-1 text-xs text-gray-500">Enter the product name you want to generate content for</p>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+              <label htmlFor="niche-selector" className="block text-sm font-medium text-teal-700 mb-2">
+                Content Niche
+              </label>
+              <div id="niche-selector" className="w-full">
+                <NicheSelector value={niche} onChange={setNiche} />
+              </div>
+              <p className="mt-1 text-xs text-gray-500">Select the industry or niche for your content</p>
+            </div>
+            
             <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
               <label htmlFor="template-type" className="block text-sm font-medium text-violet-700 mb-2">
                 Template Type
