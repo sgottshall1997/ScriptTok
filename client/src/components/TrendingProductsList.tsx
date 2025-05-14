@@ -81,10 +81,23 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
     <Card className="shadow-xl bg-white/80 backdrop-blur-sm border border-gray-200">
       <CardHeader className="bg-gradient-to-r from-blue-50 to-violet-50 rounded-t-lg border-b border-neutral-200 flex justify-between items-center py-5">
         <div>
-          <CardTitle className="text-gradient bg-gradient-to-r from-blue-600 to-violet-600 font-bold text-xl">Trending Products</CardTitle>
-          <p className="text-sm text-gray-700">Live data from social media platforms</p>
+          <CardTitle className="text-gradient bg-gradient-to-r from-blue-600 to-violet-600 font-bold text-xl">
+            {niche 
+              ? `${niche.charAt(0).toUpperCase() + niche.slice(1)} Trending Products` 
+              : "Trending Products"}
+          </CardTitle>
+          <p className="text-sm text-gray-700">
+            {niche 
+              ? `Filtered for ${niche} niche from social media platforms` 
+              : "Live data from social media platforms"}
+          </p>
         </div>
-        <div>
+        <div className="flex items-center gap-2">
+          {niche && (
+            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              {niche.charAt(0).toUpperCase() + niche.slice(1)}
+            </span>
+          )}
           <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
             <span className="mr-1.5 h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
             Live

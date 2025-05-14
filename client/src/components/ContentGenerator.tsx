@@ -19,7 +19,7 @@ interface ContentGeneratorProps {
   initialNiche?: string;
 }
 
-const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
+const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate, onNicheChange, initialNiche = 'skincare' }) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
   
@@ -27,7 +27,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
   const productInputRef = useRef<HTMLInputElement>(null);
   const [templateType, setTemplateType] = useState("seo_blog");
   const [tone, setTone] = useState("friendly");
-  const [niche, setNiche] = useState("skincare");
+  const [niche, setNiche] = useState(initialNiche);
   
   // State for template options based on selected niche
   const [templateOptions, setTemplateOptions] = useState([...UNIVERSAL_TEMPLATE_OPTIONS]);
@@ -42,7 +42,12 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({ onGenerate }) => {
       ...UNIVERSAL_TEMPLATE_OPTIONS,
       ...nicheSpecificOptions
     ]);
-  }, [niche]);
+    
+    // Notify parent component of niche change if callback provided
+    if (onNicheChange) {
+      onNicheChange(niche);
+    }
+  }, [niche, onNicheChange]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

@@ -92,6 +92,7 @@ export default function Home() {
             <TrendingProductsList 
               products={trendingProducts || []} 
               isLoading={isLoadingTrending}
+              niche={selectedNiche}
             />
           </div>
           
@@ -100,7 +101,11 @@ export default function Home() {
             {/* Left column */}
             <div className="lg:col-span-2 space-y-6">
               {/* Content Generator */}
-              <ContentGenerator onGenerate={handleContentGenerated} />
+              <ContentGenerator 
+                onGenerate={handleContentGenerated} 
+                initialNiche={selectedNiche}
+                onNicheChange={setSelectedNiche}
+              />
               
               {/* Content Output */}
               <ContentOutput content={generatedContent} />
