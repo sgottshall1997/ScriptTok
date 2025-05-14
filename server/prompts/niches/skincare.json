@@ -1,0 +1,27 @@
+{
+  "original": "As a skincare specialist, write a detailed review of {product} in {tone}. Analyze key ingredients, skin benefit mechanisms, texture experience, absorption rate, scent profile, packaging functionality, and results timeline. Address different skin types and concerns. {trendContext}",
+  
+  "comparison": "Compare {product} with similar skincare items in {tone}. Analyze differences in ingredient lists, formulation philosophy, texture, skin feel, targeted concerns, price point, and efficacy for various skin types. {trendContext}",
+  
+  "caption": "Create a skincare-focused social media caption for {product} in {tone}. Include key active ingredients, skin benefits, application tips, and relevant skincare hashtags. Balance educational content with aspirational messaging. {trendContext}",
+  
+  "pros_cons": "Analyze the strengths and limitations of {product} in {tone}. Evaluate ingredient quality, formulation elegance, sensorial experience, packaging functionality, and results potential. Consider different skin types and potential sensitivities. {trendContext}",
+  
+  "routine": "Create a complete skincare routine incorporating {product} in {tone}. Include morning and evening sequences, correct application order, waiting times between products, and how this specific product enhances the overall effectiveness. {trendContext}",
+  
+  "beginner_kit": "Create a skincare starter guide featuring {product} in {tone}. Include basic skin science, complementary products, proper introduction schedule, patch testing instructions, and realistic expectations for beginners. {trendContext}",
+  
+  "demo_script": "Write a skincare demonstration for {product} in {tone}. Walk through texture analysis, application technique, and proper integration into routines for different skin types. Include tips for maximizing absorption and efficacy. {trendContext}",
+  
+  "drugstore_dupe": "Present {product} as an affordable alternative to a luxury skincare item in {tone}. Compare ingredient profiles, formulation similarities, texture, effectiveness, and cost savings while highlighting why this dupe delivers exceptional value. {trendContext}",
+  
+  "personal_review": "Share a personal skincare journey with {product} in {tone}. Detail initial skin concerns, introduction experience, sensorial qualities, short and long-term results observed, and how it compares to alternatives you've tried. {trendContext}",
+  
+  "tiktok_breakdown": "Create a TikTok-style breakdown of {product} in {tone}. Cover viral claims, ingredient reality check, dermatologist perspectives, and honest assessment of whether this trending product deserves the hype. {trendContext}",
+  
+  "dry_skin_list": "Create a curated product list for dry skin featuring {product} in {tone}. For each recommendation, explain how it addresses moisture barrier repair, hydration retention, comfort restoration, and long-term skin health. {trendContext}",
+  
+  "top5_under25": "Create a list of skincare essentials under $25 featuring {product} in {tone}. For each recommendation, highlight active ingredients, targeted concerns, and how it delivers luxury-level results at an accessible price point. {trendContext}",
+  
+  "influencer_caption": "Write an influencer-style caption for {product} in {tone}. Include personal skin journey context, specific benefits noticed, application ritual details, and authentic enthusiasm that balances promotional with educational content. {trendContext}"
+}

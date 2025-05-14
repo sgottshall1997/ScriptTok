@@ -1,0 +1,23 @@
+{
+  "original": "As a travel expert, review {product} in {tone}. Assess durability, practicality for different travel types, comfort, space efficiency, and overall travel enhancement value. Address both casual travelers and frequent adventurers. {trendContext}",
+  
+  "comparison": "Compare {product} with similar travel gear in {tone}. Analyze differences in build quality, functionality across travel scenarios, convenience features, packability, and value for various traveler types. {trendContext}",
+  
+  "caption": "Create an inspiring travel-focused caption for {product} in {tone}. Include practical usage tips, destination suggestions where this item excels, and relevant travel hashtags. Balance aspirational with practical advice. {trendContext}",
+  
+  "pros_cons": "Analyze the strengths and limitations of {product} for travelers in {tone}. Evaluate durability, weight, functionality, versatility across destinations, and value. Include specific travel scenarios where this item excels or falls short. {trendContext}",
+  
+  "routine": "Create a travel preparation checklist incorporating {product} in {tone}. Show how this item integrates with essential travel gear for different trip types, from weekend getaways to international adventures. {trendContext}",
+  
+  "beginner_kit": "Create a travel essentials guide featuring {product} in {tone}. Include packing strategies, complementary items, maintenance tips on the road, and advice for maximizing usefulness across different travel situations. {trendContext}",
+  
+  "demo_script": "Write a travel gear demonstration for {product} in {tone}. Walk through features, packing techniques, and three distinct travel scenarios where this item provides significant benefits to the journey. {trendContext}",
+  
+  "personal_review": "Share a personal travel experience with {product} in {tone}. Detail how it performed in real travel conditions, unexpected benefits discovered, any limitations encountered, and recommendations for fellow travelers. {trendContext}",
+  
+  "surprise_me": "Create unexpected travel content about {product} in {tone}. This could include unconventional usage tips, historical connection to traditional travel methods, adventure stories featuring this gear, or creative space-saving hacks. {trendContext}",
+  
+  "packing_list": "Create a comprehensive packing list featuring {product} in {tone}. Organize by categories (clothing, toiletries, electronics, etc.) and explain how each item complements the featured product for a seamless travel experience. {trendContext}",
+  
+  "top5_under25": "Create a list of travel accessories under $25 that pair perfectly with {product} in {tone}. For each item, explain how it enhances functionality, solves a specific travel challenge, or improves the overall journey. {trendContext}"
+}

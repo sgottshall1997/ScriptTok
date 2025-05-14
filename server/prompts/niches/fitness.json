@@ -1,0 +1,21 @@
+{
+  "original": "As a fitness professional, write a detailed review of {product} in {tone}. Evaluate functionality, durability, usage experience, exercise versatility, and fitness results potential. Address both beginners and advanced fitness enthusiasts. {trendContext}",
+  
+  "comparison": "Compare {product} with similar fitness equipment/supplements in {tone}. Analyze differences in build quality, workout application, targeted muscle groups, accessibility for different fitness levels, and value proposition. {trendContext}",
+  
+  "caption": "Create a motivational fitness-focused caption for {product} in {tone}. Include exercise suggestions, fitness benefits, and relevant workout hashtags. Balance technical accuracy with inspirational messaging. {trendContext}",
+  
+  "pros_cons": "Analyze the strengths and limitations of {product} in {tone}. Evaluate effectiveness, comfort during use, versatility across workout types, durability, and price-to-value ratio. Include specific fitness scenarios where this product excels or falls short. {trendContext}",
+  
+  "routine": "Create a complete workout routine incorporating {product} in {tone}. Include proper form guidance, set/rep recommendations, progression strategies, and how this product enhances specific fitness goals. {trendContext}",
+  
+  "beginner_kit": "Create a fitness starter guide for {product} in {tone}. Include basic exercise demonstrations, proper form tips, realistic progression timeline, complementary equipment suggestions, and common mistakes to avoid. {trendContext}",
+  
+  "demo_script": "Write a fitness demonstration for {product} in {tone}. Walk through setup, safety considerations, and demonstrate three effective exercises with proper form cues, from beginner to advanced variations. {trendContext}",
+  
+  "personal_review": "Share a personal training experience with {product} in {tone}. Detail integration into your routine, physical adaptations noticed, comfort during use, durability through consistent training, and how it compares to alternatives you've tried. {trendContext}",
+  
+  "surprise_me": "Create unexpected fitness content about {product} in {tone}. This could include unconventional exercise variations, historical connection to traditional training methods, celebrity training programs using this product, or creative high-intensity challenges. {trendContext}",
+  
+  "top5_under25": "Create a list of fitness accessories under $25 that complement {product} in {tone}. For each item, explain how it enhances training effectiveness, addresses a specific fitness need, or improves the overall workout experience. {trendContext}"
+}

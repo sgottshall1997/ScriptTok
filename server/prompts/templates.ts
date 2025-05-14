@@ -19,11 +19,9 @@ let templatesCache: PromptTemplates | null = null;
  * @returns An object containing all templates organized by niche and type
  */
 export async function loadPromptTemplates(): Promise<PromptTemplates> {
-  // Return cached templates if available
-  if (templatesCache) {
-    return templatesCache;
-  }
-
+  // For development, let's force a reload to test our JSON templates
+  console.log('Loading all prompt templates...');
+  
   const templates: PromptTemplates = {
     default: await loadDefaultTemplates(),
     skincare: await loadNicheTemplates('skincare'),
@@ -38,6 +36,7 @@ export async function loadPromptTemplates(): Promise<PromptTemplates> {
 
   // Cache templates for future use
   templatesCache = templates;
+  console.log('All templates loaded and cached');
   return templates;
 }
 
@@ -84,61 +83,63 @@ async function loadDefaultTemplates(): Promise<NicheTemplates> {
  */
 async function loadNicheTemplates(niche: string): Promise<NicheTemplates> {
   try {
-    // In a production system, this would load from a JSON file
-    // For now, we'll return a subset of customized templates
-    
     // Start with empty templates
     const templates: NicheTemplates = {};
     
-    // Try to load from file if it exists (for future expansion)
+    // Try to load from JSON file first
     try {
       const nicheFilePath = path.join(__dirname, 'niches', `${niche}.json`);
+      console.log(`Looking for niche template file at: ${nicheFilePath}`);
+      
       const fileContent = await fs.readFile(nicheFilePath, 'utf-8');
       const fileTemplates = JSON.parse(fileContent);
       
       // Merge file templates
       Object.assign(templates, fileTemplates);
+      console.log(`Successfully loaded templates for ${niche} from JSON file`);
+      
+      // If we successfully loaded from JSON, return immediately
+      return templates;
     } catch (error) {
-      // File doesn't exist yet, use hardcoded templates instead
-      // This is normal during development
-    }
-    
-    // Add hardcoded templates based on niche
-    switch (niche) {
-      case 'skincare':
-        templates['original'] = 'As a skincare specialist, write a detailed review of {product} in {tone}. Discuss ingredients, benefits for skin health, and application techniques. {trendContext}';
-        templates['routine'] = 'Create a skincare routine incorporating {product} in {tone}. Include morning and evening routines, and explain how this product benefits skin health. {trendContext}';
-        break;
-        
-      case 'tech':
-        templates['original'] = 'As a tech reviewer, write a detailed analysis of {product} in {tone}. Cover specifications, performance benchmarks, and user experience. {trendContext}';
-        templates['comparison'] = 'Compare {product} with its main competitors in {tone}. Focus on technical specifications, price-to-performance ratio, and unique features. {trendContext}';
-        break;
-        
-      case 'fashion':
-        templates['original'] = 'As a fashion expert, review {product} in {tone}. Discuss fabric quality, styling options, and current fashion trends it aligns with. {trendContext}';
-        templates['influencer_caption'] = 'Write a fashion influencer caption for {product} in {tone}. Include styling tips and outfit pairing suggestions. {trendContext}';
-        break;
-        
-      case 'fitness':
-        templates['original'] = 'As a fitness trainer, review {product} in {tone}. Discuss its benefits for workouts, proper usage techniques, and results users can expect. {trendContext}';
-        templates['routine'] = 'Create a fitness routine incorporating {product} in {tone}. Include warm-up, main exercises, and cool-down phases. {trendContext}';
-        break;
-        
-      case 'food':
-        templates['original'] = 'As a culinary expert, review {product} in {tone}. Discuss flavor profile, ingredient quality, and potential uses in different recipes. {trendContext}';
-        templates['recipe'] = 'Create a recipe featuring {product} in {tone}. Include ingredients, step-by-step instructions, and serving suggestions. {trendContext}';
-        break;
-        
-      case 'travel':
-        templates['original'] = 'As a travel expert, review {product} in {tone}. Discuss its usefulness for travelers, durability, and space-saving features. {trendContext}';
-        templates['packing_list'] = 'Create a travel packing list including {product} in {tone}. Organize by categories and explain why each item is essential. {trendContext}';
-        break;
-        
-      case 'pet':
-        templates['original'] = 'As a pet care specialist, review {product} in {tone}. Discuss benefits for pets, safety considerations, and usage instructions. {trendContext}';
-        templates['routine'] = 'Create a pet care routine incorporating {product} in {tone}. Include daily, weekly, and monthly care tasks. {trendContext}';
-        break;
+      console.log(`No JSON file found for niche ${niche} or error reading it, using fallback templates`);
+      
+      // If no JSON file found, fall back to hardcoded templates
+      switch (niche) {
+        case 'skincare':
+          templates['original'] = 'As a skincare specialist, write a detailed review of {product} in {tone}. Discuss ingredients, benefits for skin health, and application techniques. {trendContext}';
+          templates['routine'] = 'Create a skincare routine incorporating {product} in {tone}. Include morning and evening routines, and explain how this product benefits skin health. {trendContext}';
+          break;
+          
+        case 'tech':
+          templates['original'] = 'As a tech reviewer, write a detailed analysis of {product} in {tone}. Cover specifications, performance benchmarks, and user experience. {trendContext}';
+          templates['comparison'] = 'Compare {product} with its main competitors in {tone}. Focus on technical specifications, price-to-performance ratio, and unique features. {trendContext}';
+          break;
+          
+        case 'fashion':
+          templates['original'] = 'As a fashion expert, review {product} in {tone}. Discuss fabric quality, styling options, and current fashion trends it aligns with. {trendContext}';
+          templates['influencer_caption'] = 'Write a fashion influencer caption for {product} in {tone}. Include styling tips and outfit pairing suggestions. {trendContext}';
+          break;
+          
+        case 'fitness':
+          templates['original'] = 'As a fitness trainer, review {product} in {tone}. Discuss its benefits for workouts, proper usage techniques, and results users can expect. {trendContext}';
+          templates['routine'] = 'Create a fitness routine incorporating {product} in {tone}. Include warm-up, main exercises, and cool-down phases. {trendContext}';
+          break;
+          
+        case 'food':
+          templates['original'] = 'As a culinary expert, review {product} in {tone}. Discuss flavor profile, ingredient quality, and potential uses in different recipes. {trendContext}';
+          templates['recipe'] = 'Create a recipe featuring {product} in {tone}. Include ingredients, step-by-step instructions, and serving suggestions. {trendContext}';
+          break;
+          
+        case 'travel':
+          templates['original'] = 'As a travel expert, review {product} in {tone}. Discuss its usefulness for travelers, durability, and space-saving features. {trendContext}';
+          templates['packing_list'] = 'Create a travel packing list including {product} in {tone}. Organize by categories and explain why each item is essential. {trendContext}';
+          break;
+          
+        case 'pet':
+          templates['original'] = 'As a pet care specialist, review {product} in {tone}. Discuss benefits for pets, safety considerations, and usage instructions. {trendContext}';
+          templates['routine'] = 'Create a pet care routine incorporating {product} in {tone}. Include daily, weekly, and monthly care tasks. {trendContext}';
+          break;
+      }
     }
     
     return templates;

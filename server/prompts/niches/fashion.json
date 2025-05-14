@@ -1,0 +1,25 @@
+{
+  "original": "As a fashion expert, write a detailed review of {product} in {tone}. Cover design aesthetic, fabric quality, fit considerations, versatility, and styling potential. Address both casual wearers and fashion enthusiasts. {trendContext}",
+  
+  "comparison": "Compare {product} with similar fashion items in {tone}. Analyze differences in construction, materials, styling options, price point, and brand positioning. Consider seasonal relevance and fashion trend alignment. {trendContext}",
+  
+  "caption": "Create a fashion-forward social media caption for {product} in {tone}. Include style inspiration, outfit pairing suggestions, and relevant fashion hashtags. Balance aspirational with practical styling advice. {trendContext}",
+  
+  "pros_cons": "Analyze the strengths and limitations of {product} in {tone}. Evaluate quality, comfort, silhouette, versatility, and value. Include specific styling scenarios where this piece excels or falls short. {trendContext}",
+  
+  "routine": "Create a capsule wardrobe guide incorporating {product} in {tone}. Show how this piece integrates with essential wardrobe items to create multiple versatile looks for different occasions. {trendContext}",
+  
+  "beginner_kit": "Create a style starter guide for {product} in {tone}. Include essential pairings, accessories that elevate the look, maintenance tips, and style evolution possibilities for fashion beginners. {trendContext}",
+  
+  "demo_script": "Write a styling demonstration for {product} in {tone}. Walk through unboxing, quality assessment, and creating three distinct outfits ranging from casual to formal using this piece as a foundation. {trendContext}",
+  
+  "drugstore_dupe": "Present {product} as an affordable alternative to a luxury fashion item in {tone}. Compare design elements, materials, construction, versatility, and cost savings while highlighting why this piece delivers exceptional value. {trendContext}",
+  
+  "personal_review": "Share a personal styling experience with {product} in {tone}. Detail initial impressions, comfort during wear, outfit combinations tried, compliments received, and how it has integrated with your existing wardrobe. {trendContext}",
+  
+  "surprise_me": "Create unexpected fashion content about {product} in {tone}. This could include unconventional styling tips, historical inspiration behind the design, celebrity spotting, or creative upcycling ideas. {trendContext}",
+  
+  "influencer_caption": "Write an influencer-style caption for {product} in {tone}. Include outfit details, lifestyle context for wearing this look, brand appreciation, and authentic personal notes about your styling choices. {trendContext}",
+  
+  "top5_under25": "Create a list of fashion accessories under $25 that pair perfectly with {product} in {tone}. For each item, explain how it complements and elevates the main piece within different style contexts. {trendContext}"
+}

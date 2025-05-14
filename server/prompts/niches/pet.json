@@ -1,0 +1,23 @@
+{
+  "original": "As a pet care specialist, review {product} in {tone}. Evaluate safety, durability, species appropriateness, comfort for the animal, and overall pet wellness benefits. Address both new pet owners and experienced animal enthusiasts. {trendContext}",
+  
+  "comparison": "Compare {product} with similar pet items in {tone}. Analyze differences in material safety, species-specific design features, durability, ease of cleaning, and value for different types of pet owners. {trendContext}",
+  
+  "caption": "Create a pet-friendly social media caption for {product} in {tone}. Include pet wellness benefits, usage tips, and relevant pet community hashtags. Balance informative content with emotional connection to pets. {trendContext}",
+  
+  "pros_cons": "Analyze the strengths and limitations of {product} for pets in {tone}. Evaluate safety, durability, animal engagement, ease of maintenance, and value. Include specific pet scenarios where this item excels or falls short. {trendContext}",
+  
+  "routine": "Create a pet care routine incorporating {product} in {tone}. Include daily, weekly, and monthly care practices that utilize this product to enhance your pet's wellbeing, comfort, and happiness. {trendContext}",
+  
+  "beginner_kit": "Create a new pet owner's guide featuring {product} in {tone}. Include essential care instructions, complementary supplies, introduction techniques, and guidance for establishing healthy patterns from the start. {trendContext}",
+  
+  "demo_script": "Write a pet product demonstration for {product} in {tone}. Walk through features, proper introduction to your pet, and three specific scenarios where this item provides significant benefits to your animal companion. {trendContext}",
+  
+  "drugstore_dupe": "Present {product} as an affordable alternative to a premium pet product in {tone}. Compare safety features, effectiveness, durability, pet acceptance, and cost savings while highlighting why this option delivers exceptional value. {trendContext}",
+  
+  "personal_review": "Share a personal experience using {product} with your pet in {tone}. Detail your pet's reaction, behavioral changes noticed, durability through use, cleaning/maintenance reality, and whether you would recommend to fellow pet owners. {trendContext}",
+  
+  "surprise_me": "Create unexpected pet content about {product} in {tone}. This could include unusual applications, multi-pet household solutions, travel adaptations, DIY enhancements, or creative ways to extend the product's lifespan. {trendContext}",
+  
+  "top5_under25": "Create a list of pet accessories under $25 that complement {product} in {tone}. For each item, explain how it enhances pet care, solves a specific challenge, or improves the bond between pet and owner. {trendContext}"
+}

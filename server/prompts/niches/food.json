@@ -1,0 +1,25 @@
+{
+  "original": "As a culinary expert, write a detailed review of {product} in {tone}. Evaluate flavor profile, ingredient quality, versatility in recipes, preparation convenience, and value. Address both casual home cooks and food enthusiasts. {trendContext}",
+  
+  "comparison": "Compare {product} with similar food products in {tone}. Analyze differences in taste, nutritional profile, ingredient quality, culinary applications, and value. Consider dietary restrictions and cooking versatility. {trendContext}",
+  
+  "caption": "Create a mouth-watering food-focused caption for {product} in {tone}. Include flavor notes, meal pairing suggestions, and relevant culinary hashtags. Evoke sensory experience while providing practical usage ideas. {trendContext}",
+  
+  "pros_cons": "Analyze the strengths and limitations of {product} in {tone}. Evaluate taste, nutrition, ingredient quality, culinary versatility, and value. Include specific meal scenarios where this product excels or falls short. {trendContext}",
+  
+  "routine": "Create a weekly meal plan incorporating {product} in {tone}. Showcase its versatility across breakfast, lunch, dinner, and snacks with different flavor profiles and preparation methods. {trendContext}",
+  
+  "beginner_kit": "Create a beginner's guide to {product} in {tone}. Include selection tips, storage recommendations, basic preparation techniques, flavor pairing suggestions, and simple recipes for culinary novices. {trendContext}",
+  
+  "demo_script": "Write a culinary demonstration for {product} in {tone}. Walk through selection, preparation, and creating three distinct recipes that showcase its versatility from simple to sophisticated applications. {trendContext}",
+  
+  "drugstore_dupe": "Present {product} as an affordable alternative to a gourmet food item in {tone}. Compare flavor profiles, ingredient quality, culinary applications, and cost savings while highlighting why this option delivers exceptional value. {trendContext}",
+  
+  "personal_review": "Share a personal culinary experience with {product} in {tone}. Detail tasting notes, dishes created, family/guest reactions, how it compares to alternatives, and whether you would purchase again. {trendContext}",
+  
+  "surprise_me": "Create unexpected culinary content about {product} in {tone}. This could include unusual recipe applications, cultural history behind the product, chef secrets for maximizing flavor, or creative presentation ideas. {trendContext}",
+  
+  "recipe": "Create a signature recipe featuring {product} in {tone}. Include a complete ingredient list with measurements, clear step-by-step instructions, cooking tips, and serving suggestions that highlight this product's best qualities. {trendContext}",
+  
+  "top5_under25": "Create a list of essential kitchen items under $25 that pair perfectly with {product} in {tone}. For each item, explain how it enhances preparation, serving, or enjoyment of the featured food product. {trendContext}"
+}
