@@ -1,6 +1,10 @@
 import { FC } from "react";
+import { format } from "date-fns";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { ScraperStatus, STATUS_COLORS } from "@/lib/types";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -15,19 +19,40 @@ const ScraperHealth: FC<ScraperHealthProps> = ({ scrapers, isLoading }) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const handleRefresh = async () => {
+  const handleRefreshAll = async () => {
     try {
       await apiRequest('POST', '/api/trending/refresh', {});
       // Invalidate cache to refetch scraper health
       queryClient.invalidateQueries({ queryKey: ['/api/scraper-health'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending'] });
       
       toast({
-        title: "Scraper status refreshed",
-        description: "Latest platform status has been updated.",
+        title: "All scrapers refreshed",
+        description: "Latest platform statuses have been updated.",
       });
     } catch (error) {
       toast({
         title: "Error refreshing status",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleRefreshPlatform = async (platform: string) => {
+    try {
+      await apiRequest('POST', `/api/trending/refresh/${platform}`, {});
+      // Invalidate cache to refetch scraper health
+      queryClient.invalidateQueries({ queryKey: ['/api/scraper-health'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending'] });
+      
+      toast({
+        title: `${platform.charAt(0).toUpperCase() + platform.slice(1)} refreshed`,
+        description: "Latest platform status has been updated.",
+      });
+    } catch (error) {
+      toast({
+        title: "Error refreshing platform",
         description: error instanceof Error ? error.message : "Unknown error occurred",
         variant: "destructive",
       });
@@ -155,26 +180,68 @@ const ScraperHealth: FC<ScraperHealthProps> = ({ scrapers, isLoading }) => {
         ) : (
           // Scraper status list
           scrapers.map((scraper) => (
-            <div key={scraper.id} className="flex flex-col mb-3">
+            <div key={scraper.id} className="flex flex-col mb-4 p-3 border border-neutral-200 rounded-lg hover:shadow-sm transition-shadow">
               <div className="flex justify-between items-center">
                 <div className="flex items-center">
-                  <span className="w-6 text-center text-neutral-700">
+                  <span className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-700">
                     {getPlatformIcon(scraper.name)}
                   </span>
-                  <span className="ml-2 text-sm text-neutral-700">
+                  <span className="ml-2 font-medium text-neutral-800">
                     {scraper.name.charAt(0).toUpperCase() + scraper.name.slice(1)}
                   </span>
                 </div>
-                <div className="flex items-center">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColorClass(scraper.status)}`}>
-                    {getStatusIcon(scraper.status)}
-                    {getStatusText(scraper.status)}
-                  </span>
+                <div className="flex items-center space-x-2">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Badge className={getStatusColorClass(scraper.status)} variant="outline">
+                          {getStatusIcon(scraper.status)}
+                          {getStatusText(scraper.status)}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <div className="text-xs">
+                          <p className="font-semibold">Status: {getStatusText(scraper.status)}</p>
+                          {scraper.status === 'active' && <p>Real-time data is being retrieved successfully.</p>}
+                          {scraper.status === 'gpt-fallback' && <p>Using AI-generated data due to scraper issues.</p>}
+                          {scraper.status === 'degraded' && <p>The scraper is working with reduced capabilities.</p>}
+                          {scraper.status === 'error' && <p>Data retrieval has failed completely.</p>}
+                          {scraper.status === 'rate-limited' && <p>Too many requests sent to the platform.</p>}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="h-8 w-8 p-0 rounded-full" 
+                    onClick={() => handleRefreshPlatform(scraper.name)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                    <span className="sr-only">Refresh {scraper.name}</span>
+                  </Button>
                 </div>
               </div>
+              
+              {/* Last check timestamp */}
+              <div className="mt-1 text-xs text-neutral-500 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                Last checked: {format(new Date(scraper.lastCheck), 'MMM d, yyyy h:mm a')}
+              </div>
+              
+              {/* Error message */}
               {(scraper.status === 'gpt-fallback' || scraper.status === 'error' || scraper.status === 'rate-limited') && scraper.errorMessage && (
-                <div className="mt-1 ml-8 text-xs text-red-500 italic">
-                  {scraper.errorMessage}
+                <div className="mt-2 py-2 px-3 bg-red-50 border border-red-100 rounded text-xs text-red-600">
+                  <div className="flex items-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                    <span>{scraper.errorMessage}</span>
+                  </div>
                 </div>
               )}
             </div>
@@ -182,15 +249,17 @@ const ScraperHealth: FC<ScraperHealthProps> = ({ scrapers, isLoading }) => {
         )}
       </CardContent>
       <CardFooter className="px-5 py-3 bg-neutral-50 border-t border-neutral-200 flex justify-end">
-        <button 
-          className="text-sm text-secondary-600 hover:text-secondary-800 font-medium flex items-center"
-          onClick={handleRefresh}
+        <Button
+          variant="outline"
+          size="sm"
+          className="text-sm flex items-center" 
+          onClick={handleRefreshAll}
         >
-          Refresh Status
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-        </button>
+          Refresh All Platforms
+        </Button>
       </CardFooter>
     </Card>
   );
