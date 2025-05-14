@@ -137,6 +137,12 @@ export class MemStorage implements IStorage {
         source: "tiktok",
         mentions: 380000,
         sourceUrl: "https://tiktok.com/tag/laroche"
+      },
+      {
+        title: "Glow Recipe Watermelon Glow Niacinamide Dew Drops",
+        source: "google-trends",
+        mentions: 890000,
+        sourceUrl: "https://trends.google.com/trends/explore?q=glow%20recipe"
       }
     ];
     

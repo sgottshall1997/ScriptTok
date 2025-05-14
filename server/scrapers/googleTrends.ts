@@ -66,7 +66,7 @@ export async function getGoogleTrendingProducts(): Promise<ScraperReturn> {
         errorMessage: undefined
       }
     };
-  } catch (scrapingError: unknown) {
+  } catch (scrapingError: any) {
     console.error('Error scraping Google Trends:', scrapingError);
     
     // Fall back to OpenAI for simulated data
