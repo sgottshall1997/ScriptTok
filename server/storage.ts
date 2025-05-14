@@ -71,13 +71,29 @@ export class MemStorage implements IStorage {
   }
   
   private initializeScraperStatuses(): void {
-    SCRAPER_PLATFORMS.forEach(platform => {
+    SCRAPER_PLATFORMS.forEach((platform, index) => {
+      // For demonstration purposes, set different statuses
+      let statusType: ScraperStatusType = 'active';
+      let errorMsg: string | null = null;
+      
+      // Set TikTok as GPT fallback
+      if (platform === 'tiktok') {
+        statusType = 'gpt-fallback';
+        errorMsg = 'Scraping failed: Rate limit exceeded on TikTok API';
+      }
+      
+      // Set YouTube as error
+      if (platform === 'youtube') {
+        statusType = 'error';
+        errorMsg = 'Scraping and GPT fallback failed: Network timeout';
+      }
+      
       const status: ScraperStatus = {
         id: this.scraperStatusId++,
         name: platform,
-        status: 'active',
+        status: statusType,
         lastCheck: new Date(),
-        errorMessage: null
+        errorMessage: errorMsg
       };
       this.scraperStatuses.set(platform, status);
     });

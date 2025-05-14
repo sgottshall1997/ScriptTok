@@ -36,10 +36,16 @@ const ScraperHealth: FC<ScraperHealthProps> = ({ scrapers, isLoading }) => {
 
   const getStatusIcon = (status: string) => {
     switch (status) {
-      case 'operational':
+      case 'active':
         return (
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+          </svg>
+        );
+      case 'gpt-fallback':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         );
       case 'degraded':
@@ -48,7 +54,8 @@ const ScraperHealth: FC<ScraperHealthProps> = ({ scrapers, isLoading }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
           </svg>
         );
-      case 'down':
+      case 'error':
+      case 'rate-limited':
         return (
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -106,12 +113,16 @@ const ScraperHealth: FC<ScraperHealthProps> = ({ scrapers, isLoading }) => {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'operational':
-        return 'Operational';
+      case 'active':
+        return 'Active';
+      case 'gpt-fallback':
+        return 'GPT Fallback';
       case 'degraded':
         return 'Degraded';
-      case 'down':
-        return 'Down';
+      case 'error':
+        return 'Error';
+      case 'rate-limited':
+        return 'Rate Limited';
       default:
         return 'Unknown';
     }
@@ -144,21 +155,28 @@ const ScraperHealth: FC<ScraperHealthProps> = ({ scrapers, isLoading }) => {
         ) : (
           // Scraper status list
           scrapers.map((scraper) => (
-            <div key={scraper.id} className="flex justify-between items-center">
-              <div className="flex items-center">
-                <span className="w-6 text-center text-neutral-700">
-                  {getPlatformIcon(scraper.name)}
-                </span>
-                <span className="ml-2 text-sm text-neutral-700">
-                  {scraper.name.charAt(0).toUpperCase() + scraper.name.slice(1)}
-                </span>
+            <div key={scraper.id} className="flex flex-col mb-3">
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  <span className="w-6 text-center text-neutral-700">
+                    {getPlatformIcon(scraper.name)}
+                  </span>
+                  <span className="ml-2 text-sm text-neutral-700">
+                    {scraper.name.charAt(0).toUpperCase() + scraper.name.slice(1)}
+                  </span>
+                </div>
+                <div className="flex items-center">
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColorClass(scraper.status)}`}>
+                    {getStatusIcon(scraper.status)}
+                    {getStatusText(scraper.status)}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center">
-                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColorClass(scraper.status)}`}>
-                  {getStatusIcon(scraper.status)}
-                  {getStatusText(scraper.status)}
-                </span>
-              </div>
+              {(scraper.status === 'gpt-fallback' || scraper.status === 'error' || scraper.status === 'rate-limited') && scraper.errorMessage && (
+                <div className="mt-1 ml-8 text-xs text-red-500 italic">
+                  {scraper.errorMessage}
+                </div>
+              )}
             </div>
           ))
         )}
