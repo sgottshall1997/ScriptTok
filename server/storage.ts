@@ -30,11 +30,17 @@ export interface IStorage {
   getScraperStatus(): Promise<ScraperStatus[]>;
   
   // API usage operations
-  incrementApiUsage(): Promise<void>;
+  incrementApiUsage(templateType?: string, tone?: string): Promise<void>;
   getApiUsage(): Promise<ApiUsage[]>;
   getTodayApiUsage(): Promise<number>;
   getWeeklyApiUsage(): Promise<number>;
   getMonthlyApiUsage(): Promise<number>;
+  
+  // Analytics operations
+  getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>>;
+  getToneUsageStats(): Promise<Array<{tone: string, count: number}>>;
+  getGenerationTrends(): Promise<Array<{date: string, count: number}>>;
+  getPopularProducts(): Promise<Array<{product: string, count: number}>>;
 }
 
 // In-memory storage implementation
@@ -44,6 +50,11 @@ export class MemStorage implements IStorage {
   private trendingProducts: Map<number, TrendingProduct>;
   private scraperStatuses: Map<string, ScraperStatus>;
   private apiUsage: Map<string, ApiUsage>;
+  
+  // Analytics tracking maps
+  private templateUsage: Map<string, number>;
+  private toneUsage: Map<string, number>;
+  private productUsage: Map<string, number>;
   
   private userId: number;
   private contentGenerationId: number;
@@ -57,6 +68,11 @@ export class MemStorage implements IStorage {
     this.trendingProducts = new Map();
     this.scraperStatuses = new Map();
     this.apiUsage = new Map();
+    
+    // Initialize analytics tracking
+    this.templateUsage = new Map();
+    this.toneUsage = new Map();
+    this.productUsage = new Map();
     
     this.userId = 1;
     this.contentGenerationId = 1;
@@ -183,6 +199,19 @@ export class MemStorage implements IStorage {
       id, 
       createdAt: new Date() 
     };
+    
+    // Track analytics for template type
+    const currentTemplateCount = this.templateUsage.get(generation.templateType) || 0;
+    this.templateUsage.set(generation.templateType, currentTemplateCount + 1);
+    
+    // Track analytics for tone
+    const currentToneCount = this.toneUsage.get(generation.tone) || 0;
+    this.toneUsage.set(generation.tone, currentToneCount + 1);
+    
+    // Track analytics for product
+    const currentProductCount = this.productUsage.get(generation.product) || 0;
+    this.productUsage.set(generation.product, currentProductCount + 1);
+    
     this.contentGenerations.set(id, generation);
     return generation;
   }
