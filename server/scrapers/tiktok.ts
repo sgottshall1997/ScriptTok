@@ -6,20 +6,74 @@ import { ScraperReturn } from './index';
 import { ScraperStatusType } from '@shared/constants';
 
 // TikTok trending products scraper with web approach
-export async function getTikTokTrending(): Promise<ScraperReturn> {
+export async function getTikTokTrending(niche: string = 'skincare'): Promise<ScraperReturn> {
   // First try real TikTok data
   try {
-    // Define popular TikTok skincare hashtags to search
-    const skincareTags = [
-      'skincaretips',
-      'skincareproducts', 
-      'skincaremusthaves',
-      'beautyhacks',
-      'skintok'
-    ];
+    // Define popular TikTok hashtags by niche
+    const nicheTags: Record<string, string[]> = {
+      'skincare': [
+        'skincaretips',
+        'skincareproducts', 
+        'skincaremusthaves',
+        'beautyhacks',
+        'skintok'
+      ],
+      'tech': [
+        'techtok',
+        'techreview',
+        'gadgets',
+        'technews',
+        'techhacks'
+      ],
+      'fashion': [
+        'fashiontok',
+        'ootd',
+        'styletips',
+        'fashionhacks',
+        'outfitinspo'
+      ],
+      'fitness': [
+        'fitnesstok',
+        'workout',
+        'fitnessgear',
+        'gymessentials',
+        'fitnessjourney'
+      ],
+      'food': [
+        'foodtok',
+        'kitchengadgets',
+        'foodie',
+        'cookingessentials',
+        'recipehacks'
+      ],
+      'home': [
+        'hometok',
+        'homedecor',
+        'cleaninghacks',
+        'organization',
+        'homeessentials'
+      ],
+      'pet': [
+        'pettok',
+        'dogproducts',
+        'catessentials',
+        'pethacks',
+        'petcare'
+      ],
+      'travel': [
+        'traveltok',
+        'travelgear',
+        'travelmusthaves',
+        'packingtips',
+        'wanderlust'
+      ]
+    };
+    
+    // Get the tags for the specified niche, or default to skincare
+    const tags = nicheTags[niche] || nicheTags['skincare'];
     
     // Choose a random tag
-    const selectedTag = skincareTags[Math.floor(Math.random() * skincareTags.length)];
+    const selectedTag = tags[Math.floor(Math.random() * tags.length)];
     console.log(`Scraping TikTok for tag: #${selectedTag}`);
     
     // Try to access the TikTok tag page
