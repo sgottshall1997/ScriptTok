@@ -11,9 +11,10 @@ import {
   ContentPerformance, InsertContentPerformance,
   ContentVersion, InsertContentVersion,
   ApiIntegration, InsertApiIntegration,
+  TrendingEmojisHashtags, InsertTrendingEmojisHashtags,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
-  contentPerformance, contentVersions, apiIntegrations
+  contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -88,6 +89,11 @@ export interface IStorage {
   getApiIntegrationsByUser(userId: number): Promise<ApiIntegration[]>;
   getApiIntegrationByProvider(userId: number, provider: string): Promise<ApiIntegration | undefined>;
   deleteApiIntegration(id: number): Promise<boolean>;
+  
+  // Trending Emojis and Hashtags operations
+  getTrendingEmojisHashtags(niche: string): Promise<TrendingEmojisHashtags | undefined>;
+  saveTrendingEmojisHashtags(data: InsertTrendingEmojisHashtags): Promise<TrendingEmojisHashtags>;
+  getAllTrendingEmojisHashtags(): Promise<TrendingEmojisHashtags[]>;
   
   // Analytics operations
   getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>>;
@@ -1388,6 +1394,60 @@ export class DatabaseStorage implements IStorage {
       .where(eq(apiIntegrations.id, id))
       .returning({ deleted: apiIntegrations.id });
     return result.length > 0;
+  }
+  
+  // Trending Emojis and Hashtags operations
+  async getTrendingEmojisHashtags(niche: string): Promise<TrendingEmojisHashtags | undefined> {
+    const [result] = await db
+      .select()
+      .from(trendingEmojisHashtags)
+      .where(eq(trendingEmojisHashtags.niche, niche))
+      .orderBy(desc(trendingEmojisHashtags.updatedAt))
+      .limit(1);
+    
+    return result;
+  }
+  
+  async saveTrendingEmojisHashtags(data: InsertTrendingEmojisHashtags): Promise<TrendingEmojisHashtags> {
+    // Check if there's an existing entry for this niche
+    const [existing] = await db
+      .select()
+      .from(trendingEmojisHashtags)
+      .where(eq(trendingEmojisHashtags.niche, data.niche));
+    
+    if (existing) {
+      // Update existing record
+      const [updated] = await db
+        .update(trendingEmojisHashtags)
+        .set({
+          emojis: data.emojis,
+          hashtags: data.hashtags,
+          updatedAt: new Date()
+        })
+        .where(eq(trendingEmojisHashtags.id, existing.id))
+        .returning();
+      
+      return updated;
+    } else {
+      // Insert new record
+      const [newRecord] = await db
+        .insert(trendingEmojisHashtags)
+        .values({
+          ...data,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      
+      return newRecord;
+    }
+  }
+  
+  async getAllTrendingEmojisHashtags(): Promise<TrendingEmojisHashtags[]> {
+    return await db
+      .select()
+      .from(trendingEmojisHashtags)
+      .orderBy(desc(trendingEmojisHashtags.updatedAt));
   }
 }
 
