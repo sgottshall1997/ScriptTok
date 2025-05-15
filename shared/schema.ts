@@ -27,6 +27,7 @@ export const trendingProducts = pgTable("trending_products", {
   source: text("source").notNull(),
   mentions: integer("mentions"),
   sourceUrl: text("source_url"),
+  niche: text("niche").notNull().default("skincare"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -65,6 +66,7 @@ export const insertTrendingProductSchema = createInsertSchema(trendingProducts).
   source: true,
   mentions: true,
   sourceUrl: true,
+  niche: true,
 });
 
 export const insertScraperStatusSchema = createInsertSchema(scraperStatus).pick({

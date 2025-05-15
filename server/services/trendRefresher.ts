@@ -31,10 +31,41 @@ export async function getRefreshedTrendingProducts() {
 
 /**
  * Generate trending products using OpenAI with scraper results as context
+ * @param niche Optional niche to generate trending products for
+ * @param scraperResults Optional scraper results to use as context
  */
-async function generateTrendingProductsWithAI(scraperResults?: any) {
+async function generateTrendingProductsWithAI(niche: string = 'skincare', scraperResults?: any) {
   try {
-    // Create context from scraper results if available
+    // Define niche-specific system prompts
+    const nicheSystemPrompts: Record<string, string> = {
+      skincare: "You are a beauty industry trend analyst with real-time knowledge of trending skincare and beauty products. Provide specific, named product suggestions with brand names that are currently trending on social media platforms. Avoid generic descriptions like 'Retinol Serum' and instead use specific product names like 'The Ordinary Niacinamide 10% + Zinc 1%' or 'CeraVe Hydrating Facial Cleanser'. Return your response in JSON format.",
+      tech: "You are a technology industry analyst with real-time knowledge of trending tech products. Provide specific, named product suggestions with brand names that are currently trending on tech review sites and social media platforms. Avoid generic descriptions like 'Bluetooth Speaker' and instead use specific product names like 'Sony WH-1000XM5' or 'Apple MacBook Air M2'. Return your response in JSON format.",
+      fashion: "You are a fashion industry analyst with real-time knowledge of trending clothing and accessories. Provide specific, named product suggestions with brand names that are currently trending on social media and fashion blogs. Avoid generic descriptions like 'White Sneakers' and instead use specific product names like 'Nike Air Force 1' or 'Levi's 501 Original Fit Jeans'. Return your response in JSON format.",
+      fitness: "You are a fitness industry analyst with real-time knowledge of trending fitness products and equipment. Provide specific, named product suggestions with brand names that are currently trending on social media and fitness communities. Avoid generic descriptions like 'Running Shoes' and instead use specific product names like 'Hoka Clifton 8' or 'Lululemon Align Leggings'. Return your response in JSON format.",
+      food: "You are a food and kitchen industry analyst with real-time knowledge of trending cooking products and kitchen gadgets. Provide specific, named product suggestions with brand names that are currently trending on social media and cooking communities. Avoid generic descriptions like 'Air Fryer' and instead use specific product names like 'Ninja Foodi 10-in-1 XL Pro' or 'Le Creuset Dutch Oven'. Return your response in JSON format.",
+      home: "You are a home goods industry analyst with real-time knowledge of trending home products and decor. Provide specific, named product suggestions with brand names that are currently trending on social media and home design communities. Avoid generic descriptions like 'Throw Pillow' and instead use specific product names like 'Brooklinen Down Pillow' or 'Dyson V11 Vacuum'. Return your response in JSON format.",
+      pet: "You are a pet industry analyst with real-time knowledge of trending pet products and accessories. Provide specific, named product suggestions with brand names that are currently trending on social media and pet owner communities. Avoid generic descriptions like 'Dog Leash' and instead use specific product names like 'Wild One Walk Kit' or 'Furbo Dog Camera'. Return your response in JSON format.",
+      travel: "You are a travel goods industry analyst with real-time knowledge of trending travel products and accessories. Provide specific, named product suggestions with brand names that are currently trending on social media and travel communities. Avoid generic descriptions like 'Carry-on Bag' and instead use specific product names like 'Away The Carry-On' or 'Bose QuietComfort Earbuds'. Return your response in JSON format.",
+      default: "You are a product trend analyst with real-time knowledge of trending consumer products. Provide specific, named product suggestions with brand names that are currently trending on social media platforms. Avoid generic descriptions and use specific product names with brands. Return your response in JSON format."
+    };
+
+    // Define niche-specific user prompts
+    const nicheUserPrompts: Record<string, string> = {
+      skincare: "Please suggest 10 realistic trending skincare and beauty products that would likely be trending currently. Include a diverse mix of product types, brands, and price points.",
+      tech: "Please suggest 10 realistic trending technology products that would likely be trending currently. Include a diverse mix of gadgets, accessories, and devices at different price points.",
+      fashion: "Please suggest 10 realistic trending fashion items that would likely be trending currently. Include a diverse mix of clothing, footwear, and accessories at different price points.",
+      fitness: "Please suggest 10 realistic trending fitness products that would likely be trending currently. Include a diverse mix of workout equipment, apparel, and accessories at different price points.",
+      food: "Please suggest 10 realistic trending kitchen and cooking products that would likely be trending currently. Include a diverse mix of appliances, cookware, and gadgets at different price points.",
+      home: "Please suggest 10 realistic trending home products that would likely be trending currently. Include a diverse mix of furniture, decor, and smart home devices at different price points.",
+      pet: "Please suggest 10 realistic trending pet products that would likely be trending currently. Include a diverse mix of food, toys, and accessories at different price points for different types of pets.",
+      travel: "Please suggest 10 realistic trending travel products that would likely be trending currently. Include a diverse mix of luggage, accessories, and gadgets at different price points.",
+      default: "Please suggest 10 realistic trending consumer products that would likely be trending currently. Include a diverse mix of product types, brands, and price points."
+    };
+
+    // Get the appropriate system prompt for the niche
+    const systemPrompt = nicheSystemPrompts[niche] || nicheSystemPrompts.default;
+    
+    // Create context from scraper results if available, or use the default prompt
     let scraperContext = "";
     if (scraperResults && scraperResults.products && scraperResults.products.length > 0) {
       const platformStatuses = scraperResults.platforms.map((p: any) => 
@@ -52,10 +83,10 @@ ${platformStatuses}
 Products already found by scrapers:
 ${existingProducts}
 
-Based on these real results, please suggest 5-8 additional trending skincare/beauty products that would likely be trending now. These should be different from the ones already listed but realistic in nature. Include some from different price points and categories.
+Based on these real results, please suggest 5-8 additional trending ${niche} products that would likely be trending now. These should be different from the ones already listed but realistic in nature. Include some from different price points and categories.
 `;
     } else {
-      scraperContext = `Please suggest 10 realistic trending skincare and beauty products that would likely be trending currently. Include a diverse mix of product types, brands, and price points.`;
+      scraperContext = nicheUserPrompts[niche] || nicheUserPrompts.default;
     }
     
     // Generate new trending products with OpenAI
@@ -64,7 +95,7 @@ Based on these real results, please suggest 5-8 additional trending skincare/bea
       messages: [
         {
           role: "system",
-          content: "You are a beauty industry trend analyst with real-time knowledge of trending skincare and beauty products. Provide specific, named product suggestions with brand names that are currently trending on social media platforms. Avoid generic descriptions like 'Retinol Serum' and instead use specific product names like 'The Ordinary Niacinamide 10% + Zinc 1%' or 'CeraVe Hydrating Facial Cleanser'. Return your response in JSON format."
+          content: systemPrompt
         },
         {
           role: "user",
@@ -89,7 +120,7 @@ Based on these real results, please suggest 5-8 additional trending skincare/bea
       parsedContent.trending_products || 
       [];
     
-    console.log(`OpenAI generated ${trendingProducts.length} trending products`);
+    console.log(`OpenAI generated ${trendingProducts.length} trending ${niche} products`);
     
     // Convert to our format with different sources
     const platforms: ScraperPlatform[] = ['tiktok', 'instagram', 'youtube', 'reddit', 'amazon', 'google-trends'];
@@ -113,7 +144,20 @@ Based on these real results, please suggest 5-8 additional trending skincare/bea
         if (source === 'tiktok') sourceUrl = `https://tiktok.com/tag/${encodeURIComponent(title.split(' ')[0])}`;
         else if (source === 'instagram') sourceUrl = `https://instagram.com/explore/tags/${encodeURIComponent(title.split(' ')[0])}`;
         else if (source === 'youtube') sourceUrl = `https://youtube.com/results?search_query=${encodeURIComponent(title)}`;
-        else if (source === 'reddit') sourceUrl = 'https://reddit.com/r/SkincareAddiction';
+        else if (source === 'reddit') {
+          // Select appropriate subreddit based on niche
+          let subreddit = 'all';
+          if (niche === 'skincare') subreddit = 'SkincareAddiction';
+          else if (niche === 'tech') subreddit = 'gadgets';
+          else if (niche === 'fashion') subreddit = 'malefashionadvice';
+          else if (niche === 'fitness') subreddit = 'fitness';
+          else if (niche === 'food') subreddit = 'cooking';
+          else if (niche === 'home') subreddit = 'homedecorating';
+          else if (niche === 'pet') subreddit = 'pets';
+          else if (niche === 'travel') subreddit = 'travel';
+          
+          sourceUrl = `https://reddit.com/r/${subreddit}`;
+        }
         else if (source === 'amazon') sourceUrl = `https://amazon.com/s?k=${encodeURIComponent(title)}`;
         else if (source === 'google-trends') sourceUrl = `https://trends.google.com/trends/explore?q=${encodeURIComponent(title)}`;
         
@@ -121,18 +165,19 @@ Based on these real results, please suggest 5-8 additional trending skincare/bea
           title,
           source,
           mentions,
-          sourceUrl
+          sourceUrl,
+          niche // Add niche to the trending product
         });
       } catch (productError) {
         console.error('Error processing product from OpenAI:', productError);
       }
     });
     
-    console.log(`Successfully processed ${results.length} products from OpenAI`);
+    console.log(`Successfully processed ${results.length} ${niche} products from OpenAI`);
     
     return results;
   } catch (error) {
-    console.error('Error generating trending products with AI:', error);
+    console.error(`Error generating trending ${niche} products with AI:`, error);
     return [];
   }
 }
@@ -223,46 +268,92 @@ async function curateTrendingProductsWithAI(scrapedProducts: InsertTrendingProdu
 
 /**
  * Refresh trending products using scraper outputs and OpenAI
+ * Optionally specify a niche to refresh products specifically for that niche
  */
-async function refreshTrendingProducts() {
+async function refreshTrendingProducts(specificNiche?: string) {
   try {
-    console.log('Refreshing trending products...');
+    const niches = specificNiche ? [specificNiche] : ['skincare', 'tech', 'fashion', 'fitness', 'food', 'home', 'pet', 'travel'];
+    console.log(`Refreshing trending products for ${specificNiche || 'all niches'}...`);
     
     // Get current scraper outputs
     const scraperResults = await getAllTrendingProducts();
     
-    // Clear existing trending products
-    await storage.clearTrendingProducts();
+    // Clear existing trending products for the specified niche(s)
+    if (specificNiche) {
+      await storage.clearTrendingProductsByNiche(specificNiche);
+    } else {
+      await storage.clearTrendingProducts();
+    }
 
     // Prepare a list of all scraped products with their sources
     let allScrapedProducts = [...scraperResults.products];
     
-    // If we have at least some scraper results, analyze them with OpenAI
-    if (allScrapedProducts.length > 0) {
-      console.log(`Found ${allScrapedProducts.length} products from scrapers for analysis`);
+    // Process each niche
+    for (const niche of niches) {
+      console.log(`Processing niche: ${niche}`);
       
-      // Find the best trending products using OpenAI to analyze the scraped data
-      const curatedProducts = await curateTrendingProductsWithAI(allScrapedProducts);
-      
-      // Save the curated products
-      for (const product of curatedProducts) {
-        await storage.saveTrendingProduct(product);
-      }
-      
-      // If we need more products to reach a minimum, generate them with OpenAI
-      if (curatedProducts.length < 5) {
-        console.log(`Need ${5 - curatedProducts.length} more products to reach minimum`);
-        const additionalProducts = await generateTrendingProductsWithAI(scraperResults);
-        for (const product of additionalProducts.slice(0, 5 - curatedProducts.length)) {
+      // If we have at least some scraper results, analyze them with OpenAI
+      if (allScrapedProducts.length > 0) {
+        console.log(`Found ${allScrapedProducts.length} products from scrapers for analysis`);
+        
+        // Filter products that might be relevant to this niche (basic keyword matching)
+        // This is a simple approach - in a real system you might use categorization or ML
+        const potentialNicheProducts = allScrapedProducts.filter(product => {
+          const title = product.title.toLowerCase();
+          
+          // Basic keyword matching for each niche
+          if (niche === 'skincare' && (
+            title.includes('skin') || title.includes('face') || title.includes('cream') || 
+            title.includes('serum') || title.includes('cleanser') || title.includes('moisturizer')
+          )) return true;
+          
+          if (niche === 'tech' && (
+            title.includes('phone') || title.includes('laptop') || title.includes('headphone') || 
+            title.includes('speaker') || title.includes('tablet') || title.includes('watch')
+          )) return true;
+          
+          if (niche === 'fashion' && (
+            title.includes('jeans') || title.includes('shirt') || title.includes('dress') || 
+            title.includes('shoes') || title.includes('bag') || title.includes('jacket')
+          )) return true;
+          
+          // Default behavior - give the product to the niche if no other niche has claimed it
+          // and we're processing the default niche (skincare)
+          return niche === 'skincare' && !product.niche;
+        });
+        
+        // Add niche to these products
+        potentialNicheProducts.forEach(product => {
+          product.niche = niche;
+        });
+        
+        // Find the best trending products using OpenAI to analyze the scraped data
+        const curatedProducts = potentialNicheProducts.length > 0 ? 
+          await curateTrendingProductsWithAI(potentialNicheProducts) : [];
+        
+        // Save the curated products
+        for (const product of curatedProducts) {
+          product.niche = niche; // Ensure niche is set
           await storage.saveTrendingProduct(product);
         }
-      }
-    } else {
-      // No scraper results, generate everything with OpenAI
-      console.log('No scraper results, generating all products with OpenAI');
-      const generatedProducts = await generateTrendingProductsWithAI();
-      for (const product of generatedProducts) {
-        await storage.saveTrendingProduct(product);
+        
+        // If we need more products to reach a minimum, generate them with OpenAI
+        if (curatedProducts.length < 5) {
+          console.log(`Need ${5 - curatedProducts.length} more products for ${niche} to reach minimum`);
+          const additionalProducts = await generateTrendingProductsWithAI(niche, scraperResults);
+          for (const product of additionalProducts.slice(0, 5 - curatedProducts.length)) {
+            product.niche = niche; // Ensure niche is set
+            await storage.saveTrendingProduct(product);
+          }
+        }
+      } else {
+        // No scraper results, generate everything with OpenAI
+        console.log(`No scraper results, generating all products for ${niche} with OpenAI`);
+        const generatedProducts = await generateTrendingProductsWithAI(niche);
+        for (const product of generatedProducts) {
+          product.niche = niche; // Ensure niche is set
+          await storage.saveTrendingProduct(product);
+        }
       }
     }
     
@@ -275,9 +366,9 @@ async function refreshTrendingProducts() {
       );
     }
     
-    console.log('Trending products refreshed successfully');
+    console.log(`Trending products refreshed successfully for ${specificNiche || 'all niches'}`);
   } catch (error) {
-    console.error('Error refreshing trending products:', error);
+    console.error(`Error refreshing trending products for ${specificNiche || 'all niches'}:`, error);
   }
 }
 
