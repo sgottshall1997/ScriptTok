@@ -5,6 +5,7 @@ import * as z from 'zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { NICHES } from '@shared/constants';
+import CustomTemplateTestDialog from './CustomTemplateTestDialog';
 
 import {
   Dialog,
