@@ -40,9 +40,17 @@ export interface IStorage {
   
   // Analytics operations
   getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>>;
+  getTemplateUsageByNiche(niche: string): Promise<Array<{templateType: string, count: number}>>;
   getToneUsageStats(): Promise<Array<{tone: string, count: number}>>;
+  getToneUsageByNiche(niche: string): Promise<Array<{tone: string, count: number}>>;
   getGenerationTrends(): Promise<Array<{date: string, count: number}>>;
+  getGenerationTrendsByNiche(niche: string): Promise<Array<{date: string, count: number}>>;
   getPopularProducts(): Promise<Array<{product: string, count: number}>>;
+  getPopularProductsByNiche(niche: string): Promise<Array<{product: string, count: number}>>;
+  getNicheUsageStats(): Promise<Array<{niche: string, count: number}>>;
+  getCustomTemplates(): Promise<Array<{id: number, name: string, content: string, niche: string}>>;
+  saveCustomTemplate(template: {name: string, content: string, niche: string}): Promise<{id: number, name: string, content: string, niche: string}>;
+  deleteCustomTemplate(id: number): Promise<boolean>;
 }
 
 // In-memory storage implementation
@@ -57,6 +65,16 @@ export class MemStorage implements IStorage {
   private templateUsage: Map<string, number>;
   private toneUsage: Map<string, number>;
   private productUsage: Map<string, number>;
+  private nicheUsage: Map<string, number>;
+  
+  // Niche-specific tracking maps
+  private templateUsageByNiche: Map<string, Map<string, number>>;
+  private toneUsageByNiche: Map<string, Map<string, number>>;
+  private productUsageByNiche: Map<string, Map<string, number>>;
+  private generationsByNicheDate: Map<string, Map<string, number>>;
+  
+  // Custom templates
+  private customTemplates: Map<number, {id: number, name: string, content: string, niche: string}>;
   
   private userId: number;
   private contentGenerationId: number;
