@@ -280,7 +280,7 @@ const TemplateExplorerPage: React.FC = () => {
                   borderClass=""
                   templateCount={templateCounts[niche] || 10}
                   isSelected={selectedNiche === niche}
-                  onSelect={handleNicheSelect}
+                  onSelect={handleNicheChange}
                 />
               ))}
             </div>
