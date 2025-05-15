@@ -317,6 +317,15 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
               <span>Estimated Video Length: <strong>{content.videoDuration.seconds} seconds</strong></span>
             </div>
           )}
+
+          {/* Smart Hashtag & Emoji Recommender - Only show if we have content */}
+          {content && content.content && (
+            <HashtagEmojiRecommender 
+              content={content.content}
+              niche={content.niche as Niche}
+              product={content.product}
+            />
+          )}
         </div>
       </CardContent>
     </Card>

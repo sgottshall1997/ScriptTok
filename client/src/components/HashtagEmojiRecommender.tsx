@@ -73,13 +73,12 @@ const HashtagEmojiRecommender: FC<HashtagEmojiRecommendationsProps> = ({ content
   const { data, isLoading, isError, refetch } = useQuery<RecommendationsResponse>({
     queryKey: ['/api/hashtag-emoji', niche, product],
     queryFn: async () => {
-      return await apiRequest('/api/hashtag-emoji', {
-        method: 'POST',
-        body: JSON.stringify({ content, niche, product }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      const response = await apiRequest(
+        'POST',
+        '/api/hashtag-emoji',
+        { content, niche, product }
+      );
+      return await response.json() as RecommendationsResponse;
     },
     enabled: !!content && !!niche && !!product
   });
@@ -217,7 +216,7 @@ const HashtagEmojiRecommender: FC<HashtagEmojiRecommendationsProps> = ({ content
           
           <TabsContent value="hashtags" className="space-y-4 mt-4">
             <div className="flex flex-wrap gap-2">
-              {data?.recommendations?.hashtags.map((hashtag, index) => (
+              {data?.recommendations?.hashtags.map((hashtag: string, index: number) => (
                 <Badge 
                   key={index} 
                   variant="secondary"
@@ -248,7 +247,7 @@ const HashtagEmojiRecommender: FC<HashtagEmojiRecommendationsProps> = ({ content
           
           <TabsContent value="emojis" className="space-y-4 mt-4">
             <div className="flex flex-wrap gap-3">
-              {data?.recommendations?.emojis.map((emoji, index) => (
+              {data?.recommendations?.emojis.map((emoji: string, index: number) => (
                 <div 
                   key={index} 
                   className="text-2xl cursor-pointer hover:scale-110 transition-transform"
