@@ -275,9 +275,6 @@ async function refreshTrendingProducts(specificNiche?: string) {
     const niches = specificNiche ? [specificNiche] : ['skincare', 'tech', 'fashion', 'fitness', 'food', 'home', 'pet', 'travel'];
     console.log(`Refreshing trending products for ${specificNiche || 'all niches'}...`);
     
-    // Get current scraper outputs (for all niches initially)
-    const scraperResults = await getAllTrendingProducts();
-    
     // Clear existing trending products for the specified niche(s)
     if (specificNiche) {
       await storage.clearTrendingProductsByNiche(specificNiche);
@@ -285,20 +282,37 @@ async function refreshTrendingProducts(specificNiche?: string) {
       await storage.clearTrendingProducts();
     }
 
-    // Prepare a list of all scraped products with their sources
-    let allScrapedProducts = [...scraperResults.products];
-    
-    // Process each niche
+    // Process each niche separately to get niche-specific trending products
     for (const niche of niches) {
       console.log(`Processing niche: ${niche}`);
       
+      // Get current scraper outputs for this specific niche
+      const scraperResults = await getAllTrendingProducts(niche);
+      
+      // Prepare a list of scraped products with their sources for this niche
+      let scrapedProducts = [...scraperResults.products];
+      
+      // Do we have enough products from scrapers?
+      console.log(`Found ${scrapedProducts.length} products from scrapers for analysis`);
+      
+      // We need at least 5 products, if we don't have enough, generate more with AI
+      const minProductsNeeded = 5;
+      if (scrapedProducts.length < minProductsNeeded) {
+        const neededProducts = minProductsNeeded - scrapedProducts.length;
+        console.log(`Need ${neededProducts} more products for ${niche} to reach minimum`);
+        const generatedProducts = await generateTrendingProductsWithAI(niche);
+        const additionalProducts = generatedProducts.slice(0, neededProducts);
+        scrapedProducts = [...scrapedProducts, ...additionalProducts];
+        console.log(`Successfully processed ${additionalProducts.length} ${niche} products from OpenAI`);
+      }
+      
       // If we have at least some scraper results, analyze them with OpenAI
-      if (allScrapedProducts.length > 0) {
-        console.log(`Found ${allScrapedProducts.length} products from scrapers for analysis`);
+      if (scrapedProducts.length > 0) {
+        console.log(`Found ${scrapedProducts.length} products from scrapers for analysis`);
         
         // Filter products that might be relevant to this niche (basic keyword matching)
         // This is a simple approach - in a real system you might use categorization or ML
-        const potentialNicheProducts = allScrapedProducts.filter(product => {
+        const potentialNicheProducts = scrapedProducts.filter(product => {
           const title = product.title.toLowerCase();
           
           // Basic keyword matching for each niche
