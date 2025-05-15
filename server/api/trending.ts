@@ -139,4 +139,30 @@ router.post("/refresh/:platform", async (req, res) => {
   }
 });
 
+// Get trending products from storage
+router.get("/products", async (req, res) => {
+  try {
+    // Get product limit from query param or use default
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
+    
+    // Get specific niche if provided
+    const niche = req.query.niche as string;
+    
+    let trendingProducts;
+    if (niche) {
+      trendingProducts = await storage.getTrendingProductsByNiche(niche, limit);
+    } else {
+      trendingProducts = await storage.getTrendingProducts(limit);
+    }
+    
+    res.json(trendingProducts);
+  } catch (error) {
+    console.error("Error fetching trending products from storage:", error);
+    res.status(500).json({ 
+      error: "Failed to fetch trending products",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
 export { router as trendingRouter };

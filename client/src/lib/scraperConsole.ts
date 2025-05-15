@@ -62,7 +62,8 @@ export async function logScraperHealth() {
       console.log('%c✅ Active Scrapers:', subheaderStyle);
       activeScrapers.forEach(scraper => {
         const lastCheck = new Date(scraper.lastCheck).toLocaleString();
-        console.log(`%c${scraper.name}%c - Last check: ${lastCheck} - Success: ${scraper.successCount}`, 
+        const successCount = typeof scraper.successCount === 'number' ? scraper.successCount : 0;
+        console.log(`%c${scraper.name}%c - Last check: ${lastCheck} - Success count: ${successCount}`, 
           statusStyles.active, 'color: inherit');
       });
       console.log('-'.repeat(50));
@@ -73,8 +74,11 @@ export async function logScraperHealth() {
       console.log('%c⚠️ Warning Scrapers:', subheaderStyle);
       warningScrapers.forEach(scraper => {
         const lastCheck = new Date(scraper.lastCheck).toLocaleString();
-        console.log(`%c${scraper.name}%c - Last check: ${lastCheck} - Message: ${scraper.errorMessage || 'No details'}`, 
+        const successCount = typeof scraper.successCount === 'number' ? scraper.successCount : 0;
+        const failureCount = typeof scraper.failureCount === 'number' ? scraper.failureCount : 0;
+        console.log(`%c${scraper.name}%c - Last check: ${lastCheck} - Success count: ${successCount} - Failures: ${failureCount}`, 
           statusStyles.warning, 'color: inherit');
+        console.log(`  Message: ${scraper.errorMessage || 'No details'}`);
       });
       console.log('-'.repeat(50));
     }
@@ -86,10 +90,13 @@ export async function logScraperHealth() {
         const lastCheck = new Date(scraper.lastCheck).toLocaleString();
         const lastSuccess = scraper.lastSuccess ? 
           new Date(scraper.lastSuccess).toLocaleString() : 'Never';
+        const successCount = typeof scraper.successCount === 'number' ? scraper.successCount : 0;
+        const failureCount = typeof scraper.failureCount === 'number' ? scraper.failureCount : 0;
         
         console.log(`%c${scraper.name}%c - Last check: ${lastCheck}`, 
           statusStyles.error, 'color: inherit');
         console.log(`  Last success: ${lastSuccess}`);
+        console.log(`  Success/failure count: ${successCount}/${failureCount}`);
         console.log(`  Error: ${scraper.errorMessage || 'Unknown error'}`);
       });
       console.log('-'.repeat(50));
@@ -101,9 +108,12 @@ export async function logScraperHealth() {
       otherScrapers.forEach(scraper => {
         const lastCheck = scraper.lastCheck ? 
           new Date(scraper.lastCheck).toLocaleString() : 'Never';
+        const successCount = typeof scraper.successCount === 'number' ? scraper.successCount : 0;
+        const failureCount = typeof scraper.failureCount === 'number' ? scraper.failureCount : 0;
         
         console.log(`%c${scraper.name}%c - Status: ${scraper.status} - Last check: ${lastCheck}`, 
           statusStyles.default, 'color: inherit');
+        console.log(`  Success/failure count: ${successCount}/${failureCount}`);
       });
       console.log('-'.repeat(50));
     }
@@ -122,6 +132,9 @@ export async function logScraperHealth() {
 export async function logTrendingProducts() {
   try {
     const response = await apiRequest('GET', '/api/trending/products');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch trending products: ${response.status} ${response.statusText}`);
+    }
     const products = await response.json();
     
     // Group by source and niche
