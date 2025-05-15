@@ -1,48 +1,60 @@
 /**
  * AI Model Configuration API Endpoint
- * Used to expose the AI model configuration for different niches and template types
+ * Used to configure and manage AI model parameters for different niches, templates, and tones
  */
+
 import { Router, Request, Response } from 'express';
-import { z } from 'zod';
-import { NICHES, TEMPLATE_TYPES, TONE_OPTIONS } from '@shared/constants';
-import { getModelConfig } from '../services/aiModelSelector';
 import { storage } from '../storage';
+import { InsertAiModelConfig } from '@shared/schema';
+import { NICHES, TEMPLATE_TYPES, TONE_OPTIONS } from '@shared/constants';
 
 export const aiModelConfigRouter = Router();
 
-// Validate request body for fetching configuration
-const configRequestSchema = z.object({
-  niche: z.enum(NICHES),
-  templateType: z.enum(TEMPLATE_TYPES),
-  tone: z.enum(TONE_OPTIONS),
-  productName: z.string().optional()
+/**
+ * GET /api/ai-model-config/:niche/:templateType/:tone
+ * Get a specific AI model configuration
+ */
+aiModelConfigRouter.get('/:niche/:templateType/:tone', async (req: Request, res: Response) => {
+  try {
+    const { niche, templateType, tone } = req.params;
+    
+    if (!NICHES.includes(niche)) {
+      return res.status(400).json({ message: `Invalid niche: ${niche}` });
+    }
+    
+    if (!TEMPLATE_TYPES.includes(templateType)) {
+      return res.status(400).json({ message: `Invalid template type: ${templateType}` });
+    }
+    
+    if (!TONE_OPTIONS.includes(tone)) {
+      return res.status(400).json({ message: `Invalid tone: ${tone}` });
+    }
+    
+    const config = await storage.getAiModelConfig(niche, templateType, tone);
+    
+    if (!config) {
+      // Return default settings if no custom configuration exists
+      return res.json({
+        niche,
+        templateType,
+        tone,
+        temperature: 0.7,
+        frequencyPenalty: 0.0,
+        presencePenalty: 0.0,
+        modelName: 'gpt-4',
+        isDefault: true
+      });
+    }
+    
+    res.json({
+      ...config,
+      isDefault: false
+    });
+  } catch (error) {
+    console.error('Error fetching AI model config:', error);
+    res.status(500).json({ message: 'Failed to fetch AI model configuration' });
+  }
 });
-
-// Validate request body for saving custom configuration
-const saveConfigSchema = z.object({
-  niche: z.enum(NICHES),
-  templateType: z.enum(TEMPLATE_TYPES),
-  tone: z.enum(TONE_OPTIONS),
-  temperature: z.number().min(0).max(1),
-  frequencyPenalty: z.number().min(0).max(2),
-  presencePenalty: z.number().min(0).max(2),
-  modelName: z.string()
-});
-
-// Interface for custom model configurations
-interface CustomModelConfig {
-  niche: string;
-  templateType: string;
-  tone: string;
-  temperature: number;
-  frequencyPenalty: number;
-  presencePenalty: number;
-  modelName: string;
-}
-
-// In-memory store for custom configurations
-// In a production environment, this would be in a database
-const customConfigurations: CustomModelConfig[] = [];
 
 /**
  * POST /api/ai-model-config
@@ -50,57 +62,67 @@ const customConfigurations: CustomModelConfig[] = [];
  */
 aiModelConfigRouter.post('/', async (req: Request, res: Response) => {
   try {
-    // Validate request
-    const result = configRequestSchema.safeParse(req.body);
-    if (!result.success) {
-      return res.status(400).json({ 
-        error: 'Invalid request', 
-        details: result.error.format() 
-      });
+    const { niche, templateType, tone } = req.body;
+    
+    if (!niche || !templateType || !tone) {
+      return res.status(400).json({ message: 'Missing required parameters' });
     }
-
-    const { niche, templateType, tone, productName } = result.data;
-
-    // First check if there's a custom configuration
-    const customConfig = customConfigurations.find(config => 
-      config.niche === niche && 
-      config.templateType === templateType && 
-      config.tone === tone
-    );
-
-    if (customConfig) {
-      // Return the custom configuration
+    
+    if (!NICHES.includes(niche)) {
+      return res.status(400).json({ message: `Invalid niche: ${niche}` });
+    }
+    
+    if (!TEMPLATE_TYPES.includes(templateType)) {
+      return res.status(400).json({ message: `Invalid template type: ${templateType}` });
+    }
+    
+    if (!TONE_OPTIONS.includes(tone)) {
+      return res.status(400).json({ message: `Invalid tone: ${tone}` });
+    }
+    
+    const config = await storage.getAiModelConfig(niche, templateType, tone);
+    
+    if (!config) {
+      // Return default settings if no custom configuration exists
       return res.json({
-        ...customConfig,
-        source: 'custom'
+        niche,
+        templateType,
+        tone,
+        temperature: 0.7,
+        frequencyPenalty: 0.0,
+        presencePenalty: 0.0,
+        modelName: 'gpt-4',
+        isDefault: true
       });
     }
-
-    // Otherwise, get the default configuration from the model selector
-    const modelConfig = getModelConfig({
-      niche,
-      templateType,
-      tone,
-      productName
-    });
-
-    // Return the configuration
-    return res.json({
-      niche,
-      templateType,
-      tone,
-      temperature: modelConfig.temperature,
-      frequencyPenalty: modelConfig.frequencyPenalty,
-      presencePenalty: modelConfig.presencePenalty,
-      modelName: modelConfig.modelName,
-      source: 'default'
+    
+    res.json({
+      ...config,
+      isDefault: false
     });
   } catch (error) {
-    console.error('Error fetching AI model configuration:', error);
-    return res.status(500).json({ 
-      error: 'Failed to fetch AI model configuration', 
-      message: error instanceof Error ? error.message : 'Unknown error' 
-    });
+    console.error('Error retrieving AI model config:', error);
+    res.status(500).json({ message: 'Failed to retrieve AI model configuration' });
+  }
+});
+
+/**
+ * GET /api/ai-model-config/niche/:niche
+ * Get all AI model configurations for a specific niche
+ */
+aiModelConfigRouter.get('/niche/:niche', async (req: Request, res: Response) => {
+  try {
+    const { niche } = req.params;
+    
+    if (!NICHES.includes(niche)) {
+      return res.status(400).json({ message: `Invalid niche: ${niche}` });
+    }
+    
+    const configs = await storage.getAiModelConfigsByNiche(niche);
+    res.json(configs);
+  } catch (error) {
+    console.error('Error fetching niche AI model configs:', error);
+    res.status(500).json({ message: 'Failed to fetch AI model configurations for niche' });
   }
 });
 
@@ -110,44 +132,40 @@ aiModelConfigRouter.post('/', async (req: Request, res: Response) => {
  */
 aiModelConfigRouter.post('/save', async (req: Request, res: Response) => {
   try {
-    // Validate request
-    const result = saveConfigSchema.safeParse(req.body);
-    if (!result.success) {
-      return res.status(400).json({ 
-        error: 'Invalid configuration data', 
-        details: result.error.format() 
-      });
+    const { niche, templateType, tone, temperature, frequencyPenalty, presencePenalty, modelName, userId } = req.body;
+    
+    if (!niche || !templateType || !tone || temperature === undefined) {
+      return res.status(400).json({ message: 'Missing required parameters' });
     }
-
-    const configData = result.data;
-
-    // Check if configuration already exists
-    const existingIndex = customConfigurations.findIndex(config => 
-      config.niche === configData.niche && 
-      config.templateType === configData.templateType && 
-      config.tone === configData.tone
-    );
-
-    if (existingIndex >= 0) {
-      // Update existing configuration
-      customConfigurations[existingIndex] = configData;
-    } else {
-      // Add new configuration
-      customConfigurations.push(configData);
+    
+    if (!NICHES.includes(niche)) {
+      return res.status(400).json({ message: `Invalid niche: ${niche}` });
     }
-
-    // In a real application, these would be saved to a database
-    return res.json({
-      success: true,
-      message: 'Configuration saved successfully',
-      config: configData
-    });
+    
+    if (!TEMPLATE_TYPES.includes(templateType)) {
+      return res.status(400).json({ message: `Invalid template type: ${templateType}` });
+    }
+    
+    if (!TONE_OPTIONS.includes(tone)) {
+      return res.status(400).json({ message: `Invalid tone: ${tone}` });
+    }
+    
+    const config: InsertAiModelConfig = {
+      niche,
+      templateType,
+      tone,
+      temperature: temperature ?? 0.7,
+      frequencyPenalty: frequencyPenalty ?? 0.0,
+      presencePenalty: presencePenalty ?? 0.0,
+      modelName: modelName ?? 'gpt-4',
+      createdBy: userId
+    };
+    
+    const savedConfig = await storage.saveAiModelConfig(config);
+    res.json(savedConfig);
   } catch (error) {
-    console.error('Error saving AI model configuration:', error);
-    return res.status(500).json({ 
-      error: 'Failed to save AI model configuration', 
-      message: error instanceof Error ? error.message : 'Unknown error' 
-    });
+    console.error('Error saving AI model config:', error);
+    res.status(500).json({ message: 'Failed to save AI model configuration' });
   }
 });
 
@@ -155,26 +173,23 @@ aiModelConfigRouter.post('/save', async (req: Request, res: Response) => {
  * GET /api/ai-model-config/templates/:niche
  * Get available template types for a specific niche that have custom configurations
  */
-aiModelConfigRouter.get('/templates/:niche', (req: Request, res: Response) => {
+aiModelConfigRouter.get('/templates/:niche', async (req: Request, res: Response) => {
   try {
     const { niche } = req.params;
     
-    // Validate niche
-    if (!NICHES.includes(niche as any)) {
-      return res.status(400).json({ error: 'Invalid niche' });
+    if (!NICHES.includes(niche)) {
+      return res.status(400).json({ message: `Invalid niche: ${niche}` });
     }
-
-    // Get all custom configurations for this niche
-    const nicheConfigs = customConfigurations.filter(config => config.niche === niche);
+    
+    const configs = await storage.getAiModelConfigsByNiche(niche);
     
     // Extract unique template types
-    const templatesSet = new Set(nicheConfigs.map(config => config.templateType));
-    const templates = Array.from(templatesSet);
+    const templateTypes = [...new Set(configs.map(config => config.templateType))];
     
-    return res.json(templates);
+    res.json(templateTypes);
   } catch (error) {
     console.error('Error fetching template types:', error);
-    return res.status(500).json({ error: 'Failed to fetch template types' });
+    res.status(500).json({ message: 'Failed to fetch template types' });
   }
 });
 
@@ -182,62 +197,55 @@ aiModelConfigRouter.get('/templates/:niche', (req: Request, res: Response) => {
  * GET /api/ai-model-config/tones/:niche/:templateType
  * Get available tones for a specific niche and template type that have custom configurations
  */
-aiModelConfigRouter.get('/tones/:niche/:templateType', (req: Request, res: Response) => {
+aiModelConfigRouter.get('/tones/:niche/:templateType', async (req: Request, res: Response) => {
   try {
     const { niche, templateType } = req.params;
     
-    // Validate parameters
-    if (!NICHES.includes(niche as any)) {
-      return res.status(400).json({ error: 'Invalid niche' });
+    if (!NICHES.includes(niche)) {
+      return res.status(400).json({ message: `Invalid niche: ${niche}` });
     }
     
-    if (!TEMPLATE_TYPES.includes(templateType as any)) {
-      return res.status(400).json({ error: 'Invalid template type' });
+    if (!TEMPLATE_TYPES.includes(templateType)) {
+      return res.status(400).json({ message: `Invalid template type: ${templateType}` });
     }
-
-    // Get all custom configurations for this niche and template type
-    const configs = customConfigurations.filter(
-      config => config.niche === niche && config.templateType === templateType
-    );
     
-    // Extract unique tones
-    const tonesSet = new Set(configs.map(config => config.tone));
-    const tones = Array.from(tonesSet);
+    const configs = await storage.getAiModelConfigsByNiche(niche);
     
-    return res.json(tones);
+    // Filter configs by template type and extract unique tones
+    const tones = [...new Set(
+      configs
+        .filter(config => config.templateType === templateType)
+        .map(config => config.tone)
+    )];
+    
+    res.json(tones);
   } catch (error) {
     console.error('Error fetching tones:', error);
-    return res.status(500).json({ error: 'Failed to fetch tones' });
+    res.status(500).json({ message: 'Failed to fetch tones' });
   }
 });
 
 /**
- * DELETE /api/ai-model-config/:niche/:templateType/:tone
+ * DELETE /api/ai-model-config/:id
  * Delete a custom configuration
  */
-aiModelConfigRouter.delete('/:niche/:templateType/:tone', (req: Request, res: Response) => {
+aiModelConfigRouter.delete('/:id', async (req: Request, res: Response) => {
   try {
-    const { niche, templateType, tone } = req.params;
+    const id = parseInt(req.params.id);
     
-    // Find the index of the configuration to delete
-    const index = customConfigurations.findIndex(
-      config => config.niche === niche && 
-                config.templateType === templateType && 
-                config.tone === tone
-    );
-    
-    if (index === -1) {
-      return res.status(404).json({ error: 'Configuration not found' });
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid ID' });
     }
     
-    // Remove the configuration
-    customConfigurations.splice(index, 1);
+    const deleted = await storage.deleteAiModelConfig(id);
     
-    return res.json({ success: true, message: 'Configuration deleted successfully' });
+    if (!deleted) {
+      return res.status(404).json({ message: 'Configuration not found' });
+    }
+    
+    res.json({ success: true });
   } catch (error) {
-    console.error('Error deleting configuration:', error);
-    return res.status(500).json({ error: 'Failed to delete configuration' });
+    console.error('Error deleting AI model config:', error);
+    res.status(500).json({ message: 'Failed to delete AI model configuration' });
   }
 });
-
-export default aiModelConfigRouter;

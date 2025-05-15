@@ -25,11 +25,38 @@ export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
+  deleteUser(id: number): Promise<boolean>;
+  
+  // Teams & User Roles operations
+  createTeam(team: InsertTeam): Promise<Team>;
+  getTeams(): Promise<Team[]>;
+  getTeam(id: number): Promise<Team | undefined>;
+  updateTeam(id: number, updates: Partial<InsertTeam>): Promise<Team | undefined>;
+  deleteTeam(id: number): Promise<boolean>;
+  addTeamMember(teamMember: InsertTeamMember): Promise<TeamMember>;
+  removeTeamMember(teamId: number, userId: number): Promise<boolean>;
+  getTeamMembers(teamId: number): Promise<TeamMember[]>;
+  getUserTeams(userId: number): Promise<Team[]>;
   
   // Content generation operations
   saveContentGeneration(generation: InsertContentGeneration): Promise<ContentGeneration>;
   getContentGenerations(limit?: number): Promise<ContentGeneration[]>;
   getContentGenerationById(id: number): Promise<ContentGeneration | undefined>;
+  
+  // Content versioning operations
+  saveContentVersion(version: InsertContentVersion): Promise<ContentVersion>;
+  getContentVersions(contentId: number): Promise<ContentVersion[]>;
+  getLatestContentVersion(contentId: number): Promise<ContentVersion | undefined>;
+  
+  // Content optimization operations
+  saveContentOptimization(optimization: InsertContentOptimization): Promise<ContentOptimization>;
+  getContentOptimization(contentId: number): Promise<ContentOptimization | undefined>;
+  
+  // Content performance operations
+  saveContentPerformance(performance: InsertContentPerformance): Promise<ContentPerformance>;
+  getContentPerformanceById(contentId: number): Promise<ContentPerformance[]>;
+  getContentPerformanceByPlatform(platform: string, limit?: number): Promise<ContentPerformance[]>;
   
   // Trending products operations
   saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct>;
@@ -44,11 +71,23 @@ export interface IStorage {
   getScraperStatus(): Promise<ScraperStatus[]>;
   
   // API usage operations
-  incrementApiUsage(templateType?: string, tone?: string): Promise<void>;
+  incrementApiUsage(templateType?: string, tone?: string, niche?: string, userId?: number): Promise<void>;
   getApiUsage(): Promise<ApiUsage[]>;
   getTodayApiUsage(): Promise<number>;
   getWeeklyApiUsage(): Promise<number>;
   getMonthlyApiUsage(): Promise<number>;
+  
+  // AI Model Config operations
+  saveAiModelConfig(config: InsertAiModelConfig): Promise<AiModelConfig>;
+  getAiModelConfig(niche: string, templateType: string, tone: string): Promise<AiModelConfig | undefined>;
+  getAiModelConfigsByNiche(niche: string): Promise<AiModelConfig[]>;
+  deleteAiModelConfig(id: number): Promise<boolean>;
+  
+  // API Integration operations
+  saveApiIntegration(integration: InsertApiIntegration): Promise<ApiIntegration>;
+  getApiIntegrationsByUser(userId: number): Promise<ApiIntegration[]>;
+  getApiIntegrationByProvider(userId: number, provider: string): Promise<ApiIntegration | undefined>;
+  deleteApiIntegration(id: number): Promise<boolean>;
   
   // Analytics operations
   getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>>;
@@ -670,4 +709,687 @@ export class MemStorage implements IStorage {
 }
 
 // Export a single instance of the storage
-export const storage = new MemStorage();
+// Database storage implementation
+export class DatabaseStorage implements IStorage {
+  // User operations
+  async getUser(id: number): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
+  }
+  
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user;
+  }
+  
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const now = new Date();
+    const [user] = await db
+      .insert(users)
+      .values({
+        ...insertUser,
+        role: insertUser.role || 'writer',
+        createdAt: now,
+        updatedAt: now
+      })
+      .returning();
+    return user;
+  }
+  
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const [updatedUser] = await db
+      .update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    return updatedUser;
+  }
+  
+  async deleteUser(id: number): Promise<boolean> {
+    const result = await db
+      .delete(users)
+      .where(eq(users.id, id))
+      .returning({ deleted: users.id });
+    return result.length > 0;
+  }
+  
+  // Teams & User Roles operations
+  async createTeam(team: InsertTeam): Promise<Team> {
+    const [newTeam] = await db
+      .insert(teams)
+      .values(team)
+      .returning();
+    return newTeam;
+  }
+  
+  async getTeams(): Promise<Team[]> {
+    return await db
+      .select()
+      .from(teams)
+      .orderBy(teams.name);
+  }
+  
+  async getTeam(id: number): Promise<Team | undefined> {
+    const [team] = await db
+      .select()
+      .from(teams)
+      .where(eq(teams.id, id));
+    return team;
+  }
+  
+  async updateTeam(id: number, updates: Partial<InsertTeam>): Promise<Team | undefined> {
+    const [updatedTeam] = await db
+      .update(teams)
+      .set(updates)
+      .where(eq(teams.id, id))
+      .returning();
+    return updatedTeam;
+  }
+  
+  async deleteTeam(id: number): Promise<boolean> {
+    const result = await db
+      .delete(teams)
+      .where(eq(teams.id, id))
+      .returning({ deleted: teams.id });
+    return result.length > 0;
+  }
+  
+  async addTeamMember(teamMember: InsertTeamMember): Promise<TeamMember> {
+    const [newMember] = await db
+      .insert(teamMembers)
+      .values(teamMember)
+      .returning();
+    return newMember;
+  }
+  
+  async removeTeamMember(teamId: number, userId: number): Promise<boolean> {
+    const result = await db
+      .delete(teamMembers)
+      .where(
+        and(
+          eq(teamMembers.teamId, teamId),
+          eq(teamMembers.userId, userId)
+        )
+      )
+      .returning({ deleted: teamMembers.id });
+    return result.length > 0;
+  }
+  
+  async getTeamMembers(teamId: number): Promise<TeamMember[]> {
+    return await db
+      .select()
+      .from(teamMembers)
+      .where(eq(teamMembers.teamId, teamId));
+  }
+  
+  async getUserTeams(userId: number): Promise<Team[]> {
+    const result = await db
+      .select({
+        team: teams
+      })
+      .from(teamMembers)
+      .innerJoin(teams, eq(teamMembers.teamId, teams.id))
+      .where(eq(teamMembers.userId, userId));
+      
+    return result.map(r => r.team);
+  }
+  
+  // Content generation operations
+  async saveContentGeneration(insertGeneration: InsertContentGeneration): Promise<ContentGeneration> {
+    const [generation] = await db
+      .insert(contentGenerations)
+      .values(insertGeneration)
+      .returning();
+    return generation;
+  }
+  
+  async getContentGenerations(limit = 10): Promise<ContentGeneration[]> {
+    return await db
+      .select()
+      .from(contentGenerations)
+      .orderBy(desc(contentGenerations.createdAt))
+      .limit(limit);
+  }
+  
+  async getContentGenerationById(id: number): Promise<ContentGeneration | undefined> {
+    const [generation] = await db
+      .select()
+      .from(contentGenerations)
+      .where(eq(contentGenerations.id, id));
+    return generation;
+  }
+  
+  // Content versioning operations
+  async saveContentVersion(version: InsertContentVersion): Promise<ContentVersion> {
+    const [newVersion] = await db
+      .insert(contentVersions)
+      .values(version)
+      .returning();
+    return newVersion;
+  }
+  
+  async getContentVersions(contentId: number): Promise<ContentVersion[]> {
+    return await db
+      .select()
+      .from(contentVersions)
+      .where(eq(contentVersions.contentId, contentId))
+      .orderBy(desc(contentVersions.version));
+  }
+  
+  async getLatestContentVersion(contentId: number): Promise<ContentVersion | undefined> {
+    const [latestVersion] = await db
+      .select()
+      .from(contentVersions)
+      .where(eq(contentVersions.contentId, contentId))
+      .orderBy(desc(contentVersions.version))
+      .limit(1);
+    return latestVersion;
+  }
+  
+  // Content optimization operations
+  async saveContentOptimization(optimization: InsertContentOptimization): Promise<ContentOptimization> {
+    // See if there's already an optimization for this content
+    const [existingOptimization] = await db
+      .select()
+      .from(contentOptimizations)
+      .where(eq(contentOptimizations.contentId, optimization.contentId));
+    
+    if (existingOptimization) {
+      // Update existing optimization
+      const [updatedOptimization] = await db
+        .update(contentOptimizations)
+        .set(optimization)
+        .where(eq(contentOptimizations.id, existingOptimization.id))
+        .returning();
+      return updatedOptimization;
+    } else {
+      // Create new optimization
+      const [newOptimization] = await db
+        .insert(contentOptimizations)
+        .values(optimization)
+        .returning();
+      return newOptimization;
+    }
+  }
+  
+  async getContentOptimization(contentId: number): Promise<ContentOptimization | undefined> {
+    const [optimization] = await db
+      .select()
+      .from(contentOptimizations)
+      .where(eq(contentOptimizations.contentId, contentId));
+    return optimization;
+  }
+  
+  // Content performance operations
+  async saveContentPerformance(performance: InsertContentPerformance): Promise<ContentPerformance> {
+    const [newPerformance] = await db
+      .insert(contentPerformance)
+      .values(performance)
+      .returning();
+    return newPerformance;
+  }
+  
+  async getContentPerformanceById(contentId: number): Promise<ContentPerformance[]> {
+    return await db
+      .select()
+      .from(contentPerformance)
+      .where(eq(contentPerformance.contentId, contentId))
+      .orderBy(desc(contentPerformance.recordedAt));
+  }
+  
+  async getContentPerformanceByPlatform(platform: string, limit = 10): Promise<ContentPerformance[]> {
+    return await db
+      .select()
+      .from(contentPerformance)
+      .where(eq(contentPerformance.platform, platform))
+      .orderBy(desc(contentPerformance.recordedAt))
+      .limit(limit);
+  }
+  
+  // Trending products operations
+  async saveTrendingProduct(insertProduct: InsertTrendingProduct): Promise<TrendingProduct> {
+    const [product] = await db
+      .insert(trendingProducts)
+      .values(insertProduct)
+      .returning();
+    return product;
+  }
+  
+  async getTrendingProducts(limit = 10): Promise<TrendingProduct[]> {
+    return await db
+      .select()
+      .from(trendingProducts)
+      .orderBy(desc(trendingProducts.mentions))
+      .limit(limit);
+  }
+  
+  async getTrendingProductsByNiche(niche: string, limit = 10): Promise<TrendingProduct[]> {
+    return await db
+      .select()
+      .from(trendingProducts)
+      .where(eq(trendingProducts.niche, niche))
+      .orderBy(desc(trendingProducts.mentions))
+      .limit(limit);
+  }
+  
+  async clearTrendingProducts(): Promise<void> {
+    await db.delete(trendingProducts);
+  }
+  
+  async clearTrendingProductsByPlatform(platform: ScraperPlatform): Promise<void> {
+    await db
+      .delete(trendingProducts)
+      .where(eq(trendingProducts.source, platform));
+  }
+  
+  async clearTrendingProductsByNiche(niche: string): Promise<void> {
+    await db
+      .delete(trendingProducts)
+      .where(eq(trendingProducts.niche, niche));
+  }
+  
+  // Scraper status operations
+  async updateScraperStatus(
+    name: ScraperPlatform, 
+    status: ScraperStatusType, 
+    errorMessage?: string
+  ): Promise<ScraperStatus> {
+    // Try to update first
+    const [updated] = await db
+      .update(scraperStatus)
+      .set({ 
+        status, 
+        lastCheck: new Date(), 
+        errorMessage: errorMessage || null 
+      })
+      .where(eq(scraperStatus.name, name))
+      .returning();
+    
+    if (updated) {
+      return updated;
+    }
+    
+    // If no rows were updated, insert a new record
+    const [newStatus] = await db
+      .insert(scraperStatus)
+      .values({
+        name,
+        status,
+        errorMessage: errorMessage || null,
+      })
+      .returning();
+    
+    return newStatus;
+  }
+  
+  async getScraperStatus(): Promise<ScraperStatus[]> {
+    return await db.select().from(scraperStatus);
+  }
+  
+  // API usage operations
+  async incrementApiUsage(templateType?: string, tone?: string, niche?: string, userId?: number): Promise<void> {
+    const today = new Date();
+    
+    // Check if there's an entry for today with same template and tone
+    const [todayEntry] = await db
+      .select()
+      .from(apiUsage)
+      .where(
+        and(
+          gte(apiUsage.date, new Date(today.setHours(0, 0, 0, 0))),
+          lte(apiUsage.date, new Date(today.setHours(23, 59, 59, 999))),
+          templateType ? eq(apiUsage.templateType, templateType) : sql`TRUE`,
+          tone ? eq(apiUsage.tone, tone) : sql`TRUE`,
+          niche ? eq(apiUsage.niche, niche) : sql`TRUE`,
+          userId ? eq(apiUsage.userId, userId) : sql`TRUE`
+        )
+      );
+    
+    if (todayEntry) {
+      await db
+        .update(apiUsage)
+        .set({ count: todayEntry.count + 1 })
+        .where(eq(apiUsage.id, todayEntry.id));
+    } else {
+      await db
+        .insert(apiUsage)
+        .values({
+          date: new Date(),
+          count: 1,
+          templateType: templateType || null,
+          tone: tone || null,
+          niche: niche || null,
+          userId: userId || null
+        });
+    }
+  }
+  
+  async getApiUsage(): Promise<ApiUsage[]> {
+    return await db
+      .select()
+      .from(apiUsage)
+      .orderBy(desc(apiUsage.date));
+  }
+  
+  async getTodayApiUsage(): Promise<number> {
+    const today = new Date();
+    
+    const [result] = await db
+      .select({ 
+        totalCount: sql<number>`SUM(${apiUsage.count})` 
+      })
+      .from(apiUsage)
+      .where(
+        and(
+          gte(apiUsage.date, new Date(today.setHours(0, 0, 0, 0))),
+          lte(apiUsage.date, new Date(today.setHours(23, 59, 59, 999)))
+        )
+      );
+    
+    return result?.totalCount || 0;
+  }
+  
+  async getWeeklyApiUsage(): Promise<number> {
+    const today = new Date();
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    
+    const [result] = await db
+      .select({ 
+        totalCount: sql<number>`SUM(${apiUsage.count})` 
+      })
+      .from(apiUsage)
+      .where(
+        and(
+          gte(apiUsage.date, weekAgo),
+          lte(apiUsage.date, today)
+        )
+      );
+    
+    return result?.totalCount || 0;
+  }
+  
+  async getMonthlyApiUsage(): Promise<number> {
+    const today = new Date();
+    const monthAgo = new Date();
+    monthAgo.setMonth(monthAgo.getMonth() - 1);
+    
+    const [result] = await db
+      .select({ 
+        totalCount: sql<number>`SUM(${apiUsage.count})` 
+      })
+      .from(apiUsage)
+      .where(
+        and(
+          gte(apiUsage.date, monthAgo),
+          lte(apiUsage.date, today)
+        )
+      );
+    
+    return result?.totalCount || 0;
+  }
+
+  // Analytics operations
+  async getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>> {
+    const results = await db
+      .select({
+        templateType: contentGenerations.templateType,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .groupBy(contentGenerations.templateType)
+      .orderBy(desc(sql<number>`COUNT(*)`));
+    
+    return results;
+  }
+  
+  async getTemplateUsageByNiche(niche: string): Promise<Array<{templateType: string, count: number}>> {
+    const results = await db
+      .select({
+        templateType: contentGenerations.templateType,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .where(eq(contentGenerations.niche, niche))
+      .groupBy(contentGenerations.templateType)
+      .orderBy(desc(sql<number>`COUNT(*)`));
+    
+    return results;
+  }
+  
+  async getToneUsageStats(): Promise<Array<{tone: string, count: number}>> {
+    const results = await db
+      .select({
+        tone: contentGenerations.tone,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .groupBy(contentGenerations.tone)
+      .orderBy(desc(sql<number>`COUNT(*)`));
+    
+    return results;
+  }
+  
+  async getToneUsageByNiche(niche: string): Promise<Array<{tone: string, count: number}>> {
+    const results = await db
+      .select({
+        tone: contentGenerations.tone,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .where(eq(contentGenerations.niche, niche))
+      .groupBy(contentGenerations.tone)
+      .orderBy(desc(sql<number>`COUNT(*)`));
+    
+    return results;
+  }
+  
+  async getGenerationTrends(): Promise<Array<{date: string, count: number}>> {
+    const results = await db
+      .select({
+        date: sql<string>`TO_CHAR(${contentGenerations.createdAt}, 'YYYY-MM-DD')`,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .groupBy(sql`TO_CHAR(${contentGenerations.createdAt}, 'YYYY-MM-DD')`)
+      .orderBy(sql`TO_CHAR(${contentGenerations.createdAt}, 'YYYY-MM-DD')`);
+    
+    return results;
+  }
+  
+  async getGenerationTrendsByNiche(niche: string): Promise<Array<{date: string, count: number}>> {
+    const results = await db
+      .select({
+        date: sql<string>`TO_CHAR(${contentGenerations.createdAt}, 'YYYY-MM-DD')`,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .where(eq(contentGenerations.niche, niche))
+      .groupBy(sql`TO_CHAR(${contentGenerations.createdAt}, 'YYYY-MM-DD')`)
+      .orderBy(sql`TO_CHAR(${contentGenerations.createdAt}, 'YYYY-MM-DD')`);
+    
+    return results;
+  }
+  
+  async getPopularProducts(): Promise<Array<{product: string, count: number}>> {
+    const results = await db
+      .select({
+        product: contentGenerations.product,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .groupBy(contentGenerations.product)
+      .orderBy(desc(sql<number>`COUNT(*)`))
+      .limit(10);
+    
+    return results;
+  }
+  
+  async getPopularProductsByNiche(niche: string): Promise<Array<{product: string, count: number}>> {
+    const results = await db
+      .select({
+        product: contentGenerations.product,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .where(eq(contentGenerations.niche, niche))
+      .groupBy(contentGenerations.product)
+      .orderBy(desc(sql<number>`COUNT(*)`))
+      .limit(10);
+    
+    return results;
+  }
+  
+  async getNicheUsageStats(): Promise<Array<{niche: string, count: number}>> {
+    const results = await db
+      .select({
+        niche: contentGenerations.niche,
+        count: sql<number>`COUNT(*)`,
+      })
+      .from(contentGenerations)
+      .groupBy(contentGenerations.niche)
+      .orderBy(desc(sql<number>`COUNT(*)`));
+    
+    return results;
+  }
+  
+  // Custom templates
+  async getCustomTemplates(): Promise<Array<{id: number, name: string, content: string, niche: string}>> {
+    // This would typically be its own table, but for now we'll just return empty
+    // Will be implemented with actual table in upcoming code
+    return [];
+  }
+  
+  async saveCustomTemplate(template: {name: string, content: string, niche: string}): Promise<{id: number, name: string, content: string, niche: string}> {
+    // This would typically be its own table, but for now we'll return a mock
+    // Will be implemented with actual table in upcoming code
+    return { id: 1, ...template };
+  }
+  
+  async deleteCustomTemplate(id: number): Promise<boolean> {
+    // This would typically be its own table, but for now we'll return success
+    // Will be implemented with actual table in upcoming code
+    return true;
+  }
+
+  // AI Model Config operations
+  async saveAiModelConfig(config: InsertAiModelConfig): Promise<AiModelConfig> {
+    const [savedConfig] = await db
+      .insert(aiModelConfigs)
+      .values(config)
+      .onConflictDoUpdate({
+        target: [aiModelConfigs.niche, aiModelConfigs.templateType, aiModelConfigs.tone],
+        set: {
+          temperature: config.temperature,
+          frequencyPenalty: config.frequencyPenalty,
+          presencePenalty: config.presencePenalty,
+          modelName: config.modelName,
+          updatedAt: new Date()
+        }
+      })
+      .returning();
+    
+    return savedConfig;
+  }
+  
+  async getAiModelConfig(niche: string, templateType: string, tone: string): Promise<AiModelConfig | undefined> {
+    const [config] = await db
+      .select()
+      .from(aiModelConfigs)
+      .where(
+        and(
+          eq(aiModelConfigs.niche, niche),
+          eq(aiModelConfigs.templateType, templateType),
+          eq(aiModelConfigs.tone, tone)
+        )
+      );
+    
+    return config;
+  }
+  
+  async getAiModelConfigsByNiche(niche: string): Promise<AiModelConfig[]> {
+    return await db
+      .select()
+      .from(aiModelConfigs)
+      .where(eq(aiModelConfigs.niche, niche));
+  }
+  
+  async deleteAiModelConfig(id: number): Promise<boolean> {
+    const result = await db
+      .delete(aiModelConfigs)
+      .where(eq(aiModelConfigs.id, id))
+      .returning({ deleted: aiModelConfigs.id });
+    
+    return result.length > 0;
+  }
+  
+  // API Integration operations
+  async saveApiIntegration(integration: InsertApiIntegration): Promise<ApiIntegration> {
+    // Check if this user already has an integration for this provider
+    const [existingIntegration] = await db
+      .select()
+      .from(apiIntegrations)
+      .where(
+        and(
+          eq(apiIntegrations.userId, integration.userId),
+          eq(apiIntegrations.provider, integration.provider)
+        )
+      );
+    
+    if (existingIntegration) {
+      // Update existing integration
+      const [updatedIntegration] = await db
+        .update(apiIntegrations)
+        .set({
+          ...integration,
+          updatedAt: new Date()
+        })
+        .where(eq(apiIntegrations.id, existingIntegration.id))
+        .returning();
+      return updatedIntegration;
+    } else {
+      // Create new integration
+      const [newIntegration] = await db
+        .insert(apiIntegrations)
+        .values({
+          ...integration,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+      return newIntegration;
+    }
+  }
+  
+  async getApiIntegrationsByUser(userId: number): Promise<ApiIntegration[]> {
+    return await db
+      .select()
+      .from(apiIntegrations)
+      .where(eq(apiIntegrations.userId, userId))
+      .orderBy(apiIntegrations.provider);
+  }
+  
+  async getApiIntegrationByProvider(userId: number, provider: string): Promise<ApiIntegration | undefined> {
+    const [integration] = await db
+      .select()
+      .from(apiIntegrations)
+      .where(
+        and(
+          eq(apiIntegrations.userId, userId),
+          eq(apiIntegrations.provider, provider)
+        )
+      );
+    return integration;
+  }
+  
+  async deleteApiIntegration(id: number): Promise<boolean> {
+    const result = await db
+      .delete(apiIntegrations)
+      .where(eq(apiIntegrations.id, id))
+      .returning({ deleted: apiIntegrations.id });
+    return result.length > 0;
+  }
+}
+
+// Switch to database storage
+export const storage = new DatabaseStorage();
