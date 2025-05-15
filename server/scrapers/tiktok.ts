@@ -350,6 +350,7 @@ export async function getTikTokTrending(niche: string = 'skincare'): Promise<Scr
       const products: InsertTrendingProduct[] = productsArray.map((item: any) => ({
         title: item.title,
         source: "tiktok",
+        niche: niche, // Add niche to each product
         mentions: typeof item.mentions === 'string' ? parseInt(item.mentions.replace(/[^0-9]/g, "")) : (item.mentions || 100000),
         sourceUrl: item.sourceUrl || `https://tiktok.com/tag/${encodeURIComponent(item.title.replace(/\s+/g, ''))}`
       }));

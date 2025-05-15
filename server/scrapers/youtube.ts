@@ -289,6 +289,7 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
       const products: InsertTrendingProduct[] = productsArray.map((item: any) => ({
         title: item.title,
         source: "youtube",
+        niche: niche, // Add niche to each product
         mentions: typeof item.mentions === 'string' ? parseInt(item.mentions.replace(/[^0-9]/g, "")) : (item.mentions || 500000),
         sourceUrl: item.sourceUrl || `https://youtube.com/results?search_query=${encodeURIComponent(item.title)}`
       }));

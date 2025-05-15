@@ -266,6 +266,7 @@ export async function getInstagramTrending(niche: string = 'skincare'): Promise<
       const products: InsertTrendingProduct[] = productsArray.map((item: any) => ({
         title: item.title,
         source: "instagram",
+        niche: niche, // Add niche to each product
         mentions: typeof item.mentions === 'string' ? parseInt(item.mentions.replace(/[^0-9]/g, "")) : (item.mentions || 800000),
         sourceUrl: item.sourceUrl || `https://instagram.com/explore/tags/${encodeURIComponent(item.title)}`
       }));
