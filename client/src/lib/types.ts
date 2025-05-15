@@ -19,14 +19,6 @@ export interface ContentGeneration {
   createdAt: string;
 }
 
-export interface ScraperStatus {
-  id: number;
-  name: string;
-  status: 'active' | 'gpt-fallback' | 'degraded' | 'error' | 'rate-limited';
-  lastCheck: string;
-  errorMessage?: string;
-}
-
 export interface ApiUsage {
   today: number;
   weekly: number;
@@ -56,6 +48,11 @@ export interface GenerationResponse {
     isIdealLength: boolean;
     lengthFeedback: string;
   };
+  hashtagsAndEmojis?: {
+    hashtags: string[];
+    emojis: string[];
+    callToActions: string[];
+  };
 }
 
 // Source branding colors for platforms
@@ -72,9 +69,9 @@ export const SOURCE_COLORS = {
 export interface ScraperStatus {
   id: number;
   name: string;
-  status: string; // "active", "gpt-fallback", "degraded", "error", "rate-limited"
+  status: 'active' | 'gpt-fallback' | 'degraded' | 'error' | 'rate-limited';
   lastCheck: string;
-  errorMessage: string | null;
+  errorMessage?: string;
 }
 
 // Status colors for scraper health

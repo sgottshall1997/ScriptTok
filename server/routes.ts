@@ -10,6 +10,7 @@ import { scraperStatusRouter } from "./api/scraperStatus";
 import { customTemplateTestRouter } from "./api/customTemplateTest";
 import { aiModelConfigRouter } from "./api/aiModelConfig";
 import { hashtagEmojiRouter } from "./api/hashtagEmoji";
+import { socialMediaOptimizationRouter } from "./api/socialMediaOptimization";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -22,6 +23,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/custom-template', customTemplateTestRouter);
   app.use('/api/ai-model-config', aiModelConfigRouter);
   app.use('/api/hashtag-emoji', hashtagEmojiRouter);
+  app.use('/api/social-media-optimization', socialMediaOptimizationRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {
