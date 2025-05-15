@@ -22,8 +22,10 @@ export interface IStorage {
   // Trending products operations
   saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct>;
   getTrendingProducts(limit?: number): Promise<TrendingProduct[]>;
+  getTrendingProductsByNiche(niche: string, limit?: number): Promise<TrendingProduct[]>;
   clearTrendingProducts(): Promise<void>;
   clearTrendingProductsByPlatform(platform: ScraperPlatform): Promise<void>;
+  clearTrendingProductsByNiche(niche: string): Promise<void>;
   
   // Scraper status operations
   updateScraperStatus(name: ScraperPlatform, status: ScraperStatusType, errorMessage?: string): Promise<ScraperStatus>;
@@ -122,43 +124,80 @@ export class MemStorage implements IStorage {
         title: "CeraVe Hydrating Cleanser",
         source: "tiktok",
         mentions: 980000,
-        sourceUrl: "https://tiktok.com/tag/cerave"
+        sourceUrl: "https://tiktok.com/tag/cerave",
+        niche: "skincare"
       },
       {
         title: "The Ordinary Niacinamide 10% + Zinc 1%",
         source: "instagram",
         mentions: 840000,
-        sourceUrl: "https://instagram.com/explore/tags/theordinary"
+        sourceUrl: "https://instagram.com/explore/tags/theordinary",
+        niche: "skincare"
       },
       {
         title: "Drunk Elephant C-Firma Fresh Day Serum",
         source: "youtube",
         mentions: 720000,
-        sourceUrl: "https://youtube.com/results?search_query=drunk+elephant+serum"
+        sourceUrl: "https://youtube.com/results?search_query=drunk+elephant+serum",
+        niche: "skincare"
       },
       {
         title: "Summer Fridays Jet Lag Mask",
         source: "reddit",
         mentions: 530000,
-        sourceUrl: "https://reddit.com/r/SkincareAddiction"
+        sourceUrl: "https://reddit.com/r/SkincareAddiction",
+        niche: "skincare"
       },
       {
         title: "Paula's Choice 2% BHA Liquid Exfoliant",
         source: "amazon",
         mentions: 450000,
-        sourceUrl: "https://amazon.com/Paulas-Choice-SKIN-PERFECTING-Exfoliant/dp/B00949CTQQ/"
+        sourceUrl: "https://amazon.com/Paulas-Choice-SKIN-PERFECTING-Exfoliant/dp/B00949CTQQ/",
+        niche: "skincare"
       },
       {
         title: "La Roche-Posay Toleriane Double Repair Face Moisturizer",
         source: "tiktok",
         mentions: 380000,
-        sourceUrl: "https://tiktok.com/tag/laroche"
+        sourceUrl: "https://tiktok.com/tag/laroche",
+        niche: "skincare"
       },
       {
         title: "Glow Recipe Watermelon Glow Niacinamide Dew Drops",
         source: "google-trends",
         mentions: 890000,
-        sourceUrl: "https://trends.google.com/trends/explore?q=glow%20recipe"
+        sourceUrl: "https://trends.google.com/trends/explore?q=glow%20recipe",
+        niche: "skincare"
+      },
+      // Tech niche examples
+      {
+        title: "Apple AirPods Pro (2nd Generation)",
+        source: "youtube",
+        mentions: 920000,
+        sourceUrl: "https://youtube.com/results?search_query=airpods+pro+2",
+        niche: "tech"
+      },
+      {
+        title: "Sony WH-1000XM5 Headphones",
+        source: "instagram",
+        mentions: 780000,
+        sourceUrl: "https://instagram.com/explore/tags/sonywh1000xm5",
+        niche: "tech"
+      },
+      // Fashion niche examples
+      {
+        title: "Levi's 501 Original Fit Jeans",
+        source: "tiktok",
+        mentions: 850000,
+        sourceUrl: "https://tiktok.com/tag/levis501",
+        niche: "fashion"
+      },
+      {
+        title: "Nike Air Force 1 Sneakers",
+        source: "instagram",
+        mentions: 950000,
+        sourceUrl: "https://instagram.com/explore/tags/airforce1",
+        niche: "fashion"
       }
     ];
     
@@ -197,6 +236,7 @@ export class MemStorage implements IStorage {
     const generation: ContentGeneration = { 
       ...insertGeneration, 
       id, 
+      niche: insertGeneration.niche || 'skincare', // Ensure niche is always set 
       createdAt: new Date() 
     };
     
@@ -234,6 +274,7 @@ export class MemStorage implements IStorage {
       ...insertProduct,
       id,
       createdAt: new Date(),
+      niche: insertProduct.niche || 'skincare', // Ensure niche is always set
       mentions: insertProduct.mentions || null,
       sourceUrl: insertProduct.sourceUrl || null
     };
@@ -263,6 +304,33 @@ export class MemStorage implements IStorage {
     
     this.trendingProducts.forEach((product, id) => {
       if (product.source !== platform) {
+        productsToKeep.set(id, product);
+      }
+    });
+    
+    // Replace the current map with the filtered map
+    this.trendingProducts = productsToKeep;
+  }
+  
+  async getTrendingProductsByNiche(niche: string, limit = 10): Promise<TrendingProduct[]> {
+    const products = Array.from(this.trendingProducts.values())
+      .filter(product => product.niche === niche)
+      .sort((a, b) => {
+        if (a.mentions && b.mentions) {
+          return b.mentions - a.mentions;
+        }
+        return 0;
+      });
+    
+    return products.slice(0, limit);
+  }
+  
+  async clearTrendingProductsByNiche(niche: string): Promise<void> {
+    // Filter out products from the specific niche
+    const productsToKeep = new Map<number, TrendingProduct>();
+    
+    this.trendingProducts.forEach((product, id) => {
+      if (product.niche !== niche) {
         productsToKeep.set(id, product);
       }
     });
