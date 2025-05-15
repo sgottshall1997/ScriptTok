@@ -110,6 +110,7 @@ export async function getAmazonTrending(niche: string = 'skincare'): Promise<Scr
           products.push({
             title,
             source: "amazon",
+            niche: niche, // Add niche to each product
             mentions: (1000 - rank * 50) * 100, // Rough approximation of popularity based on rank
             sourceUrl: sourceUrl || `https://amazon.com/s?k=${encodeURIComponent(title)}`
           });
@@ -190,6 +191,7 @@ export async function getAmazonTrending(niche: string = 'skincare'): Promise<Scr
       const products: InsertTrendingProduct[] = productsArray.map((item: any) => ({
         title: item.title,
         source: "amazon",
+        niche: niche, // Add niche to each product
         mentions: typeof item.mentions === 'string' ? parseInt(item.mentions.replace(/[^0-9]/g, "")) : (item.mentions || 10000),
         sourceUrl: item.sourceUrl || `https://amazon.com/s?k=${encodeURIComponent(item.title)}`
       }));
