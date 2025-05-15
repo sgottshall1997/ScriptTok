@@ -1375,6 +1375,14 @@ export class DatabaseStorage implements IStorage {
       .orderBy(apiIntegrations.provider);
   }
   
+  async getApiIntegrationById(id: number): Promise<ApiIntegration | undefined> {
+    const [integration] = await db
+      .select()
+      .from(apiIntegrations)
+      .where(eq(apiIntegrations.id, id));
+    return integration;
+  }
+  
   async getApiIntegrationByProvider(userId: number, provider: string): Promise<ApiIntegration | undefined> {
     const [integration] = await db
       .select()
