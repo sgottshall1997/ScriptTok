@@ -374,41 +374,44 @@ const VideoScriptGenerator: FC<VideoScriptGeneratorProps> = ({ onSuccess }) => {
                   <FormField
                     control={form.control}
                     name="duration"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>
-                          Target Duration (seconds)
-                          <span className="ml-2 text-sm text-muted-foreground">
-                            {formatToMMSS(field.value)}
-                          </span>
-                        </FormLabel>
-                        <FormControl>
-                          <div className="flex items-center space-x-4">
-                            <Input 
-                              type="range" 
-                              min="10" 
-                              max={form.getValues('platform') === 'youtube_long' ? 600 : 90} 
-                              step="5"
-                              className="w-full"
-                              value={field.value}
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                            />
-                            <Input 
-                              type="number" 
-                              className="w-20" 
-                              value={field.value}
-                              onChange={(e) => field.onChange(parseInt(e.target.value))}
-                              min="10"
-                              max={form.getValues('platform') === 'youtube_long' ? 600 : 90}
-                            />
-                          </div>
-                        </FormControl>
-                        <FormDescription>
-                          Adjust based on your chosen platform's optimal length
-                        </FormDescription>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    render={({ field }) => {
+                      const maxDuration = form.watch("platform") === 'youtube_long' ? 600 : 90;
+                      return (
+                        <FormItem>
+                          <FormLabel>
+                            Target Duration (seconds)
+                            <span className="ml-2 text-sm text-muted-foreground">
+                              {formatToMMSS(field.value)}
+                            </span>
+                          </FormLabel>
+                          <FormControl>
+                            <div className="flex items-center space-x-4">
+                              <Input 
+                                type="range" 
+                                min="10" 
+                                max={maxDuration}
+                                step="5"
+                                className="w-full"
+                                value={field.value}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                              />
+                              <Input 
+                                type="number" 
+                                className="w-20" 
+                                value={field.value}
+                                onChange={(e) => field.onChange(parseInt(e.target.value))}
+                                min="10"
+                                max={maxDuration}
+                              />
+                            </div>
+                          </FormControl>
+                          <FormDescription>
+                            Adjust based on your chosen platform's optimal length
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      );
+                    }}
                   />
                   
                   <div className="grid grid-cols-2 gap-2">

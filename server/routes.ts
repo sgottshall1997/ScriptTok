@@ -25,6 +25,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/ai-model-config', aiModelConfigRouter);
   app.use('/api/hashtag-emoji', hashtagEmojiRouter);
   app.use('/api/social-media-optimization', socialMediaOptimizationRouter);
+  app.use('/api/video-script', videoScriptRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {
