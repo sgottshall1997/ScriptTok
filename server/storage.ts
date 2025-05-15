@@ -88,7 +88,23 @@ export interface IStorage {
   saveApiIntegration(integration: InsertApiIntegration): Promise<ApiIntegration>;
   getApiIntegrationsByUser(userId: number): Promise<ApiIntegration[]>;
   getApiIntegrationByProvider(userId: number, provider: string): Promise<ApiIntegration | undefined>;
+  getApiIntegrationById(id: number): Promise<ApiIntegration | undefined>;
   deleteApiIntegration(id: number): Promise<boolean>;
+  
+  // Social Media Platforms operations
+  getSocialMediaPlatforms(): Promise<SocialMediaPlatform[]>;
+  getSocialMediaPlatformById(id: number): Promise<SocialMediaPlatform | undefined>;
+  
+  // Published Content operations
+  getPublishedContentByUser(userId: number, limit?: number, offset?: number): Promise<PublishedContent[]>;
+  
+  // Integration Webhooks operations
+  saveIntegrationWebhook(webhook: InsertIntegrationWebhook): Promise<IntegrationWebhook>;
+  getIntegrationWebhooksByUser(userId: number): Promise<IntegrationWebhook[]>;
+  getIntegrationWebhooksByIntegration(integrationId: number): Promise<IntegrationWebhook[]>;
+  
+  // User Activity operations
+  logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
   
   // Trending Emojis and Hashtags operations
   getTrendingEmojisHashtags(niche: string): Promise<TrendingEmojisHashtags | undefined>;
@@ -1402,6 +1418,68 @@ export class DatabaseStorage implements IStorage {
       .where(eq(apiIntegrations.id, id))
       .returning({ deleted: apiIntegrations.id });
     return result.length > 0;
+  }
+  
+  async getSocialMediaPlatforms(): Promise<SocialMediaPlatform[]> {
+    return db
+      .select()
+      .from(socialMediaPlatforms)
+      .where(eq(socialMediaPlatforms.isActive, true))
+      .orderBy(asc(socialMediaPlatforms.name));
+  }
+  
+  async getSocialMediaPlatformById(id: number): Promise<SocialMediaPlatform | undefined> {
+    const [platform] = await db
+      .select()
+      .from(socialMediaPlatforms)
+      .where(eq(socialMediaPlatforms.id, id));
+    return platform;
+  }
+  
+  async getPublishedContentByUser(userId: number, limit = 20, offset = 0): Promise<PublishedContent[]> {
+    return db
+      .select()
+      .from(publishedContent)
+      .where(eq(publishedContent.userId, userId))
+      .orderBy(desc(publishedContent.publishedAt))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async saveIntegrationWebhook(webhook: InsertIntegrationWebhook): Promise<IntegrationWebhook> {
+    const [result] = await db
+      .insert(integrationWebhooks)
+      .values(webhook)
+      .returning();
+    return result;
+  }
+  
+  async getIntegrationWebhooksByUser(userId: number): Promise<IntegrationWebhook[]> {
+    return db
+      .select()
+      .from(integrationWebhooks)
+      .where(eq(integrationWebhooks.userId, userId))
+      .orderBy(asc(integrationWebhooks.name));
+  }
+  
+  async getIntegrationWebhooksByIntegration(integrationId: number): Promise<IntegrationWebhook[]> {
+    return db
+      .select()
+      .from(integrationWebhooks)
+      .where(eq(integrationWebhooks.integrationId, integrationId))
+      .orderBy(asc(integrationWebhooks.name));
+  }
+  
+  async logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void> {
+    await db
+      .insert(userActivityLogs)
+      .values({
+        userId: activityData.userId,
+        action: activityData.action,
+        metadata: activityData.metadata || null,
+        ipAddress: activityData.ipAddress || null,
+        userAgent: activityData.userAgent || null
+      });
   }
   
   // Trending Emojis and Hashtags operations
