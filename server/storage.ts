@@ -12,13 +12,17 @@ import {
   ContentVersion, InsertContentVersion,
   ApiIntegration, InsertApiIntegration,
   TrendingEmojisHashtags, InsertTrendingEmojisHashtags,
+  SocialMediaPlatform,
+  PublishedContent,
+  IntegrationWebhook, InsertIntegrationWebhook,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
-  contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags
+  contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
+  socialMediaPlatforms, publishedContent, integrationWebhooks, userActivityLogs
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
-import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
+import { eq, desc, and, gte, lte, sql, asc } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
@@ -1425,7 +1429,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(socialMediaPlatforms)
       .where(eq(socialMediaPlatforms.isActive, true))
-      .orderBy(asc(socialMediaPlatforms.name));
+      .orderBy(asc(socialMediaPlatforms.platformName));
   }
   
   async getSocialMediaPlatformById(id: number): Promise<SocialMediaPlatform | undefined> {
