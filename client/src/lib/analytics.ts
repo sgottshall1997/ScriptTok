@@ -44,60 +44,7 @@ export const trackPageView = (url: string) => {
   });
 };
 
-// Track niche selection events
-export const trackNicheSelection = (niche: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  window.gtag('event', 'select_niche', {
-    event_category: 'niche_interaction',
-    event_label: niche,
-  });
-};
-
-// Track template selection events
-export const trackTemplateSelection = (templateType: string, niche: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  window.gtag('event', 'select_template', {
-    event_category: 'content_generation',
-    event_label: templateType,
-    niche: niche
-  });
-};
-
-// Track tone selection events
-export const trackToneSelection = (tone: string, niche: string) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  window.gtag('event', 'select_tone', {
-    event_category: 'content_generation',
-    event_label: tone,
-    niche: niche
-  });
-};
-
-// Track content generation events
-export const trackContentGeneration = (
-  niche: string,
-  templateType: string,
-  tone: string,
-  productName: string,
-  contentLength: number
-) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
-  
-  window.gtag('event', 'generate_content', {
-    event_category: 'content_generation',
-    event_label: `${niche}/${templateType}`,
-    niche: niche,
-    template_type: templateType,
-    tone: tone,
-    product_name: productName,
-    content_length: contentLength
-  });
-};
-
-// Generic event tracking
+// Track events
 export const trackEvent = (
   action: string, 
   category?: string, 

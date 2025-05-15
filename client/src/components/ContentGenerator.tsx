@@ -13,12 +13,7 @@ import {
 } from "@/lib/types";
 import NicheSelector from "./NicheSelector";
 import AffiliateLink from "./AffiliateLink";
-import { 
-  trackNicheSelection, 
-  trackTemplateSelection, 
-  trackToneSelection, 
-  trackContentGeneration 
-} from "@/lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 
 interface ContentGeneratorProps {
   onGenerate: (content: GenerationResponse) => void;
@@ -106,12 +101,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       onGenerate(data);
       
       // Track content generation event in analytics
-      trackContentGeneration(
-        niche,
-        templateType,
-        tone,
-        productValue,
-        data.content.length
+      trackEvent('content_generation', 'content_generator', `${niche}_${templateType}_${tone}`
       );
       
       toast({
@@ -182,7 +172,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
                 onValueChange={(value) => {
                   setTemplateType(value);
                   // Track template selection in analytics
-                  trackTemplateSelection(value, niche);
+                  trackEvent('template_selection', 'content_generator', `${niche}_${value}`);
                 }}
               >
                 <SelectTrigger id="template-type" className="w-full border-gray-200 focus:border-violet-400 focus:ring-2 focus:ring-violet-100">
@@ -226,7 +216,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
                 onValueChange={(value) => {
                   setTone(value);
                   // Track tone selection in analytics
-                  trackToneSelection(value, niche);
+                  trackEvent('tone_selection', 'content_generator', `${niche}_${value}`);
                 }}
               >
                 <SelectTrigger id="tone" className="w-full border-gray-200 focus:border-pink-400 focus:ring-2 focus:ring-pink-100">

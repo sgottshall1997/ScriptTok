@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Info } from "lucide-react";
-import { trackNicheSelection } from "@/lib/analytics";
+import { trackEvent } from "@/lib/analytics";
 
 interface NicheSelectorProps {
   value: string;
@@ -58,7 +58,7 @@ const NicheSelector: FC<NicheSelectorProps> = ({ value, onChange }) => {
         // Call original onChange function
         onChange(newValue);
         // Track niche selection in analytics
-        trackNicheSelection(newValue);
+        trackEvent('niche_selection', 'content_generator', newValue);
       }}>
         <SelectTrigger className="w-full">
           <SelectValue placeholder="Select niche" />
