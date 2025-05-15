@@ -61,6 +61,7 @@
     prose-strong:font-semibold
     prose-blockquote:text-violet-700
     prose-blockquote:border-l-violet-500;
+  /* Theme colors will be applied via inline styles */
 }
 
 :root {

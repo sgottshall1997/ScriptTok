@@ -22,16 +22,15 @@ const getFormattedContent = (content: GenerationResponse): string => {
   if (!content || !content.content) return '';
   
   let formattedContent = content.content;
-  const color = getNicheColor(content.niche);
   
   // Add branded intro - could be moved to the server-side
   if (content.niche && content.templateType) {
     const nicheCapitalized = content.niche.charAt(0).toUpperCase() + content.niche.slice(1);
     const template = content.templateType.replace(/_/g, ' ');
     
-    // Add a niche-specific intro wrapper
-    formattedContent = `<div class="p-3 mb-4 rounded-md bg-${color}-50 border border-${color}-100">
-      <p class="text-sm text-${color}-800 font-medium">
+    // Add a niche-specific intro wrapper using theme variables
+    formattedContent = `<div class="p-3 mb-4 rounded-md bg-theme/10 border border-theme/20">
+      <p class="text-sm text-theme font-medium">
         <span class="font-bold">${nicheCapitalized} ${template}</span> content for <span class="font-bold">${content.product}</span>
       </p>
     </div>${formattedContent}`;
@@ -141,9 +140,9 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
 
   return (
     <Card className="shadow-md">
-      <CardHeader className={`bg-gradient-to-r ${nicheStyles.bgGradient} py-4 px-5 border-b flex flex-row items-center`}>
+      <CardHeader className="bg-theme-gradient-light py-4 px-5 border-b flex flex-row items-center">
         <div className="flex-1">
-          <CardTitle className={`text-xl text-gradient bg-gradient-to-r ${nicheStyles.textGradient} flex items-center`}>
+          <CardTitle className="text-xl text-theme-gradient flex items-center">
             {content && nicheStyles.icon}
             {content?.niche 
               ? `${content.niche.charAt(0).toUpperCase() + content.niche.slice(1)} Content` 
@@ -154,7 +153,7 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
         <div className="flex items-center space-x-2">
           <Button 
             variant="outline" 
-            className="flex items-center text-blue-700 border-blue-200 hover:bg-blue-50" 
+            className="flex items-center text-theme border-theme/30 hover:bg-theme/10" 
             onClick={copyContent}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -169,16 +168,16 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
           <div className="mb-4">
             {/* Content metadata */}
             <div className="mb-3 p-2 rounded-lg bg-gray-50 border border-gray-200 flex flex-wrap gap-2">
-              <div className="px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium">
+              <div className="px-3 py-1 rounded-full bg-theme/10 text-theme text-xs font-medium">
                 Product: {content.product}
               </div>
-              <div className="px-3 py-1 rounded-full bg-teal-100 text-teal-800 text-xs font-medium">
+              <div className="px-3 py-1 rounded-full bg-theme/20 text-theme text-xs font-medium">
                 Niche: {content.niche}
               </div>
-              <div className="px-3 py-1 rounded-full bg-violet-100 text-violet-800 text-xs font-medium">
+              <div className="px-3 py-1 rounded-full bg-theme/15 text-theme text-xs font-medium">
                 Template: {content.templateType}
               </div>
-              <div className="px-3 py-1 rounded-full bg-pink-100 text-pink-800 text-xs font-medium">
+              <div className="px-3 py-1 rounded-full bg-theme/25 text-theme text-xs font-medium">
                 Tone: {content.tone}
               </div>
               {content.fromCache && (
@@ -286,13 +285,13 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
         <div className="space-y-4">
           <div
             ref={contentRef}
-            className={`min-h-[300px] prose prose-sm max-w-none content-output bg-white p-5 rounded-lg border ${content?.niche ? `border-${getNicheColor(content.niche)}-200` : 'border-gray-100'} shadow-inner`}
+            className="min-h-[300px] prose prose-sm max-w-none content-output bg-white p-5 rounded-lg border border-theme/20 shadow-inner"
           >
             {content ? (
-              // Render HTML content safely with niche-specific styling
+              // Render HTML content safely with theme-based styling
               <div 
                 dangerouslySetInnerHTML={{ __html: getFormattedContent(content) }} 
-                className={`prose-headings:${getNicheColor(content.niche)}-800`}
+                className="prose-headings:text-theme"
               />
             ) : (
               // Empty state

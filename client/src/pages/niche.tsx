@@ -144,70 +144,75 @@ export default function NichePage() {
   }
 
   return (
-    <div className="px-4 py-6 md:px-6 lg:px-8 min-h-screen bg-gray-50">
-      {/* Niche Navigation */}
-      <NicheNavigation currentNiche={params.niche} />
-      
-      {/* Header */}
-      <div className={`rounded-lg bg-gradient-to-r ${nicheInfo.bgClass} p-8 mb-8 shadow-md border border-gray-200`}>
-        <h1 className={`text-3xl font-bold text-gradient bg-gradient-to-r ${nicheInfo.textClass} mb-3`}>
-          {nicheInfo.title}
-        </h1>
-        <p className="text-gray-700 text-lg max-w-3xl">
-          {nicheInfo.description}
-        </p>
-        <div className="mt-6">
-          <button 
-            onClick={refreshTrendingProducts}
-            disabled={isRefreshingTrends}
-            className={`px-5 py-2.5 rounded-md bg-gradient-to-r ${
-              !params.niche 
-                ? 'from-indigo-600 to-blue-600'
-                : `from-${params.niche === 'skincare' ? 'pink' : params.niche === 'tech' ? 'blue' : params.niche === 'fashion' ? 'purple' : params.niche === 'fitness' ? 'green' : params.niche === 'food' ? 'orange' : params.niche === 'travel' ? 'sky' : params.niche === 'pet' ? 'amber' : 'gray'}-600 to-${params.niche === 'skincare' ? 'purple' : params.niche === 'tech' ? 'cyan' : params.niche === 'fashion' ? 'pink' : params.niche === 'fitness' ? 'teal' : params.niche === 'food' ? 'yellow' : params.niche === 'travel' ? 'indigo' : params.niche === 'pet' ? 'orange' : 'gray'}-600`
-            } hover:opacity-90 text-white font-medium flex items-center transition-all shadow-md hover:shadow-lg`}
-          >
-            {isRefreshingTrends ? (
-              <>
-                <svg className="animate-spin mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Fetching Trends...
-              </>
-            ) : (
-              <>
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-                </svg>
-                Get Latest {params.niche ? `${params.niche.charAt(0).toUpperCase() + params.niche.slice(1)} Trends` : "Trending Products"}
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          {/* Trending Products */}
-          <TrendingProductsList 
-            products={trendingProducts || []} 
-            isLoading={isLoadingTrending || isRefreshingTrends}
-            niche={params.niche}
-          />
-        </div>
+    <NicheThemeProvider niche={params.niche}>
+      <div className="px-4 py-6 md:px-6 lg:px-8 min-h-screen bg-gray-50">
+        {/* Niche Navigation */}
+        <NicheNavigation currentNiche={params.niche} />
         
-        <div className="space-y-6">
-          {/* Content Generator */}
-          <ContentGenerator 
-            onGenerate={handleContentGenerated} 
-            initialNiche={params.niche as Niche}
-            initialTemplate={selectedTemplate}
-          />
+        {/* Header */}
+        <div ref={contentRef} className="rounded-lg bg-theme-gradient-light p-8 mb-8 shadow-md border border-gray-200">
+          <h1 className="text-3xl font-bold text-theme-gradient mb-3">
+            {nicheInfo.title}
+          </h1>
+          <p className="text-gray-700 text-lg max-w-3xl">
+            {nicheInfo.description}
+          </p>
+          <div className="mt-6">
+            <button 
+              onClick={refreshTrendingProducts}
+              disabled={isRefreshingTrends}
+              className="px-5 py-2.5 rounded-md bg-theme-gradient hover:opacity-90 text-white font-medium flex items-center transition-all shadow-md hover:shadow-lg"
+            >
+              {isRefreshingTrends ? (
+                <>
+                  <svg className="animate-spin mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Fetching Trends...
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                  </svg>
+                  Get Latest {params.niche ? `${params.niche.charAt(0).toUpperCase() + params.niche.slice(1)} Trends` : "Trending Products"}
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="space-y-6">
+            {/* Trending Products */}
+            <TrendingProductsList 
+              products={trendingProducts || []} 
+              isLoading={isLoadingTrending || isRefreshingTrends}
+              niche={params.niche}
+            />
+          </div>
           
-          {/* Content Output */}
-          <ContentOutput content={generatedContent} />
+          <div className="space-y-6">
+            {/* Content Generator */}
+            <ContentGenerator 
+              onGenerate={(content) => {
+                setGeneratedContent(content);
+                // Scroll to the top of the page after content generation
+                if (contentRef.current) {
+                  contentRef.current.scrollIntoView({ behavior: 'smooth' });
+                }
+              }} 
+              initialNiche={params.niche as Niche}
+              initialTemplate={selectedTemplate}
+              scrollToTopOnGenerate={false} // Disable internal scrolling as we're handling it here
+            />
+            
+            {/* Content Output */}
+            <ContentOutput content={generatedContent} />
+          </div>
         </div>
       </div>
-    </div>
+    </NicheThemeProvider>
   );
 }
