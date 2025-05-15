@@ -2,6 +2,8 @@ import { FC, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GenerationResponse } from "@/lib/types";
+import HashtagEmojiRecommender from "@/components/HashtagEmojiRecommender";
+import { Niche } from "@shared/constants";
 
 // Maps niche to a Tailwind color
 const getNicheColor = (niche?: string): string => {
@@ -282,7 +284,8 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
         )}
         
         {/* Main content display */}
-        <div className="space-y-4">
+        <div className="space-y-6">
+          {/* Content display */}
           <div
             ref={contentRef}
             className="min-h-[300px] prose prose-sm max-w-none content-output bg-white p-5 rounded-lg border border-theme/20 shadow-inner"

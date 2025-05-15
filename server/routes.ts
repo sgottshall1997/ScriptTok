@@ -21,6 +21,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/scraper-status', scraperStatusRouter);
   app.use('/api/custom-template', customTemplateTestRouter);
   app.use('/api/ai-model-config', aiModelConfigRouter);
+  app.use('/api/hashtag-emoji', hashtagEmojiRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {
