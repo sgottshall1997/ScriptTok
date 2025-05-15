@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2, Download, Upload, Layout, Eye, LineChart, Sliders } from 'lucide-react';
+import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2, Download, Upload, Layout, Eye, LineChart, Sliders, Hash, Smile } from 'lucide-react';
 
 export default function Navbar() {
   return (
@@ -81,6 +81,13 @@ export default function Navbar() {
             <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
               <Sliders className="w-4 h-4 mr-1" />
               AI Model Config
+            </a>
+          </Link>
+          <Link href="/emoji-hashtag-test">
+            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
+              <Hash className="w-4 h-4 mr-1" />
+              <Smile className="w-4 h-4 mr-1" />
+              Emoji & Hashtags
             </a>
           </Link>
         </nav>
