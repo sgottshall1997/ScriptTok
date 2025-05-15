@@ -23,6 +23,7 @@ import PlatformPreviewPage from "@/pages/platform-preview";
 import PerformanceTrackerPage from "@/pages/performance-tracker";
 import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
+import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/performance-tracker" component={PerformanceTrackerPage} />
       <Route path="/ai-model-config" component={AiModelConfigPage} />
       <Route path="/emoji-hashtag-test" component={EmojiHashtagTestPage} />
+      <Route path="/api-integration-hub" component={ApiIntegrationHubPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
