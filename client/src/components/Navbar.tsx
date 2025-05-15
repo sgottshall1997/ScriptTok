@@ -71,6 +71,12 @@ export default function Navbar() {
               Platform Preview
             </a>
           </Link>
+          <Link href="/performance-tracker">
+            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
+              <LineChart className="w-4 h-4 mr-1" />
+              Performance Tracker
+            </a>
+          </Link>
         </nav>
         
         <div className="hidden md:flex items-center space-x-4">
