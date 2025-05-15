@@ -234,8 +234,7 @@ Follow these guidelines:
       content: content,
       templateType: requestData.templateType || 'claude_general',
       tone: requestData.tone,
-      product: '',  // No specific product associated
-      createdAt: new Date()
+      product: ''  // No specific product associated
     });
     
     return res.json({ content });
