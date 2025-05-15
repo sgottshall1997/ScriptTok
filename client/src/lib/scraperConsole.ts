@@ -137,6 +137,27 @@ export async function logTrendingProducts() {
     }
     const products = await response.json();
     
+    // Header styling
+    const headerStyle = 'color: #fff; background: #333; padding: 4px 8px; border-radius: 4px; font-weight: bold;';
+    const subheaderStyle = 'color: #fff; background: #555; padding: 2px 6px; border-radius: 4px; font-weight: bold;';
+    
+    console.clear();
+    console.log('%c📊 GlowBot Trending Products 📊', headerStyle);
+    console.log(`Total products: ${products.length}`);
+    
+    // Handle empty products case
+    if (!products || products.length === 0) {
+      console.log('%c⚠️ No trending products found.', 'color: #f39c12; font-weight: bold;');
+      console.log('Possible reasons:');
+      console.log('1. The system is still initializing trend data');
+      console.log('2. Scrapers have not completed their first run');
+      console.log('3. External APIs may be temporarily unavailable');
+      console.log('-'.repeat(50));
+      console.log('To manually refresh trending products data, call window.refreshTrendingProducts()');
+      console.log('To view trending products when available, call window.checkTrendingProducts()');
+      return;
+    }
+    
     // Group by source and niche
     const bySource: Record<string, any[]> = {};
     const byNiche: Record<string, any[]> = {};
@@ -155,58 +176,85 @@ export async function logTrendingProducts() {
       byNiche[product.niche].push(product);
     });
     
-    // Header styling
-    const headerStyle = 'color: #fff; background: #333; padding: 4px 8px; border-radius: 4px; font-weight: bold;';
-    const subheaderStyle = 'color: #fff; background: #555; padding: 2px 6px; border-radius: 4px; font-weight: bold;';
-    
-    console.log('%c📊 GlowBot Trending Products 📊', headerStyle);
-    console.log(`Total products: ${products.length}`);
     console.log('-'.repeat(50));
     
     // Products by source
     console.log('%cProducts by Source:', subheaderStyle);
-    Object.entries(bySource).forEach(([source, sourceProducts]) => {
-      console.log(`%c${source}%c (${sourceProducts.length} products)`, 'color: #3498db; font-weight: bold;', 'color: inherit');
-      
-      // Show top 3 products by mentions for each source
-      sourceProducts
-        .sort((a, b) => b.mentions - a.mentions)
-        .slice(0, 3)
-        .forEach((product, idx) => {
-          console.log(`  ${idx + 1}. ${product.title} (${product.mentions.toLocaleString()} mentions)`);
-        });
-      
-      if (sourceProducts.length > 3) {
-        console.log(`  ... ${sourceProducts.length - 3} more products`);
-      }
-    });
+    if (Object.keys(bySource).length === 0) {
+      console.log('  No source information available');
+    } else {
+      Object.entries(bySource).forEach(([source, sourceProducts]) => {
+        console.log(`%c${source}%c (${sourceProducts.length} products)`, 'color: #3498db; font-weight: bold;', 'color: inherit');
+        
+        // Show top 3 products by mentions for each source
+        sourceProducts
+          .sort((a, b) => (b.mentions || 0) - (a.mentions || 0))
+          .slice(0, 3)
+          .forEach((product, idx) => {
+            const mentions = product.mentions ? product.mentions.toLocaleString() : 'unknown';
+            console.log(`  ${idx + 1}. ${product.title} (${mentions} mentions)`);
+          });
+        
+        if (sourceProducts.length > 3) {
+          console.log(`  ... ${sourceProducts.length - 3} more products`);
+        }
+      });
+    }
     
     console.log('-'.repeat(50));
     
     // Products by niche
     console.log('%cProducts by Niche:', subheaderStyle);
-    Object.entries(byNiche).forEach(([niche, nicheProducts]) => {
-      console.log(`%c${niche}%c (${nicheProducts.length} products)`, 'color: #9b59b6; font-weight: bold;', 'color: inherit');
-      
-      // Show top 3 products by mentions for each niche
-      nicheProducts
-        .sort((a, b) => b.mentions - a.mentions)
-        .slice(0, 3)
-        .forEach((product, idx) => {
-          console.log(`  ${idx + 1}. ${product.title} (${product.mentions.toLocaleString()} mentions)`);
-        });
-      
-      if (nicheProducts.length > 3) {
-        console.log(`  ... ${nicheProducts.length - 3} more products`);
-      }
-    });
+    if (Object.keys(byNiche).length === 0) {
+      console.log('  No niche information available');
+    } else {
+      Object.entries(byNiche).forEach(([niche, nicheProducts]) => {
+        console.log(`%c${niche}%c (${nicheProducts.length} products)`, 'color: #9b59b6; font-weight: bold;', 'color: inherit');
+        
+        // Show top 3 products by mentions for each niche
+        nicheProducts
+          .sort((a, b) => (b.mentions || 0) - (a.mentions || 0))
+          .slice(0, 3)
+          .forEach((product, idx) => {
+            const mentions = product.mentions ? product.mentions.toLocaleString() : 'unknown';
+            console.log(`  ${idx + 1}. ${product.title} (${mentions} mentions)`);
+          });
+        
+        if (nicheProducts.length > 3) {
+          console.log(`  ... ${nicheProducts.length - 3} more products`);
+        }
+      });
+    }
     
     // Footer message
     console.log('-'.repeat(50));
     console.log('To refresh trending products, call window.checkTrendingProducts()');
+    console.log('To manually trigger a new scrape, call window.refreshTrendingProducts()');
     
   } catch (error) {
     console.error('Failed to fetch trending products:', error);
+  }
+}
+
+/**
+ * Triggers a manual refresh of trending products data from all scrapers
+ */
+export async function refreshTrendingProducts() {
+  try {
+    console.log('%c⏳ Refreshing trending products...', 'color: #f39c12; font-weight: bold;');
+    const response = await apiRequest('POST', '/api/trending/refresh');
+    
+    if (!response.ok) {
+      throw new Error(`Failed to refresh trending products: ${response.status} ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    console.log('%c✅ Refresh completed!', 'color: #2ecc71; font-weight: bold;');
+    console.log(`Successfully refreshed ${result.count} products`);
+    console.log('Wait a moment for scrapers to complete, then call window.checkTrendingProducts() to see updated data');
+    
+  } catch (error) {
+    console.error('Failed to refresh trending products:', error);
   }
 }
 
@@ -215,6 +263,7 @@ declare global {
   interface Window {
     checkScraperHealth: () => Promise<void>;
     checkTrendingProducts: () => Promise<void>;
+    refreshTrendingProducts: () => Promise<void>;
   }
 }
 
@@ -222,6 +271,7 @@ declare global {
 export function initScraperConsole() {
   window.checkScraperHealth = logScraperHealth;
   window.checkTrendingProducts = logTrendingProducts;
+  window.refreshTrendingProducts = refreshTrendingProducts;
   
   // Run initial scraper health check
   setTimeout(() => {
