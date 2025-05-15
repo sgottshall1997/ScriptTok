@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'wouter';
 import { trackPageView } from '../lib/analytics';
 
-export const useAnalytics = () => {
+export function useAnalytics() {
   const [location] = useLocation();
   const prevLocationRef = useRef<string>(location);
   

@@ -45,7 +45,7 @@ export const trackPageView = (url: string) => {
   });
 };
 
-// Generic event tracking function
+// Track events
 export const trackEvent = (
   action: string, 
   category?: string, 
