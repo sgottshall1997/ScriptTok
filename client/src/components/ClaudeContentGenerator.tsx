@@ -44,15 +44,17 @@ export default function ClaudeContentGenerator() {
     setGeneratedContent('');
     
     try {
-      const response = await apiRequest('/api/claude-content', {
-        method: 'POST',
-        data: {
+      const response = await apiRequest(
+        'POST',
+        '/api/claude-content',
+        {
           ...values,
           maxTokens: 1024,
-        },
-      });
+        }
+      );
       
-      setGeneratedContent(response.content);
+      const responseData = await response.json();
+      setGeneratedContent(responseData.content);
       toast({
         title: 'Content Generated',
         description: 'Claude AI has successfully generated your content.',

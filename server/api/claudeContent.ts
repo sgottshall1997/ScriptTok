@@ -5,81 +5,40 @@
  * Serves as an alternative AI provider alongside OpenAI.
  */
 
-import { Router, Request, Response } from 'express';
-import { z } from 'zod';
+import { Request, Response, Router } from 'express';
+import { NICHES, TONE_OPTIONS, Niche, ToneOption } from '@shared/constants';
 import { storage } from '../storage';
-import { 
-  generateWithClaude, 
-  generateStructuredContent, 
-  processImageWithClaude 
-} from '../utils/anthropic';
-import { Niche, NICHES, TONE_OPTIONS, ToneOption } from '../../shared/constants';
-import fs from 'fs';
-import path from 'path';
+import { generateContentWithClaude, analyzeImageWithClaude, getClaudeModels } from '../utils/anthropic';
 
 export const claudeContentRouter = Router();
-
-// Schema for content generation request
-const contentRequestSchema = z.object({
-  prompt: z.string().min(10),
-  niche: z.enum(NICHES),
-  tone: z.enum(TONE_OPTIONS),
-  maxTokens: z.number().int().positive().optional().default(1024),
-  temperature: z.number().min(0).max(1).optional().default(0.7),
-  includeProducts: z.boolean().optional().default(true),
-  templateType: z.string().optional(),
-  withImage: z.boolean().optional().default(false),
-  imageBase64: z.string().optional(),
-});
-
-// Predefined structured response types
-type VideoScriptResponse = {
-  intro: string;
-  body: string[];
-  outro: string;
-  b_roll?: string[];
-  onscreen_text?: string[];
-  script_with_timestamps?: string;
-  thumbnail_ideas?: string[];
-  duration_estimate: number;
-  platform_specific_tips: string[];
-};
-
-type SocialMediaPostResponse = {
-  headline: string;
-  content: string;
-  hashtags: string[];
-  callToAction: string;
-  imageDescription?: string;
-  platformSpecificTips: Record<string, string>;
-};
 
 /**
  * Helper function to enhance the prompt with trending products
  */
 async function enhancePromptWithProducts(
-  prompt: string, 
+  prompt: string,
   niche: Niche, 
   includeProducts: boolean
 ): Promise<string> {
   if (!includeProducts) return prompt;
-  
-  try {
-    // Get trending products for this niche
-    const trendingProducts = await storage.getTrendingProductsByNiche(niche, 3);
-    
-    if (!trendingProducts.length) return prompt;
-    
-    // Add products to the prompt context
-    const productsContext = `
-Consider mentioning these trending products in your content:
-${trendingProducts.map(p => `- ${p.title}`).join('\n')}
 
-Original prompt: ${prompt}`;
+  try {
+    // Get trending products for the niche
+    const trendingProducts = await storage.getTrendingProductsByNiche(niche, 5);
     
-    return productsContext;
+    if (trendingProducts.length === 0) {
+      return prompt;
+    }
+
+    // Format products to add to the prompt
+    const productList = trendingProducts
+      .map(product => `- ${product.title} (trending with ${product.mentions || 0} mentions)`)
+      .join('\n');
+
+    // Add trending products to the prompt
+    return `${prompt}\n\nConsider including references to these trending products in this niche:\n${productList}`;
   } catch (error) {
-    console.error("Error enhancing prompt with products:", error);
+    console.error('Error enhancing prompt with products:', error);
     return prompt; // Return original prompt if there's an error
   }
 }
@@ -88,27 +47,78 @@ Original prompt: ${prompt}`;
  * Helper function to load specialized system prompts
  */
 function getSystemPrompt(niche: Niche, tone: ToneOption, templateType?: string): string {
-  // Base system prompt for content generation
-  let systemPrompt = `You are an expert content creator specializing in the ${niche} niche.
-Write in a ${tone} tone that resonates with the target audience.
-Your content should be engaging, informative, and optimized for the specified purpose.`;
+  // Base system prompt that applies to all niches
+  let systemPrompt = `You are a specialized content creator with expertise in the ${niche} niche. 
+Create content that is informative, engaging, and accurate with a ${tone} tone.
+Make your content compelling, well-structured, and optimized for engagement.`;
 
-  // Add template-specific instructions
+  // Add niche-specific instructions
+  switch (niche) {
+    case 'skincare':
+      systemPrompt += `\nInclude scientifically accurate information about skincare ingredients and their benefits.
+Avoid making exaggerated claims about products. Be honest about potential side effects.
+Use terminology that demonstrates expertise in dermatology and cosmetic science.`;
+      break;
+    case 'tech':
+      systemPrompt += `\nBe precise about technical specifications. Compare features objectively.
+Stay current with the latest technology trends and innovations.
+Make complex technical concepts accessible to different levels of technical understanding.`;
+      break;
+    case 'fashion':
+      systemPrompt += `\nReference current fashion trends and seasonal appropriate styles.
+Consider sustainability aspects of fashion where relevant.
+Be inclusive of different body types, styles, and fashion preferences.`;
+      break;
+    case 'fitness':
+      systemPrompt += `\nEnsure all exercise recommendations are safe and come with proper form instructions.
+Be informed by actual exercise science and avoid fitness myths.
+Be encouraging and motivational while remaining realistic about fitness goals.`;
+      break;
+    case 'food':
+      systemPrompt += `\nInclude detailed ingredients and clear preparation steps for recipes.
+Consider dietary restrictions and offer alternatives when possible.
+Describe flavors and textures vividly to make content appetizing.`;
+      break;
+    case 'travel':
+      systemPrompt += `\nProvide practical travel advice including local customs, best times to visit, and budget considerations.
+Include both popular attractions and lesser-known local experiences.
+Be sensitive to cultural differences and sustainability concerns in tourism.`;
+      break;
+    case 'pet':
+      systemPrompt += `\nPrioritize pet safety, health, and welfare in all content.
+Include species-specific advice and don't generalize across different animals.
+Reference veterinary best practices when discussing pet health topics.`;
+      break;
+  }
+
+  // Add template-specific instructions if provided
   if (templateType) {
     switch (templateType) {
-      case 'video_script':
-        systemPrompt += `\nCreate a compelling video script with clear sections for intro, body content, and outro.
-Include suggestions for b-roll footage, on-screen text, and thumbnail ideas.`;
-        break;
-      case 'social_post':
-        systemPrompt += `\nCreate engaging social media content with a captivating headline, 
-concise body text, relevant hashtags, and a clear call-to-action.`;
-        break;
       case 'product_review':
-        systemPrompt += `\nCreate a balanced product review that highlights both pros and cons.
-Include sections for features, benefits, potential drawbacks, and comparisons to alternatives.`;
+        systemPrompt += `\nFor product reviews, be balanced and honest. Discuss both pros and cons.
+Evaluate the product based on value, quality, performance, and user experience.
+Include comparisons to similar products where relevant.`;
         break;
-      // Add more template types as needed
+      case 'social_media_post':
+        systemPrompt += `\nCreate concise, engaging content that works well for social media.
+Include relevant hashtags that would increase discoverability.
+Consider the visual component that might accompany the text.`;
+        break;
+      case 'email_newsletter':
+        systemPrompt += `\nCreate content with a clear structure and sections that work well in email format.
+Include a compelling subject line suggestion.
+Write in a personable way that builds relationship with the reader.`;
+        break;
+      case 'blog_article':
+        systemPrompt += `\nCreate comprehensive, well-structured content with headings and subheadings.
+Include an engaging introduction and a satisfying conclusion.
+Optimize for readability with short paragraphs and varied sentence structure.`;
+        break;
+      case 'video_script':
+        systemPrompt += `\nCreate content that works well when spoken aloud with natural transitions.
+Include directions for visual elements or b-roll where appropriate.
+Structure the script with clear segments and a compelling hook at the beginning.`;
+        break;
     }
   }
 
@@ -121,130 +131,46 @@ Include sections for features, benefits, potential drawbacks, and comparisons to
  */
 claudeContentRouter.post('/', async (req: Request, res: Response) => {
   try {
-    // Validate request
-    const validationResult = contentRequestSchema.safeParse(req.body);
-    if (!validationResult.success) {
-      return res.status(400).json({ 
-        error: 'Invalid request data', 
-        details: validationResult.error.errors 
-      });
-    }
-    
-    const requestData = validationResult.data;
-    
-    // Track API usage
-    await storage.incrementApiUsage(
-      requestData.templateType || 'claude_general',
-      requestData.tone
-    );
-    
-    // Enhanced prompt with trending products if requested
-    const enhancedPrompt = await enhancePromptWithProducts(
-      requestData.prompt,
-      requestData.niche,
-      requestData.includeProducts
-    );
-    
-    // Get specialized system prompt
-    const systemPrompt = getSystemPrompt(
-      requestData.niche as Niche,
-      requestData.tone as ToneOption,
-      requestData.templateType
-    );
+    // Validate request body
+    const { prompt, niche, tone, maxTokens = 1024, temperature = 0.7, includeProducts = true } = req.body;
 
-    // Handle image-based generation if image is provided
-    if (requestData.withImage && requestData.imageBase64) {
-      const imagePrompt = `Analyze this image and create content based on it.
-Follow these guidelines:
-- Create content for the ${requestData.niche} niche
-- Use a ${requestData.tone} tone
-- Address the following prompt: ${requestData.prompt}`;
+    if (!prompt || !niche || !tone) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
 
-      const imageContent = await processImageWithClaude(
-        requestData.imageBase64,
-        imagePrompt
-      );
-      
-      return res.json({ content: imageContent });
+    if (!NICHES.includes(niche)) {
+      return res.status(400).json({ error: 'Invalid niche' });
     }
-    
-    // Handle structured content generation based on template type
-    if (requestData.templateType) {
-      switch (requestData.templateType) {
-        case 'video_script': {
-          const videoScriptStructure = `{
-            "intro": "String - Attention-grabbing introduction",
-            "body": "Array of strings - Main content sections",
-            "outro": "String - Conclusion with call to action",
-            "b_roll": "Array of strings - Suggested b-roll footage",
-            "onscreen_text": "Array of strings - Text to display on screen",
-            "script_with_timestamps": "String - Complete script with approximate timestamps",
-            "thumbnail_ideas": "Array of strings - Ideas for video thumbnail",
-            "duration_estimate": "Number - Estimated duration in seconds",
-            "platform_specific_tips": "Array of strings - Tips specific to platform"
-          }`;
-          
-          const videoScript = await generateStructuredContent<VideoScriptResponse>(
-            enhancedPrompt,
-            videoScriptStructure,
-            requestData.temperature
-          );
-          
-          return res.json(videoScript);
-        }
-        
-        case 'social_post': {
-          const socialPostStructure = `{
-            "headline": "String - Attention-grabbing headline",
-            "content": "String - Main post content",
-            "hashtags": "Array of strings - Relevant hashtags",
-            "callToAction": "String - Clear call to action",
-            "imageDescription": "String - Suggested image description",
-            "platformSpecificTips": "Object with platform names as keys and tips as values"
-          }`;
-          
-          const socialPost = await generateStructuredContent<SocialMediaPostResponse>(
-            enhancedPrompt,
-            socialPostStructure,
-            requestData.temperature
-          );
-          
-          return res.json(socialPost);
-        }
-        
-        // Add more structured templates as needed
-        
-        default:
-          // If template type is not recognized, fall back to general content
-          break;
-      }
+
+    if (!TONE_OPTIONS.includes(tone)) {
+      return res.status(400).json({ error: 'Invalid tone' });
     }
-    
-    // General content generation
-    const content = await generateWithClaude(
-      enhancedPrompt,
-      requestData.maxTokens,
-      requestData.temperature,
+
+    // Enhance prompt with trending products if requested
+    const enhancedPrompt = await enhancePromptWithProducts(prompt, niche, includeProducts);
+
+    // Get the appropriate system prompt
+    const systemPrompt = getSystemPrompt(niche, tone);
+
+    // Generate content with Claude
+    const result = await generateContentWithClaude(enhancedPrompt, {
+      maxTokens,
+      temperature,
       systemPrompt
-    );
-    
-    // Save generation for analytics
-    await storage.saveContentGeneration({
-      niche: requestData.niche,
-      content: content,
-      templateType: requestData.templateType || 'claude_general',
-      tone: requestData.tone,
-      product: ''  // No specific product associated
     });
-    
-    return res.json({ content });
-    
-  } catch (error: any) {
+
+    // Increment API usage stats
+    await storage.incrementApiUsage('claude_content', tone);
+
+    // Return the generated content
+    res.json({
+      content: result.content,
+      model: result.model,
+      usage: result.usage
+    });
+  } catch (error) {
     console.error('Error generating content with Claude:', error);
-    return res.status(500).json({ 
-      error: 'Failed to generate content',
-      message: error.message 
-    });
+    res.status(500).json({ error: 'Failed to generate content' });
   }
 });
 
@@ -254,34 +180,36 @@ Follow these guidelines:
  */
 claudeContentRouter.post('/analyze-image', async (req: Request, res: Response) => {
   try {
-    const schema = z.object({
-      imageBase64: z.string(),
-      analysisPrompt: z.string().default('Analyze this image in detail')
-    });
-    
-    const validationResult = schema.safeParse(req.body);
-    if (!validationResult.success) {
-      return res.status(400).json({ 
-        error: 'Invalid request data', 
-        details: validationResult.error.errors 
-      });
+    const { image, prompt, niche, tone, maxTokens = 1024, temperature = 0.7 } = req.body;
+
+    if (!image || !prompt || !niche || !tone) {
+      return res.status(400).json({ error: 'Missing required fields' });
     }
-    
-    const { imageBase64, analysisPrompt } = validationResult.data;
-    
-    const analysis = await processImageWithClaude(
-      imageBase64,
-      analysisPrompt
-    );
-    
-    return res.json({ analysis });
-    
-  } catch (error: any) {
-    console.error('Error analyzing image with Claude:', error);
-    return res.status(500).json({ 
-      error: 'Failed to analyze image',
-      message: error.message 
+
+    // Extract base64 data - assuming format like "data:image/jpeg;base64,..."
+    const base64Data = image.split(',')[1];
+
+    // Get appropriate system prompt
+    const systemPrompt = getSystemPrompt(niche, tone);
+
+    // Analyze image with Claude
+    const result = await analyzeImageWithClaude(base64Data, prompt, {
+      maxTokens,
+      temperature,
+      systemPrompt
     });
+
+    // Increment API usage
+    await storage.incrementApiUsage('claude_image_analysis', tone);
+
+    res.json({
+      analysis: result.content,
+      model: result.model,
+      usage: result.usage
+    });
+  } catch (error) {
+    console.error('Error analyzing image with Claude:', error);
+    res.status(500).json({ error: 'Failed to analyze image' });
   }
 });
 
@@ -290,25 +218,11 @@ claudeContentRouter.post('/analyze-image', async (req: Request, res: Response) =
  * Get information about available Claude models
  */
 claudeContentRouter.get('/model-info', (_req: Request, res: Response) => {
-  // Provide information about available Claude models
-  return res.json({
-    models: [
-      {
-        id: 'claude-3-7-sonnet-20250219',
-        description: 'Advanced Claude model with strong performance across tasks',
-        maxTokens: 200000,
-        strengths: [
-          'Detailed content generation',
-          'Creative writing',
-          'Complex reasoning',
-          'Image understanding'
-        ]
-      }
-    ],
-    features: {
-      multimodal: true,
-      structuredOutput: true,
-      systemInstructions: true
-    }
-  });
+  try {
+    const models = getClaudeModels();
+    res.json({ models });
+  } catch (error) {
+    console.error('Error getting Claude model info:', error);
+    res.status(500).json({ error: 'Failed to retrieve model information' });
+  }
 });
