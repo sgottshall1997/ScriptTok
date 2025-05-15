@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2 } from 'lucide-react';
+import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2, Download, Upload } from 'lucide-react';
 
 export default function Navbar() {
   return (
@@ -51,6 +51,18 @@ export default function Navbar() {
             <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
               <Calendar className="w-4 h-4 mr-1" />
               Content Calendar
+            </a>
+          </Link>
+          <Link href="/competitive-analysis">
+            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
+              <BarChart2 className="w-4 h-4 mr-1" />
+              Competitive Analysis
+            </a>
+          </Link>
+          <Link href="/export-import">
+            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
+              <Upload className="w-4 h-4 mr-1" />
+              Export/Import
             </a>
           </Link>
         </nav>

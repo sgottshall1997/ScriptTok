@@ -18,6 +18,7 @@ import AIModelTestPage from "@/pages/ai-model-test";
 import ClaudeGeneratorPage from "@/pages/claude-generator";
 import ContentCalendarPage from "@/pages/content-calendar";
 import CompetitiveAnalysisPage from "@/pages/competitive-analysis";
+import ExportImportPage from "@/pages/export-import";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -45,6 +46,7 @@ function Router() {
       <Route path="/claude-generator" component={ClaudeGeneratorPage} />
       <Route path="/content-calendar" component={ContentCalendarPage} />
       <Route path="/competitive-analysis" component={CompetitiveAnalysisPage} />
+      <Route path="/export-import" component={ExportImportPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
