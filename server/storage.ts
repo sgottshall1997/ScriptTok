@@ -1402,7 +1402,7 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(trendingEmojisHashtags)
       .where(eq(trendingEmojisHashtags.niche, niche))
-      .orderBy(desc(trendingEmojisHashtags.updatedAt))
+      .orderBy(desc(trendingEmojisHashtags.lastUpdated))
       .limit(1);
     
     return result;
@@ -1422,7 +1422,7 @@ export class DatabaseStorage implements IStorage {
         .set({
           emojis: data.emojis,
           hashtags: data.hashtags,
-          updatedAt: new Date()
+          lastUpdated: new Date()
         })
         .where(eq(trendingEmojisHashtags.id, existing.id))
         .returning();
@@ -1433,9 +1433,11 @@ export class DatabaseStorage implements IStorage {
       const [newRecord] = await db
         .insert(trendingEmojisHashtags)
         .values({
-          ...data,
-          createdAt: new Date(),
-          updatedAt: new Date()
+          niche: data.niche,
+          hashtags: data.hashtags,
+          emojis: data.emojis,
+          lastUpdated: new Date(),
+          createdAt: new Date()
         })
         .returning();
       
@@ -1447,7 +1449,7 @@ export class DatabaseStorage implements IStorage {
     return await db
       .select()
       .from(trendingEmojisHashtags)
-      .orderBy(desc(trendingEmojisHashtags.updatedAt));
+      .orderBy(desc(trendingEmojisHashtags.lastUpdated));
   }
 }
 
