@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Home, Settings, FileText, Users, HelpCircle } from 'lucide-react';
+import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2 } from 'lucide-react';
 
 export default function Navbar() {
   return (
@@ -45,6 +45,12 @@ export default function Navbar() {
             <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
               <HelpCircle className="w-4 h-4 mr-1" />
               How It Works
+            </a>
+          </Link>
+          <Link href="/content-calendar">
+            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
+              <Calendar className="w-4 h-4 mr-1" />
+              Content Calendar
             </a>
           </Link>
         </nav>

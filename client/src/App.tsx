@@ -16,6 +16,8 @@ import TermsPage from "@/pages/terms";
 import ContactPage from "@/pages/contact";
 import AIModelTestPage from "@/pages/ai-model-test";
 import ClaudeGeneratorPage from "@/pages/claude-generator";
+import ContentCalendarPage from "@/pages/content-calendar";
+import CompetitiveAnalysisPage from "@/pages/competitive-analysis";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -41,6 +43,8 @@ function Router() {
       <Route path="/contact" component={ContactPage} />
       <Route path="/ai-model-test" component={AIModelTestPage} />
       <Route path="/claude-generator" component={ClaudeGeneratorPage} />
+      <Route path="/content-calendar" component={ContentCalendarPage} />
+      <Route path="/competitive-analysis" component={CompetitiveAnalysisPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
