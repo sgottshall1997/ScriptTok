@@ -177,7 +177,15 @@ const CustomTemplateEditor: FC<CustomTemplateEditorProps> = ({ onSuccess }) => {
                 </FormItem>
               )}
             />
-            <DialogFooter>
+            <DialogFooter className="flex justify-between flex-wrap gap-2">
+              <CustomTemplateTestDialog 
+                initialTemplate={form.watch('content')} 
+                trigger={
+                  <Button type="button" variant="outline">
+                    Test Template
+                  </Button>
+                } 
+              />
               <Button 
                 type="submit" 
                 disabled={createTemplateMutation.isPending}
