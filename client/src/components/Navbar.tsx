@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2, Download, Upload } from 'lucide-react';
+import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2, Download, Upload, Layout, Eye, LineChart } from 'lucide-react';
 
 export default function Navbar() {
   return (
@@ -63,6 +63,12 @@ export default function Navbar() {
             <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
               <Upload className="w-4 h-4 mr-1" />
               Export/Import
+            </a>
+          </Link>
+          <Link href="/platform-preview">
+            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
+              <Layout className="w-4 h-4 mr-1" />
+              Platform Preview
             </a>
           </Link>
         </nav>
