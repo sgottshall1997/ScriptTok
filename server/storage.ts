@@ -3,9 +3,21 @@ import {
   ContentGeneration, InsertContentGeneration,
   TrendingProduct, InsertTrendingProduct,
   ScraperStatus, InsertScraperStatus,
-  ApiUsage, InsertApiUsage
+  ApiUsage, InsertApiUsage,
+  AiModelConfig, InsertAiModelConfig,
+  Team, InsertTeam,
+  TeamMember, InsertTeamMember,
+  ContentOptimization, InsertContentOptimization,
+  ContentPerformance, InsertContentPerformance,
+  ContentVersion, InsertContentVersion,
+  ApiIntegration, InsertApiIntegration,
+  users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
+  aiModelConfigs, teams, teamMembers, contentOptimizations, 
+  contentPerformance, contentVersions, apiIntegrations
 } from "@shared/schema";
-import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType } from "@shared/constants";
+import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
+import { db } from "./db";
+import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 
 // Interface for storage operations
 export interface IStorage {
