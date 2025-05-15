@@ -156,6 +156,16 @@ export const apiIntegrations = pgTable("api_integrations", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Trending emojis and hashtags
+export const trendingEmojisHashtags = pgTable("trending_emojis_hashtags", {
+  id: serial("id").primaryKey(),
+  niche: text("niche").notNull().unique(),
+  hashtags: text("hashtags").array().notNull(),
+  emojis: text("emojis").array().notNull(),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -259,6 +269,12 @@ export const insertApiIntegrationSchema = createInsertSchema(apiIntegrations).pi
   userId: true,
 });
 
+export const insertTrendingEmojisHashtagsSchema = createInsertSchema(trendingEmojisHashtags).pick({
+  niche: true,
+  hashtags: true,
+  emojis: true,
+});
+
 // Export types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -295,3 +311,6 @@ export type InsertContentVersion = z.infer<typeof insertContentVersionSchema>;
 
 export type ApiIntegration = typeof apiIntegrations.$inferSelect;
 export type InsertApiIntegration = z.infer<typeof insertApiIntegrationSchema>;
+
+export type TrendingEmojisHashtags = typeof trendingEmojisHashtags.$inferSelect;
+export type InsertTrendingEmojisHashtags = z.infer<typeof insertTrendingEmojisHashtagsSchema>;
