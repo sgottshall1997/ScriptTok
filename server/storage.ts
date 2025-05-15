@@ -1450,6 +1450,14 @@ export class DatabaseStorage implements IStorage {
       .offset(offset);
   }
   
+  async savePublishedContent(content: InsertPublishedContent): Promise<PublishedContent> {
+    const [savedContent] = await db
+      .insert(publishedContent)
+      .values(content)
+      .returning();
+    return savedContent;
+  }
+  
   async saveIntegrationWebhook(webhook: InsertIntegrationWebhook): Promise<IntegrationWebhook> {
     const [result] = await db
       .insert(integrationWebhooks)

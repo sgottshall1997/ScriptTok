@@ -42,56 +42,50 @@ async function createSocialMediaPlatforms() {
     {
       platformName: 'Instagram',
       description: 'Share photos and videos with your followers.',
-      apiDocUrl: 'https://developers.facebook.com/docs/instagram-api/',
+      apiDocsUrl: 'https://developers.facebook.com/docs/instagram-api/',
       postLengthLimit: 2200,
       isActive: true,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png',
-      displayOrder: 1,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Instagram_icon.png/2048px-Instagram_icon.png'
     },
     {
       platformName: 'X (Twitter)',
       description: 'Share short messages with your followers.',
-      apiDocUrl: 'https://developer.twitter.com/en/docs',
+      apiDocsUrl: 'https://developer.twitter.com/en/docs',
       postLengthLimit: 280,
       isActive: true,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/X_icon_2.svg/2048px-X_icon_2.svg.png',
-      displayOrder: 2,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/X_icon_2.svg/2048px-X_icon_2.svg.png'
     },
     {
       platformName: 'Facebook',
       description: 'Share updates, photos, and videos with your friends and followers.',
-      apiDocUrl: 'https://developers.facebook.com/docs/',
+      apiDocsUrl: 'https://developers.facebook.com/docs/',
       postLengthLimit: 63206,
       isActive: true,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png',
-      displayOrder: 3,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/2021_Facebook_icon.svg/2048px-2021_Facebook_icon.svg.png'
     },
     {
       platformName: 'LinkedIn',
       description: 'Share professional updates with your network.',
-      apiDocUrl: 'https://docs.microsoft.com/en-us/linkedin/',
+      apiDocsUrl: 'https://docs.microsoft.com/en-us/linkedin/',
       postLengthLimit: 3000,
       isActive: true,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/800px-LinkedIn_logo_initials.png',
-      displayOrder: 4,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/ca/LinkedIn_logo_initials.png/800px-LinkedIn_logo_initials.png'
     },
     {
       platformName: 'Pinterest',
       description: 'Share visual content with your followers.',
-      apiDocUrl: 'https://developers.pinterest.com/docs/',
+      apiDocsUrl: 'https://developers.pinterest.com/docs/',
       postLengthLimit: 500,
       isActive: true,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Pinterest-logo.png/800px-Pinterest-logo.png',
-      displayOrder: 5,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Pinterest-logo.png/800px-Pinterest-logo.png'
     },
     {
       platformName: 'TikTok',
       description: 'Share short videos with your followers.',
-      apiDocUrl: 'https://developers.tiktok.com/',
+      apiDocsUrl: 'https://developers.tiktok.com/',
       postLengthLimit: 2200,
       isActive: true,
-      logoUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/1200px-TikTok_logo.svg.png',
-      displayOrder: 6,
+      logoUrl: 'https://upload.wikimedia.org/wikipedia/en/thumb/a/a9/TikTok_logo.svg/1200px-TikTok_logo.svg.png'
     }
   ];
   
@@ -190,11 +184,11 @@ async function createSamplePublishedContent() {
       userId: 1,
       platformId: instagramPlatform.id,
       contentId: 101,
+      integrationId: 1, // Use the Instagram integration ID
       platformContentId: 'instagram-post-123456',
-      contentUrl: 'https://www.instagram.com/p/sample-post-123456/',
-      status: 'success',
+      publishedUrl: 'https://www.instagram.com/p/sample-post-123456/',
+      publishStatus: 'success',
       publishedAt: threeDaysAgo,
-      scheduledFor: null,
       metadata: {
         likes: 245,
         comments: 32,
