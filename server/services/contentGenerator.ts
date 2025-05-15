@@ -3,6 +3,7 @@ import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption, Niche } from '@shared/constants';
 import * as GptTemplates from './gpt-templates';
 import { generatePrompt } from '../prompts';
+import { getModelConfig, getTokenLimit } from './aiModelSelector';
 
 // Video duration estimation interface
 interface VideoDuration {
