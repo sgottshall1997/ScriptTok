@@ -12,8 +12,54 @@ export const users = pgTable("users", {
   firstName: text("first_name"),
   lastName: text("last_name"),
   profileImage: text("profile_image"),
+  status: text("status").notNull().default("active"), // active, suspended, pending
+  lastLogin: timestamp("last_login"),
+  loginCount: integer("login_count").default(0),
+  preferences: jsonb("preferences"), // User-specific preferences
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Roles and permissions
+export const roles = pgTable("roles", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  isCustom: boolean("is_custom").notNull().default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Available permissions in the system
+export const permissions = pgTable("permissions", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  category: text("category").notNull(), // content, user, analytics, system, etc.
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Role permissions join table
+export const rolePermissions = pgTable("role_permissions", {
+  id: serial("id").primaryKey(),
+  roleId: integer("role_id").notNull().references(() => roles.id, { onDelete: 'cascade' }),
+  permissionId: integer("permission_id").notNull().references(() => permissions.id, { onDelete: 'cascade' }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    unq: unique().on(table.roleId, table.permissionId),
+  };
+});
+
+// User activity logs
+export const userActivityLogs = pgTable("user_activity_logs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  action: text("action").notNull(), // login, content_generation, api_integration, etc.
+  metadata: jsonb("metadata"), // Additional details about the action
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // Sessions table for auth
@@ -116,6 +162,46 @@ export const contentOptimizations = pgTable("content_optimizations", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Advanced content optimization metrics
+export const advancedContentOptimizations = pgTable("advanced_content_optimizations", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").notNull().references(() => contentGenerations.id, { onDelete: 'cascade' }),
+  // SEO Analysis
+  keywordRelevance: decimal("keyword_relevance"), // 0-1 score of how well content matches keyword intent
+  titleOptimization: decimal("title_optimization"), // 0-1 score for title quality
+  metaDescriptionScore: decimal("meta_description_score"), // 0-1 score for meta description
+  headingStructureScore: decimal("heading_structure_score"), // 0-1 score for proper heading usage
+  
+  // Readability Analysis
+  fleschKincaidScore: decimal("flesch_kincaid_score"), // Standard readability score
+  sentenceLengthVariation: decimal("sentence_length_variation"), // Measure of sentence variety
+  passiveVoicePercentage: decimal("passive_voice_percentage"), // % of sentences with passive voice
+  adverbDensity: decimal("adverb_density"), // Percentage of adverbs (potentially weakening content)
+  
+  // Engagement Metrics
+  emotionalToneAnalysis: jsonb("emotional_tone_analysis"), // Object with emotional tone scores
+  engagementPrediction: decimal("engagement_prediction"), // Predicted engagement score
+  targetAudienceRelevance: decimal("target_audience_relevance"), // Relevance to specified audience
+  
+  // Competitive Analysis
+  uniquenessVsCompetitors: decimal("uniqueness_vs_competitors"), // Uniqueness compared to top content
+  topPerformingPhrases: text("top_performing_phrases").array(), // Phrases that engage well
+  competitorKeyGaps: text("competitor_key_gaps").array(), // Content gaps vs competitors
+  
+  // Content Quality
+  grammarIssuesCount: integer("grammar_issues_count"), // Number of grammar issues
+  spellingIssuesCount: integer("spelling_issues_count"), // Number of spelling issues
+  brandVoiceConsistency: decimal("brand_voice_consistency"), // Consistency with brand voice
+  citationNeeds: text("citation_needs").array(), // Areas that need citation/backing
+  
+  // Recommendations
+  optimizationSuggestions: jsonb("optimization_suggestions"), // Structured suggestions
+  abTestingSuggestions: jsonb("ab_testing_suggestions"), // Suggestions for testing variations
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Content performance data for analytics
 export const contentPerformance = pgTable("content_performance", {
   id: serial("id").primaryKey(),
@@ -152,6 +238,80 @@ export const apiIntegrations = pgTable("api_integrations", {
   refreshToken: text("refresh_token"),
   tokenExpiresAt: timestamp("token_expires_at"),
   userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Social media platform configurations
+export const socialMediaPlatforms = pgTable("social_media_platforms", {
+  id: serial("id").primaryKey(),
+  platformName: text("platform_name").notNull().unique(), // instagram, facebook, twitter, tiktok, etc.
+  description: text("description"),
+  apiDocsUrl: text("api_docs_url"),
+  logoUrl: text("logo_url"),
+  supportedFeatures: jsonb("supported_features"), // e.g., {posting: true, stories: true, reels: false}
+  postLengthLimit: integer("post_length_limit"),
+  mediaTypeSupport: jsonb("media_type_support"), // e.g., {images: true, videos: true, carousels: true}
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Direct publishing records 
+export const publishedContent = pgTable("published_content", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").notNull().references(() => contentGenerations.id, { onDelete: 'cascade' }),
+  platformId: integer("platform_id").notNull().references(() => socialMediaPlatforms.id),
+  integrationId: integer("integration_id").notNull().references(() => apiIntegrations.id),
+  userId: integer("user_id").notNull().references(() => users.id),
+  publishedUrl: text("published_url"),
+  platformContentId: text("platform_content_id"), // ID of the content on the platform
+  publishedAt: timestamp("published_at").defaultNow().notNull(),
+  publishStatus: text("publish_status").notNull(), // success, failed, scheduled
+  statusMessage: text("status_message"),
+  scheduledPublishTime: timestamp("scheduled_publish_time"),
+  metadata: jsonb("metadata"), // Platform-specific metadata
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// API Rate limits tracker
+export const apiRateLimits = pgTable("api_rate_limits", {
+  id: serial("id").primaryKey(),
+  platformId: integer("platform_id").notNull().references(() => socialMediaPlatforms.id),
+  integrationId: integer("integration_id").notNull().references(() => apiIntegrations.id),
+  requestsSent: integer("requests_sent").notNull().default(0),
+  limitPerHour: integer("limit_per_hour"),
+  limitPerDay: integer("limit_per_day"),
+  resetTime: timestamp("reset_time"),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+});
+
+// Webhooks for external integrations
+export const integrationWebhooks = pgTable("integration_webhooks", {
+  id: serial("id").primaryKey(),
+  integrationId: integer("integration_id").notNull().references(() => apiIntegrations.id, { onDelete: 'cascade' }),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  events: text("events").array(), // Event types to trigger this webhook
+  secretKey: text("secret_key"), // For webhook signature verification
+  isActive: boolean("is_active").notNull().default(true),
+  lastTriggered: timestamp("last_triggered"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Marketing automation actions
+export const marketingAutomations = pgTable("marketing_automations", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  triggerEvent: text("trigger_event").notNull(), // content_generated, scheduled_time, etc.
+  triggerConditions: jsonb("trigger_conditions"), // e.g., {niche: "skincare", templateType: "product_review"}
+  actions: jsonb("actions").notNull(), // Array of actions to perform
+  integrationIds: integer("integration_ids").array(), // Which integrations to use
+  isActive: boolean("is_active").notNull().default(true),
+  lastTriggered: timestamp("last_triggered"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -269,6 +429,111 @@ export const insertApiIntegrationSchema = createInsertSchema(apiIntegrations).pi
   userId: true,
 });
 
+// Insert schemas for roles and permissions
+export const insertRoleSchema = createInsertSchema(roles).pick({
+  name: true,
+  description: true,
+  isCustom: true,
+});
+
+export const insertPermissionSchema = createInsertSchema(permissions).pick({
+  name: true,
+  description: true,
+  category: true,
+});
+
+export const insertRolePermissionSchema = createInsertSchema(rolePermissions).pick({
+  roleId: true,
+  permissionId: true,
+});
+
+export const insertUserActivityLogSchema = createInsertSchema(userActivityLogs).pick({
+  userId: true,
+  action: true,
+  metadata: true,
+  ipAddress: true,
+  userAgent: true,
+});
+
+// Insert schemas for advanced content optimization
+export const insertAdvancedContentOptimizationSchema = createInsertSchema(advancedContentOptimizations).pick({
+  contentId: true,
+  keywordRelevance: true,
+  titleOptimization: true,
+  metaDescriptionScore: true,
+  headingStructureScore: true,
+  fleschKincaidScore: true,
+  sentenceLengthVariation: true,
+  passiveVoicePercentage: true,
+  adverbDensity: true,
+  emotionalToneAnalysis: true,
+  engagementPrediction: true,
+  targetAudienceRelevance: true,
+  uniquenessVsCompetitors: true,
+  topPerformingPhrases: true,
+  competitorKeyGaps: true,
+  grammarIssuesCount: true,
+  spellingIssuesCount: true,
+  brandVoiceConsistency: true,
+  citationNeeds: true,
+  optimizationSuggestions: true,
+  abTestingSuggestions: true,
+});
+
+// Insert schemas for social media platforms
+export const insertSocialMediaPlatformSchema = createInsertSchema(socialMediaPlatforms).pick({
+  platformName: true,
+  description: true,
+  apiDocsUrl: true,
+  logoUrl: true,
+  supportedFeatures: true,
+  postLengthLimit: true,
+  mediaTypeSupport: true,
+  isActive: true,
+});
+
+export const insertPublishedContentSchema = createInsertSchema(publishedContent).pick({
+  contentId: true,
+  platformId: true,
+  integrationId: true,
+  userId: true,
+  publishedUrl: true,
+  platformContentId: true,
+  publishStatus: true,
+  statusMessage: true,
+  scheduledPublishTime: true,
+  metadata: true,
+});
+
+export const insertApiRateLimitSchema = createInsertSchema(apiRateLimits).pick({
+  platformId: true,
+  integrationId: true,
+  requestsSent: true,
+  limitPerHour: true,
+  limitPerDay: true,
+  resetTime: true,
+});
+
+export const insertIntegrationWebhookSchema = createInsertSchema(integrationWebhooks).pick({
+  integrationId: true,
+  userId: true,
+  name: true,
+  url: true,
+  events: true,
+  secretKey: true,
+  isActive: true,
+});
+
+export const insertMarketingAutomationSchema = createInsertSchema(marketingAutomations).pick({
+  userId: true,
+  name: true,
+  triggerEvent: true,
+  triggerConditions: true,
+  actions: true,
+  integrationIds: true,
+  isActive: true,
+});
+
 export const insertTrendingEmojisHashtagsSchema = createInsertSchema(trendingEmojisHashtags).pick({
   niche: true,
   hashtags: true,
@@ -278,6 +543,18 @@ export const insertTrendingEmojisHashtagsSchema = createInsertSchema(trendingEmo
 // Export types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+
+export type Role = typeof roles.$inferSelect;
+export type InsertRole = z.infer<typeof insertRoleSchema>;
+
+export type Permission = typeof permissions.$inferSelect;
+export type InsertPermission = z.infer<typeof insertPermissionSchema>;
+
+export type RolePermission = typeof rolePermissions.$inferSelect;
+export type InsertRolePermission = z.infer<typeof insertRolePermissionSchema>;
+
+export type UserActivityLog = typeof userActivityLogs.$inferSelect;
+export type InsertUserActivityLog = z.infer<typeof insertUserActivityLogSchema>;
 
 export type Team = typeof teams.$inferSelect;
 export type InsertTeam = z.infer<typeof insertTeamSchema>;
@@ -303,6 +580,9 @@ export type InsertApiUsage = z.infer<typeof insertApiUsageSchema>;
 export type ContentOptimization = typeof contentOptimizations.$inferSelect;
 export type InsertContentOptimization = z.infer<typeof insertContentOptimizationSchema>;
 
+export type AdvancedContentOptimization = typeof advancedContentOptimizations.$inferSelect;
+export type InsertAdvancedContentOptimization = z.infer<typeof insertAdvancedContentOptimizationSchema>;
+
 export type ContentPerformance = typeof contentPerformance.$inferSelect;
 export type InsertContentPerformance = z.infer<typeof insertContentPerformanceSchema>;
 
@@ -311,6 +591,21 @@ export type InsertContentVersion = z.infer<typeof insertContentVersionSchema>;
 
 export type ApiIntegration = typeof apiIntegrations.$inferSelect;
 export type InsertApiIntegration = z.infer<typeof insertApiIntegrationSchema>;
+
+export type SocialMediaPlatform = typeof socialMediaPlatforms.$inferSelect;
+export type InsertSocialMediaPlatform = z.infer<typeof insertSocialMediaPlatformSchema>;
+
+export type PublishedContent = typeof publishedContent.$inferSelect;
+export type InsertPublishedContent = z.infer<typeof insertPublishedContentSchema>;
+
+export type ApiRateLimit = typeof apiRateLimits.$inferSelect;
+export type InsertApiRateLimit = z.infer<typeof insertApiRateLimitSchema>;
+
+export type IntegrationWebhook = typeof integrationWebhooks.$inferSelect;
+export type InsertIntegrationWebhook = z.infer<typeof insertIntegrationWebhookSchema>;
+
+export type MarketingAutomation = typeof marketingAutomations.$inferSelect;
+export type InsertMarketingAutomation = z.infer<typeof insertMarketingAutomationSchema>;
 
 export type TrendingEmojisHashtags = typeof trendingEmojisHashtags.$inferSelect;
 export type InsertTrendingEmojisHashtags = z.infer<typeof insertTrendingEmojisHashtagsSchema>;
