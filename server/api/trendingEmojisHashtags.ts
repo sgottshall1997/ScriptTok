@@ -54,8 +54,8 @@ trendingEmojisHashtagsRouter.get('/:niche', async (req: Request, res: Response) 
     // Fall back to default hashtags and emojis if nothing found in DB
     const defaultData = {
       niche,
-      hashtags: DEFAULT_HASHTAGS[niche] || [],
-      emojis: DEFAULT_EMOJIS[niche] || [],
+      hashtags: DEFAULT_HASHTAGS[niche as keyof typeof DEFAULT_HASHTAGS] || [],
+      emojis: DEFAULT_EMOJIS[niche as keyof typeof DEFAULT_EMOJIS] || [],
       lastUpdated: new Date(),
       isDefault: true
     };
@@ -162,19 +162,19 @@ async function generateTrendingEmojisHashtags(niche: string, trendingProducts: a
     } catch (e) {
       console.error('Failed to parse AI response as JSON:', e);
       // Create a simple regex-based parser for extracting arrays
-      const hashtagRegex = /"hashtags":\s*\[(.*?)\]/s;
-      const emojiRegex = /"emojis":\s*\[(.*?)\]/s;
+      const hashtagRegex = /"hashtags":\s*\[(.*?)\]/;
+      const emojiRegex = /"emojis":\s*\[(.*?)\]/;
       
       const hashtagMatch = response.match(hashtagRegex);
       const emojiMatch = response.match(emojiRegex);
       
       const hashtags = hashtagMatch ? 
-        hashtagMatch[1].split(',').map(tag => tag.trim().replace(/"/g, '')) : 
-        DEFAULT_HASHTAGS[niche];
+        hashtagMatch[1].split(',').map((tag: string) => tag.trim().replace(/"/g, '')) : 
+        DEFAULT_HASHTAGS[niche as keyof typeof DEFAULT_HASHTAGS];
         
       const emojis = emojiMatch ? 
-        emojiMatch[1].split(',').map(emoji => emoji.trim().replace(/"/g, '')) : 
-        DEFAULT_EMOJIS[niche];
+        emojiMatch[1].split(',').map((emoji: string) => emoji.trim().replace(/"/g, '')) : 
+        DEFAULT_EMOJIS[niche as keyof typeof DEFAULT_EMOJIS];
       
       result = { hashtags, emojis };
     }
@@ -245,20 +245,20 @@ async function generateSmartSuggestions(content: string, niche: string, template
     } catch (e) {
       console.error('Failed to parse AI response as JSON:', e);
       // Create a simple regex-based parser for extracting arrays and explanation
-      const hashtagRegex = /"hashtags":\s*\[(.*?)\]/s;
-      const emojiRegex = /"emojis":\s*\[(.*?)\]/s;
-      const explanationRegex = /"explanation":\s*"(.*?)"/s;
+      const hashtagRegex = /"hashtags":\s*\[(.*?)\]/;
+      const emojiRegex = /"emojis":\s*\[(.*?)\]/;
+      const explanationRegex = /"explanation":\s*"(.*?)"/;
       
       const hashtagMatch = response.match(hashtagRegex);
       const emojiMatch = response.match(emojiRegex);
       const explanationMatch = response.match(explanationRegex);
       
       const hashtags = hashtagMatch ? 
-        hashtagMatch[1].split(',').map(tag => tag.trim().replace(/"/g, '')) : 
+        hashtagMatch[1].split(',').map((tag: string) => tag.trim().replace(/"/g, '')) : 
         hashtagOptions.slice(0, 5);
         
       const emojis = emojiMatch ? 
-        emojiMatch[1].split(',').map(emoji => emoji.trim().replace(/"/g, '')) : 
+        emojiMatch[1].split(',').map((emoji: string) => emoji.trim().replace(/"/g, '')) : 
         emojiOptions.slice(0, 3);
       
       const explanation = explanationMatch ? 
