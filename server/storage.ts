@@ -93,6 +93,16 @@ export class MemStorage implements IStorage {
     this.templateUsage = new Map();
     this.toneUsage = new Map();
     this.productUsage = new Map();
+    this.nicheUsage = new Map();
+    
+    // Initialize niche-specific tracking maps
+    this.templateUsageByNiche = new Map();
+    this.toneUsageByNiche = new Map();
+    this.productUsageByNiche = new Map();
+    this.generationsByNicheDate = new Map();
+    
+    // Initialize custom templates
+    this.customTemplates = new Map();
     
     this.userId = 1;
     this.contentGenerationId = 1;
@@ -269,6 +279,43 @@ export class MemStorage implements IStorage {
     // Track analytics for product
     const currentProductCount = this.productUsage.get(generation.product) || 0;
     this.productUsage.set(generation.product, currentProductCount + 1);
+    
+    // Track analytics for niche
+    const currentNicheCount = this.nicheUsage.get(generation.niche) || 0;
+    this.nicheUsage.set(generation.niche, currentNicheCount + 1);
+    
+    // Track niche-specific template usage
+    if (!this.templateUsageByNiche.has(generation.niche)) {
+      this.templateUsageByNiche.set(generation.niche, new Map());
+    }
+    const templatesByNiche = this.templateUsageByNiche.get(generation.niche)!;
+    const currentTemplateNicheCount = templatesByNiche.get(generation.templateType) || 0;
+    templatesByNiche.set(generation.templateType, currentTemplateNicheCount + 1);
+    
+    // Track niche-specific tone usage
+    if (!this.toneUsageByNiche.has(generation.niche)) {
+      this.toneUsageByNiche.set(generation.niche, new Map());
+    }
+    const tonesByNiche = this.toneUsageByNiche.get(generation.niche)!;
+    const currentToneNicheCount = tonesByNiche.get(generation.tone) || 0;
+    tonesByNiche.set(generation.tone, currentToneNicheCount + 1);
+    
+    // Track niche-specific product usage
+    if (!this.productUsageByNiche.has(generation.niche)) {
+      this.productUsageByNiche.set(generation.niche, new Map());
+    }
+    const productsByNiche = this.productUsageByNiche.get(generation.niche)!;
+    const currentProductNicheCount = productsByNiche.get(generation.product) || 0;
+    productsByNiche.set(generation.product, currentProductNicheCount + 1);
+    
+    // Track niche-specific generation trends by date
+    const today = new Date().toISOString().split('T')[0];
+    if (!this.generationsByNicheDate.has(generation.niche)) {
+      this.generationsByNicheDate.set(generation.niche, new Map());
+    }
+    const datesByNiche = this.generationsByNicheDate.get(generation.niche)!;
+    const currentDateNicheCount = datesByNiche.get(today) || 0;
+    datesByNiche.set(today, currentDateNicheCount + 1);
     
     this.contentGenerations.set(id, generation);
     return generation;
