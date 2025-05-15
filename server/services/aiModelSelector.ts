@@ -94,6 +94,9 @@ export function getModelConfig(params: PromptParams): AIModelConfig {
   // Apply niche-specific adjustments if available
   if (niche && NICHE_CONFIGURATIONS[niche]) {
     Object.assign(config, NICHE_CONFIGURATIONS[niche]);
+    console.log(`Using optimized AI model configuration for ${niche} niche: Temperature ${config.temperature}, Max Tokens ${config.maxTokens}`);
+  } else {
+    console.log(`No specific AI model configuration for ${niche}, using default settings`);
   }
   
   // Adjust based on template type
@@ -122,17 +125,25 @@ export function getModelConfig(params: PromptParams): AIModelConfig {
  */
 export function getTokenLimit(templateType: string): number {
   // Different template types need different token limits
+  let tokenLimit: number;
+  
   switch (templateType) {
     case 'original':
     case 'personal_review':
-      return 3072; // Longer for detailed reviews
+      tokenLimit = 3072; // Longer for detailed reviews
+      break;
     case 'caption':
     case 'influencer_caption':
-      return 1024; // Shorter for captions
+      tokenLimit = 1024; // Shorter for captions
+      break;
     case 'tiktok_breakdown':
     case 'surprise_me':
-      return 2048; // Medium for varied content
+      tokenLimit = 2048; // Medium for varied content
+      break;
     default:
-      return 2048; // Default for most template types
+      tokenLimit = 2048; // Default for most template types
   }
+  
+  console.log(`Setting token limit to ${tokenLimit} for template type: ${templateType}`);
+  return tokenLimit;
 }

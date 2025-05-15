@@ -33,17 +33,28 @@ export async function generateContent(
 ): Promise<string> {
   try {
     // First try using the new modular prompt system
-    const prompt = await generatePrompt({
+    const promptParams = {
       niche,
       productName: product,
       templateType,
       tone,
       trendingProducts
-    });
+    };
     
-    // Call OpenAI with the generated prompt
+    const prompt = await generatePrompt(promptParams);
+    
+    // Get optimized AI model configuration for this specific content generation
+    const modelConfig = getModelConfig(promptParams);
+    
+    // Get appropriate token limit based on template type
+    const maxTokens = getTokenLimit(templateType);
+    
+    // Log the content generation request for analytics
+    console.log(`Generating ${templateType} content for ${product} in ${niche} niche using ${tone} tone.`);
+    
+    // Call OpenAI with the generated prompt and optimized parameters
     const completion = await openai.chat.completions.create({
-      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      model: modelConfig.modelName, // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
       messages: [
         {
           role: "system",
@@ -54,51 +65,86 @@ export async function generateContent(
           content: prompt
         }
       ],
-      temperature: 0.7,
-      max_tokens: 1500
+      temperature: modelConfig.temperature,
+      max_tokens: maxTokens,
+      frequency_penalty: modelConfig.frequencyPenalty,
+      presence_penalty: modelConfig.presencePenalty
     });
 
     return completion.choices[0].message.content || 
       "Could not generate content. Please try again.";
       
   } catch (error) {
-    console.error("Error generating content with modular system:", error);
+    console.error("Error generating content with enhanced system:", error);
     
-    // Fallback to the old system if there's an error
-    console.log("Falling back to legacy template system");
-    
-    // Generate content based on template type using the old system
-    switch (templateType) {
-      case "original":
-        return await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
-      case "comparison":
-        return await GptTemplates.generateProductComparison(openai, product, tone, trendingProducts);
-      case "caption":
-        return await GptTemplates.generateCaption(openai, product, tone);
-      case "pros_cons":
-        return await GptTemplates.generateProsAndCons(openai, product, tone);
-      case "routine":
-        return await GptTemplates.generateRoutine(openai, product, tone);
-      case "beginner_kit":
-        return await GptTemplates.generateBeginnerKit(openai, product, tone);
-      case "demo_script":
-        return await GptTemplates.generateDemoScript(openai, product, tone);
-      case "drugstore_dupe":
-        return await GptTemplates.generateDrugstoreDupe(openai, product, tone);
-      case "personal_review":
-        return await GptTemplates.generatePersonalReview(openai, product, tone);
-      case "surprise_me":
-        return await GptTemplates.generateSurpriseMe(openai, product, tone);
-      case "tiktok_breakdown":
-        return await GptTemplates.generateTikTokBreakdown(openai, product, tone);
-      case "dry_skin_list":
-        return await GptTemplates.generateDrySkinList(openai, product, tone);
-      case "top5_under25":
-        return await GptTemplates.generateTop5Under25(openai, product, tone);
-      case "influencer_caption":
-        return await GptTemplates.generateInfluencerCaption(openai, product, tone);
-      default:
-        return await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
+    try {
+      // Try a more reliable configuration with the same prompt
+      console.log("Attempting generation with fallback model configuration");
+      
+      // Use a more reliable fallback configuration with proper type casting
+      const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
+        {
+          role: "system",
+          content: "You are a content creation expert. Generate high-quality content about the product according to the specified template type and tone."
+        },
+        {
+          role: "user",
+          content: `Create ${templateType} content for ${product} in a ${tone} tone. This is for the ${niche} niche.`
+        }
+      ];
+      
+      // Try the fallback request
+      const fallbackCompletion = await openai.chat.completions.create({
+        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
+        messages: messages,
+        temperature: 0.7,
+        max_tokens: 2048,
+        frequency_penalty: 0.0,
+        presence_penalty: 0.0
+      });
+      
+      return fallbackCompletion.choices[0].message.content || 
+        "Could not generate content. Please try again.";
+      
+    } catch (fallbackError) {
+      console.error("Fallback generation also failed:", fallbackError);
+      
+      // Fallback to the legacy system if all else fails
+      console.log("Falling back to legacy template system");
+      
+      // Generate content based on template type using the legacy system
+      switch (templateType) {
+        case "original":
+          return await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
+        case "comparison":
+          return await GptTemplates.generateProductComparison(openai, product, tone, trendingProducts);
+        case "caption":
+          return await GptTemplates.generateCaption(openai, product, tone);
+        case "pros_cons":
+          return await GptTemplates.generateProsAndCons(openai, product, tone);
+        case "routine":
+          return await GptTemplates.generateRoutine(openai, product, tone);
+        case "beginner_kit":
+          return await GptTemplates.generateBeginnerKit(openai, product, tone);
+        case "demo_script":
+          return await GptTemplates.generateDemoScript(openai, product, tone);
+        case "drugstore_dupe":
+          return await GptTemplates.generateDrugstoreDupe(openai, product, tone);
+        case "personal_review":
+          return await GptTemplates.generatePersonalReview(openai, product, tone);
+        case "surprise_me":
+          return await GptTemplates.generateSurpriseMe(openai, product, tone);
+        case "tiktok_breakdown":
+          return await GptTemplates.generateTikTokBreakdown(openai, product, tone);
+        case "dry_skin_list":
+          return await GptTemplates.generateDrySkinList(openai, product, tone);
+        case "top5_under25":
+          return await GptTemplates.generateTop5Under25(openai, product, tone);
+        case "influencer_caption":
+          return await GptTemplates.generateInfluencerCaption(openai, product, tone);
+        default:
+          return await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
+      }
     }
   }
 }
