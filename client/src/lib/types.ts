@@ -68,6 +68,15 @@ export const SOURCE_COLORS = {
   'google-trends': 'bg-blue-100 text-blue-800'
 };
 
+// Scraper status interface matching backend schema
+export interface ScraperStatus {
+  id: number;
+  name: string;
+  status: string; // "active", "gpt-fallback", "degraded", "error", "rate-limited"
+  lastCheck: string;
+  errorMessage: string | null;
+}
+
 // Status colors for scraper health
 export const STATUS_COLORS = {
   active: 'bg-green-100 text-green-800',

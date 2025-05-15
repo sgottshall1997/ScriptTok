@@ -50,6 +50,11 @@ export default function Home() {
   const { data: scraperHealth = [], isLoading: isLoadingScraperHealth } = useQuery<ScraperStatusType[]>({
     queryKey: ['/api/scraper-health'],
   });
+  
+  // Fetch original scraper logs including error messages
+  const { data: scraperLogs = [] } = useQuery<any[]>({
+    queryKey: ['/api/scraper-status'],
+  });
 
   // Fetch trending products
   const { data: trendingProducts = [], isLoading: isLoadingTrending } = useQuery<TrendingProduct[]>({
@@ -193,7 +198,7 @@ export default function Home() {
               />
               
               {/* Scraper Status Console */}
-              <ScraperStatusConsole />
+              <ScraperStatusConsole scraperLogs={scraperLogs} />
               
               {/* API Usage */}
               <ApiUsageComponent 
