@@ -112,15 +112,15 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
 
   const handleRefresh = async () => {
     try {
-      const response = await apiRequest('POST', '/api/trending/refresh', {});
+      const response = await apiRequest('POST', '/api/trending/refresh', {}) as any;
       
       // Update the last refresh time from the response
-      if (response.lastRefresh) {
+      if (response && response.lastRefresh) {
         setLastRefresh(response.lastRefresh);
       }
       
       // Update next scheduled refresh if available
-      if (response.nextScheduledRefresh) {
+      if (response && response.nextScheduledRefresh) {
         setNextRefresh(response.nextScheduledRefresh);
       }
       
@@ -270,7 +270,25 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
           </div>
         )}
       </CardContent>
-      <CardFooter className="px-5 py-4 bg-gradient-to-r from-blue-50 to-violet-50 border-t border-neutral-200 flex justify-center">
+      <CardFooter className="px-5 py-4 bg-gradient-to-r from-blue-50 to-violet-50 border-t border-neutral-200 flex flex-col items-center space-y-3">
+        {/* Refresh status info */}
+        <div className="text-xs text-gray-600 text-center">
+          <p className="mb-1">
+            <span className="font-medium">Data refresh policy:</span> Once daily at midnight
+          </p>
+          {lastRefresh && (
+            <p className="text-green-600">
+              <span className="mr-1">✓</span>
+              Last refresh: {lastRefresh}
+            </p>
+          )}
+          <p className="text-gray-500">
+            <span className="mr-1">⏱</span>
+            Next scheduled: {nextRefresh}
+          </p>
+        </div>
+        
+        {/* Manual refresh button */}
         <button 
           className="px-4 py-2 rounded-md bg-gradient-to-r from-blue-500 to-violet-500 hover:from-blue-600 hover:to-violet-600 text-white font-medium flex items-center transition-all shadow-md hover:shadow-lg"
           onClick={handleRefresh}
@@ -278,7 +296,7 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 animate-spin-slow" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
           </svg>
-          Refresh Trending Products
+          Refresh Now (Manual)
         </button>
       </CardFooter>
     </Card>
