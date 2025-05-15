@@ -259,11 +259,68 @@ export async function refreshTrendingProducts() {
 }
 
 // Export functions to window for easy access in the console
+/**
+ * Fetches and displays trending hashtags and emojis by niche
+ */
+export async function logTrendingHashtagsEmojis() {
+  try {
+    const response = await apiRequest('GET', '/api/trending-emojis-hashtags');
+    if (!response.ok) {
+      throw new Error(`Failed to fetch trending hashtags and emojis: ${response.status} ${response.statusText}`);
+    }
+    const trends = await response.json();
+    
+    // Header styling
+    const headerStyle = 'color: #fff; background: #333; padding: 4px 8px; border-radius: 4px; font-weight: bold;';
+    const subheaderStyle = 'color: #fff; background: #555; padding: 2px 6px; border-radius: 4px; font-weight: bold;';
+    
+    console.clear();
+    console.log('%c🔠 GlowBot Trending Hashtags & Emojis 🔠', headerStyle);
+    console.log(`Last updated: ${new Date().toLocaleString()}`);
+    console.log('-'.repeat(50));
+    
+    if (!trends || trends.length === 0) {
+      console.log('%c⚠️ No trending hashtags and emojis found.', 'color: #f39c12; font-weight: bold;');
+      console.log('The system is still building trending data. Check back later.');
+      console.log('-'.repeat(50));
+      return;
+    }
+    
+    // Display by niche
+    console.log('%cTrending by Niche:', subheaderStyle);
+    
+    trends.forEach((trend: { niche: string, lastUpdated: string, hashtags: string[], emojis: string[] }) => {
+      console.log(`%c${trend.niche}%c updated ${new Date(trend.lastUpdated).toLocaleString()}`,
+        'color: #9b59b6; font-weight: bold;', 'color: inherit');
+      
+      // Display hashtags
+      console.log('%c#️⃣ Top Hashtags:', 'color: #3498db; font-weight: bold;');
+      trend.hashtags.slice(0, 5).forEach((hashtag: string, idx: number) => {
+        console.log(`  ${idx + 1}. ${hashtag}`);
+      });
+      
+      // Display emojis
+      console.log('%c😀 Top Emojis:', 'color: #2ecc71; font-weight: bold;');
+      trend.emojis.slice(0, 5).forEach((emoji: string, idx: number) => {
+        console.log(`  ${idx + 1}. ${emoji}`);
+      });
+      
+      console.log('-'.repeat(50));
+    });
+    
+    console.log('To refresh hashtags and emojis, call window.checkTrendingHashtags()');
+    
+  } catch (error) {
+    console.error('Failed to fetch trending hashtags and emojis:', error);
+  }
+}
+
 declare global {
   interface Window {
     checkScraperHealth: () => Promise<void>;
     checkTrendingProducts: () => Promise<void>;
     refreshTrendingProducts: () => Promise<void>;
+    checkTrendingHashtags: () => Promise<void>;
   }
 }
 
@@ -272,6 +329,7 @@ export function initScraperConsole() {
   window.checkScraperHealth = logScraperHealth;
   window.checkTrendingProducts = logTrendingProducts;
   window.refreshTrendingProducts = refreshTrendingProducts;
+  window.checkTrendingHashtags = logTrendingHashtagsEmojis;
   
   // Run initial scraper health check
   setTimeout(() => {
@@ -283,4 +341,5 @@ export function initScraperConsole() {
   console.log('- window.checkScraperHealth() - View scraper status');
   console.log('- window.checkTrendingProducts() - View trending products');
   console.log('- window.refreshTrendingProducts() - Manually trigger a new product scrape');
+  console.log('- window.checkTrendingHashtags() - View trending hashtags and emojis');
 }

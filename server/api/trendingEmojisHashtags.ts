@@ -32,6 +32,36 @@ const DEFAULT_EMOJIS: Record<string, string[]> = {
   pet: ['🐶', '🐱', '🐾', '🦮', '🐕', '🐈', '❤️', '🏠']
 };
 
+// New endpoint for the Scraper Console to get all trends for all niches
+trendingEmojisHashtagsRouter.get('/', async (req: Request, res: Response) => {
+  try {
+    // Get trends for all niches
+    const allTrends = [];
+    
+    for (const niche of NICHES) {
+      const trendingData = await storage.getTrendingEmojisHashtags(niche);
+      
+      if (trendingData) {
+        allTrends.push(trendingData);
+      } else {
+        // Fall back to default data
+        allTrends.push({
+          niche,
+          hashtags: DEFAULT_HASHTAGS[niche as keyof typeof DEFAULT_HASHTAGS] || [],
+          emojis: DEFAULT_EMOJIS[niche as keyof typeof DEFAULT_EMOJIS] || [],
+          lastUpdated: new Date(),
+          isDefault: true
+        });
+      }
+    }
+    
+    res.json(allTrends);
+  } catch (error) {
+    console.error('Error fetching all trending emojis and hashtags:', error);
+    res.status(500).json({ message: 'Failed to fetch trending emojis and hashtags' });
+  }
+});
+
 /**
  * GET /api/trending-emojis-hashtags/:niche
  * Get trending emojis and hashtags for a specific niche
@@ -182,8 +212,8 @@ async function generateTrendingEmojisHashtags(niche: string, trendingProducts: a
     // Ensure we have hashtags and emojis
     if (!Array.isArray(result.hashtags) || !Array.isArray(result.emojis)) {
       return {
-        hashtags: DEFAULT_HASHTAGS[niche],
-        emojis: DEFAULT_EMOJIS[niche]
+        hashtags: DEFAULT_HASHTAGS[niche as keyof typeof DEFAULT_HASHTAGS] || [],
+        emojis: DEFAULT_EMOJIS[niche as keyof typeof DEFAULT_EMOJIS] || []
       };
     }
     
@@ -194,8 +224,8 @@ async function generateTrendingEmojisHashtags(niche: string, trendingProducts: a
   } catch (error) {
     console.error('Error generating trending emojis and hashtags:', error);
     return {
-      hashtags: DEFAULT_HASHTAGS[niche] || [],
-      emojis: DEFAULT_EMOJIS[niche] || []
+      hashtags: DEFAULT_HASHTAGS[niche as keyof typeof DEFAULT_HASHTAGS] || [],
+      emojis: DEFAULT_EMOJIS[niche as keyof typeof DEFAULT_EMOJIS] || []
     };
   }
 }
@@ -206,8 +236,8 @@ async function generateTrendingEmojisHashtags(niche: string, trendingProducts: a
 async function generateSmartSuggestions(content: string, niche: string, templateType: string, trendingData: any) {
   try {
     // Get default or trending hashtags and emojis for context
-    const hashtagOptions = trendingData?.hashtags || DEFAULT_HASHTAGS[niche] || [];
-    const emojiOptions = trendingData?.emojis || DEFAULT_EMOJIS[niche] || [];
+    const hashtagOptions = trendingData?.hashtags || DEFAULT_HASHTAGS[niche as keyof typeof DEFAULT_HASHTAGS] || [];
+    const emojiOptions = trendingData?.emojis || DEFAULT_EMOJIS[niche as keyof typeof DEFAULT_EMOJIS] || [];
     
     // Use AI model to generate smart suggestions
     const systemPrompt = `You are a social media content optimization expert specialized in the ${niche} niche.
@@ -289,8 +319,8 @@ async function generateSmartSuggestions(content: string, niche: string, template
   } catch (error) {
     console.error('Error generating smart suggestions:', error);
     return {
-      hashtags: trendingData?.hashtags?.slice(0, 5) || DEFAULT_HASHTAGS[niche]?.slice(0, 5) || [],
-      emojis: trendingData?.emojis?.slice(0, 3) || DEFAULT_EMOJIS[niche]?.slice(0, 3) || [],
+      hashtags: trendingData?.hashtags?.slice(0, 5) || DEFAULT_HASHTAGS[niche as keyof typeof DEFAULT_HASHTAGS]?.slice(0, 5) || [],
+      emojis: trendingData?.emojis?.slice(0, 3) || DEFAULT_EMOJIS[niche as keyof typeof DEFAULT_EMOJIS]?.slice(0, 3) || [],
       explanation: "Default suggestions based on niche trends. Smart suggestions unavailable at the moment."
     };
   }
