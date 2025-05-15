@@ -8,7 +8,10 @@ import { getYouTubeTrending } from "../scrapers/youtube";
 import { getInstagramTrending } from "../scrapers/instagram";
 import { getRedditTrending } from "../scrapers/reddit";
 import { getGoogleTrendingProducts } from "../scrapers/googleTrends";
-import { getRefreshedTrendingProducts } from "../services/trendRefresher";
+import { 
+  getRefreshedTrendingProducts, 
+  forceRefreshTrendingProducts 
+} from "../services/trendRefresher";
 
 const router = Router();
 
@@ -27,33 +30,20 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Refresh trending products from all scrapers
+// Force refresh trending products from all scrapers
 router.post("/refresh", async (req, res) => {
   try {
-    // Fetch fresh trending data from all scrapers
-    const trendingData = await getAllTrendingProducts();
+    console.log("Manual refresh requested - this will force a full refresh regardless of time");
     
-    // Clear existing trending products
-    await storage.clearTrendingProducts();
-    
-    // Save new trending products
-    if (trendingData && trendingData.products && Array.isArray(trendingData.products)) {
-      for (const product of trendingData.products) {
-        await storage.saveTrendingProduct(product);
-      }
-    }
-    
-    // Update scraper status
-    if (trendingData && trendingData.platforms && Array.isArray(trendingData.platforms)) {
-      for (const scraper of trendingData.platforms) {
-        await storage.updateScraperStatus(scraper.name, scraper.status);
-      }
-    }
+    // Use the forceRefreshTrendingProducts which handles everything including storage updates
+    const trendingProducts = await forceRefreshTrendingProducts();
     
     res.json({ 
       success: true, 
-      count: trendingData?.products?.length || 0,
-      message: "Trending products refreshed successfully" 
+      count: trendingProducts.length,
+      message: "Trending products refreshed successfully", 
+      lastRefresh: new Date().toLocaleString(),
+      nextScheduledRefresh: "Next automatic refresh at midnight"
     });
   } catch (error) {
     console.error("Error refreshing trending products:", error);

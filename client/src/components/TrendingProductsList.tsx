@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TrendingProduct, SOURCE_COLORS } from "@/lib/types";
@@ -106,12 +106,27 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
     : filteredProducts;
   const { toast } = useToast();
 
+  // State for last refresh time and next scheduled refresh
+  const [lastRefresh, setLastRefresh] = useState<string | null>(null);
+  const [nextRefresh, setNextRefresh] = useState<string>("Midnight (12:00 AM)");
+
   const handleRefresh = async () => {
     try {
-      await apiRequest('POST', '/api/trending/refresh', {});
+      const response = await apiRequest('POST', '/api/trending/refresh', {});
+      
+      // Update the last refresh time from the response
+      if (response.lastRefresh) {
+        setLastRefresh(response.lastRefresh);
+      }
+      
+      // Update next scheduled refresh if available
+      if (response.nextScheduledRefresh) {
+        setNextRefresh(response.nextScheduledRefresh);
+      }
+      
       toast({
         title: "Trending products refreshed",
-        description: "The latest trending products have been fetched.",
+        description: "The latest trending products have been fetched. Next automatic refresh at midnight.",
       });
     } catch (error) {
       toast({

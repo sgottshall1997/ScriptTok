@@ -1,6 +1,6 @@
 /**
  * Service to periodically refresh trending products using OpenAI
- * This keeps trending products dynamic while using the scraper outputs as context
+ * Data is refreshed once a day at midnight to reduce load on scrapers
  */
 
 import { openai } from './openai';
@@ -11,23 +11,86 @@ import { getAllTrendingProducts } from '../scrapers';
 
 // Cache for the last generated products
 let lastRefreshTime = 0;
-const REFRESH_INTERVAL = 15 * 60 * 1000; // 15 minutes
+let lastRefreshDate = ''; // Track the date of last refresh
 
 /**
- * Get trending products from scrapers and OpenAI
- * Will refresh trending products at specified intervals
+ * Check if we need to refresh the data based on the current date
+ * Returns true if:
+ * 1. It's a new day (after midnight)
+ * 2. We haven't refreshed data today yet
+ * 3. We have no data at all (first run)
+ */
+function shouldRefreshData(): boolean {
+  const now = new Date();
+  const today = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+  
+  // If we've never refreshed or it's a new day, we should refresh
+  return !lastRefreshTime || today !== lastRefreshDate;
+}
+
+/**
+ * Force a refresh of trending products regardless of the time
+ * This is useful for manual refresh or testing
+ */
+export async function forceRefreshTrendingProducts() {
+  console.log('Manually forcing refresh of trending products at:', new Date().toLocaleString());
+  await refreshTrendingProducts();
+  
+  // Update the refresh tracking variables
+  lastRefreshTime = Date.now();
+  lastRefreshDate = new Date().toISOString().split('T')[0];
+  
+  return storage.getTrendingProducts();
+}
+
+/**
+ * Get trending products from storage, refreshing only when needed
+ * Data is refreshed once per day (after midnight)
  */
 export async function getRefreshedTrendingProducts() {
-  const now = Date.now();
-  // Only refresh if enough time has passed
-  if (now - lastRefreshTime > REFRESH_INTERVAL) {
+  // Only refresh if it's a new day or we have no data
+  if (shouldRefreshData()) {
+    console.log('Refreshing trending products for the day at:', new Date().toLocaleString());
     await refreshTrendingProducts();
-    lastRefreshTime = now;
+    
+    // Update the refresh tracking variables
+    lastRefreshTime = Date.now();
+    lastRefreshDate = new Date().toISOString().split('T')[0];
   }
   
   // Return current products from storage
   return storage.getTrendingProducts();
 }
+
+// Schedule a refresh to run at midnight every day
+function scheduleNextMidnightRefresh() {
+  const now = new Date();
+  const midnight = new Date();
+  
+  // Set time to next midnight (00:00:00)
+  midnight.setDate(now.getDate() + 1);
+  midnight.setHours(0, 0, 0, 0);
+  
+  // Calculate milliseconds until midnight
+  const timeUntilMidnight = midnight.getTime() - now.getTime();
+  
+  console.log(`Scheduled next trending product refresh at midnight (${midnight.toLocaleString()}), which is in ${Math.round(timeUntilMidnight/1000/60)} minutes`);
+  
+  // Schedule the refresh
+  setTimeout(async () => {
+    try {
+      await forceRefreshTrendingProducts();
+    } catch (error) {
+      console.error('Error in scheduled midnight refresh:', error);
+    } finally {
+      // Schedule the next day's refresh
+      scheduleNextMidnightRefresh();
+    }
+  }, timeUntilMidnight);
+}
+
+// Initialize the midnight refresh schedule when this module is loaded
+scheduleNextMidnightRefresh();
 
 /**
  * Generate trending products using OpenAI with scraper results as context
