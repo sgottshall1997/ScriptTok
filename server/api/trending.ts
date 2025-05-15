@@ -150,7 +150,50 @@ router.get("/products", async (req, res) => {
     
     let trendingProducts;
     if (niche) {
-      trendingProducts = await storage.getTrendingProductsByNiche(niche, limit);
+      // Always get exactly 3 products per niche when a specific niche is requested
+      const EXACT_NICHE_PRODUCT_COUNT = 3;
+      trendingProducts = await storage.getTrendingProductsByNiche(niche, EXACT_NICHE_PRODUCT_COUNT);
+      
+      // If we don't have exactly 3 products, make sure we get exactly 3
+      if (trendingProducts.length !== EXACT_NICHE_PRODUCT_COUNT) {
+        // If we have more than 3, truncate to exactly 3
+        if (trendingProducts.length > EXACT_NICHE_PRODUCT_COUNT) {
+          trendingProducts = trendingProducts.slice(0, EXACT_NICHE_PRODUCT_COUNT);
+        } 
+        // If we have fewer than 3, we need to make sure we have exactly 3
+        else if (trendingProducts.length < EXACT_NICHE_PRODUCT_COUNT) {
+          // Get all products of this niche from all scrapers to ensure we have enough options
+          const allProducts = await storage.getTrendingProductsByNiche(niche, 100);
+          
+          // If we have enough products, just take the top 3
+          if (allProducts.length >= EXACT_NICHE_PRODUCT_COUNT) {
+            trendingProducts = allProducts.slice(0, EXACT_NICHE_PRODUCT_COUNT);
+          }
+          // If we still don't have enough, we'll need to fill in with products from other niches
+          else {
+            // Get all products and filter for those that could be relevant to this niche
+            const allAvailableProducts = await storage.getTrendingProducts(100);
+            
+            // Prioritize products with matching niche, then add additional ones until we have 3
+            const existingIds = new Set(trendingProducts.map(p => p.id));
+            
+            for (const product of allAvailableProducts) {
+              // Skip products we already have
+              if (existingIds.has(product.id)) continue;
+              
+              // Add this product
+              trendingProducts.push(product);
+              existingIds.add(product.id);
+              
+              // Stop when we reach the target count
+              if (trendingProducts.length >= EXACT_NICHE_PRODUCT_COUNT) break;
+            }
+            
+            // Limit to exactly 3 (just in case)
+            trendingProducts = trendingProducts.slice(0, EXACT_NICHE_PRODUCT_COUNT);
+          }
+        }
+      }
     } else {
       trendingProducts = await storage.getTrendingProducts(limit);
     }
