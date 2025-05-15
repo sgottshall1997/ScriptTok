@@ -98,9 +98,11 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
       })
     : products;
     
-  // If we have a niche but no matching products, generate some placeholders
-  const finalProducts = (niche && filteredProducts.length === 0) 
-    ? generatePlaceholderProducts(niche)
+  // If we have a niche, ensure we always have exactly 3 products
+  const finalProducts = niche
+    ? (filteredProducts.length > 0
+        ? filteredProducts.slice(0, 3) // Limit to exactly 3 products
+        : generatePlaceholderProducts(niche, 3)) // Use exactly 3 placeholders if needed
     : filteredProducts;
   const { toast } = useToast();
 
@@ -176,9 +178,9 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
       </CardHeader>
       <CardContent className="p-5">
         {isLoading ? (
-          // Loading skeletons
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array(6).fill(0).map((_, i) => (
+          // Loading skeletons - exactly 3 for consistency
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {Array(3).fill(0).map((_, i) => (
               <div key={i} className="flex items-center bg-white p-3 rounded-lg border border-gray-100 shadow-sm">
                 <Skeleton className="h-10 w-10 rounded-full mr-3" />
                 <div className="flex-1">
@@ -217,8 +219,8 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
           </div>
         ) : (
           // Trending products grid - using finalProducts
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {finalProducts.slice(0, 6).map((product, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {finalProducts.slice(0, 3).map((product, index) => (
               <div key={product.id} className="flex flex-col bg-white rounded-lg border border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden">
                 <div className="flex items-center p-3 border-b border-gray-100">
                   <div className="bg-gradient-to-r from-blue-500 to-violet-500 text-white inline-flex items-center justify-center h-10 w-10 rounded-full flex-shrink-0 mr-3 shadow-sm">

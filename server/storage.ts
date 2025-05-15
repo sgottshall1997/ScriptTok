@@ -455,17 +455,48 @@ export class MemStorage implements IStorage {
     this.trendingProducts = productsToKeep;
   }
   
-  async getTrendingProductsByNiche(niche: string, limit = 10): Promise<TrendingProduct[]> {
-    const products = Array.from(this.trendingProducts.values())
+  async getTrendingProductsByNiche(niche: string, limit = 3): Promise<TrendingProduct[]> {
+    // First get products matching the specific niche
+    let nicheProducts = Array.from(this.trendingProducts.values())
       .filter(product => product.niche === niche)
       .sort((a, b) => {
         if (a.mentions && b.mentions) {
           return b.mentions - a.mentions;
         }
         return 0;
-      });
+      })
+      .slice(0, limit);
     
-    return products.slice(0, limit);
+    // If we have exactly the requested number of products, return them
+    if (nicheProducts.length === limit) {
+      return nicheProducts;
+    }
+    
+    // If we don't have enough products, get additional trending products
+    if (nicheProducts.length < limit) {
+      // Get all trending products not already included
+      const nicheProductIds = new Set(nicheProducts.map(p => p.id));
+      const additionalProducts = Array.from(this.trendingProducts.values())
+        .filter(product => 
+          // Exclude products we already have
+          !nicheProductIds.has(product.id) &&
+          // Exclude products from this niche (we already got those)
+          product.niche !== niche
+        )
+        .sort((a, b) => {
+          if (a.mentions && b.mentions) {
+            return b.mentions - a.mentions;
+          }
+          return 0;
+        })
+        .slice(0, limit - nicheProducts.length);
+      
+      // Combine the specific niche products with additional trending products
+      return [...nicheProducts, ...additionalProducts].slice(0, limit);
+    }
+    
+    // If we have more products than requested, return only the top ones
+    return nicheProducts.slice(0, limit);
   }
   
   async clearTrendingProductsByNiche(niche: string): Promise<void> {
@@ -990,13 +1021,42 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
   }
   
-  async getTrendingProductsByNiche(niche: string, limit = 10): Promise<TrendingProduct[]> {
-    return await db
+  async getTrendingProductsByNiche(niche: string, limit = 3): Promise<TrendingProduct[]> {
+    // First try to get products specifically for this niche
+    const nicheProducts = await db
       .select()
       .from(trendingProducts)
       .where(eq(trendingProducts.niche, niche))
       .orderBy(desc(trendingProducts.mentions))
       .limit(limit);
+    
+    // If we have exactly the requested number of products, return them
+    if (nicheProducts.length === limit) {
+      return nicheProducts;
+    }
+    
+    // If we don't have enough products, get additional trending products
+    // that might be relevant but not specifically tagged for this niche
+    if (nicheProducts.length < limit) {
+      // Get all remaining products
+      const additionalProducts = await db
+        .select()
+        .from(trendingProducts)
+        .where(and(
+          // Exclude products we already have
+          ...nicheProducts.map(p => (p.id ? sql`${trendingProducts.id} != ${p.id}` : sql`1=1`)),
+          // Exclude products from this niche (we already got those)
+          sql`${trendingProducts.niche} != ${niche}`
+        ))
+        .orderBy(desc(trendingProducts.mentions))
+        .limit(limit - nicheProducts.length);
+      
+      // Combine the specific niche products with additional trending products
+      return [...nicheProducts, ...additionalProducts].slice(0, limit);
+    }
+    
+    // If we have more products than requested, return only the top ones
+    return nicheProducts.slice(0, limit);
   }
   
   async clearTrendingProducts(): Promise<void> {
