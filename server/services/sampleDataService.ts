@@ -141,6 +141,57 @@ async function createSampleIntegrations() {
 }
 
 /**
+ * Creates sample content generations
+ */
+async function createSampleContentGenerations() {
+  console.log('Creating sample content generations...');
+  
+  // Sample content types
+  const contentTypes = ['instagram_post', 'tweet', 'facebook_post', 'linkedin_post'];
+  const tones = ['professional', 'casual', 'enthusiastic', 'informative'];
+  const niches = ['skincare', 'beauty', 'tech', 'fitness'];
+  
+  // Sample products
+  const products = [
+    'Vitamin C Serum',
+    'Hyaluronic Acid Moisturizer',
+    'Blue Light Blocking Glasses',
+    'Fitness Tracking Smartwatch',
+    'Collagen Peptide Supplement'
+  ];
+  
+  // Create 5 sample content generations
+  const sampleContentGenerations = [];
+  
+  for (let i = 0; i < 5; i++) {
+    const templateType = contentTypes[i % contentTypes.length];
+    const tone = tones[i % tones.length];
+    const niche = niches[i % niches.length];
+    const product = products[i % products.length];
+    
+    const contentGeneration = {
+      product,
+      niche,
+      templateType,
+      tone,
+      content: `Sample ${niche} content for ${product} using ${templateType} template in a ${tone} tone.`
+    };
+    
+    sampleContentGenerations.push(contentGeneration);
+  }
+  
+  // Save the content generations and store their IDs
+  const contentGenerationIds = [];
+  for (const contentGeneration of sampleContentGenerations) {
+    const savedContent = await storage.saveContentGeneration(contentGeneration);
+    contentGenerationIds.push(savedContent.id);
+  }
+  
+  console.log(`Created ${sampleContentGenerations.length} sample content generations.`);
+  return contentGenerationIds;
+}
+
+/**
  * Creates sample published content
  */
 async function createSamplePublishedContent() {
@@ -159,6 +210,13 @@ async function createSamplePublishedContent() {
   
   if (!instagramPlatform || !twitterPlatform) {
     console.warn('Instagram or Twitter platform not found, skipping published content creation.');
+    return;
+  }
+  
+  // Create sample content generations first
+  const contentIds = await createSampleContentGenerations();
+  if (contentIds.length === 0) {
+    console.warn('No content generations created, skipping published content creation.');
     return;
   }
   
@@ -183,7 +241,7 @@ async function createSamplePublishedContent() {
     {
       userId: 1,
       platformId: instagramPlatform.id,
-      contentId: 101,
+      contentId: contentIds[0],
       integrationId: 1, // Use the Instagram integration ID
       platformContentId: 'instagram-post-123456',
       publishedUrl: 'https://www.instagram.com/p/sample-post-123456/',
@@ -198,7 +256,7 @@ async function createSamplePublishedContent() {
     {
       userId: 1,
       platformId: twitterPlatform.id,
-      contentId: 102,
+      contentId: contentIds[1],
       integrationId: 2, // Use the Twitter integration ID
       platformContentId: 'twitter-post-789012',
       publishedUrl: 'https://twitter.com/sample/status/789012',
@@ -213,7 +271,7 @@ async function createSamplePublishedContent() {
     {
       userId: 1,
       platformId: instagramPlatform.id,
-      contentId: 103,
+      contentId: contentIds[2],
       integrationId: 1, // Use the Instagram integration ID
       platformContentId: null,
       publishedUrl: null,
@@ -227,7 +285,7 @@ async function createSamplePublishedContent() {
     {
       userId: 1,
       platformId: twitterPlatform.id,
-      contentId: 104,
+      contentId: contentIds[3],
       integrationId: 2, // Use the Twitter integration ID
       platformContentId: null,
       publishedUrl: null,
@@ -240,7 +298,7 @@ async function createSamplePublishedContent() {
     {
       userId: 1,
       platformId: instagramPlatform.id,
-      contentId: 105,
+      contentId: contentIds[4],
       integrationId: 1, // Use the Instagram integration ID
       platformContentId: 'instagram-post-345678',
       publishedUrl: 'https://www.instagram.com/p/sample-post-345678/',
