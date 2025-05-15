@@ -214,17 +214,44 @@ export async function getInstagramTrending(niche: string = 'skincare'): Promise<
     
     // Fallback to OpenAI if real scraping fails
     try {
-      // Use OpenAI to generate realistic trending skincare products on Instagram
+      // Define niche-specific prompts
+      const nicheSystemPrompts: Record<string, string> = {
+        'skincare': "You are an Instagram trend analyzer specialized in skincare and beauty products. Provide authentic, realistic trending skincare products that could be trending on Instagram right now.",
+        'tech': "You are an Instagram trend analyzer specialized in technology products. Provide authentic, realistic trending tech products that could be trending on Instagram right now.",
+        'fashion': "You are an Instagram trend analyzer specialized in fashion and clothing products. Provide authentic, realistic trending fashion items that could be trending on Instagram right now.",
+        'fitness': "You are an Instagram trend analyzer specialized in fitness and workout products. Provide authentic, realistic trending fitness products that could be trending on Instagram right now.",
+        'food': "You are an Instagram trend analyzer specialized in cooking and kitchen products. Provide authentic, realistic trending kitchen gadgets and cooking products that could be trending on Instagram right now.",
+        'home': "You are an Instagram trend analyzer specialized in home decor and organization. Provide authentic, realistic trending home products that could be trending on Instagram right now.",
+        'pet': "You are an Instagram trend analyzer specialized in pet products and accessories. Provide authentic, realistic trending pet products that could be trending on Instagram right now.",
+        'travel': "You are an Instagram trend analyzer specialized in travel gear and accessories. Provide authentic, realistic trending travel products that could be trending on Instagram right now."
+      };
+      
+      const nicheUserPrompts: Record<string, string> = {
+        'skincare': "Generate 5 realistic trending skincare products on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'tech': "Generate 5 realistic trending tech products on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fashion': "Generate 5 realistic trending fashion items on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fitness': "Generate 5 realistic trending fitness products on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'food': "Generate 5 realistic trending kitchen gadgets and cooking products on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'home': "Generate 5 realistic trending home decor and household products on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'pet': "Generate 5 realistic trending pet products on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'travel': "Generate 5 realistic trending travel gear and accessories on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+      };
+      
+      // Get the appropriate prompts for the niche
+      const systemPrompt = nicheSystemPrompts[niche] || nicheSystemPrompts['skincare'];
+      const userPrompt = nicheUserPrompts[niche] || nicheUserPrompts['skincare'];
+      
+      // Use OpenAI to generate realistic trending products on Instagram
       const completion = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
         messages: [
           {
             role: "system",
-            content: "You are an Instagram trend analyzer specialized in skincare and beauty products. Provide authentic, realistic trending skincare products that could be trending on Instagram right now."
+            content: systemPrompt
           },
           {
             role: "user",
-            content: "Generate 5 realistic trending skincare products on Instagram with title, mentions count (between 300K-1.5M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+            content: userPrompt
           }
         ],
         response_format: { type: "json_object" }

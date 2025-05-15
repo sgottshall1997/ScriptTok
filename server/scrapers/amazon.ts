@@ -6,14 +6,47 @@ import { ScraperReturn } from './index';
 import { ScraperStatusType } from '@shared/constants';
 
 // Amazon trending products scraper
-export async function getAmazonTrending(): Promise<ScraperReturn> {
+export async function getAmazonTrending(niche: string = 'skincare'): Promise<ScraperReturn> {
   // First try real scraping
   try {
-    // Target URLs for beauty and skincare trending/bestsellers 
-    const targetURLs = [
-      'https://www.amazon.com/Best-Sellers-Beauty/zgbs/beauty',
-      'https://www.amazon.com/Best-Sellers-Beauty-Skin-Care-Products/zgbs/beauty/11060451'
-    ];
+    // Target URLs for different niches trending/bestsellers
+    const nicheTargetURLs: Record<string, string[]> = {
+      'skincare': [
+        'https://www.amazon.com/Best-Sellers-Beauty/zgbs/beauty',
+        'https://www.amazon.com/Best-Sellers-Beauty-Skin-Care-Products/zgbs/beauty/11060451'
+      ],
+      'tech': [
+        'https://www.amazon.com/Best-Sellers-Electronics/zgbs/electronics',
+        'https://www.amazon.com/Best-Sellers-Electronics-Computer-Accessories-Supplies/zgbs/electronics/172456'
+      ],
+      'fashion': [
+        'https://www.amazon.com/Best-Sellers-Clothing-Shoes-Jewelry/zgbs/fashion',
+        'https://www.amazon.com/Best-Sellers-Clothing-Shoes-Jewelry-Womens-Fashion/zgbs/fashion/7147440011'
+      ],
+      'fitness': [
+        'https://www.amazon.com/Best-Sellers-Sports-Fitness/zgbs/sporting-goods',
+        'https://www.amazon.com/Best-Sellers-Sports-Fitness-Exercise-Fitness-Equipment/zgbs/sporting-goods/3375251'
+      ],
+      'food': [
+        'https://www.amazon.com/Best-Sellers-Kitchen-Dining/zgbs/kitchen',
+        'https://www.amazon.com/Best-Sellers-Home-Kitchen-Small-Appliances/zgbs/kitchen/289913'
+      ],
+      'home': [
+        'https://www.amazon.com/Best-Sellers-Home-Kitchen/zgbs/home-garden',
+        'https://www.amazon.com/Best-Sellers-Home-Kitchen-Home-D%C3%A9cor-Products/zgbs/home-garden/1063278'
+      ],
+      'pet': [
+        'https://www.amazon.com/Best-Sellers-Pet-Supplies/zgbs/pet-supplies',
+        'https://www.amazon.com/Best-Sellers-Pet-Supplies-Dog-Supplies/zgbs/pet-supplies/2975312011'
+      ],
+      'travel': [
+        'https://www.amazon.com/Best-Sellers-Luggage-Travel-Gear/zgbs/luggage',
+        'https://www.amazon.com/Best-Sellers-Luggage-Travel-Gear-Travel-Accessories/zgbs/luggage/9479199011'
+      ]
+    };
+    
+    // Get the target URLs for the specified niche, or default to skincare
+    const targetURLs = nicheTargetURLs[niche] || nicheTargetURLs['skincare'];
     
     // Choose a random URL to avoid detection patterns
     const targetURL = targetURLs[Math.floor(Math.random() * targetURLs.length)];
@@ -105,17 +138,44 @@ export async function getAmazonTrending(): Promise<ScraperReturn> {
     
     // Fallback to OpenAI if real scraping fails
     try {
-      // Use OpenAI to generate realistic trending skincare products on Amazon
+      // Define niche-specific prompts
+      const nicheSystemPrompts: Record<string, string> = {
+        'skincare': "You are an Amazon trend analyzer specialized in skincare and beauty bestsellers. Provide authentic, realistic trending skincare products that could be bestsellers on Amazon right now.",
+        'tech': "You are an Amazon trend analyzer specialized in electronics and tech gadgets. Provide authentic, realistic trending tech products that could be bestsellers on Amazon right now.",
+        'fashion': "You are an Amazon trend analyzer specialized in fashion and clothing items. Provide authentic, realistic trending fashion products that could be bestsellers on Amazon right now.",
+        'fitness': "You are an Amazon trend analyzer specialized in fitness and workout equipment. Provide authentic, realistic trending fitness products that could be bestsellers on Amazon right now.",
+        'food': "You are an Amazon trend analyzer specialized in kitchen gadgets and cooking tools. Provide authentic, realistic trending kitchen products that could be bestsellers on Amazon right now.",
+        'home': "You are an Amazon trend analyzer specialized in home decor and organization products. Provide authentic, realistic trending home products that could be bestsellers on Amazon right now.",
+        'pet': "You are an Amazon trend analyzer specialized in pet supplies and accessories. Provide authentic, realistic trending pet products that could be bestsellers on Amazon right now.",
+        'travel': "You are an Amazon trend analyzer specialized in luggage and travel accessories. Provide authentic, realistic trending travel products that could be bestsellers on Amazon right now."
+      };
+      
+      const nicheUserPrompts: Record<string, string> = {
+        'skincare': "Generate 5 realistic trending skincare products on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'tech': "Generate 5 realistic trending tech products on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fashion': "Generate 5 realistic trending fashion items on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fitness': "Generate 5 realistic trending fitness products on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'food': "Generate 5 realistic trending kitchen gadgets and cooking products on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'home': "Generate 5 realistic trending home decor and household products on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'pet': "Generate 5 realistic trending pet products on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'travel': "Generate 5 realistic trending travel gear and accessories on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+      };
+      
+      // Get the appropriate prompts for the niche
+      const systemPrompt = nicheSystemPrompts[niche] || nicheSystemPrompts['skincare'];
+      const userPrompt = nicheUserPrompts[niche] || nicheUserPrompts['skincare'];
+      
+      // Use OpenAI to generate realistic trending products on Amazon
       const completion = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
         messages: [
           {
             role: "system",
-            content: "You are an Amazon trend analyzer specialized in skincare and beauty bestsellers. Provide authentic, realistic trending skincare products that could be bestsellers on Amazon right now."
+            content: systemPrompt
           },
           {
             role: "user",
-            content: "Generate 5 realistic trending skincare products on Amazon with title, review count (between 1K-20K), and a mock product URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+            content: userPrompt
           }
         ],
         response_format: { type: "json_object" }
