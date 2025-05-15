@@ -23,10 +23,19 @@ export async function generateContentWithClaude(prompt: string, options: {
       messages: [{ role: 'user', content: prompt }],
     });
 
-    // Handle the content safely checking for text property
-    const contentText = message.content[0].type === 'text' 
-      ? message.content[0].text 
-      : JSON.stringify(message.content[0]);
+    // Handle the content safely with proper type handling
+    let contentText = "";
+    const contentBlock = message.content[0];
+    
+    if (contentBlock && typeof contentBlock === 'object' && 'type' in contentBlock) {
+      if (contentBlock.type === 'text' && 'text' in contentBlock) {
+        contentText = contentBlock.text as string;
+      } else {
+        contentText = JSON.stringify(contentBlock);
+      }
+    } else {
+      contentText = JSON.stringify(contentBlock);
+    }
       
     return {
       content: contentText,
@@ -79,10 +88,19 @@ export async function analyzeImageWithClaude(
       }]
     });
 
-    // Handle the content safely checking for text property
-    const contentText = response.content[0].type === 'text' 
-      ? response.content[0].text 
-      : JSON.stringify(response.content[0]);
+    // Handle the content safely with proper type handling
+    let contentText = "";
+    const contentBlock = response.content[0];
+    
+    if (contentBlock && typeof contentBlock === 'object' && 'type' in contentBlock) {
+      if (contentBlock.type === 'text' && 'text' in contentBlock) {
+        contentText = contentBlock.text as string;
+      } else {
+        contentText = JSON.stringify(contentBlock);
+      }
+    } else {
+      contentText = JSON.stringify(contentBlock);
+    }
       
     return {
       content: contentText,
