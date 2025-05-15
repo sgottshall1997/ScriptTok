@@ -9,6 +9,7 @@ import { templateRouter } from "./api/templates";
 import { scraperStatusRouter } from "./api/scraperStatus";
 import { customTemplateTestRouter } from "./api/customTemplateTest";
 import { aiModelConfigRouter } from "./api/aiModelConfig";
+import { hashtagEmojiRouter } from "./api/hashtagEmoji";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
