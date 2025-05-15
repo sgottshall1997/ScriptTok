@@ -279,5 +279,8 @@ export function initScraperConsole() {
     logTrendingProducts();
   }, 1000);
   
-  console.log('Scraper console helpers initialized! Use window.checkScraperHealth() or window.checkTrendingProducts() to refresh data.');
+  console.log('Scraper console helpers initialized! Available commands:');
+  console.log('- window.checkScraperHealth() - View scraper status');
+  console.log('- window.checkTrendingProducts() - View trending products');
+  console.log('- window.refreshTrendingProducts() - Manually trigger a new product scrape');
 }
