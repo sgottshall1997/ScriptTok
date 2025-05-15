@@ -12,6 +12,7 @@ export const initGA = () => {
 
   if (!measurementId) {
     console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
+    console.info('Add your GA Measurement ID to Replit Secrets with key VITE_GA_MEASUREMENT_ID');
     return;
   }
 
@@ -44,7 +45,7 @@ export const trackPageView = (url: string) => {
   });
 };
 
-// Track events
+// Generic event tracking function
 export const trackEvent = (
   action: string, 
   category?: string, 

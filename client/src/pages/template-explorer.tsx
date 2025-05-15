@@ -54,6 +54,39 @@ const TemplateExplorerPage: React.FC = () => {
   const [templateList, setTemplateList] = useState<string[]>([]);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  
+  // Niche labels with proper formatting for display
+  const nicheLabels: Record<string, string> = {
+    skincare: "Skincare & Beauty",
+    tech: "Technology & Gadgets",
+    fashion: "Fashion & Apparel",
+    fitness: "Fitness & Wellness",
+    food: "Food & Cooking",
+    travel: "Travel & Adventure",
+    pet: "Pet Care & Products"
+  };
+  
+  // Descriptions for each niche
+  const nicheDescriptions: Record<string, string> = {
+    skincare: "Generate content for skincare, beauty, and cosmetic products with specialized templates for routines, ingredient analysis, and before-after comparisons.",
+    tech: "Create tech reviews, comparisons, and tutorials for gadgets, software, and electronics with specifications and feature-focused templates.",
+    fashion: "Produce stylish content for apparel, accessories, and footwear with outfit pairing guides, seasonal collections, and style trend analysis.",
+    fitness: "Develop workout routines, supplement reviews, and equipment guides with templates designed for fitness enthusiasts and wellness products.",
+    food: "Craft recipes, cookware reviews, and meal plan content with specialized formats for ingredients, nutritional information, and cooking techniques.",
+    travel: "Build travel guides, gear reviews, and destination comparisons with templates for itineraries, packing lists, and travel essentials.",
+    pet: "Generate pet care content, product reviews, and training guides with specialized templates for different pet types, breeds, and care routines."
+  };
+  
+  // Template counts for each niche
+  const templateCounts: Record<string, number> = {
+    skincare: 18,
+    tech: 14,
+    fashion: 12,
+    fitness: 15,
+    food: 11,
+    travel: 10,
+    pet: 9
+  };
 
   // Fetch all niches for the dropdown
   const { 
@@ -234,10 +267,23 @@ const TemplateExplorerPage: React.FC = () => {
             </Select>
             
             {/* Niche cards grid */}
-            <NicheGrid 
-              niches={niches} 
-              selectedNiche={selectedNiche} 
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
+              {niches.map((niche) => (
+                <NicheCard
+                  key={niche}
+                  niche={niche}
+                  title={nicheLabels[niche] || niche}
+                  description={nicheDescriptions[niche] || `Generate content for ${niche} products and services.`}
+                  icon=""
+                  bgClass=""
+                  textClass=""
+                  borderClass=""
+                  templateCount={templateCounts[niche] || 10}
+                  isSelected={selectedNiche === niche}
+                  onSelect={handleNicheSelect}
+                />
+              ))}
+            </div>
           </div>
         </CardContent>
       </Card>
