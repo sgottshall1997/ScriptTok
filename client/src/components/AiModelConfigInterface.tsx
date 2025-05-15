@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import {
@@ -18,7 +18,6 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import {
@@ -30,7 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { apiRequest } from '@/lib/queryClient';
+import { apiRequest, queryClient } from '@/lib/queryClient';
 import { NICHES, TEMPLATE_TYPES, TONE_OPTIONS } from '../../../shared/constants';
 
 interface ModelConfig {
@@ -53,7 +52,6 @@ const MODEL_OPTIONS = [
 
 const AiModelConfigInterface: React.FC = () => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const [niche, setNiche] = useState<string>('');
   const [templateType, setTemplateType] = useState<string>('');
@@ -76,7 +74,6 @@ const AiModelConfigInterface: React.FC = () => {
     isLoading: isLoadingConfigs
   } = useQuery({
     queryKey: ['/api/ai-model-config/niche', niche],
-    queryFn: () => apiRequest(`/api/ai-model-config/niche/${niche}`),
     enabled: !!niche
   });
 
@@ -86,25 +83,29 @@ const AiModelConfigInterface: React.FC = () => {
     isLoading: isLoadingSpecificConfig
   } = useQuery({
     queryKey: ['/api/ai-model-config', niche, templateType, tone],
-    queryFn: () => apiRequest(`/api/ai-model-config/${niche}/${templateType}/${tone}`),
-    enabled: !!niche && !!templateType && !!tone,
-    onSuccess: (data) => {
+    enabled: !!niche && !!templateType && !!tone
+  });
+
+  // Update config when specific config is loaded
+  React.useEffect(() => {
+    if (specificConfig) {
       setConfig({
-        ...data,
+        ...specificConfig,
         niche,
         templateType,
         tone
       });
     }
-  });
+  }, [specificConfig, niche, templateType, tone]);
 
   // Save configuration mutation
   const saveConfigMutation = useMutation({
-    mutationFn: (configToSave: ModelConfig) => 
-      apiRequest('/api/ai-model-config/save', {
+    mutationFn: async (configToSave: ModelConfig) => {
+      return await apiRequest('/api/ai-model-config/save', {
         method: 'POST',
         data: configToSave
-      }),
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/ai-model-config/niche', niche] });
       queryClient.invalidateQueries({ queryKey: ['/api/ai-model-config', niche, templateType, tone] });
@@ -125,10 +126,11 @@ const AiModelConfigInterface: React.FC = () => {
 
   // Delete configuration mutation
   const deleteConfigMutation = useMutation({
-    mutationFn: (id: number) => 
-      apiRequest(`/api/ai-model-config/${id}`, {
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/ai-model-config/${id}`, {
         method: 'DELETE'
-      }),
+      });
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/ai-model-config/niche', niche] });
       toast({
@@ -326,10 +328,10 @@ const AiModelConfigInterface: React.FC = () => {
             </CardContent>
             <CardFooter className="flex justify-between">
               <div>
-                {specificConfig?.isDefault === false && (
+                {specificConfig && 'isDefault' in specificConfig && specificConfig.isDefault === false && (
                   <span className="text-sm text-blue-500">Using custom configuration</span>
                 )}
-                {specificConfig?.isDefault === true && (
+                {specificConfig && 'isDefault' in specificConfig && specificConfig.isDefault === true && (
                   <span className="text-sm text-gray-500">Using default configuration</span>
                 )}
               </div>
@@ -373,7 +375,7 @@ const AiModelConfigInterface: React.FC = () => {
                 <div className="mt-6">
                   {isLoadingConfigs ? (
                     <p>Loading configurations...</p>
-                  ) : nicheConfigs?.length > 0 ? (
+                  ) : nicheConfigs && Array.isArray(nicheConfigs) && nicheConfigs.length > 0 ? (
                     <Table>
                       <TableCaption>Custom AI model configurations for {niche}</TableCaption>
                       <TableHeader>
@@ -388,7 +390,7 @@ const AiModelConfigInterface: React.FC = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {nicheConfigs.map((config: ModelConfig) => (
+                        {nicheConfigs.map((config: any) => (
                           <TableRow key={`${config.templateType}-${config.tone}`}>
                             <TableCell>{config.templateType}</TableCell>
                             <TableCell>{config.tone}</TableCell>
