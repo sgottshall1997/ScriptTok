@@ -1,8 +1,10 @@
-import { FC, useRef } from "react";
+import { FC, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GenerationResponse } from "@/lib/types";
 import HashtagEmojiRecommender from "@/components/HashtagEmojiRecommender";
+import { SocialMediaPreview } from "@/components/SocialMediaPreview";
+import { Share2 } from "lucide-react";
 import { Niche } from "@shared/constants";
 
 // Maps niche to a Tailwind color
@@ -47,6 +49,7 @@ interface ContentOutputProps {
 
 const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const [showSocialPreview, setShowSocialPreview] = useState(false);
 
   const copyContent = () => {
     if (contentRef.current) {
@@ -153,6 +156,16 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
           <p className="text-sm text-gray-600">AI-generated marketing text optimized for {content?.niche || "short videos"}</p>
         </div>
         <div className="flex items-center space-x-2">
+          {content && content.content && (
+            <Button 
+              variant="outline" 
+              className="flex items-center text-theme border-theme/30 hover:bg-theme/10" 
+              onClick={() => setShowSocialPreview(true)}
+            >
+              <Share2 className="h-4 w-4 mr-2" />
+              Social Preview
+            </Button>
+          )}
           <Button 
             variant="outline" 
             className="flex items-center text-theme border-theme/30 hover:bg-theme/10" 
@@ -328,6 +341,17 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
           )}
         </div>
       </CardContent>
+
+      {/* Social Media Preview Modal */}
+      {content && content.content && (
+        <SocialMediaPreview
+          open={showSocialPreview}
+          onOpenChange={setShowSocialPreview}
+          content={content.content}
+          niche={content.niche as Niche}
+          hashtagsAndEmojis={content.hashtagsAndEmojis}
+        />
+      )}
     </Card>
   );
 };
