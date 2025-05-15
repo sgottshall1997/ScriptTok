@@ -188,7 +188,6 @@ async function createSamplePublishedContent() {
       platformContentId: 'instagram-post-123456',
       publishedUrl: 'https://www.instagram.com/p/sample-post-123456/',
       publishStatus: 'success',
-      publishedAt: threeDaysAgo,
       metadata: {
         likes: 245,
         comments: 32,
@@ -204,7 +203,6 @@ async function createSamplePublishedContent() {
       platformContentId: 'twitter-post-789012',
       publishedUrl: 'https://twitter.com/sample/status/789012',
       publishStatus: 'success',
-      publishedAt: yesterday,
       metadata: {
         likes: 78,
         retweets: 12,
@@ -247,7 +245,6 @@ async function createSamplePublishedContent() {
       platformContentId: 'instagram-post-345678',
       publishedUrl: 'https://www.instagram.com/p/sample-post-345678/',
       publishStatus: 'success',
-      createdAt: fourDaysAgo,
       metadata: {
         likes: 567,
         comments: 89,
