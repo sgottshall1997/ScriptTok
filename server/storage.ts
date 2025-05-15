@@ -565,6 +565,96 @@ export class MemStorage implements IStorage {
     // Return top 10 products
     return stats.sort((a, b) => b.count - a.count).slice(0, 10);
   }
+
+  async getTemplateUsageByNiche(niche: string): Promise<Array<{templateType: string, count: number}>> {
+    const stats: Array<{templateType: string, count: number}> = [];
+    const templatesByNiche = this.templateUsageByNiche.get(niche);
+    
+    if (templatesByNiche) {
+      templatesByNiche.forEach((count, templateType) => {
+        stats.push({ templateType, count });
+      });
+    }
+    
+    // Sort by most used first
+    return stats.sort((a, b) => b.count - a.count);
+  }
+  
+  async getToneUsageByNiche(niche: string): Promise<Array<{tone: string, count: number}>> {
+    const stats: Array<{tone: string, count: number}> = [];
+    const tonesByNiche = this.toneUsageByNiche.get(niche);
+    
+    if (tonesByNiche) {
+      tonesByNiche.forEach((count, tone) => {
+        stats.push({ tone, count });
+      });
+    }
+    
+    // Sort by most used first
+    return stats.sort((a, b) => b.count - a.count);
+  }
+  
+  async getGenerationTrendsByNiche(niche: string): Promise<Array<{date: string, count: number}>> {
+    const last30Days: Array<{date: string, count: number}> = [];
+    const today = new Date();
+    const datesByNiche = this.generationsByNicheDate.get(niche);
+    
+    // Create entries for the last 30 days
+    for (let i = 0; i < 30; i++) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - i);
+      const dateString = date.toISOString().split('T')[0];
+      
+      const count = datesByNiche ? (datesByNiche.get(dateString) || 0) : 0;
+      last30Days.push({
+        date: dateString,
+        count
+      });
+    }
+    
+    // Sort by date ascending
+    return last30Days.sort((a, b) => a.date.localeCompare(b.date));
+  }
+  
+  async getPopularProductsByNiche(niche: string): Promise<Array<{product: string, count: number}>> {
+    const stats: Array<{product: string, count: number}> = [];
+    const productsByNiche = this.productUsageByNiche.get(niche);
+    
+    if (productsByNiche) {
+      productsByNiche.forEach((count, product) => {
+        stats.push({ product, count });
+      });
+    }
+    
+    // Return top 10 products
+    return stats.sort((a, b) => b.count - a.count).slice(0, 10);
+  }
+  
+  async getNicheUsageStats(): Promise<Array<{niche: string, count: number}>> {
+    const stats: Array<{niche: string, count: number}> = [];
+    this.nicheUsage.forEach((count, niche) => {
+      stats.push({ niche, count });
+    });
+    
+    // Sort by most used first
+    return stats.sort((a, b) => b.count - a.count);
+  }
+  
+  // Custom templates management
+  async getCustomTemplates(): Promise<Array<{id: number, name: string, content: string, niche: string}>> {
+    return Array.from(this.customTemplates.values());
+  }
+  
+  async saveCustomTemplate(template: {name: string, content: string, niche: string}): Promise<{id: number, name: string, content: string, niche: string}> {
+    const id = Date.now(); // Use timestamp as ID
+    const customTemplate = { id, ...template };
+    this.customTemplates.set(id, customTemplate);
+    return customTemplate;
+  }
+  
+  async deleteCustomTemplate(id: number): Promise<boolean> {
+    return this.customTemplates.delete(id);
+  }
 }
 
 // Export a single instance of the storage
