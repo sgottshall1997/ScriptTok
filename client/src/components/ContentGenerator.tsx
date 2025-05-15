@@ -139,7 +139,13 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       </CardHeader>
       <CardContent className="p-5">
         <form className="space-y-4" onSubmit={handleSubmit}>
-          {/* Content Niche Selection was moved to top level */}
+          {/* Content Niche Selection */}
+          <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
+            <NicheSelector
+              value={niche}
+              onChange={setNiche}
+            />
+          </div>
 
           <div className="bg-white rounded-lg shadow-sm p-4 border border-gray-100">
             <label htmlFor="product" className="block text-sm font-medium text-blue-700 mb-2">
@@ -158,7 +164,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
           </div>
           
           {/* Amazon Affiliate Link */}
-          {niche && (
+          {niche && productName && (
             <AffiliateLink 
               niche={niche} 
               productName={productName}
