@@ -21,6 +21,7 @@ import CompetitiveAnalysisPage from "@/pages/competitive-analysis";
 import ExportImportPage from "@/pages/export-import";
 import PlatformPreviewPage from "@/pages/platform-preview";
 import PerformanceTrackerPage from "@/pages/performance-tracker";
+import AiModelConfigPage from "@/pages/ai-model-config";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -51,6 +52,7 @@ function Router() {
       <Route path="/export-import" component={ExportImportPage} />
       <Route path="/platform-preview" component={PlatformPreviewPage} />
       <Route path="/performance-tracker" component={PerformanceTrackerPage} />
+      <Route path="/ai-model-config" component={AiModelConfigPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
