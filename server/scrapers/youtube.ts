@@ -6,17 +6,71 @@ import { ScraperReturn } from './index';
 import { ScraperStatusType } from '@shared/constants';
 
 // YouTube trending products scraper
-export async function getYouTubeTrending(): Promise<ScraperReturn> {
+export async function getYouTubeTrending(niche: string = 'skincare'): Promise<ScraperReturn> {
   // First try real YouTube data
   try {
-    // YouTube search terms for beauty and skincare
-    const searchTerms = [
-      'trending skincare products',
-      'best beauty products',
-      'skincare must haves',
-      'viral beauty products',
-      'skincare 2023 trending'
-    ];
+    // YouTube search terms by niche
+    const nicheSearchTerms: Record<string, string[]> = {
+      'skincare': [
+        'trending skincare products',
+        'best beauty products',
+        'skincare must haves',
+        'viral beauty products',
+        'skincare trending'
+      ],
+      'tech': [
+        'trending tech gadgets',
+        'best tech products',
+        'tech must haves',
+        'viral tech products',
+        'tech accessories trending'
+      ],
+      'fashion': [
+        'trending fashion items',
+        'best clothing brands',
+        'fashion must haves',
+        'viral clothing products',
+        'fashion trending'
+      ],
+      'fitness': [
+        'trending fitness equipment',
+        'best workout gear',
+        'fitness must haves',
+        'viral fitness products',
+        'home gym essentials'
+      ],
+      'food': [
+        'trending kitchen gadgets',
+        'best cooking tools',
+        'kitchen must haves',
+        'viral cooking products',
+        'chef recommended tools'
+      ],
+      'home': [
+        'trending home products',
+        'best home decor',
+        'home organization must haves',
+        'viral home gadgets',
+        'home essentials trending'
+      ],
+      'pet': [
+        'trending pet products',
+        'best pet accessories',
+        'pet owner must haves',
+        'viral pet gadgets',
+        'dog cat products trending'
+      ],
+      'travel': [
+        'trending travel gear',
+        'best travel accessories',
+        'travel must haves',
+        'viral travel products',
+        'packing essentials trending'
+      ]
+    };
+    
+    // Get search terms for the specified niche, or default to skincare
+    const searchTerms = nicheSearchTerms[niche] || nicheSearchTerms['skincare'];
     
     // Choose a random search term
     const searchTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
@@ -183,17 +237,44 @@ export async function getYouTubeTrending(): Promise<ScraperReturn> {
     
     // Fallback to OpenAI if real scraping fails
     try {
-      // Use OpenAI to generate realistic trending skincare products on YouTube
+      // Define niche-specific prompts
+      const nicheSystemPrompts: Record<string, string> = {
+        'skincare': "You are a YouTube trend analyzer specialized in skincare and beauty content. Provide authentic, realistic trending skincare products that could be trending in YouTube videos right now.",
+        'tech': "You are a YouTube trend analyzer specialized in technology content. Provide authentic, realistic trending tech products that could be trending in YouTube videos right now.",
+        'fashion': "You are a YouTube trend analyzer specialized in fashion content. Provide authentic, realistic trending fashion items that could be trending in YouTube videos right now.",
+        'fitness': "You are a YouTube trend analyzer specialized in fitness content. Provide authentic, realistic trending fitness products that could be trending in YouTube videos right now.",
+        'food': "You are a YouTube trend analyzer specialized in cooking and food content. Provide authentic, realistic trending kitchen gadgets and cooking products that could be trending in YouTube videos right now.",
+        'home': "You are a YouTube trend analyzer specialized in home decor and DIY content. Provide authentic, realistic trending home products that could be trending in YouTube videos right now.",
+        'pet': "You are a YouTube trend analyzer specialized in pet content. Provide authentic, realistic trending pet products that could be trending in YouTube videos right now.",
+        'travel': "You are a YouTube trend analyzer specialized in travel content. Provide authentic, realistic trending travel gear and accessories that could be trending in YouTube videos right now."
+      };
+      
+      const nicheUserPrompts: Record<string, string> = {
+        'skincare': "Generate 5 realistic trending skincare products on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'tech': "Generate 5 realistic trending tech products on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fashion': "Generate 5 realistic trending fashion items on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fitness': "Generate 5 realistic trending fitness products on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'food': "Generate 5 realistic trending kitchen gadgets and cooking products on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'home': "Generate 5 realistic trending home decor and household products on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'pet': "Generate 5 realistic trending pet products on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'travel': "Generate 5 realistic trending travel gear and accessories on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+      };
+      
+      // Get the appropriate prompts for the niche
+      const systemPrompt = nicheSystemPrompts[niche] || nicheSystemPrompts['skincare'];
+      const userPrompt = nicheUserPrompts[niche] || nicheUserPrompts['skincare'];
+      
+      // Use OpenAI to generate realistic trending products on YouTube
       const completion = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
         messages: [
           {
             role: "system",
-            content: "You are a YouTube trend analyzer specialized in skincare and beauty content. Provide authentic, realistic trending skincare products that could be trending in YouTube videos right now."
+            content: systemPrompt
           },
           {
             role: "user",
-            content: "Generate 5 realistic trending skincare products on YouTube with title, mentions count (between 200K-800K), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+            content: userPrompt
           }
         ],
         response_format: { type: "json_object" }

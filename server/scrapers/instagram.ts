@@ -6,21 +6,82 @@ import { ScraperReturn } from './index';
 import { ScraperStatusType } from '@shared/constants';
 
 // Instagram trending products scraper
-export async function getInstagramTrending(): Promise<ScraperReturn> {
+export async function getInstagramTrending(niche: string = 'skincare'): Promise<ScraperReturn> {
   // First try real Instagram data
   try {
-    // Define popular skincare hashtags to search for
-    const skincareTags = [
-      'skincare',
-      'skincareproducts', 
-      'skincareroutine',
-      'beautytips',
-      'glowingskin',
-      'skinessentials'
-    ];
+    // Define niche-specific hashtags to search for
+    const nicheTags: Record<string, string[]> = {
+      'skincare': [
+        'skincare',
+        'skincareproducts', 
+        'skincareroutine',
+        'beautytips',
+        'glowingskin',
+        'skinessentials'
+      ],
+      'tech': [
+        'techgadgets',
+        'technology', 
+        'techaccessories',
+        'techlover',
+        'newtech',
+        'techreview'
+      ],
+      'fashion': [
+        'fashion',
+        'styleinspo', 
+        'outfitoftheday',
+        'fashiontrends',
+        'fashionista',
+        'fashionstyle'
+      ],
+      'fitness': [
+        'fitness',
+        'fitnessgear', 
+        'workout',
+        'gymlife',
+        'fitnessmotivation',
+        'homeworkout'
+      ],
+      'food': [
+        'foodie',
+        'kitchengadgets', 
+        'cookingtips',
+        'kitchentools',
+        'foodprep',
+        'bakingtools'
+      ],
+      'home': [
+        'homedecor',
+        'homeorganization', 
+        'interiordesign',
+        'homestyle',
+        'homeimprovement',
+        'organizationhacks'
+      ],
+      'pet': [
+        'petproducts',
+        'doglovers', 
+        'catlovers',
+        'petsofinstagram',
+        'petaccessories',
+        'petcare'
+      ],
+      'travel': [
+        'travel',
+        'travelgear', 
+        'packingessentials',
+        'travelaccessories',
+        'travelhacks',
+        'traveltech'
+      ]
+    };
+    
+    // Get tags for the specified niche, or default to skincare
+    const nicheSpecificTags = nicheTags[niche] || nicheTags['skincare'];
     
     // Choose a random tag to search
-    const selectedTag = skincareTags[Math.floor(Math.random() * skincareTags.length)];
+    const selectedTag = nicheSpecificTags[Math.floor(Math.random() * nicheSpecificTags.length)];
     console.log(`Scraping Instagram for tag: #${selectedTag}`);
     
     // Fetch Instagram explore page for this hashtag
