@@ -12,8 +12,8 @@ import {
   ContentVersion, InsertContentVersion,
   ApiIntegration, InsertApiIntegration,
   TrendingEmojisHashtags, InsertTrendingEmojisHashtags,
-  SocialMediaPlatform,
-  PublishedContent,
+  SocialMediaPlatform, InsertSocialMediaPlatform,
+  PublishedContent, InsertPublishedContent,
   IntegrationWebhook, InsertIntegrationWebhook,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
@@ -98,6 +98,7 @@ export interface IStorage {
   // Social Media Platforms operations
   getSocialMediaPlatforms(): Promise<SocialMediaPlatform[]>;
   getSocialMediaPlatformById(id: number): Promise<SocialMediaPlatform | undefined>;
+  saveSocialMediaPlatform(platform: InsertSocialMediaPlatform): Promise<SocialMediaPlatform>;
   
   // Published Content operations
   getPublishedContentByUser(userId: number, limit?: number, offset?: number): Promise<PublishedContent[]>;
@@ -1438,6 +1439,14 @@ export class DatabaseStorage implements IStorage {
       .from(socialMediaPlatforms)
       .where(eq(socialMediaPlatforms.id, id));
     return platform;
+  }
+  
+  async saveSocialMediaPlatform(platform: InsertSocialMediaPlatform): Promise<SocialMediaPlatform> {
+    const [savedPlatform] = await db
+      .insert(socialMediaPlatforms)
+      .values(platform)
+      .returning();
+    return savedPlatform;
   }
   
   async getPublishedContentByUser(userId: number, limit = 20, offset = 0): Promise<PublishedContent[]> {
