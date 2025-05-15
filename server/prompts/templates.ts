@@ -45,7 +45,11 @@ let nicheInfoCache: NicheInfoMap | null = null;
  * @returns An object containing all templates organized by niche and type
  */
 export async function loadPromptTemplates(): Promise<PromptTemplates> {
-  // Force reload to ensure we have latest templates (ideal for development)
+  // Use cached templates if available and not in development mode
+  if (templatesCache && process.env.NODE_ENV !== 'development') {
+    return templatesCache;
+  }
+  
   console.log('Loading all prompt templates...');
   
   const templates: PromptTemplates = {
@@ -305,12 +309,21 @@ function getFallbackNicheTemplates(niche: string): NicheTemplates {
  * Reload all templates and metadata, clearing all caches
  */
 export async function reloadTemplates(): Promise<PromptTemplates> {
+  console.log('Reloading all template caches...');
+  
+  // Clear all caches
   templatesCache = null;
   metadataCache = null;
   nicheInfoCache = null;
   
   // Load everything fresh
-  await loadNicheInfo();
-  await loadTemplateMetadata();
-  return loadPromptTemplates();
+  const nicheInfo = await loadNicheInfo();
+  const metadata = await loadTemplateMetadata();
+  const templates = await loadPromptTemplates();
+  
+  console.log(`Successfully reloaded templates for ${Object.keys(templates).length} niches`);
+  console.log(`Successfully reloaded metadata for ${Object.keys(metadata).length} niches`);
+  console.log(`Successfully reloaded info for ${Object.keys(nicheInfo).length} niches`);
+  
+  return templates;
 }
