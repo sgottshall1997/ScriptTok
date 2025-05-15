@@ -6,6 +6,7 @@ import { trendingRouter } from "./api/trending";
 import { analyticsRouter } from "./api/analytics";
 import { templateTestRouter } from "./api/templateTest";
 import { templateRouter } from "./api/templates";
+import { scraperStatusRouter } from "./api/scraperStatus";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -14,6 +15,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/analytics', analyticsRouter);
   app.use('/api/template-test', templateTestRouter);
   app.use('/api/templates', templateRouter);
+  app.use('/api/scraper-status', scraperStatusRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {

@@ -3,13 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import Sidebar from "@/components/Sidebar";
 import TrendingProductsList from "@/components/TrendingProductsList";
 import ScraperHealth from "@/components/ScraperHealth";
+import ScraperStatusConsole from "@/components/ScraperStatus";
 import ContentGenerator from "@/components/ContentGenerator";
 import ContentOutput from "@/components/ContentOutput";
 import RecentGenerations from "@/components/RecentGenerations";
 import ApiUsageComponent from "@/components/ApiUsage";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
 import NicheSelector from "@/components/NicheSelector";
-import { GenerationResponse, TrendingProduct, ApiUsage, ContentGeneration, ScraperStatus } from "@/lib/types";
+import { GenerationResponse, TrendingProduct, ApiUsage, ContentGeneration, ScraperStatus as ScraperStatusType } from "@/lib/types";
 import { convertContentGenerations, convertScraperStatuses } from "@/lib/type-converters";
 import { apiRequest } from "@/lib/queryClient";
 import { queryClient } from "@/lib/queryClient";
@@ -46,7 +47,7 @@ export default function Home() {
   };
 
   // Fetch scraper health
-  const { data: scraperHealth = [], isLoading: isLoadingScraperHealth } = useQuery<ScraperStatus[]>({
+  const { data: scraperHealth = [], isLoading: isLoadingScraperHealth } = useQuery<ScraperStatusType[]>({
     queryKey: ['/api/scraper-health'],
   });
 
@@ -190,6 +191,9 @@ export default function Home() {
                 scrapers={scraperHealth || []} 
                 isLoading={isLoadingScraperHealth}
               />
+              
+              {/* Scraper Status Console */}
+              <ScraperStatusConsole />
               
               {/* API Usage */}
               <ApiUsageComponent 
