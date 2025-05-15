@@ -30,18 +30,18 @@ export interface ScraperResults {
 }
 
 // Get trending products from all platforms
-export async function getAllTrendingProducts(): Promise<ScraperResults> {
+export async function getAllTrendingProducts(niche: string = 'skincare'): Promise<ScraperResults> {
   const platforms: PlatformStatus[] = [];
   let allProducts: InsertTrendingProduct[] = [];
   
-  // Run all scrapers in parallel
+  // Run all scrapers in parallel with the specified niche
   const results = await Promise.allSettled([
-    getTikTokTrending(),
-    getRedditTrending(),
-    getYouTubeTrending(),
-    getInstagramTrending(),
-    getAmazonTrending(),
-    getGoogleTrendingProducts()
+    getTikTokTrending(niche),
+    getRedditTrending(niche),
+    getYouTubeTrending(niche),
+    getInstagramTrending(niche),
+    getAmazonTrending(niche),
+    getGoogleTrendingProducts(niche)
   ]);
   
   // Process each scraper's results

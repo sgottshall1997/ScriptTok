@@ -275,7 +275,7 @@ async function refreshTrendingProducts(specificNiche?: string) {
     const niches = specificNiche ? [specificNiche] : ['skincare', 'tech', 'fashion', 'fitness', 'food', 'home', 'pet', 'travel'];
     console.log(`Refreshing trending products for ${specificNiche || 'all niches'}...`);
     
-    // Get current scraper outputs
+    // Get current scraper outputs (for all niches initially)
     const scraperResults = await getAllTrendingProducts();
     
     // Clear existing trending products for the specified niche(s)

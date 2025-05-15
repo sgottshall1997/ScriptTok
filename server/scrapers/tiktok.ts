@@ -162,15 +162,69 @@ export async function getTikTokTrending(niche: string = 'skincare'): Promise<Scr
     
     // Process video descriptions for product mentions
     if (videoContent.length > 0) {
-      // Define skincare brands to look for
-      const skincareBrands = [
-        'CeraVe', 'The Ordinary', 'La Roche-Posay', 'Neutrogena', 'Cetaphil', 
-        'Paula\'s Choice', 'Kiehl\'s', 'Drunk Elephant', 'Tatcha', 'Glossier',
-        'Laneige', 'Glow Recipe', 'Youth To The People', 'First Aid Beauty', 'Sunday Riley',
-        'COSRX', 'SK-II', 'Supergoop', 'Dermalogica', 'Fresh', 'Clinique',
-        'Hyaluronic', 'Niacinamide', 'Retinol', 'SPF', 'Sunscreen', 'Moisturizer',
-        'Cleanser', 'Serum', 'Toner', 'Exfoliant', 'AHA', 'BHA', 'Vitamin C'
-      ];
+      // Define niche-specific brands and keywords
+      const nicheBrands: Record<string, string[]> = {
+        'skincare': [
+          'CeraVe', 'The Ordinary', 'La Roche-Posay', 'Neutrogena', 'Cetaphil', 
+          'Paula\'s Choice', 'Kiehl\'s', 'Drunk Elephant', 'Tatcha', 'Glossier',
+          'Laneige', 'Glow Recipe', 'Youth To The People', 'First Aid Beauty', 'Sunday Riley',
+          'COSRX', 'SK-II', 'Supergoop', 'Dermalogica', 'Fresh', 'Clinique',
+          'Hyaluronic', 'Niacinamide', 'Retinol', 'SPF', 'Sunscreen', 'Moisturizer',
+          'Cleanser', 'Serum', 'Toner', 'Exfoliant', 'AHA', 'BHA', 'Vitamin C'
+        ],
+        'tech': [
+          'Apple', 'Samsung', 'Sony', 'Bose', 'Sonos', 'Google', 'Microsoft', 'Logitech',
+          'Anker', 'DJI', 'GoPro', 'Kindle', 'Fitbit', 'Garmin', 'JBL', 'Razer', 'Asus',
+          'Canon', 'Nikon', 'iPhone', 'iPad', 'MacBook', 'AirPods', 'Galaxy', 'Pixel',
+          'Surface', 'Nintendo', 'PlayStation', 'Xbox', 'Quest', 'Echo', 'SmartWatch',
+          'Wireless', 'Bluetooth', 'Charger', 'Adapter', 'Speaker', 'Headphones', 'Earbuds'
+        ],
+        'fashion': [
+          'Nike', 'Adidas', 'Zara', 'H&M', 'Lululemon', 'Shein', 'Abercrombie', 'Hollister',
+          'Gap', 'Uniqlo', 'Urban Outfitters', 'Free People', 'Aritzia', 'Brandy Melville',
+          'Patagonia', 'North Face', 'Levi\'s', 'Dr. Martens', 'Converse', 'Vans',
+          'Sweater', 'Jeans', 'Jacket', 'Dress', 'Pants', 'Shirt', 'Skirt', 'Shorts',
+          'Boots', 'Sneakers', 'Sandals', 'Heels', 'Bag', 'Purse', 'Backpack', 'Accessories'
+        ],
+        'fitness': [
+          'Nike', 'Adidas', 'Lululemon', 'Under Armour', 'New Balance', 'Gymshark',
+          'Peloton', 'NordicTrack', 'Bowflex', 'HOKA', 'On Running', 'Brooks', 'Asics',
+          'Fitbit', 'Garmin', 'Apple Watch', 'Hyperice', 'Theragun', 'Trigger Point',
+          'Protein', 'Pre-workout', 'Creatine', 'BCAA', 'Collagen', 'Dumbbells',
+          'Resistance bands', 'Yoga mat', 'Foam roller', 'Jump rope', 'Kettlebell'
+        ],
+        'food': [
+          'Ninja', 'Instant Pot', 'KitchenAid', 'Vitamix', 'Cuisinart', 'Breville',
+          'Oxo', 'Le Creuset', 'Lodge', 'Staub', 'All-Clad', 'Zwilling', 'Wusthof',
+          'Nutribullet', 'Yeti', 'Stanley', 'Hydro Flask', 'Traeger', 'Weber',
+          'Air fryer', 'Blender', 'Mixer', 'Coffee maker', 'Toaster', 'Food processor',
+          'Dutch oven', 'Cast iron', 'Knife set', 'Cutting board', 'Meal prep', 'Containers'
+        ],
+        'home': [
+          'Dyson', 'iRobot', 'Shark', 'Clorox', 'Bissell', 'OxiClean', 'Lysol',
+          'Rubbermaid', 'Sterilite', 'Container Store', 'SimpleHuman', 'IKEA',
+          'Wayfair', 'West Elm', 'Pottery Barn', 'CB2', 'Target', 'Amazon Basics',
+          'Roomba', 'Vacuum', 'Mop', 'Disinfectant', 'Organizer', 'Storage', 'Basket',
+          'Sheets', 'Pillow', 'Mattress', 'Lamp', 'Chair', 'Sofa', 'Table', 'Curtains'
+        ],
+        'pet': [
+          'Chewy', 'PetSmart', 'Petco', 'Kong', 'Nylabone', 'Purina', 'Royal Canin',
+          'Hill\'s', 'Blue Buffalo', 'Greenies', 'Frontline', 'Seresto', 'Advantage',
+          'Furbo', 'Whistle', 'PetSafe', 'FURminator', 'ChomChom', 'Bark Box',
+          'Food', 'Treats', 'Toys', 'Bed', 'Crate', 'Carrier', 'Leash', 'Collar',
+          'Harness', 'Brush', 'Shampoo', 'Flea', 'Tick', 'Litter box', 'Scratching post'
+        ],
+        'travel': [
+          'Away', 'Samsonite', 'Tumi', 'Monos', 'Calpak', 'Beis', 'Eagle Creek',
+          'Osprey', 'North Face', 'Patagonia', 'REI', 'Columbia', 'Thule', 'Fjallraven',
+          'Quay', 'Ray-Ban', 'Hydroflask', 'Yeti', 'GoPro', 'Sony', 'Bose', 'Apple',
+          'Suitcase', 'Luggage', 'Backpack', 'Duffel', 'Packing cubes', 'Toiletry bag',
+          'Passport holder', 'Travel pillow', 'Eye mask', 'Adapter', 'Power bank', 'Camera'
+        ]
+      };
+      
+      // Get brands for the specified niche
+      const brandList = nicheBrands[niche] || nicheBrands['skincare'];
       
       // Track product mentions
       const productMentions: Map<string, { mentions: number, url: string, views: number }> = new Map();
@@ -180,8 +234,8 @@ export async function getTikTokTrending(niche: string = 'skincare'): Promise<Scr
         const views = video.views;
         const url = video.url;
         
-        // Look for skincare brand mentions
-        for (const brand of skincareBrands) {
+        // Look for brand mentions for the specified niche
+        for (const brand of brandList) {
           if (desc.includes(brand.toLowerCase())) {
             // Extract product name (brand + up to 5 words)
             const regex = new RegExp(`${brand.toLowerCase()}(\\s+\\w+){0,5}`, 'gi');
@@ -244,17 +298,44 @@ export async function getTikTokTrending(niche: string = 'skincare'): Promise<Scr
     
     // Fallback to OpenAI if real scraping fails
     try {
-      // Use OpenAI to generate realistic trending skincare products on TikTok
+      // Define niche-specific prompts
+      const nicheSystemPrompts: Record<string, string> = {
+        'skincare': "You are a TikTok trend analyzer specialized in skincare and beauty products. Provide authentic, realistic trending skincare products that could be trending on TikTok right now.",
+        'tech': "You are a TikTok trend analyzer specialized in technology and gadgets. Provide authentic, realistic trending tech products that could be trending on TikTok right now.",
+        'fashion': "You are a TikTok trend analyzer specialized in fashion and clothing. Provide authentic, realistic trending fashion items that could be trending on TikTok right now.",
+        'fitness': "You are a TikTok trend analyzer specialized in fitness equipment and accessories. Provide authentic, realistic trending fitness products that could be trending on TikTok right now.",
+        'food': "You are a TikTok trend analyzer specialized in cooking and kitchen products. Provide authentic, realistic trending cooking gadgets and kitchen items that could be trending on TikTok right now.",
+        'home': "You are a TikTok trend analyzer specialized in home goods and decor. Provide authentic, realistic trending home products that could be trending on TikTok right now.",
+        'pet': "You are a TikTok trend analyzer specialized in pet products and accessories. Provide authentic, realistic trending pet products that could be trending on TikTok right now.",
+        'travel': "You are a TikTok trend analyzer specialized in travel gear and accessories. Provide authentic, realistic trending travel products that could be trending on TikTok right now."
+      };
+      
+      const nicheUserPrompts: Record<string, string> = {
+        'skincare': "Generate 5 realistic trending skincare products on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'tech': "Generate 5 realistic trending tech products on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fashion': "Generate 5 realistic trending fashion items on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'fitness': "Generate 5 realistic trending fitness products on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'food': "Generate 5 realistic trending kitchen gadgets and cooking products on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'home': "Generate 5 realistic trending home decor and household products on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'pet': "Generate 5 realistic trending pet products on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]",
+        'travel': "Generate 5 realistic trending travel gear and accessories on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+      };
+      
+      // Get the appropriate prompts for the niche
+      const systemPrompt = nicheSystemPrompts[niche] || nicheSystemPrompts['skincare'];
+      const userPrompt = nicheUserPrompts[niche] || nicheUserPrompts['skincare'];
+      
+      // Use OpenAI to generate realistic trending products for the specified niche
       const completion = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
         messages: [
           {
             role: "system",
-            content: "You are a TikTok trend analyzer specialized in skincare and beauty products. Provide authentic, realistic trending skincare products that could be trending on TikTok right now."
+            content: systemPrompt
           },
           {
             role: "user",
-            content: "Generate 5 realistic trending skincare products on TikTok with title, mentions count (between 100K-2M), and a mock source URL. Only return JSON in this format: [{title, mentions, sourceUrl}]"
+            content: userPrompt
           }
         ],
         response_format: { type: "json_object" }

@@ -5,16 +5,70 @@ import { ScraperReturn } from './index';
 import { ScraperStatusType } from '@shared/constants';
 
 // Reddit trending products scraper
-export async function getRedditTrending(): Promise<ScraperReturn> {
+export async function getRedditTrending(niche: string = 'skincare'): Promise<ScraperReturn> {
   // First try real Reddit API
   try {
-    // Define subreddits to check
-    const subreddits = [
-      'SkincareAddiction',
-      'AsianBeauty',
-      'beauty',
-      'BeautyGuruChatter'
-    ];
+    // Define niche-specific subreddits to check
+    const nicheSubreddits: Record<string, string[]> = {
+      'skincare': [
+        'SkincareAddiction',
+        'AsianBeauty',
+        'beauty',
+        'BeautyGuruChatter'
+      ],
+      'tech': [
+        'gadgets',
+        'technology',
+        'AndroidApps',
+        'homeautomation',
+        'Cameras'
+      ],
+      'fashion': [
+        'malefashionadvice',
+        'femalefashionadvice',
+        'streetwear',
+        'frugalmalefashion',
+        'sneakers'
+      ],
+      'fitness': [
+        'fitness',
+        'running',
+        'homegym',
+        'weightlifting',
+        'fitnessgear'
+      ],
+      'food': [
+        'cooking',
+        'cookingforbeginners',
+        'mealprep',
+        'kitchenconfidential',
+        'foodhacks'
+      ],
+      'home': [
+        'homedecorating',
+        'organization',
+        'CleaningTips',
+        'furniture',
+        'houseplants'
+      ],
+      'pet': [
+        'pets',
+        'dogs',
+        'cats',
+        'dogtraining',
+        'aquariums'
+      ],
+      'travel': [
+        'travel',
+        'backpacking',
+        'onebag',
+        'camping',
+        'solotravel'
+      ]
+    };
+    
+    // Get subreddits for the specified niche, or default to skincare
+    const subreddits = nicheSubreddits[niche] || nicheSubreddits['skincare'];
     
     // Choose a random subreddit to diversify results
     const subreddit = subreddits[Math.floor(Math.random() * subreddits.length)];
