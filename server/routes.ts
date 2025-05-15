@@ -12,6 +12,7 @@ import { aiModelConfigRouter } from "./api/aiModelConfig";
 import { hashtagEmojiRouter } from "./api/hashtagEmoji";
 import { socialMediaOptimizationRouter } from "./api/socialMediaOptimization";
 import { videoScriptRouter } from "./api/videoScript";
+import { claudeContentRouter } from "./api/claudeContent";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -26,6 +27,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/hashtag-emoji', hashtagEmojiRouter);
   app.use('/api/social-media-optimization', socialMediaOptimizationRouter);
   app.use('/api/video-script', videoScriptRouter);
+  app.use('/api/claude-content', claudeContentRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {

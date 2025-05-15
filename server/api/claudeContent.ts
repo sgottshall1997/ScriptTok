@@ -22,8 +22,8 @@ export const claudeContentRouter = Router();
 // Schema for content generation request
 const contentRequestSchema = z.object({
   prompt: z.string().min(10),
-  niche: z.enum(NICHES as [string, ...string[]]),
-  tone: z.enum(TONE_OPTIONS as [string, ...string[]]),
+  niche: z.enum(NICHES),
+  tone: z.enum(TONE_OPTIONS),
   maxTokens: z.number().int().positive().optional().default(1024),
   temperature: z.number().min(0).max(1).optional().default(0.7),
   includeProducts: z.boolean().optional().default(true),
@@ -73,7 +73,7 @@ async function enhancePromptWithProducts(
     // Add products to the prompt context
     const productsContext = `
 Consider mentioning these trending products in your content:
-${trendingProducts.map(p => `- ${p.name}`).join('\n')}
+${trendingProducts.map(p => `- ${p.title}`).join('\n')}
 
 Original prompt: ${prompt}`;
     
@@ -141,7 +141,7 @@ claudeContentRouter.post('/', async (req: Request, res: Response) => {
     // Enhanced prompt with trending products if requested
     const enhancedPrompt = await enhancePromptWithProducts(
       requestData.prompt,
-      requestData.niche as Niche,
+      requestData.niche,
       requestData.includeProducts
     );
     
@@ -231,16 +231,16 @@ Follow these guidelines:
     // Save generation for analytics
     await storage.saveContentGeneration({
       niche: requestData.niche,
-      prompt: requestData.prompt,
       content: content,
       templateType: requestData.templateType || 'claude_general',
       tone: requestData.tone,
+      product: '',  // No specific product associated
       createdAt: new Date()
     });
     
     return res.json({ content });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error generating content with Claude:', error);
     return res.status(500).json({ 
       error: 'Failed to generate content',
@@ -277,7 +277,7 @@ claudeContentRouter.post('/analyze-image', async (req: Request, res: Response) =
     
     return res.json({ analysis });
     
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error analyzing image with Claude:', error);
     return res.status(500).json({ 
       error: 'Failed to analyze image',
