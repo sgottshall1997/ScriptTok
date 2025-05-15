@@ -72,8 +72,8 @@ router.post("/", async (req, res) => {
       });
     }
     
-    // Get trending data for context enrichment
-    const trendingProducts = await storage.getTrendingProducts();
+    // Get niche-specific trending data for context enrichment
+    const trendingProducts = await storage.getTrendingProductsByNiche(niche);
     
     // Generate content using OpenAI
     const content = await generateContent(product, templateType, tone, trendingProducts, niche);

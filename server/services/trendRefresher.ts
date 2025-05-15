@@ -371,12 +371,11 @@ async function refreshTrendingProducts(specificNiche?: string) {
       }
     }
     
-    // Update scraper statuses
-    for (const platform of scraperResults.platforms) {
+    // Update scraper statuses for each platform
+    for (const platform of SCRAPER_PLATFORMS) {
       await storage.updateScraperStatus(
-        platform.name,
-        platform.status,
-        platform.errorMessage
+        platform,
+        'active' // Set all platforms to active after refreshing
       );
     }
     
