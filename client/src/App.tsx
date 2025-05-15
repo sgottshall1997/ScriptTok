@@ -14,6 +14,7 @@ import FAQPage from "@/pages/faq";
 import PrivacyPolicyPage from "@/pages/privacy";
 import TermsPage from "@/pages/terms";
 import ContactPage from "@/pages/contact";
+import AIModelTestPage from "@/pages/ai-model-test";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -37,6 +38,7 @@ function Router() {
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />
       <Route path="/contact" component={ContactPage} />
+      <Route path="/ai-model-test" component={AIModelTestPage} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
