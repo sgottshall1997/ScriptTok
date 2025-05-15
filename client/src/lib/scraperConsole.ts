@@ -11,6 +11,7 @@ type ScraperStatus = {
   errorMessage?: string;
   successCount: number;
   failureCount: number;
+  realData?: any[]; // Store actual products scraped directly from the source
 };
 
 /**
@@ -20,6 +21,10 @@ export async function logScraperHealth() {
   try {
     const response = await apiRequest('GET', '/api/scraper-status');
     const scraperStatus: ScraperStatus[] = await response.json();
+    
+    // Also fetch actual products to display samples of real data
+    const productsResponse = await apiRequest('GET', '/api/trending/products');
+    const products = await productsResponse.json();
     
     // Group scrapers by status
     const activeScrapers = scraperStatus.filter(s => s.status === 'active');
@@ -33,6 +38,17 @@ export async function logScraperHealth() {
     activeScrapers.forEach(scraper => {
       if (scraper.successCount === 0 && !scraper.errorMessage) {
         scraper.status = 'gpt-fallback';
+      }
+      
+      // Find real scraped data (if any) for this scraper
+      const realData = products.filter((p: any) => 
+        p.source?.toLowerCase() === scraper.name.toLowerCase() && 
+        p.isAIGenerated === false
+      );
+      
+      // Attach real data samples to scraper object
+      if (realData && realData.length > 0) {
+        scraper.realData = realData.slice(0, 3); // Limit to 3 samples
       }
     });
     
@@ -91,6 +107,14 @@ export async function logScraperHealth() {
           console.log(`  Direct successes: ${successCount} | Using AI for data generation | Failures: ${failureCount}`);
         } else {
           console.log(`  Success count: ${successCount} | Failure count: ${failureCount}`);
+        }
+        
+        // Display real data (if any) from this scraper
+        if (scraper.realData && scraper.realData.length > 0) {
+          console.log(`  %c🌐 Real data from ${scraper.name}:`, 'color: #00cc99; font-style: italic');
+          scraper.realData.forEach((product: any, index: number) => {
+            console.log(`    ${index + 1}. ${product.title} (${product.mentionCount?.toLocaleString() || 'unknown'} mentions)`);
+          });
         }
       });
       console.log('-'.repeat(50));
@@ -170,7 +194,7 @@ export async function logTrendingProducts() {
     try {
       const statsResponse = await apiRequest('GET', '/api/scraper-status');
       const scraperStatus = await statsResponse.json();
-      const aiScrapers = scraperStatus.filter(s => s.status === 'gpt-fallback' || s.successCount === 0);
+      const aiScrapers = scraperStatus.filter((s: any) => s.status === 'gpt-fallback' || s.successCount === 0);
       
       if (aiScrapers.length > 0) {
         // If all scrapers are in AI fallback
