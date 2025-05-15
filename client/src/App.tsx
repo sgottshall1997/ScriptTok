@@ -28,6 +28,7 @@ import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
+import { initScraperConsole } from "./lib/scraperConsole";
 
 function Router() {
   // Track page views when routes change
@@ -64,15 +65,18 @@ function Router() {
 }
 
 function App() {
-  // Initialize Google Analytics when app loads
+  // Initialize Google Analytics and scraper console when app loads
   useEffect(() => {
-    // Verify required environment variable is present
+    // Verify required environment variable is present for GA
     if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
       console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
       console.info('Add your GA Measurement ID to Replit Secrets with key VITE_GA_MEASUREMENT_ID');
     } else {
       initGA();
     }
+    
+    // Initialize the scraper console for developer tools
+    initScraperConsole();
   }, []);
 
   return (
