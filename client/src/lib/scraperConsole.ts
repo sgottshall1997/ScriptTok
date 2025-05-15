@@ -29,6 +29,13 @@ export async function logScraperHealth() {
       s.status !== 'active' && s.status !== 'error' && s.status !== 'warning'
     );
     
+    // Identify AI fallback scrapers based on success count
+    activeScrapers.forEach(scraper => {
+      if (scraper.successCount === 0 && !scraper.errorMessage) {
+        scraper.status = 'gpt-fallback';
+      }
+    });
+    
     // Clear console for better visibility
     console.clear();
     
@@ -39,6 +46,9 @@ export async function logScraperHealth() {
     // Status styling
     const statusStyles = {
       active: 'color: #00cc00; font-weight: bold;',
+      'gpt-fallback': 'color: #0099ff; font-weight: bold;',
+      degraded: 'color: #ffaa00; font-weight: bold;',
+      'rate-limited': 'color: #cc00cc; font-weight: bold;',
       error: 'color: #ff0000; font-weight: bold;',
       warning: 'color: #ffcc00; font-weight: bold;',
       default: 'color: #999999; font-weight: bold;'
@@ -63,8 +73,25 @@ export async function logScraperHealth() {
       activeScrapers.forEach(scraper => {
         const lastCheck = new Date(scraper.lastCheck).toLocaleString();
         const successCount = typeof scraper.successCount === 'number' ? scraper.successCount : 0;
-        console.log(`%c${scraper.name}%c - Last check: ${lastCheck} - Success count: ${successCount}`, 
-          statusStyles.active, 'color: inherit');
+        const failureCount = typeof scraper.failureCount === 'number' ? scraper.failureCount : 0;
+        
+        // Display based on whether using AI fallback or not
+        const isAIFallback = scraper.status === 'gpt-fallback';
+        const statusStyle = isAIFallback ? statusStyles['gpt-fallback'] : statusStyles.active;
+        const statusIcon = isAIFallback ? '🤖' : '✅';
+        const statusLabel = isAIFallback ? 'AI Fallback' : 'Active';
+        
+        console.log(
+          `%c${scraper.name}%c - ${statusIcon} ${statusLabel} - Last check: ${lastCheck}`, 
+          statusStyle, 
+          'color: inherit'
+        );
+        
+        if (isAIFallback) {
+          console.log(`  Direct successes: ${successCount} | Using AI for data generation | Failures: ${failureCount}`);
+        } else {
+          console.log(`  Success count: ${successCount} | Failure count: ${failureCount}`);
+        }
       });
       console.log('-'.repeat(50));
     }
@@ -137,12 +164,35 @@ export async function logTrendingProducts() {
     }
     const products = await response.json();
     
+    // Get AI fallback information
+    let dataSource = "Live scraped data";
+    let dataSourceIcon = "🌐";
+    try {
+      const statsResponse = await apiRequest('GET', '/api/scraper-status');
+      const scraperStatus = await statsResponse.json();
+      const aiScrapers = scraperStatus.filter(s => s.status === 'gpt-fallback' || s.successCount === 0);
+      
+      if (aiScrapers.length > 0) {
+        // If all scrapers are in AI fallback
+        if (aiScrapers.length === scraperStatus.length) {
+          dataSource = "AI-generated data (all scrapers)";
+          dataSourceIcon = "🤖";
+        } else {
+          dataSource = "Mixed data sources (scraped + AI)";
+          dataSourceIcon = "🔄";
+        }
+      }
+    } catch (error) {
+      // Continue without showing data source info
+    }
+    
     // Header styling
     const headerStyle = 'color: #fff; background: #333; padding: 4px 8px; border-radius: 4px; font-weight: bold;';
     const subheaderStyle = 'color: #fff; background: #555; padding: 2px 6px; border-radius: 4px; font-weight: bold;';
     
     console.clear();
     console.log('%c📊 GlowBot Trending Products 📊', headerStyle);
+    console.log(`${dataSourceIcon} Data source: ${dataSource}`);
     console.log(`Total products: ${products.length}`);
     
     // Handle empty products case
