@@ -120,11 +120,11 @@ export async function loadNicheInfo(): Promise<NicheInfoMap> {
   // Default niche info fallback
   const defaultNicheInfo: NicheInfo = {
     name: "General Content",
-    description: "Universal templates for all content types",
-    icon: "file-text",
+    description: "Generate versatile content for any product type using universal templates suitable for various industries and product categories.",
+    icon: "🌐",
     primary_color: "gray",
-    secondary_color: "blue",
-    keywords: ["universal", "general", "content"]
+    secondary_color: "slate",
+    keywords: ["product", "review", "content", "general", "universal", "versatile", "all-purpose"]
   };
   
   nicheInfo['default'] = defaultNicheInfo;
@@ -216,9 +216,20 @@ async function loadNicheTemplates(niche: string): Promise<NicheTemplates> {
     const templateFile = await loadTemplateFile(niche);
     
     if (templateFile && templateFile.templates) {
-      // Extract template strings from the template file
+      // Extract template strings from the template file and convert newer format variables to old format
       Object.entries(templateFile.templates).forEach(([templateType, templateData]) => {
-        templates[templateType as TemplateType] = templateData.template;
+        let templateString = templateData.template;
+        
+        // Convert new {{productName}} format to {product} for backward compatibility
+        templateString = templateString.replace(/{{productName}}/g, '{product}');
+        
+        // Convert new {{trendingProducts}} format to {trendContext} for backward compatibility
+        templateString = templateString.replace(/{{trendingProducts}}/g, '{trendContext}');
+        
+        // Convert new {{tone}} format to {tone} for backward compatibility
+        templateString = templateString.replace(/{{tone}}/g, '{tone}');
+        
+        templates[templateType as TemplateType] = templateString;
       });
       
       console.log(`Successfully loaded ${Object.keys(templates).length} templates for ${niche}`);
