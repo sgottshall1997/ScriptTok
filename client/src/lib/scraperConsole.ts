@@ -219,6 +219,12 @@ export async function logTrendingProducts() {
     console.log(`${dataSourceIcon} Data source: ${dataSource}`);
     console.log(`Total products: ${products.length}`);
     
+    // Add explanation about mention counts
+    console.log('');
+    console.log('%c📌 About Mention Counts:', 'color: #ff6600; font-weight: bold;');
+    console.log('  %c🌐 Real scraped data:%c Actual mention counts from source websites', 'color: #00cc99; font-style: italic;', 'color: inherit');
+    console.log('  %c🤖 AI-generated data:%c Estimated mention counts (not actual data)', 'color: #0099ff; font-style: italic;', 'color: inherit');
+    
     // Handle empty products case
     if (!products || products.length === 0) {
       console.log('%c⚠️ No trending products found.', 'color: #f39c12; font-weight: bold;');
@@ -266,7 +272,9 @@ export async function logTrendingProducts() {
           .slice(0, 3)
           .forEach((product, idx) => {
             const mentions = product.mentions ? product.mentions.toLocaleString() : 'unknown';
-            console.log(`  ${idx + 1}. ${product.title} (${mentions} mentions)`);
+            const isAI = product.isAIGenerated === true;
+            const icon = isAI ? '🤖' : '🌐';
+            console.log(`  ${idx + 1}. ${icon} ${product.title} (${mentions} mentions)`);
           });
         
         if (sourceProducts.length > 3) {
@@ -291,7 +299,9 @@ export async function logTrendingProducts() {
           .slice(0, 3)
           .forEach((product, idx) => {
             const mentions = product.mentions ? product.mentions.toLocaleString() : 'unknown';
-            console.log(`  ${idx + 1}. ${product.title} (${mentions} mentions)`);
+            const isAI = product.isAIGenerated === true;
+            const icon = isAI ? '🤖' : '🌐';
+            console.log(`  ${idx + 1}. ${icon} ${product.title} (${mentions} mentions)`);
           });
         
         if (nicheProducts.length > 3) {
