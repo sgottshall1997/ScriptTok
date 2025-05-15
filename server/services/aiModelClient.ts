@@ -49,7 +49,7 @@ export const aiModelClient = {
       } else {
         return await this.generateWithOpenAI(params);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating content with AI model:', error);
       throw new Error(`Failed to generate content: ${error.message}`);
     }
@@ -125,8 +125,15 @@ export const aiModelClient = {
         ],
       });
 
-      return response.content[0].text || '';
-    } catch (error) {
+      // Access the content safely with type checking
+      if (response.content && response.content.length > 0) {
+        const contentBlock = response.content[0];
+        if ('text' in contentBlock) {
+          return contentBlock.text;
+        }
+      }
+      return '';
+    } catch (error: any) {
       console.error('Error generating content with Claude:', error);
       throw new Error(`Failed to generate content with Claude: ${error.message}`);
     }
