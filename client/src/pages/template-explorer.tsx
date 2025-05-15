@@ -20,10 +20,11 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useToast } from '@/hooks/use-toast';
-import { NicheCard, NicheGrid } from '@/components/NicheCard';
+import NicheCard from '@/components/NicheCard';
+import NicheGrid from '@/components/NicheGrid';
 import { TemplateGrid } from '@/components/TemplatePreview';
 import { useLocation } from 'wouter';
-import { trackNicheSelection, trackTemplateSelection, trackEvent } from '@/lib/analytics';
+import { trackEvent } from '@/lib/analytics';
 
 interface NicheInfo {
   name: string;
@@ -113,14 +114,14 @@ const TemplateExplorerPage: React.FC = () => {
     // Reset template selection when niche changes
     setSelectedTemplate('');
     // Track niche selection event
-    trackNicheSelection(niche);
+    trackEvent('niche_selection', 'template_explorer', niche);
   };
 
   // Handle template selection
   const handleTemplateSelect = (templateType: string) => {
     setSelectedTemplate(templateType);
     // Track template selection event
-    trackTemplateSelection(templateType, selectedNiche);
+    trackEvent('template_selection', 'template_explorer', `${selectedNiche}_${templateType}`);
   };
 
   // Handle generate button
