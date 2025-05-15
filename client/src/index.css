@@ -10,6 +10,32 @@
   .animate-spin-slow {
     animation: spin 3s linear infinite;
   }
+  
+  /* Theme utility classes */
+  .bg-theme-gradient {
+    background: linear-gradient(to right, hsl(var(--theme-primary)), hsl(var(--theme-secondary)));
+  }
+  
+  .bg-theme-gradient-light {
+    background: linear-gradient(to right, hsl(var(--theme-primary-light)), hsl(var(--theme-secondary-light)));
+  }
+  
+  .text-theme-gradient {
+    background: linear-gradient(to right, hsl(var(--theme-primary)), hsl(var(--theme-secondary)));
+    @apply text-transparent bg-clip-text;
+  }
+  
+  .border-theme {
+    border-color: hsl(var(--theme-primary));
+  }
+  
+  .text-theme {
+    color: hsl(var(--theme-primary));
+  }
+  
+  .bg-theme {
+    background-color: hsl(var(--theme-primary));
+  }
 }
 
 @keyframes spin {
@@ -58,6 +84,46 @@
   --destructive-foreground: 60 9.1% 97.8%;
   --ring: 20 14.3% 4.1%;
   --radius: 0.5rem;
+
+  /* Niche-specific colors */
+  --violet-600: 263 70% 50.4%;
+  --blue-600: 221.2 83.2% 53.3%;
+  --cyan-600: 192.9 91% 36.1%;
+  --pink-600: 336.8 80.9% 58%;
+  --purple-600: 274 87% 43.2%;
+  --green-600: 142.1 76.2% 36.3%;
+  --teal-600: 172.5 66% 40.4%;
+  --orange-600: 27.2 98% 54.3%;
+  --yellow-600: 40 96.3% 57.8%;
+  --sky-600: 198.5 88.7% 48.4%;
+  --indigo-600: 230.5 70.5% 52%;
+  --amber-600: 37.6 100% 50%;
+  --red-600: 0 91.6% 60.6%;
+  --slate-600: 215.4 25% 46.9%;
+  --gray-600: 220 8.9% 46.1%;
+  
+  /* For light mode */
+  --violet-50: 263 80% 97.8%;
+  --blue-50: 217.9 100% 96.5%;
+  --cyan-50: 183.2 100% 96.3%;
+  --pink-50: 327.3 73.3% 97.1%;
+  --purple-50: 270 100% 98%;
+  --green-50: 138.5 76.5% 96.7%;
+  --teal-50: 166.2 76.5% 96.7%;
+  --orange-50: 33.3 100% 96.5%;
+  --yellow-50: 55 100% 95.5%;
+  --sky-50: 204 100% 97.1%;
+  --indigo-50: 225.9 100% 96.7%;
+  --amber-50: 48 100% 96.1%;
+  --red-50: 0 85.7% 97.3%;
+  --slate-50: 210 40% 98%;
+  --gray-50: 210 20% 98%;
+  
+  /* Dynamic theme variables that will be updated by NicheThemeProvider */
+  --theme-primary: var(--violet-600);
+  --theme-secondary: var(--blue-600);
+  --theme-primary-light: var(--violet-50);
+  --theme-secondary-light: var(--blue-50);
 
   /* Chart colors */
   --chart-1: 357 100% 75%;

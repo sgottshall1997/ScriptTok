@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import ContentGenerator from "@/components/ContentGenerator";
 import ContentOutput from "@/components/ContentOutput";
 import TrendingProductsList from "@/components/TrendingProductsList";
 import NicheNavigation from "@/components/NicheNavigation";
+import NicheThemeProvider from "@/components/NicheThemeProvider";
 import { GenerationResponse, TrendingProduct } from "@/lib/types";
 import { NICHES } from "@shared/constants";
 import type { Niche } from "@shared/constants";
@@ -72,6 +73,7 @@ export default function NichePage() {
   const [generatedContent, setGeneratedContent] = useState<GenerationResponse | null>(null);
   const [isRefreshingTrends, setIsRefreshingTrends] = useState(false);
   const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const contentRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   // Redirect to home if niche is invalid (but only if a niche is specified in the URL)

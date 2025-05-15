@@ -20,13 +20,15 @@ interface ContentGeneratorProps {
   onNicheChange?: (niche: string) => void;
   initialNiche?: string;
   initialTemplate?: string;
+  scrollToTopOnGenerate?: boolean;
 }
 
 const ContentGenerator: FC<ContentGeneratorProps> = ({ 
   onGenerate, 
   onNicheChange, 
   initialNiche = '',
-  initialTemplate = ''
+  initialTemplate = '',
+  scrollToTopOnGenerate = true
 }) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -94,6 +96,15 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
     
     try {
       setIsGenerating(true);
+      
+      // Scroll to the top of the page before generating content
+      if (scrollToTopOnGenerate) {
+        window.scrollTo({
+          top: 0,
+          left: 0,
+          behavior: 'smooth'
+        });
+      }
       
       const response = await apiRequest('POST', '/api/generate', requestData);
       const data: GenerationResponse = await response.json();
