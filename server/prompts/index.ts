@@ -14,7 +14,7 @@ import {
   TemplateMetadata,
   NicheInfo
 } from './templates';
-import { getToneDescription } from './tones';
+import { getToneInstructions, getToneDescription } from './tones';
 
 export interface PromptParams {
   niche: string;
