@@ -41,7 +41,7 @@ router.post("/refresh", async (req, res) => {
     
     res.json({ 
       success: true, 
-      count: trendingProducts.length,
+      count: trendingProducts.count,
       message: "Trending products refreshed successfully", 
       lastRefresh: new Date().toLocaleString(),
       nextScheduledRefresh: "Next automatic refresh at midnight"

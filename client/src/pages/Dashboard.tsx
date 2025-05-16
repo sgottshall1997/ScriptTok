@@ -34,7 +34,16 @@ const Dashboard = () => {
     
   // Safely access trending products with defaults
   const productCount = trendingProducts?.count || 0;
-  const nicheProducts = trendingProducts?.byNiche || {};
+  const nicheProducts: Record<string, TrendingProduct[]> = {};
+  
+  // Prepare niche products with proper fallbacks for each niche
+  niches.forEach(niche => {
+    if (trendingProducts?.byNiche && trendingProducts.byNiche[niche.id]) {
+      nicheProducts[niche.id] = trendingProducts.byNiche[niche.id];
+    } else {
+      nicheProducts[niche.id] = [];
+    }
+  });
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">

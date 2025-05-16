@@ -7,6 +7,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import NichePage from "@/pages/niche";
+import Dashboard from "@/pages/Dashboard";
 import TemplateExplorerPage from "@/pages/template-explorer";
 import AboutPage from "@/pages/about";
 import HowItWorksPage from "@/pages/how-it-works";
@@ -36,9 +37,10 @@ function Router() {
   
   return (
     <Switch>
-      {/* Add pages below */}
-      <Route path="/" component={Home} />
-      <Route path="/dashboard" component={() => <NichePage />} />
+      {/* Dashboard as the landing page */}
+      <Route path="/" component={Dashboard} />
+      <Route path="/home" component={Home} />
+      <Route path="/dashboard" component={Dashboard} />
       <Route path="/niche/:niche" component={NichePage} />
       <Route path="/templates" component={TemplateExplorerPage} />
       {/* Static pages */}
