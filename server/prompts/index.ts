@@ -41,8 +41,8 @@ export async function generatePrompt(params: PromptParams): Promise<string> {
   const promptTemplate = nicheTemplates[templateType] || templates.default?.[templateType] || 
     `Write about ${productName} in a ${tone} style.`;
   
-  // Get the tone description
-  const toneDescription = getToneDescription(tone);
+  // Get the tone description - now async
+  const toneDescription = await getToneDescription(tone);
   
   // Build context about trending products
   let trendContext = '';
@@ -119,7 +119,32 @@ export function createPromptFactory(templateType: TemplateType) {
   };
 }
 
-// Export factory functions for each template type
+// Export factory functions for universal template types
+export const generateSEOBlogPrompt = createPromptFactory('seo_blog');
+export const generateShortVideoPrompt = createPromptFactory('short_video');
+export const generateInfluencerCaptionPrompt = createPromptFactory('influencer_caption');
+export const generateProductComparisonPrompt = createPromptFactory('product_comparison');
+export const generateRoutineKitPrompt = createPromptFactory('routine_kit');
+export const generateBulletPointsPrompt = createPromptFactory('bullet_points');
+export const generateTrendingExplainerPrompt = createPromptFactory('trending_explainer');
+export const generateBuyerPersonaPrompt = createPromptFactory('buyer_persona');
+export const generateAffiliateEmailPrompt = createPromptFactory('affiliate_email');
+
+// Export factory functions for skincare-specific templates
+export const generateSkincareRoutinePrompt = createPromptFactory('skincare_routine');
+export const generateDermApprovedPrompt = createPromptFactory('derm_approved');
+export const generateTransformationPrompt = createPromptFactory('transformation');
+export const generateSkinTypeListPrompt = createPromptFactory('skin_type_list');
+export const generateDupeAlertPrompt = createPromptFactory('dupe_alert');
+
+// Export factory functions for tech-specific templates
+export const generateUnboxingPrompt = createPromptFactory('unboxing');
+export const generateTopUseCasesPrompt = createPromptFactory('top_use_cases');
+export const generateWorthItPrompt = createPromptFactory('worth_it');
+export const generateSetupGuidePrompt = createPromptFactory('setup_guide');
+export const generateHiddenFeaturesPrompt = createPromptFactory('hidden_features');
+
+// Legacy template factories (for backward compatibility)
 export const generateReviewPrompt = createPromptFactory('original');
 export const generateComparisonPrompt = createPromptFactory('comparison');
 export const generateCaptionPrompt = createPromptFactory('caption');
@@ -133,4 +158,3 @@ export const generateSurpriseMePrompt = createPromptFactory('surprise_me');
 export const generateTikTokBreakdownPrompt = createPromptFactory('tiktok_breakdown');
 export const generateDrySkinListPrompt = createPromptFactory('dry_skin_list');
 export const generateTop5Under25Prompt = createPromptFactory('top5_under25');
-export const generateInfluencerCaptionPrompt = createPromptFactory('influencer_caption');

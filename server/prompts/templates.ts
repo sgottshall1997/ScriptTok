@@ -41,6 +41,55 @@ let metadataCache: Record<string, Partial<TemplateMetadataMap>> | null = null;
 let nicheInfoCache: NicheInfoMap | null = null;
 
 /**
+ * Load template data from a JSON file for a specific niche
+ * @param niche The niche to load templates for
+ * @returns An object containing all templates for this niche
+ */
+async function loadNicheTemplatesFromJson(niche: string): Promise<NicheTemplates> {
+  try {
+    // Construct the path to the JSON file
+    const filePath = path.join(__dirname, 'niches', `${niche}.json`);
+    
+    // Read and parse the JSON file
+    const fileContent = await fs.readFile(filePath, 'utf-8');
+    const data = JSON.parse(fileContent) as EnhancedTemplateFile;
+    
+    // Extract the templates
+    const templates: NicheTemplates = {};
+    
+    // Store niche info in cache if available
+    if (data.niche_info) {
+      if (!nicheInfoCache) {
+        nicheInfoCache = {};
+      }
+      nicheInfoCache[niche] = data.niche_info;
+    }
+    
+    // Process each template in the file
+    Object.entries(data.templates).forEach(([type, metadata]) => {
+      // Store the template text
+      templates[type as TemplateType] = metadata.template;
+      
+      // Store metadata for this template type
+      if (!metadataCache) {
+        metadataCache = {};
+      }
+      if (!metadataCache[niche]) {
+        metadataCache[niche] = {};
+      }
+      metadataCache[niche][type as TemplateType] = metadata;
+    });
+    
+    console.log(`Loaded ${Object.keys(templates).length} templates for niche: ${niche}`);
+    return templates;
+  } catch (error) {
+    console.warn(`Could not load templates for niche ${niche}:`, error);
+    // Return empty template set if file doesn't exist or has errors
+    return {};
+  }
+}
+
+/**
  * Load all prompt templates and metadata from templates directory
  * @returns An object containing all templates organized by niche and type
  */
@@ -50,15 +99,15 @@ export async function loadPromptTemplates(): Promise<PromptTemplates> {
     return templatesCache;
   }
   
-  console.log('Loading all prompt templates...');
+  console.log('Loading all prompt templates from JSON files...');
   
   const templates: PromptTemplates = {
     default: {},
   };
 
-  // Dynamically load templates for all registered niches
+  // Dynamically load templates for all registered niches from JSON files
   for (const niche of ['default', ...NICHES]) {
-    templates[niche] = await loadNicheTemplates(niche);
+    templates[niche] = await loadNicheTemplatesFromJson(niche);
   }
 
   // Cache templates for future use
