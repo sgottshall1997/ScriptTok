@@ -1,0 +1,101 @@
+{
+  "friendly": {
+    "description": "A warm, approachable tone that feels like advice from a friend. Use conversational language and occasional first-person perspective.",
+    "examples": [
+      "I've been using this product for months, and honestly? It's been a game-changer for my routine.",
+      "You're going to love how this feels on your skin - it's like a refreshing drink of water!"
+    ],
+    "keywords": ["warm", "approachable", "conversational", "personal", "relatable"],
+    "emoji_style": "moderate, enthusiastic"
+  },
+  "professional": {
+    "description": "A formal, authoritative tone with industry terminology and third-person perspective. Emphasize expertise and factual information.",
+    "examples": [
+      "Clinical studies have demonstrated that this formulation provides significant hydration benefits over a 24-hour period.",
+      "The proprietary blend of ceramides and hyaluronic acid creates an optimal moisture barrier."
+    ],
+    "keywords": ["authoritative", "expert", "formal", "clinical", "factual"],
+    "emoji_style": "minimal or none"
+  },
+  "casual": {
+    "description": "A relaxed, conversational style with simple language and occasional slang. Write as if chatting with a peer.",
+    "examples": [
+      "This stuff is seriously good - like, I was not expecting it to work that fast!",
+      "Okay so I grabbed this on a whim and now I can't stop using it. So. Good."
+    ],
+    "keywords": ["relaxed", "everyday", "simple", "chatty", "casual"],
+    "emoji_style": "frequent, casual"
+  },
+  "enthusiastic": {
+    "description": "An energetic, passionate tone with emphasis words and exclamations where appropriate. Convey excitement about the topic.",
+    "examples": [
+      "This is AMAZING! I've tried dozens of similar products and nothing comes close!",
+      "You NEED to try this right now! It completely transformed my routine in just weeks!"
+    ],
+    "keywords": ["excited", "energetic", "passionate", "emphatic", "animated"],
+    "emoji_style": "abundant, expressive"
+  },
+  "minimalist": {
+    "description": "A concise, straightforward tone focusing on essential information. Avoid flowery language and keep sentences short.",
+    "examples": [
+      "Lightweight serum. Reduces fine lines. Apply morning and night.",
+      "Three key ingredients. No fragrance. Clinically tested."
+    ],
+    "keywords": ["concise", "direct", "essential", "clean", "minimal"],
+    "emoji_style": "none"
+  },
+  "luxurious": {
+    "description": "An elegant, sophisticated tone emphasizing premium quality and exclusivity. Use rich descriptive language and focus on sensory details.",
+    "examples": [
+      "This opulent formulation envelops the skin in a veil of radiance, transforming your daily ritual into a moment of indulgence.",
+      "The rare botanical extracts, sourced from pristine alpine meadows, deliver an unparalleled luminosity."
+    ],
+    "keywords": ["elegant", "sophisticated", "premium", "indulgent", "exquisite"],
+    "emoji_style": "selective, refined"
+  },
+  "educational": {
+    "description": "An informative, clear tone that explains concepts thoroughly. Include helpful details and technical information where relevant.",
+    "examples": [
+      "Retinol works by accelerating cell turnover, which means your skin produces new cells more quickly. This helps to reduce fine lines by promoting collagen production.",
+      "The pH level of this cleanser (5.5) is important because it matches your skin's natural acidity, preventing disruption to your acid mantle."
+    ],
+    "keywords": ["informative", "explanatory", "clear", "detailed", "educational"],
+    "emoji_style": "minimal, purposeful"
+  },
+  "humorous": {
+    "description": "A light-hearted, witty tone with appropriate jokes or wordplay. Keep information accurate while maintaining a fun voice.",
+    "examples": [
+      "This moisturizer is like a drink of water for your face, except your face won't spit it out if you add ice cubes.",
+      "I was skeptical at first, but this serum turned my skin from 'who is she?' to 'SHE HAS ARRIVED!'"
+    ],
+    "keywords": ["light-hearted", "witty", "playful", "fun", "amusing"],
+    "emoji_style": "frequent, playful"
+  },
+  "trendy": {
+    "description": "A contemporary, fashionable tone using current slang and cultural references. Write as if speaking to a trend-conscious audience.",
+    "examples": [
+      "The girlies on TikTok are NOT gatekeeping this one anymore - this is the real holy grail, no cap!",
+      "It's giving main character energy and we're obsessed. POV: everyone asking what you've done differently."
+    ],
+    "keywords": ["contemporary", "fashionable", "current", "cool", "viral"],
+    "emoji_style": "strategic, trendy"
+  },
+  "scientific": {
+    "description": "A precise, analytical tone with proper terminology and evidence-based statements. Maintain objectivity and include technical details.",
+    "examples": [
+      "The 2.5% concentration of benzoyl peroxide provides antimicrobial efficacy while minimizing the potential for epidermal irritation.",
+      "In a randomized controlled trial with 247 participants, 87% experienced a statistically significant reduction in transepidermal water loss."
+    ],
+    "keywords": ["precise", "analytical", "objective", "technical", "evidence-based"],
+    "emoji_style": "none"
+  },
+  "poetic": {
+    "description": "An artistic, expressive tone with vivid imagery and creative language. Focus on evoking feelings about the product.",
+    "examples": [
+      "Like dawn breaking over still waters, this elixir awakens the skin from its winter slumber, revealing the luminosity that lay dormant beneath.",
+      "In the quiet moment between day and night, this balm becomes a sanctuary - a whispered promise of renewal as you surrender to dreams."
+    ],
+    "keywords": ["artistic", "expressive", "vivid", "creative", "evocative"],
+    "emoji_style": "selective, meaningful"
+  }
+}

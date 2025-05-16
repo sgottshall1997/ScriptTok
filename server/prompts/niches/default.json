@@ -1,123 +1,89 @@
 {
   "niche_info": {
-    "name": "General Content",
-    "description": "Generate versatile content for any product type using universal templates suitable for various industries and product categories.",
-    "icon": "🌐",
-    "primary_color": "gray",
-    "secondary_color": "slate",
-    "keywords": ["product", "review", "content", "general", "universal", "versatile", "all-purpose"]
+    "name": "default",
+    "description": "Universal templates that can be applied to any product niche",
+    "icon": "✨",
+    "primary_color": "#4F46E5",
+    "secondary_color": "#818CF8",
+    "keywords": ["universal", "general", "all-purpose"]
   },
   "templates": {
-    "original": {
-      "template": "Create a comprehensive review of {{productName}} with the following sections:\n\n1. Product Overview: Key features and target audience\n2. Performance Analysis: How well it fulfills its intended purpose\n3. Design & Quality: Materials, construction, and aesthetic considerations\n4. User Experience: Ease of use and learning curve\n5. Value Assessment: Price-to-performance ratio\n6. Pros and Cons: Balanced assessment of strengths and limitations\n7. Recommendation: Who would benefit most from this product\n\nReference current market trends: {{trendingProducts}}. Use a {{tone}} tone appropriate for the product category.",
-      "title": "Detailed Review",
-      "description": "A comprehensive product review with features, benefits, and user recommendations",
-      "icon": "⭐",
-      "exampleOutput": "The Hydra-Boost Moisturizer is an exceptional skincare product designed for those seeking intense hydration. This lightweight formula absorbs quickly without leaving a greasy residue, making it perfect for daily use under makeup or as part of your nighttime routine."
+    "seo_blog": {
+      "title": "SEO Blog Post",
+      "description": "A comprehensive, keyword-optimized blog post (1000+ words)",
+      "icon": "📝",
+      "template": "Write a comprehensive SEO-optimized blog post about {product} in {tone}. The post should be at least 1000 words and include appropriate headings, subheadings, meta description, and a compelling title with the product name. Include factual information, benefits, features, and practical advice for the reader. Organize the content with H2 and H3 tags. {trendContext}",
+      "exampleOutput": "# The Complete Guide to [Product Name]: Transform Your Experience\n\nAre you looking for a way to improve your daily routine? Look no further than [Product Name]..."
     },
-    
-    "comparison": {
-      "template": "Create a detailed comparison between {{productName}} and similar products with the following sections:\n\n1. Market Context: How these products compare in price tiers and positioning\n2. Feature Comparison: Side-by-side analysis of key specifications and capabilities\n3. Performance Differences: How each product performs in real-world usage\n4. Design & Quality: Material quality and construction differences\n5. User Experience: Interface, learning curve, and satisfaction differences\n6. Value Assessment: Which products offer the best balance for different users\n7. Ideal User Profile: Who each product is best suited for\n\nReference relevant market options: {{trendingProducts}}. Use a {{tone}} tone that highlights meaningful differences.",
-      "title": "Product Comparison",
-      "description": "Side-by-side comparison with similar products highlighting key differences",
-      "icon": "⚖️",
-      "exampleOutput": "When comparing the PowerTech X300 to similar gaming laptops like the RazerBook and MSI Stealth, several differences become apparent. The X300 offers superior battery life (10 hours vs 6-7) and better thermal management, while the competitors edge ahead in graphics performance."
-    },
-    
-    "caption": {
-      "template": "Create an engaging social media caption for {{productName}} in a {{tone}} tone. Include relevant hashtags, a call to action, and reference current trends: {{trendingProducts}}.",
-      "title": "Social Media Caption",
-      "description": "Engaging social media post with hashtags and call to action",
-      "icon": "📱",
-      "exampleOutput": "Finally found THE solution to my morning routine chaos! 🙌 This @ProductName has literally saved me 20 minutes every day and my skin has never looked better! Who else struggles with skincare consistency? #SkincareTips #MorningRoutine #GlowUp"
-    },
-    
-    "pros_cons": {
-      "template": "Create a balanced analysis of {{productName}} with the following sections:\n\n1. Product Overview: Brief introduction to the product\n2. Key Strengths: Major advantages and standout features\n3. Notable Limitations: Important drawbacks and considerations\n4. Value Analysis: Assessment of price-to-performance ratio\n5. User Feedback: Summary of common user experiences\n6. Alternatives Worth Considering: When another product might be preferable\n7. Final Verdict: Overall assessment of the product's merit\n\nReference market context: {{trendingProducts}}. Use a {{tone}} tone that's fair and objective.",
-      "title": "Pros and Cons Analysis",
-      "description": "Balanced analysis of advantages and disadvantages",
-      "icon": "✅",
-      "exampleOutput": "The AirPod Pro 2 offers industry-leading noise cancellation and seamless Apple ecosystem integration. However, the battery life remains average and the price point is higher than many competitors."
-    },
-    
-    "routine": {
-      "template": "Create a complete routine incorporating {{productName}} with the following sections:\n\n1. Routine Overview: Goals and expected outcomes\n2. Required Materials: Everything needed for the routine\n3. Preparation Steps: Setting up for success\n4. Step-by-Step Process: Detailed walkthrough with timing\n5. Optimization Tips: How to get the best results\n6. Common Mistakes: Issues to avoid\n7. Variations: How to adapt the routine for different needs\n\nReference best practices: {{trendingProducts}}. Use a {{tone}} tone that's clear and instructional.",
-      "title": "Complete Routine",
-      "description": "Step-by-step routine incorporating the product",
-      "icon": "🔄",
-      "exampleOutput": "Morning Routine with Vitamin C Serum: 1) Cleanse with gentle cleanser 2) Apply toner 3) Apply 3-4 drops of Vitamin C Serum to face and neck 4) Allow 60 seconds to absorb 5) Apply moisturizer 6) Finish with sunscreen"
-    },
-    
-    "beginner_kit": {
-      "template": "Create a beginner's guide to {{productName}} with the following sections:\n\n1. Basic Introduction: What the product is and its purpose\n2. Getting Started: First steps for complete beginners\n3. Essential Techniques: Fundamental skills for effective use\n4. Common Mistakes: Typical beginner errors and how to avoid them\n5. Beginner-Friendly Applications: Easy ways to start using the product\n6. Progression Path: How to advance from beginner to intermediate\n7. Resource Recommendations: Where to learn more\n\nReference beginner-friendly advice: {{trendingProducts}}. Use a {{tone}} tone that's encouraging and supportive.",
-      "title": "Beginner's Guide",
-      "description": "Easy-to-follow guide for first-time users",
-      "icon": "🔰",
-      "exampleOutput": "New to retinol? Here's everything you need to know to get started safely. Retinol is a derivative of vitamin A that promotes cell turnover, but requires gradual introduction to avoid irritation..."
-    },
-    
-    "demo_script": {
-      "template": "Write a demonstration script for {{productName}} in a {{tone}} tone with the following sections:\n\n1. Introduction: Brief overview of what will be demonstrated\n2. Equipment Setup: What's needed for the demonstration\n3. Step-by-Step Walkthrough: Detailed breakdown of the demonstration\n4. Troubleshooting Tips: Addressing common issues\n5. Advanced Applications: Taking usage to the next level\n6. Closing Summary: Recap of key points demonstrated\n7. Call to Action: What viewers should do next\n\nReference demonstration best practices: {{trendingProducts}}.",
-      "title": "Demonstration Script",
-      "description": "Script for product demonstration video or presentation",
+    "short_video": {
+      "title": "Short-Form Video Script",
+      "description": "Script for TikTok, Reels, or YouTube Shorts (30-60 seconds)",
       "icon": "🎬",
-      "exampleOutput": "INTRO: \"Hey everyone! Today I'm going to show you exactly how to use the new InstaCook Air Fryer to get perfect crispy results every time!\" [Hold up product] STEP 1: \"First, let's understand the control panel...\" [Close-up of controls]"
+      "template": "Create a script for a 30-60 second social media video (TikTok/Instagram Reels/YouTube Shorts) about {product} in {tone}. Include a hook for the first 3 seconds, key points to highlight, suggested visuals/demonstrations, and a strong call to action. Make it engaging for social media audiences. {trendContext}",
+      "exampleOutput": "[Hook - show product close-up]\nVOICEOVER: \"Wait, you haven't tried THIS yet?!\"\n\n[Transition to demonstration]\nVOICEOVER: \"Let me show you why [Product] has completely changed my routine...\""
     },
-    
-    "drugstore_dupe": {
-      "template": "Create a guide to affordable alternatives for {{productName}} with the following sections:\n\n1. Original Product Overview: What makes the original desirable\n2. Price Comparison: Original cost versus alternatives\n3. Affordable Options: Detailed breakdown of budget-friendly alternatives\n4. Ingredient/Feature Analysis: How dupes compare in key areas\n5. Performance Comparison: Real-world effectiveness differences\n6. Best Value Option: Which alternative offers the best balance\n7. When to Splurge: Cases where the original might be worth it\n\nReference budget-friendly options: {{trendingProducts}}. Use a {{tone}} tone that's practical and value-focused.",
-      "title": "Affordable Alternatives",
-      "description": "Budget-friendly alternatives with comparison",
-      "icon": "💰",
-      "exampleOutput": "Looking for alternatives to the $95 Luxury Face Cream? The Cerave Moisturizing Cream ($16) contains many of the same ceramides and hyaluronic acid at a fraction of the price. While it lacks the fancy packaging and fragrance, it delivers comparable hydration results."
-    },
-    
-    "personal_review": {
-      "template": "Write a first-person experience review of {{productName}} with the following sections:\n\n1. Purchase Decision: Why I chose this product\n2. First Impressions: Initial reactions upon use\n3. Extended Experience: How perceptions changed over time\n4. Standout Features: What impressed me most\n5. Disappointments: Where the product fell short\n6. Comparison to Alternatives: How it stacks up to others I've tried\n7. Would I Recommend It?: My honest recommendation\n\nReference personal experience context: {{trendingProducts}}. Use a {{tone}} tone that's authentic and relatable.",
-      "title": "Personal Experience Review",
-      "description": "First-person testimonial and experience with the product",
-      "icon": "👤",
-      "exampleOutput": "I've been using the Mountain Trail Hiking Boots for the past month, covering over 60 miles of varied terrain. My honest thoughts? These boots required minimal break-in time and handled mud and rocks beautifully, but I noticed the waterproofing started to fail during my last rainy hike."
-    },
-    
-    "surprise_me": {
-      "template": "Create unique, creative content about {{productName}} in a {{tone}} tone. Think outside the typical product content format with an unexpected angle or format. Reference creative approaches: {{trendingProducts}}.",
-      "title": "Creative Content",
-      "description": "Unique, unexpected content format for maximum engagement",
-      "icon": "✨",
-      "exampleOutput": "BREAKING NEWS: Local Shower Gel Becomes Town Hero! Residents report that the new AloeCalm Shower Gel has been single-handedly ending bad days across the city. Witnesses describe coming home stressed, stepping into the shower, and emerging as \"completely new people.\""
-    },
-    
-    "tiktok_breakdown": {
-      "template": "Create a script for a TikTok video about {{productName}} with the following sections:\n\n1. Hook (0-5 sec): Attention-grabbing opening line or visual\n2. Problem Statement (5-10 sec): Pain point or need being addressed\n3. Solution Reveal (10-20 sec): How the product solves the problem\n4. Demonstration (20-40 sec): Quick, visual showcase of key features\n5. Results/Proof (40-50 sec): Evidence of effectiveness\n6. Call to Action (50-60 sec): What viewers should do next\n\nReference viral formats: {{trendingProducts}}. Use a {{tone}} tone that's fast-paced and engaging.",
-      "title": "TikTok Script",
-      "description": "Short-form video script optimized for TikTok",
-      "icon": "📹",
-      "exampleOutput": "[Text on screen: Is this viral product worth it?] \"You guys won't believe what happened when I tried this... [dramatic pause] I've been using this for exactly 7 days now and... [transition] LOOK AT THE DIFFERENCE! Let me show you exactly how to use it...\""
-    },
-    
-    "dry_skin_list": {
-      "template": "Create a list of recommendations for dry skin including {{productName}} with the following sections:\n\n1. Dry Skin Overview: Understanding the specific needs\n2. Product Categories: Types of products needed for a complete routine\n3. Top Recommendations: Curated product list with rationales\n4. Usage Instructions: How to incorporate these products effectively\n5. Ingredient Guidance: What to look for and avoid\n6. Seasonal Adjustments: Adapting the routine for different conditions\n7. Professional Advice: When to seek dermatological help\n\nReference targeted solutions: {{trendingProducts}}. Use a {{tone}} tone that's helpful and informative.",
-      "title": "Dry Skin Recommendations",
-      "description": "Curated product list for people with dry skin",
-      "icon": "📋",
-      "exampleOutput": "TOP 5 PRODUCTS FOR EXTREMELY DRY SKIN: 1. Hydration Barrier Cream: Creates a seal to prevent moisture loss 2. Hyaluronic Acid Serum: Draws moisture into deeper skin layers 3. Overnight Recovery Mask: Repairs skin barrier while you sleep..."
-    },
-    
-    "top5_under25": {
-      "template": "Create a \"Top 5 Products Under $25\" list including {{productName}} with the following sections:\n\n1. Value Shopping Context: The importance of budget-friendly options\n2. Selection Criteria: How these affordable products were chosen\n3. Ranked Recommendations: The top 5 products with prices and key features\n4. Value Analysis: Why each product offers exceptional value\n5. Usage Recommendations: How to maximize results with each product\n6. Where to Purchase: Best places to find these budget options\n7. When to Upgrade: Situations where investing more might be worthwhile\n\nReference affordable options: {{trendingProducts}}. Use a {{tone}} tone that emphasizes smart shopping.",
-      "title": "Budget-Friendly Top 5",
-      "description": "Top 5 affordable products under $25",
-      "icon": "💲",
-      "exampleOutput": "You don't need to break the bank for quality products! Here are my top 5 beauty essentials under $25: 1. Hydrating Cleanser ($12.99): Removes makeup while maintaining skin barrier 2. Brightening Serum ($19.99): Vitamin C and niacinamide for glowing skin..."
-    },
-    
     "influencer_caption": {
-      "template": "Write an influencer-style caption for {{productName}} with the following elements:\n\n1. Attention-Grabbing Opening: Emotionally engaging first line\n2. Personal Story: Brief narrative connecting to the product\n3. Product Introduction: Casual mention of key features\n4. Benefit Statements: How it's changed your routine/life\n5. Authentic Details: Specific observations that feel genuine\n6. Engagement Question: Prompt for follower interaction\n7. Call to Action: Clear next step for followers\n\nReference social trends: {{trendingProducts}}. Use a {{tone}} tone that's conversational and enthusiastic.",
       "title": "Influencer Caption",
-      "description": "Engaging social media caption in popular influencer style",
-      "icon": "👥",
-      "exampleOutput": "Literally OBSESSED with this new find! 😍 Been using @ProductName for just two weeks and my friends are already asking what I've changed in my routine! The secret? This little bottle packs a serious punch 💪 Drop a 💙 if you want me to show my whole routine using this game-changer! #Ad"
+      "description": "Social media post with hashtags, emojis, and CTAs",
+      "icon": "📱",
+      "template": "Write an engaging social media caption for {product} in {tone} that an influencer would post. Include relevant emojis throughout, 2-3 appropriate hashtags at the end, a clear call-to-action, and make sure it feels authentic rather than overly promotional. The caption should be around 50-100 words. {trendContext}",
+      "exampleOutput": "Obsessed is an understatement! 😍 I've been using the new [Product] for just a week and the results are UNREAL! My skin feels completely renewed and that stubborn texture? GONE! ✨\n\nThe way it [key benefit] while also [secondary benefit] is actually mind-blowing. I'm linking it in my bio - trust me, this is one product worth the hype! 💫\n\nHave you tried it yet? Drop a ❤️ if you want a full review video!\n\n#SkincareMustHaves #GlowingSkin #ProductObsession"
+    },
+    "product_comparison": {
+      "title": "Product Comparison",
+      "description": "Side-by-side comparison of products with pros/cons",
+      "icon": "⚖️",
+      "template": "Create a detailed comparison between {product} and its main competitor in {tone}. Structure the comparison with an introduction, side-by-side feature analysis, price comparison, clear pros and cons for each, and a balanced conclusion with a recommendation based on different user needs. Be objective and focus on helping consumers make an informed choice. {trendContext}",
+      "exampleOutput": "# [Product A] vs [Product B]: Which Should You Choose?\n\n## Introduction\nLooking for [product category]? Two top contenders are [Product A] and [Product B]. Let's break down how they compare...\n\n## Features\n\n### [Product A]\n- Feature 1: ...\n- Feature 2: ...\n\n### [Product B]\n- Feature 1: ...\n- Feature 2: ..."
+    },
+    "routine_kit": {
+      "title": "Routine or Kit Builder",
+      "description": "Product bundle or usage flow guide",
+      "icon": "🧰",
+      "template": "Create a comprehensive guide showcasing how {product} fits into a complete routine or kit in {tone}. Include complementary products that work well with it, step-by-step instructions for using the entire routine, expected benefits from consistent use, and advice for different situations or needs. Format this as a practical guide that demonstrates expertise. {trendContext}",
+      "exampleOutput": "# The Ultimate [Activity/Need] Routine Featuring [Product]\n\n## The Complete Kit\n1. Step One: [Complementary Product 1] - Prepares for...\n2. Step Two: [Product] - The star of the routine that...\n3. Step Three: [Complementary Product 2] - Enhances the effects by..."
+    },
+    "bullet_points": {
+      "title": "Bullet-Point Summary",
+      "description": "Concise bullet points for newsletters or carousel posts",
+      "icon": "📋",
+      "template": "Create a concise, scannable bullet-point summary of {product} in {tone}. Include the main value proposition, 5-7 key features or benefits with one sentence elaboration for each, who this product is ideal for, and a final takeaway point. Format this for easy reading in email newsletters or social media carousel posts. {trendContext}",
+      "exampleOutput": "# [Product]: The Essential Breakdown\n\n• **What it is:** A revolutionary [product type] that [main benefit]\n\n• **Standout feature:** [Feature 1] that delivers [specific benefit]\n\n• **We love:** How it [unique selling point] unlike conventional alternatives"
+    },
+    "trending_explainer": {
+      "title": "Why It's Trending Explainer",
+      "description": "Analysis of why a product is currently trending",
+      "icon": "📈",
+      "template": "Explain why {product} is currently trending in {tone}. Cover the product's origins, what makes it unique, why it's gaining popularity now (social media influence, celebrity endorsements, viral content, etc.), consumer feedback and experiences, and whether you think it's a passing trend or has staying power. Use contemporary references and cultural context. {trendContext}",
+      "exampleOutput": "# Why [Product] Is Suddenly Everywhere\n\nIf your social feeds are anything like mine, you've seen [Product] absolutely dominating your timeline lately. This seemingly overnight sensation has actually been building momentum for months, and here's the full story behind why it's the internet's current obsession:"
+    },
+    "buyer_persona": {
+      "title": "Buyer Persona Targeting",
+      "description": "Content tailored to specific audience segments",
+      "icon": "🎯",
+      "template": "Create content about {product} specifically targeted at [choose an appropriate buyer persona: Gen Z, busy parents, fitness enthusiasts, beauty minimalists, tech early adopters, budget shoppers, luxury consumers, etc.] in {tone}. Address their specific needs, pain points, preferences, communication style, and how this product uniquely solves their problems or enhances their lifestyle. {trendContext}",
+      "exampleOutput": "# Why [Product] Is a Game-Changer for Busy Parents\n\nParent life: where \"free time\" is a distant memory and multitasking is your superpower. Between school runs, meal prep, and trying to maintain a career, the last thing you need is complicated [product category]. Enter [Product] - designed for parents who need efficiency without compromise."
+    },
+    "affiliate_email": {
+      "title": "Affiliate Email Blurb",
+      "description": "Promotional paragraph for email marketing",
+      "icon": "📧",
+      "template": "Write a 1-2 paragraph promotional blurb about {product} for an affiliate email newsletter in {tone}. The content should be persuasive but authentic, include 1-2 specific benefits, mention any special offers or timely reasons to purchase now, and include a clear call-to-action with affiliate link placeholder. Strike a balance between informative and promotional content. {trendContext}",
+      "exampleOutput": "**Just discovered: The [Product] that's changing how people [activity]**\n\nI don't recommend products often, but when I found [Product] last month, it completely transformed my [relevant activity]. What makes it different is [unique feature] that [key benefit] - something I haven't seen in any alternatives. Right now they're offering [special deal] for first-time buyers, which is the perfect opportunity to see why it's earned over [X] 5-star reviews. Check it out here [AFFILIATE LINK] before the offer ends this weekend!"
+    },
+    "original": {
+      "title": "Original Review",
+      "description": "Classic product review format",
+      "icon": "📊",
+      "template": "Write a detailed review of {product} in {tone}. Include an introduction about the product category, a breakdown of the notable features, benefits, potential drawbacks, who it's best suited for, and your overall assessment. Balance honest analysis with helpful insights. {trendContext}",
+      "exampleOutput": "# [Product] Review: Is It Worth The Hype?\n\nIn the crowded world of [product category], finding truly effective products can feel like searching for a needle in a haystack. I've spent the last month testing [Product] to determine if it deserves a place in your routine."
+    },
+    "comparison": {
+      "title": "Comparison Review",
+      "description": "Compare the product with alternatives",
+      "icon": "🔄",
+      "template": "Write a comparison review between {product} and its main competitors in {tone}. Include a brief introduction explaining the product category, a feature-by-feature breakdown, price comparison, which situations or users each product is best for, and your overall recommendation. Be balanced and fair to each product. {trendContext}",
+      "exampleOutput": "# [Product] vs. The Competition: Which Delivers Best Results?\n\nChoosing the right [product category] can significantly impact your [relevant outcome]. Today, I'm comparing [Product] against the top competitors to help you determine which deserves your money."
     }
   }
 }
