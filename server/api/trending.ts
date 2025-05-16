@@ -10,7 +10,7 @@ import { getRedditTrending } from "../scrapers/reddit";
 import { getGoogleTrendingProducts } from "../scrapers/googleTrends";
 import { 
   getRefreshedTrendingProducts, 
-  forceRefreshTrendingProducts 
+  refreshTrendingProducts 
 } from "../services/trendRefresher";
 
 const router = Router();
@@ -35,8 +35,9 @@ router.post("/refresh", async (req, res) => {
   try {
     console.log("Manual refresh requested - this will force a full refresh regardless of time");
     
-    // Use the forceRefreshTrendingProducts which handles everything including storage updates
-    const trendingProducts = await forceRefreshTrendingProducts();
+    // Use the refreshTrendingProducts which handles everything including storage updates
+    await refreshTrendingProducts();
+    const trendingProducts = await getRefreshedTrendingProducts();
     
     res.json({ 
       success: true, 
