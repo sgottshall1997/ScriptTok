@@ -36,8 +36,9 @@ export interface ScraperStatus {
  */
 export interface ScraperResult {
   products: ScrapedProduct[];     // Array of scraped products
-  status: ScraperStatus;          // Status information about the scrape operation
-  rawData?: any;                  // Optional raw data from the source (for debugging)
+  status: ScraperStatus & {
+    rawData?: any;                // Optional raw data from the source (for debugging)
+  };          
 }
 
 /**
