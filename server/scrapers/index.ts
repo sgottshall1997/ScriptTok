@@ -6,20 +6,42 @@ import { getAmazonTrending } from './amazon';
 import { getGoogleTrendingProducts } from './googleTrends';
 import type { TrendingProduct, InsertTrendingProduct } from '@shared/schema';
 import { ScraperPlatform, SCRAPER_PLATFORMS, ScraperStatusType } from '@shared/constants';
+import { 
+  ScrapedProduct, 
+  ScraperStatus, 
+  ScraperResult, 
+  toInsertTrendingProduct,
+  createErrorStatus,
+  createSuccessStatus
+} from './types';
 
-// Structure for platform status
+// Structure for platform status (legacy - will be replaced with ScraperStatus)
 interface PlatformStatus {
   name: ScraperPlatform;
   status: ScraperStatusType;
   errorMessage?: string;
 }
 
-// Interface for the scraper return type
+// Legacy interface for the old scraper return type (for backward compatibility)
 export interface ScraperReturn {
   products: InsertTrendingProduct[];
   status: {
     status: ScraperStatusType;
     errorMessage?: string;
+  };
+}
+
+// Convert new ScraperResult to legacy ScraperReturn
+function convertToLegacyFormat(result: ScraperResult, niche: string): ScraperReturn {
+  return {
+    products: result.products.map(product => toInsertTrendingProduct({
+      ...product,
+      category: product.category || niche
+    })),
+    status: {
+      status: result.status.status,
+      errorMessage: result.status.message
+    }
   };
 }
 
