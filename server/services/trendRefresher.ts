@@ -109,6 +109,11 @@ export async function getRefreshedTrendingProducts() {
     nextScheduledRefresh: nextScheduledRefresh
   };
   
+  // Initialize empty arrays for each niche to avoid type errors
+  niches.forEach(niche => {
+    result.byNiche[niche] = [];
+  });
+  
   // For each niche, get top 3 trending products
   for (const niche of niches) {
     try {
