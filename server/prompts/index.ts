@@ -37,9 +37,28 @@ export async function generatePrompt(params: PromptParams): Promise<string> {
   // First check if there's a specific template for this niche
   const nicheTemplates = templates[niche] || {};
   
-  // Fall back to default if the niche or template doesn't have a specific prompt
-  const promptTemplate = nicheTemplates[templateType] || templates.default?.[templateType] || 
-    `Write about ${productName} in a ${tone} style.`;
+  // Implement enhanced fallback logic with clear error handling
+  let promptTemplate: string | null = null;
+  
+  // Step 1: Try to get the specific niche+template combination
+  if (nicheTemplates && templateType in nicheTemplates) {
+    promptTemplate = nicheTemplates[templateType] || null;
+  }
+  
+  // Step 2: If not found, fall back to the default template for this template type
+  if (!promptTemplate && templates.default && templateType in templates.default) {
+    console.log(`No specific template found for niche "${niche}" and type "${templateType}". Using default template.`);
+    promptTemplate = templates.default[templateType] || null;
+  }
+  
+  // Step 3: If still not found, use a generic fallback with a warning
+  if (!promptTemplate) {
+    console.warn(`⚠️ Template missing: No template found for type "${templateType}" in niche "${niche}" or default templates.`);
+    // Instead of silently using a generic fallback, provide a more detailed prompt
+    promptTemplate = `Write about ${productName} for the ${niche} niche in a ${tone} style. 
+This should be in the format of a ${templateType.replace(/_/g, ' ')}. 
+Note: A specific template for this combination wasn't found, so this is using a generic fallback.`;
+  }
   
   // Get the tone description - now async
   const toneDescription = await getToneDescription(tone);

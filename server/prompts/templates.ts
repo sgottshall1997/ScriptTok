@@ -65,8 +65,20 @@ async function loadNicheTemplatesFromJson(niche: string): Promise<NicheTemplates
       nicheInfoCache[niche] = data.niche_info;
     }
     
+    // Validate that templates object exists
+    if (!data.templates) {
+      console.warn(`⚠️ Invalid template format: ${niche}.json is missing 'templates' object`);
+      return {};
+    }
+    
     // Process each template in the file
     Object.entries(data.templates).forEach(([type, metadata]) => {
+      // Verify that template content exists
+      if (!metadata || !metadata.template) {
+        console.warn(`⚠️ Missing template content for '${type}' in ${niche}.json`);
+        return;
+      }
+      
       // Store the template text
       templates[type as TemplateType] = metadata.template;
       
@@ -80,10 +92,26 @@ async function loadNicheTemplatesFromJson(niche: string): Promise<NicheTemplates
       metadataCache[niche][type as TemplateType] = metadata;
     });
     
-    console.log(`Loaded ${Object.keys(templates).length} templates for niche: ${niche}`);
+    const templateCount = Object.keys(templates).length;
+    console.log(`Loaded ${templateCount} templates for niche: ${niche}`);
+    
+    // Warn if no templates were found in a valid file (but only if not default)
+    if (templateCount === 0 && niche !== 'default') {
+      console.warn(`⚠️ No templates found in ${niche}.json file`);
+    }
+    
     return templates;
   } catch (error) {
-    console.warn(`Could not load templates for niche ${niche}:`, error);
+    // More detailed error reporting based on error type
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+      // Don't log warnings for default niche since it might be intentionally missing
+      if (niche !== 'default') {
+        console.warn(`Template file not found: ${niche}.json. Consider creating this file in the prompts/niches/ directory.`);
+      }
+    } else {
+      console.error(`⚠️ Error loading templates for niche '${niche}':`, error);
+    }
+    
     // Return empty template set if file doesn't exist or has errors
     return {};
   }
