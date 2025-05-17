@@ -20,6 +20,7 @@ import { historyRouter } from "./api/history";
 import { usageSummaryRouter } from "./api/usageSummary";
 import { webhooksRouter } from "./api/webhooks";
 import { webhookTestRouter } from "./api/webhook-test";
+import authRouter from "./api/auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
