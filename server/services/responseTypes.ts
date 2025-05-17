@@ -16,6 +16,7 @@ export interface ContentGenerationResponse {
     requestId?: string;       // Unique identifier for the request
     generatedAt: string;      // ISO timestamp when content was generated
     promptTemplate?: string;  // Which template was used
+    fallbackLevel?: 'exact' | 'default' | 'generic'; // Which fallback level was used for the template
     niche?: string;           // Content niche
     productName?: string;     // Product the content is about
     tone?: string;            // Tone used for generation

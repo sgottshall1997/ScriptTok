@@ -22,6 +22,7 @@ export interface PromptParams {
   templateType: TemplateType;
   tone: ToneOption;
   trendingProducts?: TrendingProduct[];
+  fallbackLevel?: 'exact' | 'default' | 'generic'; // Tracks which template fallback level was used
 }
 
 /**
@@ -39,26 +40,33 @@ export async function generatePrompt(params: PromptParams): Promise<string> {
   
   // Implement enhanced fallback logic with clear error handling
   let promptTemplate: string | null = null;
+  let fallbackLevel: 'exact' | 'default' | 'generic' = 'exact'; // Track which level of fallback is used
   
   // Step 1: Try to get the specific niche+template combination
   if (nicheTemplates && templateType in nicheTemplates) {
     promptTemplate = nicheTemplates[templateType] || null;
+    fallbackLevel = 'exact';
   }
   
   // Step 2: If not found, fall back to the default template for this template type
   if (!promptTemplate && templates.default && templateType in templates.default) {
-    console.log(`No specific template found for niche "${niche}" and type "${templateType}". Using default template.`);
+    fallbackLevel = 'default';
+    console.warn(`[PromptFactory] Fallback used → niche=${niche}, type=${templateType}, fallbackLevel=${fallbackLevel}`);
     promptTemplate = templates.default[templateType] || null;
   }
   
   // Step 3: If still not found, use a generic fallback with a warning
   if (!promptTemplate) {
-    console.warn(`⚠️ Template missing: No template found for type "${templateType}" in niche "${niche}" or default templates.`);
+    fallbackLevel = 'generic';
+    console.warn(`[PromptFactory] Fallback used → niche=${niche}, type=${templateType}, fallbackLevel=${fallbackLevel}`);
     // Instead of silently using a generic fallback, provide a more detailed prompt
     promptTemplate = `Write about ${productName} for the ${niche} niche in a ${tone} style. 
 This should be in the format of a ${templateType.replace(/_/g, ' ')}. 
 Note: A specific template for this combination wasn't found, so this is using a generic fallback.`;
   }
+  
+  // Store the fallback level for later use in the response
+  params.fallbackLevel = fallbackLevel;
   
   // Get the tone description - now async
   const toneDescription = await getToneDescription(tone);
