@@ -778,6 +778,43 @@ export class MemStorage implements IStorage {
 // Export a single instance of the storage
 // Database storage implementation
 export class DatabaseStorage implements IStorage {
+  // Content History operations
+  async saveContentHistory(history: InsertContentHistory): Promise<ContentHistory> {
+    const [result] = await db.insert(contentHistory).values(history).returning();
+    return result;
+  }
+  
+  async getContentHistoryById(id: number): Promise<ContentHistory | undefined> {
+    const [result] = await db.select().from(contentHistory).where(eq(contentHistory.id, id));
+    return result;
+  }
+  
+  async getContentHistoryByUserId(userId: number, limit: number = 50, offset: number = 0): Promise<ContentHistory[]> {
+    return await db.select()
+      .from(contentHistory)
+      .where(eq(contentHistory.userId, userId))
+      .orderBy(desc(contentHistory.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async getAllContentHistory(limit: number = 50, offset: number = 0): Promise<ContentHistory[]> {
+    return await db.select()
+      .from(contentHistory)
+      .orderBy(desc(contentHistory.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+  
+  async getContentHistoryByNiche(niche: string, limit: number = 50, offset: number = 0): Promise<ContentHistory[]> {
+    return await db.select()
+      .from(contentHistory)
+      .where(eq(contentHistory.niche, niche))
+      .orderBy(desc(contentHistory.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
   // User operations
   async getUser(id: number): Promise<User | undefined> {
     const [user] = await db.select().from(users).where(eq(users.id, id));

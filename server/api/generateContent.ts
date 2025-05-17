@@ -4,6 +4,7 @@ import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { CacheService } from "../services/cacheService";
+import { insertContentHistorySchema } from "@shared/schema";
 
 const router = Router();
 
