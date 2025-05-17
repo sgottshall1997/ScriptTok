@@ -7,13 +7,80 @@ import { CacheService } from "../services/cacheService";
 
 const router = Router();
 
-// Validate request body schema
+// Import tone definitions
+import { TONES } from '../prompts/tones';
+import { loadPromptTemplates } from '../prompts/templates';
+
+// Validate request body schema with basic type checking
 const generateContentSchema = z.object({
   product: z.string().trim().min(1, "Product name is required"),
   templateType: z.enum(TEMPLATE_TYPES).default("original"),
   tone: z.enum(TONE_OPTIONS).default("friendly"),
   niche: z.enum(NICHES).default("skincare"),
 });
+
+// Helper functions to check if tone and template exist in the system
+async function isValidTemplateType(templateType: string, niche: string): Promise<boolean> {
+  try {
+    // Load available templates
+    const templates = await loadPromptTemplates();
+    
+    // Check if the template exists in the niche-specific templates
+    if (templates[niche] && templateType in templates[niche]) {
+      return true;
+    }
+    
+    // If not in niche-specific, check if it exists in default templates
+    if (templates.default && templateType in templates.default) {
+      return true;
+    }
+    
+    return false;
+  } catch (error) {
+    console.error("Error checking template validity:", error);
+    return false;
+  }
+}
+
+function isValidTone(tone: string): boolean {
+  return tone in TONES;
+}
+
+// Helper to get all available tones
+function getAvailableTones(): string[] {
+  return Object.keys(TONES);
+}
+
+// Helper to get all available template types
+async function getAvailableTemplateTypes(niche: string): Promise<string[]> {
+  try {
+    const templates = await loadPromptTemplates();
+    const nicheTemplates = templates[niche] || {};
+    const defaultTemplates = templates.default || {};
+    
+    // Combine niche-specific and default templates without using Set
+    const allTemplates: string[] = [];
+    
+    // Add niche-specific templates
+    Object.keys(nicheTemplates).forEach(key => {
+      if (!allTemplates.includes(key)) {
+        allTemplates.push(key);
+      }
+    });
+    
+    // Add default templates (if not already added)
+    Object.keys(defaultTemplates).forEach(key => {
+      if (!allTemplates.includes(key)) {
+        allTemplates.push(key);
+      }
+    });
+    
+    return allTemplates;
+  } catch (error) {
+    console.error("Error getting available templates:", error);
+    return [];
+  }
+}
 
 // Create a cache service for content generation
 interface CachedContent {
@@ -29,13 +96,35 @@ const contentCache = new CacheService<CachedContent>({
 
 router.post("/", async (req, res) => {
   try {
-    // Validate request body
+    // Validate request body against schema
     const result = generateContentSchema.safeParse(req.body);
     
     if (!result.success) {
       return res.status(400).json({ 
         error: "Invalid request", 
         details: result.error.format() 
+      });
+    }
+    
+    // Get the validated data
+    const validatedData = result.data;
+    
+    // Check if the requested tone exists in the system
+    if (!isValidTone(validatedData.tone)) {
+      const availableTones = getAvailableTones();
+      return res.status(400).json({
+        error: "Invalid tone selected",
+        message: `The tone "${validatedData.tone}" is not available. Please choose from: ${availableTones.join(", ")}`
+      });
+    }
+    
+    // Check if the template type exists for the requested niche
+    const templateExists = await isValidTemplateType(validatedData.templateType, validatedData.niche);
+    if (!templateExists) {
+      const availableTemplates = await getAvailableTemplateTypes(validatedData.niche);
+      return res.status(400).json({
+        error: "Invalid template type selected",
+        message: `The template type "${validatedData.templateType}" is not available for the "${validatedData.niche}" niche. Available templates: ${availableTemplates.join(", ")}`
       });
     }
     
