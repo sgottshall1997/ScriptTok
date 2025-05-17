@@ -30,7 +30,13 @@ export async function generateContent(
   tone: ToneOption,
   trendingProducts: TrendingProduct[],
   niche: Niche = "skincare"
-): Promise<{ content: string; fallbackLevel?: 'exact' | 'default' | 'generic' }> {
+): Promise<{ 
+  content: string; 
+  fallbackLevel?: 'exact' | 'default' | 'generic';
+  prompt?: string;
+  model?: string;
+  tokens?: number;
+}> {
   try {
     // First try using the new modular prompt system
     const promptParams: PromptParams = {
@@ -79,9 +85,13 @@ export async function generateContent(
       presence_penalty: modelConfig.presencePenalty
     });
 
+    // Return additional metadata for history tracking
     return {
       content: completion.choices[0].message.content || "Could not generate content. Please try again.",
-      fallbackLevel
+      fallbackLevel,
+      prompt,
+      model: modelConfig.modelName,
+      tokens: completion.usage?.total_tokens || 0
     };
       
   } catch (error) {
@@ -113,9 +123,14 @@ export async function generateContent(
         presence_penalty: 0.0
       });
       
+      const genericPrompt = `Create ${templateType} content for ${product} in a ${tone} tone. This is for the ${niche} niche.`;
+      
       return {
         content: fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.",
-        fallbackLevel: 'generic' // Model fallback is considered generic
+        fallbackLevel: 'generic', // Model fallback is considered generic
+        prompt: genericPrompt,
+        model: "gpt-4o",
+        tokens: fallbackCompletion.usage?.total_tokens || 0
       };
       
     } catch (fallbackError) {
@@ -175,9 +190,14 @@ export async function generateContent(
           legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
       }
       
+      const legacyPrompt = `Create ${templateType} content for ${product} using legacy templates in a ${tone} tone. This is for the ${niche} niche.`;
+      
       return {
         content: legacyContent,
-        fallbackLevel: 'generic' // Consider legacy system as generic fallback
+        fallbackLevel: 'generic', // Consider legacy system as generic fallback
+        prompt: legacyPrompt,
+        model: "gpt-4o",
+        tokens: 0 // We don't have token usage from legacy system
       };
     }
   }
