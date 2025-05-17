@@ -8,6 +8,7 @@ import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 import NichePage from "@/pages/niche";
 import Dashboard from "@/pages/Dashboard";
+import MyContentHistory from "@/pages/MyContentHistory";
 import TemplateExplorerPage from "@/pages/template-explorer";
 import AboutPage from "@/pages/about";
 import HowItWorksPage from "@/pages/how-it-works";
@@ -43,6 +44,7 @@ function Router() {
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/niche/:niche" component={NichePage} />
       <Route path="/templates" component={TemplateExplorerPage} />
+      <Route path="/history" component={MyContentHistory} />
       {/* Static pages */}
       <Route path="/about" component={AboutPage} />
       <Route path="/how-it-works" component={HowItWorksPage} />
