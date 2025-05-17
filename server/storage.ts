@@ -15,10 +15,12 @@ import {
   SocialMediaPlatform, InsertSocialMediaPlatform,
   PublishedContent, InsertPublishedContent,
   IntegrationWebhook, InsertIntegrationWebhook,
+  ContentHistory, InsertContentHistory,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
-  socialMediaPlatforms, publishedContent, integrationWebhooks, userActivityLogs
+  socialMediaPlatforms, publishedContent, integrationWebhooks, userActivityLogs,
+  contentHistory
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -115,6 +117,13 @@ export interface IStorage {
   getTrendingEmojisHashtags(niche: string): Promise<TrendingEmojisHashtags | undefined>;
   saveTrendingEmojisHashtags(data: InsertTrendingEmojisHashtags): Promise<TrendingEmojisHashtags>;
   getAllTrendingEmojisHashtags(): Promise<TrendingEmojisHashtags[]>;
+  
+  // Content History operations
+  saveContentHistory(history: InsertContentHistory): Promise<ContentHistory>;
+  getContentHistoryById(id: number): Promise<ContentHistory | undefined>;
+  getContentHistoryByUserId(userId: number, limit?: number, offset?: number): Promise<ContentHistory[]>;
+  getAllContentHistory(limit?: number, offset?: number): Promise<ContentHistory[]>;
+  getContentHistoryByNiche(niche: string, limit?: number, offset?: number): Promise<ContentHistory[]>;
   
   // Analytics operations
   getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>>;

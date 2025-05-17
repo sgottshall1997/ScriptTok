@@ -326,6 +326,21 @@ export const trendingEmojisHashtags = pgTable("trending_emojis_hashtags", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Content generation history for tracking and analytics
+export const contentHistory = pgTable("content_history", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id"), // Optional user reference
+  niche: text("niche").notNull(),
+  contentType: text("content_type").notNull(), // Maps to templateType
+  tone: text("tone").notNull(),
+  productName: text("product_name").notNull(),
+  promptText: text("prompt_text").notNull(),
+  outputText: text("output_text").notNull(),
+  modelUsed: text("model_used").notNull(),
+  tokenCount: integer("token_count").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -609,3 +624,18 @@ export type InsertMarketingAutomation = z.infer<typeof insertMarketingAutomation
 
 export type TrendingEmojisHashtags = typeof trendingEmojisHashtags.$inferSelect;
 export type InsertTrendingEmojisHashtags = z.infer<typeof insertTrendingEmojisHashtagsSchema>;
+
+export const insertContentHistorySchema = createInsertSchema(contentHistory).pick({
+  userId: true,
+  niche: true,
+  contentType: true,
+  tone: true,
+  productName: true,
+  promptText: true,
+  outputText: true,
+  modelUsed: true,
+  tokenCount: true,
+});
+
+export type ContentHistory = typeof contentHistory.$inferSelect;
+export type InsertContentHistory = z.infer<typeof insertContentHistorySchema>;
