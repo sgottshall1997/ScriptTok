@@ -75,12 +75,13 @@ router.post("/", async (req, res) => {
     // Get niche-specific trending data for context enrichment
     const trendingProducts = await storage.getTrendingProductsByNiche(niche);
     
-    // Generate content using OpenAI
-    const content = await generateContent(product, templateType, tone, trendingProducts, niche);
+    // Generate content using OpenAI - now includes fallbackLevel
+    const { content, fallbackLevel } = await generateContent(product, templateType, tone, trendingProducts, niche);
     
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 
       content, 
+      fallbackLevel,
       generatedAt: Date.now() 
     });
     

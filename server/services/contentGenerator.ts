@@ -30,7 +30,7 @@ export async function generateContent(
   tone: ToneOption,
   trendingProducts: TrendingProduct[],
   niche: Niche = "skincare"
-): Promise<string> {
+): Promise<{ content: string; fallbackLevel?: 'exact' | 'default' | 'generic' }> {
   try {
     // First try using the new modular prompt system
     const promptParams = {
@@ -42,6 +42,9 @@ export async function generateContent(
     };
     
     const prompt = await generatePrompt(promptParams);
+    
+    // Get the fallbackLevel that was set during prompt generation
+    const fallbackLevel = promptParams.fallbackLevel || 'exact';
     
     // Get optimized AI model configuration for this specific content generation
     const modelConfig = getModelConfig(promptParams);
@@ -71,8 +74,10 @@ export async function generateContent(
       presence_penalty: modelConfig.presencePenalty
     });
 
-    return completion.choices[0].message.content || 
-      "Could not generate content. Please try again.";
+    return {
+      content: completion.choices[0].message.content || "Could not generate content. Please try again.",
+      fallbackLevel
+    };
       
   } catch (error) {
     console.error("Error generating content with enhanced system:", error);
@@ -103,48 +108,72 @@ export async function generateContent(
         presence_penalty: 0.0
       });
       
-      return fallbackCompletion.choices[0].message.content || 
-        "Could not generate content. Please try again.";
+      return {
+        content: fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.",
+        fallbackLevel: 'generic' // Model fallback is considered generic
+      };
       
     } catch (fallbackError) {
       console.error("Fallback generation also failed:", fallbackError);
       
       // Fallback to the legacy system if all else fails
       console.log("Falling back to legacy template system");
+      console.warn(`[PromptFactory] Deep fallback to legacy templates → niche=${niche}, type=${templateType}, fallbackLevel=legacy`);
       
       // Generate content based on template type using the legacy system
+      let legacyContent = "";
+      
       switch (templateType) {
         case "original":
-          return await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
+          legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
+          break;
         case "comparison":
-          return await GptTemplates.generateProductComparison(openai, product, tone, trendingProducts);
+          legacyContent = await GptTemplates.generateProductComparison(openai, product, tone, trendingProducts);
+          break;
         case "caption":
-          return await GptTemplates.generateCaption(openai, product, tone);
+          legacyContent = await GptTemplates.generateCaption(openai, product, tone);
+          break;
         case "pros_cons":
-          return await GptTemplates.generateProsAndCons(openai, product, tone);
+          legacyContent = await GptTemplates.generateProsAndCons(openai, product, tone);
+          break;
         case "routine":
-          return await GptTemplates.generateRoutine(openai, product, tone);
+          legacyContent = await GptTemplates.generateRoutine(openai, product, tone);
+          break;
         case "beginner_kit":
-          return await GptTemplates.generateBeginnerKit(openai, product, tone);
+          legacyContent = await GptTemplates.generateBeginnerKit(openai, product, tone);
+          break;
         case "demo_script":
-          return await GptTemplates.generateDemoScript(openai, product, tone);
+          legacyContent = await GptTemplates.generateDemoScript(openai, product, tone);
+          break;
         case "drugstore_dupe":
-          return await GptTemplates.generateDrugstoreDupe(openai, product, tone);
+          legacyContent = await GptTemplates.generateDrugstoreDupe(openai, product, tone);
+          break;
         case "personal_review":
-          return await GptTemplates.generatePersonalReview(openai, product, tone);
+          legacyContent = await GptTemplates.generatePersonalReview(openai, product, tone);
+          break;
         case "surprise_me":
-          return await GptTemplates.generateSurpriseMe(openai, product, tone);
+          legacyContent = await GptTemplates.generateSurpriseMe(openai, product, tone);
+          break;
         case "tiktok_breakdown":
-          return await GptTemplates.generateTikTokBreakdown(openai, product, tone);
+          legacyContent = await GptTemplates.generateTikTokBreakdown(openai, product, tone);
+          break;
         case "dry_skin_list":
-          return await GptTemplates.generateDrySkinList(openai, product, tone);
+          legacyContent = await GptTemplates.generateDrySkinList(openai, product, tone);
+          break;
         case "top5_under25":
-          return await GptTemplates.generateTop5Under25(openai, product, tone);
+          legacyContent = await GptTemplates.generateTop5Under25(openai, product, tone);
+          break;
         case "influencer_caption":
-          return await GptTemplates.generateInfluencerCaption(openai, product, tone);
+          legacyContent = await GptTemplates.generateInfluencerCaption(openai, product, tone);
+          break;
         default:
-          return await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
+          legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
       }
+      
+      return {
+        content: legacyContent,
+        fallbackLevel: 'generic' // Consider legacy system as generic fallback
+      };
     }
   }
 }
