@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { Link, useLocation } from "wouter";
+import UserProfileMenu from "./UserProfileMenu";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -125,18 +126,8 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, onClose }) => {
         </nav>
         
         {/* User profile */}
-        <div className="p-4 border-t border-sidebar-border">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <div className="h-10 w-10 rounded-full bg-primary-300 text-white flex items-center justify-center">
-                <span className="text-lg font-semibold">SP</span>
-              </div>
-            </div>
-            <div className="ml-3">
-              <p className="text-sm font-medium text-sidebar-foreground">Sarah Parker</p>
-              <p className="text-xs text-sidebar-foreground/60">Admin</p>
-            </div>
-          </div>
+        <div className="p-2 border-t border-sidebar-border">
+          <UserProfileMenu />
         </div>
       </div>
     </aside>

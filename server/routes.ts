@@ -21,6 +21,7 @@ import { usageSummaryRouter } from "./api/usageSummary";
 import { webhooksRouter } from "./api/webhooks";
 import { webhookTestRouter } from "./api/webhook-test";
 import authRouter from "./api/auth";
+import protectedRouter from "./api/protected-routes";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -28,26 +29,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes (non-protected)
   app.use('/api/auth', authRouter);
   
-  // Content-related routes
-  app.use('/api/generate', generateContentRouter);
+  // Public routes that don't require authentication
   app.use('/api/trending', trendingRouter);
-  app.use('/api/analytics', analyticsRouter);
   app.use('/api/template-test', templateTestRouter);
   app.use('/api/templates', templateRouter);
   app.use('/api/scraper-status', scraperStatusRouter);
-  app.use('/api/custom-template', customTemplateTestRouter);
-  app.use('/api/ai-model-config', aiModelConfigRouter);
   app.use('/api/hashtag-emoji', hashtagEmojiRouter);
-  app.use('/api/social-media-optimization', socialMediaOptimizationRouter);
-  app.use('/api/video-script', videoScriptRouter);
-  app.use('/api/claude-content', claudeContentRouter);
   app.use('/api/trending-emojis-hashtags', trendingEmojisHashtagsRouter);
-  app.use('/api/integrations', apiIntegrationRouter);
   app.use('/api/options', optionsRouter);
-  app.use('/api/history', historyRouter);
-  app.use('/api/usage-summary', usageSummaryRouter);
-  app.use('/api/webhooks', webhooksRouter);
-  app.use('/api/webhooks/test', webhookTestRouter);
+  
+  // Apply protected routes (requires authentication)
+  app.use('/api', protectedRouter);
+  
+  // These routes are now handled through the protected router
+  // app.use('/api/generate', generateContentRouter);
+  // app.use('/api/analytics', analyticsRouter);
+  // app.use('/api/custom-template', customTemplateTestRouter);
+  // app.use('/api/ai-model-config', aiModelConfigRouter);
+  // app.use('/api/social-media-optimization', socialMediaOptimizationRouter);
+  // app.use('/api/video-script', videoScriptRouter);
+  // app.use('/api/claude-content', claudeContentRouter);
+  // app.use('/api/integrations', apiIntegrationRouter);
+  // app.use('/api/history', historyRouter);
+  // app.use('/api/usage-summary', usageSummaryRouter);
+  // app.use('/api/webhooks', webhooksRouter);
+  // app.use('/api/webhooks/test', webhookTestRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {

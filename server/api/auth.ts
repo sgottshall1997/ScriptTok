@@ -1,207 +1,308 @@
-import { Request, Response, Router } from 'express';
+import { Router } from 'express';
 import bcrypt from 'bcrypt';
-import { body, validationResult } from 'express-validator';
-import { storage } from '../storage';
-import { generateToken, authenticate } from '../middleware/auth';
 import { z } from 'zod';
-import { insertUserSchema } from '@shared/schema';
+import { insertUserSchema, users } from '@shared/schema';
+import { storage } from '../storage';
+import { generateToken } from '../middleware/auth';
 
-const router = Router();
+const authRouter = Router();
 
-// Validation schema for registration with additional validation
+// Validation schemas
 const registerSchema = insertUserSchema.extend({
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  email: z.string().email('Invalid email format'),
+  password: z.string().min(8).max(100),
+  confirmPassword: z.string().min(8).max(100),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
 });
 
-// Validation schema for login
 const loginSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  password: z.string().min(1, 'Password is required'),
+  username: z.string().min(3).max(50),
+  password: z.string().min(3).max(100),
 });
 
-// Registration endpoint
-router.post('/register', [
-  body('username').trim().isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
-  body('email').isEmail().withMessage('Invalid email format'),
-  body('password').isLength({ min: 8 }).withMessage('Password must be at least 8 characters'),
-], async (req: Request, res: Response) => {
+const passwordResetRequestSchema = z.object({
+  email: z.string().email(),
+});
+
+const passwordResetSchema = z.object({
+  token: z.string(),
+  password: z.string().min(8).max(100),
+  confirmPassword: z.string().min(8).max(100),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+// User registration endpoint
+authRouter.post('/register', async (req, res) => {
   try {
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // Validate with Zod schema
-    try {
-      registerSchema.parse(req.body);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          message: "Validation error", 
-          errors: error.errors.map(e => ({
-            field: e.path.join('.'),
-            message: e.message
-          }))
-        });
-      }
-      throw error;
-    }
-
-    const { username, email, password, firstName, lastName, role = 'writer' } = req.body;
-
-    // Check if user already exists
-    const existingUser = await storage.getUserByUsername(username);
+    // Validate request body
+    const validatedData = registerSchema.parse(req.body);
+    
+    // Check if username already exists
+    const existingUser = await storage.getUserByUsername(validatedData.username);
     if (existingUser) {
-      return res.status(409).json({ message: 'Username already exists' });
+      return res.status(400).json({ message: 'Username already exists' });
     }
-
+    
+    // Check if email already exists (if provided)
+    if (validatedData.email) {
+      const existingEmail = await storage.getUserByEmail(validatedData.email);
+      if (existingEmail) {
+        return res.status(400).json({ message: 'Email already exists' });
+      }
+    }
+    
     // Hash password
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    // Create user
-    const user = await storage.createUser({
-      username,
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-      role,
-      status: 'active'
-    });
-
-    // Generate token
-    const token = generateToken(user);
-
-    // Update user's last login
-    await storage.updateUser(user.id, {
-      lastLogin: new Date(),
-      loginCount: 1
-    });
-
-    // Log user activity
-    await storage.logUserActivity({
-      userId: user.id,
-      action: 'registration',
-      metadata: { ip: req.ip },
-      ipAddress: req.ip
-    });
-
-    // Return user info and token, exclude password
-    const { password: _, ...userWithoutPassword } = user;
+    const hashedPassword = await bcrypt.hash(validatedData.password, salt);
     
-    res.status(201).json({
-      message: 'User registered successfully',
+    // Create user with hashed password
+    const newUser = await storage.createUser({
+      ...validatedData,
+      password: hashedPassword,
+      // Set default role if not provided
+      role: validatedData.role || 'writer',
+    });
+    
+    // Generate JWT token
+    const token = generateToken({
+      id: newUser.id,
+      username: newUser.username,
+      email: newUser.email,
+      role: newUser.role,
+    });
+    
+    // Update user's last login time
+    await storage.updateUser(newUser.id, {
+      lastLogin: new Date(),
+      loginCount: 1,
+    });
+    
+    // Record login activity
+    await storage.recordUserActivity({
+      userId: newUser.id,
+      action: 'register',
+      metadata: {
+        method: 'email_password',
+      },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+    });
+    
+    // Return user data and token (excluding password)
+    const { password, ...userWithoutPassword } = newUser;
+    return res.status(201).json({
       user: userWithoutPassword,
       token
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation error', details: error.errors });
+    }
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Server error during registration' });
   }
 });
 
-// Login endpoint
-router.post('/login', [
-  body('username').trim().notEmpty().withMessage('Username is required'),
-  body('password').notEmpty().withMessage('Password is required'),
-], async (req: Request, res: Response) => {
+// User login endpoint
+authRouter.post('/login', async (req, res) => {
   try {
-    // Check for validation errors
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    // Validate with Zod schema
-    try {
-      loginSchema.parse(req.body);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        return res.status(400).json({ 
-          message: "Validation error", 
-          errors: error.errors.map(e => ({
-            field: e.path.join('.'),
-            message: e.message
-          }))
-        });
-      }
-      throw error;
-    }
-
-    const { username, password } = req.body;
-
-    // Find user
-    const user = await storage.getUserByUsername(username);
+    // Validate request body
+    const validatedData = loginSchema.parse(req.body);
+    
+    // Find user by username
+    const user = await storage.getUserByUsername(validatedData.username);
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid username or password' });
     }
-
+    
     // Check if user is active
     if (user.status !== 'active') {
-      return res.status(403).json({ message: 'Account is not active' });
+      return res.status(403).json({ message: `Your account is ${user.status}. Please contact support.` });
     }
-
-    // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+    // Compare passwords
+    const isPasswordValid = await bcrypt.compare(validatedData.password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ message: 'Invalid username or password' });
     }
-
-    // Generate token
-    const token = generateToken(user);
-
-    // Update user's last login
+    
+    // Generate JWT token
+    const token = generateToken({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    });
+    
+    // Update user's last login time and increment login count
     await storage.updateUser(user.id, {
       lastLogin: new Date(),
-      loginCount: (user.loginCount || 0) + 1
+      loginCount: (user.loginCount || 0) + 1,
     });
-
-    // Log user activity
-    await storage.logUserActivity({
+    
+    // Record login activity
+    await storage.recordUserActivity({
       userId: user.id,
       action: 'login',
-      metadata: { ip: req.ip },
-      ipAddress: req.ip
+      metadata: {
+        method: 'email_password',
+      },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
     });
-
-    // Return user info and token, exclude password
-    const { password: _, ...userWithoutPassword } = user;
     
-    res.status(200).json({
-      message: 'Login successful',
+    // Return user data and token (excluding password)
+    const { password, ...userWithoutPassword } = user;
+    return res.json({
       user: userWithoutPassword,
       token
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation error', details: error.errors });
+    }
     console.error('Login error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    return res.status(500).json({ message: 'Server error during login' });
   }
 });
 
-// Get current user endpoint
-router.get('/me', authenticate, async (req: Request, res: Response) => {
+// Get user profile endpoint (protected)
+authRouter.get('/profile', async (req, res) => {
   try {
     if (!req.user || !req.user.userId) {
       return res.status(401).json({ message: 'Authentication required' });
     }
     
-    // Get user from database
     const user = await storage.getUser(req.user.userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
-    // Return user info, exclude password
-    const { password, ...userWithoutPassword } = user;
     
-    res.status(200).json(userWithoutPassword);
+    // Return user data without password
+    const { password, ...userWithoutPassword } = user;
+    res.json(userWithoutPassword);
   } catch (error) {
-    console.error('Get profile error:', error);
-    res.status(500).json({ message: 'Internal server error' });
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: 'Server error fetching profile' });
   }
 });
 
-export default router;
+// Update user profile endpoint (protected)
+authRouter.put('/profile', async (req, res) => {
+  try {
+    if (!req.user || !req.user.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+    
+    const user = await storage.getUser(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Validate update data using a subset of the user schema
+    const updateProfileSchema = z.object({
+      firstName: z.string().optional().nullable(),
+      lastName: z.string().optional().nullable(),
+      email: z.string().email().optional().nullable(),
+      profileImage: z.string().optional().nullable(),
+      preferences: z.any().optional(),
+    });
+    
+    const validatedData = updateProfileSchema.parse(req.body);
+    
+    // If email is being updated, check if it's already in use
+    if (validatedData.email && validatedData.email !== user.email) {
+      const existingEmail = await storage.getUserByEmail(validatedData.email);
+      if (existingEmail) {
+        return res.status(400).json({ message: 'Email already in use' });
+      }
+    }
+    
+    // Update user profile
+    const updatedUser = await storage.updateUser(user.id, validatedData);
+    
+    // Record profile update activity
+    await storage.recordUserActivity({
+      userId: user.id,
+      action: 'profile_update',
+      metadata: {
+        fieldsUpdated: Object.keys(validatedData),
+      },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+    });
+    
+    // Return updated user data without password
+    const { password, ...userWithoutPassword } = updatedUser;
+    res.json(userWithoutPassword);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation error', details: error.errors });
+    }
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Server error updating profile' });
+  }
+});
+
+// Change password endpoint (protected)
+authRouter.post('/change-password', async (req, res) => {
+  try {
+    if (!req.user || !req.user.userId) {
+      return res.status(401).json({ message: 'Authentication required' });
+    }
+    
+    // Validate password data
+    const changePasswordSchema = z.object({
+      currentPassword: z.string(),
+      newPassword: z.string().min(8).max(100),
+      confirmPassword: z.string().min(8).max(100),
+    }).refine((data) => data.newPassword === data.confirmPassword, {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    });
+    
+    const validatedData = changePasswordSchema.parse(req.body);
+    
+    // Retrieve user
+    const user = await storage.getUser(req.user.userId);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    // Verify current password
+    const isCurrentPasswordValid = await bcrypt.compare(validatedData.currentPassword, user.password);
+    if (!isCurrentPasswordValid) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+    
+    // Hash new password and update
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(validatedData.newPassword, salt);
+    
+    await storage.updateUser(user.id, {
+      password: hashedPassword,
+      updatedAt: new Date(),
+    });
+    
+    // Record password change activity
+    await storage.recordUserActivity({
+      userId: user.id,
+      action: 'password_change',
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent'],
+    });
+    
+    res.json({ message: 'Password updated successfully' });
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ message: 'Validation error', details: error.errors });
+    }
+    console.error('Error changing password:', error);
+    res.status(500).json({ message: 'Server error changing password' });
+  }
+});
+
+export default authRouter;

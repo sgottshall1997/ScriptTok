@@ -31,9 +31,11 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
+  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
   deleteUser(id: number): Promise<boolean>;
+  recordUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
   
   // Teams & User Roles operations
   createTeam(team: InsertTeam): Promise<Team>;
@@ -338,11 +340,62 @@ export class MemStorage implements IStorage {
     );
   }
   
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      user => user.email === email
+    );
+  }
+  
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userId++;
-    const user: User = { ...insertUser, id };
+    const now = new Date();
+    const user: User = { 
+      ...insertUser, 
+      id,
+      status: 'active',
+      lastLogin: null,
+      loginCount: 0,
+      preferences: {},
+      createdAt: now,
+      updatedAt: now
+    };
     this.users.set(id, user);
     return user;
+  }
+  
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const user = this.users.get(id);
+    if (!user) return undefined;
+    
+    const updatedUser = {
+      ...user,
+      ...updates,
+      updatedAt: new Date()
+    };
+    
+    this.users.set(id, updatedUser);
+    return updatedUser;
+  }
+  
+  async deleteUser(id: number): Promise<boolean> {
+    return this.users.delete(id);
+  }
+  
+  async recordUserActivity(activityData: { 
+    userId: number, 
+    action: string, 
+    metadata?: any, 
+    ipAddress?: string, 
+    userAgent?: string 
+  }): Promise<void> {
+    // For MemStorage, we'll just log the activity
+    console.log(`User activity: ${activityData.action}`, {
+      userId: activityData.userId,
+      timestamp: new Date(),
+      metadata: activityData.metadata,
+      ipAddress: activityData.ipAddress,
+      userAgent: activityData.userAgent
+    });
   }
   
   // Content generation operations
