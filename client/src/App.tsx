@@ -9,6 +9,7 @@ import Home from "@/pages/home";
 import NichePage from "@/pages/niche";
 import Dashboard from "@/pages/Dashboard";
 import MyContentHistory from "@/pages/MyContentHistory";
+import AnalyticsDashboard from "@/pages/AnalyticsDashboard";
 import TemplateExplorerPage from "@/pages/template-explorer";
 import AboutPage from "@/pages/about";
 import HowItWorksPage from "@/pages/how-it-works";
