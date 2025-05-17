@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Card, 
   CardContent, 
@@ -25,8 +25,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
-import { apiRequest } from '@/lib/queryClient';
-import { Loader2, TestTube2, CheckCircle2, XCircle } from 'lucide-react';
+import { Loader2, TestTube2 } from 'lucide-react';
 
 // Form validation schema
 const webhookFormSchema = z.object({
@@ -44,7 +43,7 @@ const WebhookSettings = () => {
   const [isTestingWebhook, setIsTestingWebhook] = useState(false);
 
   // Fetch current webhook configuration
-  const { data, isLoading, error } = useQuery<{ success: boolean, config: { url: string, enabled: boolean, secret?: string } }>({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['/api/webhooks/config'],
   });
 
@@ -59,7 +58,7 @@ const WebhookSettings = () => {
   });
 
   // Update form when data is loaded
-  useEffect(() => {
+  React.useEffect(() => {
     if (data?.config) {
       form.reset({
         url: data.config.url || '',
@@ -72,10 +71,20 @@ const WebhookSettings = () => {
   // Mutation for updating webhook configuration
   const updateWebhookMutation = useMutation({
     mutationFn: async (values: WebhookFormValues) => {
-      return await apiRequest('/api/webhooks/config', {
+      const response = await fetch('/api/webhooks/config', {
         method: 'POST',
-        data: values,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to update webhook');
+      }
+      
+      return await response.json();
     },
     onSuccess: () => {
       toast({
@@ -118,17 +127,27 @@ const WebhookSettings = () => {
       await updateWebhookMutation.mutateAsync(form.getValues());
       
       // Then send a test notification
-      const response = await apiRequest('/api/webhooks/test', {
+      const response = await fetch('/api/webhooks/test', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
       });
       
-      if (response.success) {
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to send test webhook');
+      }
+      
+      const result = await response.json();
+      
+      if (result.success) {
         toast({
           title: 'Test webhook sent',
           description: 'The test notification was sent successfully',
         });
       } else {
-        throw new Error(response.message || 'Failed to send test webhook');
+        throw new Error(result.message || 'Failed to send test webhook');
       }
     } catch (error: any) {
       toast({
