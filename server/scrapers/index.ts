@@ -78,11 +78,25 @@ export async function getAllTrendingProducts(niche: string = 'skincare'): Promis
     const platform = SCRAPER_PLATFORMS[index];
     
     if (result.status === 'fulfilled') {
-      // Add products with source
-      const products = result.value.products.map(item => ({
-        ...item,
-        source: platform
-      }));
+      // Add products with source and AI generation flag
+      const products = result.value.products.map(item => {
+        // Check if this is a ScraperResult with the new ScraperStatus type
+        const hasScraperStatus = 'realDataCount' in result.value.status;
+        
+        // Determine if this is AI-generated based on status or data counts
+        const isAIGenerated = 
+          result.value.status.status === 'gpt-fallback' || 
+          (hasScraperStatus && (result.value.status as any).aiDataCount > 0);
+        
+        return {
+          ...item,
+          source: platform,
+          isAIGenerated: isAIGenerated,
+          errorReason: isAIGenerated ? 
+            (hasScraperStatus ? (result.value.status as any).message : result.value.status.errorMessage) : 
+            undefined
+        };
+      });
       
       allProducts = [...allProducts, ...products];
       
@@ -90,7 +104,9 @@ export async function getAllTrendingProducts(niche: string = 'skincare'): Promis
       platforms.push({
         name: platform,
         status: result.value.status.status,
-        errorMessage: result.value.status.errorMessage
+        errorMessage: 'message' in result.value.status ? 
+          (result.value.status as any).message : 
+          result.value.status.errorMessage
       });
     } else {
       // Add platform status as error with the error message

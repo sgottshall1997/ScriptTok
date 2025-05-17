@@ -1,109 +1,97 @@
-/**
- * Scraper Status API endpoints
- * Provides access to the current status of scrapers and their raw data
- */
+import { Router } from "express";
+import { storage } from "../storage";
+import { SCRAPER_PLATFORMS } from "../../shared/constants";
 
-import { Router, Request, Response } from 'express';
-import { storage } from '../storage';
-import { SCRAPER_PLATFORMS } from '@shared/constants';
-import type { ScraperPlatform } from '@shared/constants';
-
-export const scraperStatusRouter = Router();
+const router = Router();
 
 /**
- * GET /api/scraper-status
- * Get the current status of all scrapers
+ * Get detailed status for all scrapers with error reasons
  */
-scraperStatusRouter.get('/', async (req: Request, res: Response) => {
+router.get("/", async (req, res) => {
   try {
-    const scraperStatus = await storage.getScraperStatus();
-    
-    // Sort by update time to show most recently updated first
-    const sortedStatus = scraperStatus.sort((a, b) => {
-      return new Date(b.lastCheck).getTime() - new Date(a.lastCheck).getTime();
-    });
-    
-    return res.status(200).json(sortedStatus);
+    // Get the status of all scrapers
+    const scraperStatuses = await Promise.all(
+      SCRAPER_PLATFORMS.map(async (platform) => {
+        const statuses = await storage.getScraperStatus();
+        const status = statuses.find(s => s.name === platform);
+        
+        let statusOutput = {
+          name: platform,
+          status: "unknown",
+          lastCheck: new Date().toISOString(),
+          successCount: 0,
+          failureCount: 0,
+          errorMessage: ""
+        };
+
+        if (status) {
+          // We need to handle both old and new status format
+          
+          // Get the status from the legacy format
+          statusOutput.status = status.status;
+          statusOutput.errorMessage = status.errorMessage || "";
+          
+          // Convert timestamp if it exists
+          if (status.lastCheck) {
+            statusOutput.lastCheck = status.lastCheck.toISOString();
+          }
+          
+          // For newer style statuses with more information
+          if ('realDataCount' in status) {
+            // This is a newer format with more detail
+            const realCount = (status as any).realDataCount || 0;
+            const aiCount = (status as any).aiDataCount || 0;
+            
+            // Check if scraper is using GPT fallback
+            if (status.status === "active" && aiCount > 0 && realCount === 0) {
+              statusOutput.status = "gpt-fallback";
+              statusOutput.errorMessage = (status as any).message || "Using AI data generation";
+            }
+            
+            // Add additional context
+            if ((status as any).timestamp) {
+              statusOutput.lastCheck = new Date((status as any).timestamp).toISOString();
+            }
+            
+            statusOutput.successCount = realCount;
+            statusOutput.failureCount = aiCount;
+          }
+        }
+
+        // If the scraper has an error status, classify the error reason
+        if (statusOutput.status === "error" && statusOutput.errorMessage) {
+          // Common error reasons to classify
+          if (statusOutput.errorMessage.includes("429") || 
+              statusOutput.errorMessage.includes("throttled") ||
+              statusOutput.errorMessage.includes("rate limit")) {
+            statusOutput.status = "rate-limited";
+            statusOutput.errorMessage = "Rate limited by source platform";
+          } 
+          else if (statusOutput.errorMessage.includes("403") || 
+                  statusOutput.errorMessage.includes("401") || 
+                  statusOutput.errorMessage.includes("unauthorized")) {
+            statusOutput.status = "auth-error";
+            statusOutput.errorMessage = "Authentication error with source platform";
+          }
+          else if (statusOutput.errorMessage.includes("parse") || 
+                  statusOutput.errorMessage.includes("extract")) {
+            statusOutput.status = "parse-error";
+            statusOutput.errorMessage = "Failed to parse data from source platform";
+          }
+        }
+
+        return statusOutput;
+      })
+    );
+
+    res.json(scraperStatuses);
   } catch (error) {
-    console.error('Error fetching scraper status:', error);
-    return res.status(500).json({ error: 'Failed to fetch scraper status' });
+    console.error("Error fetching scraper status:", error);
+    res.status(500).json({
+      error: "Failed to fetch scraper status",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
   }
 });
 
-/**
- * GET /api/scraper-data
- * Get raw data from all scrapers
- */
-scraperStatusRouter.get('/data', async (req: Request, res: Response) => {
-  try {
-    // Get trending products from storage
-    const trendingProducts = await storage.getTrendingProducts(50);
-    
-    // Group by source platform
-    const groupedBySource: Record<string, any[]> = {};
-    
-    trendingProducts.forEach(product => {
-      const source = product.source;
-      if (!groupedBySource[source]) {
-        groupedBySource[source] = [];
-      }
-      
-      groupedBySource[source].push({
-        title: product.title,
-        mentions: product.mentions || 0,
-        url: product.sourceUrl || ''
-      });
-    });
-    
-    // Format as array of platform data
-    const data = Object.entries(groupedBySource).map(([source, products]) => {
-      return {
-        source,
-        products: products.sort((a, b) => b.mentions - a.mentions),
-        rawData: JSON.stringify(products.slice(0, 3), null, 2)
-      };
-    });
-    
-    // Add empty entries for missing platforms
-    SCRAPER_PLATFORMS.forEach(platform => {
-      if (!groupedBySource[platform]) {
-        data.push({
-          source: platform,
-          products: [],
-          rawData: '{"error": "No data available"}'
-        });
-      }
-    });
-    
-    return res.status(200).json(data);
-  } catch (error) {
-    console.error('Error fetching scraper data:', error);
-    return res.status(500).json({ error: 'Failed to fetch scraper data' });
-  }
-});
-
-/**
- * GET /api/scraper-status/:name
- * Get the status of a specific scraper
- */
-scraperStatusRouter.get('/:name', async (req: Request, res: Response) => {
-  try {
-    const { name } = req.params;
-    
-    if (!SCRAPER_PLATFORMS.includes(name as ScraperPlatform)) {
-      return res.status(400).json({ error: 'Invalid scraper name' });
-    }
-    
-    const scraperStatus = await storage.getScraperStatus();
-    const status = scraperStatus.find(s => s.name === name);
-    
-    if (!status) {
-      return res.status(404).json({ error: 'Scraper status not found' });
-    }
-    
-    return res.status(200).json(status);
-  } catch (error) {
-    console.error(`Error fetching status for scraper ${req.params.name}:`, error);
-    return res.status(500).json({ error: 'Failed to fetch scraper status' });
-  }
-});
+export { router as scraperStatusRouter };
