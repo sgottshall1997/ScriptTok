@@ -59,10 +59,13 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
             <p className="text-sm font-medium text-neutral-800 truncate">{product.title}</p>
             <div className="flex items-center mt-1">
               <span className={`inline-block text-xs px-2 py-0.5 rounded ${getSourceColorClass(product.source)} mr-2`}>
-                {product.source.charAt(0).toUpperCase() + product.source.slice(1)}
+                {product.isAIGenerated ? 
+                  '🤖 AI-' + product.source.charAt(0).toUpperCase() + product.source.slice(1) :
+                  '🌐 ' + product.source.charAt(0).toUpperCase() + product.source.slice(1)
+                }
               </span>
               <div className="text-xs text-neutral-500 truncate">
-                {formatNumber(product.mentions || 0)} mentions
+                {formatNumber(product.mentions || 0)} {product.isAIGenerated ? 'est. mentions' : 'mentions'}
               </div>
             </div>
           </div>

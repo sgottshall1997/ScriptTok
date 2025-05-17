@@ -7,6 +7,8 @@ export interface TrendingProduct {
   sourceUrl?: string;
   createdAt?: string;
   niche?: string;
+  isAIGenerated?: boolean;
+  errorReason?: string;
 }
 
 // Dashboard trending products response
@@ -25,7 +27,12 @@ export const SOURCE_COLORS: Record<string, string> = {
   'youtube': 'bg-red-100 text-red-800',
   'amazon': 'bg-yellow-100 text-yellow-800',
   'google-trends': 'bg-blue-100 text-blue-800',
-  'openai': 'bg-emerald-100 text-emerald-800'
+  'openai': 'bg-emerald-100 text-emerald-800',
+  'ai-tiktok': 'bg-blue-100 text-blue-800',
+  'ai-instagram': 'bg-blue-100 text-blue-800',
+  'ai-reddit': 'bg-blue-100 text-blue-800',
+  'ai-youtube': 'bg-blue-100 text-blue-800',
+  'ai-amazon': 'bg-blue-100 text-blue-800'
 };
 
 // Universal content template options
