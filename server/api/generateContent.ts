@@ -167,8 +167,8 @@ router.post("/", async (req, res) => {
     // Get niche-specific trending data for context enrichment
     const trendingProducts = await storage.getTrendingProductsByNiche(niche);
     
-    // Generate content using OpenAI - now includes fallbackLevel
-    const { content, fallbackLevel } = await generateContent(product, templateType, tone, trendingProducts, niche);
+    // Generate content using OpenAI - now includes fallbackLevel and additional metadata
+    const { content, fallbackLevel, prompt, model, tokens } = await generateContent(product, templateType, tone, trendingProducts, niche);
     
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 
@@ -188,8 +188,21 @@ router.post("/", async (req, res) => {
       content
     });
     
+    // Save detailed content history record with all metadata
+    await storage.saveContentHistory({
+      userId: req.user?.id, // If user is authenticated
+      niche,
+      contentType: templateType,
+      tone,
+      productName: product,
+      promptText: prompt || `Generate ${templateType} content for ${product} with ${tone} tone in ${niche} niche`,
+      outputText: content,
+      modelUsed: model || "gpt-4o",
+      tokenCount: tokens || 0
+    });
+    
     // Increment API usage counter with template and tone tracking
-    await storage.incrementApiUsage(templateType, tone);
+    await storage.incrementApiUsage(templateType, tone, niche, req.user?.id);
     
     // Estimate video duration
     const videoDuration = estimateVideoDuration(content, tone, templateType);
