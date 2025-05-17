@@ -1,9 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, useRoute } from 'wouter';
-import { useAuth } from '@/hooks/useAuth';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
+import { useAuth } from "@/hooks/useAuth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,262 +21,361 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2 } from 'lucide-react';
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2 } from "lucide-react";
+
+const loginSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
+
+const registerSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Please enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters"),
+  confirmPassword: z.string().min(8, "Password must be at least 8 characters"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Passwords do not match",
+  path: ["confirmPassword"],
+});
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const AuthPage = () => {
-  const [, setLocation] = useLocation();
-  const { isAuthenticated, loginMutation, registerMutation } = useAuth();
-  const [activeTab, setActiveTab] = useState('login');
+  const [activeTab, setActiveTab] = useState<"login" | "register">("login");
+  const [, navigate] = useLocation();
+  const { user, loginMutation, registerMutation } = useAuth();
 
-  // Form states
-  const [loginForm, setLoginForm] = useState({
-    username: '',
-    password: '',
-  });
-  
-  const [registerForm, setRegisterForm] = useState({
-    username: '',
-    email: '',
-    password: '',
-    firstName: '',
-    lastName: '',
-  });
-
-  // Redirect if already authenticated
+  // Redirect if user is already logged in
   useEffect(() => {
-    if (isAuthenticated) {
-      setLocation('/');
+    if (user) {
+      navigate("/");
     }
-  }, [isAuthenticated, setLocation]);
+  }, [user, navigate]);
 
-  // Form submission handlers
-  const handleLoginSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    loginMutation.mutate(loginForm);
+  const loginForm = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
+
+  const registerForm = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+      firstName: "",
+      lastName: "",
+    },
+  });
+
+  const onLoginSubmit = (values: LoginFormValues) => {
+    loginMutation.mutate(values);
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    registerMutation.mutate(registerForm);
-  };
-
-  // Form input change handlers
-  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setLoginForm(prev => ({ ...prev, [name]: value }));
-  };
-
-  const handleRegisterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setRegisterForm(prev => ({ ...prev, [name]: value }));
+  const onRegisterSubmit = (values: RegisterFormValues) => {
+    registerMutation.mutate(values);
   };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Left side - Auth forms */}
-      <div className="flex flex-1 items-center justify-center">
-        <div className="w-full max-w-md p-6">
-          <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-2 mb-8">
+    <div className="min-h-screen flex flex-col md:flex-row">
+      {/* Left side - Auth form */}
+      <div className="w-full md:w-1/2 p-8 flex items-center justify-center">
+        <div className="w-full max-w-md">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold tracking-tight">GlowBot</h1>
+            <p className="text-muted-foreground mt-2">
+              AI-powered content creation for smart marketers
+            </p>
+          </div>
+
+          <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as "login" | "register")}>
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="register">Sign Up</TabsTrigger>
+              <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="login">
               <Card>
-                <CardHeader className="space-y-1">
-                  <CardTitle className="text-2xl">Welcome back</CardTitle>
+                <CardHeader>
+                  <CardTitle>Login to your account</CardTitle>
                   <CardDescription>
-                    Enter your credentials to access your account
+                    Enter your username and password to access your account
                   </CardDescription>
                 </CardHeader>
-                <form onSubmit={handleLoginSubmit}>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="username">Username</Label>
-                      <Input
-                        id="username"
+                <CardContent>
+                  <Form {...loginForm}>
+                    <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="space-y-4">
+                      <FormField
+                        control={loginForm.control}
                         name="username"
-                        placeholder="Enter your username"
-                        required
-                        value={loginForm.username}
-                        onChange={handleLoginChange}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Enter your username" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <Label htmlFor="password">Password</Label>
-                      </div>
-                      <Input
-                        id="password"
+
+                      <FormField
+                        control={loginForm.control}
                         name="password"
-                        type="password"
-                        placeholder="Enter your password"
-                        required
-                        value={loginForm.password}
-                        onChange={handleLoginChange}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="Enter your password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
-                      disabled={loginMutation.isPending}
+
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={loginMutation.isPending}
+                      >
+                        {loginMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Logging in...
+                          </>
+                        ) : (
+                          "Login"
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                  <p className="text-sm text-muted-foreground">
+                    Don't have an account?{" "}
+                    <button
+                      onClick={() => setActiveTab("register")}
+                      className="text-primary underline hover:text-primary/80"
                     >
-                      {loginMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Logging in...
-                        </>
-                      ) : (
-                        'Log in'
-                      )}
-                    </Button>
-                  </CardFooter>
-                </form>
+                      Register
+                    </button>
+                  </p>
+                </CardFooter>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="register">
               <Card>
-                <CardHeader className="space-y-1">
-                  <CardTitle className="text-2xl">Create an account</CardTitle>
+                <CardHeader>
+                  <CardTitle>Create an account</CardTitle>
                   <CardDescription>
-                    Enter your information to create a new account
+                    Fill in the details below to create your new account
                   </CardDescription>
                 </CardHeader>
-                <form onSubmit={handleRegisterSubmit}>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="firstName">First Name</Label>
-                        <Input
-                          id="firstName"
+                <CardContent>
+                  <Form {...registerForm}>
+                    <form onSubmit={registerForm.handleSubmit(onRegisterSubmit)} className="space-y-4">
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={registerForm.control}
                           name="firstName"
-                          placeholder="John"
-                          value={registerForm.firstName}
-                          onChange={handleRegisterChange}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>First name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="John" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="lastName">Last Name</Label>
-                        <Input
-                          id="lastName"
+
+                        <FormField
+                          control={registerForm.control}
                           name="lastName"
-                          placeholder="Doe"
-                          value={registerForm.lastName}
-                          onChange={handleRegisterChange}
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Last name</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Doe" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
                         />
                       </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="reg-username">Username</Label>
-                      <Input
-                        id="reg-username"
+
+                      <FormField
+                        control={registerForm.control}
                         name="username"
-                        placeholder="johndoe"
-                        required
-                        value={registerForm.username}
-                        onChange={handleRegisterChange}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Username</FormLabel>
+                            <FormControl>
+                              <Input placeholder="johndoe" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
+
+                      <FormField
+                        control={registerForm.control}
                         name="email"
-                        type="email"
-                        placeholder="john.doe@example.com"
-                        required
-                        value={registerForm.email}
-                        onChange={handleRegisterChange}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input type="email" placeholder="johndoe@example.com" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="reg-password">Password</Label>
-                      <Input
-                        id="reg-password"
+
+                      <FormField
+                        control={registerForm.control}
                         name="password"
-                        type="password"
-                        placeholder="Create a secure password"
-                        required
-                        value={registerForm.password}
-                        onChange={handleRegisterChange}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Password</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="Create a strong password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
                       />
-                      <p className="text-xs text-muted-foreground">
-                        Password must be at least 8 characters long
-                      </p>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button 
-                      type="submit" 
-                      className="w-full" 
-                      disabled={registerMutation.isPending}
+
+                      <FormField
+                        control={registerForm.control}
+                        name="confirmPassword"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Confirm password</FormLabel>
+                            <FormControl>
+                              <Input
+                                type="password"
+                                placeholder="Confirm your password"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={registerMutation.isPending}
+                      >
+                        {registerMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Creating account...
+                          </>
+                        ) : (
+                          "Create Account"
+                        )}
+                      </Button>
+                    </form>
+                  </Form>
+                </CardContent>
+                <CardFooter className="flex justify-center">
+                  <p className="text-sm text-muted-foreground">
+                    Already have an account?{" "}
+                    <button
+                      onClick={() => setActiveTab("login")}
+                      className="text-primary underline hover:text-primary/80"
                     >
-                      {registerMutation.isPending ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating account...
-                        </>
-                      ) : (
-                        'Create account'
-                      )}
-                    </Button>
-                  </CardFooter>
-                </form>
+                      Login
+                    </button>
+                  </p>
+                </CardFooter>
               </Card>
             </TabsContent>
           </Tabs>
         </div>
       </div>
-      
+
       {/* Right side - Hero section */}
-      <div className="hidden lg:flex flex-1 bg-muted items-center justify-center flex-col p-10">
+      <div className="w-full md:w-1/2 bg-gradient-to-br from-primary to-primary-foreground/90 p-8 flex flex-col items-center justify-center text-white">
         <div className="max-w-md text-center">
-          <h1 className="text-4xl font-bold mb-6">
-            Multi-Niche AI Content Engine
-          </h1>
+          <h2 className="text-4xl font-bold mb-6">
+            Grow your business with AI-powered content
+          </h2>
           <p className="text-lg mb-8">
-            Generate trend-aware, optimized content for multiple niches including 
-            skincare, tech, fashion, fitness, food, and more. Streamline your 
-            social media content creation with advanced AI technologies.
+            GlowBot is your multi-niche content generation engine for creating engaging, trend-aware content across all major industries.
           </p>
-          <div className="space-y-4">
-            <div className="flex items-center p-4 bg-background rounded-lg shadow">
-              <div className="mr-4 bg-primary text-primary-foreground p-3 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                  <path d="M12 2v8"></path><path d="m4.93 10.93 1.41 1.41"></path><path d="M2 18h2"></path><path d="M20 18h2"></path><path d="m19.07 10.93-1.41 1.41"></path><path d="M22 22H2"></path><path d="m8 22 4-10 4 10"></path>
+
+          <div className="grid grid-cols-2 gap-4 text-left">
+            <div className="flex items-start">
+              <div className="rounded-full bg-white/20 p-2 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                  <path d="M2 17l10 5 10-5" />
+                  <path d="M2 12l10 5 10-5" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold">Real-time Trend Detection</h3>
-                <p className="text-sm text-muted-foreground">Stay ahead with automated trend analysis across platforms</p>
+                <h3 className="font-semibold">Multi-niche support</h3>
+                <p className="text-sm text-white/90">Skincare, Tech, Fashion, Fitness and more</p>
               </div>
             </div>
-            <div className="flex items-center p-4 bg-background rounded-lg shadow">
-              <div className="mr-4 bg-primary text-primary-foreground p-3 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                  <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline>
+
+            <div className="flex items-start">
+              <div className="rounded-full bg-white/20 p-2 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold">Dynamic Content Templates</h3>
-                <p className="text-sm text-muted-foreground">Specialized templates for each industry and platform</p>
+                <h3 className="font-semibold">Trend-aware content</h3>
+                <p className="text-sm text-white/90">Stay ahead with real-time trends</p>
               </div>
             </div>
-            <div className="flex items-center p-4 bg-background rounded-lg shadow">
-              <div className="mr-4 bg-primary text-primary-foreground p-3 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
-                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+
+            <div className="flex items-start">
+              <div className="rounded-full bg-white/20 p-2 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                  <path d="M6 12v5c3 3 9 3 12 0v-5" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold">Advanced AI Integration</h3>
-                <p className="text-sm text-muted-foreground">Powered by leading AI models for optimal content generation</p>
+                <h3 className="font-semibold">AI-powered</h3>
+                <p className="text-sm text-white/90">Utilize the latest AI models</p>
+              </div>
+            </div>
+
+            <div className="flex items-start">
+              <div className="rounded-full bg-white/20 p-2 mr-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold">Content templates</h3>
+                <p className="text-sm text-white/90">Multiple formats for any need</p>
               </div>
             </div>
           </div>

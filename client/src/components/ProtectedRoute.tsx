@@ -1,39 +1,34 @@
-import React from 'react';
-import { Route, Redirect } from 'wouter';
-import { useAuth } from '@/hooks/useAuth';
-import { Loader2 } from 'lucide-react';
+import { FC } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { Redirect, Route, RouteProps } from "wouter";
+import { Loader2 } from "lucide-react";
 
-interface ProtectedRouteProps {
+interface ProtectedRouteProps extends RouteProps {
   component: React.ComponentType;
-  path: string;
 }
 
-export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
-  component: Component,
-  path,
-  ...rest
-}) => {
-  const { isAuthenticated, isLoading } = useAuth();
+const ProtectedRoute: FC<ProtectedRouteProps> = ({ component: Component, ...rest }) => {
+  const { user, isLoading } = useAuth();
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <span className="ml-2">Loading...</span>
+      </div>
+    );
+  }
 
   return (
     <Route
-      path={path}
       {...rest}
-      component={() => {
-        if (isLoading) {
-          return (
-            <div className="flex min-h-screen items-center justify-center">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            </div>
-          );
-        }
-
-        return isAuthenticated ? (
-          <Component />
+      component={props =>
+        user ? (
+          <Component {...props} />
         ) : (
           <Redirect to="/auth" />
-        );
-      }}
+        )
+      }
     />
   );
 };

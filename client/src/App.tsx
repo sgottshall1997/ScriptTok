@@ -36,6 +36,7 @@ import { useAnalytics } from "./hooks/use-analytics";
 import { initScraperConsole } from "./lib/scraperConsole";
 import { AuthProvider } from "./hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
+import ProfilePage from "@/pages/ProfilePage";
 
 function Router() {
   // Track page views when routes change

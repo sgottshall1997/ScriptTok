@@ -1,7 +1,3 @@
-import React from 'react';
-import { useAuth } from '@/hooks/useAuth';
-import { useLocation } from 'wouter';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,110 +5,113 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Loader2, User, LogOut, Settings } from 'lucide-react';
+} from "@/components/ui/dropdown-menu";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
+import { ChevronDown, User, Settings, LogOut, Key } from "lucide-react";
+import { useLocation } from "wouter";
 
 const UserProfileMenu = () => {
-  const { user, isLoading, logoutMutation } = useAuth();
+  const { user, logoutMutation } = useAuth();
+  const { toast } = useToast();
   const [, setLocation] = useLocation();
 
-  // Handle logout
   const handleLogout = () => {
     logoutMutation.mutate();
-    setLocation('/auth');
   };
 
-  // Generate initials for avatar fallback
-  const getInitials = (name: string) => {
-    return name
-      .split(' ')
-      .map(part => part[0])
-      .join('')
-      .toUpperCase();
+  const handleProfileClick = () => {
+    setLocation("/profile");
   };
 
-  // Get display name (first name, full name, or username)
-  const getDisplayName = () => {
-    if (!user) return '';
-    
-    if (user.firstName) {
-      return user.lastName ? `${user.firstName} ${user.lastName}` : user.firstName;
-    }
-    
-    return user.username;
+  const handleChangePassword = () => {
+    setLocation("/change-password");
   };
 
-  // Loading state
-  if (isLoading) {
+  const handleAccountSettings = () => {
+    setLocation("/account-settings");
+  };
+
+  if (!user) {
     return (
-      <div className="flex items-center gap-2 px-4 py-2">
-        <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-        <span className="text-muted-foreground">Loading...</span>
+      <div className="flex items-center p-2 cursor-pointer" onClick={() => setLocation("/auth")}>
+        <div className="flex-shrink-0">
+          <div className="h-10 w-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+            <User className="h-5 w-5" />
+          </div>
+        </div>
+        <div className="ml-3">
+          <p className="text-sm font-medium text-sidebar-foreground">Sign In</p>
+          <p className="text-xs text-sidebar-foreground/60">Login or Register</p>
+        </div>
       </div>
     );
   }
 
-  // Not authenticated state (shouldn't normally be visible due to protected routes)
-  if (!user) {
-    return (
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        className="w-full justify-start px-4" 
-        onClick={() => setLocation('/auth')}
-      >
-        <User className="mr-2 h-4 w-4" />
-        <span>Sign In</span>
-      </Button>
-    );
-  }
+  const initials = user.firstName && user.lastName
+    ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`
+    : user.username.substring(0, 2).toUpperCase();
 
-  // Authenticated user profile menu
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="w-full justify-start px-2 py-6">
-          <div className="flex items-center gap-2">
-            <Avatar className="h-8 w-8">
-              <AvatarImage src={user.profileImage || ''} alt={getDisplayName()} />
-              <AvatarFallback>{getInitials(getDisplayName())}</AvatarFallback>
-            </Avatar>
-            <div className="flex flex-col items-start">
-              <span className="font-medium">{getDisplayName()}</span>
-              <span className="text-xs text-muted-foreground capitalize">{user.role}</span>
+        <div className="flex items-center p-2 cursor-pointer">
+          <div className="flex-shrink-0">
+            {user.profileImage ? (
+              <img
+                src={user.profileImage}
+                alt="Profile"
+                className="h-10 w-10 rounded-full object-cover"
+              />
+            ) : (
+              <div className="h-10 w-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                <span className="text-sm font-semibold">{initials}</span>
+              </div>
+            )}
+          </div>
+          <div className="ml-3 flex-1">
+            <p className="text-sm font-medium text-sidebar-foreground">
+              {user.firstName && user.lastName
+                ? `${user.firstName} ${user.lastName}`
+                : user.username}
+            </p>
+            <div className="flex items-center">
+              <p className="text-xs text-sidebar-foreground/60 capitalize">
+                {user.role}
+              </p>
+              <ChevronDown className="h-3 w-3 ml-1 text-sidebar-foreground/60" />
             </div>
           </div>
-        </Button>
+        </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-56">
+      
+      <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => setLocation('/profile')}>
+        
+        <DropdownMenuItem onClick={handleProfileClick}>
           <User className="mr-2 h-4 w-4" />
           <span>Profile</span>
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setLocation('/settings')}>
+        
+        <DropdownMenuItem onClick={handleAccountSettings}>
           <Settings className="mr-2 h-4 w-4" />
-          <span>Settings</span>
+          <span>Account Settings</span>
         </DropdownMenuItem>
+        
+        <DropdownMenuItem onClick={handleChangePassword}>
+          <Key className="mr-2 h-4 w-4" />
+          <span>Change Password</span>
+        </DropdownMenuItem>
+        
         <DropdownMenuSeparator />
-        <DropdownMenuItem 
-          className="text-destructive focus:text-destructive" 
-          onClick={handleLogout} 
+        
+        <DropdownMenuItem
+          onClick={handleLogout}
           disabled={logoutMutation.isPending}
         >
-          {logoutMutation.isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              <span>Logging out...</span>
-            </>
-          ) : (
-            <>
-              <LogOut className="mr-2 h-4 w-4" />
-              <span>Logout</span>
-            </>
-          )}
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>{logoutMutation.isPending ? "Logging out..." : "Log out"}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
