@@ -119,59 +119,19 @@ export async function getRefreshedTrendingProducts() {
     try {
       const { products } = await getAllTrendingProducts(niche);
       
-      // Create a map to track products by source
-      const productsBySource: Record<string, InsertTrendingProduct[]> = {};
-      
-      // Group products by source
-      products.forEach(product => {
-        if (!productsBySource[product.source]) {
-          productsBySource[product.source] = [];
-        }
-        productsBySource[product.source].push(product);
-      });
-      
-      // Get sources with at least one product
-      const availableSources = Object.keys(productsBySource).filter(
-        source => productsBySource[source].length > 0
-      );
-      
-      // Create a diversified list of products (maximum 3 products)
-      let diversifiedProducts: InsertTrendingProduct[] = [];
-      
-      // Round-robin selection from different sources
-      let sourceIndex = 0;
-      while (diversifiedProducts.length < 3 && availableSources.length > 0) {
-        const currentSource = availableSources[sourceIndex % availableSources.length];
-        const productsFromSource = productsBySource[currentSource];
-        
-        // Take the next product from this source if available
-        if (productsFromSource.length > 0) {
-          diversifiedProducts.push(productsFromSource.shift()!);
-        } else {
-          // Remove this source as it has no more products
-          availableSources.splice(sourceIndex % availableSources.length, 1);
-          if (availableSources.length === 0) break;
-          // Don't increment index when removing a source
-          continue;
-        }
-        
-        // Move to next source
-        sourceIndex++;
+      // Ensure we have products, otherwise just use what we got
+      if (!products || products.length === 0) {
+        result.byNiche[niche] = [];
+        continue;
       }
       
-      // If we still don't have 3 products, add more from any remaining sources
-      if (diversifiedProducts.length < 3) {
-        // Flatten remaining products from all sources
-        const remainingProducts = Object.values(productsBySource)
-          .flat()
-          .slice(0, 3 - diversifiedProducts.length);
-        
-        diversifiedProducts = [...diversifiedProducts, ...remainingProducts];
-      }
+      // Simple approach - just take top 3 products for now
+      // Later we can add more sophisticated diversification
+      const topProducts = products.slice(0, 3);
       
       // Add to result
-      result.byNiche[niche] = diversifiedProducts;
-      result.count += diversifiedProducts.length;
+      result.byNiche[niche] = topProducts;
+      result.count += topProducts.length;
     } catch (error) {
       console.error(`Error fetching trending products for ${niche}:`, error);
       // Initialize with empty array if there's an error
