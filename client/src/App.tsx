@@ -72,6 +72,7 @@ function Router() {
       <ProtectedRoute path="/emoji-hashtag-test" component={EmojiHashtagTestPage} />
       <ProtectedRoute path="/api-integration-hub" component={ApiIntegrationHubPage} />
       <ProtectedRoute path="/webhook-settings" component={WebhookSettings} />
+      <ProtectedRoute path="/profile" component={ProfilePage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
