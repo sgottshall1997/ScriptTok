@@ -5,8 +5,25 @@ import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema } from "@shared/schema";
+import rateLimit from "express-rate-limit";
 
 const router = Router();
+
+// Create a rate limiter middleware that limits to 5 requests per minute
+const contentGenerationLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 5, // limit each IP to 5 requests per windowMs
+  message: {
+    error: "Too many generations — please wait a minute and try again."
+  },
+  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  skipSuccessfulRequests: false, // Count all requests, including successful ones
+  keyGenerator: (req) => {
+    // If user is authenticated, use their ID as the key, otherwise use IP
+    return req.user?.id?.toString() || req.ip || 'unknown';
+  }
+});
 
 // Import tone definitions
 import { TONES } from '../prompts/tones';
@@ -95,7 +112,7 @@ const contentCache = new CacheService<CachedContent>({
   maxSize: 500 // Store up to 500 generations
 });
 
-router.post("/", async (req, res) => {
+router.post("/", contentGenerationLimiter, async (req, res) => {
   try {
     // Validate request body against schema
     const result = generateContentSchema.safeParse(req.body);
