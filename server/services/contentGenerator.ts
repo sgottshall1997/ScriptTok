@@ -2,7 +2,7 @@ import { openai } from './openai';
 import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption, Niche } from '@shared/constants';
 import * as GptTemplates from './gpt-templates';
-import { generatePrompt } from '../prompts';
+import { generatePrompt, PromptParams } from '../prompts';
 import { getModelConfig, getTokenLimit } from './aiModelSelector';
 
 // Video duration estimation interface
@@ -33,12 +33,13 @@ export async function generateContent(
 ): Promise<{ content: string; fallbackLevel?: 'exact' | 'default' | 'generic' }> {
   try {
     // First try using the new modular prompt system
-    const promptParams = {
+    const promptParams: PromptParams = {
       niche,
       productName: product,
       templateType,
       tone,
-      trendingProducts
+      trendingProducts,
+      fallbackLevel: 'exact' // Initialize with default value
     };
     
     const prompt = await generatePrompt(promptParams);
@@ -47,7 +48,11 @@ export async function generateContent(
     const fallbackLevel = promptParams.fallbackLevel || 'exact';
     
     // Get optimized AI model configuration for this specific content generation
-    const modelConfig = getModelConfig(promptParams);
+    const modelConfig = getModelConfig({
+      niche: niche as Niche,
+      templateType,
+      tone
+    });
     
     // Get appropriate token limit based on template type
     const maxTokens = getTokenLimit(templateType);
