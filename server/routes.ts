@@ -18,6 +18,7 @@ import apiIntegrationRouter from "./api/apiIntegration";
 import optionsRouter from "./api/options";
 import { historyRouter } from "./api/history";
 import { usageSummaryRouter } from "./api/usageSummary";
+import { webhooksRouter } from "./api/webhooks";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -38,6 +39,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/options', optionsRouter);
   app.use('/api/history', historyRouter);
   app.use('/api/usage-summary', usageSummaryRouter);
+  app.use('/api/webhooks', webhooksRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {

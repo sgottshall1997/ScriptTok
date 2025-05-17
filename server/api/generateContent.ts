@@ -5,6 +5,7 @@ import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema } from "@shared/schema";
+import { sendWebhookNotification } from "../services/webhookService";
 import rateLimit from "express-rate-limit";
 
 const router = Router();
@@ -206,7 +207,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     });
     
     // Save detailed content history record with all metadata
-    await storage.saveContentHistory({
+    const contentHistoryEntry = await storage.saveContentHistory({
       userId: req.user?.id, // If user is authenticated
       niche,
       contentType: templateType,
@@ -220,6 +221,27 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     
     // Increment API usage counter with template and tone tracking
     await storage.incrementApiUsage(templateType, tone, niche, req.user?.id);
+    
+    // Send webhook notification if available
+    if (contentHistoryEntry) {
+      try {
+        // Fire and forget - don't await to avoid holding up the response
+        sendWebhookNotification(contentHistoryEntry)
+          .then(result => {
+            if (result.success) {
+              console.log(`Webhook notification sent successfully for content #${contentHistoryEntry.id}`);
+            } else {
+              console.warn(`Webhook notification failed: ${result.message}`);
+            }
+          })
+          .catch(error => {
+            console.error('Error in webhook notification:', error);
+          });
+      } catch (error) {
+        // Log webhook errors but don't block the response
+        console.error('Error triggering webhook notification:', error);
+      }
+    }
     
     // Estimate video duration
     const videoDuration = estimateVideoDuration(content, tone, templateType);
