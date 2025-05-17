@@ -15,6 +15,7 @@ import { videoScriptRouter } from "./api/videoScript";
 import { claudeContentRouter } from "./api/claudeContent";
 import { trendingEmojisHashtagsRouter } from "./api/trendingEmojisHashtags";
 import apiIntegrationRouter from "./api/apiIntegration";
+import optionsRouter from "./api/options";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -32,6 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/claude-content', claudeContentRouter);
   app.use('/api/trending-emojis-hashtags', trendingEmojisHashtagsRouter);
   app.use('/api/integrations', apiIntegrationRouter);
+  app.use('/api/options', optionsRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {
