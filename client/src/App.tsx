@@ -46,6 +46,7 @@ function Router() {
       <Route path="/niche/:niche" component={NichePage} />
       <Route path="/templates" component={TemplateExplorerPage} />
       <Route path="/history" component={MyContentHistory} />
+      <Route path="/analytics" component={AnalyticsDashboard} />
       {/* Static pages */}
       <Route path="/about" component={AboutPage} />
       <Route path="/how-it-works" component={HowItWorksPage} />
