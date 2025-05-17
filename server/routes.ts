@@ -17,6 +17,7 @@ import { trendingEmojisHashtagsRouter } from "./api/trendingEmojisHashtags";
 import apiIntegrationRouter from "./api/apiIntegration";
 import optionsRouter from "./api/options";
 import { historyRouter } from "./api/history";
+import { usageSummaryRouter } from "./api/usageSummary";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -36,6 +37,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/integrations', apiIntegrationRouter);
   app.use('/api/options', optionsRouter);
   app.use('/api/history', historyRouter);
+  app.use('/api/usage-summary', usageSummaryRouter);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {
