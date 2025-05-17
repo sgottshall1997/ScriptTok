@@ -18,6 +18,7 @@ const generateContentSchema = z.object({
 // Create a cache service for content generation
 interface CachedContent {
   content: string;
+  fallbackLevel?: 'exact' | 'default' | 'generic';
   generatedAt: number;
 }
 
@@ -67,6 +68,7 @@ router.post("/", async (req, res) => {
         tone, 
         niche,
         content: cached.content,
+        fallbackLevel: cached.fallbackLevel || 'exact', // Include cached fallback level
         fromCache: true,
         videoDuration
       });
@@ -102,13 +104,14 @@ router.post("/", async (req, res) => {
     // Estimate video duration
     const videoDuration = estimateVideoDuration(content, tone, templateType);
     
-    // Return generated content with video duration estimation
+    // Return generated content with video duration estimation and fallback information
     res.json({
       product,
       templateType,
       tone,
       niche,
       content,
+      fallbackLevel,
       fromCache: false,
       videoDuration
     });
