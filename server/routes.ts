@@ -24,6 +24,11 @@ import authRouter from "./api/auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
+  
+  // Authentication routes (non-protected)
+  app.use('/api/auth', authRouter);
+  
+  // Content-related routes
   app.use('/api/generate', generateContentRouter);
   app.use('/api/trending', trendingRouter);
   app.use('/api/analytics', analyticsRouter);
