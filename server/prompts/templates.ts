@@ -4,7 +4,12 @@
  */
 import { promises as fs } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { TemplateType, NICHES } from '@shared/constants';
+
+// Create a proper __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Type definitions for enhanced templates
 export interface TemplateMetadata {
