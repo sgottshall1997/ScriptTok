@@ -116,11 +116,12 @@ const AuthPage: React.FC = () => {
     }
   };
 
-  // Redirect if already logged in
-  if (user) {
-    navigate('/');
-    return null;
-  }
+  // Use useEffect for redirection to avoid render-time redirect that causes infinite loops
+  React.useEffect(() => {
+    if (user) {
+      navigate('/');
+    }
+  }, [user, navigate]);
 
   return (
     <div className="container max-w-6xl mx-auto flex min-h-screen items-center justify-center py-12">

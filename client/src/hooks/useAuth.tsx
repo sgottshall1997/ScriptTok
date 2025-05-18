@@ -126,9 +126,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     error,
     isLoading,
   } = useQuery<User | null, Error>({
-    queryKey: ["/api/users/me"],
+    queryKey: ["/api/auth/user"],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/auth/user');
+        if (!response.ok) {
+          if (response.status === 401) {
+            return null;
+          }
+          throw new Error('Failed to fetch user data');
+        }
+        return response.json();
+      } catch (err) {
+        console.error('Auth error:', err);
+        return null;
+      }
+    },
     retry: false,
-    // If 401 is returned, don't retry and set data to null
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
