@@ -3,7 +3,7 @@ import {
   useQuery,
   useMutation,
 } from "@tanstack/react-query";
-import { apiRequest, queryClient, saveAuthToken, removeAuthToken } from "../lib/queryClient";
+import { apiRequest, queryClient, saveAuthToken, removeAuthToken, getAuthToken } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 type User = {
@@ -124,6 +124,9 @@ function useLogoutMutation() {
       await apiRequest("POST", "/api/auth/logout");
     },
     onSuccess: () => {
+      // Remove the JWT token from localStorage
+      removeAuthToken();
+      // Clear user data from query cache
       queryClient.setQueryData(["/api/auth/user"], null);
       toast({
         title: "Logged out",
@@ -153,13 +156,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     queryKey: ["/api/auth/user"],
     queryFn: async () => {
       try {
-        const response = await fetch('/api/auth/user');
+        // Get token from localStorage
+        const token = getAuthToken();
+        
+        // If no token is present, return null (not authenticated)
+        if (!token) {
+          return null;
+        }
+        
+        // Make request with token in Authorization header
+        const response = await fetch('/api/auth/user', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
         if (!response.ok) {
           if (response.status === 401) {
+            // Invalid or expired token
+            removeAuthToken(); // Clean up invalid token
             return null;
           }
           throw new Error('Failed to fetch user data');
         }
+        
         return response.json();
       } catch (err) {
         console.error('Auth error:', err);
