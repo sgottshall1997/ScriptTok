@@ -30,6 +30,7 @@ import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
 import UserPreferences from "@/pages/UserPreferences";
+import TestLogin from "@/pages/TestLogin";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -48,6 +49,7 @@ function Router() {
     <Switch>
       {/* Public routes */}
       <Route path="/auth" component={AuthPage} />
+      <Route path="/test-login" component={TestLogin} />
       <Route path="/about" component={AboutPage} />
       <Route path="/how-it-works" component={HowItWorksPage} />
       <Route path="/faq" component={FAQPage} />

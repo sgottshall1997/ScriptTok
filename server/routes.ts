@@ -54,6 +54,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     updateUserPreferences(req, res);
   });
   
+  // Test login route for development
+  app.post('/api/test-login', (req, res) => {
+    const { handleTestLogin } = require('./api/test-login');
+    handleTestLogin(req, res);
+  });
+  
   // Apply protected routes (requires authentication)
   app.use('/api', protectedRouter);
   

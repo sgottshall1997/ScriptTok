@@ -34,6 +34,19 @@ import { Loader2 } from 'lucide-react';
 // Mock user ID for testing without full auth system
 const MOCK_USER_ID = 1;
 
+// Simple function to create a test user if needed
+const createTestUser = async () => {
+  try {
+    console.log("Creating test user for preferences demo...");
+    await apiRequest('POST', '/api/test-login', {});
+    console.log("Test user created/logged in successfully");
+    return true;
+  } catch (error) {
+    console.error("Failed to create test user:", error);
+    return false;
+  }
+};
+
 // Define the form schema
 const formSchema = z.object({
   defaultNiche: z.string().min(1, { message: 'Please select a niche' }),
@@ -59,6 +72,32 @@ const UserPreferences: React.FC = () => {
     'gpt-4o', 'claude-3-7-sonnet-20250219'
   ]);
 
+  // State to track if user is logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+
+  // Function to log in test user
+  const loginTestUser = async () => {
+    setIsLoggingIn(true);
+    try {
+      await createTestUser();
+      setIsLoggedIn(true);
+      toast({
+        title: "Test Login Successful",
+        description: "You're now logged in as a test user.",
+      });
+    } catch (error) {
+      console.error("Login failed:", error);
+      toast({
+        title: "Login Failed",
+        description: "Could not create test user. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoggingIn(false);
+    }
+  };
+
   // Fetch user preferences
   const { data: preferences, isLoading } = useQuery({
     queryKey: ['/api/preferences'],
@@ -71,7 +110,8 @@ const UserPreferences: React.FC = () => {
         console.error('Failed to fetch preferences:', error);
         return null;
       }
-    }
+    },
+    enabled: isLoggedIn // Only run query when logged in
   });
 
   // Form setup
