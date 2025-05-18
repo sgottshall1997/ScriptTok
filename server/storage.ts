@@ -16,11 +16,12 @@ import {
   PublishedContent, InsertPublishedContent,
   IntegrationWebhook, InsertIntegrationWebhook,
   ContentHistory, InsertContentHistory,
+  UserPreferences, InsertUserPreferences, UpdateUserPreferences,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
   socialMediaPlatforms, publishedContent, integrationWebhooks, userActivityLogs,
-  contentHistory
+  contentHistory, userPreferences
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -36,6 +37,11 @@ export interface IStorage {
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
   deleteUser(id: number): Promise<boolean>;
   logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
+  
+  // User preferences operations
+  getUserPreferences(userId: number): Promise<UserPreferences | undefined>;
+  createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences>;
+  updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined>;
   
   // Teams & User Roles operations
   createTeam(team: InsertTeam): Promise<Team>;
@@ -897,6 +903,57 @@ export class DatabaseStorage implements IStorage {
       });
     } catch (error) {
       console.error("Error logging user activity:", error);
+    }
+  }
+  
+  // User preferences operations
+  async getUserPreferences(userId: number): Promise<UserPreferences | undefined> {
+    try {
+      const [prefs] = await db
+        .select()
+        .from(userPreferences)
+        .where(eq(userPreferences.userId, userId));
+        
+      return prefs || undefined;
+    } catch (error) {
+      console.error("Error getting user preferences:", error);
+      return undefined;
+    }
+  }
+
+  async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
+    try {
+      const [prefs] = await db
+        .insert(userPreferences)
+        .values({
+          ...preferences,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+        
+      return prefs;
+    } catch (error) {
+      console.error("Error creating user preferences:", error);
+      throw error;
+    }
+  }
+
+  async updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined> {
+    try {
+      const [updatedPrefs] = await db
+        .update(userPreferences)
+        .set({
+          ...updates,
+          updatedAt: new Date()
+        })
+        .where(eq(userPreferences.userId, userId))
+        .returning();
+        
+      return updatedPrefs || undefined;
+    } catch (error) {
+      console.error("Error updating user preferences:", error);
+      return undefined;
     }
   }
 
