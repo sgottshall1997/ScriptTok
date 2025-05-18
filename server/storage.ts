@@ -914,57 +914,6 @@ export class DatabaseStorage implements IStorage {
       console.error("Error logging user activity:", error);
     }
   }
-  
-  // User preferences operations
-  async getUserPreferences(userId: number): Promise<UserPreferences | undefined> {
-    try {
-      const [prefs] = await db
-        .select()
-        .from(userPreferences)
-        .where(eq(userPreferences.userId, userId));
-        
-      return prefs || undefined;
-    } catch (error) {
-      console.error("Error getting user preferences:", error);
-      return undefined;
-    }
-  }
-
-  async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
-    try {
-      const [prefs] = await db
-        .insert(userPreferences)
-        .values({
-          ...preferences,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
-        .returning();
-        
-      return prefs;
-    } catch (error) {
-      console.error("Error creating user preferences:", error);
-      throw error;
-    }
-  }
-
-  async updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined> {
-    try {
-      const [updatedPrefs] = await db
-        .update(userPreferences)
-        .set({
-          ...updates,
-          updatedAt: new Date()
-        })
-        .where(eq(userPreferences.userId, userId))
-        .returning();
-        
-      return updatedPrefs || undefined;
-    } catch (error) {
-      console.error("Error updating user preferences:", error);
-      return undefined;
-    }
-  }
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
@@ -1819,6 +1768,57 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(trendingEmojisHashtags)
       .orderBy(desc(trendingEmojisHashtags.lastUpdated));
+  }
+  
+  // User preferences operations
+  async getUserPreferences(userId: number): Promise<UserPreferences | undefined> {
+    try {
+      const [prefs] = await db
+        .select()
+        .from(userPreferences)
+        .where(eq(userPreferences.userId, userId));
+        
+      return prefs || undefined;
+    } catch (error) {
+      console.error("Error getting user preferences:", error);
+      return undefined;
+    }
+  }
+
+  async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
+    try {
+      const [prefs] = await db
+        .insert(userPreferences)
+        .values({
+          ...preferences,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        })
+        .returning();
+        
+      return prefs;
+    } catch (error) {
+      console.error("Error creating user preferences:", error);
+      throw error;
+    }
+  }
+
+  async updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined> {
+    try {
+      const [updatedPrefs] = await db
+        .update(userPreferences)
+        .set({
+          ...updates,
+          updatedAt: new Date()
+        })
+        .where(eq(userPreferences.userId, userId))
+        .returning();
+        
+      return updatedPrefs || undefined;
+    } catch (error) {
+      console.error("Error updating user preferences:", error);
+      return undefined;
+    }
   }
 }
 
