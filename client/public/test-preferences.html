@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>User Preferences Test</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+    .card {
+      background-color: white;
+      border-radius: 0.5rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .select-box {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid #e2e8f0;
+      border-radius: 0.25rem;
+      margin-top: 0.25rem;
+      margin-bottom: 1rem;
+    }
+    .btn {
+      background-color: #4f46e5;
+      color: white;
+      padding: 0.5rem 1rem;
+      border-radius: 0.25rem;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn:hover {
+      background-color: #4338ca;
+    }
+    .label {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      display: block;
+    }
+    .description {
+      color: #64748b;
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-8">
+  <div class="max-w-3xl mx-auto">
+    <div class="card">
+      <h1 class="text-2xl font-bold mb-2">User Preferences Test</h1>
+      <p class="text-gray-600 mb-6">
+        This is a test page for setting default preferences for content generation. 
+        These settings would be applied automatically when you create new content.
+      </p>
+      
+      <form id="preferences-form">
+        <div class="mb-4">
+          <label class="label" for="niche">Default Niche</label>
+          <select class="select-box" id="niche" required>
+            <option value="">Select your preferred niche</option>
+            <option value="skincare">Skincare</option>
+            <option value="tech">Tech</option>
+            <option value="fashion">Fashion</option>
+            <option value="fitness">Fitness</option>
+            <option value="food">Food</option>
+            <option value="travel">Travel</option>
+            <option value="pets">Pets</option>
+          </select>
+          <p class="description">The default industry to focus on when generating content.</p>
+        </div>
+        
+        <div class="mb-4">
+          <label class="label" for="contentType">Default Content Type</label>
+          <select class="select-box" id="contentType" required>
+            <option value="">Select your preferred content type</option>
+            <option value="social_post">Social Post</option>
+            <option value="product_description">Product Description</option>
+            <option value="article">Article</option>
+            <option value="email">Email</option>
+            <option value="ad_copy">Ad Copy</option>
+          </select>
+          <p class="description">The default type of content you want to generate.</p>
+        </div>
+        
+        <div class="mb-4">
+          <label class="label" for="tone">Default Tone</label>
+          <select class="select-box" id="tone" required>
+            <option value="">Select your preferred tone</option>
+            <option value="professional">Professional</option>
+            <option value="casual">Casual</option>
+            <option value="enthusiastic">Enthusiastic</option>
+            <option value="informative">Informative</option>
+            <option value="persuasive">Persuasive</option>
+          </select>
+          <p class="description">The default tone or voice for your generated content.</p>
+        </div>
+        
+        <div class="mb-6">
+          <label class="label" for="model">Preferred AI Model</label>
+          <select class="select-box" id="model" required>
+            <option value="">Select your preferred AI model</option>
+            <option value="gpt-4o">GPT-4o (OpenAI)</option>
+            <option value="claude-3-7-sonnet-20250219">Claude 3.7 Sonnet (Anthropic)</option>
+          </select>
+          <p class="description">Your preferred AI model for generating content.</p>
+        </div>
+        
+        <button type="submit" class="btn" id="save-button">
+          Save Preferences
+        </button>
+      </form>
+    </div>
+    
+    <div class="card mt-4 text-center text-gray-500 text-sm">
+      This is a test page only. No data will be saved to the database.
+    </div>
+  </div>
+  
+  <script>
+    document.getElementById('preferences-form').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const niche = document.getElementById('niche').value;
+      const contentType = document.getElementById('contentType').value;
+      const tone = document.getElementById('tone').value;
+      const model = document.getElementById('model').value;
+      
+      alert(
+        'Test Mode: These preferences would be saved:\n\n' +
+        `Niche: ${niche}\n` +
+        `Content Type: ${contentType}\n` +
+        `Tone: ${tone}\n` +
+        `AI Model: ${model}`
+      );
+    });
+  </script>
+</body>
+</html>
