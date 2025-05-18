@@ -11,6 +11,7 @@ const registerSchema = z.object({
   username: z.string().min(1, "Username is required"),
   email: z.string().min(1, "Email is required"),
   password: z.string().min(1, "Password is required"),
+  confirmPassword: z.string().optional(), // This field comes from the form but isn't stored
   firstName: z.string().optional().default(""),
   lastName: z.string().optional().default(""),
 });
@@ -37,12 +38,24 @@ router.post('/register', async (req: Request, res: Response) => {
     console.log("==== REGISTRATION DEBUG INFO ====");
     console.log("Request body:", req.body);
     
-    // Extract user data, providing defaults if needed
-    const username = req.body.username || "defaultuser";
-    const email = req.body.email || "default@example.com";
-    const password = req.body.password || "defaultpassword";
-    const firstName = "";
-    const lastName = "";
+    // Check if passwords match if confirmPassword is provided
+    if (req.body.confirmPassword && req.body.password !== req.body.confirmPassword) {
+      return res.status(400).json({ message: 'Passwords do not match' });
+    }
+    
+    // Validate the basic requirements
+    if (!req.body.username || !req.body.email || !req.body.password) {
+      return res.status(400).json({ 
+        message: 'Missing required fields',
+        details: 'Username, email, and password are required'
+      });
+    }
+    
+    const username = req.body.username;
+    const email = req.body.email;
+    const password = req.body.password;
+    const firstName = req.body.firstName || "";
+    const lastName = req.body.lastName || "";
 
     // Check if user already exists
     const existingUser = await storage.getUserByUsername(username);
@@ -50,55 +63,66 @@ router.post('/register', async (req: Request, res: Response) => {
       return res.status(409).json({ message: 'Username already exists' });
     }
 
-    // Check if email already exists if provided
-    if (email) {
-      const existingEmail = await storage.getUserByEmail(email);
-      if (existingEmail) {
-        return res.status(409).json({ message: 'Email already in use' });
-      }
+    // Check if email already exists
+    const existingEmail = await storage.getUserByEmail(email);
+    if (existingEmail) {
+      return res.status(409).json({ message: 'Email already in use' });
     }
 
-    // Hash password
-    const saltRounds = 10;
-    const passwordHash = await bcrypt.hash(password, saltRounds);
+    try {
+      // Hash password
+      const saltRounds = 10;
+      const passwordHash = await bcrypt.hash(password, saltRounds);
 
-    // Create new user
-    const newUser = await storage.createUser({
-      username,
-      password: passwordHash,
-      email,
-      firstName,
-      lastName,
-      role: 'writer', // Default role
-    });
+      // Create new user
+      const newUser = await storage.createUser({
+        username,
+        password: passwordHash,
+        email,
+        firstName,
+        lastName,
+        role: 'writer', // Default role
+        status: 'active', // Default status
+      });
 
-    // Record user creation activity
-    await storage.logUserActivity({
-      userId: newUser.id,
-      action: 'registration',
-      metadata: { source: 'api_register' },
-      ipAddress: req.ip,
-      userAgent: req.headers['user-agent']?.toString()
-    });
+      // Record user creation activity
+      await storage.logUserActivity({
+        userId: newUser.id,
+        action: 'registration',
+        metadata: { source: 'api_register' },
+        ipAddress: req.ip,
+        userAgent: req.headers['user-agent']?.toString()
+      });
 
-    // Generate JWT token
-    const token = generateToken({
-      id: newUser.id,
-      username: newUser.username,
-      role: newUser.role,
-    });
+      // Generate JWT token
+      const token = generateToken({
+        id: newUser.id,
+        username: newUser.username,
+        role: newUser.role,
+      });
 
-    // Return user data with token (no password)
-    const userResponse = {
-      ...newUser,
-      token,
-      password: undefined // Remove password from response
-    };
-    
-    res.status(201).json(userResponse);
+      // Return user data with token (no password)
+      const userResponse = {
+        ...newUser,
+        token,
+        password: undefined // Remove password from response
+      };
+      
+      res.status(201).json(userResponse);
+    } catch (dbError) {
+      console.error('Database error during user creation:', dbError);
+      return res.status(500).json({ 
+        message: 'Failed to create user account',
+        details: 'There was a problem creating your account in our system.'
+      });
+    }
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Failed to register user' });
+    // Provide a more helpful error message
+    res.status(500).json({ 
+      message: 'Failed to register user',
+      details: error instanceof Error ? error.message : 'Unknown error occurred'
+    });
   }
 });
 
