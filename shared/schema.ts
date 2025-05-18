@@ -326,6 +326,18 @@ export const trendingEmojisHashtags = pgTable("trending_emojis_hashtags", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// User preferences for content generation
+export const userPreferences = pgTable("user_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
+  defaultNiche: text("default_niche"),
+  defaultContentType: text("default_content_type"),
+  defaultTone: text("default_tone"),
+  defaultModel: text("default_model"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Content generation history for tracking and analytics
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),
@@ -351,6 +363,23 @@ export const insertUserSchema = createInsertSchema(users).pick({
   lastName: true,
   profileImage: true,
 });
+
+export const insertUserPreferencesSchema = createInsertSchema(userPreferences).pick({
+  userId: true,
+  defaultNiche: true,
+  defaultContentType: true,
+  defaultTone: true,
+  defaultModel: true,
+});
+
+export const updateUserPreferencesSchema = createInsertSchema(userPreferences)
+  .pick({
+    defaultNiche: true,
+    defaultContentType: true,
+    defaultTone: true,
+    defaultModel: true,
+  })
+  .partial();
 
 export const insertTeamSchema = createInsertSchema(teams).pick({
   name: true,
@@ -639,3 +668,7 @@ export const insertContentHistorySchema = createInsertSchema(contentHistory).pic
 
 export type ContentHistory = typeof contentHistory.$inferSelect;
 export type InsertContentHistory = z.infer<typeof insertContentHistorySchema>;
+
+export type UserPreferences = typeof userPreferences.$inferSelect;
+export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
+export type UpdateUserPreferences = z.infer<typeof updateUserPreferencesSchema>;
