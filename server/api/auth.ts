@@ -35,86 +35,63 @@ const profileUpdateSchema = z.object({
 // User registration endpoint
 router.post('/register', async (req: Request, res: Response) => {
   try {
-    console.log("==== REGISTRATION DEBUG INFO ====");
-    console.log("Request body:", req.body);
+    console.log("Processing registration for:", req.body.username);
     
-    // Check if passwords match if confirmPassword is provided
-    if (req.body.confirmPassword && req.body.password !== req.body.confirmPassword) {
+    // Basic validation - passwords must match
+    if (req.body.password !== req.body.confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
     
-    // Validate the basic requirements
+    // Basic required fields check
     if (!req.body.username || !req.body.email || !req.body.password) {
-      return res.status(400).json({ 
-        message: 'Missing required fields',
-        details: 'Username, email, and password are required'
-      });
+      return res.status(400).json({ message: 'Username, email, and password are required' });
     }
     
-    const username = req.body.username;
-    const email = req.body.email;
-    const password = req.body.password;
-    const firstName = req.body.firstName || "";
-    const lastName = req.body.lastName || "";
-
     // Check if user already exists
-    const existingUser = await storage.getUserByUsername(username);
+    const existingUser = await storage.getUserByUsername(req.body.username);
     if (existingUser) {
       return res.status(409).json({ message: 'Username already exists' });
     }
 
     // Check if email already exists
-    const existingEmail = await storage.getUserByEmail(email);
+    const existingEmail = await storage.getUserByEmail(req.body.email);
     if (existingEmail) {
       return res.status(409).json({ message: 'Email already in use' });
     }
 
+    // Hash password
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(req.body.password, saltRounds);
+
+    // Create user with minimal required fields
     try {
-      // Hash password
-      const saltRounds = 10;
-      const passwordHash = await bcrypt.hash(password, saltRounds);
-
-      // Create new user
-      const newUser = await storage.createUser({
-        username,
+      const userData = {
+        username: req.body.username,
+        email: req.body.email,
         password: passwordHash,
-        email,
-        firstName,
-        lastName,
-        role: 'writer', // Default role
-        status: 'active', // Default status
-      });
-
-      // Record user creation activity
-      await storage.logUserActivity({
-        userId: newUser.id,
-        action: 'registration',
-        metadata: { source: 'api_register' },
-        ipAddress: req.ip,
-        userAgent: req.headers['user-agent']?.toString()
-      });
-
-      // Generate JWT token
+        role: 'writer'
+      };
+      
+      const newUser = await storage.createUser(userData);
+      
+      // Generate token
       const token = generateToken({
         id: newUser.id,
         username: newUser.username,
-        role: newUser.role,
+        role: newUser.role || 'writer',
       });
-
-      // Return user data with token (no password)
-      const userResponse = {
-        ...newUser,
-        token,
-        password: undefined // Remove password from response
-      };
       
-      res.status(201).json(userResponse);
-    } catch (dbError) {
-      console.error('Database error during user creation:', dbError);
-      return res.status(500).json({ 
-        message: 'Failed to create user account',
-        details: 'There was a problem creating your account in our system.'
+      // Return user data (without password)
+      res.status(201).json({
+        id: newUser.id,
+        username: newUser.username,
+        email: newUser.email,
+        role: newUser.role,
+        token
       });
+    } catch (dbError) {
+      console.error('Database error during registration:', dbError);
+      return res.status(500).json({ message: 'Failed to create user account' });
     }
   } catch (error) {
     console.error('Registration error:', error);
