@@ -2,100 +2,73 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { storage } from '../storage';
 
-// JWT secret should be stored in environment variables in production
-const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-for-development'; 
-const JWT_EXPIRES_IN = '24h'; // Token expiration time
+const JWT_SECRET = process.env.JWT_SECRET || 'glowbot-development-secret-key'; 
 
-// Extend Express Request type to include user property
-declare global {
-  namespace Express {
-    interface Request {
-      user?: {
-        userId: number;
-        username: string;
-        email?: string;
-        role: string;
-      };
-    }
-  }
+// Define types for user auth request
+export interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    username: string;
+    role: string;
+  };
 }
 
-// Generate JWT token
-export const generateToken = (user: {
-  id: number;
-  username: string;
-  role: string;
-  email?: string;
-}): string => {
-  return jwt.sign(
-    {
-      userId: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role
-    },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
-  );
-};
+// Middleware to verify JWT token
+export const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
 
-// Verify JWT token
-export const verifyToken = (token: string): any => {
-  try {
-    return jwt.verify(token, JWT_SECRET);
-  } catch (error) {
-    return null;
+  if (!token) {
+    return res.status(401).json({ message: 'Authentication required' });
   }
-};
 
-// Authentication middleware
-export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const authHeader = req.headers.authorization;
+    const decoded = jwt.verify(token, JWT_SECRET) as { id: number, username: string, role: string };
     
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({ message: 'Authentication required' });
-    }
+    // Verify the user still exists and is active
+    const user = await storage.getUser(decoded.id);
     
-    const token = authHeader.split(' ')[1];
-    const decoded = verifyToken(token);
-    
-    if (!decoded) {
-      return res.status(401).json({ message: 'Invalid or expired token' });
-    }
-    
-    // Check if user exists in database
-    const user = await storage.getUser(decoded.userId);
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(401).json({ message: 'User no longer exists' });
+    }
+    
+    if (user.status !== 'active') {
+      return res.status(403).json({ message: 'Account is not active' });
     }
     
     // Attach user info to request
     req.user = {
-      userId: decoded.userId,
+      id: decoded.id,
       username: decoded.username,
-      email: decoded.email,
       role: decoded.role
     };
     
     next();
   } catch (error) {
-    console.error('Authentication error:', error);
-    res.status(500).json({ message: 'Server error during authentication' });
+    return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };
 
 // Role-based authorization middleware
 export const authorize = (roles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Authentication required' });
     }
-    
+
     if (!roles.includes(req.user.role)) {
-      return res.status(403).json({ message: 'Insufficient permissions' });
+      return res.status(403).json({ message: 'Access denied: insufficient permissions' });
     }
-    
+
     next();
   };
+};
+
+// Create a JWT token
+export const generateToken = (user: { id: number, username: string, role: string }) => {
+  return jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  );
 };

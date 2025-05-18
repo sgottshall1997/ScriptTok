@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, authorize } from '../middleware/auth';
+import { authenticateToken, authorize } from '../middleware/auth';
 import { generateContentRouter } from './generateContent';
 import { historyRouter } from './history';
 import { webhooksRouter } from './webhooks';
@@ -12,7 +12,7 @@ import { apiIntegrationRouter } from './apiIntegration';
 const protectedRouter = Router();
 
 // Apply authentication middleware to all routes
-protectedRouter.use(authenticate);
+protectedRouter.use(authenticateToken);
 
 // Content generation - requires authentication
 protectedRouter.use('/generate', generateContentRouter);
