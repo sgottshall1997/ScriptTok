@@ -51,11 +51,13 @@ function useLoginMutation() {
       return await res.json();
     },
     onSuccess: (userData: User) => {
-      queryClient.setQueryData(["/api/users/me"], userData);
+      queryClient.setQueryData(["/api/auth/user"], userData);
       toast({
         title: "Login successful",
         description: `Welcome back, ${userData.username}!`,
       });
+      // Reload the page to ensure proper redirection
+      window.location.href = '/';
     },
     onError: (error: Error) => {
       toast({
@@ -77,11 +79,13 @@ function useRegisterMutation() {
       return await res.json();
     },
     onSuccess: (userData: User) => {
-      queryClient.setQueryData(["/api/users/me"], userData);
+      queryClient.setQueryData(["/api/auth/user"], userData);
       toast({
         title: "Registration successful",
         description: `Welcome, ${userData.username}!`,
       });
+      // Reload the page to ensure proper redirection
+      window.location.href = '/';
     },
     onError: (error: Error) => {
       toast({
@@ -102,11 +106,13 @@ function useLogoutMutation() {
       await apiRequest("POST", "/api/auth/logout");
     },
     onSuccess: () => {
-      queryClient.setQueryData(["/api/users/me"], null);
+      queryClient.setQueryData(["/api/auth/user"], null);
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
+      // Redirect to auth page
+      window.location.href = '/auth';
     },
     onError: (error: Error) => {
       toast({
