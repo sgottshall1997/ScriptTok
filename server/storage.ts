@@ -118,6 +118,11 @@ export interface IStorage {
   getIntegrationWebhooksByUser(userId: number): Promise<IntegrationWebhook[]>;
   getIntegrationWebhooksByIntegration(integrationId: number): Promise<IntegrationWebhook[]>;
   
+  // User preferences operations
+  getUserPreferences(userId: number): Promise<UserPreferences | undefined>;
+  createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences>;
+  updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined>;
+  
   // User Activity operations
   logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
   
@@ -177,12 +182,16 @@ export class MemStorage implements IStorage {
   private scraperStatusId: number;
   private apiUsageId: number;
   
+  private userPreferences: Map<number, UserPreferences>;
+  private userPreferencesId: number;
+  
   constructor() {
     this.users = new Map();
     this.contentGenerations = new Map();
     this.trendingProducts = new Map();
     this.scraperStatuses = new Map();
     this.apiUsage = new Map();
+    this.userPreferences = new Map();
     
     // Initialize analytics tracking
     this.templateUsage = new Map();
