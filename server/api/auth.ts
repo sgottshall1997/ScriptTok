@@ -63,13 +63,17 @@ router.post('/register', async (req: Request, res: Response) => {
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(req.body.password, saltRounds);
 
-    // Create user with minimal required fields
+    // Create user with minimal required fields and ensure compatibility with our database
     try {
       const userData = {
         username: req.body.username,
         email: req.body.email,
         password: passwordHash,
-        role: 'writer'
+        role: 'writer',
+        status: 'active',
+        lastLogin: null,
+        loginCount: 0,
+        preferences: {}
       };
       
       const newUser = await storage.createUser(userData);
