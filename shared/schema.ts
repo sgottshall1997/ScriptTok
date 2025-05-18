@@ -338,6 +338,36 @@ export const userPreferences = pgTable("user_preferences", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Zod schemas for user preferences
+export const userPreferencesSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  defaultNiche: z.string().nullable(),
+  defaultContentType: z.string().nullable(),
+  defaultTone: z.string().nullable(),
+  defaultModel: z.string().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date()
+});
+
+export const createOrUpdateUserPreferencesSchema = z.object({
+  defaultNiche: z.string().nullable(),
+  defaultContentType: z.string().nullable(),
+  defaultTone: z.string().nullable(),
+  defaultModel: z.string().nullable(),
+});
+
+export const createUserPreferencesSchema = createOrUpdateUserPreferencesSchema.extend({
+  userId: z.number()
+});
+
+// Types for user preferences
+// Use the database inference type definitions (consistent with other tables)
+export type UserPreferences = typeof userPreferences.$inferSelect;
+export type InsertUserPreferences = typeof userPreferences.$inferInsert;
+export type UpdateUserPreferences = z.infer<typeof createOrUpdateUserPreferencesSchema>;
+export type CreateUserPreferences = z.infer<typeof createUserPreferencesSchema>;
+
 // Content generation history for tracking and analytics
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),

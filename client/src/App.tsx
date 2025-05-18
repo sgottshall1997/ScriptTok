@@ -29,6 +29,7 @@ import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
+import UserPreferences from "@/pages/UserPreferences";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -75,6 +76,7 @@ function Router() {
       <ProtectedRoute path="/api-integration-hub" component={ApiIntegrationHubPage} />
       <ProtectedRoute path="/webhook-settings" component={WebhookSettings} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
+      <ProtectedRoute path="/preferences" component={UserPreferences} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

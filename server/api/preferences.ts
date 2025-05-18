@@ -1,96 +1,100 @@
 import { Router } from 'express';
-import { storage } from '../storage';
-import { db } from '../db';
-import { 
-  updateUserPreferencesSchema, 
-  userPreferences 
-} from '@shared/schema';
-import { AuthRequest } from '../middleware/auth';
-import { eq } from 'drizzle-orm';
 import { z } from 'zod';
+import { storage } from '../storage';
+import { AuthRequest } from '../middleware/auth';
+import { createOrUpdateUserPreferencesSchema } from '../../shared/schema';
 
-const router = Router();
+// Create router
+export const preferencesRouter = Router();
 
-// Get user preferences
-router.get('/', async (req: AuthRequest, res) => {
+/**
+ * @route   GET /api/preferences
+ * @desc    Get user preferences
+ * @access  Private
+ */
+preferencesRouter.get('/', async (req: AuthRequest, res) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Authentication required' 
-      });
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'Authentication required' });
     }
 
     const userId = req.user.id;
-    const userPrefs = await storage.getUserPreferences(userId);
     
-    if (!userPrefs) {
-      return res.status(200).json({
+    // Get user preferences
+    const preferences = await storage.getUserPreferences(userId);
+    
+    if (!preferences) {
+      // If no preferences found, return default values
+      return res.json({
         defaultNiche: null,
         defaultContentType: null,
         defaultTone: null,
         defaultModel: null
       });
     }
-
-    res.json(userPrefs);
+    
+    return res.json(preferences);
   } catch (error) {
-    console.error("Error getting user preferences:", error);
-    res.status(500).json({ 
-      success: false, 
-      error: "Failed to get user preferences", 
-      message: error instanceof Error ? error.message : "Unknown error"
-    });
+    console.error('Error fetching user preferences:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
 
-// Update user preferences
-router.post('/update', async (req: AuthRequest, res) => {
+/**
+ * @route   POST /api/preferences/update
+ * @desc    Update user preferences
+ * @access  Private
+ */
+preferencesRouter.post('/update', async (req: AuthRequest, res) => {
   try {
-    if (!req.user) {
-      return res.status(401).json({ 
-        success: false, 
-        error: 'Authentication required' 
-      });
+    if (!req.user || !req.user.id) {
+      return res.status(401).json({ message: 'Authentication required' });
     }
 
     const userId = req.user.id;
     
     // Validate request body
-    const validationResult = updateUserPreferencesSchema.safeParse(req.body);
+    const validationResult = createOrUpdateUserPreferencesSchema.safeParse(req.body);
+    
     if (!validationResult.success) {
       return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid preferences data',
-        details: validationResult.error.format()
+        message: 'Invalid data provided',
+        errors: validationResult.error.format() 
       });
     }
     
-    const preferences = validationResult.data;
+    const preferenceData = validationResult.data;
     
     // Check if user already has preferences
-    const existingPrefs = await storage.getUserPreferences(userId);
+    const existingPreferences = await storage.getUserPreferences(userId);
     
-    if (existingPrefs) {
+    let updatedPreferences;
+    
+    if (existingPreferences) {
       // Update existing preferences
-      const updatedPrefs = await storage.updateUserPreferences(userId, preferences);
-      return res.json(updatedPrefs);
+      updatedPreferences = await storage.updateUserPreferences(userId, {
+        ...preferenceData
+      });
     } else {
       // Create new preferences
-      const newPrefs = await storage.createUserPreferences({
+      updatedPreferences = await storage.createUserPreferences({
         userId,
-        ...preferences
+        ...preferenceData
       });
-      return res.json(newPrefs);
     }
-  } catch (error) {
-    console.error("Error updating user preferences:", error);
-    res.status(500).json({ 
-      success: false, 
-      error: "Failed to update user preferences", 
-      message: error instanceof Error ? error.message : "Unknown error"
+    
+    // Log user activity
+    await storage.logUserActivity({
+      userId,
+      action: 'update_preferences',
+      metadata: { preferences: preferenceData },
+      ipAddress: req.ip,
+      userAgent: req.headers['user-agent']
     });
+    
+    return res.json(updatedPreferences);
+  } catch (error) {
+    console.error('Error updating user preferences:', error);
+    return res.status(500).json({ message: 'Server error' });
   }
 });
-
-export { router as preferencesRouter };

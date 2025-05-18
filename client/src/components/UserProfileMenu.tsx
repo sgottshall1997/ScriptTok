@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { User, Settings, History, LogOut } from "lucide-react";
+import { User, Settings, History, LogOut, Sliders } from "lucide-react";
 
 const UserProfileMenu = () => {
   const { user, logoutMutation } = useAuth();
@@ -80,6 +80,12 @@ const UserProfileMenu = () => {
           <Link href="/webhook-settings" className="cursor-pointer flex w-full items-center">
             <Settings className="mr-2 h-4 w-4" />
             <span>Webhook Settings</span>
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/preferences" className="cursor-pointer flex w-full items-center">
+            <Sliders className="mr-2 h-4 w-4" />
+            <span>User Preferences</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
