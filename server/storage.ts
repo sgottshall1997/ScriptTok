@@ -884,16 +884,20 @@ export class DatabaseStorage implements IStorage {
   
   // User activity logging
   async logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void> {
-    const { userId, action, metadata, ipAddress, userAgent } = activityData;
-    
-    await db.insert(userActivityLogs).values({
-      userId,
-      action,
-      metadata: metadata || {},
-      ipAddress: ipAddress || null,
-      userAgent: userAgent || null,
-      timestamp: new Date()
-    });
+    try {
+      const { userId, action, metadata, ipAddress, userAgent } = activityData;
+      
+      await db.insert(userActivityLogs).values({
+        userId,
+        action,
+        metadata: metadata || {},
+        ipAddress: ipAddress || null,
+        userAgent: userAgent || null,
+        timestamp: new Date()
+      });
+    } catch (error) {
+      console.error("Error logging user activity:", error);
+    }
   }
 
   // User operations

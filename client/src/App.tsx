@@ -37,6 +37,7 @@ import { initScraperConsole } from "./lib/scraperConsole";
 import { AuthProvider } from "./hooks/useAuth";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import ProfilePage from "@/pages/ProfilePage";
+import MyDashboard from "@/pages/MyDashboard";
 
 function Router() {
   // Track page views when routes change
@@ -54,9 +55,10 @@ function Router() {
       <Route path="/contact" component={ContactPage} />
       
       {/* Protected routes - require authentication */}
-      <ProtectedRoute path="/" component={Dashboard} />
-      <ProtectedRoute path="/home" component={Home} />
+      <ProtectedRoute path="/" component={MyDashboard} />
+      <ProtectedRoute path="/home" component={MyDashboard} />
       <ProtectedRoute path="/dashboard" component={Dashboard} />
+      <ProtectedRoute path="/my-dashboard" component={MyDashboard} />
       <ProtectedRoute path="/niche/:niche" component={NichePage} />
       <ProtectedRoute path="/templates" component={TemplateExplorerPage} />
       <ProtectedRoute path="/history" component={MyContentHistory} />

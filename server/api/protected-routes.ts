@@ -4,7 +4,7 @@ import { generateContentRouter } from './generateContent';
 import { historyRouter } from './history';
 import { webhooksRouter } from './webhooks';
 import { usageSummaryRouter } from './usageSummary';
-import { analyticsRouter } from './analytics';
+import { analyticsRouter } from './analytics/index';
 import { aiModelConfigRouter } from './aiModelConfig';
 import { apiIntegrationRouter } from './apiIntegration';
 
