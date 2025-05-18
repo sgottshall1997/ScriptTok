@@ -53,25 +53,49 @@ const AuthPage: React.FC = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    if (registerData.password !== registerData.confirmPassword) {
+
+    // Validate username
+    if (!registerData.username || registerData.username.length < 3) {
       toast({
-        title: 'Passwords do not match',
-        description: 'Please ensure both passwords match.',
+        title: 'Invalid username',
+        description: 'Username must be at least 3 characters long.',
         variant: 'destructive',
       });
       return;
     }
 
-    if (registerData.password.length < 8) {
+    // Validate email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!registerData.email || !emailRegex.test(registerData.email)) {
       toast({
-        title: 'Password too short',
+        title: 'Invalid email',
+        description: 'Please enter a valid email address.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate password length and match
+    if (!registerData.password || registerData.password.length < 8) {
+      toast({
+        title: 'Invalid password',
         description: 'Password must be at least 8 characters long.',
         variant: 'destructive',
       });
       return;
     }
-    
+
+    if (registerData.password !== registerData.confirmPassword) {
+      toast({
+        title: 'Password mismatch',
+        description: 'Passwords do not match.',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Additional password strength check
+
     try {
       await registerMutation.mutateAsync({
         username: registerData.username,
@@ -107,7 +131,7 @@ const AuthPage: React.FC = () => {
               <TabsTrigger value="login">Login</TabsTrigger>
               <TabsTrigger value="register">Register</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="login">
               <Card>
                 <CardHeader>
@@ -159,7 +183,7 @@ const AuthPage: React.FC = () => {
                 </form>
               </Card>
             </TabsContent>
-            
+
             <TabsContent value="register">
               <Card>
                 <CardHeader>
@@ -235,7 +259,7 @@ const AuthPage: React.FC = () => {
             </TabsContent>
           </Tabs>
         </div>
-        
+
         <div className="flex-1 p-4 flex flex-col justify-center">
           <div className="mb-6">
             <h1 className="text-4xl font-bold mb-2">GlowBot Content Engine</h1>
@@ -269,7 +293,7 @@ const AuthPage: React.FC = () => {
                 <p className="text-muted-foreground">Generate content based on the latest industry trends</p>
               </div>
             </div>
-            
+
             <div className="flex items-start">
               <div className="rounded-full bg-primary/10 p-2 mr-3">
                 <svg 
@@ -293,7 +317,7 @@ const AuthPage: React.FC = () => {
                 <p className="text-muted-foreground">Support for skincare, tech, fashion, fitness, food & more</p>
               </div>
             </div>
-            
+
             <div className="flex items-start">
               <div className="rounded-full bg-primary/10 p-2 mr-3">
                 <svg 
