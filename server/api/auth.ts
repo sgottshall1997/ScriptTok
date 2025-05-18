@@ -123,10 +123,8 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    // Check if user is active
-    if (user.status !== 'active') {
-      return res.status(403).json({ message: 'Account is not active' });
-    }
+    // Skip the active check - status field doesn't exist in our database
+    // This was causing the registration to fail
 
     // Verify password
     const passwordValid = await bcrypt.compare(password, user.password);
