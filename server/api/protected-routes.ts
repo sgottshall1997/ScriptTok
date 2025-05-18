@@ -7,7 +7,7 @@ import { usageSummaryRouter } from './usageSummary';
 import { analyticsRouter } from './analytics/index';
 import { aiModelConfigRouter } from './aiModelConfig';
 import { apiIntegrationRouter } from './apiIntegration';
-import { preferencesRouter } from './preferences';
+// Preferences are handled directly in routes.ts
 
 // Create router for protected routes
 const protectedRouter = Router();
@@ -36,7 +36,6 @@ protectedRouter.use('/ai-model-config', authorize(['admin']), aiModelConfigRoute
 // API Integrations - requires authentication
 protectedRouter.use('/integrations', apiIntegrationRouter);
 
-// User preferences - requires authentication
-protectedRouter.use('/preferences', preferencesRouter);
+// User preferences are handled directly in routes.ts
 
 export default protectedRouter;

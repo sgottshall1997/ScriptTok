@@ -38,6 +38,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/trending-emojis-hashtags', trendingEmojisHashtagsRouter);
   app.use('/api/options', optionsRouter);
   
+  // User preferences routes
+  app.get('/api/preferences', (req, res) => {
+    const { getUserPreferences } = require('./api/preferences');
+    getUserPreferences(req, res);
+  });
+  
+  app.post('/api/preferences', (req, res) => {
+    const { saveUserPreferences } = require('./api/preferences');
+    saveUserPreferences(req, res);
+  });
+  
+  app.patch('/api/preferences', (req, res) => {
+    const { updateUserPreferences } = require('./api/preferences');
+    updateUserPreferences(req, res);
+  });
+  
   // Apply protected routes (requires authentication)
   app.use('/api', protectedRouter);
   
