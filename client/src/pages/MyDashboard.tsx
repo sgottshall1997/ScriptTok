@@ -5,7 +5,8 @@ import {
   CardContent, 
   CardDescription, 
   CardHeader, 
-  CardTitle 
+  CardTitle, 
+  CardFooter 
 } from '@/components/ui/card';
 import { 
   Select,
@@ -15,12 +16,24 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Loader2, FileText, PieChart, BarChart3, Calendar } from 'lucide-react';
+import { Loader2, FileText, PieChart, BarChart3, Calendar, Clock, Tag, FileType, Radio } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/hooks/useAuth';
 import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, PieChart as RePieChart, Pie, Cell } from 'recharts';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Link } from "wouter";
 
 // Type definitions
+interface ContentHistoryItem {
+  id: number;
+  niche: string;
+  contentType: string;
+  tone: string;
+  productName: string;
+  modelUsed: string;
+  createdAt: string;
+}
+
 interface UserAnalytics {
   totalGenerations: number;
   totalTokens: number;
@@ -49,6 +62,7 @@ interface UserAnalytics {
     contentType: string;
     tone: string;
   };
+  recentContent: ContentHistoryItem[];
 }
 
 const MyDashboard: React.FC = () => {
