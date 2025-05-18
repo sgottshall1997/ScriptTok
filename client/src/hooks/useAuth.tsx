@@ -65,8 +65,8 @@ function useLoginMutation() {
         description: `Welcome back, ${userData.username}!`,
       });
       
-      // Instead of redirect here, we'll just let the AuthPage handle redirection
-      // This prevents a race condition between window.location.replace and the React component redirect
+      // Force redirect to home page
+      window.location.replace('/');
     },
     onError: (error: Error) => {
       toast({
@@ -102,7 +102,8 @@ function useRegisterMutation() {
         description: `Welcome, ${userData.username}!`,
       });
       
-      // Let the AuthPage handle the redirect
+      // Force redirect to home page
+      window.location.replace('/');
     },
     onError: (error: Error) => {
       toast({
