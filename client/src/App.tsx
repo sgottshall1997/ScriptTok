@@ -30,6 +30,7 @@ import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
 import UserPreferences from "@/pages/UserPreferences";
+import TestPreferences from "@/pages/test-preferences";
 import TestLogin from "@/pages/TestLogin";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
@@ -81,6 +82,7 @@ function Router() {
       
       {/* Make preferences directly accessible for testing */}
       <Route path="/preferences" component={UserPreferences} />
+      <Route path="/test-preferences" component={TestPreferences} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
