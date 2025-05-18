@@ -62,6 +62,15 @@ const AuthPage: React.FC = () => {
       });
       return;
     }
+
+    if (registerData.password.length < 8) {
+      toast({
+        title: 'Password too short',
+        description: 'Password must be at least 8 characters long.',
+        variant: 'destructive',
+      });
+      return;
+    }
     
     try {
       await registerMutation.mutateAsync({
@@ -73,7 +82,12 @@ const AuthPage: React.FC = () => {
         confirmPassword: registerData.confirmPassword
       });
       navigate('/');
-    } catch (error) {
+    } catch (error: any) {
+      toast({
+        title: 'Registration failed',
+        description: error.message || 'Please check your input and try again.',
+        variant: 'destructive',
+      });
       console.error('Registration failed:', error);
     }
   };
