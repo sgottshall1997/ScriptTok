@@ -344,7 +344,85 @@ const MyDashboard: React.FC = () => {
         </Tabs>
       </div>
 
-      {/* Recent Activity Section - Could be added here */}
+      {/* Recent Activity Section */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center">
+            <Clock className="mr-2 h-5 w-5" />
+            Recent Content Generations
+          </CardTitle>
+          <CardDescription>
+            Your most recently created content
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {data?.recentContent && data.recentContent.length > 0 ? (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Product</TableHead>
+                  <TableHead>Niche</TableHead>
+                  <TableHead>Content Type</TableHead>
+                  <TableHead>Tone</TableHead>
+                  <TableHead>Model</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.recentContent.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell>
+                      {new Date(item.createdAt).toLocaleDateString('en-US', { 
+                        month: 'short', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                      })}
+                    </TableCell>
+                    <TableCell>{item.productName}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <Tag className="h-4 w-4 mr-1" />
+                        <span>{item.niche}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <FileType className="h-4 w-4 mr-1" />
+                        <span>{item.contentType}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center">
+                        <Radio className="h-4 w-4 mr-1" />
+                        <span>{item.tone}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <span className="text-xs px-2 py-1 bg-gray-100 rounded-full">
+                        {item.modelUsed}
+                      </span>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          ) : (
+            <div className="py-8 text-center text-muted-foreground">
+              <FileText className="mx-auto h-10 w-10 mb-3 text-muted-foreground/60" />
+              <p>No content generated yet</p>
+              <p className="text-sm">Start creating content to see your history here</p>
+            </div>
+          )}
+        </CardContent>
+        <CardFooter className="flex justify-end border-t px-6 py-4">
+          <Link href="/history">
+            <span className="text-primary hover:underline text-sm font-medium cursor-pointer">
+              View full history →
+            </span>
+          </Link>
+        </CardFooter>
+      </Card>
     </div>
   );
 };

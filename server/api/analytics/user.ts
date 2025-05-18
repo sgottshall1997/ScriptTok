@@ -109,6 +109,22 @@ router.get('/', async (req: AuthRequest, res) => {
       .groupBy(sql`date_trunc('day', ${contentHistory.createdAt})`)
       .orderBy(sql`date_trunc('day', ${contentHistory.createdAt})`);
 
+    // Get recent content history for this user
+    const recentContent = await db
+      .select({
+        id: contentHistory.id,
+        niche: contentHistory.niche,
+        contentType: contentHistory.contentType,
+        tone: contentHistory.tone,
+        productName: contentHistory.productName,
+        modelUsed: contentHistory.modelUsed,
+        createdAt: contentHistory.createdAt
+      })
+      .from(contentHistory)
+      .where(sql`${contentHistory.userId} = ${userId}`)
+      .orderBy(sql`${contentHistory.createdAt} desc`)
+      .limit(10);
+
     res.json({
       totalGenerations: totals.totalGenerations || 0,
       totalTokens: totals.totalTokens || 0,
@@ -116,7 +132,8 @@ router.get('/', async (req: AuthRequest, res) => {
       byContentType,
       byTone,
       mostUsed,
-      last7Days
+      last7Days,
+      recentContent
     });
   } catch (error) {
     console.error("Error getting user analytics:", error);
