@@ -65,8 +65,8 @@ function useLoginMutation() {
         description: `Welcome back, ${userData.username}!`,
       });
       
-      // Use replace instead of href to prevent adding to history
-      window.location.replace('/');
+      // Instead of redirect here, we'll just let the AuthPage handle redirection
+      // This prevents a race condition between window.location.replace and the React component redirect
     },
     onError: (error: Error) => {
       toast({
@@ -102,8 +102,7 @@ function useRegisterMutation() {
         description: `Welcome, ${userData.username}!`,
       });
       
-      // Use replace instead of href to prevent adding to history
-      window.location.replace('/');
+      // Let the AuthPage handle the redirect
     },
     onError: (error: Error) => {
       toast({

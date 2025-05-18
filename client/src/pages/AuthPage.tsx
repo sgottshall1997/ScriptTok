@@ -45,7 +45,7 @@ const AuthPage: React.FC = () => {
     e.preventDefault();
     try {
       await loginMutation.mutateAsync(loginData);
-      navigate('/');
+      // Don't navigate here - let the useEffect handle redirection after user state updates
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -101,11 +101,11 @@ const AuthPage: React.FC = () => {
         username: registerData.username,
         email: registerData.email,
         password: registerData.password,
-        firstName: null,
-        lastName: null,
+        firstName: "",
+        lastName: "",
         confirmPassword: registerData.confirmPassword
       });
-      navigate('/');
+      // Don't navigate here - let the useEffect handle redirection after user state updates
     } catch (error: any) {
       toast({
         title: 'Registration failed',
@@ -119,9 +119,10 @@ const AuthPage: React.FC = () => {
   // Use useEffect for redirection to avoid render-time redirect that causes infinite loops
   React.useEffect(() => {
     if (user) {
-      navigate('/');
+      // Use window.location.href for more consistent navigation behavior
+      window.location.href = '/';
     }
-  }, [user, navigate]);
+  }, [user]);
 
   return (
     <div className="container max-w-6xl mx-auto flex min-h-screen items-center justify-center py-12">
