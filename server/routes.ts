@@ -26,6 +26,159 @@ import protectedRouter from "./api/protected-routes";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
   
+  // Direct test route for preferences that bypasses React routing
+  app.get('/test-preferences-direct', (req, res) => {
+    res.send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>User Preferences Test</title>
+      <style>
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f7f8fa;
+        }
+        h1 { color: #333; }
+        .card {
+          background: white;
+          border-radius: 8px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+          padding: 25px;
+          margin-bottom: 20px;
+        }
+        label { 
+          display: block; 
+          margin-bottom: 6px;
+          font-weight: 500;
+        }
+        select {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          margin-bottom: 15px;
+          font-size: 16px;
+        }
+        button {
+          background-color: #5469d4;
+          color: white;
+          border: none;
+          padding: 12px 20px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 16px;
+          width: 100%;
+        }
+        button:hover {
+          background-color: #4054b4;
+        }
+        .description {
+          font-size: 14px;
+          color: #666;
+          margin-top: -10px;
+          margin-bottom: 15px;
+        }
+        .footer {
+          text-align: center;
+          color: #888;
+          font-size: 14px;
+          margin-top: 30px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <h1>User Preferences Test</h1>
+        <p>This is a test page for setting default preferences for content generation.</p>
+        
+        <form id="preferences-form">
+          <div>
+            <label for="niche">Default Niche</label>
+            <select id="niche" required>
+              <option value="">Select your preferred niche</option>
+              <option value="skincare">Skincare</option>
+              <option value="tech">Tech</option>
+              <option value="fashion">Fashion</option>
+              <option value="fitness">Fitness</option>
+              <option value="food">Food</option>
+              <option value="travel">Travel</option>
+              <option value="pets">Pets</option>
+            </select>
+            <p class="description">The default industry to focus on when generating content.</p>
+          </div>
+          
+          <div>
+            <label for="contentType">Default Content Type</label>
+            <select id="contentType" required>
+              <option value="">Select your preferred content type</option>
+              <option value="social_post">Social Post</option>
+              <option value="product_description">Product Description</option>
+              <option value="article">Article</option>
+              <option value="email">Email</option>
+              <option value="ad_copy">Ad Copy</option>
+            </select>
+            <p class="description">The default type of content you want to generate.</p>
+          </div>
+          
+          <div>
+            <label for="tone">Default Tone</label>
+            <select id="tone" required>
+              <option value="">Select your preferred tone</option>
+              <option value="professional">Professional</option>
+              <option value="casual">Casual</option>
+              <option value="enthusiastic">Enthusiastic</option>
+              <option value="informative">Informative</option>
+              <option value="persuasive">Persuasive</option>
+            </select>
+            <p class="description">The default tone or voice for your generated content.</p>
+          </div>
+          
+          <div>
+            <label for="model">Preferred AI Model</label>
+            <select id="model" required>
+              <option value="">Select your preferred AI model</option>
+              <option value="gpt-4o">GPT-4o (OpenAI)</option>
+              <option value="claude-3-7-sonnet-20250219">Claude 3.7 Sonnet (Anthropic)</option>
+            </select>
+            <p class="description">Your preferred AI model for generating content.</p>
+          </div>
+          
+          <button type="submit">Save Preferences</button>
+        </form>
+      </div>
+      
+      <div class="footer">
+        This is a test page only. No data will be saved to the database.
+      </div>
+      
+      <script>
+        document.getElementById('preferences-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const niche = document.getElementById('niche').value;
+          const contentType = document.getElementById('contentType').value;
+          const tone = document.getElementById('tone').value;
+          const model = document.getElementById('model').value;
+          
+          alert(
+            'Test Mode: These preferences would be saved:\\n\\n' +
+            'Niche: ' + niche + '\\n' +
+            'Content Type: ' + contentType + '\\n' +
+            'Tone: ' + tone + '\\n' +
+            'AI Model: ' + model
+          );
+        });
+      </script>
+    </body>
+    </html>
+    `);
+  });
+
   // Authentication routes (non-protected)
   app.use('/api/auth', authRouter);
   
