@@ -867,6 +867,20 @@ export class DatabaseStorage implements IStorage {
       .limit(limit)
       .offset(offset);
   }
+  
+  async getContentHistoryByUserIdAndNiche(userId: number, niche: string, limit: number = 50, offset: number = 0): Promise<ContentHistory[]> {
+    return await db.select()
+      .from(contentHistory)
+      .where(
+        and(
+          eq(contentHistory.userId, userId),
+          eq(contentHistory.niche, niche)
+        )
+      )
+      .orderBy(desc(contentHistory.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
