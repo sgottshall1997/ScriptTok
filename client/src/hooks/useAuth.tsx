@@ -56,8 +56,8 @@ function useLoginMutation() {
         title: "Login successful",
         description: `Welcome back, ${userData.username}!`,
       });
-      // Reload the page to ensure proper redirection
-      window.location.href = '/';
+      // Use replace instead of href to prevent adding to history
+      window.location.replace('/');
     },
     onError: (error: Error) => {
       toast({
@@ -84,8 +84,8 @@ function useRegisterMutation() {
         title: "Registration successful",
         description: `Welcome, ${userData.username}!`,
       });
-      // Reload the page to ensure proper redirection
-      window.location.href = '/';
+      // Use replace instead of href to prevent adding to history
+      window.location.replace('/');
     },
     onError: (error: Error) => {
       toast({
@@ -111,8 +111,8 @@ function useLogoutMutation() {
         title: "Logged out",
         description: "You have been successfully logged out.",
       });
-      // Redirect to auth page
-      window.location.href = '/auth';
+      // Use replace instead of href to prevent adding to history
+      window.location.replace('/auth');
     },
     onError: (error: Error) => {
       toast({
