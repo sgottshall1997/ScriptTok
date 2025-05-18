@@ -89,13 +89,14 @@ router.post('/register', async (req: Request, res: Response) => {
       role: newUser.role,
     });
 
-    // Return user data without password and token
-    const { password: _, ...userWithoutPassword } = newUser;
-    
-    res.status(201).json({
-      ...userWithoutPassword,
+    // Return user data with token (no password)
+    const userResponse = {
+      ...newUser,
       token,
-    });
+      password: undefined // Remove password from response
+    };
+    
+    res.status(201).json(userResponse);
   } catch (error) {
     console.error('Registration error:', error);
     res.status(500).json({ message: 'Failed to register user' });
@@ -133,11 +134,8 @@ router.post('/login', async (req: Request, res: Response) => {
       return res.status(401).json({ message: 'Invalid username or password' });
     }
 
-    // Update user's last login timestamp and increment login count
-    await storage.updateUser(user.id, {
-      lastLogin: new Date(),
-      loginCount: (user.loginCount || 0) + 1,
-    });
+    // We'll just log the login activity instead of updating fields
+    // that might not exist in our schema
 
     // Record login activity
     await storage.logUserActivity({
@@ -155,13 +153,14 @@ router.post('/login', async (req: Request, res: Response) => {
       role: user.role,
     });
 
-    // Return user data without password and token
-    const { password: _, ...userWithoutPassword } = user;
-    
-    res.status(200).json({
-      ...userWithoutPassword,
+    // Return user data with token (no password)
+    const userResponse = {
+      ...user,
       token,
-    });
+      password: undefined // Remove password from response
+    };
+    
+    res.status(200).json(userResponse);
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ message: 'Failed to log in' });
@@ -180,10 +179,13 @@ router.get('/me', authenticateToken, async (req: AuthRequest, res: Response) => 
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Return user data without password
-    const { password, ...userWithoutPassword } = user;
+    // Return user data (no password)
+    const userResponse = {
+      ...user,
+      password: undefined // Remove password from response
+    };
     
-    res.status(200).json(userWithoutPassword);
+    res.status(200).json(userResponse);
   } catch (error) {
     console.error('Get current user error:', error);
     res.status(500).json({ message: 'Failed to retrieve user information' });
@@ -221,7 +223,6 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res: Response
       firstName,
       lastName,
       email,
-      updatedAt: new Date(),
     });
 
     // Record profile update activity
@@ -233,10 +234,13 @@ router.put('/profile', authenticateToken, async (req: AuthRequest, res: Response
       userAgent: req.headers['user-agent']?.toString()
     });
 
-    // Return updated user data without password
-    const { password, ...userWithoutPassword } = updatedUser;
+    // Return updated user data (password is never exposed to the client)
+    const userResponse = {
+      ...updatedUser,
+      password: undefined // Remove password from response
+    };
     
-    res.status(200).json(userWithoutPassword);
+    res.status(200).json(userResponse);
   } catch (error) {
     console.error('Update profile error:', error);
     res.status(500).json({ message: 'Failed to update profile' });

@@ -35,7 +35,7 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
   deleteUser(id: number): Promise<boolean>;
-  recordUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
+  logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
   
   // Teams & User Roles operations
   createTeam(team: InsertTeam): Promise<Team>;
@@ -880,6 +880,20 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(contentHistory.createdAt))
       .limit(limit)
       .offset(offset);
+  }
+  
+  // User activity logging
+  async logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void> {
+    const { userId, action, metadata, ipAddress, userAgent } = activityData;
+    
+    await db.insert(userActivityLogs).values({
+      userId,
+      action,
+      metadata: metadata || {},
+      ipAddress: ipAddress || null,
+      userAgent: userAgent || null,
+      timestamp: new Date()
+    });
   }
 
   // User operations
