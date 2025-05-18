@@ -2,6 +2,7 @@ import express from 'express';
 import { storage } from '../storage';
 import { insertContentHistorySchema } from '@shared/schema';
 import { z } from 'zod';
+import { AuthRequest } from '../middleware/auth';
 
 const router = express.Router();
 

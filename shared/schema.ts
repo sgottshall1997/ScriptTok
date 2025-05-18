@@ -329,7 +329,7 @@ export const trendingEmojisHashtags = pgTable("trending_emojis_hashtags", {
 // Content generation history for tracking and analytics
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id"), // Optional user reference
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }), // Now required with foreign key reference
   niche: text("niche").notNull(),
   contentType: text("content_type").notNull(), // Maps to templateType
   tone: text("tone").notNull(),

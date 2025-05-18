@@ -71,8 +71,6 @@ router.post('/register', async (req: Request, res: Response) => {
       firstName,
       lastName,
       role: 'writer', // Default role
-      status: 'active',
-      lastLogin: new Date(),
     });
 
     // Record user creation activity
