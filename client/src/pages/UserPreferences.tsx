@@ -173,6 +173,43 @@ const UserPreferences: React.FC = () => {
     savePreferences.mutate(values);
   };
 
+  // Show login screen if not logged in
+  if (!isLoggedIn) {
+    return (
+      <div className="flex h-[80vh] items-center justify-center">
+        <Card className="w-[400px]">
+          <CardHeader>
+            <CardTitle>User Preferences</CardTitle>
+            <CardDescription>
+              Log in with a test account to set your default preferences
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              Click the button below to create a test user and access the preferences page.
+            </p>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              className="w-full" 
+              onClick={loginTestUser}
+              disabled={isLoggingIn}
+            >
+              {isLoggingIn ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Logging in...
+                </>
+              ) : (
+                'Log in as Test User'
+              )}
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+  
   if (isLoading) {
     return (
       <div className="flex h-[80vh] items-center justify-center">
