@@ -8,9 +8,9 @@ const router = Router();
 
 // Validation schemas
 const registerSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
+  username: z.string().min(1, "Username is required"),
+  email: z.string().min(1, "Email is required"),
+  password: z.string().min(1, "Password is required"),
   firstName: z.string().optional().default(""),
   lastName: z.string().optional().default(""),
 });
@@ -35,11 +35,14 @@ const profileUpdateSchema = z.object({
 router.post('/register', async (req: Request, res: Response) => {
   try {
     // Validate request body
+    console.log("Registration attempt with data:", JSON.stringify(req.body, null, 2));
     const validationResult = registerSchema.safeParse(req.body);
     if (!validationResult.success) {
+      console.log("Validation errors:", JSON.stringify(validationResult.error.errors, null, 2));
       return res.status(400).json({ 
         message: 'Validation failed', 
-        errors: validationResult.error.errors 
+        errors: validationResult.error.errors,
+        requestBody: req.body
       });
     }
 
