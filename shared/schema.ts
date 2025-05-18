@@ -394,22 +394,7 @@ export const insertUserSchema = createInsertSchema(users).pick({
   profileImage: true,
 });
 
-export const insertUserPreferencesSchema = createInsertSchema(userPreferences).pick({
-  userId: true,
-  defaultNiche: true,
-  defaultContentType: true,
-  defaultTone: true,
-  defaultModel: true,
-});
-
-export const updateUserPreferencesSchema = createInsertSchema(userPreferences)
-  .pick({
-    defaultNiche: true,
-    defaultContentType: true,
-    defaultTone: true,
-    defaultModel: true,
-  })
-  .partial();
+// User preferences schemas are now defined earlier in the file with createOrUpdateUserPreferencesSchema and createUserPreferencesSchema
 
 export const insertTeamSchema = createInsertSchema(teams).pick({
   name: true,
@@ -698,7 +683,3 @@ export const insertContentHistorySchema = createInsertSchema(contentHistory).pic
 
 export type ContentHistory = typeof contentHistory.$inferSelect;
 export type InsertContentHistory = z.infer<typeof insertContentHistorySchema>;
-
-export type UserPreferences = typeof userPreferences.$inferSelect;
-export type InsertUserPreferences = z.infer<typeof insertUserPreferencesSchema>;
-export type UpdateUserPreferences = z.infer<typeof updateUserPreferencesSchema>;
