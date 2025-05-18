@@ -192,6 +192,7 @@ export class MemStorage implements IStorage {
     this.scraperStatuses = new Map();
     this.apiUsage = new Map();
     this.userPreferences = new Map();
+    this.userPreferencesId = 1;
     
     // Initialize analytics tracking
     this.templateUsage = new Map();
