@@ -9,6 +9,21 @@ export const queryClient = new QueryClient({
   },
 });
 
+// Get saved token from localStorage
+export function getAuthToken(): string | null {
+  return localStorage.getItem('authToken');
+}
+
+// Save token to localStorage
+export function saveAuthToken(token: string): void {
+  localStorage.setItem('authToken', token);
+}
+
+// Remove token from localStorage
+export function removeAuthToken(): void {
+  localStorage.removeItem('authToken');
+}
+
 // Helper function for making API requests
 export async function apiRequest(method: string, url: string, data?: any) {
   const options: RequestInit = {
@@ -18,6 +33,15 @@ export async function apiRequest(method: string, url: string, data?: any) {
     },
     credentials: "include",
   };
+
+  // Add auth token if available
+  const token = getAuthToken();
+  if (token) {
+    options.headers = {
+      ...options.headers,
+      "Authorization": `Bearer ${token}`,
+    };
+  }
 
   if (data) {
     options.body = JSON.stringify(data);

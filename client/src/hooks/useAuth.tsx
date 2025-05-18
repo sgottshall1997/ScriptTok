@@ -3,7 +3,7 @@ import {
   useQuery,
   useMutation,
 } from "@tanstack/react-query";
-import { apiRequest, queryClient } from "../lib/queryClient";
+import { apiRequest, queryClient, saveAuthToken, removeAuthToken } from "../lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
 type User = {
@@ -50,12 +50,21 @@ function useLoginMutation() {
       const res = await apiRequest("POST", "/api/auth/login", credentials);
       return await res.json();
     },
-    onSuccess: (userData: User) => {
-      queryClient.setQueryData(["/api/auth/user"], userData);
+    onSuccess: (userData: any) => {
+      // Save the JWT token to localStorage
+      if (userData.token) {
+        saveAuthToken(userData.token);
+      }
+      
+      // Save user data to query cache (without token)
+      const { token, ...userWithoutToken } = userData;
+      queryClient.setQueryData(["/api/auth/user"], userWithoutToken);
+      
       toast({
         title: "Login successful",
         description: `Welcome back, ${userData.username}!`,
       });
+      
       // Use replace instead of href to prevent adding to history
       window.location.replace('/');
     },
@@ -78,12 +87,21 @@ function useRegisterMutation() {
       const res = await apiRequest("POST", "/api/auth/register", userData);
       return await res.json();
     },
-    onSuccess: (userData: User) => {
-      queryClient.setQueryData(["/api/auth/user"], userData);
+    onSuccess: (userData: any) => {
+      // Save the JWT token to localStorage
+      if (userData.token) {
+        saveAuthToken(userData.token);
+      }
+      
+      // Save user data to query cache (without token)
+      const { token, ...userWithoutToken } = userData;
+      queryClient.setQueryData(["/api/auth/user"], userWithoutToken);
+      
       toast({
         title: "Registration successful",
         description: `Welcome, ${userData.username}!`,
       });
+      
       // Use replace instead of href to prevent adding to history
       window.location.replace('/');
     },
