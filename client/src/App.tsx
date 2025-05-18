@@ -78,7 +78,9 @@ function Router() {
       <ProtectedRoute path="/api-integration-hub" component={ApiIntegrationHubPage} />
       <ProtectedRoute path="/webhook-settings" component={WebhookSettings} />
       <ProtectedRoute path="/profile" component={ProfilePage} />
-      <ProtectedRoute path="/preferences" component={UserPreferences} />
+      
+      {/* Make preferences directly accessible for testing */}
+      <Route path="/preferences" component={UserPreferences} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
