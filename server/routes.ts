@@ -184,6 +184,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Public routes that don't require authentication
   app.use('/api/trending', trendingRouter);
+  
+  // Direct trending products endpoint for dashboard
+  app.get('/api/trending/products', async (req, res) => {
+    try {
+      const { getRefreshedTrendingProducts } = require('./services/trendRefresher');
+      const trendingProducts = await getRefreshedTrendingProducts();
+      res.json(trendingProducts);
+    } catch (error) {
+      console.error("Error fetching trending products:", error);
+      res.status(500).json({ error: "Failed to fetch trending products" });
+    }
+  });
+  
   app.use('/api/template-test', templateTestRouter);
   app.use('/api/templates', templateRouter);
   app.use('/api/scraper-status', scraperStatusRouter);

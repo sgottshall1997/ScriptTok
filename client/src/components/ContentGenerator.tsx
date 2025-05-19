@@ -35,7 +35,8 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   
   // Using refs and state to store the form values
   const productInputRef = useRef<HTMLInputElement>(null);
-  const [templateType, setTemplateType] = useState(initialTemplate || "seo_blog");
+  // Initialize with safer default template that works across all niches
+  const [templateType, setTemplateType] = useState(initialTemplate || "social_post");
   const [tone, setTone] = useState("friendly");
   const [niche, setNiche] = useState(initialNiche);
   const [productName, setProductName] = useState('');
