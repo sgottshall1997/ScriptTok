@@ -12,7 +12,7 @@ import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 const Dashboard = () => {
   // Fetch trending products for all niches
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
-    queryKey: ['/api/trending'],
+    queryKey: ['/api/trending/products'],
     retry: false,
   });
 
@@ -99,7 +99,7 @@ const Dashboard = () => {
               <ArrowRight className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <Link href="/generate">
+              <Link href="/niche/skincare">
                 <Button className="w-full">Start Creating</Button>
               </Link>
               <p className="text-xs text-muted-foreground mt-1">Go to content generator</p>
@@ -163,7 +163,7 @@ const Dashboard = () => {
                       // No products for this niche
                       <div className="col-span-3 py-10 text-center border rounded-lg border-dashed">
                         <p className="text-gray-500">No trending products found for this niche</p>
-                        <Link href="/generate">
+                        <Link href={`/niche/${niche.id}`}>
                           <Button variant="outline" size="sm" className="mt-4">
                             Generate Content Anyway
                           </Button>
