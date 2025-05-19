@@ -65,8 +65,8 @@ function useLoginMutation() {
         description: `Welcome back, ${userData.username}!`,
       });
       
-      // Force redirect to home page
-      window.location.replace('/');
+      // Redirect to dashboard
+      window.location.replace('/dashboard');
     },
     onError: (error: Error) => {
       toast({
@@ -102,8 +102,8 @@ function useRegisterMutation() {
         description: `Welcome, ${userData.username}!`,
       });
       
-      // Force redirect to home page
-      window.location.replace('/');
+      // Redirect to dashboard
+      window.location.replace('/dashboard');
     },
     onError: (error: Error) => {
       toast({

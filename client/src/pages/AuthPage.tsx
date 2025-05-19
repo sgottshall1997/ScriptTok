@@ -119,8 +119,8 @@ const AuthPage: React.FC = () => {
   // Use useEffect for redirection to avoid render-time redirect that causes infinite loops
   React.useEffect(() => {
     if (user) {
-      // Use window.location.href for more consistent navigation behavior
-      window.location.href = '/';
+      // Redirect authenticated users to dashboard
+      window.location.replace('/dashboard');
     }
   }, [user]);
 
