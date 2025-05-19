@@ -19,9 +19,13 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ component: Component, path })
     const token = getAuthToken();
     setHasToken(!!token);
     setTokenChecked(true);
-  }, []);
+    
+    // Debug
+    console.log("Token check:", !!token, "User:", !!user);
+  }, [user]);
 
-  if (isLoading || !tokenChecked) {
+  // If initial loading, show loading indicator
+  if (isLoading && !tokenChecked) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -34,22 +38,21 @@ const ProtectedRoute: FC<ProtectedRouteProps> = ({ component: Component, path })
     <Route
       path={path}
       component={() => {
-        // If we have a token but no user yet, show loading
-        if (hasToken && !user) {
-          return (
-            <div className="flex items-center justify-center min-h-screen">
-              <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <span className="ml-2">Authenticating...</span>
-            </div>
-          );
+        // For debugging
+        console.log("Route render - hasToken:", hasToken, "user:", !!user);
+        
+        // If we have a token, render the component immediately
+        // This forces the component to render even if user data isn't fully loaded yet
+        if (hasToken) {
+          return <Component />;
         }
         
-        // If no token and no user, redirect to auth
-        if (!hasToken && !user) {
+        // If no token, redirect to auth
+        if (!hasToken) {
           return <Redirect to="/auth" />;
         }
         
-        // If token is present or user is loaded, render the component
+        // Fallback (shouldn't reach here)
         return <Component />;
       }}
     />
