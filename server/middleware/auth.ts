@@ -25,14 +25,15 @@ export const authenticateToken = async (req: AuthRequest, res: Response, next: N
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: number, username: string, role: string };
     
-    // Verify the user still exists and is active
+    // Verify the user still exists
     const user = await storage.getUser(decoded.id);
     
     if (!user) {
       return res.status(401).json({ message: 'User no longer exists' });
     }
     
-    if (user.status !== 'active') {
+    // Only check status if the field exists
+    if (user.status && user.status !== 'active') {
       return res.status(403).json({ message: 'Account is not active' });
     }
     
