@@ -44,8 +44,10 @@ const AuthPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await loginMutation.mutateAsync(loginData);
-      // Don't navigate here - let the useEffect handle redirection after user state updates
+      const userData = await loginMutation.mutateAsync(loginData);
+      // After successful login, explicitly navigate to dashboard
+      console.log('Login successful, redirecting to dashboard...');
+      window.location.href = '/dashboard';
     } catch (error) {
       console.error('Login failed:', error);
     }
@@ -105,7 +107,9 @@ const AuthPage: React.FC = () => {
         lastName: "",
         confirmPassword: registerData.confirmPassword
       });
-      // Don't navigate here - let the useEffect handle redirection after user state updates
+      // After successful registration, explicitly navigate to dashboard
+      console.log('Registration successful, redirecting to dashboard...');
+      window.location.href = '/dashboard';
     } catch (error: any) {
       toast({
         title: 'Registration failed',
