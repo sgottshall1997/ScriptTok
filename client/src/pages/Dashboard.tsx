@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowRight, TrendingUp, BarChart3, Clock } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
+import { format } from "date-fns";
 
 const Dashboard = () => {
   // Fetch trending products for all niches
@@ -44,10 +45,17 @@ const Dashboard = () => {
 
   // Group the trending products by their niche
   if (Array.isArray(trendingProducts)) {
+    console.log('Grouping products by niche:', trendingProducts.length, 'total products');
     trendingProducts.forEach(product => {
+      console.log('Product:', product.title, 'Niche:', product.niche);
       if (product.niche && nicheProducts[product.niche]) {
         nicheProducts[product.niche].push(product);
       }
+    });
+    
+    // Log final counts per niche
+    Object.keys(nicheProducts).forEach(niche => {
+      console.log(`${niche}: ${nicheProducts[niche].length} products`);
     });
   }
 
