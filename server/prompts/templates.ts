@@ -132,15 +132,43 @@ export async function loadPromptTemplates(): Promise<PromptTemplates> {
     return templatesCache;
   }
   
-  console.log('Loading all prompt templates from JSON files...');
+  console.log('Loading all prompt templates...');
   
   const templates: PromptTemplates = {
     default: {},
   };
 
-  // Dynamically load templates for all registered niches from JSON files
+  // First, load universal templates from text files
+  try {
+    const universalTemplates = await loadUniversalTemplatesFromTextFiles();
+    templates.default = universalTemplates;
+    console.log(`✅ Loaded ${Object.keys(universalTemplates).length} universal templates`);
+  } catch (error) {
+    console.warn("⚠️ Could not load universal templates:", error.message);
+  }
+
+  // Load niche-specific templates from text files
+  try {
+    const textTemplates = await loadTemplatesFromTextFiles();
+    Object.entries(textTemplates).forEach(([niche, nicheTemplates]) => {
+      templates[niche] = nicheTemplates;
+    });
+    console.log(`✅ Loaded niche-specific templates for ${Object.keys(textTemplates).length} niches`);
+  } catch (error) {
+    console.warn("⚠️ Could not load niche-specific templates:", error.message);
+  }
+
+  // Then load templates from JSON files (if they exist)
   for (const niche of ['default', ...NICHES]) {
-    templates[niche] = await loadNicheTemplatesFromJson(niche);
+    try {
+      const jsonTemplates = await loadNicheTemplatesFromJson(niche);
+      if (Object.keys(jsonTemplates).length > 0) {
+        // Merge with existing templates (JSON takes precedence)
+        templates[niche] = { ...templates[niche], ...jsonTemplates };
+      }
+    } catch (error) {
+      // Silently ignore JSON loading errors since text files are primary
+    }
   }
 
   // Cache templates for future use
@@ -305,7 +333,7 @@ async function loadUniversalTemplatesFromTextFiles(): Promise<NicheTemplates> {
           const content = await fs.readFile(filePath, 'utf-8');
           templates[templateType] = content;
         } catch (error) {
-          console.warn(`Could not load universal template ${file}:`, error.message);
+          console.warn(`Could not load universal template ${file}:`, error instanceof Error ? error.message : String(error));
         }
       }
     }
