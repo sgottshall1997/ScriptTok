@@ -43,6 +43,7 @@ function Router() {
       {/* Dashboard as the landing page */}
       <Route path="/" component={Dashboard} />
       <Route path="/home" component={Home} />
+      <Route path="/generate" component={Home} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/niche/:niche" component={NichePage} />
       <Route path="/templates" component={TemplateExplorerPage} />
