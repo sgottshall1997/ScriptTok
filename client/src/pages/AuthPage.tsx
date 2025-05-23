@@ -44,12 +44,16 @@ const AuthPage: React.FC = () => {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const userData = await loginMutation.mutateAsync(loginData);
-      // After successful login, explicitly navigate to dashboard
-      console.log('Login successful, redirecting to dashboard...');
-      window.location.href = '/dashboard';
+      await loginMutation.mutateAsync(loginData);
+      // After successful login, use replace to prevent back navigation
+      window.location.replace('/dashboard');
     } catch (error) {
       console.error('Login failed:', error);
+      toast({
+        title: "Login failed",
+        description: error instanceof Error ? error.message : "Please check your credentials and try again",
+        variant: "destructive"
+      });
     }
   };
 

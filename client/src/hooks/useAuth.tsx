@@ -54,19 +54,21 @@ function useLoginMutation() {
       // Save the JWT token to localStorage
       if (userData.token) {
         saveAuthToken(userData.token);
+        
+        // Save user data to query cache (without token)
+        const { token, ...userWithoutToken } = userData;
+        queryClient.setQueryData(["/api/auth/user"], userWithoutToken);
+        
+        toast({
+          title: "Login successful",
+          description: `Welcome back, ${userData.username}!`,
+        });
+        
+        // Redirect to dashboard using replace
+        window.location.replace('/dashboard');
+      } else {
+        throw new Error('No authentication token received');
       }
-      
-      // Save user data to query cache (without token)
-      const { token, ...userWithoutToken } = userData;
-      queryClient.setQueryData(["/api/auth/user"], userWithoutToken);
-      
-      toast({
-        title: "Login successful",
-        description: `Welcome back, ${userData.username}!`,
-      });
-      
-      // Redirect to dashboard
-      window.location.replace('/dashboard');
     },
     onError: (error: Error) => {
       toast({
