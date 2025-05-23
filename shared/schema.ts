@@ -326,52 +326,10 @@ export const trendingEmojisHashtags = pgTable("trending_emojis_hashtags", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// User preferences for content generation
-export const userPreferences = pgTable("user_preferences", {
-  id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }).unique(),
-  defaultNiche: text("default_niche"),
-  defaultContentType: text("default_content_type"),
-  defaultTone: text("default_tone"),
-  defaultModel: text("default_model"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
-// Zod schemas for user preferences
-export const userPreferencesSchema = z.object({
-  id: z.number(),
-  userId: z.number(),
-  defaultNiche: z.string().nullable(),
-  defaultContentType: z.string().nullable(),
-  defaultTone: z.string().nullable(),
-  defaultModel: z.string().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date()
-});
-
-export const createOrUpdateUserPreferencesSchema = z.object({
-  defaultNiche: z.string().nullable(),
-  defaultContentType: z.string().nullable(),
-  defaultTone: z.string().nullable(),
-  defaultModel: z.string().nullable(),
-});
-
-export const createUserPreferencesSchema = createOrUpdateUserPreferencesSchema.extend({
-  userId: z.number()
-});
-
-// Types for user preferences
-// Use the database inference type definitions (consistent with other tables)
-export type UserPreferences = typeof userPreferences.$inferSelect;
-export type InsertUserPreferences = typeof userPreferences.$inferInsert;
-export type UpdateUserPreferences = z.infer<typeof createOrUpdateUserPreferencesSchema>;
-export type CreateUserPreferences = z.infer<typeof createUserPreferencesSchema>;
-
 // Content generation history for tracking and analytics
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }), // Now required with foreign key reference
+  userId: integer("user_id"), // Optional user reference
   niche: text("niche").notNull(),
   contentType: text("content_type").notNull(), // Maps to templateType
   tone: text("tone").notNull(),
@@ -393,8 +351,6 @@ export const insertUserSchema = createInsertSchema(users).pick({
   lastName: true,
   profileImage: true,
 });
-
-// User preferences schemas are now defined earlier in the file with createOrUpdateUserPreferencesSchema and createUserPreferencesSchema
 
 export const insertTeamSchema = createInsertSchema(teams).pick({
   name: true,

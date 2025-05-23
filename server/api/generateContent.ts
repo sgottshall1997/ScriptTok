@@ -21,8 +21,8 @@ const contentGenerationLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipSuccessfulRequests: false, // Count all requests, including successful ones
   keyGenerator: (req) => {
-    // If user is authenticated, use their userId as the key, otherwise use IP
-    return req.user?.userId?.toString() || req.ip || 'unknown';
+    // If user is authenticated, use their ID as the key, otherwise use IP
+    return req.user?.id?.toString() || req.ip || 'unknown';
   }
 });
 
@@ -208,7 +208,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     
     // Save detailed content history record with all metadata
     const contentHistoryEntry = await storage.saveContentHistory({
-      userId: req.user?.userId, // If user is authenticated
+      userId: req.user?.id, // If user is authenticated
       niche,
       contentType: templateType,
       tone,
@@ -220,7 +220,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     });
     
     // Increment API usage counter with template and tone tracking
-    await storage.incrementApiUsage(templateType, tone, niche, req.user?.userId);
+    await storage.incrementApiUsage(templateType, tone, niche, req.user?.id);
     
     // Send webhook notification if available
     if (contentHistoryEntry) {

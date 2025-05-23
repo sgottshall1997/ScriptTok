@@ -8,14 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowRight, TrendingUp, BarChart3, Clock } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
-import { format } from "date-fns";
 
 const Dashboard = () => {
   // Fetch trending products for all niches
-  const { data: trendingProducts, isLoading: trendingLoading } = useQuery<TrendingProduct[]>({
-    queryKey: ['/api/trending/products'],
-    retry: 2,
-    retryDelay: 1000
+  const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
+    queryKey: ['/api/trending'],
+    retry: false,
   });
 
   // Pre-define niche data for consistent display
@@ -29,40 +27,23 @@ const Dashboard = () => {
     { id: 'pet', name: 'Pets', icon: '🐶', color: 'from-yellow-500 to-amber-500' }
   ];
 
-  // Calculate summary stats from the actual product array
-  const productCount = Array.isArray(trendingProducts) ? trendingProducts.length : 0;
-  const lastRefreshTime = Array.isArray(trendingProducts) && trendingProducts.length > 0 && trendingProducts[0]?.createdAt 
-    ? format(new Date(trendingProducts[0].createdAt), 'MMM d, h:mm a')
-    : 'Not available';
-
-  // Group products by niche for display
+  // Format the last refresh time
+  const lastRefreshTime = trendingProducts?.lastRefresh 
+    ? new Date(trendingProducts.lastRefresh).toLocaleString() 
+    : "Not available";
+    
+  // Safely access trending products with defaults
+  const productCount = trendingProducts?.count || 0;
   const nicheProducts: Record<string, TrendingProduct[]> = {};
   
-  // Initialize empty arrays for each niche
+  // Prepare niche products with proper fallbacks for each niche
   niches.forEach(niche => {
-    nicheProducts[niche.id] = [];
+    if (trendingProducts?.byNiche && trendingProducts.byNiche[niche.id]) {
+      nicheProducts[niche.id] = trendingProducts.byNiche[niche.id];
+    } else {
+      nicheProducts[niche.id] = [];
+    }
   });
-
-  // Group the trending products by their niche
-  console.log('Dashboard - trendingProducts:', trendingProducts);
-  console.log('Dashboard - trendingLoading:', trendingLoading);
-  
-  if (Array.isArray(trendingProducts)) {
-    console.log('Dashboard - Grouping products by niche:', trendingProducts.length, 'total products');
-    trendingProducts.forEach(product => {
-      console.log('Dashboard - Product:', product.title, 'Niche:', product.niche);
-      if (product.niche && nicheProducts[product.niche]) {
-        nicheProducts[product.niche].push(product);
-      }
-    });
-    
-    // Log final counts per niche
-    Object.keys(nicheProducts).forEach(niche => {
-      console.log(`Dashboard - ${niche}: ${nicheProducts[niche].length} products`);
-    });
-  } else {
-    console.log('Dashboard - trendingProducts is not an array:', typeof trendingProducts);
-  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -118,7 +99,7 @@ const Dashboard = () => {
               <ArrowRight className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <Link href="/niche/skincare">
+              <Link href="/generate">
                 <Button className="w-full">Start Creating</Button>
               </Link>
               <p className="text-xs text-muted-foreground mt-1">Go to content generator</p>
@@ -168,9 +149,9 @@ const Dashboard = () => {
                           </CardContent>
                         </Card>
                       ))
-                    ) : Array.isArray(trendingProducts) && trendingProducts.filter(p => p.niche === niche.id).length > 0 ? (
-                      // Direct filter and display - bypass grouping
-                      trendingProducts.filter(p => p.niche === niche.id).slice(0, 3).map((product, idx) => (
+                    ) : nicheProducts[niche.id]?.length > 0 ? (
+                      // Actual trending products for this niche
+                      nicheProducts[niche.id].slice(0, 3).map((product, idx) => (
                         <TrendingProductCard 
                           key={product.id || idx} 
                           product={product} 
@@ -182,7 +163,7 @@ const Dashboard = () => {
                       // No products for this niche
                       <div className="col-span-3 py-10 text-center border rounded-lg border-dashed">
                         <p className="text-gray-500">No trending products found for this niche</p>
-                        <Link href={`/niche/${niche.id}`}>
+                        <Link href="/generate">
                           <Button variant="outline" size="sm" className="mt-4">
                             Generate Content Anyway
                           </Button>

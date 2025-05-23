@@ -16,12 +16,11 @@ import {
   PublishedContent, InsertPublishedContent,
   IntegrationWebhook, InsertIntegrationWebhook,
   ContentHistory, InsertContentHistory,
-  UserPreferences, InsertUserPreferences, UpdateUserPreferences,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
   socialMediaPlatforms, publishedContent, integrationWebhooks, userActivityLogs,
-  contentHistory, userPreferences
+  contentHistory
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -32,16 +31,9 @@ export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  getUserByEmail(email: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
   deleteUser(id: number): Promise<boolean>;
-  logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
-  
-  // User preferences operations
-  getUserPreferences(userId: number): Promise<UserPreferences | undefined>;
-  createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences>;
-  updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined>;
   
   // Teams & User Roles operations
   createTeam(team: InsertTeam): Promise<Team>;
@@ -118,11 +110,6 @@ export interface IStorage {
   getIntegrationWebhooksByUser(userId: number): Promise<IntegrationWebhook[]>;
   getIntegrationWebhooksByIntegration(integrationId: number): Promise<IntegrationWebhook[]>;
   
-  // User preferences operations
-  getUserPreferences(userId: number): Promise<UserPreferences | undefined>;
-  createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences>;
-  updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined>;
-  
   // User Activity operations
   logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void>;
   
@@ -182,17 +169,12 @@ export class MemStorage implements IStorage {
   private scraperStatusId: number;
   private apiUsageId: number;
   
-  private userPreferences: Map<number, UserPreferences>;
-  private userPreferencesId: number;
-  
   constructor() {
     this.users = new Map();
     this.contentGenerations = new Map();
     this.trendingProducts = new Map();
     this.scraperStatuses = new Map();
     this.apiUsage = new Map();
-    this.userPreferences = new Map();
-    this.userPreferencesId = 1;
     
     // Initialize analytics tracking
     this.templateUsage = new Map();
@@ -356,62 +338,11 @@ export class MemStorage implements IStorage {
     );
   }
   
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      user => user.email === email
-    );
-  }
-  
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.userId++;
-    const now = new Date();
-    const user: User = { 
-      ...insertUser, 
-      id,
-      status: 'active',
-      lastLogin: null,
-      loginCount: 0,
-      preferences: {},
-      createdAt: now,
-      updatedAt: now
-    };
+    const user: User = { ...insertUser, id };
     this.users.set(id, user);
     return user;
-  }
-  
-  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
-    const user = this.users.get(id);
-    if (!user) return undefined;
-    
-    const updatedUser = {
-      ...user,
-      ...updates,
-      updatedAt: new Date()
-    };
-    
-    this.users.set(id, updatedUser);
-    return updatedUser;
-  }
-  
-  async deleteUser(id: number): Promise<boolean> {
-    return this.users.delete(id);
-  }
-  
-  async recordUserActivity(activityData: { 
-    userId: number, 
-    action: string, 
-    metadata?: any, 
-    ipAddress?: string, 
-    userAgent?: string 
-  }): Promise<void> {
-    // For MemStorage, we'll just log the activity
-    console.log(`User activity: ${activityData.action}`, {
-      userId: activityData.userId,
-      timestamp: new Date(),
-      metadata: activityData.metadata,
-      ipAddress: activityData.ipAddress,
-      userAgent: activityData.userAgent
-    });
   }
   
   // Content generation operations
@@ -883,38 +814,6 @@ export class DatabaseStorage implements IStorage {
       .limit(limit)
       .offset(offset);
   }
-  
-  async getContentHistoryByUserIdAndNiche(userId: number, niche: string, limit: number = 50, offset: number = 0): Promise<ContentHistory[]> {
-    return await db.select()
-      .from(contentHistory)
-      .where(
-        and(
-          eq(contentHistory.userId, userId),
-          eq(contentHistory.niche, niche)
-        )
-      )
-      .orderBy(desc(contentHistory.createdAt))
-      .limit(limit)
-      .offset(offset);
-  }
-  
-  // User activity logging
-  async logUserActivity(activityData: { userId: number, action: string, metadata?: any, ipAddress?: string, userAgent?: string }): Promise<void> {
-    try {
-      const { userId, action, metadata, ipAddress, userAgent } = activityData;
-      
-      await db.insert(userActivityLogs).values({
-        userId,
-        action,
-        metadata: metadata || {},
-        ipAddress: ipAddress || null,
-        userAgent: userAgent || null,
-        timestamp: new Date()
-      });
-    } catch (error) {
-      console.error("Error logging user activity:", error);
-    }
-  }
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
@@ -927,23 +826,13 @@ export class DatabaseStorage implements IStorage {
     return user;
   }
   
-  async getUserByEmail(email: string): Promise<User | undefined> {
-    const [user] = await db.select().from(users).where(eq(users.email, email));
-    return user;
-  }
-  
   async createUser(insertUser: InsertUser): Promise<User> {
     const now = new Date();
-      
     const [user] = await db
       .insert(users)
       .values({
-        username: insertUser.username,
-        password: insertUser.password,
-        email: insertUser.email,
+        ...insertUser,
         role: insertUser.role || 'writer',
-        firstName: insertUser.firstName,
-        lastName: insertUser.lastName,
         createdAt: now,
         updatedAt: now
       })
@@ -1774,57 +1663,6 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(trendingEmojisHashtags)
       .orderBy(desc(trendingEmojisHashtags.lastUpdated));
-  }
-  
-  // User preferences operations
-  async getUserPreferences(userId: number): Promise<UserPreferences | undefined> {
-    try {
-      const [prefs] = await db
-        .select()
-        .from(userPreferences)
-        .where(eq(userPreferences.userId, userId));
-        
-      return prefs || undefined;
-    } catch (error) {
-      console.error("Error getting user preferences:", error);
-      return undefined;
-    }
-  }
-
-  async createUserPreferences(preferences: InsertUserPreferences): Promise<UserPreferences> {
-    try {
-      const [prefs] = await db
-        .insert(userPreferences)
-        .values({
-          ...preferences,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
-        .returning();
-        
-      return prefs;
-    } catch (error) {
-      console.error("Error creating user preferences:", error);
-      throw error;
-    }
-  }
-
-  async updateUserPreferences(userId: number, updates: UpdateUserPreferences): Promise<UserPreferences | undefined> {
-    try {
-      const [updatedPrefs] = await db
-        .update(userPreferences)
-        .set({
-          ...updates,
-          updatedAt: new Date()
-        })
-        .where(eq(userPreferences.userId, userId))
-        .returning();
-        
-      return updatedPrefs || undefined;
-    } catch (error) {
-      console.error("Error updating user preferences:", error);
-      return undefined;
-    }
   }
 }
 

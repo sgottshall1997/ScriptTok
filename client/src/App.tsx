@@ -5,6 +5,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
+import Home from "@/pages/home";
 import NichePage from "@/pages/niche";
 import Dashboard from "@/pages/Dashboard";
 import MyContentHistory from "@/pages/MyContentHistory";
@@ -27,8 +28,6 @@ import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
-import UserPreferences from "@/pages/UserPreferences";
-import TestPreferencesPage from "@/pages/TestPreferencesPage";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -41,14 +40,21 @@ function Router() {
   
   return (
     <Switch>
-      {/* Main application routes - no auth required */}
+      {/* Dashboard as the landing page */}
       <Route path="/" component={Dashboard} />
-      <Route path="/home" component={Dashboard} />
+      <Route path="/home" component={Home} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/niche/:niche" component={NichePage} />
       <Route path="/templates" component={TemplateExplorerPage} />
       <Route path="/history" component={MyContentHistory} />
       <Route path="/analytics" component={AnalyticsDashboard} />
+      {/* Static pages */}
+      <Route path="/about" component={AboutPage} />
+      <Route path="/how-it-works" component={HowItWorksPage} />
+      <Route path="/faq" component={FAQPage} />
+      <Route path="/privacy" component={PrivacyPolicyPage} />
+      <Route path="/terms" component={TermsPage} />
+      <Route path="/contact" component={ContactPage} />
       <Route path="/ai-model-test" component={AIModelTestPage} />
       <Route path="/claude-generator" component={ClaudeGeneratorPage} />
       <Route path="/content-calendar" component={ContentCalendarPage} />
@@ -60,17 +66,6 @@ function Router() {
       <Route path="/emoji-hashtag-test" component={EmojiHashtagTestPage} />
       <Route path="/api-integration-hub" component={ApiIntegrationHubPage} />
       <Route path="/webhook-settings" component={WebhookSettings} />
-      <Route path="/preferences" component={UserPreferences} />
-      <Route path="/test-preferences" component={TestPreferencesPage} />
-      
-      {/* Info pages */}
-      <Route path="/about" component={AboutPage} />
-      <Route path="/how-it-works" component={HowItWorksPage} />
-      <Route path="/faq" component={FAQPage} />
-      <Route path="/privacy" component={PrivacyPolicyPage} />
-      <Route path="/terms" component={TermsPage} />
-      <Route path="/contact" component={ContactPage} />
-      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
