@@ -13,13 +13,8 @@ const Dashboard = () => {
   // Fetch trending products for all niches
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending/products'],
-    retry: false,
-    // Add a fallback if the server response fails
-    placeholderData: () => {
-      console.log("Using mock trending products as fallback");
-      import { getMockDashboardData } from '@/components/MockTrendingProducts';
-      return getMockDashboardData();
-    }
+    retry: 2,
+    retryDelay: 1000
   });
 
   // Pre-define niche data for consistent display
