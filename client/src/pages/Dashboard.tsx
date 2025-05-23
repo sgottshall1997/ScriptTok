@@ -1,20 +1,64 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingProductCard } from "@/components/TrendingProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
-import { ArrowRight, TrendingUp, BarChart3, Clock } from "lucide-react";
+import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 
 const Dashboard = () => {
+  const [loadingTimeElapsed, setLoadingTimeElapsed] = useState(0);
+  const [nextRefreshIn, setNextRefreshIn] = useState<string>("");
+
   // Fetch trending products for all niches
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
     retry: false,
   });
+
+  // Timer for loading time elapsed
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (trendingLoading) {
+      interval = setInterval(() => {
+        setLoadingTimeElapsed(prev => prev + 1);
+      }, 1000);
+    } else {
+      setLoadingTimeElapsed(0);
+    }
+    return () => clearInterval(interval);
+  }, [trendingLoading]);
+
+  // Calculate time until next refresh (midnight)
+  useEffect(() => {
+    const updateNextRefresh = () => {
+      const now = new Date();
+      const midnight = new Date();
+      midnight.setHours(24, 0, 0, 0); // Next midnight
+      
+      const timeDiff = midnight.getTime() - now.getTime();
+      const hours = Math.floor(timeDiff / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+      
+      setNextRefreshIn(`${hours}h ${minutes}m`);
+    };
+
+    updateNextRefresh();
+    const interval = setInterval(updateNextRefresh, 60000); // Update every minute
+    return () => clearInterval(interval);
+  }, []);
+
+  // Format loading time
+  const formatLoadingTime = (seconds: number) => {
+    if (seconds < 60) return `${seconds}s`;
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}m ${secs}s`;
+  };
 
   // Pre-define niche data for consistent display
   const niches = [
@@ -110,10 +154,26 @@ const Dashboard = () => {
         {/* Trending Products By Niche */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold tracking-tight">Trending Products By Niche</h2>
-            <p className="text-sm text-muted-foreground">
-              Top 3 products from each category
-            </p>
+            <div className="flex items-center gap-3">
+              <h2 className="text-2xl font-bold tracking-tight">Trending Products By Niche</h2>
+              {trendingLoading && (
+                <Badge variant="secondary" className="flex items-center gap-2">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Loading... {formatLoadingTime(loadingTimeElapsed)}
+                </Badge>
+              )}
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-muted-foreground">
+                Top 3 products from each category
+              </p>
+              {!trendingLoading && nextRefreshIn && (
+                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                  <Clock className="h-3 w-3" />
+                  Next refresh in {nextRefreshIn}
+                </p>
+              )}
+            </div>
           </div>
           
           <Tabs defaultValue="skincare" className="w-full">
@@ -149,19 +209,31 @@ const Dashboard = () => {
                   {/* Products Grid */}
                   <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {trendingLoading ? (
-                      // Loading skeletons
+                      // Enhanced loading cards with progress
                       Array(3).fill(0).map((_, i) => (
-                        <Card key={i} className="overflow-hidden shadow-sm">
+                        <Card key={i} className="overflow-hidden shadow-sm border-2 border-dashed">
                           <CardContent className="p-0">
                             <div className="p-6 space-y-4">
+                              <div className="flex items-center gap-2 mb-4">
+                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                <span className="text-sm text-muted-foreground">
+                                  Scanning platforms...
+                                </span>
+                              </div>
                               <Skeleton className="h-6 w-2/3" />
                               <Skeleton className="h-4 w-1/2" />
                               <div className="flex gap-2">
                                 <Skeleton className="h-5 w-16 rounded-full" />
                                 <Skeleton className="h-5 w-24 rounded-full" />
                               </div>
+                              <div className="text-xs text-muted-foreground">
+                                Est. {Math.max(1, 3 - Math.floor(loadingTimeElapsed / 10))} min remaining
+                              </div>
                             </div>
-                            <div className="bg-muted/50 p-4 flex justify-end">
+                            <div className="bg-muted/50 p-4 flex justify-between items-center">
+                              <span className="text-xs text-muted-foreground">
+                                {loadingTimeElapsed}s elapsed
+                              </span>
                               <Skeleton className="h-9 w-28 rounded-md" />
                             </div>
                           </CardContent>
