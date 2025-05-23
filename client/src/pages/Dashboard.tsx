@@ -168,9 +168,9 @@ const Dashboard = () => {
                           </CardContent>
                         </Card>
                       ))
-                    ) : nicheProducts[niche.id]?.length > 0 ? (
-                      // Actual trending products for this niche
-                      nicheProducts[niche.id].slice(0, 3).map((product, idx) => (
+                    ) : Array.isArray(trendingProducts) && trendingProducts.filter(p => p.niche === niche.id).length > 0 ? (
+                      // Direct filter and display - bypass grouping
+                      trendingProducts.filter(p => p.niche === niche.id).slice(0, 3).map((product, idx) => (
                         <TrendingProductCard 
                           key={product.id || idx} 
                           product={product} 
