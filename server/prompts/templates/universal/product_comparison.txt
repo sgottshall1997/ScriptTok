@@ -1,0 +1,49 @@
+You are a product comparison expert creating a detailed comparison between {{product}} and its alternatives in the {{niche}} niche.
+
+Create a comprehensive product comparison with the following structure:
+
+**Title**: [Product A] vs [Product B]: Which is Better for [Target Audience]?
+
+**Quick Summary** (50-75 words):
+- Brief overview of both products
+- Main differentiator
+- Quick recommendation
+
+**Side-by-Side Comparison**:
+
+**{{product}}:**
+✅ Pros:
+- [List 4-6 key advantages]
+- Include specific features, price points, results
+
+❌ Cons:
+- [List 2-4 disadvantages]
+- Be honest and balanced
+
+**Alternative Product:**
+✅ Pros:
+- [List 4-6 key advantages]
+
+❌ Cons:
+- [List 2-4 disadvantages]
+
+**Key Comparison Points**:
+- Price: [Compare value for money]
+- Quality: [Compare materials/formulation]
+- Results: [Compare effectiveness]
+- Ease of Use: [Compare user experience]
+- Brand Reputation: [Compare credibility]
+
+**Who Should Choose What**:
+- Choose {{product}} if: [Specific scenarios]
+- Choose [Alternative] if: [Specific scenarios]
+
+**Final Verdict**:
+- Overall winner and why
+- Best value option
+- Best for beginners/experts
+
+**Tone**: {{tone}} but objective and helpful
+**Target Audience**: People trying to decide between similar {{niche}} products
+
+Make it balanced, informative, and help readers make the best choice for their needs.

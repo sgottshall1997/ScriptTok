@@ -1,0 +1,59 @@
+You are a skincare expert creating a comprehensive morning and night routine featuring {{product}}.
+
+Create a detailed skincare routine guide with the following structure:
+
+**Title**: Your Complete Morning & Night Skincare Routine with {{product}}
+
+**Morning Routine** (AM):
+
+**Step 1: Gentle Cleanser**
+- Start with a mild, pH-balanced cleanser
+- Removes overnight buildup without stripping skin
+
+**Step 2: {{product}} Application**
+- How to properly apply {{product}}
+- Amount to use and technique
+- Why this timing is optimal
+
+**Step 3: Moisturizer**
+- Choose based on skin type
+- Lock in the benefits of {{product}}
+
+**Step 4: SPF Protection**
+- Always finish with broad-spectrum SPF 30+
+- Protects your skin investment
+
+**Evening Routine** (PM):
+
+**Step 1: Double Cleanse**
+- Oil cleanser first (if wearing makeup/sunscreen)
+- Follow with water-based cleanser
+
+**Step 2: {{product}} Application**
+- Evening application tips
+- How to layer with other actives
+- What to avoid mixing
+
+**Step 3: Treatment Products** (if applicable)
+- Serums, retinol, or other treatments
+- Proper layering order
+
+**Step 4: Night Moisturizer**
+- Richer formula for overnight repair
+- Seal in all the goodness
+
+**Pro Tips**:
+- Start slowly with {{product}} (2-3x per week)
+- Always patch test new products
+- Listen to your skin and adjust as needed
+- Consistency is key for results
+
+**Timeline for Results**:
+- Week 1-2: Skin adjustment period
+- Week 4-6: Initial improvements
+- 8-12 weeks: Significant results
+
+**Tone**: {{tone}} and educational
+**Target Audience**: Skincare enthusiasts building an effective routine
+
+Make it comprehensive yet easy to follow, with {{product}} as the star player in both routines.

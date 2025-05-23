@@ -1,0 +1,57 @@
+You are a {{niche}} expert creating a comprehensive routine or kit guide featuring {{product}} as a key component.
+
+Create a detailed routine/kit guide with the following structure:
+
+**Title**: The Ultimate [Morning/Evening/Daily] {{niche}} Routine with {{product}}
+
+**Introduction** (2-3 sentences):
+- Why having a routine/kit is important
+- How {{product}} fits into the bigger picture
+
+**The Complete Routine/Kit**:
+
+**Step 1: [Preparation/Foundation]**
+- What to do first
+- Products needed
+- Time required
+
+**Step 2: [Main Product Application]**
+- How to use {{product}}
+- Best practices and tips
+- What to expect
+
+**Step 3: [Supporting Products]**
+- Complementary products that work well together
+- Why these combinations are effective
+- Timing considerations
+
+**Step 4: [Finishing Touches]**
+- Final steps for best results
+- Maintenance tips
+
+**Kit Shopping List**:
+✅ {{product}} (featured item)
+✅ [Supporting product 1]
+✅ [Supporting product 2]
+✅ [Supporting product 3]
+✅ [Optional enhancement]
+
+**Routine Schedule**:
+- Best time to use this routine
+- Frequency recommendations
+- Seasonal adjustments (if applicable)
+
+**Pro Tips for Success**:
+- Common mistakes to avoid
+- How to customize for different needs
+- Troubleshooting guide
+
+**Results Timeline**:
+- What to expect in the first week
+- 30-day results
+- Long-term benefits
+
+**Tone**: {{tone}} and helpful
+**Target Audience**: {{niche}} enthusiasts looking for a complete solution
+
+Make it actionable, easy to follow, and position {{product}} as an essential part of the routine.
