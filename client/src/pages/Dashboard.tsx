@@ -44,10 +44,13 @@ const Dashboard = () => {
   });
 
   // Group the trending products by their niche
+  console.log('Dashboard - trendingProducts:', trendingProducts);
+  console.log('Dashboard - trendingLoading:', trendingLoading);
+  
   if (Array.isArray(trendingProducts)) {
-    console.log('Grouping products by niche:', trendingProducts.length, 'total products');
+    console.log('Dashboard - Grouping products by niche:', trendingProducts.length, 'total products');
     trendingProducts.forEach(product => {
-      console.log('Product:', product.title, 'Niche:', product.niche);
+      console.log('Dashboard - Product:', product.title, 'Niche:', product.niche);
       if (product.niche && nicheProducts[product.niche]) {
         nicheProducts[product.niche].push(product);
       }
@@ -55,8 +58,10 @@ const Dashboard = () => {
     
     // Log final counts per niche
     Object.keys(nicheProducts).forEach(niche => {
-      console.log(`${niche}: ${nicheProducts[niche].length} products`);
+      console.log(`Dashboard - ${niche}: ${nicheProducts[niche].length} products`);
     });
+  } else {
+    console.log('Dashboard - trendingProducts is not an array:', typeof trendingProducts);
   }
 
   return (
