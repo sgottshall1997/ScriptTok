@@ -287,6 +287,87 @@ async function loadTemplateFile(niche: string): Promise<EnhancedTemplateFile | n
 }
 
 /**
+ * Load universal templates from text files
+ */
+async function loadUniversalTemplatesFromTextFiles(): Promise<NicheTemplates> {
+  const templates: NicheTemplates = {};
+  
+  try {
+    const universalDir = path.join(process.cwd(), 'server', 'prompts', 'templates', 'universal');
+    const files = await fs.readdir(universalDir);
+    
+    for (const file of files) {
+      if (file.endsWith('.txt')) {
+        const templateType = file.replace('.txt', '') as TemplateType;
+        const filePath = path.join(universalDir, file);
+        
+        try {
+          const content = await fs.readFile(filePath, 'utf-8');
+          templates[templateType] = content;
+        } catch (error) {
+          console.warn(`Could not load universal template ${file}:`, error.message);
+        }
+      }
+    }
+    
+    console.log(`✅ Loaded ${Object.keys(templates).length} universal templates`);
+    return templates;
+  } catch (error) {
+    console.warn("⚠️ Could not load universal templates directory:", error.message);
+    return {};
+  }
+}
+
+/**
+ * Load niche-specific templates from text files
+ */
+async function loadTemplatesFromTextFiles(): Promise<PromptTemplates> {
+  const templates: PromptTemplates = {};
+  
+  try {
+    const templatesDir = path.join(process.cwd(), 'server', 'prompts', 'templates');
+    const dirs = await fs.readdir(templatesDir, { withFileTypes: true });
+    
+    for (const dir of dirs) {
+      if (dir.isDirectory() && dir.name !== 'universal') {
+        const niche = dir.name;
+        const nicheTemplates: NicheTemplates = {};
+        
+        try {
+          const nicheDir = path.join(templatesDir, niche);
+          const files = await fs.readdir(nicheDir);
+          
+          for (const file of files) {
+            if (file.endsWith('.txt')) {
+              const templateType = file.replace('.txt', '') as TemplateType;
+              const filePath = path.join(nicheDir, file);
+              
+              try {
+                const content = await fs.readFile(filePath, 'utf-8');
+                nicheTemplates[templateType] = content;
+              } catch (error) {
+                console.warn(`Could not load template ${niche}/${file}:`, error.message);
+              }
+            }
+          }
+          
+          if (Object.keys(nicheTemplates).length > 0) {
+            templates[niche] = nicheTemplates;
+          }
+        } catch (error) {
+          console.warn(`Could not load templates for niche ${niche}:`, error.message);
+        }
+      }
+    }
+    
+    return templates;
+  } catch (error) {
+    console.warn("⚠️ Could not load templates from text files:", error.message);
+    return {};
+  }
+}
+
+/**
  * Load templates for a specific niche
  * @param niche The niche to load templates for
  */
