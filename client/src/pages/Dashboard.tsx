@@ -28,23 +28,28 @@ const Dashboard = () => {
     { id: 'pet', name: 'Pets', icon: '🐶', color: 'from-yellow-500 to-amber-500' }
   ];
 
-  // Format the last refresh time
-  const lastRefreshTime = trendingProducts?.lastRefresh 
-    ? new Date(trendingProducts.lastRefresh).toLocaleString() 
-    : "Not available";
-    
-  // Safely access trending products with defaults
-  const productCount = trendingProducts?.count || 0;
+  // Calculate summary stats from the actual product array
+  const productCount = Array.isArray(trendingProducts) ? trendingProducts.length : 0;
+  const lastRefreshTime = Array.isArray(trendingProducts) && trendingProducts.length > 0 && trendingProducts[0]?.createdAt 
+    ? format(new Date(trendingProducts[0].createdAt), 'MMM d, h:mm a')
+    : 'Not available';
+
+  // Group products by niche for display
   const nicheProducts: Record<string, TrendingProduct[]> = {};
   
-  // Prepare niche products with proper fallbacks for each niche
+  // Initialize empty arrays for each niche
   niches.forEach(niche => {
-    if (trendingProducts?.byNiche && trendingProducts.byNiche[niche.id]) {
-      nicheProducts[niche.id] = trendingProducts.byNiche[niche.id];
-    } else {
-      nicheProducts[niche.id] = [];
-    }
+    nicheProducts[niche.id] = [];
   });
+
+  // Group the trending products by their niche
+  if (Array.isArray(trendingProducts)) {
+    trendingProducts.forEach(product => {
+      if (product.niche && nicheProducts[product.niche]) {
+        nicheProducts[product.niche].push(product);
+      }
+    });
+  }
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
