@@ -18,9 +18,40 @@ const router = Router();
 // Get all trending products
 router.get("/", async (req, res) => {
   try {
-    // Use the trend refresher service to get dynamically updated trending products
-    const trendingProducts = await getRefreshedTrendingProducts();
-    res.json(trendingProducts);
+    // First try to get cached data from storage
+    const cachedProducts = await storage.getAllTrendingProducts();
+    
+    if (cachedProducts && cachedProducts.length > 0) {
+      // We have cached data, format it for the response
+      const lastRefresh = await storage.getLastTrendingRefresh();
+      const productsByNiche: Record<string, any[]> = {};
+      const niches = ["skincare", "tech", "fashion", "fitness", "food", "travel", "pet"];
+      
+      // Initialize empty arrays for each niche
+      niches.forEach(niche => {
+        productsByNiche[niche] = [];
+      });
+      
+      // Group products by niche, taking top 3 for each
+      cachedProducts.forEach(product => {
+        if (product.niche && productsByNiche[product.niche]) {
+          if (productsByNiche[product.niche].length < 3) {
+            productsByNiche[product.niche].push(product);
+          }
+        }
+      });
+      
+      res.json({
+        byNiche: productsByNiche,
+        count: cachedProducts.length,
+        lastRefresh: lastRefresh || new Date().toISOString(),
+        nextScheduledRefresh: "Midnight (12:00 AM)"
+      });
+    } else {
+      // No cached data, get fresh data
+      const trendingProducts = await getRefreshedTrendingProducts();
+      res.json(trendingProducts);
+    }
   } catch (error) {
     console.error("Error fetching trending products:", error);
     res.status(500).json({ 
