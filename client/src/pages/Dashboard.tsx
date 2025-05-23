@@ -107,44 +107,62 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Trending Products Tabs */}
-        <Card className="col-span-3">
-          <CardHeader>
-            <CardTitle>Trending Products By Niche</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="skincare" className="w-full">
-              <TabsList className="grid grid-cols-2 md:grid-cols-7 mb-4">
-                {niches.map(niche => (
-                  <TabsTrigger 
-                    key={niche.id} 
-                    value={niche.id}
-                    className="text-xs md:text-sm flex items-center"
-                  >
-                    <span className="mr-1.5">{niche.icon}</span>
-                    <span className="hidden md:inline">{niche.name}</span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              
+        {/* Trending Products By Niche */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold tracking-tight">Trending Products By Niche</h2>
+            <p className="text-sm text-muted-foreground">
+              Top 3 products from each category
+            </p>
+          </div>
+          
+          <Tabs defaultValue="skincare" className="w-full">
+            <TabsList className="grid grid-cols-4 md:grid-cols-7 mb-8 h-auto p-1">
               {niches.map(niche => (
-                <TabsContent key={niche.id} value={niche.id}>
-                  <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+                <TabsTrigger 
+                  key={niche.id} 
+                  value={niche.id}
+                  className="text-xs md:text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2 py-3 px-2 md:px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  <span className="text-lg md:text-base">{niche.icon}</span>
+                  <span className="text-xs md:text-sm font-medium">{niche.name}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            
+            {niches.map(niche => (
+              <TabsContent key={niche.id} value={niche.id} className="mt-6">
+                <div className="space-y-4">
+                  {/* Niche Header */}
+                  <div className="flex items-center gap-3 pb-4 border-b">
+                    <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${niche.color} flex items-center justify-center text-white text-xl font-bold`}>
+                      {niche.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold">{niche.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {nicheProducts[niche.id]?.length || 0} trending products
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Products Grid */}
+                  <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {trendingLoading ? (
                       // Loading skeletons
                       Array(3).fill(0).map((_, i) => (
-                        <Card key={i} className="overflow-hidden">
+                        <Card key={i} className="overflow-hidden shadow-sm">
                           <CardContent className="p-0">
-                            <div className="p-4">
-                              <Skeleton className="h-6 w-2/3 mb-2" />
-                              <Skeleton className="h-4 w-1/2 mb-4" />
+                            <div className="p-6 space-y-4">
+                              <Skeleton className="h-6 w-2/3" />
+                              <Skeleton className="h-4 w-1/2" />
                               <div className="flex gap-2">
                                 <Skeleton className="h-5 w-16 rounded-full" />
                                 <Skeleton className="h-5 w-24 rounded-full" />
                               </div>
                             </div>
-                            <div className="bg-muted p-3 flex justify-end">
-                              <Skeleton className="h-8 w-24 rounded-md" />
+                            <div className="bg-muted/50 p-4 flex justify-end">
+                              <Skeleton className="h-9 w-28 rounded-md" />
                             </div>
                           </CardContent>
                         </Card>
@@ -161,21 +179,31 @@ const Dashboard = () => {
                       ))
                     ) : (
                       // No products for this niche
-                      <div className="col-span-3 py-10 text-center border rounded-lg border-dashed">
-                        <p className="text-gray-500">No trending products found for this niche</p>
-                        <Link href="/generate">
-                          <Button variant="outline" size="sm" className="mt-4">
-                            Generate Content Anyway
-                          </Button>
-                        </Link>
+                      <div className="col-span-3 py-12 text-center">
+                        <div className="max-w-sm mx-auto space-y-4">
+                          <div className="w-16 h-16 mx-auto rounded-full bg-muted flex items-center justify-center">
+                            <TrendingUp className="h-8 w-8 text-muted-foreground" />
+                          </div>
+                          <div>
+                            <p className="text-lg font-medium text-muted-foreground">No trending products found</p>
+                            <p className="text-sm text-muted-foreground mt-1">
+                              Data will be refreshed automatically
+                            </p>
+                          </div>
+                          <Link href="/generate">
+                            <Button variant="outline" size="sm" className="mt-4">
+                              Generate Content Anyway
+                            </Button>
+                          </Link>
+                        </div>
                       </div>
                     )}
                   </div>
-                </TabsContent>
-              ))}
-            </Tabs>
-          </CardContent>
-        </Card>
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
       </div>
     </div>
   );
