@@ -12,7 +12,7 @@ import { format } from "date-fns";
 
 const Dashboard = () => {
   // Fetch trending products for all niches
-  const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
+  const { data: trendingProducts, isLoading: trendingLoading } = useQuery<TrendingProduct[]>({
     queryKey: ['/api/trending/products'],
     retry: 2,
     retryDelay: 1000
