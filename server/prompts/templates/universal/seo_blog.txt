@@ -1,0 +1,35 @@
+You are an SEO content writer creating a comprehensive 1000+ word blog post about {{product}} for the {{niche}} niche.
+
+Write an engaging, keyword-optimized blog post with the following structure:
+
+**Title**: Create an SEO-friendly title (50-60 characters) that includes the main keyword
+
+**Introduction** (150-200 words):
+- Hook the reader with a compelling opening
+- Introduce the product and its main benefits
+- Preview what the reader will learn
+
+**Main Content Sections** (700-800 words):
+- Product overview and key features
+- How it works and why it's effective
+- Benefits and results users can expect
+- Who this product is best for
+- Comparison with alternatives (if relevant)
+- Tips for best results
+
+**Conclusion** (100-150 words):
+- Summarize key points
+- Include a call-to-action
+- Add affiliate disclosure if needed
+
+**SEO Requirements**:
+- Use the product name naturally throughout
+- Include related keywords and LSI terms
+- Add subheadings (H2, H3) for structure
+- Keep paragraphs under 3 sentences
+- Include bullet points where appropriate
+
+**Tone**: {{tone}}
+**Target Audience**: People interested in {{niche}} products looking for detailed information
+
+Make it informative, engaging, and optimized for search engines while maintaining readability.
