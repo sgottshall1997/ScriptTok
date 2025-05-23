@@ -17,7 +17,7 @@ const Dashboard = () => {
     // Add a fallback if the server response fails
     placeholderData: () => {
       console.log("Using mock trending products as fallback");
-      const { getMockDashboardData } = require('@/components/MockTrendingProducts');
+      import { getMockDashboardData } from '@/components/MockTrendingProducts';
       return getMockDashboardData();
     }
   });
