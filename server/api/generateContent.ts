@@ -194,8 +194,50 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     // Get niche-specific trending data for context enrichment
     const trendingProducts = await storage.getTrendingProductsByNiche(niche);
     
-    // Generate content using OpenAI - now includes fallbackLevel and additional metadata
-    const { content, fallbackLevel, prompt, model, tokens } = await generateContent(product, templateType, tone, trendingProducts, niche);
+    // Generate content using OpenAI with error handling and model fallback
+    let content, fallbackLevel, prompt, model, tokens;
+    
+    try {
+      const result = await generateContent(product, templateType, tone, trendingProducts, niche);
+      content = result.content;
+      fallbackLevel = result.fallbackLevel;
+      prompt = result.prompt;
+      model = result.model;
+      tokens = result.tokens;
+    } catch (error: any) {
+      // Handle OpenAI quota exceeded errors gracefully
+      if (error.status === 429 || error.code === 'insufficient_quota') {
+        console.log('OpenAI quota exceeded, attempting fallback to GPT-3.5-turbo...');
+        
+        try {
+          // Retry with GPT-3.5-turbo
+          const fallbackResult = await generateContent(product, templateType, tone, trendingProducts, niche, 'gpt-3.5-turbo');
+          content = fallbackResult.content;
+          fallbackLevel = fallbackResult.fallbackLevel;
+          prompt = fallbackResult.prompt;
+          model = 'gpt-3.5-turbo';
+          tokens = fallbackResult.tokens;
+        } catch (fallbackError: any) {
+          // If both models fail, return a graceful error response
+          console.error('Both GPT-4 and GPT-3.5-turbo failed:', fallbackError);
+          
+          return res.status(429).json({
+            success: false,
+            data: null,
+            error: "Content generation temporarily unavailable — OpenAI usage quota exceeded. Please try again later."
+          });
+        }
+      } else {
+        // Handle other types of errors
+        console.error('Content generation error:', error);
+        
+        return res.status(500).json({
+          success: false,
+          data: null,
+          error: "Content generation failed. Please try again."
+        });
+      }
+    }
     
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 

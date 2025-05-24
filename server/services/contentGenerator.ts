@@ -29,7 +29,8 @@ export async function generateContent(
   templateType: TemplateType,
   tone: ToneOption,
   trendingProducts: TrendingProduct[],
-  niche: Niche = "skincare"
+  niche: Niche = "skincare",
+  model: string = "gpt-4o"
 ): Promise<{ 
   content: string; 
   fallbackLevel?: 'exact' | 'default' | 'generic';
@@ -68,7 +69,7 @@ export async function generateContent(
     
     // Call OpenAI with the generated prompt and optimized parameters
     const completion = await openai.chat.completions.create({
-      model: modelConfig.modelName, // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      model: model, // Use the model parameter passed to the function (supports fallback to gpt-3.5-turbo)
       messages: [
         {
           role: "system",
@@ -90,7 +91,7 @@ export async function generateContent(
       content: completion.choices[0].message.content || "Could not generate content. Please try again.",
       fallbackLevel,
       prompt,
-      model: modelConfig.modelName,
+      model: model,
       tokens: completion.usage?.total_tokens || 0
     };
       
