@@ -195,11 +195,12 @@ export async function getRefreshedTrendingProducts() {
         if (amazonProducts && amazonProducts.length > 0) {
           console.log(`🛒 ${niche}: Found ${amazonProducts.length} Amazon products`);
           
-          // Filter Amazon products that are genuinely relevant to this niche
-          const relevantAmazonProducts = amazonProducts.filter(product => {
-            const categorizeResult = categorizeProductWithFallback(product.title);
-            return categorizeResult.niche === niche && !categorizeResult.fallback;
-          });
+          // Since we're fetching from niche-specific Amazon URLs, trust the source
+          // All products from Amazon's niche-specific pages are relevant to that niche
+          const relevantAmazonProducts = amazonProducts.map(product => ({
+            ...product,
+            niche: niche // Ensure niche is properly set
+          }));
           
           console.log(`✅ ${niche}: ${relevantAmazonProducts.length} Amazon products match niche criteria`);
           
