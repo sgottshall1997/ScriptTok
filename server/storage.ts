@@ -68,6 +68,8 @@ export interface IStorage {
   // Trending products operations
   saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct>;
   getTrendingProducts(limit?: number): Promise<TrendingProduct[]>;
+  getAllTrendingProducts(): Promise<TrendingProduct[]>;
+  getLastTrendingRefresh(): Promise<string | null>;
   getTrendingProductsByNiche(niche: string, limit?: number): Promise<TrendingProduct[]>;
   clearTrendingProducts(): Promise<void>;
   clearTrendingProductsByPlatform(platform: ScraperPlatform): Promise<void>;
@@ -162,6 +164,9 @@ export class MemStorage implements IStorage {
   
   // Custom templates
   private customTemplates: Map<number, {id: number, name: string, content: string, niche: string}>;
+  
+  // Trending products refresh tracking
+  private lastTrendingRefresh: string | null = null;
   
   private userId: number;
   private contentGenerationId: number;
@@ -444,6 +449,15 @@ export class MemStorage implements IStorage {
       return 0;
     });
     return products.slice(0, limit);
+  }
+
+  async getAllTrendingProducts(): Promise<TrendingProduct[]> {
+    return Array.from(this.trendingProducts.values());
+  }
+
+  async getLastTrendingRefresh(): Promise<string | null> {
+    // For memory storage, we'll store this as a simple variable
+    return this.lastTrendingRefresh || null;
   }
   
   async clearTrendingProducts(): Promise<void> {

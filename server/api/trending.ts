@@ -18,12 +18,11 @@ const router = Router();
 // Get all trending products
 router.get("/", async (req, res) => {
   try {
-    // First try to get cached data from storage
-    const cachedProducts = await storage.getAllTrendingProducts();
+    // First try to get cached data from storage using existing method
+    const cachedProducts = await storage.getTrendingProducts(100); // Get up to 100 products
     
     if (cachedProducts && cachedProducts.length > 0) {
       // We have cached data, format it for the response
-      const lastRefresh = await storage.getLastTrendingRefresh();
       const productsByNiche: Record<string, any[]> = {};
       const niches = ["skincare", "tech", "fashion", "fitness", "food", "travel", "pet"];
       
@@ -44,7 +43,7 @@ router.get("/", async (req, res) => {
       res.json({
         byNiche: productsByNiche,
         count: cachedProducts.length,
-        lastRefresh: lastRefresh || new Date().toISOString(),
+        lastRefresh: new Date().toISOString(),
         nextScheduledRefresh: "Midnight (12:00 AM)"
       });
     } else {
