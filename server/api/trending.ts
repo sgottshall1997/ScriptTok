@@ -18,9 +18,33 @@ const router = Router();
 // Get all trending products
 router.get("/", async (req, res) => {
   try {
-    // Force fresh data with smart categorization for now to fix the distribution issue
-    const trendingProducts = await getRefreshedTrendingProducts();
-    res.json(trendingProducts);
+    // Always get fresh categorized data to ensure proper distribution
+    const freshData = await getRefreshedTrendingProducts();
+    
+    // Ensure we have exactly 4 products per niche
+    const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
+    const result = {
+      byNiche: {} as Record<string, any[]>,
+      count: 0,
+      lastRefresh: new Date().toISOString(),
+      nextScheduledRefresh: "Midnight (12:00 AM)"
+    };
+
+    // Initialize each niche with empty array
+    niches.forEach(niche => {
+      result.byNiche[niche] = [];
+    });
+
+    // Use fresh authentic data from scrapers
+    if (freshData.byNiche) {
+      niches.forEach(niche => {
+        const nicheProducts = freshData.byNiche[niche] || [];
+        result.byNiche[niche] = nicheProducts.slice(0, 4);
+        result.count += result.byNiche[niche].length;
+      });
+    }
+
+    res.json(result);
   } catch (error) {
     console.error("Error fetching trending products:", error);
     res.status(500).json({ 

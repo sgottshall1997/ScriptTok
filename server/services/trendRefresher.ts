@@ -29,11 +29,11 @@ function categorizeProductWithFallback(title: string): { niche: string; confiden
   }
   
   // Medium confidence matches (single relevant keywords)
-  if (lowerTitle.match(/\b(cream|serum|cleanser|moisturizer|toner|mask|hydrat)\b/)) {
+  if (lowerTitle.match(/\b(cream|serum|cleanser|moisturizer|toner|mask|hydrat|skincare|beauty|makeup|foundation|mascara|face|facial)\b/)) {
     return { niche: 'skincare', confidence: 'medium', fallback: false };
   }
   
-  if (lowerTitle.match(/\b(phone|smart|wireless|headphones|earbuds|charger|cable|device|gadget|keyboard|mouse)\b/)) {
+  if (lowerTitle.match(/\b(phone|smart|wireless|headphones|earbuds|charger|cable|device|gadget|keyboard|mouse|apple|android|fire tv|stick|airtag|airpods)\b/)) {
     return { niche: 'tech', confidence: 'medium', fallback: false };
   }
   
@@ -41,19 +41,19 @@ function categorizeProductWithFallback(title: string): { niche: string; confiden
     return { niche: 'fashion', confidence: 'medium', fallback: false };
   }
   
-  if (lowerTitle.match(/\b(weights|dumbbell|resistance|yoga|running|muscle|cardio|bike|treadmill|thermometer|scale|water bottle|tumbler)\b/)) {
+  if (lowerTitle.match(/\b(weights|dumbbell|resistance|yoga|running|muscle|cardio|bike|treadmill|water bottle|tumbler|exercise|fitness|gym|workout)\b/)) {
     return { niche: 'fitness', confidence: 'medium', fallback: false };
   }
   
-  if (lowerTitle.match(/\b(pot|pan|knife|food|oven|grill|tea|frother|scale)\b/)) {
+  if (lowerTitle.match(/\b(pot|pan|knife|food|oven|grill|tea|frother|scale|kitchen|cooking|thermometer|air fryer)\b/)) {
     return { niche: 'food', confidence: 'medium', fallback: false };
   }
   
-  if (lowerTitle.match(/\b(travel|luggage|backpack|suitcase|trip|vacation|camping|outdoor|hiking|portable|insulated|bottle)\b/)) {
+  if (lowerTitle.match(/\b(travel|luggage|backpack|suitcase|trip|vacation|camping|outdoor|hiking|portable|insulated|bottle|stanley|tumbler)\b/)) {
     return { niche: 'travel', confidence: 'medium', fallback: false };
   }
   
-  if (lowerTitle.match(/\b(dog|cat|pet|collar|leash|toy|treat|bed|carrier|grooming|puppy|kitten|animal)\b/)) {
+  if (lowerTitle.match(/\b(dog|cat|pet|collar|leash|toy|treat|bed|carrier|grooming|puppy|kitten|animal|pee pad|litter|poop bag)\b/)) {
     return { niche: 'pet', confidence: 'medium', fallback: false };
   }
   
