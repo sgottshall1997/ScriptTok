@@ -190,12 +190,15 @@ export async function getRefreshedTrendingProducts() {
         let assignedNiche = 'skincare'; // default
         
         // Enhanced smart categorization with fallback mechanism
-        const categorizeResult = categorizeProductWithFallback(productTitle);
+        const categorizeResult = categorizeProductWithFallback(product.title);
         assignedNiche = categorizeResult.niche;
         
-        // Log categorization for debugging
-        if (categorizeResult.fallback) {
-          console.log(`Fallback categorization: "${product.title}" → ${assignedNiche} (confidence: ${categorizeResult.confidence})`);
+        // Log all categorization for debugging
+        console.log(`Product categorization: "${product.title}" → ${assignedNiche} (confidence: ${categorizeResult.confidence}, fallback: ${categorizeResult.fallback})`);
+        
+        // Additional debugging for pet products specifically
+        if (productTitle.includes('dog') || productTitle.includes('cat') || productTitle.includes('pet')) {
+          console.log(`🐾 Pet product detected: "${product.title}" assigned to ${assignedNiche}`);
         }
         
         // Add to the assigned niche if it has less than 3 products
