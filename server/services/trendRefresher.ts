@@ -1,5 +1,6 @@
 import { storage } from "../storage";
 import { getAllTrendingProducts, ScraperResults } from "../scrapers";
+import { getAmazonTrending } from "../scrapers/amazon";
 import cron from "node-cron";
 
 let lastTrendingRefresh: Date = new Date();
@@ -178,54 +179,52 @@ export async function getRefreshedTrendingProducts() {
     result.byNiche[niche] = [];
   });
   
-  // Fetch niche-specific trending products for each category
+  // Fetch Amazon-only trending products for display + other platforms for content enrichment
   try {
-    console.log('🔍 Fetching niche-specific trending products...');
+    console.log('🔍 Fetching Amazon-only trending products for display...');
     
-    // Fetch products for each niche separately to ensure authentic, relevant content
+    // Fetch products for each niche separately using Amazon as primary source
     for (const niche of niches) {
-      console.log(`📊 Fetching trending products for ${niche}...`);
+      console.log(`📊 Fetching Amazon products for ${niche}...`);
       
       try {
-        const { products } = await getAllTrendingProducts(niche);
+        // Get Amazon products only for trending display
+        const amazonResult = await getAmazonTrending(niche);
+        const amazonProducts = amazonResult.products;
         
-        if (products && products.length > 0) {
-          // Prioritize authentic scraped data only
-          const scrapedProducts = products.filter(product => 
-            !product.isAIGenerated && product.source !== 'ai-fallback'
-          );
+        if (amazonProducts && amazonProducts.length > 0) {
+          console.log(`🛒 ${niche}: Found ${amazonProducts.length} Amazon products`);
           
-          console.log(`🔍 ${niche}: Found ${scrapedProducts.length} authentic products`);
-          
-          // Filter products that are genuinely relevant to this niche
-          const relevantProducts = scrapedProducts.filter(product => {
+          // Filter Amazon products that are genuinely relevant to this niche
+          const relevantAmazonProducts = amazonProducts.filter(product => {
             const categorizeResult = categorizeProductWithFallback(product.title);
             return categorizeResult.niche === niche && !categorizeResult.fallback;
           });
           
-          console.log(`✅ ${niche}: ${relevantProducts.length} products match niche criteria`);
+          console.log(`✅ ${niche}: ${relevantAmazonProducts.length} Amazon products match niche criteria`);
           
-          // Add up to 4 authentic, relevant products for this niche
-          const productsToAdd = relevantProducts.slice(0, 4);
+          // Add up to 4 authentic Amazon products for this niche
+          const productsToAdd = relevantAmazonProducts.slice(0, 4);
           productsToAdd.forEach(product => {
             result.byNiche[niche].push({
               ...product,
-              niche: niche
+              niche: niche,
+              source: 'amazon' // Ensure source is clearly marked
             });
             result.count++;
           });
           
-          console.log(`📝 Added ${productsToAdd.length} authentic products to ${niche}`);
+          console.log(`📝 Added ${productsToAdd.length} Amazon products to ${niche}`);
           
         } else {
-          console.log(`⚠️ No products found for ${niche}`);
+          console.log(`⚠️ No Amazon products found for ${niche} - will show empty section`);
         }
       } catch (nicheError) {
-        console.error(`❌ Error fetching products for ${niche}:`, nicheError);
+        console.error(`❌ Error fetching Amazon products for ${niche}:`, nicheError);
       }
     }
   } catch (error) {
-    console.error(`Error in niche-specific product fetching:`, error);
+    console.error(`Error in Amazon-only product fetching:`, error);
   }
   
   return result;
