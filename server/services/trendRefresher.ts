@@ -190,15 +190,22 @@ export async function getRefreshedTrendingProducts() {
         const { products } = await getAllTrendingProducts(niche);
         
         if (products && products.length > 0) {
+          // Prioritize authentic scraped data only
+          const scrapedProducts = products.filter(product => 
+            !product.isAIGenerated && product.source !== 'ai-fallback'
+          );
+          
+          console.log(`🔍 ${niche}: Found ${scrapedProducts.length} authentic products`);
+          
           // Filter products that are genuinely relevant to this niche
-          const relevantProducts = products.filter(product => {
+          const relevantProducts = scrapedProducts.filter(product => {
             const categorizeResult = categorizeProductWithFallback(product.title);
             return categorizeResult.niche === niche && !categorizeResult.fallback;
           });
           
-          console.log(`✅ Found ${relevantProducts.length} relevant products for ${niche}`);
+          console.log(`✅ ${niche}: ${relevantProducts.length} products match niche criteria`);
           
-          // Add up to 4 relevant products for this niche
+          // Add up to 4 authentic, relevant products for this niche
           const productsToAdd = relevantProducts.slice(0, 4);
           productsToAdd.forEach(product => {
             result.byNiche[niche].push({
@@ -208,7 +215,8 @@ export async function getRefreshedTrendingProducts() {
             result.count++;
           });
           
-          console.log(`📝 Added ${productsToAdd.length} products to ${niche} section`);
+          console.log(`📝 Added ${productsToAdd.length} authentic products to ${niche}`);
+          
         } else {
           console.log(`⚠️ No products found for ${niche}`);
         }
