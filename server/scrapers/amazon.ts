@@ -31,10 +31,6 @@ export async function getAmazonTrending(niche: string = 'skincare'): Promise<Scr
         'https://www.amazon.com/Best-Sellers-Kitchen-Dining/zgbs/kitchen',
         'https://www.amazon.com/Best-Sellers-Home-Kitchen-Small-Appliances/zgbs/kitchen/289913'
       ],
-      'home': [
-        'https://www.amazon.com/Best-Sellers-Home-Kitchen/zgbs/home-garden',
-        'https://www.amazon.com/Best-Sellers-Home-Kitchen-Home-D%C3%A9cor-Products/zgbs/home-garden/1063278'
-      ],
       'pet': [
         'https://www.amazon.com/Best-Sellers-Pet-Supplies/zgbs/pet-supplies',
         'https://www.amazon.com/Best-Sellers-Pet-Supplies-Dog-Supplies/zgbs/pet-supplies/2975312011'
