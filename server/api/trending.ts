@@ -18,35 +18,17 @@ const router = Router();
 // Get all trending products
 router.get("/", async (req, res) => {
   try {
-    // Always get fresh categorized data to ensure proper distribution
+    console.log("🔄 API request: Getting fresh trending products");
+    
+    // Force refresh to get latest categorized data
+    await refreshTrendingProducts();
     const freshData = await getRefreshedTrendingProducts();
     
-    // Ensure we have exactly 4 products per niche
-    const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
-    const result = {
-      byNiche: {} as Record<string, any[]>,
-      count: 0,
-      lastRefresh: new Date().toISOString(),
-      nextScheduledRefresh: "Midnight (12:00 AM)"
-    };
-
-    // Initialize each niche with empty array
-    niches.forEach(niche => {
-      result.byNiche[niche] = [];
-    });
-
-    // Use fresh authentic data from scrapers
-    if (freshData.byNiche) {
-      niches.forEach(niche => {
-        const nicheProducts = freshData.byNiche[niche] || [];
-        result.byNiche[niche] = nicheProducts.slice(0, 4);
-        result.count += result.byNiche[niche].length;
-      });
-    }
-
-    res.json(result);
+    console.log("📊 Fresh data structure:", JSON.stringify(freshData, null, 2));
+    
+    res.json(freshData);
   } catch (error) {
-    console.error("Error fetching trending products:", error);
+    console.error("❌ Error in trending API:", error);
     res.status(500).json({ 
       error: "Failed to fetch trending products",
       details: error instanceof Error ? error.message : "Unknown error"
