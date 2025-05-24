@@ -114,29 +114,67 @@ export async function getRefreshedTrendingProducts() {
     result.byNiche[niche] = [];
   });
   
-  // For each niche, get diversified products from multiple sources
-  for (const niche of niches) {
-    try {
-      const { products } = await getAllTrendingProducts(niche);
+  // Get all trending products once and then distribute across niches
+  try {
+    const { products } = await getAllTrendingProducts('skincare'); // Fetch once
+    
+    if (products && products.length > 0) {
+      // Distribute products across niches based on intelligent categorization
+      products.forEach((product, index) => {
+        // Assign products to niches in a round-robin fashion but with smart categorization
+        const productTitle = product.title.toLowerCase();
+        let assignedNiche = 'skincare'; // default
+        
+        // Smart niche assignment based on product keywords
+        if (productTitle.includes('vitamin') || productTitle.includes('serum') || productTitle.includes('cream') || productTitle.includes('cleanser') || productTitle.includes('moisturizer') || productTitle.includes('sunscreen')) {
+          assignedNiche = 'skincare';
+        } else if (productTitle.includes('phone') || productTitle.includes('laptop') || productTitle.includes('airpods') || productTitle.includes('tech') || productTitle.includes('smart') || productTitle.includes('wireless')) {
+          assignedNiche = 'tech';
+        } else if (productTitle.includes('shirt') || productTitle.includes('jacket') || productTitle.includes('dress') || productTitle.includes('shoes') || productTitle.includes('jeans') || productTitle.includes('fashion')) {
+          assignedNiche = 'fashion';
+        } else if (productTitle.includes('protein') || productTitle.includes('workout') || productTitle.includes('gym') || productTitle.includes('fitness') || productTitle.includes('exercise') || productTitle.includes('weights')) {
+          assignedNiche = 'fitness';
+        } else if (productTitle.includes('kitchen') || productTitle.includes('cook') || productTitle.includes('food') || productTitle.includes('recipe') || productTitle.includes('pot') || productTitle.includes('pan')) {
+          assignedNiche = 'food';
+        } else if (productTitle.includes('travel') || productTitle.includes('luggage') || productTitle.includes('backpack') || productTitle.includes('hotel') || productTitle.includes('flight')) {
+          assignedNiche = 'travel';
+        } else if (productTitle.includes('dog') || productTitle.includes('cat') || productTitle.includes('pet') || productTitle.includes('animal') || productTitle.includes('collar') || productTitle.includes('treats')) {
+          assignedNiche = 'pet';
+        } else {
+          // Round-robin distribution for products that don't match keywords
+          assignedNiche = niches[index % niches.length];
+        }
+        
+        // Add to the assigned niche if it has less than 3 products
+        if (result.byNiche[assignedNiche].length < 3) {
+          result.byNiche[assignedNiche].push({
+            ...product,
+            niche: assignedNiche
+          });
+          result.count++;
+        }
+      });
       
-      // Ensure we have products, otherwise just use what we got
-      if (!products || products.length === 0) {
-        result.byNiche[niche] = [];
-        continue;
-      }
-      
-      // Simple approach - just take top 3 products for now
-      // Later we can add more sophisticated diversification
-      const topProducts = products.slice(0, 3);
-      
-      // Add to result
-      result.byNiche[niche] = topProducts;
-      result.count += topProducts.length;
-    } catch (error) {
-      console.error(`Error fetching trending products for ${niche}:`, error);
-      // Initialize with empty array if there's an error
-      result.byNiche[niche] = [];
+      // Fill empty niches with remaining products
+      niches.forEach(niche => {
+        if (result.byNiche[niche].length === 0) {
+          const remainingProducts = products.filter(p => 
+            !Object.values(result.byNiche).flat().some(assigned => assigned.title === p.title)
+          );
+          
+          if (remainingProducts.length > 0) {
+            const productToAdd = remainingProducts[0];
+            result.byNiche[niche].push({
+              ...productToAdd,
+              niche: niche
+            });
+            result.count++;
+          }
+        }
+      });
     }
+  } catch (error) {
+    console.error(`Error fetching trending products:`, error);
   }
   
   return result;
