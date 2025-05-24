@@ -76,7 +76,7 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
 
   // Filter products by niche if provided
   const filteredProducts = niche 
-    ? products.filter(product => {
+    ? (Array.isArray(products) ? products : []).filter(product => {
         // Logic to determine if product is relevant to niche
         // For now, use a simple matching logic that can be improved later
         const nicheKeywords: Record<string, string[]> = {
@@ -96,7 +96,7 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
         const productTitle = product.title.toLowerCase();
         return keywords.some(keyword => productTitle.includes(keyword.toLowerCase()));
       })
-    : products;
+    : (Array.isArray(products) ? products : []);
     
   // If we have a niche, ensure we always have exactly 3 products
   const finalProducts = niche
