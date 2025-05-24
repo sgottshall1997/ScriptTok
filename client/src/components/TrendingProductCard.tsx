@@ -37,9 +37,10 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
   };
 
   const handleUseProduct = () => {
-    // Navigate to content generator with product pre-filled
+    // Navigate directly to niche-specific page with product pre-filled
     const encodedProduct = encodeURIComponent(product.title);
-    setLocation(`/generate?product=${encodedProduct}&niche=${product.niche || 'skincare'}`);
+    const niche = product.niche || 'skincare';
+    setLocation(`/niche/${niche}?product=${encodedProduct}`);
   };
 
   return (
