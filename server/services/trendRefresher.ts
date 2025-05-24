@@ -201,8 +201,8 @@ export async function getRefreshedTrendingProducts() {
           console.log(`🐾 Pet product detected: "${product.title}" assigned to ${assignedNiche}`);
         }
         
-        // Add to the assigned niche if it has less than 3 products
-        if (result.byNiche[assignedNiche].length < 3) {
+        // Add to the assigned niche if it has less than 4 products
+        if (result.byNiche[assignedNiche].length < 4) {
           result.byNiche[assignedNiche].push({
             ...product,
             niche: assignedNiche
@@ -211,9 +211,9 @@ export async function getRefreshedTrendingProducts() {
         }
       });
       
-      // Fill empty niches with remaining products
+      // Ensure every niche has exactly 4 products by filling with remaining products
       niches.forEach(niche => {
-        if (result.byNiche[niche].length === 0) {
+        while (result.byNiche[niche].length < 4) {
           const remainingProducts = products.filter(p => 
             !Object.values(result.byNiche).flat().some(assigned => assigned.title === p.title)
           );
@@ -225,6 +225,9 @@ export async function getRefreshedTrendingProducts() {
               niche: niche
             });
             result.count++;
+          } else {
+            // If no more unique products, break to avoid infinite loop
+            break;
           }
         }
       });

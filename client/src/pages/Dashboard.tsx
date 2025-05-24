@@ -209,8 +209,8 @@ const Dashboard = () => {
                   {/* Products Grid */}
                   <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {trendingLoading ? (
-                      // Intelligent loading cards with detailed progress
-                      Array(3).fill(0).map((_, i) => {
+                      // Intelligent loading cards with detailed progress - show 4 cards
+                      Array(4).fill(0).map((_, i) => {
                         const platforms = ['TikTok', 'Instagram', 'YouTube', 'Reddit', 'Amazon', 'Google Trends'];
                         const currentPlatform = platforms[Math.floor(loadingTimeElapsed / 5) % platforms.length];
                         const progress = Math.min(95, (loadingTimeElapsed / 180) * 100); // Max 3 min estimate
@@ -263,8 +263,8 @@ const Dashboard = () => {
                         );
                       })
                     ) : nicheProducts[niche.id]?.length > 0 ? (
-                      // Actual trending products for this niche
-                      nicheProducts[niche.id].slice(0, 3).map((product, idx) => (
+                      // Actual trending products for this niche - show exactly 4
+                      nicheProducts[niche.id].slice(0, 4).map((product, idx) => (
                         <TrendingProductCard 
                           key={product.id || idx} 
                           product={product} 
