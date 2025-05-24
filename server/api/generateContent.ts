@@ -119,9 +119,10 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     const result = generateContentSchema.safeParse(req.body);
     
     if (!result.success) {
-      return res.status(400).json({ 
-        error: "Invalid request", 
-        details: result.error.format() 
+      return res.status(400).json({
+        success: false,
+        data: null,
+        error: "Invalid request parameters"
       });
     }
     
@@ -132,8 +133,9 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     if (!isValidTone(validatedData.tone)) {
       const availableTones = getAvailableTones();
       return res.status(400).json({
-        error: "Invalid tone selected",
-        message: `The tone "${validatedData.tone}" is not available. Please choose from: ${availableTones.join(", ")}`
+        success: false,
+        data: null,
+        error: `Invalid tone "${validatedData.tone}". Available: ${availableTones.join(", ")}`
       });
     }
     
@@ -142,8 +144,9 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     if (!templateExists) {
       const availableTemplates = await getAvailableTemplateTypes(validatedData.niche);
       return res.status(400).json({
-        error: "Invalid template type selected",
-        message: `The template type "${validatedData.templateType}" is not available for the "${validatedData.niche}" niche. Available templates: ${availableTemplates.join(", ")}`
+        success: false,
+        data: null,
+        error: `Invalid template "${validatedData.templateType}" for ${validatedData.niche}. Available: ${availableTemplates.join(", ")}`
       });
     }
     
@@ -170,15 +173,21 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       
       console.log(`Using cached content for ${product}, template: ${templateType}, tone: ${tone}`);
       
-      return res.json({ 
-        product, 
-        templateType, 
-        tone, 
-        niche,
-        content: cached.content,
-        fallbackLevel: cached.fallbackLevel || 'exact', // Include cached fallback level
-        fromCache: true,
-        videoDuration
+      return res.json({
+        success: true,
+        data: {
+          content: cached.content,
+          summary: `${templateType} content for ${product} (${tone} tone)`,
+          tags: [niche, templateType, tone, "cached"],
+          product,
+          templateType,
+          tone,
+          niche,
+          fallbackLevel: cached.fallbackLevel || 'exact',
+          fromCache: true,
+          videoDuration
+        },
+        error: null
       });
     }
     
@@ -246,22 +255,29 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     // Estimate video duration
     const videoDuration = estimateVideoDuration(content, tone, templateType);
     
-    // Return generated content with video duration estimation and fallback information
+    // Return success response with clean JSON structure
     res.json({
-      product,
-      templateType,
-      tone,
-      niche,
-      content,
-      fallbackLevel,
-      fromCache: false,
-      videoDuration
+      success: true,
+      data: {
+        content,
+        summary: `Fresh ${templateType} content for ${product} (${tone} tone)`,
+        tags: [niche, templateType, tone, model || "gpt-4o"],
+        product,
+        templateType,
+        tone,
+        niche,
+        fallbackLevel,
+        fromCache: false,
+        videoDuration
+      },
+      error: null
     });
   } catch (error) {
     console.error("Error generating content:", error);
-    res.status(500).json({ 
-      error: "Failed to generate content", 
-      details: error instanceof Error ? error.message : "Unknown error" 
+    res.status(500).json({
+      success: false,
+      data: null,
+      error: error instanceof Error ? error.message : "Failed to generate content"
     });
   }
 });
