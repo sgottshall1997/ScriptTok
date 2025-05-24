@@ -23,9 +23,9 @@ const getNicheColor = (niche?: string): string => {
 
 // Format content with niche-specific styling
 const getFormattedContent = (content: GenerationResponse): string => {
-  if (!content || !content.content) return '';
+  if (!content || !content.data?.content) return '';
   
-  let formattedContent = content.content;
+  let formattedContent = content.data.content;
   
   // Add branded intro - could be moved to the server-side
   if (content.niche && content.templateType) {

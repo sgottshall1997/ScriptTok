@@ -132,6 +132,17 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       const response = await apiRequest('POST', '/api/generate', requestData);
       const data: GenerationResponse = await response.json();
       
+      // Check if the response indicates success
+      if (data.success === false) {
+        // Handle graceful error responses from backend
+        toast({
+          title: "⚠️ Content Generation Unavailable",
+          description: data.error || "Content generation temporarily unavailable. Please try again later.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
       onGenerate(data);
       
       // Track content generation event in analytics
@@ -140,14 +151,25 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       
       toast({
         title: "Content generated successfully",
-        description: data.fromCache 
+        description: data.data?.fromCache 
           ? "Content was retrieved from cache." 
-          : "Fresh content was generated using OpenAI.",
+          : `Fresh content was generated using ${data.data?.model || 'OpenAI'}.`,
       });
-    } catch (error) {
+    } catch (error: any) {
+      // Handle network errors and other exceptions
+      let errorMessage = "Unknown error occurred";
+      
+      if (error?.response?.status === 429) {
+        errorMessage = "⚠️ Content generation temporarily unavailable — OpenAI usage quota exceeded. Please try again later.";
+      } else if (error?.response?.data?.error) {
+        errorMessage = error.response.data.error;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
       toast({
         title: "Error generating content",
-        description: error instanceof Error ? error.message : "Unknown error occurred",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {

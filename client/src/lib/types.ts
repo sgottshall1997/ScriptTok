@@ -101,13 +101,19 @@ export const TONE_OPTIONS = [
 ];
 
 export interface GenerationResponse {
-  content: string;
   success: boolean;
-  fromCache?: boolean;
-  model?: string;
-  tokens?: {
-    prompt: number;
-    completion: number;
-    total: number;
+  data?: {
+    content: string;
+    summary: string;
+    tags: string[];
+    product: string;
+    templateType: string;
+    tone: string;
+    niche: string;
+    fallbackLevel: string;
+    fromCache: boolean;
+    videoDuration?: any;
+    model?: string;
   };
+  error?: string;
 }

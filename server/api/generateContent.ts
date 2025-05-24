@@ -310,7 +310,8 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         niche,
         fallbackLevel,
         fromCache: false,
-        videoDuration
+        videoDuration,
+        model: model || "gpt-4o"
       },
       error: null
     });
