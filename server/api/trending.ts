@@ -20,11 +20,21 @@ router.get("/", async (req, res) => {
   try {
     console.log("🔄 API request: Getting fresh trending products");
     
+    // Clear any existing cache and force fresh generation
+    await storage.clearTrendingProducts();
+    
     // Force refresh to get latest categorized data
     await refreshTrendingProducts();
     const freshData = await getRefreshedTrendingProducts();
     
     console.log("📊 Fresh data structure:", JSON.stringify(freshData, null, 2));
+    
+    // Set cache-control headers to prevent browser caching
+    res.set({
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
+    });
     
     res.json(freshData);
   } catch (error) {
