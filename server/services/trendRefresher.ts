@@ -178,62 +178,46 @@ export async function getRefreshedTrendingProducts() {
     result.byNiche[niche] = [];
   });
   
-  // Get all trending products once and then distribute across niches
+  // Fetch niche-specific trending products for each category
   try {
-    const { products } = await getAllTrendingProducts('skincare'); // Fetch once
+    console.log('🔍 Fetching niche-specific trending products...');
     
-    if (products && products.length > 0) {
-      // Distribute products across niches based on intelligent categorization
-      products.forEach((product, index) => {
-        // Assign products to niches in a round-robin fashion but with smart categorization
-        const productTitle = product.title.toLowerCase();
-        let assignedNiche = 'skincare'; // default
-        
-        // Enhanced smart categorization with fallback mechanism
-        const categorizeResult = categorizeProductWithFallback(product.title);
-        assignedNiche = categorizeResult.niche;
-        
-        // Log all categorization for debugging
-        console.log(`Product categorization: "${product.title}" → ${assignedNiche} (confidence: ${categorizeResult.confidence}, fallback: ${categorizeResult.fallback})`);
-        
-        // Additional debugging for pet products specifically
-        if (productTitle.includes('dog') || productTitle.includes('cat') || productTitle.includes('pet')) {
-          console.log(`🐾 Pet product detected: "${product.title}" assigned to ${assignedNiche}`);
-        }
-        
-        // Add to the assigned niche if it has less than 4 products
-        if (result.byNiche[assignedNiche].length < 4) {
-          result.byNiche[assignedNiche].push({
-            ...product,
-            niche: assignedNiche
-          });
-          result.count++;
-        }
-      });
+    // Fetch products for each niche separately to ensure authentic, relevant content
+    for (const niche of niches) {
+      console.log(`📊 Fetching trending products for ${niche}...`);
       
-      // Ensure every niche has exactly 4 products by filling with remaining products
-      niches.forEach(niche => {
-        while (result.byNiche[niche].length < 4) {
-          const remainingProducts = products.filter(p => 
-            !Object.values(result.byNiche).flat().some(assigned => assigned.title === p.title)
-          );
+      try {
+        const { products } = await getAllTrendingProducts(niche);
+        
+        if (products && products.length > 0) {
+          // Filter products that are genuinely relevant to this niche
+          const relevantProducts = products.filter(product => {
+            const categorizeResult = categorizeProductWithFallback(product.title);
+            return categorizeResult.niche === niche && !categorizeResult.fallback;
+          });
           
-          if (remainingProducts.length > 0) {
-            const productToAdd = remainingProducts[0];
+          console.log(`✅ Found ${relevantProducts.length} relevant products for ${niche}`);
+          
+          // Add up to 4 relevant products for this niche
+          const productsToAdd = relevantProducts.slice(0, 4);
+          productsToAdd.forEach(product => {
             result.byNiche[niche].push({
-              ...productToAdd,
+              ...product,
               niche: niche
             });
             result.count++;
-          } else {
-            // If no more unique products, break to avoid infinite loop
-            break;
-          }
+          });
+          
+          console.log(`📝 Added ${productsToAdd.length} products to ${niche} section`);
+        } else {
+          console.log(`⚠️ No products found for ${niche}`);
         }
-      });
+      } catch (nicheError) {
+        console.error(`❌ Error fetching products for ${niche}:`, nicheError);
+      }
     }
   } catch (error) {
-    console.error(`Error fetching trending products:`, error);
+    console.error(`Error in niche-specific product fetching:`, error);
   }
   
   return result;
