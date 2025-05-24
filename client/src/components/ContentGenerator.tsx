@@ -43,6 +43,29 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   // State for template options based on selected niche
   const [templateOptions, setTemplateOptions] = useState([...UNIVERSAL_TEMPLATE_OPTIONS]);
   
+  // Handle URL parameters for pre-filling form
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productParam = urlParams.get('product');
+    const nicheParam = urlParams.get('niche');
+    
+    if (productParam) {
+      setProductName(decodeURIComponent(productParam));
+      if (productInputRef.current) {
+        productInputRef.current.value = decodeURIComponent(productParam);
+      }
+    }
+    
+    if (nicheParam && !initialNiche) {
+      setNiche(nicheParam);
+    }
+    
+    // Clear URL parameters after setting values
+    if (productParam || nicheParam) {
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [initialNiche]);
+  
   // Update template options when niche changes
   useEffect(() => {
     // Combine universal templates with niche-specific templates

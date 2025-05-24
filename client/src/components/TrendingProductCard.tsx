@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TrendingProduct, SOURCE_COLORS } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
+import { useLocation } from "wouter";
 
 interface TrendingProductCardProps {
   product: TrendingProduct;
@@ -26,6 +27,8 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
   rank, 
   gradientClass = "from-blue-500 to-violet-500" 
 }) => {
+  const [, setLocation] = useLocation();
+  
   const getSourceColorClass = (source: string) => {
     if (source === "suggested") {
       return 'bg-indigo-100 text-indigo-800';
@@ -33,19 +36,10 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
     return SOURCE_COLORS[source as keyof typeof SOURCE_COLORS] || 'bg-gray-100 text-gray-800';
   };
 
-  const handleAddProductToForm = (product: string) => {
-    // Find the product input field and set its value
-    const productInput = document.getElementById('product') as HTMLInputElement;
-    if (productInput) {
-      productInput.value = product;
-      productInput.focus();
-
-      // Find the closest form and navigate to it
-      const form = productInput.closest('form');
-      if (form) {
-        form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    }
+  const handleUseProduct = () => {
+    // Navigate to content generator with product pre-filled
+    const encodedProduct = encodeURIComponent(product.title);
+    setLocation(`/generate?product=${encodedProduct}&niche=${product.niche || 'skincare'}`);
   };
 
   return (
@@ -75,7 +69,7 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
             size="sm"
             variant="outline"
             className="text-xs font-medium" 
-            onClick={() => handleAddProductToForm(product.title)}
+            onClick={handleUseProduct}
           >
             <PlusIcon className="h-3.5 w-3.5 mr-1" />
             Use Product
