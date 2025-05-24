@@ -6,6 +6,70 @@ let lastTrendingRefresh: Date = new Date();
 const nextScheduledRefresh = "Midnight (12:00 AM)";
 
 /**
+ * Enhanced product categorization with confidence scoring and fallback mechanism
+ */
+function categorizeProductWithFallback(title: string): { niche: string; confidence: 'high' | 'medium' | 'low'; fallback: boolean } {
+  const lowerTitle = title.toLowerCase();
+  
+  // High confidence matches (very specific terms)
+  if (lowerTitle.match(/\b(skincare|beauty|retinol|vitamin c|niacinamide|collagen|acne|sunscreen|spf)\b/)) {
+    return { niche: 'skincare', confidence: 'high', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(smartphone|laptop|computer|iphone|android|tablet|bluetooth|wireless|usb|tech|digital|electronic)\b/)) {
+    return { niche: 'tech', confidence: 'high', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(workout|fitness|gym|protein|supplements|athletic|sports|exercise|training)\b/)) {
+    return { niche: 'fitness', confidence: 'high', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(instant pot|air fryer|kitchen|cooking|blender|coffee|recipe|meal|cookware)\b/)) {
+    return { niche: 'food', confidence: 'high', fallback: false };
+  }
+  
+  // Medium confidence matches (single relevant keywords)
+  if (lowerTitle.match(/\b(cream|serum|cleanser|moisturizer|toner|mask|hydrat)\b/)) {
+    return { niche: 'skincare', confidence: 'medium', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(phone|smart|wireless|headphones|earbuds|charger|cable|device|gadget|keyboard|mouse)\b/)) {
+    return { niche: 'tech', confidence: 'medium', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(shirt|dress|jacket|shoes|sneakers|boots|jeans|pants|sweater|hoodie|hat|bag|purse|jewelry|watch|fashion|clothing|apparel|style|outfit)\b/)) {
+    return { niche: 'fashion', confidence: 'medium', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(weights|dumbbell|resistance|yoga|running|muscle|cardio|bike|treadmill|thermometer|scale|water bottle|tumbler)\b/)) {
+    return { niche: 'fitness', confidence: 'medium', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(pot|pan|knife|food|oven|grill|tea|frother|scale)\b/)) {
+    return { niche: 'food', confidence: 'medium', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(travel|luggage|backpack|suitcase|trip|vacation|camping|outdoor|hiking|portable|insulated|bottle)\b/)) {
+    return { niche: 'travel', confidence: 'medium', fallback: false };
+  }
+  
+  if (lowerTitle.match(/\b(dog|cat|pet|collar|leash|toy|treat|bed|carrier|grooming|puppy|kitten|animal)\b/)) {
+    return { niche: 'pet', confidence: 'medium', fallback: false };
+  }
+  
+  // Low confidence fallback - distribute evenly to avoid empty sections
+  const fallbackNiches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
+  const hash = title.split('').reduce((a, b) => { a = ((a << 5) - a) + b.charCodeAt(0); return a & a; }, 0);
+  const nicheIndex = Math.abs(hash) % fallbackNiches.length;
+  
+  return { 
+    niche: fallbackNiches[nicheIndex], 
+    confidence: 'low', 
+    fallback: true 
+  };
+}
+
+/**
  * Initialize trending products refresh schedule
  * Runs once at startup and then every day at midnight
  */
@@ -125,24 +189,13 @@ export async function getRefreshedTrendingProducts() {
         const productTitle = product.title.toLowerCase();
         let assignedNiche = 'skincare'; // default
         
-        // Smart niche assignment based on product keywords
-        if (productTitle.includes('vitamin') || productTitle.includes('serum') || productTitle.includes('cream') || productTitle.includes('cleanser') || productTitle.includes('moisturizer') || productTitle.includes('sunscreen')) {
-          assignedNiche = 'skincare';
-        } else if (productTitle.includes('phone') || productTitle.includes('laptop') || productTitle.includes('airpods') || productTitle.includes('tech') || productTitle.includes('smart') || productTitle.includes('wireless')) {
-          assignedNiche = 'tech';
-        } else if (productTitle.includes('shirt') || productTitle.includes('jacket') || productTitle.includes('dress') || productTitle.includes('shoes') || productTitle.includes('jeans') || productTitle.includes('fashion')) {
-          assignedNiche = 'fashion';
-        } else if (productTitle.includes('protein') || productTitle.includes('workout') || productTitle.includes('gym') || productTitle.includes('fitness') || productTitle.includes('exercise') || productTitle.includes('weights')) {
-          assignedNiche = 'fitness';
-        } else if (productTitle.includes('kitchen') || productTitle.includes('cook') || productTitle.includes('food') || productTitle.includes('recipe') || productTitle.includes('pot') || productTitle.includes('pan')) {
-          assignedNiche = 'food';
-        } else if (productTitle.includes('travel') || productTitle.includes('luggage') || productTitle.includes('backpack') || productTitle.includes('hotel') || productTitle.includes('flight')) {
-          assignedNiche = 'travel';
-        } else if (productTitle.includes('dog') || productTitle.includes('cat') || productTitle.includes('pet') || productTitle.includes('animal') || productTitle.includes('collar') || productTitle.includes('treats')) {
-          assignedNiche = 'pet';
-        } else {
-          // Round-robin distribution for products that don't match keywords
-          assignedNiche = niches[index % niches.length];
+        // Enhanced smart categorization with fallback mechanism
+        const categorizeResult = categorizeProductWithFallback(productTitle);
+        assignedNiche = categorizeResult.niche;
+        
+        // Log categorization for debugging
+        if (categorizeResult.fallback) {
+          console.log(`Fallback categorization: "${product.title}" → ${assignedNiche} (confidence: ${categorizeResult.confidence})`);
         }
         
         // Add to the assigned niche if it has less than 3 products

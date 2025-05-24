@@ -209,36 +209,59 @@ const Dashboard = () => {
                   {/* Products Grid */}
                   <div className="grid gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                     {trendingLoading ? (
-                      // Enhanced loading cards with progress
-                      Array(3).fill(0).map((_, i) => (
-                        <Card key={i} className="overflow-hidden shadow-sm border-2 border-dashed">
-                          <CardContent className="p-0">
-                            <div className="p-6 space-y-4">
-                              <div className="flex items-center gap-2 mb-4">
-                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                                <span className="text-sm text-muted-foreground">
-                                  Scanning platforms...
+                      // Intelligent loading cards with detailed progress
+                      Array(3).fill(0).map((_, i) => {
+                        const platforms = ['TikTok', 'Instagram', 'YouTube', 'Reddit', 'Amazon', 'Google Trends'];
+                        const currentPlatform = platforms[Math.floor(loadingTimeElapsed / 5) % platforms.length];
+                        const progress = Math.min(95, (loadingTimeElapsed / 180) * 100); // Max 3 min estimate
+                        
+                        return (
+                          <Card key={i} className="overflow-hidden shadow-sm border-2 border-dashed border-primary/30">
+                            <CardContent className="p-0">
+                              <div className="p-6 space-y-4">
+                                <div className="flex items-center gap-2 mb-4">
+                                  <Loader2 className="h-4 w-4 animate-spin text-primary" />
+                                  <div className="flex flex-col">
+                                    <span className="text-sm font-medium text-foreground">
+                                      Analyzing trends...
+                                    </span>
+                                    <span className="text-xs text-muted-foreground">
+                                      Scanning {currentPlatform}
+                                    </span>
+                                  </div>
+                                </div>
+                                
+                                {/* Progress bar */}
+                                <div className="w-full bg-muted rounded-full h-2 mb-2">
+                                  <div 
+                                    className="bg-primary h-2 rounded-full transition-all duration-1000 ease-out"
+                                    style={{ width: `${progress}%` }}
+                                  ></div>
+                                </div>
+                                
+                                <Skeleton className="h-6 w-2/3" />
+                                <Skeleton className="h-4 w-1/2" />
+                                <div className="flex gap-2">
+                                  <Skeleton className="h-5 w-16 rounded-full" />
+                                  <Skeleton className="h-5 w-24 rounded-full" />
+                                </div>
+                                
+                                <div className="flex justify-between text-xs text-muted-foreground">
+                                  <span>{Math.round(progress)}% complete</span>
+                                  <span>Est. {Math.max(1, 3 - Math.floor(loadingTimeElapsed / 60))} min remaining</span>
+                                </div>
+                              </div>
+                              <div className="bg-muted/50 p-4 flex justify-between items-center">
+                                <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  {formatLoadingTime(loadingTimeElapsed)} elapsed
                                 </span>
+                                <Skeleton className="h-9 w-28 rounded-md" />
                               </div>
-                              <Skeleton className="h-6 w-2/3" />
-                              <Skeleton className="h-4 w-1/2" />
-                              <div className="flex gap-2">
-                                <Skeleton className="h-5 w-16 rounded-full" />
-                                <Skeleton className="h-5 w-24 rounded-full" />
-                              </div>
-                              <div className="text-xs text-muted-foreground">
-                                Est. {Math.max(1, 3 - Math.floor(loadingTimeElapsed / 10))} min remaining
-                              </div>
-                            </div>
-                            <div className="bg-muted/50 p-4 flex justify-between items-center">
-                              <span className="text-xs text-muted-foreground">
-                                {loadingTimeElapsed}s elapsed
-                              </span>
-                              <Skeleton className="h-9 w-28 rounded-md" />
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ))
+                            </CardContent>
+                          </Card>
+                        );
+                      })
                     ) : nicheProducts[niche.id]?.length > 0 ? (
                       // Actual trending products for this niche
                       nicheProducts[niche.id].slice(0, 3).map((product, idx) => (
