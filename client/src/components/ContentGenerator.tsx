@@ -50,9 +50,19 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
     const nicheParam = urlParams.get('niche');
     
     if (productParam) {
-      setProductName(decodeURIComponent(productParam));
-      if (productInputRef.current) {
-        productInputRef.current.value = decodeURIComponent(productParam);
+      try {
+        const decodedProduct = decodeURIComponent(productParam);
+        setProductName(decodedProduct);
+        if (productInputRef.current) {
+          productInputRef.current.value = decodedProduct;
+        }
+      } catch (error) {
+        // If decoding fails, use the raw parameter
+        console.warn('Failed to decode product parameter:', error);
+        setProductName(productParam);
+        if (productInputRef.current) {
+          productInputRef.current.value = productParam;
+        }
       }
     }
     
