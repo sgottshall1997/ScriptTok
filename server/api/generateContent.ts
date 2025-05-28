@@ -438,10 +438,25 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     });
   } catch (error) {
     console.error("Error generating content:", error);
+    
+    // Ensure we always return valid JSON, never HTML
+    const errorMessage = error instanceof Error ? error.message : "Failed to generate content";
+    
+    // Check if response headers are already sent
+    if (res.headersSent) {
+      console.error("Headers already sent, cannot send error response");
+      return;
+    }
+    
+    // Set proper content type to ensure JSON response
+    res.setHeader('Content-Type', 'application/json');
+    
     res.status(500).json({
       success: false,
       data: null,
-      error: error instanceof Error ? error.message : "Failed to generate content"
+      error: errorMessage,
+      timestamp: new Date().toISOString(),
+      requestId: Math.random().toString(36).substring(7)
     });
   }
 });
