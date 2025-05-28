@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Copy, Calendar, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import CaptionRewriter from "@/components/CaptionRewriter";
 
 interface PlatformContentResponse {
   platform: string;

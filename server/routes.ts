@@ -24,6 +24,7 @@ import { sendToMakeRouter } from "./api/sendToMake";
 import { setupFeedbackRoutes } from "./api/feedback";
 import { rewriteContent } from "./api/rewrite-content";
 import { generateMultiPlatformContent, scheduleMultiPlatformContent } from "./api/multi-platform-generate";
+import { rewriteCaption } from "./api/post/rewrite-caption";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -50,6 +51,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Rewrite content endpoint
   app.post('/api/post/rewrite-content', rewriteContent);
+  
+  // Caption rewrite endpoint
+  app.post('/api/post/rewrite-caption', rewriteCaption);
   
   // Multi-platform content generation endpoints
   app.post('/api/multi-platform/generate', generateMultiPlatformContent);
