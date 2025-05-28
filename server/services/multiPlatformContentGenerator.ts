@@ -146,7 +146,7 @@ export class MultiPlatformContentGenerator {
     }
   }
   
-  private formatResponse(platform: string, contentType: "video" | "photo" | "other", aiResponse: string, videoDuration?: string): PlatformContentResponse {
+  private formatResponse(platform: string, contentType: "video" | "photo" | "other", aiResponse: string, videoDuration?: string, product?: string, niche?: string): PlatformContentResponse {
     let label: string;
     
     if (contentType === "video") {
@@ -181,7 +181,7 @@ export class MultiPlatformContentGenerator {
       if (scriptContent === "HOOK:" || scriptContent.length < 30) {
         console.log(`[${platform}] Triggering fallback for short content`);
         const duration = videoDuration || "30";
-        scriptContent = `Hey everyone! Today I'm sharing ${product} - the ${niche} game changer you need to try. This amazing product gives you incredible results that will transform your routine. Trust me, once you try this, you'll never go back. Check the link in my bio to get yours today!`;
+        scriptContent = `Hey everyone! Today I'm sharing ${product || 'this amazing product'} - the ${niche || 'lifestyle'} game changer you need to try. This amazing product gives you incredible results that will transform your routine. Trust me, once you try this, you'll never go back. Check the link in my bio to get yours today!`;
       }
       
       return {
@@ -189,7 +189,7 @@ export class MultiPlatformContentGenerator {
         type: contentType,
         label,
         script: scriptContent,
-        caption: captionMatch ? captionMatch[1].trim() : `✨ Amazing ${product} content! Perfect for your ${niche} routine. #${niche}love`,
+        caption: captionMatch ? captionMatch[1].trim() : `✨ Amazing ${product || 'product'} content! Perfect for your ${niche || 'lifestyle'} routine. #${niche || 'lifestyle'}love`,
         hashtags: hashtagsMatch ? hashtagsMatch[1].split(/[,\s]+/).filter(tag => tag.startsWith('#')) : [],
       };
     }
