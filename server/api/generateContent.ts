@@ -3,6 +3,7 @@ import { z } from "zod";
 import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
+import { generateVideoContent } from "../services/videoContentGenerator";
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema } from "@shared/schema";
 import { sendWebhookNotification } from "../services/webhookService";
@@ -37,6 +38,8 @@ const generateContentSchema = z.object({
   templateType: z.enum(TEMPLATE_TYPES).default("original"),
   tone: z.enum(TONE_OPTIONS).default("friendly"),
   niche: z.enum(NICHES).default("skincare"),
+  isVideoContent: z.boolean().optional().default(false),
+  videoDuration: z.enum(["30", "45", "60"]).optional(),
 });
 
 // Helper functions to check if tone and template exist in the system
@@ -151,7 +154,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       });
     }
     
-    const { product, templateType, tone, niche } = result.data;
+    const { product, templateType, tone, niche, isVideoContent, videoDuration: videoLength } = result.data;
     
     // Create cache parameters object
     const cacheParams = {
@@ -195,7 +198,49 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     // Get niche-specific trending data for context enrichment
     const trendingProducts = await storage.getTrendingProductsByNiche(niche);
     
-    // Generate content using OpenAI with error handling and model fallback
+    // Handle video content generation
+    if (isVideoContent && videoLength) {
+      try {
+        const videoResult = await generateVideoContent({
+          productName: product,
+          niche,
+          tone,
+          duration: videoLength,
+          trendingData: trendingProducts
+        });
+
+        // Return video content with separate script and caption
+        return res.json({
+          success: true,
+          data: {
+            content: videoResult.script,
+            videoScript: videoResult.script,
+            videoCaption: videoResult.caption,
+            hashtags: videoResult.hashtags,
+            estimatedDuration: videoResult.estimatedDuration,
+            summary: `${videoLength}-second video content for ${product}`,
+            tags: [niche, "video", tone, videoLength + "s"],
+            product,
+            templateType: "video_script",
+            tone,
+            niche,
+            isVideoContent: true,
+            videoDuration: videoLength,
+            fromCache: false
+          },
+          error: null
+        });
+      } catch (error: any) {
+        console.error('Video content generation error:', error);
+        return res.status(500).json({
+          success: false,
+          data: null,
+          error: "Video content generation failed. Please try again."
+        });
+      }
+    }
+
+    // Generate regular content using OpenAI with error handling and model fallback
     let content, fallbackLevel, prompt, model, tokens;
     
     try {
@@ -296,7 +341,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     }
     
     // Estimate video duration
-    const videoDuration = estimateVideoDuration(content, tone, templateType);
+    const estimatedVideoDuration = estimateVideoDuration(content, tone, templateType);
     
     // 📊 Log feedback to SQLite database
     try {
@@ -320,7 +365,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         niche,
         fallbackLevel,
         fromCache: false,
-        videoDuration,
+        videoDuration: videoLength || undefined,
         model: model || "gpt-4o"
       },
       error: null
