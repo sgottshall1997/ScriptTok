@@ -23,6 +23,10 @@ export interface PromptParams {
   tone: ToneOption;
   trendingProducts?: TrendingProduct[];
   fallbackLevel?: 'exact' | 'default' | 'generic'; // Tracks which template fallback level was used
+  successfulPatterns?: { // Most successful patterns from user feedback
+    mostUsedTone: string | null;
+    mostUsedTemplateType: string | null;
+  };
 }
 
 /**
@@ -68,8 +72,20 @@ Note: A specific template for this combination wasn't found, so this is using a 
   // Store the fallback level for later use in the response
   params.fallbackLevel = fallbackLevel;
   
+  // 🎯 Apply successful patterns optimization
+  let optimizedTone = tone;
+  let optimizationNote = '';
+  
+  if (params.successfulPatterns?.mostUsedTone && params.successfulPatterns.mostUsedTone !== tone) {
+    optimizationNote += `\n\nIMPORTANT: Based on user feedback analytics, the "${params.successfulPatterns.mostUsedTone}" tone has been most successful for user engagement. Consider incorporating elements of this successful tone while maintaining the requested "${tone}" style.`;
+  }
+  
+  if (params.successfulPatterns?.mostUsedTemplateType && params.successfulPatterns.mostUsedTemplateType !== templateType) {
+    optimizationNote += `\n\nSUCCESS PATTERN: The "${params.successfulPatterns.mostUsedTemplateType}" template type has shown high user engagement. Where appropriate, incorporate successful elements from this format.`;
+  }
+
   // Get the tone description - now async
-  const toneDescription = await getToneDescription(tone);
+  const toneDescription = await getToneDescription(optimizedTone);
   
   // Build context about trending products
   let trendContext = '';
@@ -90,7 +106,10 @@ Note: A specific template for this combination wasn't found, so this is using a 
     .replace(/{tone}/g, toneDescription)
     .replace(/{trendContext}/g, trendContext);
   
-  return filledPrompt;
+  // Add optimization notes based on successful patterns
+  const finalPrompt = filledPrompt + optimizationNote;
+  
+  return finalPrompt;
 }
 
 /**

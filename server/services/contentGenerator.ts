@@ -40,6 +40,20 @@ export async function generateContent(
   tokens?: number;
 }> {
   try {
+    // 🎯 Get most successful patterns from user feedback
+    let successfulPatterns: { mostUsedTone: string | null; mostUsedTemplateType: string | null } = { 
+      mostUsedTone: null, 
+      mostUsedTemplateType: null 
+    };
+    try {
+      successfulPatterns = await getMostSuccessfulPatterns();
+      if (successfulPatterns.mostUsedTone || successfulPatterns.mostUsedTemplateType) {
+        console.log(`🎯 Found successful patterns - Tone: ${successfulPatterns.mostUsedTone || 'none'}, Template: ${successfulPatterns.mostUsedTemplateType || 'none'}`);
+      }
+    } catch (error) {
+      console.log('No successful patterns found yet, using provided parameters');
+    }
+
     // First try using the new modular prompt system
     const promptParams: PromptParams = {
       niche,
@@ -47,7 +61,8 @@ export async function generateContent(
       templateType,
       tone,
       trendingProducts,
-      fallbackLevel: 'exact' // Initialize with default value
+      fallbackLevel: 'exact', // Initialize with default value
+      successfulPatterns // Pass successful patterns to enhance prompt generation
     };
     
     const prompt = await generatePrompt(promptParams);
