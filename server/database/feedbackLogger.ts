@@ -263,4 +263,66 @@ export const getFeedbackAnalytics = async (): Promise<any[]> => {
   return await feedbackLogger.getAnalytics();
 };
 
+// Get the most successful content patterns based on user feedback
+export const getMostSuccessfulPatterns = async (): Promise<{
+  mostUsedTone: string | null;
+  mostUsedTemplateType: string | null;
+}> => {
+  return new Promise((resolve, reject) => {
+    const db = feedbackLogger.db;
+    
+    // Query for most successful tone (based on userPick = true)
+    const toneQuery = `
+      SELECT tone, COUNT(*) as usage_count
+      FROM feedback_log 
+      WHERE userPick = 1 
+      GROUP BY tone 
+      ORDER BY usage_count DESC 
+      LIMIT 1
+    `;
+    
+    // Query for most successful template type (based on userPick = true)
+    const templateQuery = `
+      SELECT templateType, COUNT(*) as usage_count
+      FROM feedback_log 
+      WHERE userPick = 1 
+      GROUP BY templateType 
+      ORDER BY usage_count DESC 
+      LIMIT 1
+    `;
+    
+    let mostUsedTone: string | null = null;
+    let mostUsedTemplateType: string | null = null;
+    let completedQueries = 0;
+    
+    // Execute tone query
+    db.get(toneQuery, (err, row: any) => {
+      if (err) {
+        console.error('Error querying most successful tone:', err);
+      } else if (row) {
+        mostUsedTone = row.tone;
+      }
+      
+      completedQueries++;
+      if (completedQueries === 2) {
+        resolve({ mostUsedTone, mostUsedTemplateType });
+      }
+    });
+    
+    // Execute template type query
+    db.get(templateQuery, (err, row: any) => {
+      if (err) {
+        console.error('Error querying most successful template type:', err);
+      } else if (row) {
+        mostUsedTemplateType = row.templateType;
+      }
+      
+      completedQueries++;
+      if (completedQueries === 2) {
+        resolve({ mostUsedTone, mostUsedTemplateType });
+      }
+    });
+  });
+};
+
 export default feedbackLogger;
