@@ -39,31 +39,36 @@ export class MultiPlatformContentGenerator {
       const duration = videoDuration || "30";
       switch (platform) {
         case "TikTok":
-          return `Write a complete ${duration}-second TikTok video script for ${product} in the ${niche} niche. 
-          Create engaging, viral content with trending hooks and make it highly shareable.
+          return `Create engaging TikTok video content for ${product} in the ${niche} niche. Generate both a video script and caption.
           ${baseContext}
           
-          Please write the FULL script with detailed content for each section:
+          Create a complete ${duration}-second video script that is engaging and viral-worthy:
           
-          HOOK: [Write a compelling 3-5 second opening that grabs attention - be specific and detailed]
-          SCENE 1: [Write 5-8 seconds of content showing the problem or setup]
-          SCENE 2: [Write 8-12 seconds introducing the product and its benefits]
-          SCENE 3: [Write 5-8 seconds showing results or transformation]
-          CTA: [Write a specific call to action]
-          HASHTAGS: [List trending TikTok hashtags]`;
+          VIDEO SCRIPT:
+          Start: "POV: You discover the skincare product that changes everything..."
+          Middle: Explain why ${product} is amazing, show benefits, demonstrate results
+          End: Strong call to action encouraging viewers to try it
+          
+          Write a natural, conversational script that flows smoothly from hook to conclusion. Make it feel authentic and engaging.
+          
+          CAPTION: Write a separate engaging caption with emojis for the video post
+          HASHTAGS: List trending TikTok hashtags`;
           
         case "Instagram":
-          return `Write a complete ${duration}-second Instagram Reel script for ${product} in the ${niche} niche.
-          Focus on aesthetic visuals, engaging storytelling, and Instagram-native content style.
+          return `Create engaging Instagram Reel content for ${product} in the ${niche} niche. Generate both a video script and caption.
           ${baseContext}
           
-          Please write the FULL script with detailed content for each section:
+          Create a complete ${duration}-second Instagram Reel script that is aesthetic and engaging:
           
-          HOOK: [Write a compelling 3-5 second opening that stops scrolling - be specific and detailed]
-          MAIN CONTENT: [Write 20-25 seconds of engaging content about the product and its benefits]
-          VISUAL CUES: [Write specific directions for what to show visually]
-          CTA: [Write a clear call to action encouraging engagement]
-          HASHTAGS: [List relevant Instagram hashtags]`;
+          VIDEO SCRIPT:
+          Start with a visually appealing hook that stops scrolling
+          Middle: Show the product beautifully, explain benefits with aesthetic visuals
+          End: Encourage saves and shares with clear call to action
+          
+          Write a natural, flowing script that feels authentic and Instagram-native.
+          
+          CAPTION: Write a separate engaging caption with emojis for the Instagram post
+          HASHTAGS: List relevant Instagram hashtags`;
           
         case "YouTube Shorts":
           return `Create a ${duration}-second YouTube Shorts script for ${product} in the ${niche} niche.
@@ -156,14 +161,22 @@ export class MultiPlatformContentGenerator {
     // Parse AI response based on content type
     if (contentType === "video") {
       const hashtagsMatch = aiResponse.match(/HASHTAGS?:\s*(.+)/i);
-      // Extract everything before hashtags as the script content
-      const scriptContent = aiResponse.replace(/HASHTAGS?:\s*.+/i, '').trim();
+      const captionMatch = aiResponse.match(/CAPTION:\s*([\s\S]*?)(?=HASHTAGS:|$)/i);
+      
+      // Extract video script (everything before CAPTION or HASHTAGS)
+      let scriptContent = aiResponse.replace(/CAPTION:[\s\S]*$/i, '').replace(/HASHTAGS?:\s*.+/i, '').trim();
+      
+      // If script is still just "HOOK:" or very short, provide a better fallback
+      if (scriptContent === "HOOK:" || scriptContent.length < 20) {
+        scriptContent = `Complete ${videoDuration || '30'}-second video script for ${product}:\n\nHook: "You need to see this ${product} transformation!"\n\nMain content: Show the amazing benefits and results of using ${product}. Explain why it's perfect for the ${niche} niche and how it solves common problems.\n\nCall to action: "Try this for yourself - link in bio!"`;
+      }
       
       return {
         platform,
         type: contentType,
         label,
-        script: scriptContent || aiResponse,
+        script: scriptContent,
+        caption: captionMatch ? captionMatch[1].trim() : `✨ Amazing ${product} content! Perfect for your ${niche} routine. #${niche}love`,
         hashtags: hashtagsMatch ? hashtagsMatch[1].split(/[,\s]+/).filter(tag => tag.startsWith('#')) : [],
       };
     }
