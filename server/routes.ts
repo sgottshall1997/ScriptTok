@@ -80,6 +80,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Analytics endpoints are now handled by analyticsRouter
 
+  // Daily content showcase endpoint
+  app.get('/api/daily-showcase', async (req, res) => {
+    try {
+      const { getDailyShowcase } = await import('./services/dailyShowcase.js');
+      const showcaseData = await getDailyShowcase();
+      
+      res.json({ 
+        success: true, 
+        data: showcaseData 
+      });
+      
+    } catch (error) {
+      console.error('Daily showcase error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to generate daily showcase' 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
 import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
+import DailyContentShowcase from "@/components/DailyContentShowcase";
 
 const Dashboard = () => {
   const [loadingTimeElapsed, setLoadingTimeElapsed] = useState(0);
@@ -150,6 +151,9 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Daily Content Showcase */}
+        <DailyContentShowcase />
 
         {/* Trending Products By Niche */}
         <div className="space-y-6">
