@@ -100,6 +100,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Amazon Beauty Products endpoint
+  app.get('/api/trending-amazon-beauty', async (req, res) => {
+    try {
+      const { getTrendingAmazonProducts } = await import('./scrapers/amazonBeauty.js');
+      const products = await getTrendingAmazonProducts();
+      
+      res.json({ 
+        success: true, 
+        data: products,
+        count: products.length,
+        niches: 7,
+        productsPerNiche: 4
+      });
+      
+    } catch (error) {
+      console.error('Amazon beauty scraping error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to fetch Amazon beauty products' 
+      });
+    }
+  });
+
+  // Amazon Beauty Products by specific niche
+  app.get('/api/trending-amazon-beauty/:niche', async (req, res) => {
+    try {
+      const { getTrendingAmazonProductsByNiche } = await import('./scrapers/amazonBeauty.js');
+      const { niche } = req.params;
+      const products = await getTrendingAmazonProductsByNiche(niche);
+      
+      res.json({ 
+        success: true, 
+        data: products,
+        niche: niche,
+        count: products.length
+      });
+      
+    } catch (error) {
+      console.error(`Amazon beauty scraping error for ${req.params.niche}:`, error);
+      res.status(500).json({ 
+        success: false, 
+        error: `Failed to fetch Amazon beauty products for ${req.params.niche}` 
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
