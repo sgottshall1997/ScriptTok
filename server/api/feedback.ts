@@ -32,7 +32,68 @@ export function setupFeedbackRoutes(app: Express): void {
     }
   });
 
-  // Update user feedback (star rating, user pick, etc.)
+  // Main feedback endpoint - handles all user interactions
+  app.post('/api/feedback/:id', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { userPick, starRating, incrementClick } = req.body;
+
+      // Validate input
+      if (userPick !== undefined && typeof userPick !== 'boolean') {
+        return res.status(400).json({ 
+          success: false,
+          error: 'userPick must be a boolean' 
+        });
+      }
+
+      if (starRating !== undefined && (typeof starRating !== 'number' || starRating < 1 || starRating > 5)) {
+        return res.status(400).json({ 
+          success: false,
+          error: 'starRating must be a number between 1 and 5' 
+        });
+      }
+
+      let changes = 0;
+      let message = '';
+
+      // Handle click tracking
+      if (incrementClick) {
+        changes = await trackClick(parseInt(id));
+        message = 'Click tracked successfully';
+      } else {
+        // Handle user feedback updates
+        const updates: any = {};
+        if (userPick !== undefined) updates.userPick = userPick;
+        if (starRating !== undefined) updates.starRating = starRating;
+        
+        changes = await updateUserFeedback(parseInt(id), updates);
+        message = 'Feedback updated successfully';
+      }
+      
+      if (changes === 0) {
+        return res.status(404).json({ 
+          success: false,
+          error: 'Feedback entry not found' 
+        });
+      }
+
+      res.json({ 
+        success: true, 
+        data: {
+          changes,
+          message
+        }
+      });
+    } catch (error) {
+      console.error('Error updating feedback:', error);
+      res.status(500).json({ 
+        success: false,
+        error: 'Failed to update feedback' 
+      });
+    }
+  });
+
+  // Legacy PATCH endpoint for backward compatibility
   app.patch('/api/feedback/:id', async (req, res) => {
     try {
       const { id } = req.params;
