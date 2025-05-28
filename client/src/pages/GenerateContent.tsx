@@ -161,8 +161,8 @@ const GenerateContent: FC = () => {
           </div>
         </div>
 
-        {/* Content Generator */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Content Generator Form */}
+        <div className="max-w-4xl mx-auto">
           <div id="content-generator-form">
             <ContentGenerator 
               onGenerate={handleGenerate}
@@ -171,40 +171,40 @@ const GenerateContent: FC = () => {
               selectedProductNiche={selectedProductNiche}
             />
           </div>
-          
-          {/* Generated Content Display */}
-          <div>
-            {generatedContent ? (
-              <div>
-                {isMultiPlatform ? (
-                  <MultiPlatformContentOutput data={generatedContent} />
-                ) : (
-                  <div className="bg-white rounded-lg shadow-xl p-6">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                      Generated Content
-                    </h3>
-                    <div className="prose max-w-none">
-                      {JSON.stringify(generatedContent, null, 2)}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="bg-white/50 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-                <div className="text-gray-400">
-                  <svg className="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    No content generated yet
+        </div>
+
+        {/* Generated Content Display Section */}
+        <div className="max-w-6xl mx-auto mt-12">
+          {generatedContent ? (
+            <div>
+              {isMultiPlatform ? (
+                <MultiPlatformContentOutput data={generatedContent} />
+              ) : (
+                <div className="bg-white rounded-lg shadow-xl p-6">
+                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
+                    Generated Content
                   </h3>
-                  <p className="text-gray-500">
-                    Fill out the form and click "Generate Content" to see your AI-powered content here
-                  </p>
+                  <div className="prose max-w-none">
+                    {JSON.stringify(generatedContent, null, 2)}
+                  </div>
                 </div>
+              )}
+            </div>
+          ) : (
+            <div className="bg-white/50 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
+              <div className="text-gray-400">
+                <svg className="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  No content generated yet
+                </h3>
+                <p className="text-gray-500">
+                  Fill out the form above and click "Generate Content" to see your AI-powered content here
+                </p>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
