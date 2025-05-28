@@ -19,42 +19,32 @@ router.get('/', async (req, res) => {
       });
     }
 
-    // Construct flattened mock payload for better Make.com compatibility
+    // Simple test payload that Make.com should definitely parse
     const mockPayload = {
-      // Core content fields
-      platform: "instagram",
-      postType: "social_media",
-      caption: "🌟 Transform your skincare routine with this amazing product! Perfect for achieving that natural glow we all want. ✨",
-      hashtags: "#skincare #glowup #beauty #selfcare #naturalbeauty #glowbottest",
-      script: "Hey beauty lovers! Today I'm sharing the secret to radiant skin that everyone's been asking about.",
-      
-      // Context fields
-      niche: "skincare",
-      product: "Vitamin C Serum - Brightening Formula",
-      templateType: "influencer_caption",
-      tone: "enthusiastic",
-      
-      // Optional fields
-      mediaUrl: "",
-      scheduledTime: new Date().toISOString(),
-      
-      // Metadata
-      timestamp: new Date().toISOString(),
-      source: "GlowBot-Test",
-      version: "1.0"
+      "test_field_1": "Hello from GlowBot",
+      "test_field_2": "skincare",
+      "test_field_3": "instagram",
+      "caption": "This is a test caption",
+      "hashtags": "#test #glowbot",
+      "timestamp": new Date().toISOString()
     };
 
     console.log('🧪 Testing Make.com webhook with payload:', mockPayload);
     console.log('📡 Webhook URL:', makeWebhookUrl);
 
-    // Send test payload to Make.com with proper formatting
-    const response = await axios.post(makeWebhookUrl, mockPayload, {
+    // Try raw JSON string approach for Make.com compatibility
+    const response = await axios({
+      method: 'POST',
+      url: makeWebhookUrl,
+      data: mockPayload,
       headers: {
-        'Content-Type': 'application/json; charset=utf-8',
-        'Accept': 'application/json',
+        'Content-Type': 'application/json',
         'User-Agent': 'GlowBot-Test/1.0'
       },
-      timeout: 15000 // 15 second timeout
+      timeout: 15000,
+      validateStatus: function (status) {
+        return status >= 200 && status < 300; // Accept any 2xx status
+      }
     });
 
     console.log('✅ Webhook test successful!');
