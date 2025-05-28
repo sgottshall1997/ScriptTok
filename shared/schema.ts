@@ -341,6 +341,20 @@ export const contentHistory = pgTable("content_history", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Daily scraper cache for storing all scraper results
+export const dailyScraperCache = pgTable("daily_scraper_cache", {
+  id: serial("id").primaryKey(),
+  source: text("source").notNull(), // "amazon", "reddit", "tiktok", "youtube", etc.
+  date: text("date").notNull(), // YYYY-MM-DD format
+  data: text("data").notNull(), // Stringified JSON result from the scraper
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    unq: unique().on(table.source, table.date),
+  };
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
