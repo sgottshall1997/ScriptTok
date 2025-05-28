@@ -11,6 +11,13 @@ import { sendWebhookNotification } from "../services/webhookService";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
 
+// Helper function to extract hashtags from text
+function extractHashtags(text: string): string[] {
+  const hashtagRegex = /#[\w]+/g;
+  const matches = text.match(hashtagRegex);
+  return matches ? matches.map(tag => tag.substring(1)) : [];
+}
+
 const router = Router();
 
 // Create a rate limiter middleware that limits to 5 requests per minute
@@ -382,6 +389,29 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       console.error('Error logging feedback to database:', feedbackError);
     }
     
+    // Prepare webhook-ready platform data for Make.com automation
+    const webhookData = [];
+    if (platformContent && platformContent.socialCaptions) {
+      for (const [platform, content] of Object.entries(platformContent.socialCaptions)) {
+        webhookData.push({
+          platform,
+          contentType,
+          caption: content.caption,
+          postInstructions: content.postInstructions,
+          videoScript: platformContent.videoScript || null,
+          photoDescription: platformContent.photoDescription || null,
+          product,
+          niche,
+          tone,
+          templateType,
+          hashtags: extractHashtags(content.caption),
+          mediaUrl: null, // Ready for user to add media URL
+          scheduledTime: null, // Ready for scheduling
+          makeWebhookReady: true
+        });
+      }
+    }
+
     // Return success response with clean JSON structure including platform content
     res.json({
       success: true,
@@ -400,7 +430,9 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         // Platform-specific content
         platforms: platforms || [],
         contentType,
-        platformContent: platformContent || null
+        platformContent: platformContent || null,
+        // Webhook automation ready data
+        webhookData
       },
       error: null
     });

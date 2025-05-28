@@ -116,28 +116,64 @@ function buildPlatformPrompt(request: PlatformContentRequest): string {
 
   const platformInstructions = {
     "Instagram": {
-      captionStyle: "Engaging with emojis, 2-3 hashtags max in caption, storytelling approach",
-      postInstructions: "Use carousel format for product features, add story highlights, tag product location"
+      video: {
+        captionStyle: "Story-style caption with emojis and line breaks, 2-3 hashtags max, engaging hook",
+        postInstructions: "Post between 6-9 PM, use trending audio, add CTA in caption, create story highlights, tag product location"
+      },
+      photo: {
+        captionStyle: "Short story-style caption with emojis, lifestyle context, 3-5 hashtags at end",
+        postInstructions: "Best posting time: 11 AM-1 PM and 6-9 PM, use carousel for multiple angles, add story highlights"
+      }
     },
     "TikTok": {
-      captionStyle: "Short, catchy, trending keywords, 3-5 relevant hashtags",
-      postInstructions: "Hook in first 3 seconds, trending sounds, quick cuts, text overlays"
+      video: {
+        captionStyle: "Hook-driven short caption, 3 viral hashtags, trending keywords, mention trending audio",
+        postInstructions: "Hook in first 3 seconds, use trending sounds, quick cuts, text overlays, post 6-10 PM"
+      },
+      photo: {
+        captionStyle: "Short catchy caption, 3 viral hashtags, call-to-action",
+        postInstructions: "Use carousel format, trending audio for slideshow, text overlays on images"
+      }
     },
     "YouTube Shorts": {
-      captionStyle: "SEO-optimized title, detailed description, 5-8 hashtags",
-      postInstructions: "Strong thumbnail, subscribe CTA, vertical format 9:16"
+      video: {
+        captionStyle: "SEO-optimized title + detailed description + 5-8 hashtags",
+        postInstructions: "Strong thumbnail, subscribe CTA, vertical format 9:16, end screen with related videos"
+      },
+      photo: {
+        captionStyle: "SEO title + bullet-point description + hashtags",
+        postInstructions: "Use slideshow format with audio, clear thumbnail text, subscribe reminder"
+      }
     },
     "Pinterest": {
-      captionStyle: "SEO-rich descriptions, keyword-heavy, 3-5 hashtags",
-      postInstructions: "Vertical image 2:3 ratio, text overlay on image, seasonal keywords"
+      video: {
+        captionStyle: "Product benefits summary, keyword-rich, 3-5 hashtags, seasonal context",
+        postInstructions: "Vertical 9:16 format, text overlay on video, seasonal board placement"
+      },
+      photo: {
+        captionStyle: "Product pin summary focusing on benefits, keyword-heavy, seasonal relevance",
+        postInstructions: "Vertical 2:3 ratio, text overlay on image, seasonal keywords, create themed boards"
+      }
     },
     "Facebook": {
-      captionStyle: "Conversational, community-focused, minimal hashtags",
-      postInstructions: "Native video upload, engage in comments, post during peak hours"
+      video: {
+        captionStyle: "Conversational tone, community-focused, minimal hashtags, personal story",
+        postInstructions: "Native video upload, engage in comments, post during peak hours 1-3 PM, use Facebook Groups"
+      },
+      photo: {
+        captionStyle: "Community-focused caption, storytelling approach, ask questions",
+        postInstructions: "Upload high-res images, post 1-3 PM, encourage comments, share in relevant groups"
+      }
     },
     "X (Twitter)": {
-      captionStyle: "Concise, witty, 1-2 hashtags max, thread if needed",
-      postInstructions: "Tweet during trending times, retweet for reach, use Twitter polls"
+      video: {
+        captionStyle: "Concise tweet, 1-2 hashtags max, witty or informative thread if needed",
+        postInstructions: "Tweet during trending times 8-10 AM, retweet for reach, use Twitter polls, engage with replies"
+      },
+      photo: {
+        captionStyle: "Single concise tweet, no line breaks, emojis optional, 1-2 hashtags",
+        postInstructions: "Tweet 8-10 AM or 7-9 PM, use alt text for accessibility, retweet with comment"
+      }
     }
   };
 
@@ -160,12 +196,13 @@ Target Platforms: ${platforms.join(", ")}`;
 `;
 
   platforms.forEach(platform => {
-    const instructions = platformInstructions[platform] || {
-      captionStyle: "Platform-appropriate style",
+    const platformData = platformInstructions[platform as keyof typeof platformInstructions];
+    const instructions = platformData?.[contentType] || {
+      captionStyle: "Platform-appropriate style for " + contentType,
       postInstructions: "Follow platform best practices"
     };
     
-    prompt += `${platform}:
+    prompt += `${platform} (${contentType}):
 - Caption Style: ${instructions.captionStyle}
 - Post Instructions: ${instructions.postInstructions}
 
