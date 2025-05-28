@@ -13,48 +13,66 @@ const DAILY_NICHES = [
   'pet'
 ];
 
-// Template rotation for variety - using valid template types
-const TEMPLATE_ROTATION = [
-  'influencer_caption',
-  'trending_explainer',
-  'bullet_points',
-  'routine_kit',
-  'buyer_persona',
-  'seo_blog',
-  'viral_hook'
+// High-performing templates based on conversion success
+const HIGH_CONVERSION_TEMPLATES = [
+  'influencer_caption',    // Proven high engagement
+  'viral_hook',           // Strong viral potential  
+  'trending_explainer',   // Educational sells well
+  'bullet_points',        // Easy to consume format
+  'buyer_persona'         // Targeted messaging
 ] as const;
 
-// Tone rotation for variety
-const TONE_ROTATION = [
-  'friendly',
-  'enthusiastic', 
-  'trendy',
-  'professional',
-  'casual',
-  'luxurious',
-  'educational'
+// High-engagement tones that drive sales
+const SALES_FOCUSED_TONES = [
+  'enthusiastic',         // Creates excitement
+  'trendy',              // Appeals to FOMO
+  'friendly',            // Builds trust
+  'luxurious',           // Premium positioning
+  'casual'               // Relatable approach
 ];
+
+// Track used products to avoid repetition across batches
+const usedProducts = new Set<string>();
 
 export async function generateDailyBatch(req: Request, res: Response) {
   try {
-    console.log('🎯 Starting daily batch content generation...');
+    console.log('🎯 Starting intelligent daily batch content generation...');
+    console.log('🎪 Focusing on high-conversion products and proven templates');
     
     const results = [];
     const webhookService = new WebhookService();
 
     for (let i = 0; i < DAILY_NICHES.length; i++) {
       const niche = DAILY_NICHES[i];
-      const template = TEMPLATE_ROTATION[i % TEMPLATE_ROTATION.length];
-      const tone = TONE_ROTATION[i % TONE_ROTATION.length];
+      // Use high-performing templates for better conversion
+      const template = HIGH_CONVERSION_TEMPLATES[i % HIGH_CONVERSION_TEMPLATES.length];
+      // Use sales-focused tones for better engagement
+      const tone = SALES_FOCUSED_TONES[i % SALES_FOCUSED_TONES.length];
       
-      console.log(`📝 Generating content for ${niche} niche...`);
+      console.log(`📝 Generating content for ${niche} niche with ${template} template...`);
       
-      // Get top trending product for this niche
-      const nicheProducts = await storage.getTrendingProductsByNiche(niche, 1);
-      const topProduct = nicheProducts[0]?.title || `Top ${niche} Product`;
+      // Get multiple trending products and select the best one
+      const nicheProducts = await storage.getTrendingProductsByNiche(niche, 5);
+      
+      // Smart product selection: prioritize high mentions + avoid repeats
+      let selectedProduct = null;
+      for (const product of nicheProducts) {
+        const productKey = `${product.title}-${niche}`;
+        if (!usedProducts.has(productKey)) {
+          selectedProduct = product;
+          usedProducts.add(productKey);
+          break;
+        }
+      }
+      
+      // Fallback to highest mention product if all were used
+      const topProduct = selectedProduct?.title || nicheProducts[0]?.title || `Top ${niche} Product`;
+      const mentions = selectedProduct?.mentions || nicheProducts[0]?.mentions || 0;
+      
+      console.log(`💎 Selected: "${topProduct}" (${mentions.toLocaleString()} mentions)`);
       
       try {
-        // Generate content using your existing content generator
+        // Generate content using your existing content generator with proven templates
         const contentResult = await generateContent(
           topProduct,
           niche,
