@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
-import NichePage from "@/pages/niche";
+
 import Dashboard from "@/pages/Dashboard";
 import MyContentHistory from "@/pages/MyContentHistory";
 import AnalyticsDashboard from "@/pages/AnalyticsDashboard";
@@ -46,7 +46,7 @@ function Router() {
       <Route path="/home" component={Home} />
       <Route path="/generate" component={GenerateContent} />
       <Route path="/dashboard" component={Dashboard} />
-      <Route path="/niche/:niche" component={NichePage} />
+
       <Route path="/templates" component={TemplateExplorerPage} />
       <Route path="/history" component={MyContentHistory} />
       <Route path="/analytics" component={AnalyticsDashboard} />
