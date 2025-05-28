@@ -170,7 +170,14 @@ export async function generateDailyBatch(req: Request, res: Response) {
         // Generate video content using direct OpenAI call with niche-specific prompt
         const { openai } = await import('../services/openai');
         
-        const expertPrompt = `You are a ${expertVoice} creating authentic content about ${topProduct}. Write a natural 25-30 second video script that sounds like a real ${expertVoice} would speak. Use ${tone} tone and include specific benefits that matter to ${niche} enthusiasts. No markdown formatting, just clean spoken content.`;
+        const expertPrompt = `You are a ${expertVoice} creating authentic content about ${topProduct}. Write a natural 25-30 second video script that sounds like a real ${expertVoice} would speak. Use ${tone} tone and include specific benefits that matter to ${niche} enthusiasts.
+
+VISUAL ENHANCEMENT: Include visually descriptive language throughout to help video editing tools select better stock footage. Focus on:
+- Scene-setting: Describe locations, lighting, environment ("in a bright bathroom," "morning sunlight," "cozy bedroom")
+- Actions: Mention what's being done ("applying the serum," "holding the product," "checking my phone")
+- Motion and mood: Convey camera movement or viewer feeling ("close-up view," "slow motion," "energetic vibe")
+
+Keep these visual elements naturally integrated without breaking your professional ${expertVoice} tone. No markdown formatting, just clean spoken content optimized for video production.`;
         
         const completion = await openai.chat.completions.create({
           model: 'gpt-4o',
