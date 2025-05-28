@@ -225,11 +225,11 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
           trendingData: trendingProducts
         });
 
-        // Return video content with separate script and caption
+        // Return video content with separate script and caption - no duplicate content
         return res.json({
           success: true,
           data: {
-            content: videoResult.script,
+            content: "", // Empty to prevent duplicate display
             videoScript: videoResult.script,
             videoCaption: videoResult.caption,
             hashtags: videoResult.hashtags,
