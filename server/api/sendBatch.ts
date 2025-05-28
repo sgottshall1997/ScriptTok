@@ -13,6 +13,8 @@ const batchItemSchema = z.object({
   script: z.string().optional(),
   niche: z.string().optional(),
   product: z.string().optional(),
+  templateType: z.string().optional(),
+  tone: z.string().optional(),
   mediaUrl: z.string().url().optional(),
   scheduledTime: z.string().datetime().optional()
 });

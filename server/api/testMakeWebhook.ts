@@ -28,6 +28,8 @@ router.get('/', async (req, res) => {
       script: "This is a test script for video content from GlowBot",
       niche: "skincare",
       product: "Test Product for Webhook",
+      templateType: "influencer_caption",
+      tone: "enthusiastic",
       mediaUrl: null,
       scheduledTime: new Date().toISOString(),
       // Add metadata similar to production payloads
