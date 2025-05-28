@@ -40,6 +40,10 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   const [niche, setNiche] = useState(initialNiche);
   const [productName, setProductName] = useState('');
   
+  // Video content state
+  const [isVideoContent, setIsVideoContent] = useState(false);
+  const [videoDuration, setVideoDuration] = useState("30");
+  
   // State for template options based on selected niche
   const [templateOptions, setTemplateOptions] = useState([...UNIVERSAL_TEMPLATE_OPTIONS]);
   
