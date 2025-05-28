@@ -302,9 +302,15 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
             const makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
             if (makeWebhookUrl) {
+              console.log(`🔍 Debug - AI Scores for ${niche}:`);
+              console.log(`   promptScore: ${promptScore}`);
+              console.log(`   promptFeedback: ${promptFeedback}`);
+              console.log(`   aiQualityScore in payload: ${enhancedPayload.aiQualityScore}`);
+              console.log(`   aiQualityAnalysis in payload: ${enhancedPayload.aiQualityAnalysis}`);
+              
               const axios = await import('axios');
               await axios.default.post(makeWebhookUrl, enhancedPayload);
-              console.log(`✅ Sent ${niche} video content to Make.com`);
+              console.log(`✅ Sent ${niche} video content to Make.com with AI score: ${enhancedPayload.aiQualityScore}`);
             }
           } catch (webhookError) {
             console.log(`⚠️ Webhook failed for ${niche}:`, webhookError);
