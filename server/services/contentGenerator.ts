@@ -112,7 +112,7 @@ export async function generateContent(
       messages: [
         {
           role: "system",
-          content: "You are a highly knowledgeable content creator specializing in product descriptions, reviews, and marketing content. Your goal is to create engaging, informative content based on the prompt provided."
+          content: "You are a video script writer specializing in 30-45 second social media videos. Create engaging, concise scripts that are exactly 30-45 seconds when read at normal speaking pace (150-160 words per minute). Each script should be approximately 75-120 words total. Focus on hook, value, and call-to-action structure."
         },
         {
           role: "user",
@@ -149,11 +149,11 @@ export async function generateContent(
       const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
         {
           role: "system",
-          content: "You are a content creation expert. Generate high-quality content about the product according to the specified template type and tone."
+          content: "You are a video script writer specializing in 30-45 second social media videos. Create engaging, concise scripts that are exactly 30-45 seconds when read at normal speaking pace (150-160 words per minute). Each script should be approximately 75-120 words total. Focus on hook, value, and call-to-action structure."
         },
         {
           role: "user",
-          content: `Create ${templateType} content for ${product} in a ${tone} tone. This is for the ${niche} niche.`
+          content: `Create a 30-45 second video script for ${product} in a ${tone} tone. This is for the ${niche} niche. Keep it to 75-120 words total for perfect timing.`
         }
       ];
       
