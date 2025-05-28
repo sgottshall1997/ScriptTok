@@ -270,7 +270,12 @@ export async function generateDailyBatch(req: Request, res: Response) {
               automationReady: true,
               monetized: !!batchItem.affiliateLink,
               batchId: `daily-${new Date().toISOString().split('T')[0]}`,
-              mentions: batchItem.mentions
+              mentions: batchItem.mentions,
+              aiQualityScore: batchItem.promptScore,
+              aiQualityAnalysis: batchItem.promptFeedback,
+              trendingDataAnalyzed: batchItem.trendingDataUsed,
+              qualityTier: batchItem.promptScore >= 80 ? 'premium' : 
+                          batchItem.promptScore >= 60 ? 'standard' : 'basic'
             };
 
             const makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
