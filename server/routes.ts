@@ -23,6 +23,7 @@ import { webhookTestRouter } from "./api/webhook-test";
 import { sendToMakeRouter } from "./api/sendToMake";
 import { setupFeedbackRoutes } from "./api/feedback";
 import { rewriteContent } from "./api/rewrite-content";
+import { generateMultiPlatformContent, scheduleMultiPlatformContent } from "./api/multi-platform-generate";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -49,6 +50,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Rewrite content endpoint
   app.post('/api/post/rewrite-content', rewriteContent);
+  
+  // Multi-platform content generation endpoints
+  app.post('/api/multi-platform/generate', generateMultiPlatformContent);
+  app.post('/api/multi-platform/schedule', scheduleMultiPlatformContent);
   
   // Setup feedback logging routes
   setupFeedbackRoutes(app);
