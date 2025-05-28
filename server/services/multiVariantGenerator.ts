@@ -1,6 +1,6 @@
 import { generateContent } from './contentGenerator';
 import { getCritiqueFromGPT } from './gptCritic';
-import { feedbackLogger } from '../database/feedbackLogger';
+import feedbackLogger from '../database/feedbackLogger';
 import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption, Niche } from '@shared/constants';
 
