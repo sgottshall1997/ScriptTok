@@ -32,19 +32,12 @@ router.get('/', async (req, res) => {
     console.log('🧪 Testing Make.com webhook with payload:', mockPayload);
     console.log('📡 Webhook URL:', makeWebhookUrl);
 
-    // Try raw JSON string approach for Make.com compatibility
-    const response = await axios({
-      method: 'POST',
-      url: makeWebhookUrl,
-      data: mockPayload,
+    // Send JSON payload to Make.com with exact structure they expect
+    const response = await axios.post(makeWebhookUrl, mockPayload, {
       headers: {
-        'Content-Type': 'application/json',
-        'User-Agent': 'GlowBot-Test/1.0'
+        'Content-Type': 'application/json'
       },
-      timeout: 15000,
-      validateStatus: function (status) {
-        return status >= 200 && status < 300; // Accept any 2xx status
-      }
+      timeout: 15000
     });
 
     console.log('✅ Webhook test successful!');
