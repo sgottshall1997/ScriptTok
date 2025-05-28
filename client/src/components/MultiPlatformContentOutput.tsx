@@ -134,12 +134,12 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
       </Card>
 
       {/* Platform Content */}
-      {Object.entries(data.platformContent).map(([platform, platformData]) => (
+      {Object.entries(data.platformContent || {}).map(([platform, platformData]) => (
         <Card key={platform} className="border-gray-200">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center justify-between">
               <span className="text-purple-700">
-                {formatLabel(platformData, data.metadata.videoDuration)}
+                {platformData.label || formatLabel(platformData, data.metadata?.videoDuration)}
               </span>
               <Button
                 variant="outline"

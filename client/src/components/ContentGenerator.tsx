@@ -154,7 +154,6 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       tone,
       niche,
       platformContentMap,
-      selectedPlatforms,
       videoDuration,
     };
     
