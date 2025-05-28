@@ -11,6 +11,8 @@ const batchItemSchema = z.object({
   caption: z.string().min(1, 'Caption is required'),
   hashtags: z.string(),
   script: z.string().optional(),
+  niche: z.string().optional(),
+  product: z.string().optional(),
   mediaUrl: z.string().url().optional(),
   scheduledTime: z.string().datetime().optional()
 });
