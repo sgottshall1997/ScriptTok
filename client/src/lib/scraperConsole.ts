@@ -105,6 +105,34 @@ export async function logScraperHealth() {
         
         if (isAIFallback) {
           console.log(`  Direct successes: ${successCount} | Using AI for data generation | Failures: ${failureCount}`);
+          
+          // Show specific failure reason
+          let failureReason = '🔍 Analyzing failure reason...';
+          if (scraper.errorMessage) {
+            if (scraper.errorMessage.includes('429') || scraper.errorMessage.includes('rate limit')) {
+              failureReason = '🚫 Rate limited by platform - too many requests';
+            } else if (scraper.errorMessage.includes('403') || scraper.errorMessage.includes('401')) {
+              failureReason = '🔐 Authentication/permission denied by platform';
+            } else if (scraper.errorMessage.includes('parse') || scraper.errorMessage.includes('extract')) {
+              failureReason = '📄 Website structure changed - cannot parse data';
+            } else if (scraper.errorMessage.includes('timeout')) {
+              failureReason = '⏰ Connection timeout - platform too slow';
+            } else if (scraper.errorMessage.includes('ECONNREFUSED') || scraper.errorMessage.includes('network')) {
+              failureReason = '🌐 Network connection failed';
+            } else if (scraper.errorMessage.includes('CAPTCHA') || scraper.errorMessage.includes('bot')) {
+              failureReason = '🤖 Bot detection - platform blocking automated requests';
+            } else {
+              failureReason = `❌ ${scraper.errorMessage.substring(0, 80)}...`;
+            }
+          } else if (successCount === 0 && failureCount === 0) {
+            failureReason = '⚙️ Scraper not configured or never attempted';
+          } else if (failureCount > 0) {
+            failureReason = '⚠️ Recent scraping failures detected - check logs';
+          } else {
+            failureReason = '🤔 Reason unknown - may be intentionally using AI fallback';
+          }
+          
+          console.log(`  💡 Why AI fallback: ${failureReason}`);
         } else {
           console.log(`  Success count: ${successCount} | Failure count: ${failureCount}`);
         }
