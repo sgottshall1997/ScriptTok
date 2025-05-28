@@ -6,13 +6,14 @@ import { TrendingProductCard } from "@/components/TrendingProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import DailyContentShowcase from "@/components/DailyContentShowcase";
 
 const Dashboard = () => {
   const [loadingTimeElapsed, setLoadingTimeElapsed] = useState(0);
+  const [, setLocation] = useLocation();
   const [nextRefreshIn, setNextRefreshIn] = useState<string>("");
 
   // Fetch trending products for all niches
