@@ -101,17 +101,24 @@ export async function generateDailyBatch(req: Request, res: Response) {
     console.log('🎪 Focusing on high-conversion products and proven templates');
 
     const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
-    const templates = ['viral_hook', 'influencer_caption', 'trending_explainer'];
-    const tones = ['friendly', 'enthusiastic', 'professional'];
+    
+    // Strategic content mix: 70% product-focused, 30% value-driven for authenticity
+    const contentStrategy = [
+      { niche: 'skincare', type: 'product', template: 'viral_hook', tone: 'friendly' },
+      { niche: 'tech', type: 'value', template: 'educational_tips', tone: 'professional' },
+      { niche: 'fashion', type: 'product', template: 'influencer_caption', tone: 'enthusiastic' },
+      { niche: 'fitness', type: 'product', template: 'trending_explainer', tone: 'motivational' },
+      { niche: 'food', type: 'value', template: 'lifestyle_tips', tone: 'friendly' },
+      { niche: 'travel', type: 'product', template: 'viral_hook', tone: 'adventurous' },
+      { niche: 'pet', type: 'product', template: 'influencer_caption', tone: 'caring' }
+    ];
     
     const results: any[] = [];
     const errors: string[] = [];
     let successCount = 0;
 
-    for (let i = 0; i < niches.length; i++) {
-      const niche = niches[i];
-      const template = templates[i % templates.length];
-      const tone = tones[i % tones.length];
+    for (let i = 0; i < contentStrategy.length; i++) {
+      const { niche, type, template, tone } = contentStrategy[i];
       
       try {
         console.log(`📝 Generating content for ${niche} niche with ${template} template...`);
