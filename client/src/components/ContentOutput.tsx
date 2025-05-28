@@ -1,11 +1,16 @@
 import { FC, useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { GenerationResponse } from "@/lib/types";
 import HashtagEmojiRecommender from "@/components/HashtagEmojiRecommender";
 import { SocialMediaPreview } from "@/components/SocialMediaPreview";
-import { Share2 } from "lucide-react";
+import { Share2, Calendar, Send } from "lucide-react";
 import { Niche } from "@shared/constants";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
 
 // Maps niche to a Tailwind color
 const getNicheColor = (niche?: string): string => {
@@ -54,6 +59,12 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
   const [showSocialPreview, setShowSocialPreview] = useState(false);
   const [scriptCopied, setScriptCopied] = useState(false);
   const [captionCopied, setCaptionCopied] = useState(false);
+  
+  // Post scheduling state
+  const [selectedPlatform, setSelectedPlatform] = useState("");
+  const [scheduleDate, setScheduleDate] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const { toast } = useToast();
 
   const copyContent = () => {
     if (contentRef.current) {
@@ -77,6 +88,63 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
       navigator.clipboard.writeText(text);
       setCaptionCopied(true);
       setTimeout(() => setCaptionCopied(false), 2000);
+    }
+  };
+
+  // Send content to Make.com webhook
+  const sendToMake = async () => {
+    if (!content || !selectedPlatform) {
+      toast({
+        title: "Missing Information",
+        description: "Please select a platform before sending to Make.com",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSending(true);
+    
+    try {
+      const payload = {
+        content: content.data?.content || "",
+        caption: content.data?.videoCaption || content.data?.content || "",
+        hashtags: content.data?.hashtags || [],
+        platform: selectedPlatform,
+        scheduleTime: scheduleDate || null,
+        niche: content.data?.niche || "",
+        product: content.data?.product || "",
+        tone: content.data?.tone || "",
+      };
+
+      const response = await apiRequest("/api/post/send-to-make", {
+        method: "POST",
+        body: JSON.stringify(payload),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.success) {
+        toast({
+          title: "Content Sent Successfully!",
+          description: `Your content has been scheduled for ${selectedPlatform}${scheduleDate ? ` on ${new Date(scheduleDate).toLocaleDateString()}` : " immediately"}.`,
+        });
+        
+        // Reset form
+        setSelectedPlatform("");
+        setScheduleDate("");
+      } else {
+        throw new Error(response.message || "Failed to send content");
+      }
+    } catch (error: any) {
+      console.error("Error sending to Make.com:", error);
+      toast({
+        title: "Send Failed",
+        description: error.message || "Failed to send content to Make.com. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSending(false);
     }
   };
 
@@ -438,6 +506,78 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
               niche={content.niche as Niche}
               product={content.product}
             />
+          )}
+
+          {/* Post Scheduling Section - Only show if we have content */}
+          {content && (content.data?.content || content.data?.videoScript) && (
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-6">
+              <div className="flex items-center mb-4">
+                <Calendar className="h-5 w-5 mr-2 text-blue-600" />
+                <h3 className="text-lg font-semibold text-blue-800">Schedule & Send to Make.com</h3>
+              </div>
+              
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {/* Platform Selection */}
+                  <div className="space-y-2">
+                    <Label htmlFor="platform" className="text-sm font-medium text-blue-700">
+                      Social Media Platform *
+                    </Label>
+                    <Select value={selectedPlatform} onValueChange={setSelectedPlatform}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Choose platform" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="instagram">Instagram</SelectItem>
+                        <SelectItem value="tiktok">TikTok</SelectItem>
+                        <SelectItem value="pinterest">Pinterest</SelectItem>
+                        <SelectItem value="twitter">X (Twitter)</SelectItem>
+                        <SelectItem value="youtube">YouTube Shorts</SelectItem>
+                        <SelectItem value="facebook">Facebook</SelectItem>
+                        <SelectItem value="linkedin">LinkedIn</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* Schedule Date/Time */}
+                  <div className="space-y-2">
+                    <Label htmlFor="schedule" className="text-sm font-medium text-blue-700">
+                      Schedule Time (Optional)
+                    </Label>
+                    <Input
+                      id="schedule"
+                      type="datetime-local"
+                      value={scheduleDate}
+                      onChange={(e) => setScheduleDate(e.target.value)}
+                      min={new Date().toISOString().slice(0, 16)}
+                      className="w-full"
+                    />
+                    <p className="text-xs text-blue-600">Leave empty to send immediately</p>
+                  </div>
+                </div>
+
+                {/* Send Button */}
+                <div className="flex justify-end pt-2">
+                  <Button 
+                    onClick={sendToMake}
+                    disabled={isSending || !selectedPlatform}
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 flex items-center"
+                  >
+                    {isSending ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4 mr-2" />
+                        Send to Make.com
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </CardContent>
