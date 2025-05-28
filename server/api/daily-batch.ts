@@ -1,5 +1,50 @@
 import type { Request, Response } from "express";
 
+// Generate dynamic captions based on niche and product
+function generateDynamicCaption(niche: string, product: string, template: string): string {
+  const captions = {
+    skincare: [
+      `Transform your skin with ${product}! ✨ Your glow-up starts here 🌟`,
+      `This ${product} is about to change your skincare game! 💆‍♀️`,
+      `POV: You found the holy grail of skincare - ${product} 🧴✨`
+    ],
+    tech: [
+      `This ${product} is a total game-changer! 📱 Tech lovers, you need this 🔥`,
+      `Why didn't I discover ${product} sooner?! 💻⚡`,
+      `Tech tip: ${product} will upgrade your entire setup! 🚀`
+    ],
+    fashion: [
+      `Found my new style obsession: ${product}! 👗 Fashion girlies unite! ✨`,
+      `This ${product} just elevated my entire wardrobe! 💅`,
+      `When ${product} hits different... style level: UNLOCKED! 🔥`
+    ],
+    fitness: [
+      `${product} is about to transform your fitness journey! 💪 Let's get it! 🏋️‍♀️`,
+      `This ${product} hits different! Fitness motivation activated 🔥`,
+      `POV: ${product} just became your new workout bestie! 💯`
+    ],
+    food: [
+      `This ${product} recipe is pure magic! 🍳 Foodies, save this! ✨`,
+      `When ${product} tastes this good, you know it's a winner! 😋`,
+      `${product} just made my kitchen dreams come true! 👨‍🍳🔥`
+    ],
+    travel: [
+      `${product} just made traveling 10x easier! ✈️ Wanderlust activated! 🌍`,
+      `Travel hack: ${product} is a total game-changer! 🎒`,
+      `This ${product} tip will change how you travel forever! 🗺️✨`
+    ],
+    pet: [
+      `My pet is obsessed with ${product}! 🐕 Pet parents, you need this! 💕`,
+      `This ${product} made my furry friend so happy! 🐱✨`,
+      `Pet hack: ${product} is the secret to happy pets! 🐾`
+    ]
+  };
+
+  const nicheOptions = captions[niche as keyof typeof captions] || captions.skincare;
+  const randomCaption = nicheOptions[Math.floor(Math.random() * nicheOptions.length)];
+  return randomCaption;
+}
+
 export async function generateDailyBatch(req: Request, res: Response) {
   try {
     console.log('🎯 Starting intelligent daily batch content generation...');
@@ -63,7 +108,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
             mentions: mentions,
             platform: randomPlatform,
             script: contentResult.content,
-            caption: `Ready to glow like never before? ✨ Discover the magic of ${topProduct} and watch your transformation! 🌟 #GlowWithMe #${niche}Goals`,
+            caption: generateDynamicCaption(niche, topProduct, template),
             hashtags: ['#GlowWithMe', `#${niche}Goals`, '#TrendingNow'].join(' '),
             postInstructions: `Video script for ${niche} niche - Post during peak hours`,
             createdAt: new Date().toISOString(),
