@@ -99,20 +99,74 @@ const DailyBatchButton = () => {
         </div>
       )}
       
-      {batchMutation.isSuccess && showResults && (
-        <div className="space-y-2 p-3 bg-green-50 rounded-lg border">
-          <div className="flex items-center gap-2">
+      {batchMutation.isSuccess && showResults && batchMutation.data && (
+        <div className="space-y-4 mt-6">
+          <div className="flex items-center gap-2 p-3 bg-green-50 rounded-lg border">
             <CheckCircle className="h-4 w-4 text-green-600" />
             <span className="text-sm font-medium text-green-900">
-              Batch Complete!
+              Daily Batch Complete! Generated {batchMutation.data.successCount}/{batchMutation.data.totalAttempted} video scripts
             </span>
           </div>
-          <div className="text-xs text-green-700">
-            Generated {batchMutation.data?.successCount}/{batchMutation.data?.totalNiches} pieces
-          </div>
-          <div className="text-xs text-green-600">
-            Sent to Make.com for scheduling
-          </div>
+          
+          {batchMutation.data.results && batchMutation.data.results.length > 0 && (
+            <div className="space-y-3">
+              <h3 className="text-lg font-semibold text-gray-900">📝 Generated Video Scripts (30-45 seconds)</h3>
+              <div className="grid gap-4">
+                {batchMutation.data.results.map((result: DailyBatchResult, index: number) => (
+                  <div key={index} className="bg-white border rounded-lg p-4 shadow-sm">
+                    <div className="flex justify-between items-start mb-3">
+                      <div className="flex items-center gap-2">
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                          {result.niche?.toUpperCase() || 'UNKNOWN'}
+                        </span>
+                        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded">
+                          {result.platform || 'TikTok'}
+                        </span>
+                        {result.mentions && (
+                          <span className="text-xs text-gray-500">
+                            {result.mentions.toLocaleString()} mentions
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(result.script || '')}
+                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                      >
+                        Copy Script
+                      </button>
+                    </div>
+                    
+                    <div className="mb-3">
+                      <h4 className="font-medium text-gray-900 text-sm mb-1">
+                        {result.product || 'Trending Product'}
+                      </h4>
+                      <p className="text-xs text-gray-600">
+                        Template: {result.template} • Tone: {result.tone}
+                      </p>
+                    </div>
+                    
+                    <div className="bg-gray-50 rounded p-3">
+                      <h5 className="text-xs font-medium text-gray-700 mb-2">🎬 Video Script:</h5>
+                      <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+                        {result.script || 'Script content not available'}
+                      </p>
+                    </div>
+                    
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <div className="text-xs text-gray-600">
+                        <span className="font-medium">Caption:</span> {result.caption || ''}
+                      </div>
+                      {result.hashtags && (
+                        <div className="text-xs text-blue-600 mt-1">
+                          {result.hashtags}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
