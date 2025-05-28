@@ -13,16 +13,16 @@ const DAILY_NICHES = [
   'pet'
 ];
 
-// Template rotation for variety
+// Template rotation for variety - using valid template types
 const TEMPLATE_ROTATION = [
-  'product_review',
-  'influencer_caption', 
+  'influencer_caption',
   'trending_explainer',
   'bullet_points',
   'routine_kit',
   'buyer_persona',
+  'seo_blog',
   'viral_hook'
-];
+] as const;
 
 // Tone rotation for variety
 const TONE_ROTATION = [
@@ -39,8 +39,6 @@ export async function generateDailyBatch(req: Request, res: Response) {
   try {
     console.log('🎯 Starting daily batch content generation...');
     
-    // Get trending products organized by niche using your existing storage
-    const trendingProducts = await storage.getTrendingProductsByNiche();
     const results = [];
     const webhookService = new WebhookService();
 
@@ -52,34 +50,29 @@ export async function generateDailyBatch(req: Request, res: Response) {
       console.log(`📝 Generating content for ${niche} niche...`);
       
       // Get top trending product for this niche
-      const nicheProducts = trendingProducts[niche] || [];
+      const nicheProducts = await storage.getTrendingProductsByNiche(niche, 1);
       const topProduct = nicheProducts[0]?.title || `Top ${niche} Product`;
       
       try {
-        // Generate content using your existing multi-platform generator
-        const contentResult = await generateMultiPlatformContent(
+        // Generate content using your existing content generator
+        const contentResult = await generateContent(
           topProduct,
           niche,
           tone,
-          template,
-          ['Instagram'], // Default to Instagram for consistency
-          '30'
+          template as any
         );
 
-        if (contentResult.success && contentResult.platformContent) {
-          const instagramContent = contentResult.platformContent.Instagram;
+        if (contentResult && contentResult.content) {
           
           const batchItem = {
             niche,
             product: topProduct,
             template,
             tone,
-            script: instagramContent?.script || '',
-            caption: instagramContent?.caption || contentResult.content,
-            hashtags: Array.isArray(instagramContent?.hashtags) 
-              ? instagramContent.hashtags.join(' ') 
-              : '',
-            postInstructions: instagramContent?.postInstructions || '',
+            script: '',
+            caption: contentResult.content,
+            hashtags: '',
+            postInstructions: `Generated for ${niche} niche using ${template} template with ${tone} tone`,
             createdAt: new Date().toISOString(),
             source: 'GlowBot-DailyBatch'
           };
@@ -106,18 +99,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
           // Send to Make.com webhook
           try {
-            await webhookService.sendMultiPlatformContent({
-              platformContent: { Instagram: instagramContent },
-              platformSchedules: {},
-              metadata: {
-                product: topProduct,
-                niche,
-                tone,
-                templateType: template,
-                generatedAt: batchItem.createdAt,
-                batchGeneration: true
-              }
-            });
+            await webhookService.sendContent(flatPayload);
             console.log(`✅ Sent ${niche} content to Make.com`);
           } catch (webhookError) {
             console.log(`⚠️ Webhook failed for ${niche}:`, webhookError);
@@ -125,39 +107,52 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
         } else {
           console.log(`❌ Content generation failed for ${niche}`);
-          results.push({
+          const errorItem = {
             niche,
             product: topProduct,
             template,
             tone,
+            script: '',
+            caption: '',
+            hashtags: '',
+            postInstructions: '',
             error: 'Content generation failed',
-            createdAt: new Date().toISOString()
-          });
+            createdAt: new Date().toISOString(),
+            source: 'GlowBot-DailyBatch'
+          };
+          results.push(errorItem);
         }
 
-      } catch (nicheError) {
+      } catch (nicheError: any) {
         console.error(`❌ Error generating ${niche} content:`, nicheError);
-        results.push({
+        const errorItem = {
           niche,
           product: topProduct,
           template,
           tone,
+          script: '',
+          caption: '',
+          hashtags: '',
+          postInstructions: '',
           error: nicheError.message,
-          createdAt: new Date().toISOString()
-        });
+          createdAt: new Date().toISOString(),
+          source: 'GlowBot-DailyBatch'
+        };
+        results.push(errorItem);
       }
 
       // Small delay between generations to avoid rate limits
       await new Promise(resolve => setTimeout(resolve, 1000));
     }
 
+    const successCount = results.filter(r => !('error' in r)).length;
     console.log(`🎉 Daily batch complete! Generated ${results.length} pieces of content`);
 
     res.json({
       success: true,
       message: `Generated ${results.length} daily content pieces`,
       totalNiches: DAILY_NICHES.length,
-      successCount: results.filter(r => !r.error).length,
+      successCount,
       batchId: `daily-${new Date().toISOString().split('T')[0]}`,
       generatedAt: new Date().toISOString(),
       results

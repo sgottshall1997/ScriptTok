@@ -164,6 +164,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Daily batch content generation endpoint
+  app.post('/api/generate/daily-batch', generateDailyBatch);
+
   // Amazon Beauty Products endpoint
   app.get('/api/trending-amazon-beauty', async (req, res) => {
     try {
