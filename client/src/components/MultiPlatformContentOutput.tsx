@@ -41,6 +41,7 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
   const { toast } = useToast();
   const [platformSchedules, setPlatformSchedules] = useState<{ [platform: string]: string }>({});
   const [isScheduling, setIsScheduling] = useState(false);
+  const [isSendingToMake, setIsSendingToMake] = useState(false);
 
   // Add safety check for data
   if (!data) {
@@ -73,25 +74,29 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
     try {
       setIsScheduling(true);
 
-      const response = await apiRequest('POST', '/api/multi-platform/schedule', {
-        platformContent: data.platformContent,
-        platformSchedules,
-        metadata: data.metadata
+      const response = await apiRequest('/api/multi-platform/schedule', {
+        method: 'POST',
+        body: JSON.stringify({
+          platformContent: data.platformContent,
+          platformSchedules,
+          metadata: data.metadata
+        }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       });
 
-      const result = await response.json();
-
-      if (result.success) {
+      if (response.success) {
         toast({
-          title: "✅ Content Scheduled Successfully",
-          description: `Scheduled for ${result.scheduledPlatforms.length} platforms via Make.com`,
+          title: "✅ Content Sent to Make.com!",
+          description: `Successfully sent content for ${response.scheduledPlatforms?.length || Object.keys(data.platformContent).length} platforms`,
         });
       } else {
-        throw new Error(result.error || "Scheduling failed");
+        throw new Error(response.error || "Failed to send to Make.com");
       }
     } catch (error: any) {
       toast({
-        title: "❌ Scheduling Failed",
+        title: "❌ Send Failed",
         description: error.message || "Please try again",
         variant: "destructive",
       });
