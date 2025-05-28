@@ -313,42 +313,25 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
               </div>
             </div>
 
-            {/* Video Content Options - moved from separate section */}
+            {/* Video Duration Options - appears for video content */}
             {contentType === "video" && (
-              <div className="mt-4 p-3 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
-                <div className="flex items-center gap-2 mb-3">
-                  <input
-                    type="checkbox"
-                    id="video-content"
-                    checked={isVideoContent}
-                    onChange={(e) => setIsVideoContent(e.target.checked)}
-                    className="w-4 h-4 text-purple-600 bg-gray-100 border-gray-300 rounded focus:ring-purple-500 focus:ring-2"
-                  />
-                  <label htmlFor="video-content" className="text-sm font-medium text-purple-700">
-                    📹 Generate Video Content (Script + Caption)
-                  </label>
-                </div>
-                
-                {isVideoContent && (
-                  <div className="mt-3 p-3 bg-white rounded-lg border border-purple-100">
-                    <label htmlFor="video-duration" className="block text-sm font-medium text-purple-700 mb-2">
-                      Video Duration
-                    </label>
-                    <Select value={videoDuration} onValueChange={setVideoDuration}>
-                      <SelectTrigger id="video-duration" className="w-full border-purple-200 focus:border-purple-400 focus:ring-2 focus:ring-purple-100">
-                        <SelectValue placeholder="Select duration" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="30">30 seconds</SelectItem>
-                        <SelectItem value="45">45 seconds</SelectItem>
-                        <SelectItem value="60">60 seconds</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <p className="mt-1 text-xs text-purple-600">
-                      ✨ Will generate separate script and caption with hashtags for easy video creation
-                    </p>
-                  </div>
-                )}
+              <div className="mt-4 p-3 bg-white rounded-lg border border-green-200">
+                <label htmlFor="video-duration" className="block text-sm font-medium text-green-700 mb-2">
+                  📹 Video Duration
+                </label>
+                <Select value={videoDuration} onValueChange={setVideoDuration}>
+                  <SelectTrigger id="video-duration" className="w-full border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100">
+                    <SelectValue placeholder="Select duration" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="30">30 seconds</SelectItem>
+                    <SelectItem value="45">45 seconds</SelectItem>
+                    <SelectItem value="60">60 seconds</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="mt-1 text-xs text-green-600">
+                  ✨ Will generate video script and caption with hashtags for each selected platform
+                </p>
               </div>
             )}
           </div>

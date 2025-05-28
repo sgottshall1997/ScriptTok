@@ -214,8 +214,8 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     // Get niche-specific trending data for context enrichment
     const trendingProducts = await storage.getTrendingProductsByNiche(niche);
     
-    // Handle video content generation
-    if (isVideoContent && videoLength) {
+    // Handle video content generation - automatically enabled when contentType is "video"
+    if ((isVideoContent || contentType === "video") && videoLength) {
       try {
         const videoResult = await generateVideoContent({
           productName: product,
