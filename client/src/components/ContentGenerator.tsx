@@ -44,8 +44,8 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   const [platforms, setPlatforms] = useState<string[]>(["Instagram"]);
   const [contentType, setContentType] = useState<"video" | "photo" | "other">("photo");
   
-  // Video content state
-  const [isVideoContent, setIsVideoContent] = useState(false);
+  // Video content state - automatically set based on contentType
+  const isVideoContent = contentType === "video";
   const [videoDuration, setVideoDuration] = useState("30");
   
   // State for template options based on selected niche
