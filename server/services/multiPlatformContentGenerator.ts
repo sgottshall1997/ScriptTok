@@ -39,30 +39,31 @@ export class MultiPlatformContentGenerator {
       const duration = videoDuration || "30";
       switch (platform) {
         case "TikTok":
-          return `Create a ${duration}-second TikTok video script for ${product} in the ${niche} niche. 
-          Use trending hooks, viral elements, and engaging storytelling. Include trending hashtags and make it highly shareable.
-          Format as a script with clear scene directions and hooks.
+          return `Write a complete ${duration}-second TikTok video script for ${product} in the ${niche} niche. 
+          Create engaging, viral content with trending hooks and make it highly shareable.
           ${baseContext}
           
-          Format:
-          HOOK: [Opening line]
-          SCENE 1: [Description]
-          SCENE 2: [Description]
-          SCENE 3: [Description]
-          CTA: [Call to action]
-          HASHTAGS: [List of hashtags]`;
+          Please write the FULL script with detailed content for each section:
+          
+          HOOK: [Write a compelling 3-5 second opening that grabs attention - be specific and detailed]
+          SCENE 1: [Write 5-8 seconds of content showing the problem or setup]
+          SCENE 2: [Write 8-12 seconds introducing the product and its benefits]
+          SCENE 3: [Write 5-8 seconds showing results or transformation]
+          CTA: [Write a specific call to action]
+          HASHTAGS: [List trending TikTok hashtags]`;
           
         case "Instagram":
-          return `Create a ${duration}-second Instagram Reel script for ${product} in the ${niche} niche.
+          return `Write a complete ${duration}-second Instagram Reel script for ${product} in the ${niche} niche.
           Focus on aesthetic visuals, engaging storytelling, and Instagram-native content style.
           ${baseContext}
           
-          Format:
-          HOOK: [Opening line]
-          MAIN CONTENT: [Core message]
-          VISUAL CUES: [What to show]
-          CTA: [Call to action]
-          HASHTAGS: [Instagram hashtags]`;
+          Please write the FULL script with detailed content for each section:
+          
+          HOOK: [Write a compelling 3-5 second opening that stops scrolling - be specific and detailed]
+          MAIN CONTENT: [Write 20-25 seconds of engaging content about the product and its benefits]
+          VISUAL CUES: [Write specific directions for what to show visually]
+          CTA: [Write a clear call to action encouraging engagement]
+          HASHTAGS: [List relevant Instagram hashtags]`;
           
         case "YouTube Shorts":
           return `Create a ${duration}-second YouTube Shorts script for ${product} in the ${niche} niche.
