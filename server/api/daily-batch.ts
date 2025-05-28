@@ -116,9 +116,29 @@ export async function generateDailyBatch(req: Request, res: Response) {
             batchId: `daily-${new Date().toISOString().split('T')[0]}`
           };
 
-          // Send to Make.com webhook
+          // Send to Make.com webhook using same method as regular content generation
           try {
-            await webhookService.sendContent(flatPayload);
+            await webhookService.sendMultiPlatformContent({
+              platformContent: { 
+                Instagram: {
+                  platform: 'Instagram',
+                  type: 'photo',
+                  caption: batchItem.caption,
+                  hashtags: [],
+                  script: batchItem.script,
+                  postInstructions: batchItem.postInstructions
+                }
+              },
+              platformSchedules: {},
+              metadata: {
+                product: batchItem.product,
+                niche: batchItem.niche,
+                tone: batchItem.tone,
+                templateType: batchItem.template,
+                generatedAt: batchItem.createdAt,
+                batchGeneration: true
+              }
+            });
             console.log(`✅ Sent ${niche} content to Make.com`);
           } catch (webhookError) {
             console.log(`⚠️ Webhook failed for ${niche}:`, webhookError);
