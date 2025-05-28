@@ -156,6 +156,10 @@ export async function generateDailyBatch(req: Request, res: Response) {
         
         console.log(`🎭 Using ${expertVoice} voice for ${niche} content about ${topProduct}`);
         
+        // Generate video content platforms
+        const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
+        const randomPlatform = platforms[i % platforms.length];
+        
         // Generate video content using direct OpenAI call with niche-specific prompt
         const { openai } = await import('../services/openai');
         
@@ -178,10 +182,11 @@ export async function generateDailyBatch(req: Request, res: Response) {
         let promptScore = 0;
         let promptFeedback = '';
         
+        console.log(`🤖 Starting AI quality analysis for ${niche} content...`);
+        
         try {
           if (contentResult?.content) {
             // Create a simple scoring prompt for GPT
-            const { openai } = await import('../services/openai');
             const scoreResponse = await openai.chat.completions.create({
               model: 'gpt-4o',
               messages: [
@@ -200,6 +205,9 @@ export async function generateDailyBatch(req: Request, res: Response) {
             const scoreData = JSON.parse(scoreResponse.choices[0].message.content || '{"score": 75, "feedback": "Standard quality content"}');
             promptScore = scoreData.score || 75;
             promptFeedback = scoreData.feedback || 'AI analysis completed';
+            
+            console.log(`📊 AI Analysis Complete - Score: ${promptScore}/100`);
+            console.log(`💭 Feedback: ${promptFeedback}`);
           }
         } catch (error) {
           console.log(`⚠️ Could not generate prompt score: ${error}`);
