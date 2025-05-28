@@ -22,6 +22,7 @@ import { webhooksRouter } from "./api/webhooks";
 import { webhookTestRouter } from "./api/webhook-test";
 import { sendToMakeRouter } from "./api/sendToMake";
 import { setupFeedbackRoutes } from "./api/feedback";
+import { rewriteContent } from "./api/rewrite-content";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -45,6 +46,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/webhooks', webhooksRouter);
   app.use('/api/webhooks/test', webhookTestRouter);
   app.use('/api/post/send-to-make', sendToMakeRouter);
+  
+  // Rewrite content endpoint
+  app.post('/api/post/rewrite-content', rewriteContent);
   
   // Setup feedback logging routes
   setupFeedbackRoutes(app);
