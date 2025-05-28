@@ -72,15 +72,28 @@ export async function generateDailyBatch(req: Request, res: Response) {
       console.log(`💎 Selected: "${topProduct}" (${mentions.toLocaleString()} mentions)`);
       
       try {
-        // Generate content using your existing content generator with proven templates
-        const contentResult = await generateContent(
-          topProduct,
-          niche,
-          tone,
-          template as any
-        );
+        // Generate video content specifically for morning automation
+        const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
+        const randomPlatform = platforms[i % platforms.length];
+        
+        const videoResult = await fetch('/api/multi-platform/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            product: topProduct,
+            niche: niche,
+            tone: tone,
+            templateType: template,
+            contentType: 'Video Content',
+            platforms: [randomPlatform],
+            videoDuration: '30'
+          })
+        });
 
-        if (contentResult && contentResult.content) {
+        const videoContent = await videoResult.json();
+
+        if (videoContent.success && videoContent.platformContent) {
+          const platformData = videoContent.platformContent[randomPlatform];
           
           const batchItem = {
             niche,
@@ -88,47 +101,21 @@ export async function generateDailyBatch(req: Request, res: Response) {
             template,
             tone,
             mentions: mentions,
-            script: '',
-            caption: contentResult.content,
-            hashtags: '',
-            postInstructions: `High-conversion ${template} for ${niche} niche (${mentions.toLocaleString()} mentions) - ${tone} tone`,
+            platform: randomPlatform,
+            script: platformData?.script || '',
+            caption: platformData?.caption || '',
+            hashtags: Array.isArray(platformData?.hashtags) ? platformData.hashtags.join(' ') : '',
+            postInstructions: platformData?.postInstructions || `Video script for ${niche} niche`,
             createdAt: new Date().toISOString(),
-            source: 'GlowBot-SmartBatch'
+            source: 'GlowBot-VideoAutomation'
           };
 
           results.push(batchItem);
-          
-          // Send each piece to Make.com webhook immediately
-          const flatPayload = {
-            platform: 'Instagram',
-            postType: 'photo',
-            caption: batchItem.caption,
-            hashtags: batchItem.hashtags,
-            script: batchItem.script,
-            postInstructions: batchItem.postInstructions,
-            product: batchItem.product,
-            niche: batchItem.niche,
-            tone: batchItem.tone,
-            templateType: batchItem.template,
-            scheduledTime: '',
-            timestamp: batchItem.createdAt,
-            source: 'GlowBot-DailyBatch',
-            batchId: `daily-${new Date().toISOString().split('T')[0]}`
-          };
 
-          // Send to Make.com webhook using same method as regular content generation
+          // Send video content to Make.com webhook
           try {
             await webhookService.sendMultiPlatformContent({
-              platformContent: { 
-                Instagram: {
-                  platform: 'Instagram',
-                  type: 'photo',
-                  caption: batchItem.caption,
-                  hashtags: [],
-                  script: batchItem.script,
-                  postInstructions: batchItem.postInstructions
-                }
-              },
+              platformContent: videoContent.platformContent,
               platformSchedules: {},
               metadata: {
                 product: batchItem.product,
@@ -136,10 +123,11 @@ export async function generateDailyBatch(req: Request, res: Response) {
                 tone: batchItem.tone,
                 templateType: batchItem.template,
                 generatedAt: batchItem.createdAt,
-                batchGeneration: true
+                batchGeneration: true,
+                contentType: 'Video'
               }
             });
-            console.log(`✅ Sent ${niche} content to Make.com`);
+            console.log(`✅ Sent ${niche} video content to Make.com`);
           } catch (webhookError) {
             console.log(`⚠️ Webhook failed for ${niche}:`, webhookError);
           }
