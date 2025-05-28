@@ -180,6 +180,10 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
                 <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
                   {platformData.script}
                 </p>
+                <CaptionRewriter 
+                  originalCaption={platformData.script} 
+                  outputId={`${platform}-script`} 
+                />
               </div>
             )}
 
@@ -190,6 +194,10 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
                 <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
                   {platformData.caption}
                 </p>
+                <CaptionRewriter 
+                  originalCaption={platformData.caption} 
+                  outputId={`${platform}-caption`} 
+                />
               </div>
             )}
 
@@ -200,6 +208,10 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
                 <p className="text-gray-700 whitespace-pre-wrap leading-relaxed">
                   {platformData.content}
                 </p>
+                <CaptionRewriter 
+                  originalCaption={platformData.content} 
+                  outputId={`${platform}-content`} 
+                />
               </div>
             )}
 
