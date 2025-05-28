@@ -20,6 +20,7 @@ import { historyRouter } from "./api/history";
 import { usageSummaryRouter } from "./api/usageSummary";
 import { webhooksRouter } from "./api/webhooks";
 import { webhookTestRouter } from "./api/webhook-test";
+import { sendToMakeRouter } from "./api/sendToMake";
 import { setupFeedbackRoutes } from "./api/feedback";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -43,6 +44,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/usage-summary', usageSummaryRouter);
   app.use('/api/webhooks', webhooksRouter);
   app.use('/api/webhooks/test', webhookTestRouter);
+  app.use('/api/post/send-to-make', sendToMakeRouter);
   
   // Setup feedback logging routes
   setupFeedbackRoutes(app);

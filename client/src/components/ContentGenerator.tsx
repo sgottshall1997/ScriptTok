@@ -40,6 +40,10 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   const [niche, setNiche] = useState(initialNiche);
   const [productName, setProductName] = useState('');
   
+  // Platform and content type state
+  const [platforms, setPlatforms] = useState<string[]>(["Instagram"]);
+  const [contentType, setContentType] = useState<"video" | "photo">("video");
+  
   // Video content state
   const [isVideoContent, setIsVideoContent] = useState(false);
   const [videoDuration, setVideoDuration] = useState("30");
@@ -123,12 +127,24 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       return;
     }
     
+    // Validate platform selection
+    if (platforms.length === 0) {
+      toast({
+        title: "Platform selection required",
+        description: "Please select at least one platform for your content",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     // Create the request data
     const requestData = {
       product: productValue,
       templateType,
       tone,
       niche,
+      platforms,
+      contentType,
       isVideoContent,
       videoDuration: isVideoContent ? videoDuration : undefined,
     };
@@ -232,6 +248,71 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
               productName={productName}
             />
           )}
+
+          {/* Platform Targeting Section */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm p-4 border border-green-200">
+            <h3 className="text-sm font-medium text-green-700 mb-3">🎯 Content Targeting</h3>
+            
+            {/* Multi-Platform Dropdown */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-green-700 mb-2">
+                Post To Platforms
+              </label>
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                {["Instagram", "TikTok", "YouTube Shorts", "Pinterest", "Facebook", "X (Twitter)"].map((platform) => (
+                  <label key={platform} className="flex items-center space-x-2 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={platforms.includes(platform)}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          setPlatforms([...platforms, platform]);
+                        } else {
+                          setPlatforms(platforms.filter(p => p !== platform));
+                        }
+                      }}
+                      className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                    />
+                    <span className="text-sm text-gray-700">{platform}</span>
+                  </label>
+                ))}
+              </div>
+              {platforms.length === 0 && (
+                <p className="text-xs text-orange-600 mt-1">⚠️ Select at least one platform</p>
+              )}
+            </div>
+
+            {/* Content Type Selector */}
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-green-700 mb-2">
+                Content Type
+              </label>
+              <div className="flex gap-4">
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="contentType"
+                    value="video"
+                    checked={contentType === "video"}
+                    onChange={(e) => setContentType(e.target.value as "video" | "photo")}
+                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
+                  />
+                  <span className="text-sm text-gray-700">🎬 Video Content</span>
+                </label>
+                <label className="flex items-center space-x-2 cursor-pointer">
+                  <input
+                    type="radio"
+                    name="contentType"
+                    value="photo"
+                    checked={contentType === "photo"}
+                    onChange={(e) => setContentType(e.target.value as "video" | "photo")}
+                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
+                  />
+                  <span className="text-sm text-gray-700">📸 Photo Content</span>
+                </label>
+              </div>
+            </div>
+          </div>
           
           {/* Video Content Generation Section */}
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 rounded-lg shadow-sm p-4 border border-pink-200">

@@ -38,6 +38,8 @@ const generateContentSchema = z.object({
   templateType: z.string().default("original"),
   tone: z.string().default("friendly"),
   niche: z.string().default("skincare"),
+  platforms: z.array(z.string()).min(1, "At least one platform is required").default(["Instagram"]),
+  contentType: z.enum(["video", "photo"]).default("video"),
   isVideoContent: z.boolean().optional().default(false),
   videoDuration: z.enum(["30", "45", "60"]).optional(),
 });
