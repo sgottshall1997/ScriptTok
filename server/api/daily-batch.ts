@@ -207,6 +207,20 @@ export async function generateDailyBatch(req: Request, res: Response) {
           promptFeedback = 'Score generated using standard metrics';
         }
 
+        // Log AI feedback to persistent memory for continuous learning
+        try {
+          const { logFeedback } = require('../database/feedbackLogger');
+          await logFeedback({
+            niche,
+            product: topProduct,
+            script: contentResult.content,
+            ai_score: promptScore,
+            analysis: promptFeedback
+          });
+        } catch (error) {
+          console.log(`⚠️ Could not log AI feedback: ${error}`);
+        }
+
         if (contentResult && contentResult.content) {
           successCount++;
           console.log(`✅ Generated ${niche} video content successfully (${successCount}/${niches.length})`);
