@@ -10,6 +10,7 @@ import { Link, useLocation } from "wouter";
 import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import DailyContentShowcase from "@/components/DailyContentShowcase";
+import DailyBatchButton from "@/components/DailyBatchButton";
 
 const Dashboard = () => {
   const [loadingTimeElapsed, setLoadingTimeElapsed] = useState(0);
@@ -154,10 +155,11 @@ const Dashboard = () => {
               <CardTitle className="text-sm font-medium">Generate Content</CardTitle>
               <ArrowRight className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-2">
               <Link href="/generate">
                 <Button className="w-full">Start Creating</Button>
               </Link>
+              <DailyBatchButton />
               <p className="text-xs text-muted-foreground mt-1">Go to content generator</p>
             </CardContent>
           </Card>
