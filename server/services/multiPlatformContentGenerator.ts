@@ -74,12 +74,16 @@ export class MultiPlatformContentGenerator {
           return `Create a ${duration}-second YouTube Shorts script for ${product} in the ${niche} niche.
           Focus on educational value, quick tips, and YouTube audience preferences.
           ${baseContext}
+          - Script must be exactly ${duration} seconds when read aloud (approximately ${Math.round(parseInt(duration) * 2.5)} words max)
+          - NO production notes, narrator directions, or scene descriptions
+          - Just the spoken content that will be read to camera
+          - Natural, conversational tone perfect for YouTube Shorts
+          - Include hook, educational value, and subscribe call to action
           
           Format:
-          INTRO: [Hook]
-          CONTENT: [Main points]
-          OUTRO: [Subscribe CTA]
-          HASHTAGS: [YouTube tags]`;
+          SCRIPT: [Clean script ready for AI video creator - spoken words only]
+          CAPTION: [Engaging YouTube Shorts caption with emojis]
+          HASHTAGS: [Relevant YouTube hashtags]`;
           
         default:
           return `Create a ${duration}-second video script for ${platform} featuring ${product}.
