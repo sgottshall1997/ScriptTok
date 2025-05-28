@@ -24,7 +24,7 @@ import { setupFeedbackRoutes } from "./api/feedback";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
-  app.use('/api/generate', generateContentRouter);
+  app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);
   app.use('/api/analytics', analyticsRouter);
   app.use('/api/template-test', templateTestRouter);
