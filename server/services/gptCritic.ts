@@ -197,7 +197,7 @@ export async function getGPTvsUserAnalysis(): Promise<{
   disagreements: number;
   topPerformingNiches: string[];
 }> {
-  const { feedbackLogger } = await import('../database/feedbackLogger.js');
+  const feedbackLogger = (await import('../database/feedbackLogger.js')).default;
   
   return new Promise((resolve, reject) => {
     const sql = `

@@ -5,6 +5,7 @@ import * as GptTemplates from './gpt-templates';
 import { generatePrompt, PromptParams } from '../prompts';
 import { getModelConfig, getTokenLimit } from './aiModelSelector';
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
+import { getCritiqueFromGPT } from './gptCritic';
 
 // Video duration estimation interface
 interface VideoDuration {
