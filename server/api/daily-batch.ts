@@ -138,7 +138,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
         const mentions = selectedProduct?.mentions || 0;
         
         console.log(`💎 Selected: "${topProduct}" (${mentions.toLocaleString()} mentions)`);
-        console.log(`🎭 Generating with NICHE: ${niche}, TEMPLATE: ${template}, TONE: ${tone}`);
+        console.log(`🎭 Generating ${type} content with NICHE: ${niche}, TEMPLATE: ${template}, TONE: ${tone}`);
         
         // Ensure trending products are in the correct format for the content generator
         const formattedTrendingProducts = nicheProducts.map((product: any) => ({
@@ -240,16 +240,26 @@ export async function generateDailyBatch(req: Request, res: Response) {
           successCount++;
           console.log(`✅ Generated ${niche} video content successfully (${successCount}/${niches.length})`);
           
-          // Get Amazon affiliate link for monetization
-          console.log(`💰 Fetching affiliate link for: ${topProduct}`);
-          const affiliateLink = await getAmazonAffiliateLink(topProduct);
+          // Generate different captions and handle affiliate links based on content type
+          let affiliateLink = '';
+          let baseCaption = '';
+          let hashtags = '';
           
-          // Generate dynamic caption and final monetized caption
-          const baseCaption = generateDynamicCaption(niche, topProduct, template);
-          const hashtags = ['#GlowWithMe', `#${niche}Goals`, '#TrendingNow'].join(' ');
+          if (type === 'product') {
+            // Product-focused content with affiliate monetization
+            console.log(`💰 Fetching affiliate link for: ${topProduct}`);
+            affiliateLink = await getAmazonAffiliateLink(topProduct);
+            baseCaption = generateDynamicCaption(niche, topProduct, template);
+            hashtags = ['#GlowWithMe', `#${niche}Goals`, '#TrendingNow', '#ProductReview'].join(' ');
+          } else {
+            // Value-driven content with tips and insights
+            console.log(`💡 Creating value-driven content for ${niche} community`);
+            baseCaption = `💡 ${niche.charAt(0).toUpperCase() + niche.slice(1)} Tips That Actually Work! Here's what every ${niche} enthusiast should know... 🔥`;
+            hashtags = ['#GlowWithMe', `#${niche}Tips`, '#ValueContent', '#CommunityLove'].join(' ');
+          }
           
-          // Create final caption with affiliate link only if link exists
-          const finalCaption = affiliateLink 
+          // Create final caption with affiliate link only for product content
+          const finalCaption = (type === 'product' && affiliateLink) 
             ? `${baseCaption}\n\nBuy it here: ${affiliateLink}\n${hashtags}`
             : `${baseCaption}\n${hashtags}`;
           
@@ -259,6 +269,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
             product: topProduct,
             template,
             tone,
+            contentType: type, // product or value
             mentions: mentions,
             platform: randomPlatform,
             script: contentResult.content,
@@ -269,9 +280,11 @@ export async function generateDailyBatch(req: Request, res: Response) {
             promptScore: promptScore,
             promptFeedback: promptFeedback,
             trendingDataUsed: formattedTrendingProducts.length,
-            postInstructions: `Video script for ${niche} niche - Post during peak hours`,
+            postInstructions: type === 'product' 
+              ? `Product-focused video for ${niche} - Post during peak shopping hours`
+              : `Value-driven tips for ${niche} community - Post during engagement hours`,
             createdAt: new Date().toISOString(),
-            source: 'GlowBot-VideoAutomation'
+            source: type === 'product' ? 'GlowBot-ProductContent' : 'GlowBot-ValueContent'
           };
 
           results.push(batchItem);
@@ -281,6 +294,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
             const enhancedPayload = {
               platform: randomPlatform,
               postType: 'video',
+              contentType: batchItem.contentType, // product or value
               caption: batchItem.caption,
               finalCaption: batchItem.finalCaption,
               hashtags: batchItem.hashtags,
@@ -293,11 +307,12 @@ export async function generateDailyBatch(req: Request, res: Response) {
               affiliateLink: batchItem.affiliateLink,
               scheduledTime: '',
               timestamp: batchItem.createdAt,
-              source: 'GlowBot-DailyBatch-Monetized',
-              contentCategory: 'video',
+              source: batchItem.source,
+              contentCategory: batchItem.contentType === 'product' ? 'product_video' : 'value_video',
               mediaType: 'video_script',
               automationReady: true,
               monetized: !!batchItem.affiliateLink,
+              isProductFocused: batchItem.contentType === 'product',
               batchId: `daily-${new Date().toISOString().split('T')[0]}`,
               mentions: batchItem.mentions,
               aiQualityScore: promptScore,
