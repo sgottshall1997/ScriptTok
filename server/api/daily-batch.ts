@@ -87,12 +87,13 @@ export async function generateDailyBatch(req: Request, res: Response) {
             product: topProduct,
             template,
             tone,
+            mentions: mentions,
             script: '',
             caption: contentResult.content,
             hashtags: '',
-            postInstructions: `Generated for ${niche} niche using ${template} template with ${tone} tone`,
+            postInstructions: `High-conversion ${template} for ${niche} niche (${mentions.toLocaleString()} mentions) - ${tone} tone`,
             createdAt: new Date().toISOString(),
-            source: 'GlowBot-DailyBatch'
+            source: 'GlowBot-SmartBatch'
           };
 
           results.push(batchItem);
