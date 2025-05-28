@@ -141,27 +141,38 @@ export async function generateDailyBatch(req: Request, res: Response) {
           id: product.id || 0
         }));
         
-        console.log(`🔧 Calling generateContent with:`);
-        console.log(`   Product: "${topProduct}"`);
-        console.log(`   Template: "${template}"`);
-        console.log(`   Tone: "${tone}"`);
-        console.log(`   Niche: "${niche}"`);
-        console.log(`   Trending Products Count: ${formattedTrendingProducts.length}`);
+        // Generate niche-specific expert prompt directly to ensure correct voice
+        const expertVoices = {
+          skincare: "beauty expert and esthetician",
+          tech: "tech reviewer and gadget specialist", 
+          fashion: "style influencer and fashion expert",
+          fitness: "personal trainer and fitness coach",
+          food: "home cook and culinary expert",
+          travel: "travel blogger and adventure guide",
+          pet: "pet parent and animal care specialist"
+        };
         
-        // Generate video content
-        const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
-        const randomPlatform = platforms[i % platforms.length];
+        const expertVoice = expertVoices[niche as keyof typeof expertVoices] || "product specialist";
         
-        // Use the working content generation service with correct parameter order
-        const { generateContent } = await import('../services/contentGenerator');
+        console.log(`🎭 Using ${expertVoice} voice for ${niche} content about ${topProduct}`);
         
-        const contentResult = await generateContent(
-          topProduct,      // product: string
-          template as any, // templateType: TemplateType
-          tone as any,     // tone: ToneOption
-          formattedTrendingProducts, // trendingProducts: TrendingProduct[]
-          niche as any     // niche: Niche
-        );
+        // Generate video content using direct OpenAI call with niche-specific prompt
+        const { openai } = await import('../services/openai');
+        
+        const expertPrompt = `You are a ${expertVoice} creating authentic content about ${topProduct}. Write a natural 25-30 second video script that sounds like a real ${expertVoice} would speak. Use ${tone} tone and include specific benefits that matter to ${niche} enthusiasts. No markdown formatting, just clean spoken content.`;
+        
+        const completion = await openai.chat.completions.create({
+          model: 'gpt-4o',
+          messages: [
+            { role: 'system', content: expertPrompt },
+            { role: 'user', content: `Create an authentic ${tone} script about ${topProduct} from the perspective of a ${expertVoice}.` }
+          ],
+          max_tokens: 300
+        });
+        
+        const contentResult = {
+          content: completion.choices[0].message.content?.trim() || ''
+        };
 
         // Generate AI prompt score for quality assessment
         let promptScore = 0;
