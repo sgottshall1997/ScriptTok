@@ -51,7 +51,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/webhooks/test', webhookTestRouter);
   app.use('/api/post/send-to-make', sendToMakeRouter);
   app.use('/api/post/send-batch', sendBatchRouter);
-  app.use('/api/post/test-make-webhook', testMakeWebhookRouter);
+  // Direct webhook test route
+  app.get('/api/post/test-make-webhook', async (req, res) => {
+    try {
+      const makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
+      
+      if (!makeWebhookUrl) {
+        return res.status(400).json({
+          error: 'Webhook not configured',
+          details: 'Make.com webhook URL is not configured. Please set MAKE_WEBHOOK_URL environment variable.'
+        });
+      }
+
+      // Simple test payload
+      const mockPayload = {
+        "test_field_1": "Hello from GlowBot",
+        "test_field_2": "skincare",
+        "test_field_3": "instagram",
+        "caption": "This is a test caption",
+        "hashtags": "#test #glowbot",
+        "timestamp": new Date().toISOString()
+      };
+
+      const axios = require('axios');
+      const response = await axios.post(makeWebhookUrl, mockPayload, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        timeout: 15000
+      });
+
+      return res.json({
+        status: 'Webhook sent successfully',
+        payload: mockPayload,
+        response_status: response.status,
+        timestamp: new Date().toISOString()
+      });
+
+    } catch (error: any) {
+      return res.status(500).json({
+        error: 'Webhook failed',
+        details: error.message || 'Unknown error occurred',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
   
   // Rewrite content endpoint
   app.post('/api/post/rewrite-content', rewriteContent);
