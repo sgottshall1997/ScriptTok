@@ -41,6 +41,17 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
   const [platformSchedules, setPlatformSchedules] = useState<{ [platform: string]: string }>({});
   const [isScheduling, setIsScheduling] = useState(false);
 
+  // Add safety check for data
+  if (!data) {
+    return (
+      <Card className="border-orange-200 bg-orange-50">
+        <CardContent className="p-6 text-center">
+          <p className="text-orange-700">No data available</p>
+        </CardContent>
+      </Card>
+    );
+  }
+
   const copyToClipboard = async (text: string, label: string) => {
     try {
       await navigator.clipboard.writeText(text);
