@@ -166,9 +166,21 @@ export class MultiPlatformContentGenerator {
       // Extract video script (everything before CAPTION or HASHTAGS)
       let scriptContent = aiResponse.replace(/CAPTION:[\s\S]*$/i, '').replace(/HASHTAGS?:\s*.+/i, '').trim();
       
+      // Debug logging
+      console.log(`[${platform}] AI Response:`, aiResponse);
+      console.log(`[${platform}] Extracted Script Content:`, scriptContent);
+      console.log(`[${platform}] Script Length:`, scriptContent.length);
+      
       // If script is still just "HOOK:" or very short, provide a better fallback
       if (scriptContent === "HOOK:" || scriptContent.length < 20) {
-        scriptContent = `Complete ${videoDuration || '30'}-second video script for ${product}:\n\nHook: "You need to see this ${product} transformation!"\n\nMain content: Show the amazing benefits and results of using ${product}. Explain why it's perfect for the ${niche} niche and how it solves common problems.\n\nCall to action: "Try this for yourself - link in bio!"`;
+        console.log(`[${platform}] Triggering fallback for short content`);
+        scriptContent = `Complete ${videoDuration || '30'}-second video script for ${request.product}:
+
+Hook: "You need to see this ${request.product} transformation!"
+
+Main content: Show the amazing benefits and results of using ${request.product}. Explain why it's perfect for the ${request.niche} niche and how it solves common problems.
+
+Call to action: "Try this for yourself - link in bio!"`;
       }
       
       return {
