@@ -3,12 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import { TrendingProduct, SOURCE_COLORS } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
-import { useLocation } from "wouter";
 
 interface TrendingProductCardProps {
   product: TrendingProduct;
-  rank: number;
+  rank?: number;
   gradientClass?: string;
+  onUseProduct?: (product: TrendingProduct) => void;
 }
 
 // Format large numbers with K/M suffix
@@ -24,11 +24,10 @@ const formatNumber = (num: number = 0) => {
 
 export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({ 
   product, 
-  rank, 
-  gradientClass = "from-blue-500 to-violet-500" 
+  rank = 1, 
+  gradientClass = "from-blue-500 to-violet-500",
+  onUseProduct
 }) => {
-  const [, setLocation] = useLocation();
-  
   const getSourceColorClass = (source: string) => {
     if (source === "suggested") {
       return 'bg-indigo-100 text-indigo-800';
@@ -37,10 +36,9 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
   };
 
   const handleUseProduct = () => {
-    // Navigate directly to niche-specific page with product pre-filled
-    const encodedProduct = encodeURIComponent(product.title);
-    const niche = product.niche || 'skincare';
-    setLocation(`/niche/${niche}?product=${encodedProduct}`);
+    if (onUseProduct) {
+      onUseProduct(product);
+    }
   };
 
   return (

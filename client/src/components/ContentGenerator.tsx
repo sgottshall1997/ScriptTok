@@ -22,6 +22,8 @@ interface ContentGeneratorProps {
   initialNiche?: string;
   initialTemplate?: string;
   scrollToTopOnGenerate?: boolean;
+  selectedProduct?: string;
+  selectedProductNiche?: string;
 }
 
 const ContentGenerator: FC<ContentGeneratorProps> = ({ 
@@ -29,7 +31,9 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   onNicheChange, 
   initialNiche = '',
   initialTemplate = '',
-  scrollToTopOnGenerate = true
+  scrollToTopOnGenerate = true,
+  selectedProduct = '',
+  selectedProductNiche = ''
 }) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -93,6 +97,23 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       window.history.replaceState({}, '', window.location.pathname);
     }
   }, [initialNiche]);
+
+  // Handle selected product from trending product cards
+  useEffect(() => {
+    if (selectedProduct) {
+      setProductName(selectedProduct);
+      if (productInputRef.current) {
+        productInputRef.current.value = selectedProduct;
+      }
+    }
+    
+    if (selectedProductNiche) {
+      setNiche(selectedProductNiche);
+      if (onNicheChange) {
+        onNicheChange(selectedProductNiche);
+      }
+    }
+  }, [selectedProduct, selectedProductNiche, onNicheChange]);
   
   // Update template options when niche changes
   useEffect(() => {
