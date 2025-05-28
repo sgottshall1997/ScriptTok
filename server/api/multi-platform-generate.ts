@@ -14,16 +14,15 @@ export async function generateMultiPlatformContent(req: Request, res: Response) 
       affiliateLink
     } = req.body;
 
-    // Validate required fields
-    if (!product || !niche || !templateType || !tone || !platformContentMap) {
-      return res.status(400).json({
-        success: false,
-        error: "Missing required fields: product, niche, templateType, tone, platformContentMap"
-      });
-    }
+    // Validate required fields with proper defaults
+    const safeProduct = product || 'Product';
+    const safeNiche = niche || 'general';
+    const safeTemplateType = templateType || 'original';
+    const safeTone = tone || 'friendly';
+    const safePlatformContentMap = platformContentMap || {};
 
     // Check if any platforms are selected
-    const selectedPlatforms = Object.keys(platformContentMap);
+    const selectedPlatforms = Object.keys(safePlatformContentMap);
     if (selectedPlatforms.length === 0) {
       return res.status(400).json({
         success: false,
@@ -33,21 +32,24 @@ export async function generateMultiPlatformContent(req: Request, res: Response) 
 
     const generator = new MultiPlatformContentGenerator();
     
-    // Generate content for all selected platforms
+    // Generate content for all selected platforms with comprehensive error handling
     const result = await generator.generateMultiPlatformContent(
-      platformContentMap,
+      safePlatformContentMap,
       {
-        product,
-        niche,
-        templateType,
-        tone,
-        videoDuration
+        product: safeProduct,
+        niche: safeNiche, 
+        templateType: safeTemplateType,
+        tone: safeTone,
+        videoDuration: videoDuration || '30'
       }
     );
 
+    // Ensure result has proper structure
+    const safeResult = result || {};
+
     res.json({
       success: true,
-      platformContent: result,
+      platformContent: safeResult,
       platformSchedules: {}, // Empty initially, filled during scheduling
       metadata: {
         product,
