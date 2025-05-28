@@ -1,59 +1,54 @@
 import { Request, Response } from 'express';
-import { multiPlatformGenerator } from '../services/multiPlatformContentGenerator';
-
-interface MultiPlatformRequest {
-  product: string;
-  templateType: string;
-  tone: string;
-  niche: string;
-  platformContentMap: { [platform: string]: "video" | "photo" | "other" };
-  selectedPlatforms: string[];
-  videoDuration?: string;
-  platformSchedules?: { [platform: string]: string };
-}
+import { MultiPlatformContentGenerator } from '../services/multiPlatformContentGenerator';
+import { WebhookService } from '../services/webhookService';
 
 export async function generateMultiPlatformContent(req: Request, res: Response) {
   try {
     const {
       product,
+      niche,
       templateType,
       tone,
-      niche,
       platformContentMap,
-      selectedPlatforms,
       videoDuration,
-      platformSchedules
-    }: MultiPlatformRequest = req.body;
+      affiliateLink
+    } = req.body;
 
     // Validate required fields
-    if (!product || !niche || !selectedPlatforms?.length) {
+    if (!product || !niche || !templateType || !tone || !platformContentMap) {
       return res.status(400).json({
         success: false,
-        error: "Missing required fields: product, niche, and selectedPlatforms"
+        error: "Missing required fields: product, niche, templateType, tone, platformContentMap"
       });
     }
 
-    // Generate content for all selected platforms
-    const baseRequest = {
-      product,
-      niche,
-      tone: tone || "friendly",
-      templateType: templateType || "seo_blog",
-      videoDuration
-    };
+    // Check if any platforms are selected
+    const selectedPlatforms = Object.keys(platformContentMap);
+    if (selectedPlatforms.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: "At least one platform must be selected"
+      });
+    }
 
-    console.log(`🎯 Generating multi-platform content for: ${selectedPlatforms.join(', ')}`);
+    const generator = new MultiPlatformContentGenerator();
     
-    const platformContent = await multiPlatformGenerator.generateMultiPlatformContent(
+    // Generate content for all selected platforms
+    const result = await generator.generateMultiPlatformContent(
       platformContentMap,
-      baseRequest
+      {
+        product,
+        niche,
+        templateType,
+        tone,
+        videoDuration
+      }
     );
 
-    // Format response with scheduling information
-    const response = {
+    res.json({
       success: true,
-      platformContent,
-      platformSchedules: platformSchedules || {},
+      platformContent: result,
+      platformSchedules: {}, // Empty initially, filled during scheduling
       metadata: {
         product,
         niche,
@@ -61,39 +56,16 @@ export async function generateMultiPlatformContent(req: Request, res: Response) 
         templateType,
         generatedAt: new Date().toISOString(),
         platforms: selectedPlatforms,
-        totalPlatforms: selectedPlatforms.length
+        totalPlatforms: selectedPlatforms.length,
+        videoDuration
       }
-    };
-
-    console.log(`✅ Multi-platform content generated successfully for ${selectedPlatforms.length} platforms`);
-    
-    return res.json(response);
+    });
 
   } catch (error: any) {
-    console.error('❌ Multi-platform content generation failed:', error);
-    
-    // Handle specific AI service errors
-    if (error.message.includes('AI content generation temporarily unavailable')) {
-      return res.status(503).json({
-        success: false,
-        error: "AI content generation is temporarily unavailable. Please try again in a few minutes.",
-        retryAfter: 60
-      });
-    }
-
-    // Handle quota/rate limit errors
-    if (error.message.includes('quota') || error.message.includes('rate limit')) {
-      return res.status(429).json({
-        success: false,
-        error: "AI service quota exceeded. Please try again later.",
-        retryAfter: 300
-      });
-    }
-
-    return res.status(500).json({
+    console.error('Multi-platform content generation error:', error);
+    res.status(500).json({
       success: false,
-      error: "Content generation failed. Please try again.",
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: error.message || "Failed to generate multi-platform content"
     });
   }
 }
@@ -107,57 +79,38 @@ export async function scheduleMultiPlatformContent(req: Request, res: Response) 
     } = req.body;
 
     // Validate required fields
-    if (!platformContent || !platformSchedules) {
+    if (!platformContent || !metadata) {
       return res.status(400).json({
         success: false,
-        error: "Missing required fields: platformContent and platformSchedules"
+        error: "Missing required fields: platformContent, metadata"
       });
     }
 
-    // Prepare webhook payload for Make.com
-    const webhookPayload = {
-      action: "schedule_multi_platform_content",
-      timestamp: new Date().toISOString(),
-      platformSchedules,
-      contentPayload: platformContent,
-      metadata: {
-        ...metadata,
-        scheduledAt: new Date().toISOString(),
-        totalPlatforms: Object.keys(platformContent).length
-      }
-    };
-
-    console.log(`📅 Scheduling content for platforms: ${Object.keys(platformSchedules).join(', ')}`);
-
-    // Send to Make.com webhook
-    const webhookResponse = await fetch('https://hook.eu2.make.com/wweojbhxm5iei0gj3v9c13uhjxl55mp2', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(webhookPayload)
+    const webhookService = new WebhookService();
+    
+    // Send to Make.com with scheduling information
+    const result = await webhookService.sendMultiPlatformContent({
+      platformContent,
+      platformSchedules: platformSchedules || {},
+      metadata
     });
 
-    if (!webhookResponse.ok) {
-      throw new Error(`Webhook failed with status: ${webhookResponse.status}`);
+    if (result.success) {
+      res.json({
+        success: true,
+        message: "Content scheduled successfully",
+        scheduledPlatforms: Object.keys(platformContent),
+        webhookResponse: result
+      });
+    } else {
+      throw new Error(result.error || "Failed to schedule content");
     }
 
-    console.log(`✅ Multi-platform content scheduled successfully via Make.com`);
-
-    return res.json({
-      success: true,
-      message: "Multi-platform content scheduled successfully",
-      scheduledPlatforms: Object.keys(platformSchedules),
-      scheduledAt: new Date().toISOString()
-    });
-
   } catch (error: any) {
-    console.error('❌ Multi-platform scheduling failed:', error);
-    
-    return res.status(500).json({
+    console.error('Multi-platform scheduling error:', error);
+    res.status(500).json({
       success: false,
-      error: "Failed to schedule content. Please try again.",
-      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+      error: error.message || "Failed to schedule multi-platform content"
     });
   }
 }

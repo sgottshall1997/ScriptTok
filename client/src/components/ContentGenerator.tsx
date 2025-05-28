@@ -13,6 +13,7 @@ import {
 } from "@/lib/types";
 import NicheSelector from "./NicheSelector";
 import AffiliateLink from "./AffiliateLink";
+import MultiPlatformContentOutput from "./MultiPlatformContentOutput";
 import { trackEvent } from "@/lib/analytics";
 
 interface ContentGeneratorProps {
@@ -169,7 +170,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
         });
       }
       
-      const response = await apiRequest('POST', '/api/generate-content', requestData);
+      const response = await apiRequest('POST', '/api/multi-platform/generate', requestData);
       const data: GenerationResponse = await response.json();
       
       // Check if the response indicates success

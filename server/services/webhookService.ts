@@ -106,3 +106,71 @@ export const sendWebhookNotification = async (
     };
   }
 };
+
+/**
+ * WebhookService class for multi-platform content delivery
+ */
+export class WebhookService {
+  async sendMultiPlatformContent(data: {
+    platformContent: any;
+    platformSchedules: any;
+    metadata: any;
+  }): Promise<{ success: boolean; error?: string }> {
+    try {
+      const webhookUrl = process.env.MAKE_WEBHOOK_URL || webhookConfig.url;
+      
+      if (!webhookUrl) {
+        throw new Error('Make.com webhook URL not configured');
+      }
+
+      const payload = {
+        type: 'multi_platform_content',
+        timestamp: new Date().toISOString(),
+        data: {
+          platformContent: data.platformContent,
+          platformSchedules: data.platformSchedules,
+          metadata: data.metadata,
+          contentPayload: this.formatContentForMake(data.platformContent, data.metadata)
+        }
+      };
+
+      const response = await axios.post(webhookUrl, payload, {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (response.status === 200) {
+        return { success: true };
+      } else {
+        throw new Error(`Webhook failed with status: ${response.status}`);
+      }
+    } catch (error: any) {
+      console.error('Multi-platform webhook error:', error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  private formatContentForMake(platformContent: any, metadata: any) {
+    const formatted: any = {};
+    
+    Object.entries(platformContent).forEach(([platform, content]: [string, any]) => {
+      formatted[platform] = {
+        platform,
+        type: content.type,
+        label: content.label,
+        content: content.script || content.caption || content.content || '',
+        hashtags: content.hashtags || [],
+        postInstructions: content.postInstructions || '',
+        metadata: {
+          product: metadata.product,
+          niche: metadata.niche,
+          tone: metadata.tone,
+          generatedAt: metadata.generatedAt
+        }
+      };
+    });
+
+    return formatted;
+  }
+}

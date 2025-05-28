@@ -140,8 +140,17 @@ export class MultiPlatformContentGenerator {
     }
   }
   
-  private formatResponse(platform: string, contentType: "video" | "photo" | "other", aiResponse: string): PlatformContentResponse {
-    const label = `${platform} (${contentType === "video" ? "Video Content" : contentType === "photo" ? "Photo Content" : "Text Content"})`;
+  private formatResponse(platform: string, contentType: "video" | "photo" | "other", aiResponse: string, videoDuration?: string): PlatformContentResponse {
+    let label: string;
+    
+    if (contentType === "video") {
+      const duration = videoDuration || "30";
+      label = `Video Script (${duration} seconds - ${platform})`;
+    } else if (contentType === "photo") {
+      label = `Photo Content (${platform})`;
+    } else {
+      label = `${platform} Content`;
+    }
     
     // Parse AI response based on content type
     if (contentType === "video") {
@@ -238,6 +247,10 @@ export class MultiPlatformContentGenerator {
       };
       
       const result = await this.generatePlatformContent(request);
+      // Update the label to include video duration if needed
+      if (result.type === "video" && baseRequest.videoDuration) {
+        result.label = `Video Script (${baseRequest.videoDuration} seconds - ${platform})`;
+      }
       results[platform] = result;
     });
     
