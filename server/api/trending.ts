@@ -9,25 +9,21 @@ import { getInstagramTrending } from "../scrapers/instagram";
 import { getRedditTrending } from "../scrapers/reddit";
 import { getGoogleTrendingProducts } from "../scrapers/googleTrends";
 import { 
-  getRefreshedTrendingProducts, 
-  refreshTrendingProducts 
-} from "../services/trendRefresher";
+  getTrendingData, 
+  refreshTrendingCache 
+} from "../services/scraperCacheManager";
 
 const router = Router();
 
 // Get all trending products
 router.get("/", async (req, res) => {
   try {
-    console.log("🔄 API request: Getting fresh trending products");
+    console.log("🔄 API request: Getting trending products from cache");
     
-    // Clear any existing cache and force fresh generation
-    await storage.clearTrendingProducts();
+    // Get trending data from cache (or run scraper if cache is empty)
+    const trendingData = await getTrendingData();
     
-    // Force refresh to get latest categorized data
-    await refreshTrendingProducts();
-    const freshData = await getRefreshedTrendingProducts();
-    
-    console.log("📊 Fresh data structure:", JSON.stringify(freshData, null, 2));
+    console.log("📊 Trending data from cache:", `${trendingData.length} products`);
     
     // Set cache-control headers to prevent browser caching
     res.set({
@@ -36,7 +32,12 @@ router.get("/", async (req, res) => {
       'Expires': '0'
     });
     
-    res.json(freshData);
+    res.json({
+      success: true,
+      count: trendingData.length,
+      data: trendingData,
+      lastUpdated: new Date().toISOString()
+    });
   } catch (error) {
     console.error("❌ Error in trending API:", error);
     res.status(500).json({ 
@@ -49,18 +50,17 @@ router.get("/", async (req, res) => {
 // Force refresh trending products from all scrapers
 router.post("/refresh", async (req, res) => {
   try {
-    console.log("Manual refresh requested - this will force a full refresh regardless of time");
+    console.log("Manual refresh requested - this will force a full refresh regardless of cache");
     
-    // Use the refreshTrendingProducts which handles everything including storage updates
-    await refreshTrendingProducts();
-    const trendingProducts = await getRefreshedTrendingProducts();
+    // Use the refreshTrendingCache which runs fresh scrapers and caches results
+    const trendingProducts = await refreshTrendingCache();
     
     res.json({ 
       success: true, 
-      count: trendingProducts.count,
+      count: trendingProducts.length,
       message: "Trending products refreshed successfully", 
       lastRefresh: new Date().toLocaleString(),
-      nextScheduledRefresh: "Next automatic refresh at midnight"
+      nextScheduledRefresh: "Next automatic refresh at 5:00 AM"
     });
   } catch (error) {
     console.error("Error refreshing trending products:", error);

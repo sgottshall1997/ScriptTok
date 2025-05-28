@@ -18,23 +18,11 @@ export function initializeDailyScraperScheduler(): void {
     console.log('\n🌅 Daily scraper job started at 5:00 AM');
     
     try {
-      // Run all scrapers and cache results
-      const results = await runAllScrapersAndCache();
+      // Run trending scraper and cache results
+      const products = await runAndCacheTrendingScraper();
       
-      // Log summary
-      const successfulScrapers = Object.entries(results)
-        .filter(([_, result]) => result.success)
-        .map(([source, _]) => source);
-      
-      const failedScrapers = Object.entries(results)
-        .filter(([_, result]) => !result.success)
-        .map(([source, _]) => source);
-
       console.log(`✅ Daily scraper job completed successfully`);
-      console.log(`   Successful: ${successfulScrapers.join(', ')}`);
-      if (failedScrapers.length > 0) {
-        console.log(`   Failed: ${failedScrapers.join(', ')}`);
-      }
+      console.log(`   Cached ${products.length} trending products`);
 
       // Clean up old cache entries
       await cleanupOldCache();
