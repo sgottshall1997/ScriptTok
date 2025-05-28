@@ -23,6 +23,7 @@ interface FeedbackUpdate {
   userPick?: boolean;
   starRating?: number;
   clickCount?: number;
+  gptPick?: number;
 }
 
 class FeedbackLogger {
@@ -54,6 +55,7 @@ class FeedbackLogger {
         userPick BOOLEAN DEFAULT 0,
         starRating INTEGER DEFAULT 0,
         clickCount INTEGER DEFAULT 0,
+        gptPick INTEGER DEFAULT NULL,
         timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
       )
     `;
@@ -90,7 +92,7 @@ class FeedbackLogger {
   // Update user interaction data
   async updateFeedback(id: number, updates: FeedbackUpdate): Promise<number> {
     return new Promise((resolve, reject) => {
-      const allowedFields = ['userPick', 'starRating', 'clickCount'];
+      const allowedFields = ['userPick', 'starRating', 'clickCount', 'gptPick'];
       const updateFields: string[] = [];
       const values: any[] = [];
 
