@@ -40,12 +40,21 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   const [niche, setNiche] = useState(initialNiche);
   const [productName, setProductName] = useState('');
   
-  // Platform and content type state
-  const [platforms, setPlatforms] = useState<string[]>(["Instagram"]);
-  const [contentType, setContentType] = useState<"video" | "photo" | "other">("photo");
+  // Multi-platform content mapping state
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [platformContentMap, setPlatformContentMap] = useState<{
+    [platform: string]: "video" | "photo" | "other";
+  }>({});
+  const [platformSchedules, setPlatformSchedules] = useState<{
+    [platform: string]: string; // ISO format or 'now'
+  }>({});
   
-  // Video content state - automatically set based on contentType
-  const isVideoContent = contentType === "video";
+  // Available platforms
+  const availablePlatforms = [
+    "Instagram", "TikTok", "YouTube Shorts", "Pinterest", "Facebook", "X (Twitter)"
+  ];
+  
+  // Legacy video content state for backward compatibility
   const [videoDuration, setVideoDuration] = useState("30");
   
   // State for template options based on selected niche
@@ -128,7 +137,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
     }
     
     // Validate platform selection
-    if (platforms.length === 0) {
+    if (selectedPlatforms.length === 0) {
       toast({
         title: "Platform selection required",
         description: "Please select at least one platform for your content",
@@ -137,16 +146,15 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
       return;
     }
     
-    // Create the request data
+    // Create the request data with multi-platform mapping
     const requestData = {
       product: productValue,
       templateType,
       tone,
       niche,
-      platforms,
-      contentType,
-      isVideoContent,
-      videoDuration: isVideoContent ? videoDuration : undefined,
+      platformContentMap,
+      selectedPlatforms,
+      videoDuration,
     };
     
     try {
@@ -249,88 +257,77 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
             />
           )}
 
-          {/* Platform Targeting Section */}
+          {/* Multi-Platform Content Targeting Section */}
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm p-4 border border-green-200">
-            <h3 className="text-sm font-medium text-green-700 mb-3">🎯 Content Targeting</h3>
+            <h3 className="text-sm font-medium text-green-700 mb-3">🎯 Multi-Platform Content Targeting</h3>
             
-            {/* Multi-Platform Dropdown - hidden for "other" content type */}
-            {contentType !== "other" && (
-              <div className="mb-4">
-                <label className="block text-sm font-medium text-green-700 mb-2">
-                  Post To Platforms
-                </label>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                {["Instagram", "TikTok", "YouTube Shorts", "Pinterest", "Facebook", "X (Twitter)"].map((platform) => (
-                  <label key={platform} className="flex items-center space-x-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={platforms.includes(platform)}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setPlatforms([...platforms, platform]);
-                        } else {
-                          setPlatforms(platforms.filter(p => p !== platform));
-                        }
-                      }}
-                      className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-                    />
-                    <span className="text-sm text-gray-700">{platform}</span>
-                  </label>
-                ))}
-              </div>
-              {platforms.length === 0 && (
-                <p className="text-xs text-orange-600 mt-1">⚠️ Select at least one platform</p>
-              )}
-              </div>
-            )}
-
-            {/* Content Type Selector */}
+            {/* Platform Selection with Content Type Mapping */}
             <div className="mb-4">
               <label className="block text-sm font-medium text-green-700 mb-2">
-                Content Type
+                Select Platforms & Content Types
               </label>
-              <div className="flex flex-wrap gap-4">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="contentType"
-                    value="video"
-                    checked={contentType === "video"}
-                    onChange={(e) => setContentType(e.target.value as "video" | "photo" | "other")}
-                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
-                  />
-                  <span className="text-sm text-gray-700">🎬 Video Content</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="contentType"
-                    value="photo"
-                    checked={contentType === "photo"}
-                    onChange={(e) => setContentType(e.target.value as "video" | "photo" | "other")}
-                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
-                  />
-                  <span className="text-sm text-gray-700">📸 Photo Content</span>
-                </label>
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="radio"
-                    name="contentType"
-                    value="other"
-                    checked={contentType === "other"}
-                    onChange={(e) => setContentType(e.target.value as "video" | "photo" | "other")}
-                    className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 focus:ring-green-500 focus:ring-2"
-                  />
-                  <span className="text-sm text-gray-700">📝 Other (blog, reddit post, etc)</span>
-                </label>
+              <div className="space-y-3">
+                {availablePlatforms.map((platform) => (
+                  <div key={platform} className="flex items-center justify-between p-3 bg-white rounded-lg border border-green-100">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={selectedPlatforms.includes(platform)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setSelectedPlatforms([...selectedPlatforms, platform]);
+                            // Default to photo content type when platform is selected
+                            setPlatformContentMap(prev => ({ ...prev, [platform]: "photo" }));
+                          } else {
+                            setSelectedPlatforms(selectedPlatforms.filter(p => p !== platform));
+                            setPlatformContentMap(prev => {
+                              const newMap = { ...prev };
+                              delete newMap[platform];
+                              return newMap;
+                            });
+                          }
+                        }}
+                        className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
+                      />
+                      <span className="text-sm font-medium text-gray-700">{platform}</span>
+                    </label>
+                    
+                    {/* Content Type Selector for Selected Platform */}
+                    {selectedPlatforms.includes(platform) && (
+                      <div className="flex space-x-2">
+                        {["video", "photo", "other"].map((type) => (
+                          <label key={type} className="flex items-center space-x-1 cursor-pointer">
+                            <input
+                              type="radio"
+                              name={`contentType-${platform}`}
+                              value={type}
+                              checked={platformContentMap[platform] === type}
+                              onChange={() => {
+                                setPlatformContentMap(prev => ({ ...prev, [platform]: type as "video" | "photo" | "other" }));
+                              }}
+                              className="w-3 h-3 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1"
+                            />
+                            <span className="text-xs text-gray-600">
+                              {type === "video" ? "🎬" : type === "photo" ? "📸" : "📝"}
+                            </span>
+                          </label>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
+              
+              {selectedPlatforms.length === 0 && (
+                <p className="text-xs text-orange-600 mt-1">⚠️ Select at least one platform</p>
+              )}
             </div>
 
-            {/* Video Duration Options - appears for video content */}
-            {contentType === "video" && (
+            {/* Video Duration Options - appears when any platform has video content */}
+            {Object.values(platformContentMap).includes("video") && (
               <div className="mt-4 p-3 bg-white rounded-lg border border-green-200">
                 <label htmlFor="video-duration" className="block text-sm font-medium text-green-700 mb-2">
-                  📹 Video Duration
+                  📹 Video Duration (for video content)
                 </label>
                 <Select value={videoDuration} onValueChange={setVideoDuration}>
                   <SelectTrigger id="video-duration" className="w-full border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100">
