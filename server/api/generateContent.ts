@@ -7,6 +7,7 @@ import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema } from "@shared/schema";
 import { sendWebhookNotification } from "../services/webhookService";
 import rateLimit from "express-rate-limit";
+import { logFeedback } from "../database/feedbackLogger";
 
 const router = Router();
 
@@ -296,6 +297,15 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     
     // Estimate video duration
     const videoDuration = estimateVideoDuration(content, tone, templateType);
+    
+    // 📊 Log feedback to SQLite database
+    try {
+      const feedbackId = await logFeedback(product, templateType, tone, content);
+      console.log(`📊 Feedback logged successfully with ID: ${feedbackId}`);
+    } catch (feedbackError) {
+      // Log error but don't block the response
+      console.error('Error logging feedback to database:', feedbackError);
+    }
     
     // Return success response with clean JSON structure
     res.json({
