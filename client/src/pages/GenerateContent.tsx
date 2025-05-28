@@ -23,6 +23,8 @@ const niches = [
 const GenerateContent: FC = () => {
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [isMultiPlatform, setIsMultiPlatform] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<string>('');
+  const [selectedProductNiche, setSelectedProductNiche] = useState<string>('');
 
   // Fetch trending products for all niches
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
@@ -39,6 +41,17 @@ const GenerateContent: FC = () => {
       setIsMultiPlatform(true);
     } else {
       setIsMultiPlatform(false);
+    }
+  };
+
+  const handleUseProduct = (product: TrendingProduct) => {
+    setSelectedProduct(product.title);
+    setSelectedProductNiche(product.niche || '');
+    
+    // Scroll to the content generator form
+    const formElement = document.getElementById('content-generator-form');
+    if (formElement) {
+      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -126,10 +139,12 @@ const GenerateContent: FC = () => {
                           </Card>
                         ))
                       ) : nicheProducts[niche.id]?.length > 0 ? (
-                        nicheProducts[niche.id].map(product => (
+                        nicheProducts[niche.id].map((product, index) => (
                           <TrendingProductCard 
                             key={product.id} 
-                            product={product} 
+                            product={product}
+                            rank={index + 1}
+                            onUseProduct={handleUseProduct}
                           />
                         ))
                       ) : (
@@ -148,10 +163,12 @@ const GenerateContent: FC = () => {
 
         {/* Content Generator */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div>
+          <div id="content-generator-form">
             <ContentGenerator 
               onGenerate={handleGenerate}
               scrollToTopOnGenerate={false}
+              selectedProduct={selectedProduct}
+              selectedProductNiche={selectedProductNiche}
             />
           </div>
           
