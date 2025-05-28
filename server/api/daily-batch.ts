@@ -157,10 +157,10 @@ export async function generateDailyBatch(req: Request, res: Response) {
           const baseCaption = generateDynamicCaption(niche, topProduct, template);
           const hashtags = ['#GlowWithMe', `#${niche}Goals`, '#TrendingNow'].join(' ');
           
-          // Create final caption with affiliate link
+          // Create final caption with affiliate link only if link exists
           const finalCaption = affiliateLink 
             ? `${baseCaption}\n\nBuy it here: ${affiliateLink}\n${hashtags}`
-            : `${baseCaption}\n\n${hashtags}`;
+            : `${baseCaption}\n${hashtags}`;
           
           // Create the batch item from successful content generation
           const batchItem = {
