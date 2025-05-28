@@ -89,9 +89,9 @@ Note: A specific template for this combination wasn't found, so this is using a 
   
   // Build context about trending products
   let trendContext = '';
-  if (trendingProducts?.length > 0) {
+  if (trendingProducts && Array.isArray(trendingProducts) && trendingProducts.length > 0) {
     const relevantProducts = trendingProducts
-      .filter(p => p.title !== productName)
+      .filter(p => p && p.title && p.title !== productName)
       .slice(0, 3);
       
     if (relevantProducts.length > 0) {

@@ -133,13 +133,6 @@ export async function generateDailyBatch(req: Request, res: Response) {
         console.log(`💎 Selected: "${topProduct}" (${mentions.toLocaleString()} mentions)`);
         console.log(`🎭 Generating with NICHE: ${niche}, TEMPLATE: ${template}, TONE: ${tone}`);
         
-        // Generate video content
-        const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
-        const randomPlatform = platforms[i % platforms.length];
-        
-        // Use the working content generation service with correct parameter order
-        const { generateContent } = await import('../services/contentGenerator');
-        
         // Ensure trending products are in the correct format for the content generator
         const formattedTrendingProducts = nicheProducts.map((product: any) => ({
           title: product.title,
@@ -148,12 +141,26 @@ export async function generateDailyBatch(req: Request, res: Response) {
           id: product.id || 0
         }));
         
+        console.log(`🔧 Calling generateContent with:`);
+        console.log(`   Product: "${topProduct}"`);
+        console.log(`   Template: "${template}"`);
+        console.log(`   Tone: "${tone}"`);
+        console.log(`   Niche: "${niche}"`);
+        console.log(`   Trending Products Count: ${formattedTrendingProducts.length}`);
+        
+        // Generate video content
+        const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
+        const randomPlatform = platforms[i % platforms.length];
+        
+        // Use the working content generation service with correct parameter order
+        const { generateContent } = await import('../services/contentGenerator');
+        
         const contentResult = await generateContent(
-          topProduct,
-          template as any,
-          tone as any,
-          formattedTrendingProducts,
-          niche as any
+          topProduct,      // product: string
+          template as any, // templateType: TemplateType
+          tone as any,     // tone: ToneOption
+          formattedTrendingProducts, // trendingProducts: TrendingProduct[]
+          niche as any     // niche: Niche
         );
 
         // Generate AI prompt score for quality assessment
