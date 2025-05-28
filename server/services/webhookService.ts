@@ -131,29 +131,21 @@ export class WebhookService {
         const platformData = data.platformContent[platform];
         const scheduledTime = data.platformSchedules[platform] || '';
 
-        // Create flattened payload that Make.com can easily parse
+        // Create clean, flattened JSON payload for Make.com
         const flatPayload = {
-          // Core content fields
-          platform: platform,
+          platform,
           postType: platformData.type || 'content',
           caption: platformData.caption || '',
           hashtags: Array.isArray(platformData.hashtags) ? platformData.hashtags.join(' ') : '',
           script: platformData.script || '',
           postInstructions: platformData.postInstructions || '',
-          
-          // Context fields
           product: data.metadata?.product || '',
           niche: data.metadata?.niche || '',
           tone: data.metadata?.tone || '',
           templateType: data.metadata?.templateType || '',
-          
-          // Scheduling
           scheduledTime: scheduledTime,
-          
-          // Metadata
           timestamp: new Date().toISOString(),
-          source: 'GlowBot',
-          generatedAt: data.metadata?.generatedAt || ''
+          source: 'GlowBot'
         };
 
         console.log(`📤 Sending ${platform} content to Make.com:`, {
