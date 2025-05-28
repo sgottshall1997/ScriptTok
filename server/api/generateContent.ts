@@ -4,6 +4,7 @@ import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { generateVideoContent } from "../services/videoContentGenerator";
+import { generatePlatformSpecificContent } from "../services/platformContentGenerator";
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema } from "@shared/schema";
 import { sendWebhookNotification } from "../services/webhookService";
@@ -161,7 +162,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       }
     }
     
-    const { product, tone, niche, isVideoContent, videoDuration: videoLength } = result.data;
+    const { product, tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength } = result.data;
     const templateType = finalTemplateType;
     
     // Create cache parameters object
@@ -293,6 +294,27 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       }
     }
     
+    // Generate platform-specific content if platforms are specified
+    let platformContent = null;
+    if (platforms && platforms.length > 0) {
+      try {
+        console.log(`Generating platform-specific content for: ${platforms.join(", ")}`);
+        platformContent = await generatePlatformSpecificContent({
+          product,
+          niche,
+          platforms,
+          contentType,
+          templateType,
+          tone,
+          videoDuration: videoLength,
+          trendingData: trendingProducts
+        });
+      } catch (error) {
+        console.error("Platform content generation failed:", error);
+        // Continue without platform content if it fails
+      }
+    }
+    
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 
       content, 
@@ -360,7 +382,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       console.error('Error logging feedback to database:', feedbackError);
     }
     
-    // Return success response with clean JSON structure
+    // Return success response with clean JSON structure including platform content
     res.json({
       success: true,
       data: {
@@ -374,7 +396,11 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         fallbackLevel,
         fromCache: false,
         videoDuration: videoLength || undefined,
-        model: model || "gpt-4o"
+        model: model || "gpt-4o",
+        // Platform-specific content
+        platforms: platforms || [],
+        contentType,
+        platformContent: platformContent || null
       },
       error: null
     });
