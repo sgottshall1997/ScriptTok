@@ -136,13 +136,14 @@ export async function generateDailyBatch(req: Request, res: Response) {
         const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
         const randomPlatform = platforms[i % platforms.length];
         
-        // Use the working content generation service
+        // Use the working content generation service with correct parameter order
         const { generateContent } = await import('../services/contentGenerator');
         const contentResult = await generateContent(
           topProduct,
-          niche,
+          template as any,
           tone,
-          template as any
+          nicheProducts, // Pass the niche products as trending products
+          niche as any
         );
 
         if (contentResult && contentResult.content) {
