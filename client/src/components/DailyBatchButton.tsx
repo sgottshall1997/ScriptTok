@@ -15,7 +15,24 @@ interface DailyBatchResult {
   platform: string;
   hashtags: string;
   mentions: number;
+  affiliateLink?: string;
+  finalCaption?: string;
   createdAt: string;
+}
+
+// Function to estimate video length based on script word count
+function estimateVideoLength(script: string): string {
+  const wordCount = script.trim().split(/\s+/).length;
+  const wordsPerMinute = 155; // Average speaking pace
+  const totalSeconds = Math.round((wordCount / wordsPerMinute) * 60);
+  
+  if (totalSeconds < 60) {
+    return `${totalSeconds}s`;
+  } else {
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  }
 }
 
 interface DailyBatchResponse {
@@ -115,12 +132,15 @@ const DailyBatchButton = () => {
                 {batchMutation.data.results.map((result: DailyBatchResult, index: number) => (
                   <div key={index} className="bg-white border rounded-lg p-4 shadow-sm">
                     <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
                           {result.niche?.toUpperCase() || 'UNKNOWN'}
                         </span>
                         <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded">
                           {result.platform || 'TikTok'}
+                        </span>
+                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                          {estimateVideoLength(result.script || '')}
                         </span>
                         {result.mentions && (
                           <span className="text-xs text-gray-500">

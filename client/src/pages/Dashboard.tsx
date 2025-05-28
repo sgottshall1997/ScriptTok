@@ -114,18 +114,8 @@ const Dashboard = () => {
           </p>
         </div>
 
-        {/* Summary Cards */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Niches</CardTitle>
-              <BarChart3 className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{niches.length}</div>
-              <p className="text-xs text-muted-foreground">Specialized content categories</p>
-            </CardContent>
-          </Card>
+        {/* Top Row - Trending Products and Data Freshness */}
+        <div className="grid gap-6 md:grid-cols-2">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Trending Products</CardTitle>
@@ -135,7 +125,7 @@ const Dashboard = () => {
               <div className="text-2xl font-bold">
                 {trendingLoading ? <Skeleton className="h-7 w-16" /> : productCount}
               </div>
-              <p className="text-xs text-muted-foreground">Across all platforms</p>
+              <p className="text-xs text-muted-foreground">High-conversion products tracked</p>
             </CardContent>
           </Card>
           <Card>
@@ -147,20 +137,24 @@ const Dashboard = () => {
               <div className="text-md font-medium truncate">
                 {trendingLoading ? <Skeleton className="h-7 w-full" /> : lastRefreshTime}
               </div>
-              <p className="text-xs text-muted-foreground">Last data refresh</p>
+              <p className="text-xs text-muted-foreground">Real-time data updates</p>
             </CardContent>
           </Card>
-          <Card>
+        </div>
+
+        {/* Content Generation Section - Centered */}
+        <div className="flex justify-center">
+          <Card className="w-full max-w-lg">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Generate Content</CardTitle>
+              <CardTitle className="text-lg font-medium">Generate Content</CardTitle>
               <ArrowRight className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
-            <CardContent className="space-y-2">
+            <CardContent className="space-y-4">
               <Link href="/generate">
-                <Button className="w-full">Start Creating</Button>
+                <Button className="w-full" size="lg">Start Creating with our AI Content Generator</Button>
               </Link>
               <DailyBatchButton />
-              <p className="text-xs text-muted-foreground mt-1">Go to content generator</p>
+              <p className="text-xs text-muted-foreground text-center">Create high-converting content in seconds</p>
             </CardContent>
           </Card>
         </div>
