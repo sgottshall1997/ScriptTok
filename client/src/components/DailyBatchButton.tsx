@@ -11,6 +11,10 @@ interface DailyBatchResult {
   template: string;
   tone: string;
   caption: string;
+  script: string;
+  platform: string;
+  hashtags: string;
+  mentions: number;
   createdAt: string;
 }
 
