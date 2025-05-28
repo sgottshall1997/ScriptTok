@@ -25,6 +25,7 @@ router.get('/', async (req, res) => {
       postType: "test",
       caption: "This is a test caption from GlowBot",
       hashtags: "#glowbotTest",
+      script: "This is a test script for video content from GlowBot",
       mediaUrl: null,
       scheduledTime: new Date().toISOString(),
       // Add metadata similar to production payloads
