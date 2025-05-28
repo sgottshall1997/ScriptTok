@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import { runAllScrapersAndCache, cleanupOldCache } from './scraperCacheManager';
+import { runAndCacheTrendingScraper, cleanupOldCache } from './scraperCacheManager';
 
 let schedulerInitialized = false;
 
