@@ -65,13 +65,14 @@ router.post('/', async (req, res) => {
       hasScheduledTime: !!payload.scheduledTime
     });
 
-    // Send the payload to Make.com
+    // Send the payload to Make.com with proper formatting
     const response = await axios.post(makeWebhookUrl, enrichedPayload, {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
+        'Accept': 'application/json',
         'User-Agent': 'GlowBot/1.0'
       },
-      timeout: 10000 // 10 second timeout
+      timeout: 15000 // 15 second timeout
     });
 
     console.log(`✅ Successfully sent to Make.com. Status: ${response.status}`);
