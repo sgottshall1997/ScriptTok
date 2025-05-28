@@ -39,36 +39,36 @@ export class MultiPlatformContentGenerator {
       const duration = videoDuration || "30";
       switch (platform) {
         case "TikTok":
-          return `Create engaging TikTok video content for ${product} in the ${niche} niche. Generate both a video script and caption.
+          return `Create a clean, concise ${duration}-second TikTok video script for ${product} in the ${niche} niche.
           ${baseContext}
           
-          Create a complete ${duration}-second video script that is engaging and viral-worthy:
+          Requirements:
+          - Script must be exactly ${duration} seconds when read aloud (approximately ${Math.round(parseInt(duration) * 2.5)} words max)
+          - NO production notes, narrator directions, or scene descriptions
+          - Just the spoken content that will be read to camera
+          - Natural, conversational tone
+          - Include hook, benefits, and call to action
           
-          VIDEO SCRIPT:
-          Start: "POV: You discover the skincare product that changes everything..."
-          Middle: Explain why ${product} is amazing, show benefits, demonstrate results
-          End: Strong call to action encouraging viewers to try it
-          
-          Write a natural, conversational script that flows smoothly from hook to conclusion. Make it feel authentic and engaging.
-          
-          CAPTION: Write a separate engaging caption with emojis for the video post
-          HASHTAGS: List trending TikTok hashtags`;
+          Format:
+          SCRIPT: [Clean script ready for AI video creator - spoken words only]
+          CAPTION: [Engaging TikTok caption with emojis]
+          HASHTAGS: [Trending TikTok hashtags]`;
           
         case "Instagram":
-          return `Create engaging Instagram Reel content for ${product} in the ${niche} niche. Generate both a video script and caption.
+          return `Create a clean, concise ${duration}-second Instagram Reel script for ${product} in the ${niche} niche.
           ${baseContext}
           
-          Create a complete ${duration}-second Instagram Reel script that is aesthetic and engaging:
+          Requirements:
+          - Script must be exactly ${duration} seconds when read aloud (approximately ${Math.round(parseInt(duration) * 2.5)} words max)
+          - NO production notes, narrator directions, or scene descriptions
+          - Just the spoken content that will be read to camera
+          - Natural, conversational tone perfect for Instagram
+          - Include hook, benefits, and call to action
           
-          VIDEO SCRIPT:
-          Start with a visually appealing hook that stops scrolling
-          Middle: Show the product beautifully, explain benefits with aesthetic visuals
-          End: Encourage saves and shares with clear call to action
-          
-          Write a natural, flowing script that feels authentic and Instagram-native.
-          
-          CAPTION: Write a separate engaging caption with emojis for the Instagram post
-          HASHTAGS: List relevant Instagram hashtags`;
+          Format:
+          SCRIPT: [Clean script ready for AI video creator - spoken words only]
+          CAPTION: [Engaging Instagram caption with emojis]
+          HASHTAGS: [Relevant Instagram hashtags]`;
           
         case "YouTube Shorts":
           return `Create a ${duration}-second YouTube Shorts script for ${product} in the ${niche} niche.
@@ -163,24 +163,25 @@ export class MultiPlatformContentGenerator {
       const hashtagsMatch = aiResponse.match(/HASHTAGS?:\s*(.+)/i);
       const captionMatch = aiResponse.match(/CAPTION:\s*([\s\S]*?)(?=HASHTAGS:|$)/i);
       
-      // Extract video script (everything before CAPTION or HASHTAGS)
-      let scriptContent = aiResponse.replace(/CAPTION:[\s\S]*$/i, '').replace(/HASHTAGS?:\s*.+/i, '').trim();
+      // Extract clean script content
+      const scriptMatch = aiResponse.match(/SCRIPT:\s*([\s\S]*?)(?=CAPTION:|HASHTAGS:|$)/i);
+      let scriptContent = scriptMatch ? scriptMatch[1].trim() : '';
+      
+      // If no SCRIPT: found, try to extract everything before CAPTION or HASHTAGS
+      if (!scriptContent) {
+        scriptContent = aiResponse.replace(/CAPTION:[\s\S]*$/i, '').replace(/HASHTAGS?:\s*.+/i, '').trim();
+      }
       
       // Debug logging
-      console.log(`[${platform}] AI Response:`, aiResponse);
+      console.log(`[${platform}] AI Response:`, aiResponse.substring(0, 200) + '...');
       console.log(`[${platform}] Extracted Script Content:`, scriptContent);
       console.log(`[${platform}] Script Length:`, scriptContent.length);
       
       // If script is still just "HOOK:" or very short, provide a better fallback
-      if (scriptContent === "HOOK:" || scriptContent.length < 20) {
+      if (scriptContent === "HOOK:" || scriptContent.length < 30) {
         console.log(`[${platform}] Triggering fallback for short content`);
-        scriptContent = `Complete ${videoDuration || '30'}-second video script for ${request.product}:
-
-Hook: "You need to see this ${request.product} transformation!"
-
-Main content: Show the amazing benefits and results of using ${request.product}. Explain why it's perfect for the ${request.niche} niche and how it solves common problems.
-
-Call to action: "Try this for yourself - link in bio!"`;
+        const duration = videoDuration || "30";
+        scriptContent = `Hey everyone! Today I'm sharing ${product} - the ${niche} game changer you need to try. This amazing product gives you incredible results that will transform your routine. Trust me, once you try this, you'll never go back. Check the link in my bio to get yours today!`;
       }
       
       return {
