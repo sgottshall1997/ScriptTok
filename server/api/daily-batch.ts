@@ -112,10 +112,22 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
           results.push(batchItem);
 
-          // Send video content to Make.com webhook
+          // Send video content to Make.com webhook with enhanced categorization
           try {
+            // Create enhanced payload with content type categorization
+            const enhancedPlatformContent = {};
+            for (const [platform, content] of Object.entries(videoContent.platformContent)) {
+              enhancedPlatformContent[platform] = {
+                ...content,
+                contentCategory: 'video',
+                mediaType: 'video_script',
+                automationReady: true,
+                batchId: `daily-${new Date().toISOString().split('T')[0]}`
+              };
+            }
+
             await webhookService.sendMultiPlatformContent({
-              platformContent: videoContent.platformContent,
+              platformContent: enhancedPlatformContent,
               platformSchedules: {},
               metadata: {
                 product: batchItem.product,
@@ -124,10 +136,13 @@ export async function generateDailyBatch(req: Request, res: Response) {
                 templateType: batchItem.template,
                 generatedAt: batchItem.createdAt,
                 batchGeneration: true,
-                contentType: 'Video'
+                contentType: 'video',
+                mediaType: 'video_script',
+                automationSource: 'daily_batch',
+                mentions: batchItem.mentions
               }
             });
-            console.log(`✅ Sent ${niche} video content to Make.com`);
+            console.log(`✅ Sent ${niche} video content to Make.com with enhanced categorization`);
           } catch (webhookError) {
             console.log(`⚠️ Webhook failed for ${niche}:`, webhookError);
           }
