@@ -16,16 +16,16 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, onClose }) => {
       className={`fixed inset-y-0 left-0 z-30 w-64 transform transition-all sidebar-height overflow-y-auto bg-sidebar border-r border-sidebar-border lg:translate-x-0 lg:static lg:inset-0 ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}
     >
       <div className="flex flex-col h-full">
-        {/* Logo and brand */}
+        {/* Logo and brand - clickable home button */}
         <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-          <div className="flex items-center space-x-2">
+          <Link href="/" className="flex items-center space-x-2 hover:opacity-80 transition-opacity">
             <span className="bg-sidebar-primary text-sidebar-primary-foreground p-1.5 rounded-lg">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
               </svg>
             </span>
             <span className="text-xl font-bold text-sidebar-foreground">GlowBot</span>
-          </div>
+          </Link>
           <button 
             className="p-2 rounded-md text-sidebar-foreground hover:text-sidebar-foreground lg:hidden"
             onClick={onClose}
