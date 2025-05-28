@@ -143,7 +143,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       });
     }
     
-    // Check if the template type exists for the requested niche, with fallback logic
+    // Check if the template type exists for the requested niche, with automatic fallback
     let finalTemplateType = validatedData.templateType;
     const templateExists = await isValidTemplateType(validatedData.templateType, validatedData.niche);
     if (!templateExists) {
@@ -153,11 +153,9 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         finalTemplateType = availableTemplates[0];
         console.log(`Template "${validatedData.templateType}" not found for ${validatedData.niche}, using fallback: ${finalTemplateType}`);
       } else {
-        return res.status(400).json({
-          success: false,
-          data: null,
-          error: `No templates available for ${validatedData.niche}. Available: ${availableTemplates.join(", ")}`
-        });
+        // If no templates available, use skincare_routine as ultimate fallback
+        finalTemplateType = "skincare_routine";
+        console.log(`No templates found for ${validatedData.niche}, using ultimate fallback: ${finalTemplateType}`);
       }
     }
     
