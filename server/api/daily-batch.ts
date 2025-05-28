@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { getAmazonAffiliateLink } from "../services/amazonAffiliate";
 
 // Generate dynamic captions based on niche and product
 function generateDynamicCaption(niche: string, product: string, template: string): string {
@@ -148,6 +149,19 @@ export async function generateDailyBatch(req: Request, res: Response) {
           successCount++;
           console.log(`✅ Generated ${niche} video content successfully (${successCount}/${niches.length})`);
           
+          // Get Amazon affiliate link for monetization
+          console.log(`💰 Fetching affiliate link for: ${topProduct}`);
+          const affiliateLink = await getAmazonAffiliateLink(topProduct);
+          
+          // Generate dynamic caption and final monetized caption
+          const baseCaption = generateDynamicCaption(niche, topProduct, template);
+          const hashtags = ['#GlowWithMe', `#${niche}Goals`, '#TrendingNow'].join(' ');
+          
+          // Create final caption with affiliate link
+          const finalCaption = affiliateLink 
+            ? `${baseCaption}\n\nBuy it here: ${affiliateLink}\n${hashtags}`
+            : `${baseCaption}\n\n${hashtags}`;
+          
           // Create the batch item from successful content generation
           const batchItem = {
             niche,
@@ -157,8 +171,10 @@ export async function generateDailyBatch(req: Request, res: Response) {
             mentions: mentions,
             platform: randomPlatform,
             script: contentResult.content,
-            caption: generateDynamicCaption(niche, topProduct, template),
-            hashtags: ['#GlowWithMe', `#${niche}Goals`, '#TrendingNow'].join(' '),
+            caption: baseCaption,
+            hashtags: hashtags,
+            affiliateLink: affiliateLink,
+            finalCaption: finalCaption,
             postInstructions: `Video script for ${niche} niche - Post during peak hours`,
             createdAt: new Date().toISOString(),
             source: 'GlowBot-VideoAutomation'
@@ -166,12 +182,13 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
           results.push(batchItem);
 
-          // Send to Make.com webhook
+          // Send to Make.com webhook with affiliate monetization
           try {
             const enhancedPayload = {
               platform: randomPlatform,
               postType: 'video',
               caption: batchItem.caption,
+              finalCaption: batchItem.finalCaption,
               hashtags: batchItem.hashtags,
               script: batchItem.script,
               postInstructions: batchItem.postInstructions,
@@ -179,12 +196,14 @@ export async function generateDailyBatch(req: Request, res: Response) {
               niche: batchItem.niche,
               tone: batchItem.tone,
               templateType: batchItem.template,
+              affiliateLink: batchItem.affiliateLink,
               scheduledTime: '',
               timestamp: batchItem.createdAt,
-              source: 'GlowBot-DailyBatch',
+              source: 'GlowBot-DailyBatch-Monetized',
               contentCategory: 'video',
               mediaType: 'video_script',
               automationReady: true,
+              monetized: !!batchItem.affiliateLink,
               batchId: `daily-${new Date().toISOString().split('T')[0]}`,
               mentions: batchItem.mentions
             };
