@@ -7,6 +7,28 @@ import { getModelConfig, getTokenLimit } from './aiModelSelector';
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
 
+// Function to clean video scripts for Pictory - removes markdown formatting
+function cleanVideoScript(content: string): string {
+  return content
+    // Remove markdown headers (### Title:, #### Section:, etc.)
+    .replace(/#{1,6}\s+.*?:/g, '')
+    // Remove asterisks used for emphasis (**bold**, *italic*)
+    .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
+    // Remove markdown bullet points (- item, * item)
+    .replace(/^[\s]*[-*]\s+/gm, '')
+    // Remove numbered list formatting (1. item, 2. item)
+    .replace(/^\s*\d+\.\s+/gm, '')
+    // Remove extra whitespace and line breaks
+    .replace(/\n{3,}/g, '\n\n')
+    // Remove leading/trailing whitespace
+    .trim()
+    // Ensure sentences flow naturally for video narration
+    .replace(/\n\n/g, ' ')
+    .replace(/\n/g, ' ')
+    // Clean up extra spaces
+    .replace(/\s+/g, ' ');
+}
+
 // Video duration estimation interface
 interface VideoDuration {
   seconds: number;
@@ -103,9 +125,13 @@ export async function generateContent(
       presence_penalty: modelConfig.presencePenalty
     });
 
+    // Clean up the content for video scripts (remove markdown, asterisks, hashtag headers)
+    const rawContent = completion.choices[0].message.content || "Could not generate content. Please try again.";
+    const cleanedContent = cleanVideoScript(rawContent);
+
     // Return additional metadata for history tracking
     return {
-      content: completion.choices[0].message.content || "Could not generate content. Please try again.",
+      content: cleanedContent,
       fallbackLevel,
       prompt,
       model: model,
@@ -143,8 +169,12 @@ export async function generateContent(
       
       const genericPrompt = `Create ${templateType} content for ${product} in a ${tone} tone. This is for the ${niche} niche.`;
       
+      // Clean up the fallback content for video scripts too
+      const fallbackContent = fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.";
+      const cleanedFallbackContent = cleanVideoScript(fallbackContent);
+
       return {
-        content: fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.",
+        content: cleanedFallbackContent,
         fallbackLevel: 'generic', // Model fallback is considered generic
         prompt: genericPrompt,
         model: "gpt-4o",
