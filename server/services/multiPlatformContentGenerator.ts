@@ -154,14 +154,15 @@ export class MultiPlatformContentGenerator {
     
     // Parse AI response based on content type
     if (contentType === "video") {
-      const scriptMatch = aiResponse.match(/SCRIPT:|HOOK:|INTRO:[\s\S]*?(?=HASHTAGS:|$)/i);
       const hashtagsMatch = aiResponse.match(/HASHTAGS?:\s*(.+)/i);
+      // Extract everything before hashtags as the script content
+      const scriptContent = aiResponse.replace(/HASHTAGS?:\s*.+/i, '').trim();
       
       return {
         platform,
         type: contentType,
         label,
-        script: scriptMatch ? scriptMatch[0] : aiResponse,
+        script: scriptContent || aiResponse,
         hashtags: hashtagsMatch ? hashtagsMatch[1].split(/[,\s]+/).filter(tag => tag.startsWith('#')) : [],
       };
     }
