@@ -1,5 +1,5 @@
 import { generateMultipleVariationsWithCritique } from './multiVariantGenerator';
-import { getTrendingProducts } from '../api/trending';
+import { getTrendingData } from './scraperCacheManager';
 import { NICHES, TEMPLATE_TYPES, TONE_OPTIONS } from '@shared/constants';
 
 interface ShowcaseItem {
