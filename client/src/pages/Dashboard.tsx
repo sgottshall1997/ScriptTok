@@ -155,7 +155,80 @@ const Dashboard = () => {
         {/* Daily Content Showcase */}
         <DailyContentShowcase />
 
-        {/* Trending Products By Niche */}
+        {/* Browse Products by Niche */}
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold tracking-tight">Browse Products by Niche</h2>
+            <p className="text-muted-foreground">
+              Click on any niche to explore trending products and start creating content.
+            </p>
+          </div>
+          
+          <Tabs defaultValue="skincare" className="w-full">
+            <TabsList className="grid grid-cols-4 md:grid-cols-7 mb-6 h-auto p-1">
+              {niches.map(niche => (
+                <TabsTrigger 
+                  key={niche.id} 
+                  value={niche.id}
+                  className="text-xs md:text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2 py-3 px-2 md:px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
+                >
+                  <span className="text-lg md:text-base">{niche.icon}</span>
+                  <span className="text-xs md:text-sm font-medium">{niche.name}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+            
+            {niches.map(niche => (
+              <TabsContent key={niche.id} value={niche.id} className="mt-6">
+                <div className="space-y-4">
+                  {/* Niche Header */}
+                  <div className="flex items-center gap-3 pb-4 border-b">
+                    <div className={`w-12 h-12 rounded-full bg-gradient-to-r ${niche.color} flex items-center justify-center text-white text-xl font-bold`}>
+                      {niche.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-semibold">{niche.name}</h3>
+                      <p className="text-sm text-muted-foreground">
+                        {nicheProducts[niche.id]?.length || 0} trending products available
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Products Grid */}
+                  <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                    {trendingLoading ? (
+                      // Loading skeleton cards
+                      Array(4).fill(0).map((_, i) => (
+                        <Card key={i} className="overflow-hidden">
+                          <CardContent className="p-4">
+                            <Skeleton className="h-4 w-3/4 mb-2" />
+                            <Skeleton className="h-3 w-1/2 mb-4" />
+                            <Skeleton className="h-8 w-full" />
+                          </CardContent>
+                        </Card>
+                      ))
+                    ) : nicheProducts[niche.id]?.length > 0 ? (
+                      nicheProducts[niche.id].map(product => (
+                        <TrendingProductCard 
+                          key={product.id} 
+                          product={product} 
+                          niche={niche.id}
+                        />
+                      ))
+                    ) : (
+                      <div className="col-span-full text-center py-12">
+                        <p className="text-muted-foreground">No trending products available for {niche.name} yet.</p>
+                        <p className="text-sm text-muted-foreground mt-2">Check back later for updates!</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </div>
+
+        {/* Full Trending Products Overview */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
