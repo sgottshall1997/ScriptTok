@@ -81,12 +81,27 @@ export async function runAndCacheTrendingScraper(): Promise<any[]> {
   console.log('🔄 Running trending products scraper...');
   
   try {
-    const trendingData = await getAllTrendingProducts();
+    const scraperResult = await getAllTrendingProducts();
+    const trendingProducts = scraperResult.products || [];
+    
+    console.log(`📦 Saving ${trendingProducts.length} products to database...`);
+    
+    // Save all products to the trending_products table
+    if (trendingProducts.length > 0) {
+      // Clear existing products first
+      await storage.clearTrendingProducts();
+      
+      // Save new products
+      for (const product of trendingProducts) {
+        await storage.saveTrendingProduct(product);
+      }
+      console.log(`✅ Successfully saved ${trendingProducts.length} products to database`);
+    }
     
     // Store in cache
-    await storeCachedTrendingData(trendingData);
+    await storeCachedTrendingData(trendingProducts);
     
-    return trendingData;
+    return trendingProducts;
     
   } catch (error) {
     console.error('❌ Trending scraper failed:', error);
