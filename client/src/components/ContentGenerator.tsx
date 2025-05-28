@@ -145,7 +145,7 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
         });
       }
       
-      const response = await apiRequest('POST', '/api/generate', requestData);
+      const response = await apiRequest('POST', '/api/generate-content', requestData);
       const data: GenerationResponse = await response.json();
       
       // Check if the response indicates success
