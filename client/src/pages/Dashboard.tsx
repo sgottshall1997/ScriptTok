@@ -91,6 +91,16 @@ const Dashboard = () => {
     }
   });
 
+  // Handler for when user clicks "Use Product" button
+  const handleUseProduct = (product: TrendingProduct) => {
+    // Navigate to Content Generator with product data
+    const params = new URLSearchParams({
+      product: product.title,
+      niche: product.niche || 'general'
+    });
+    setLocation(`/generate?${params.toString()}`);
+  };
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       <div className="flex flex-col space-y-8">
@@ -286,6 +296,7 @@ const Dashboard = () => {
                           product={product} 
                           rank={idx + 1} 
                           gradientClass={niche.color}
+                          onUseProduct={handleUseProduct}
                         />
                       ))
                     ) : (

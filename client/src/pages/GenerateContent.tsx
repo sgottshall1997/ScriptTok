@@ -1,4 +1,5 @@
-import { FC, useState } from 'react';
+import { FC, useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
 import ContentGenerator from '@/components/ContentGenerator';
 import MultiPlatformContentOutput from '@/components/MultiPlatformContentOutput';
 import { GenerationResponse, DashboardTrendingResponse, TrendingProduct } from '@/lib/types';
@@ -21,10 +22,25 @@ const niches = [
 ];
 
 const GenerateContent: FC = () => {
+  const [location] = useLocation();
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [isMultiPlatform, setIsMultiPlatform] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [selectedProductNiche, setSelectedProductNiche] = useState<string>('');
+
+  // Check for URL parameters to auto-populate form
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const productParam = searchParams.get('product');
+    const nicheParam = searchParams.get('niche');
+    
+    if (productParam) {
+      setSelectedProduct(productParam);
+    }
+    if (nicheParam) {
+      setSelectedProductNiche(nicheParam);
+    }
+  }, [location]);
 
   // Fetch trending products for all niches
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
