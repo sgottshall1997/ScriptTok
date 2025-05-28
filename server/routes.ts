@@ -27,6 +27,7 @@ import { setupFeedbackRoutes } from "./api/feedback";
 import { rewriteContent } from "./api/rewrite-content";
 import { generateMultiPlatformContent, scheduleMultiPlatformContent } from "./api/multi-platform-generate";
 import { rewriteCaption } from "./api/post/rewrite-caption";
+import { generateDailyBatch } from "./api/daily-batch";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes

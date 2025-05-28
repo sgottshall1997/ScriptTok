@@ -1,0 +1,102 @@
+ full Replit prompt you can use to create an Express route that generates 7 daily niche-specific content pieces in a single response. This assumes you're already using OpenAI and have your `promptFactory()` function ready.
+
+---
+
+## 🧠 Replit Prompt for `/generate/daily-batch` Endpoint
+
+```js
+// In your Express app (e.g., index.js or routes/content.js)
+import express from 'express';
+import { openai } from './openaiClient'; // Your OpenAI setup
+import promptFactory from './promptFactory'; // Your custom prompt generator
+
+const router = express.Router();
+
+const DAILY_NICHES = [
+  'skincare',
+  'technology',
+  'fashion',
+  'fitness',
+  'food and kitchen',
+  'travel',
+  'pets'
+];
+
+// Optional helper: get a trending product per niche (or use placeholder)
+const trendingProducts = {
+  skincare: 'HydraGlow Serum',
+  technology: 'SmartHome AI Hub',
+  fashion: 'EcoLuxe Joggers',
+  fitness: 'FlexBoost Resistance Bands',
+  'food and kitchen': 'TurboChop Blender',
+  travel: 'NomadPack Pro',
+  pets: 'PetPal Smart Feeder'
+};
+
+router.get('/generate/daily-batch', async (req, res) => {
+  try {
+    const results = [];
+
+    for (const niche of DAILY_NICHES) {
+      const product = trendingProducts[niche]; // Replace with dynamic product picker if available
+      const prompt = promptFactory({ niche, product, tone: 'trending', template: 'script' });
+
+      const completion = await openai.chat.completions.create({
+        model: 'gpt-4o',
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.8
+      });
+
+      const response = JSON.parse(completion.choices[0].message.content);
+
+      results.push({
+        niche,
+        product,
+        script: response.script || 'No script returned.',
+        caption: response.caption || '',
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    res.json(results);
+  } catch (err) {
+    console.error('Daily batch error:', err);
+    res.status(500).json({ error: 'Failed to generate content batch' });
+  }
+});
+
+export default router;
+```
+
+---
+
+### ✅ What You Need Set Up in Replit First
+
+1. `promptFactory()` should accept `{ niche, product, tone, template }` and return a custom prompt.
+2. `openai` should be your configured OpenAI client (with `gpt-4o` enabled).
+3. This route should be included in your main Express app:
+
+```js
+import dailyBatchRoute from './routes/dailyBatch.js';
+app.use('/generate', dailyBatchRoute);
+```
+
+---
+
+### ✅ Example Output (Make.com can read this):
+
+```json
+[
+  {
+    "niche": "skincare",
+    "product": "HydraGlow Serum",
+    "script": "Your skin will shine after this...",
+    "caption": "Brighten up your day ✨ #skincare",
+    "createdAt": "2025-05-28T05:00:00.000Z"
+  },
+  ...
+]
+```
+
+---
+ 
