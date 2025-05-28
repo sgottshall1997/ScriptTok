@@ -35,9 +35,9 @@ import { loadPromptTemplates } from '../prompts/templates';
 // Validate request body schema with basic type checking
 const generateContentSchema = z.object({
   product: z.string().trim().min(1, "Product name is required"),
-  templateType: z.enum(TEMPLATE_TYPES).default("original"),
-  tone: z.enum(TONE_OPTIONS).default("friendly"),
-  niche: z.enum(NICHES).default("skincare"),
+  templateType: z.string().default("original"),
+  tone: z.string().default("friendly"),
+  niche: z.string().default("skincare"),
   isVideoContent: z.boolean().optional().default(false),
   videoDuration: z.enum(["30", "45", "60"]).optional(),
 });
@@ -143,18 +143,26 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       });
     }
     
-    // Check if the template type exists for the requested niche
+    // Check if the template type exists for the requested niche, with fallback logic
+    let finalTemplateType = validatedData.templateType;
     const templateExists = await isValidTemplateType(validatedData.templateType, validatedData.niche);
     if (!templateExists) {
+      // If requested template doesn't exist, use the first available template for the niche
       const availableTemplates = await getAvailableTemplateTypes(validatedData.niche);
-      return res.status(400).json({
-        success: false,
-        data: null,
-        error: `Invalid template "${validatedData.templateType}" for ${validatedData.niche}. Available: ${availableTemplates.join(", ")}`
-      });
+      if (availableTemplates.length > 0) {
+        finalTemplateType = availableTemplates[0];
+        console.log(`Template "${validatedData.templateType}" not found for ${validatedData.niche}, using fallback: ${finalTemplateType}`);
+      } else {
+        return res.status(400).json({
+          success: false,
+          data: null,
+          error: `No templates available for ${validatedData.niche}. Available: ${availableTemplates.join(", ")}`
+        });
+      }
     }
     
-    const { product, templateType, tone, niche, isVideoContent, videoDuration: videoLength } = result.data;
+    const { product, tone, niche, isVideoContent, videoDuration: videoLength } = result.data;
+    const templateType = finalTemplateType;
     
     // Create cache parameters object
     const cacheParams = {
