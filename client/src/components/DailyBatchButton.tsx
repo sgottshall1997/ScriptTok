@@ -31,9 +31,18 @@ const DailyBatchButton = () => {
 
   const batchMutation = useMutation({
     mutationFn: async (): Promise<DailyBatchResponse> => {
-      return await apiRequest('/api/generate/daily-batch', {
-        method: 'POST'
+      const response = await fetch('/api/generate/daily-batch', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
     },
     onSuccess: (data) => {
       toast({
