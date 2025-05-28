@@ -32,12 +32,35 @@ export async function rewriteCaption(req: Request, res: Response) {
       genZ: "Rewrite this caption in Gen Z style. Use modern slang, casual language, and trending expressions that resonate with younger audiences."
     };
 
-    const selectedPrompt = tonePrompts[tone as keyof typeof tonePrompts];
-    if (!selectedPrompt) {
-      return res.status(400).json({
-        success: false,
-        error: "Invalid tone. Must be one of: funny, serious, clickbaity, genZ"
-      });
+    // Define template-specific prompts
+    const templatePrompts = {
+      question_hook: "Rewrite this caption to start with an engaging question that hooks the reader and makes them want to learn more.",
+      storytelling: "Rewrite this caption in storytelling format. Create a narrative that connects emotionally with the reader.",
+      before_after: "Rewrite this caption to emphasize transformation and results. Focus on the before/after benefits of the product.",
+      testimonial_review: "Rewrite this caption in testimonial/review style. Make it sound like a genuine personal recommendation from someone who loves the product."
+    };
+
+    let selectedPrompt = '';
+    let method = '';
+
+    if (templateType) {
+      selectedPrompt = templatePrompts[templateType as keyof typeof templatePrompts];
+      method = templateType;
+      if (!selectedPrompt) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid template type. Must be one of: question_hook, storytelling, before_after, testimonial_review"
+        });
+      }
+    } else if (tone) {
+      selectedPrompt = tonePrompts[tone as keyof typeof tonePrompts];
+      method = tone;
+      if (!selectedPrompt) {
+        return res.status(400).json({
+          success: false,
+          error: "Invalid tone. Must be one of: funny, serious, clickbaity, genZ"
+        });
+      }
     }
 
     const systemPrompt = `${selectedPrompt}
@@ -107,7 +130,9 @@ Original caption: "${originalCaption}"`;
       data: {
         originalCaption,
         rewrittenCaption,
-        tone
+        method,
+        tone: tone || null,
+        templateType: templateType || null
       }
     });
 
