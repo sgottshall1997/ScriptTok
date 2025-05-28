@@ -152,25 +152,34 @@ export class WebhookService {
   }
 
   private formatContentForMake(platformContent: any, metadata: any) {
-    const formatted: any = {};
+    // Create a flattened payload for better Make.com compatibility
+    const platforms = Object.keys(platformContent);
+    const primaryPlatform = platforms[0];
+    const primaryContent = platformContent[primaryPlatform];
     
-    Object.entries(platformContent).forEach(([platform, content]: [string, any]) => {
-      formatted[platform] = {
-        platform,
-        type: content.type,
-        label: content.label,
-        content: content.script || content.caption || content.content || '',
-        hashtags: content.hashtags || [],
-        postInstructions: content.postInstructions || '',
-        metadata: {
-          product: metadata.product,
-          niche: metadata.niche,
-          tone: metadata.tone,
-          generatedAt: metadata.generatedAt
-        }
-      };
-    });
-
-    return formatted;
+    return {
+      // Primary content fields
+      platform: primaryPlatform || 'unknown',
+      postType: primaryContent?.type || 'content',
+      caption: primaryContent?.caption || primaryContent?.script || '',
+      hashtags: Array.isArray(primaryContent?.hashtags) ? primaryContent.hashtags.join(' ') : '',
+      script: primaryContent?.script || '',
+      postInstructions: primaryContent?.postInstructions || '',
+      
+      // Context fields
+      product: metadata?.product || '',
+      niche: metadata?.niche || '',
+      tone: metadata?.tone || '',
+      templateType: metadata?.templateType || '',
+      
+      // Additional platforms (if multi-platform)
+      totalPlatforms: platforms.length,
+      allPlatforms: platforms.join(', '),
+      
+      // Metadata
+      generatedAt: metadata?.generatedAt || new Date().toISOString(),
+      timestamp: new Date().toISOString(),
+      source: 'GlowBot'
+    };
   }
 }
