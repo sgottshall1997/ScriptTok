@@ -293,8 +293,8 @@ export async function generateDailyBatch(req: Request, res: Response) {
               monetized: !!batchItem.affiliateLink,
               batchId: `daily-${new Date().toISOString().split('T')[0]}`,
               mentions: batchItem.mentions,
-              aiQualityScore: batchItem.promptScore,
-              aiQualityAnalysis: batchItem.promptFeedback,
+              aiQualityScore: promptScore,
+              aiQualityAnalysis: promptFeedback,
               trendingDataAnalyzed: batchItem.trendingDataUsed,
               qualityTier: batchItem.promptScore >= 80 ? 'premium' : 
                           batchItem.promptScore >= 60 ? 'standard' : 'basic'
