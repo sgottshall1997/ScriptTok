@@ -8,10 +8,10 @@ export interface WebhookConfig {
   secret?: string;  // For webhook signature verification if needed
 }
 
-// Store webhook configuration
+// Store webhook configuration - Auto-configure from environment
 let webhookConfig: WebhookConfig = {
-  url: '',
-  enabled: false
+  url: process.env.MAKE_WEBHOOK_URL || '',
+  enabled: Boolean(process.env.MAKE_WEBHOOK_URL)
 };
 
 /**
