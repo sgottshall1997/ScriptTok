@@ -51,6 +51,9 @@ export async function generateDailyBatch(req: Request, res: Response) {
         );
 
         if (contentResult && contentResult.content) {
+          successCount++;
+          console.log(`✅ Generated ${niche} video content successfully (${successCount}/${niches.length})`);
+          
           // Create the batch item from successful content generation
           const batchItem = {
             niche,
@@ -68,8 +71,6 @@ export async function generateDailyBatch(req: Request, res: Response) {
           };
 
           results.push(batchItem);
-          successCount++;
-          console.log(`✅ Generated ${niche} video content successfully`);
 
           // Send to Make.com webhook
           try {
@@ -96,8 +97,8 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
             const makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
             if (makeWebhookUrl) {
-              const axios = require('axios');
-              await axios.post(makeWebhookUrl, enhancedPayload);
+              const axios = await import('axios');
+              await axios.default.post(makeWebhookUrl, enhancedPayload);
               console.log(`✅ Sent ${niche} video content to Make.com`);
             }
           } catch (webhookError) {
