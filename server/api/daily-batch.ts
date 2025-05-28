@@ -102,7 +102,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
     const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
     const templates = ['viral_hook', 'influencer_caption', 'trending_explainer'];
-    const tones = ['friendly', 'enthusiastic', 'informative'];
+    const tones = ['friendly', 'enthusiastic', 'professional'];
     
     const results: any[] = [];
     const errors: string[] = [];
@@ -131,6 +131,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
         const mentions = selectedProduct?.mentions || 0;
         
         console.log(`💎 Selected: "${topProduct}" (${mentions.toLocaleString()} mentions)`);
+        console.log(`🎭 Generating with NICHE: ${niche}, TEMPLATE: ${template}, TONE: ${tone}`);
         
         // Generate video content
         const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
@@ -150,8 +151,8 @@ export async function generateDailyBatch(req: Request, res: Response) {
         const contentResult = await generateContent(
           topProduct,
           template as any,
-          tone,
-          formattedTrendingProducts, // Properly formatted trending products
+          tone as any,
+          formattedTrendingProducts,
           niche as any
         );
 
