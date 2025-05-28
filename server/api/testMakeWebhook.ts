@@ -19,24 +19,29 @@ router.get('/', async (req, res) => {
       });
     }
 
-    // Construct mock payload with realistic test values
+    // Construct flattened mock payload for better Make.com compatibility
     const mockPayload = {
-      platform: "test-platform",
-      postType: "test",
-      caption: "This is a test caption from GlowBot",
-      hashtags: "#glowbotTest",
-      script: "This is a test script for video content from GlowBot",
+      // Core content fields
+      platform: "instagram",
+      postType: "social_media",
+      caption: "🌟 Transform your skincare routine with this amazing product! Perfect for achieving that natural glow we all want. ✨",
+      hashtags: "#skincare #glowup #beauty #selfcare #naturalbeauty #glowbottest",
+      script: "Hey beauty lovers! Today I'm sharing the secret to radiant skin that everyone's been asking about.",
+      
+      // Context fields
       niche: "skincare",
-      product: "Test Product for Webhook",
+      product: "Vitamin C Serum - Brightening Formula",
       templateType: "influencer_caption",
       tone: "enthusiastic",
-      mediaUrl: null,
+      
+      // Optional fields
+      mediaUrl: "",
       scheduledTime: new Date().toISOString(),
-      // Add metadata similar to production payloads
+      
+      // Metadata
       timestamp: new Date().toISOString(),
-      source: 'GlowBot-Test',
-      version: '1.0',
-      testMode: true
+      source: "GlowBot-Test",
+      version: "1.0"
     };
 
     console.log('🧪 Testing Make.com webhook with payload:', mockPayload);

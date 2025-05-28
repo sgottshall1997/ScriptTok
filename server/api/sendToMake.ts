@@ -48,9 +48,26 @@ router.post('/', async (req, res) => {
       });
     }
 
-    // Add timestamp and source to the payload
-    const enrichedPayload = {
-      ...payload,
+    // Flatten payload for better Make.com compatibility
+    const flattenedPayload = {
+      // Core content fields
+      platform: payload.platform || 'unknown',
+      postType: payload.postType || 'content',
+      caption: payload.caption || '',
+      hashtags: payload.hashtags || '',
+      script: payload.script || '',
+      
+      // Context fields
+      niche: payload.niche || '',
+      product: payload.product || '',
+      templateType: payload.templateType || '',
+      tone: payload.tone || '',
+      
+      // Optional fields
+      mediaUrl: payload.mediaUrl || '',
+      scheduledTime: payload.scheduledTime || '',
+      
+      // Metadata
       timestamp: new Date().toISOString(),
       source: 'GlowBot',
       version: '1.0'
@@ -65,8 +82,8 @@ router.post('/', async (req, res) => {
       hasScheduledTime: !!payload.scheduledTime
     });
 
-    // Send the payload to Make.com with proper formatting
-    const response = await axios.post(makeWebhookUrl, enrichedPayload, {
+    // Send the flattened payload to Make.com with proper formatting
+    const response = await axios.post(makeWebhookUrl, flattenedPayload, {
       headers: {
         'Content-Type': 'application/json; charset=utf-8',
         'Accept': 'application/json',
@@ -84,7 +101,7 @@ router.post('/', async (req, res) => {
         platform: payload.platform,
         postType: payload.postType,
         makeResponseStatus: response.status,
-        timestamp: enrichedPayload.timestamp
+        timestamp: flattenedPayload.timestamp
       }
     });
 
