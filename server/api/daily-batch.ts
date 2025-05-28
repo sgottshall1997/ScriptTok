@@ -76,7 +76,7 @@ export async function generateDailyBatch(req: Request, res: Response) {
         const platforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
         const randomPlatform = platforms[i % platforms.length];
         
-        const videoResult = await fetch('/api/multi-platform/generate', {
+        const videoResult = await fetch(`http://localhost:5000/api/multi-platform/generate`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

@@ -28,6 +28,7 @@ import { rewriteContent } from "./api/rewrite-content";
 import { generateMultiPlatformContent, scheduleMultiPlatformContent } from "./api/multi-platform-generate";
 import { rewriteCaption } from "./api/post/rewrite-caption";
 import { generateDailyBatch } from "./api/daily-batch";
+import { testEnhancedPayloads } from "./api/test-enhanced-payloads";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
