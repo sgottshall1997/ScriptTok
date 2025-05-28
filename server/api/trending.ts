@@ -15,15 +15,27 @@ import {
 
 const router = Router();
 
-// Get all trending products
+// Get all trending products organized by niche
 router.get("/", async (req, res) => {
   try {
-    console.log("🔄 API request: Getting trending products from cache");
+    console.log("🔄 API request: Getting trending products organized by niche");
     
-    // Get trending data from cache (or run scraper if cache is empty)
-    const trendingData = await getTrendingData();
+    // Get trending products from storage for all niches
+    const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
+    const organizedProducts: any = {};
+    let totalCount = 0;
     
-    console.log("📊 Trending data from cache:", `${trendingData.length} products`);
+    for (const niche of niches) {
+      try {
+        const nicheProducts = await storage.getTrendingProductsByNiche(niche, 4);
+        organizedProducts[niche] = nicheProducts;
+        totalCount += nicheProducts.length;
+        console.log(`📊 ${niche}: ${nicheProducts.length} products`);
+      } catch (error) {
+        console.log(`⚠️ Error getting ${niche} products:`, error);
+        organizedProducts[niche] = [];
+      }
+    }
     
     // Set cache-control headers to prevent browser caching
     res.set({
@@ -32,11 +44,14 @@ router.get("/", async (req, res) => {
       'Expires': '0'
     });
     
+    console.log(`📊 Total organized products: ${totalCount}`);
+    
     res.json({
       success: true,
-      count: trendingData.length,
-      data: trendingData,
-      lastUpdated: new Date().toISOString()
+      count: totalCount,
+      data: organizedProducts,
+      lastUpdated: new Date().toISOString(),
+      nextScheduledRefresh: "5:00 AM daily"
     });
   } catch (error) {
     console.error("❌ Error in trending API:", error);
