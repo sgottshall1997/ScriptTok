@@ -112,11 +112,11 @@ export async function generateContent(
       messages: [
         {
           role: "system",
-          content: "You are a video script writer specializing in 30-45 second social media videos. Create engaging, concise scripts that are exactly 30-45 seconds when read at normal speaking pace (150-160 words per minute). Each script should be approximately 75-120 words total. Focus on hook, value, and call-to-action structure."
+          content: "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause."
         },
         {
           role: "user",
-          content: prompt
+          content: `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`
         }
       ],
       temperature: modelConfig.temperature,
@@ -149,11 +149,11 @@ export async function generateContent(
       const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
         {
           role: "system",
-          content: "You are a video script writer specializing in 30-45 second social media videos. Create engaging, concise scripts that are exactly 30-45 seconds when read at normal speaking pace (150-160 words per minute). Each script should be approximately 75-120 words total. Focus on hook, value, and call-to-action structure."
+          content: "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause."
         },
         {
           role: "user",
-          content: `Create a 30-45 second video script for ${product} in a ${tone} tone. This is for the ${niche} niche. Keep it to 75-120 words total for perfect timing.`
+          content: `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`
         }
       ];
       
