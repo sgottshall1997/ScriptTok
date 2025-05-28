@@ -15,6 +15,7 @@ export const CaptionRewriter: React.FC<CaptionRewriterProps> = ({
   outputId 
 }) => {
   const [selectedTone, setSelectedTone] = useState<string>("");
+  const [selectedTemplate, setSelectedTemplate] = useState<string>("");
   const [isRewriting, setIsRewriting] = useState(false);
   const [rewrittenCaption, setRewrittenCaption] = useState<string>("");
   const [showRewrite, setShowRewrite] = useState(false);
@@ -28,11 +29,24 @@ export const CaptionRewriter: React.FC<CaptionRewriterProps> = ({
     { value: "genZ", label: "Gen Z & Trendy" }
   ];
 
+  const templateOptions = [
+    { value: "influencer_caption", label: "Influencer Style" },
+    { value: "product_comparison", label: "Product Comparison" },
+    { value: "routine_kit", label: "Routine/Kit Post" },
+    { value: "bullet_points", label: "Bullet Points" },
+    { value: "trending_explainer", label: "Trending Explainer" },
+    { value: "buyer_persona", label: "Buyer Persona" },
+    { value: "affiliate_email", label: "Affiliate Email" },
+    { value: "storytelling", label: "Storytelling" },
+    { value: "before_after", label: "Before & After" },
+    { value: "testimonial_review", label: "Testimonial/Review" }
+  ];
+
   const handleRewrite = async () => {
-    if (!selectedTone) {
+    if (!selectedTone && !selectedTemplate) {
       toast({
-        title: "Select a tone",
-        description: "Please choose a tone before rewriting the caption.",
+        title: "Select an option",
+        description: "Please choose either a tone or template before rewriting the caption.",
         variant: "destructive",
       });
       return;
@@ -48,7 +62,8 @@ export const CaptionRewriter: React.FC<CaptionRewriterProps> = ({
         },
         body: JSON.stringify({
           originalCaption,
-          tone: selectedTone
+          tone: selectedTone,
+          templateType: selectedTemplate
         }),
       });
 
@@ -57,9 +72,10 @@ export const CaptionRewriter: React.FC<CaptionRewriterProps> = ({
       if (data.success) {
         setRewrittenCaption(data.data.rewrittenCaption);
         setShowRewrite(true);
+        const method = selectedTemplate ? `${selectedTemplate} template` : `${selectedTone} tone`;
         toast({
           title: "Caption rewritten!",
-          description: `Successfully rewrote caption with ${selectedTone} tone.`,
+          description: `Successfully rewrote caption with ${method}.`,
         });
       } else {
         throw new Error(data.error || "Failed to rewrite caption");
@@ -123,25 +139,44 @@ export const CaptionRewriter: React.FC<CaptionRewriterProps> = ({
 
         {!showRewrite ? (
           // Original rewrite interface
-          <div className="flex flex-col sm:flex-row gap-3">
-            <div className="flex-1">
-              <Select value={selectedTone} onValueChange={setSelectedTone}>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Choose tone style..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {toneOptions.map(option => (
-                    <SelectItem key={option.value} value={option.value}>
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          <div className="flex flex-col gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="text-xs text-gray-600 mb-1 block">Tone Style</label>
+                <Select value={selectedTone} onValueChange={setSelectedTone}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Choose tone..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {toneOptions.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div>
+                <label className="text-xs text-gray-600 mb-1 block">Template Type</label>
+                <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Choose template..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {templateOptions.map(option => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
             
             <Button 
               onClick={handleRewrite}
-              disabled={isRewriting || !selectedTone}
+              disabled={isRewriting || (!selectedTone && !selectedTemplate)}
               className="bg-purple-600 hover:bg-purple-700 text-white"
             >
               {isRewriting ? (

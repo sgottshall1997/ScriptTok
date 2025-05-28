@@ -15,12 +15,12 @@ const anthropic = new Anthropic({
 
 export async function rewriteCaption(req: Request, res: Response) {
   try {
-    const { originalCaption, tone } = req.body;
+    const { originalCaption, tone, templateType } = req.body;
 
-    if (!originalCaption || !tone) {
+    if (!originalCaption || (!tone && !templateType)) {
       return res.status(400).json({
         success: false,
-        error: "Missing required fields: originalCaption and tone"
+        error: "Missing required fields: originalCaption and either tone or templateType"
       });
     }
 
