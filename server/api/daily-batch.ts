@@ -151,13 +151,14 @@ export async function generateDailyBatch(req: Request, res: Response) {
             product: topProduct,
             template,
             tone,
+            mentions: mentions,
             script: '',
-            caption: '',
+            caption: 'Content generation failed',
             hashtags: '',
             postInstructions: '',
             error: 'Content generation failed',
             createdAt: new Date().toISOString(),
-            source: 'GlowBot-DailyBatch'
+            source: 'GlowBot-SmartBatch'
           };
           results.push(errorItem);
         }
@@ -169,19 +170,20 @@ export async function generateDailyBatch(req: Request, res: Response) {
           product: topProduct,
           template,
           tone,
+          mentions: mentions,
           script: '',
-          caption: '',
+          caption: 'Error occurred during generation',
           hashtags: '',
           postInstructions: '',
           error: nicheError.message,
           createdAt: new Date().toISOString(),
-          source: 'GlowBot-DailyBatch'
+          source: 'GlowBot-SmartBatch'
         };
         results.push(errorItem);
       }
 
-      // Small delay between generations to avoid rate limits
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Longer delay between generations to ensure one-at-a-time processing
+      await new Promise(resolve => setTimeout(resolve, 2000));
     }
 
     const successCount = results.filter(r => !('error' in r)).length;
