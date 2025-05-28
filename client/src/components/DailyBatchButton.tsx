@@ -17,6 +17,9 @@ interface DailyBatchResult {
   mentions: number;
   affiliateLink?: string;
   finalCaption?: string;
+  promptScore?: number;
+  promptFeedback?: string;
+  trendingDataUsed?: number;
   createdAt: string;
 }
 
@@ -142,9 +145,23 @@ const DailyBatchButton = () => {
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
                           {estimateVideoLength(result.script || '')}
                         </span>
+                        {result.promptScore && (
+                          <span className={`px-2 py-1 text-xs font-medium rounded ${
+                            result.promptScore >= 80 ? 'bg-emerald-100 text-emerald-800' :
+                            result.promptScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                          }`}>
+                            AI Score: {result.promptScore}/100
+                          </span>
+                        )}
                         {result.mentions && (
                           <span className="text-xs text-gray-500">
                             {result.mentions.toLocaleString()} mentions
+                          </span>
+                        )}
+                        {result.trendingDataUsed && (
+                          <span className="text-xs text-blue-600">
+                            {result.trendingDataUsed} trends analyzed
                           </span>
                         )}
                       </div>
@@ -171,6 +188,15 @@ const DailyBatchButton = () => {
                         {result.script || 'Script content not available'}
                       </p>
                     </div>
+                    
+                    {result.promptFeedback && (
+                      <div className="bg-indigo-50 rounded p-3 mt-2">
+                        <h5 className="text-xs font-medium text-indigo-700 mb-1">🤖 AI Quality Analysis:</h5>
+                        <p className="text-xs text-indigo-600">
+                          {result.promptFeedback}
+                        </p>
+                      </div>
+                    )}
                     
                     <div className="mt-3 pt-3 border-t border-gray-100">
                       <div className="text-xs text-gray-600">
