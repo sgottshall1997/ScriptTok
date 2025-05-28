@@ -49,12 +49,34 @@ interface ContentOutputProps {
 
 const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
   const contentRef = useRef<HTMLDivElement>(null);
+  const scriptRef = useRef<HTMLDivElement>(null);
+  const captionRef = useRef<HTMLDivElement>(null);
   const [showSocialPreview, setShowSocialPreview] = useState(false);
+  const [scriptCopied, setScriptCopied] = useState(false);
+  const [captionCopied, setCaptionCopied] = useState(false);
 
   const copyContent = () => {
     if (contentRef.current) {
       const text = contentRef.current.innerText;
       navigator.clipboard.writeText(text);
+    }
+  };
+
+  const copyScript = () => {
+    if (scriptRef.current) {
+      const text = scriptRef.current.innerText;
+      navigator.clipboard.writeText(text);
+      setScriptCopied(true);
+      setTimeout(() => setScriptCopied(false), 2000);
+    }
+  };
+
+  const copyCaption = () => {
+    if (captionRef.current) {
+      const text = captionRef.current.innerText;
+      navigator.clipboard.writeText(text);
+      setCaptionCopied(true);
+      setTimeout(() => setCaptionCopied(false), 2000);
     }
   };
 
@@ -328,6 +350,84 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
               </svg>
               <span>Estimated Video Length: <strong>{content.videoDuration.seconds} seconds</strong></span>
+            </div>
+          )}
+
+          {/* Video Content Sections - Show script and caption separately when video content is generated */}
+          {content && content.data?.isVideoContent && (
+            <div className="space-y-4">
+              {/* Video Script Section */}
+              {content.data.videoScript && (
+                <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-purple-800 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                      </svg>
+                      Video Script ({content.data.estimatedDuration || content.data.videoDuration || 'N/A'})
+                    </h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-purple-700 border-purple-300 hover:bg-purple-100" 
+                      onClick={copyScript}
+                    >
+                      {scriptCopied ? 'Copied!' : 'Copy Script'}
+                    </Button>
+                  </div>
+                  <div
+                    ref={scriptRef}
+                    className="bg-white p-4 rounded border border-purple-200 text-gray-800 whitespace-pre-wrap font-mono text-sm leading-relaxed"
+                  >
+                    {content.data.videoScript}
+                  </div>
+                </div>
+              )}
+
+              {/* Video Caption Section */}
+              {content.data.videoCaption && (
+                <div className="bg-gradient-to-r from-green-50 to-teal-50 border border-green-200 rounded-lg p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <h3 className="text-lg font-semibold text-green-800 flex items-center">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m0 0V3a1 1 0 011 1v7.5a1 1 0 01-1 1h-3.5m-8-2V8.5A1.5 1.5 0 016.5 7H9m0 0V6a1 1 0 011-1h4a1 1 0 011 1v1m0 0h2.5A1.5 1.5 0 0119 8.5V15a1 1 0 01-1 1h-2.5" />
+                      </svg>
+                      Social Media Caption
+                    </h3>
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      className="text-green-700 border-green-300 hover:bg-green-100" 
+                      onClick={copyCaption}
+                    >
+                      {captionCopied ? 'Copied!' : 'Copy Caption'}
+                    </Button>
+                  </div>
+                  <div
+                    ref={captionRef}
+                    className="bg-white p-4 rounded border border-green-200 text-gray-800 whitespace-pre-wrap leading-relaxed"
+                  >
+                    {content.data.videoCaption}
+                  </div>
+                  
+                  {/* Show hashtags if available */}
+                  {content.data.hashtags && content.data.hashtags.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-green-200">
+                      <p className="text-sm font-medium text-green-700 mb-2">Recommended Hashtags:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {content.data.hashtags.map((hashtag, index) => (
+                          <span 
+                            key={index}
+                            className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium"
+                          >
+                            #{hashtag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
