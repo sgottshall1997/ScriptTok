@@ -123,28 +123,66 @@ export class WebhookService {
         throw new Error('Make.com webhook URL not configured');
       }
 
-      const payload = {
-        type: 'multi_platform_content',
-        timestamp: new Date().toISOString(),
-        data: {
-          platformContent: data.platformContent,
-          platformSchedules: data.platformSchedules,
-          metadata: data.metadata,
-          contentPayload: this.formatContentForMake(data.platformContent, data.metadata)
-        }
-      };
+      // Send each platform as a separate flattened payload
+      const platforms = Object.keys(data.platformContent);
+      const results = [];
 
-      const response = await axios.post(webhookUrl, payload, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+      for (const platform of platforms) {
+        const platformData = data.platformContent[platform];
+        const scheduledTime = data.platformSchedules[platform] || '';
 
-      if (response.status === 200) {
-        return { success: true };
-      } else {
-        throw new Error(`Webhook failed with status: ${response.status}`);
+        // Create flattened payload that Make.com can easily parse
+        const flatPayload = {
+          // Core content fields
+          platform: platform,
+          postType: platformData.type || 'content',
+          caption: platformData.caption || '',
+          hashtags: Array.isArray(platformData.hashtags) ? platformData.hashtags.join(' ') : '',
+          script: platformData.script || '',
+          postInstructions: platformData.postInstructions || '',
+          
+          // Context fields
+          product: data.metadata?.product || '',
+          niche: data.metadata?.niche || '',
+          tone: data.metadata?.tone || '',
+          templateType: data.metadata?.templateType || '',
+          
+          // Scheduling
+          scheduledTime: scheduledTime,
+          
+          // Metadata
+          timestamp: new Date().toISOString(),
+          source: 'GlowBot',
+          generatedAt: data.metadata?.generatedAt || ''
+        };
+
+        console.log(`📤 Sending ${platform} content to Make.com:`, {
+          platform,
+          postType: flatPayload.postType,
+          captionLength: flatPayload.caption.length,
+          hasScheduledTime: !!scheduledTime
+        });
+
+        const response = await axios.post(webhookUrl, flatPayload, {
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+            'Accept': 'application/json',
+            'User-Agent': 'GlowBot/1.0'
+          },
+          timeout: 15000
+        });
+
+        results.push({ platform, status: response.status });
+        
+        // Add delay between requests to avoid overwhelming Make.com
+        if (platforms.length > 1) {
+          await new Promise(resolve => setTimeout(resolve, 500));
+        }
       }
+
+      console.log('✅ All platforms sent to Make.com successfully');
+      return { success: true };
+
     } catch (error: any) {
       console.error('Multi-platform webhook error:', error);
       return { success: false, error: error.message };
