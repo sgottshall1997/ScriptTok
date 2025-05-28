@@ -167,16 +167,27 @@ const Dashboard = () => {
                 </Badge>
               )}
             </div>
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">
-                Top 3 products from each category
-              </p>
-              {!trendingLoading && nextRefreshIn && (
-                <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
-                  <Clock className="h-3 w-3" />
-                  Next refresh in {nextRefreshIn}
+            <div className="flex items-center gap-4">
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => window.location.reload()}
+                className="flex items-center gap-2 text-xs"
+              >
+                <Clock className="h-3 w-3" />
+                Refresh
+              </Button>
+              <div className="text-right">
+                <p className="text-sm text-muted-foreground">
+                  Top 3 products from each category
                 </p>
-              )}
+                {!trendingLoading && nextRefreshIn && (
+                  <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                    <Clock className="h-3 w-3" />
+                    Next refresh in {nextRefreshIn}
+                  </p>
+                )}
+              </div>
             </div>
           </div>
           
