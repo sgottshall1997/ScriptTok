@@ -74,25 +74,21 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
     try {
       setIsScheduling(true);
 
-      const response = await apiRequest('/api/multi-platform/schedule', {
-        method: 'POST',
-        body: JSON.stringify({
-          platformContent: data.platformContent,
-          platformSchedules,
-          metadata: data.metadata
-        }),
-        headers: {
-          'Content-Type': 'application/json'
-        }
+      const response = await apiRequest('POST', '/api/multi-platform/schedule', {
+        platformContent: data.platformContent,
+        platformSchedules,
+        metadata: data.metadata
       });
 
-      if (response.success) {
+      const result = await response.json();
+
+      if (result.success) {
         toast({
           title: "✅ Content Sent to Make.com!",
-          description: `Successfully sent content for ${response.scheduledPlatforms?.length || Object.keys(data.platformContent).length} platforms`,
+          description: `Successfully sent content for ${result.scheduledPlatforms?.length || Object.keys(data.platformContent).length} platforms`,
         });
       } else {
-        throw new Error(response.error || "Failed to send to Make.com");
+        throw new Error(result.error || "Failed to send to Make.com");
       }
     } catch (error: any) {
       toast({
