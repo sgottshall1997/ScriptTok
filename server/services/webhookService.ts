@@ -162,6 +162,8 @@ export class WebhookService {
           captionLength: flatPayload.caption.length,
           hasScheduledTime: !!scheduledTime
         });
+        
+        console.log('📋 Full payload being sent to Make.com:', JSON.stringify(flatPayload, null, 2));
 
         const response = await axios.post(webhookUrl, flatPayload, {
           headers: {
