@@ -101,6 +101,10 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
     }
   };
 
+  // Debug: Log the data structure to understand what we're receiving
+  console.log('MultiPlatformContentOutput received data:', data);
+  console.log('Platform content:', data.platformContent);
+
   return (
     <div className="w-full max-w-4xl mx-auto space-y-6">
       
@@ -115,26 +119,26 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
             <div>
               <span className="font-medium text-gray-600">Product:</span>
-              <p className="text-gray-800">{data.metadata.product}</p>
+              <p className="text-gray-800">{data.metadata?.product || 'N/A'}</p>
             </div>
             <div>
               <span className="font-medium text-gray-600">Niche:</span>
-              <p className="text-gray-800 capitalize">{data.metadata.niche}</p>
+              <p className="text-gray-800 capitalize">{data.metadata?.niche || 'N/A'}</p>
             </div>
             <div>
               <span className="font-medium text-gray-600">Tone:</span>
-              <p className="text-gray-800 capitalize">{data.metadata.tone}</p>
+              <p className="text-gray-800 capitalize">{data.metadata?.tone || 'N/A'}</p>
             </div>
             <div>
               <span className="font-medium text-gray-600">Platforms:</span>
-              <p className="text-gray-800">{data.metadata.totalPlatforms}</p>
+              <p className="text-gray-800">{data.metadata?.totalPlatforms || Object.keys(data.platformContent || {}).length}</p>
             </div>
           </div>
         </CardContent>
       </Card>
 
       {/* Platform Content */}
-      {Object.entries(data.platformContent || {}).map(([platform, platformData]) => (
+      {data.platformContent && Object.keys(data.platformContent).length > 0 ? Object.entries(data.platformContent).map(([platform, platformData]) => (
         <Card key={platform} className="border-gray-200">
           <CardHeader className="pb-3">
             <CardTitle className="text-lg flex items-center justify-between">
@@ -214,9 +218,16 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
 
           </CardContent>
         </Card>
-      ))}
+      )) : (
+        <Card className="border-orange-200 bg-orange-50">
+          <CardContent className="p-6 text-center">
+            <p className="text-orange-700">No platform content available. Please generate content first.</p>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Multi-Platform Scheduling */}
+      {data.platformContent && Object.keys(data.platformContent).length > 0 && (
       <Card className="border-blue-200 bg-blue-50">
         <CardHeader>
           <CardTitle className="text-blue-700 flex items-center gap-2">
@@ -232,7 +243,7 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
               Schedule Time per Platform (Optional)
             </label>
             
-            {Object.keys(data.platformContent).map((platform) => (
+            {Object.keys(data.platformContent || {}).map((platform) => (
               <div key={platform} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-blue-200">
                 <span className="font-medium text-gray-700 w-32">{platform}:</span>
                 <Input
@@ -266,6 +277,7 @@ const MultiPlatformContentOutput: FC<MultiPlatformContentOutputProps> = ({ data 
           
         </CardContent>
       </Card>
+      )}
 
     </div>
   );
