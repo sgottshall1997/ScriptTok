@@ -217,8 +217,8 @@ export async function generateDailyBatch(req: Request, res: Response) {
 
         // Log AI feedback to persistent memory for continuous learning
         try {
-          const { logFeedback } = require('../database/feedbackLogger');
-          await logFeedback({
+          const feedbackLogger = await import('../database/feedbackLogger.js');
+          await feedbackLogger.logFeedback({
             niche,
             product: topProduct,
             script: contentResult.content,
