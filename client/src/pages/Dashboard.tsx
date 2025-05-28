@@ -83,8 +83,8 @@ const Dashboard = () => {
   
   // Prepare niche products with proper fallbacks for each niche
   niches.forEach(niche => {
-    if (trendingProducts?.byNiche && trendingProducts.byNiche[niche.id]) {
-      nicheProducts[niche.id] = trendingProducts.byNiche[niche.id];
+    if (trendingProducts?.data && trendingProducts.data[niche.id]) {
+      nicheProducts[niche.id] = trendingProducts.data[niche.id];
     } else {
       nicheProducts[niche.id] = [];
     }
