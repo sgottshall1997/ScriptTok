@@ -28,6 +28,7 @@ import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
+import GenerateContent from "@/pages/GenerateContent";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -43,7 +44,7 @@ function Router() {
       {/* Dashboard as the landing page */}
       <Route path="/" component={Dashboard} />
       <Route path="/home" component={Home} />
-      <Route path="/generate" component={Home} />
+      <Route path="/generate" component={GenerateContent} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/niche/:niche" component={NichePage} />
       <Route path="/templates" component={TemplateExplorerPage} />
