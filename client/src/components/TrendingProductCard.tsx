@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingProduct, SOURCE_COLORS } from "@/lib/types";
 import { Button } from "@/components/ui/button";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, ExternalLink } from "lucide-react";
 
 interface TrendingProductCardProps {
   product: TrendingProduct;
@@ -41,6 +41,18 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
     }
   };
 
+  // Generate Amazon affiliate link based on product title
+  const generateAmazonLink = (title: string) => {
+    // Simple keyword extraction for Amazon search
+    const searchTerm = title.replace(/[^\w\s]/g, '').replace(/\s+/g, '+');
+    return `https://www.amazon.com/s?k=${searchTerm}&tag=sgottshall199-20`;
+  };
+
+  const openAmazonLink = () => {
+    const amazonUrl = generateAmazonLink(product.title);
+    window.open(amazonUrl, '_blank', 'noopener,noreferrer');
+  };
+
   return (
     <Card className="overflow-hidden hover:shadow-md transition-shadow">
       <CardContent className="p-0">
@@ -50,7 +62,7 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-sm font-medium text-neutral-800 truncate">{product.title}</p>
-            <div className="flex items-center mt-1">
+            <div className="flex items-center mt-1 mb-2">
               <span className={`inline-block text-xs px-2 py-0.5 rounded ${getSourceColorClass(product.source)} mr-2`}>
                 {product.isAIGenerated ? 
                   '🤖 AI-' + product.source.charAt(0).toUpperCase() + product.source.slice(1) :
@@ -61,6 +73,13 @@ export const TrendingProductCard: React.FC<TrendingProductCardProps> = ({
                 {formatNumber(product.mentions || 0)} {product.isAIGenerated ? 'est. mentions' : 'mentions'}
               </div>
             </div>
+            <button 
+              onClick={openAmazonLink}
+              className="text-xs text-orange-600 hover:text-orange-800 hover:underline flex items-center gap-1"
+            >
+              <ExternalLink size={12} />
+              Find on Amazon
+            </button>
           </div>
         </div>
         <div className="p-3 bg-muted flex justify-end">
