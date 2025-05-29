@@ -3,6 +3,7 @@ import { dailyScraperCache } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 import { format } from "date-fns";
 import { getAllTrendingProducts } from "../scrapers/index";
+import { storage } from "../storage";
 
 /**
  * Gets today's date in YYYY-MM-DD format
@@ -75,10 +76,26 @@ export async function storeCachedTrendingData(products: any[]): Promise<void> {
 }
 
 /**
- * Runs the trending scraper and caches the result
+ * Runs the trending scraper with daily caching - only runs once per day
  */
 export async function runAndCacheTrendingScraper(): Promise<any[]> {
-  console.log('🔄 Running trending products scraper...');
+  const today = getTodaysDate();
+  
+  // Check if we already have cached data for today
+  const existingCache = await db
+    .select()
+    .from(dailyScraperCache)
+    .where(eq(dailyScraperCache.source, 'all_trending'))
+    .where(eq(dailyScraperCache.date, today))
+    .limit(1);
+
+  if (existingCache.length > 0) {
+    const cache = existingCache[0];
+    console.log(`📋 Using cached trending data from ${cache.lastUpdated.toLocaleString()}`);
+    return cache.data as any[] || [];
+  }
+
+  console.log('🔄 Running daily trending products scraper (once per day)...');
   
   try {
     const scraperResult = await getAllTrendingProducts();
@@ -98,8 +115,26 @@ export async function runAndCacheTrendingScraper(): Promise<any[]> {
       console.log(`✅ Successfully saved ${trendingProducts.length} products to database`);
     }
     
-    // Store in cache
-    await storeCachedTrendingData(trendingProducts);
+    // Store in cache with today's date
+    await db
+      .insert(dailyScraperCache)
+      .values({
+        source: 'all_trending',
+        date: today,
+        data: trendingProducts,
+        success: true,
+        error: null,
+        lastUpdated: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: [dailyScraperCache.source, dailyScraperCache.date],
+        set: {
+          data: trendingProducts,
+          success: true,
+          error: null,
+          lastUpdated: new Date(),
+        },
+      });
     
     return trendingProducts;
     
@@ -111,7 +146,7 @@ export async function runAndCacheTrendingScraper(): Promise<any[]> {
       .insert(dailyScraperCache)
       .values({
         source: 'all_trending',
-        date: getTodaysDate(),
+        date: today,
         data: [],
         success: false,
         error: error instanceof Error ? error.message : String(error),
