@@ -67,7 +67,10 @@ router.post("/refresh", async (req, res) => {
   try {
     console.log("Manual refresh requested - this will force a full refresh regardless of cache");
     
-    // Use the refreshTrendingCache which runs fresh scrapers and caches results
+    // Import the correct function
+    const { refreshTrendingCache } = await import("../services/scraperCacheManager");
+    
+    // Use the refreshTrendingCache which bypasses cache and runs fresh scrapers
     const trendingProducts = await refreshTrendingCache();
     
     res.json({ 

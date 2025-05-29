@@ -183,11 +183,75 @@ export async function getTrendingData(): Promise<any[]> {
 }
 
 /**
- * Manually trigger trending scraper refresh
+ * Manually trigger trending scraper refresh - forces bypass of cache
  */
 export async function refreshTrendingCache(): Promise<any[]> {
-  console.log('🔄 Manual trending cache refresh triggered...');
-  return await runAndCacheTrendingScraper();
+  console.log('🔄 Manual trending cache refresh triggered - bypassing cache...');
+  
+  const today = getTodaysDate();
+  
+  try {
+    console.log('🚀 Starting fresh scraper run with detailed logging...');
+    const scraperResult = await getAllTrendingProducts();
+    
+    // Log detailed scraper results
+    console.log('\n📊 SCRAPER RESULTS BREAKDOWN:');
+    console.log(`Total products found: ${scraperResult.products?.length || 0}`);
+    
+    // Log platform status with AI fallback detection
+    console.log('\n🔍 PLATFORM STATUS:');
+    scraperResult.platforms?.forEach(platform => {
+      const statusSymbol = platform.status === 'active' ? '✅' : 
+                          platform.status === 'gpt-fallback' ? '🤖' : '❌';
+      
+      if (platform.status === 'gpt-fallback') {
+        console.log(`${statusSymbol} ${platform.name.toUpperCase()}: AI FALLBACK - ${platform.errorMessage || 'Using AI-generated data'}`);
+      } else if (platform.status === 'error') {
+        console.log(`${statusSymbol} ${platform.name.toUpperCase()}: ERROR - ${platform.errorMessage || 'Unknown error'}`);
+      } else {
+        console.log(`${statusSymbol} ${platform.name.toUpperCase()}: AUTHENTIC DATA`);
+      }
+    });
+    
+    const trendingProducts = scraperResult.products || [];
+    
+    // Save to database
+    if (trendingProducts.length > 0) {
+      await storage.clearTrendingProducts();
+      for (const product of trendingProducts) {
+        await storage.saveTrendingProduct(product);
+      }
+      console.log(`\n✅ Successfully saved ${trendingProducts.length} products to database`);
+    }
+    
+    // Update cache with fresh data
+    await db
+      .insert(dailyScraperCache)
+      .values({
+        source: 'all_trending',
+        date: today,
+        data: trendingProducts,
+        success: true,
+        error: null,
+        lastUpdated: new Date(),
+      })
+      .onConflictDoUpdate({
+        target: [dailyScraperCache.source, dailyScraperCache.date],
+        set: {
+          data: trendingProducts,
+          success: true,
+          error: null,
+          lastUpdated: new Date(),
+        },
+      });
+    
+    console.log(`\n📦 Cache updated with fresh data (${trendingProducts.length} products)\n`);
+    return trendingProducts;
+    
+  } catch (error) {
+    console.error('\n❌ MANUAL REFRESH FAILED:', error);
+    return [];
+  }
 }
 
 /**
