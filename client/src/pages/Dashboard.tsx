@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "wouter";
-import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw } from "lucide-react";
+import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw, ChefHat } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import DailyContentShowcase from "@/components/DailyContentShowcase";
 import DailyBatchButton from "@/components/DailyBatchButton";
@@ -145,6 +145,49 @@ const Dashboard = () => {
 
         {/* Amazon Affiliate Picks Section */}
         <EnhancedAmazonAffiliateSection />
+
+        {/* Quick Actions Section */}
+        <div className="grid gap-4 md:grid-cols-2">
+          <Card className="border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-red-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-3 text-orange-800">
+                <ChefHat className="h-6 w-6" />
+                Cooking Content Generator
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-orange-700 text-sm mb-4">
+                Create recipe content with trending ingredients and cooking methods. Perfect for food influencers and cooking channels.
+              </p>
+              <Link href="/cooking">
+                <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white">
+                  Generate Recipe Content
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+
+          <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-3 text-blue-800">
+                <BarChart3 className="h-6 w-6" />
+                Multi-Niche Generator
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-blue-700 text-sm mb-4">
+                Generate content for all 7 niches with AI-powered optimization and platform-specific formatting.
+              </p>
+              <Link href="/generate">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+                  Generate Multi-Niche Content
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Content Generation Section - Full Width */}
         <Card className="w-full">
