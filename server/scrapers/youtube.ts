@@ -2,7 +2,7 @@ import { InsertTrendingProduct } from '@shared/schema';
 import axios from 'axios';
 import { ScraperReturn } from './index';
 
-// YouTube trending products scraper using real YouTube Data API
+// Clean YouTube API implementation for authentic trending data
 export async function getYouTubeTrending(niche: string = 'skincare'): Promise<ScraperReturn> {
   const API_KEY = process.env.YOUTUBE_API_KEY;
   
@@ -19,7 +19,7 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
   try {
     // Define search terms for each niche
     const nicheSearchTerms: Record<string, string[]> = {
-      'skincare': ['skincare routine', 'skin care products', 'skincare haul', 'beauty products'],
+      'skincare': ['skincare routine', 'skincare haul', 'beauty products', 'skincare review'],
       'tech': ['tech review', 'gadget unboxing', 'tech haul', 'best tech'],
       'fashion': ['fashion haul', 'outfit ideas', 'clothing review', 'style guide'],
       'fitness': ['fitness gear', 'workout equipment', 'gym essentials', 'fitness review'],
@@ -31,7 +31,9 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
     const searchTerms = nicheSearchTerms[niche] || nicheSearchTerms['skincare'];
     const searchTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
 
-    // Search for trending videos in the niche
+    console.log(`🔍 YouTube API: Searching for "${searchTerm}" in ${niche} niche`);
+
+    // Get trending videos using YouTube Data API
     const searchResponse = await axios.get('https://www.googleapis.com/youtube/v3/search', {
       params: {
         key: API_KEY,
@@ -39,7 +41,7 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
         q: searchTerm,
         type: 'video',
         order: 'relevance',
-        maxResults: 20,
+        maxResults: 15,
         relevanceLanguage: 'en'
       }
     });
@@ -50,10 +52,11 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
       throw new Error('No videos found for search term');
     }
 
-    // Get video IDs for statistics
+    console.log(`📹 YouTube API: Found ${videos.length} videos for "${searchTerm}"`);
+
+    // Get video statistics for engagement data
     const videoIds = videos.map((video: any) => video.id.videoId).join(',');
     
-    // Get video statistics
     const statsResponse = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
       params: {
         key: API_KEY,
@@ -64,48 +67,41 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
 
     const videoStats = statsResponse.data.items || [];
     
-    // Extract product mentions from video titles and descriptions
+    // Extract authentic trending content from real videos
     const products: InsertTrendingProduct[] = [];
     
     videos.forEach((video: any, index: number) => {
-      const stats = videoStats.find((stat: any) => stat.id === video.id.videoId);
-      const viewCount = stats?.statistics?.viewCount ? parseInt(stats.statistics.viewCount) : 0;
+      const stats = videoStats[index];
+      const viewCount = stats ? parseInt(stats.statistics.viewCount || '0') : 0;
       
-      // Extract potential product names from titles
-      const title = video.snippet.title;
-      const description = video.snippet.description || '';
-      
-      // Extract products from video content using a simple approach
-      const combinedText = `${title} ${description}`;
-      
-      // Extract trending content based on video engagement and niche relevance
       if (viewCount > 1000) {
-        // Create product entries based on the actual video content
-        let productTitle = '';
+        const title = video.snippet.title;
+        const description = video.snippet.description || '';
+        const combinedText = `${title} ${description}`.toLowerCase();
         
-        // Look for specific brand mentions first
+        // Extract brand mentions from authentic video content
         const brands = ['cerave', 'neutrogena', 'ordinary', 'fenty', 'glossier', 
                        'drunk elephant', 'glow recipe', 'tatcha', 'clinique', 'mac', 
                        'urban decay', 'nars', 'morphe', 'benefit', 'tarte', 'maybelline', 
-                       'loreal', 'revlon', 'nyx', 'elf'];
+                       'loreal', 'revlon', 'nyx', 'elf', 'olaplex', 'paula\'s choice'];
         
-        const lowerText = combinedText.toLowerCase();
-        const foundBrand = brands.find(brand => lowerText.includes(brand));
+        const foundBrand = brands.find(brand => combinedText.includes(brand));
         
+        let productTitle = '';
         if (foundBrand) {
           productTitle = foundBrand.charAt(0).toUpperCase() + foundBrand.slice(1);
-        } else if (lowerText.includes('routine')) {
+        } else if (combinedText.includes('routine')) {
           productTitle = `${niche.charAt(0).toUpperCase() + niche.slice(1)} Routine Trending`;
-        } else if (lowerText.includes('review')) {
+        } else if (combinedText.includes('review')) {
           productTitle = `Product Review Trending`;
-        } else if (lowerText.includes('haul')) {
+        } else if (combinedText.includes('haul')) {
           productTitle = `Beauty Haul Trending`;
         } else {
-          // Use the video title as the trending content if it's relevant
-          productTitle = title.length > 60 ? title.substring(0, 60) + '...' : title;
+          // Use actual video title for authentic trending content
+          productTitle = title.length > 50 ? title.substring(0, 50) + '...' : title;
         }
         
-        if (productTitle) {
+        if (productTitle && index < 5) { // Limit to top 5 most relevant
           products.push({
             title: productTitle,
             source: "youtube",
@@ -115,44 +111,24 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
           });
         }
       }
-      
-      // Extract from channel title for brand mentions
-      const channelTitle = video.snippet.channelTitle;
-      if (channelTitle && index < 3 && viewCount > 10000) {
-        const brandPattern = /([A-Z][a-zA-Z\s]+)\s*(?:Official|Beauty|Skincare|Cosmetics)/gi;
-        const brandMatches = [...channelTitle.matchAll(brandPattern)];
-        
-        brandMatches.forEach(match => {
-          const brandName = match[1].trim();
-          if (brandName.length > 3 && brandName.length < 30) {
-            products.push({
-              title: `${brandName} Products`,
-              source: "youtube",
-              niche: niche,
-              mentions: Math.floor(viewCount / 2000),
-              sourceUrl: `https://www.youtube.com/watch?v=${video.id.videoId}`
-            });
-          }
-        });
-      }
     });
 
-    // Remove duplicates and limit results
+    // Remove duplicates and sort by engagement
     const uniqueProducts = products
       .filter((product, index, self) => 
         index === self.findIndex(p => p.title.toLowerCase() === product.title.toLowerCase())
       )
       .sort((a, b) => (b.mentions || 0) - (a.mentions || 0))
-      .slice(0, 5);
+      .slice(0, 3);
 
-    console.log(`✅ YouTube API: Found ${uniqueProducts.length} products from ${videos.length} videos`);
+    console.log(`✅ YouTube API: Extracted ${uniqueProducts.length} authentic trending items`);
     
     if (uniqueProducts.length === 0) {
-      console.log('No products extracted, sample video data:');
+      console.log('📋 Sample authentic video data:');
       videos.slice(0, 2).forEach((video: any, i: number) => {
-        console.log(`Video ${i + 1}: "${video.snippet.title}" - Channel: ${video.snippet.channelTitle}`);
+        console.log(`  ${i + 1}. "${video.snippet.title}" by ${video.snippet.channelTitle}`);
       });
-      throw new Error('Could not extract product mentions from YouTube data');
+      throw new Error('Could not extract trending content from authentic YouTube data');
     }
     
     return {
@@ -164,7 +140,7 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
     };
 
   } catch (error: any) {
-    console.error('YouTube API error:', error);
+    console.error('YouTube API error:', error.message);
     return {
       products: [],
       status: {

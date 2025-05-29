@@ -1,6 +1,6 @@
 import { getTikTokTrending } from './tiktok';
 import { getRedditTrending } from './reddit';
-import { getYouTubeTrending } from './youtube_clean';
+import { getYouTubeTrending } from './youtube';
 import { getInstagramTrending } from './instagram';
 import { getAmazonTrending } from './amazon';
 import { getGoogleTrendingProducts } from './googleTrends';

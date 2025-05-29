@@ -91,8 +91,8 @@ export async function runAndCacheTrendingScraper(): Promise<any[]> {
 
   if (existingCache.length > 0) {
     const cache = existingCache[0];
-    console.log(`📋 Using cached trending data from ${cache.lastUpdated.toLocaleString()}`);
-    return cache.data as any[] || [];
+    console.log(`📋 Using cached trending data from ${cache.updatedAt.toLocaleString()}`);
+    return JSON.parse(cache.data) || [];
   }
 
   console.log('🔄 Running daily trending products scraper (once per day)...');
