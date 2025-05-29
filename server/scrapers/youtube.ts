@@ -75,49 +75,42 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
       const title = video.snippet.title;
       const description = video.snippet.description || '';
       
-      // Enhanced product pattern matching for different contexts
-      const productPatterns = [
-        // Brand + Product patterns
-        /([A-Z][a-zA-Z]+)\s+([A-Z][a-zA-Z\s]+(?:Serum|Cream|Cleanser|Moisturizer|Foundation|Mascara|Lipstick|Oil|Balm|Gel|Spray|Mist|Essence|Treatment|Mask|Scrub|Lotion|Powder|Primer|Toner))/gi,
-        // Review/unboxing patterns
-        /(?:review|unboxing|haul|testing|trying)\s+([A-Z][a-zA-Z\s&\-]+(?:Pro|Max|Ultra|Plus|Mini|Air|One)?)/gi,
-        // Product with brand patterns
-        /([A-Z][a-zA-Z\s&\-]+)\s+(?:from|by)\s+([A-Z][a-zA-Z\s&]+)/gi,
-        // Direct product mentions
-        /([A-Z][a-zA-Z]+\s+[A-Z][a-zA-Z\s]+)\s*(?:\||review|haul|unboxing)/gi
-      ];
+      // Extract products from video content using a simple approach
+      const combinedText = `${title} ${description}`;
       
-      productPatterns.forEach(pattern => {
-        const titleMatches = [...title.matchAll(pattern)];
-        const descMatches = [...description.substring(0, 200).matchAll(pattern)];
-        
-        [...titleMatches, ...descMatches].forEach(match => {
-          let productName = '';
-          
-          // Handle different match groups
-          if (match[1] && match[2]) {
-            productName = `${match[1]} ${match[2]}`.trim();
-          } else if (match[1]) {
-            productName = match[1].trim();
-          }
-          
-          // Clean and validate product name
-          productName = productName
-            .replace(/[^\w\s\-&]/g, '')
-            .replace(/\s+/g, ' ')
-            .trim();
-          
-          if (productName.length > 5 && productName.length < 60 && viewCount > 1000) {
+      // Look for specific brand names that commonly appear in skincare videos
+      const brands = ['CeraVe', 'Neutrogena', 'The Ordinary', 'Fenty Beauty', 'Glossier', 
+                     'Drunk Elephant', 'Glow Recipe', 'Tatcha', 'Clinique', 'MAC', 
+                     'Urban Decay', 'NARS', 'Morphe', 'Benefit', 'Tarte', 'Maybelline', 
+                     'L\'Oreal', 'Revlon', 'NYX', 'ELF'];
+      
+      brands.forEach(brand => {
+        if (combinedText.toLowerCase().includes(brand.toLowerCase())) {
+          products.push({
+            title: brand,
+            source: "youtube",
+            niche: niche,
+            mentions: Math.floor(viewCount / 1000),
+            sourceUrl: `https://www.youtube.com/watch?v=${video.id.videoId}`
+          });
+        }
+      });
+      
+      // Also look for product type mentions if no brands found
+      if (products.length === 0) {
+        const productTypes = ['serum', 'moisturizer', 'cleanser', 'foundation', 'mascara', 'lipstick'];
+        productTypes.forEach(type => {
+          if (combinedText.toLowerCase().includes(type)) {
             products.push({
-              title: productName,
+              title: `${type.charAt(0).toUpperCase() + type.slice(1)} Product`,
               source: "youtube",
               niche: niche,
-              mentions: Math.floor(viewCount / 1000), // Convert views to mention metric
+              mentions: Math.floor(viewCount / 2000),
               sourceUrl: `https://www.youtube.com/watch?v=${video.id.videoId}`
             });
           }
         });
-      });
+      }
       
       // Extract from channel title for brand mentions
       const channelTitle = video.snippet.channelTitle;
@@ -149,6 +142,14 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
       .slice(0, 5);
 
     console.log(`✅ YouTube API: Found ${uniqueProducts.length} products from ${videos.length} videos`);
+    
+    if (uniqueProducts.length === 0) {
+      console.log('No products extracted, sample video data:');
+      videos.slice(0, 2).forEach((video: any, i: number) => {
+        console.log(`Video ${i + 1}: "${video.snippet.title}" - Channel: ${video.snippet.channelTitle}`);
+      });
+      throw new Error('Could not extract product mentions from YouTube data');
+    }
     
     return {
       products: uniqueProducts,
