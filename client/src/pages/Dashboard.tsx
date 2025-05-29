@@ -11,6 +11,7 @@ import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw } from "lu
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import DailyContentShowcase from "@/components/DailyContentShowcase";
 import DailyBatchButton from "@/components/DailyBatchButton";
+import { EnhancedAmazonAffiliateSection } from "@/components/EnhancedAmazonAffiliateSection";
 
 const Dashboard = () => {
   const [loadingTimeElapsed, setLoadingTimeElapsed] = useState(0);
@@ -141,6 +142,9 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Amazon Affiliate Picks Section */}
+        <EnhancedAmazonAffiliateSection />
 
         {/* Content Generation Section - Full Width */}
         <Card className="w-full">
