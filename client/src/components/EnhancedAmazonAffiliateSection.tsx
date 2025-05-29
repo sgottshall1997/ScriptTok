@@ -322,21 +322,21 @@ export function EnhancedAmazonAffiliateSection() {
 
         {/* Generated Content Display */}
         {showContent && currentContent && (
-          <div className="bg-white rounded-lg p-6 border border-orange-200 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-900 mb-4">{currentContent.title}</h3>
+          <div className="bg-gray-800 rounded-lg p-6 border border-orange-200 shadow-sm">
+            <h3 className="text-xl font-bold text-white mb-4">{currentContent.title}</h3>
             <div className="prose prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap text-gray-700 font-sans leading-relaxed">
+              <pre className="whitespace-pre-wrap text-gray-200 font-sans leading-relaxed">
                 {currentContent.content}
               </pre>
             </div>
-            <div className="mt-4 pt-4 border-t border-gray-100">
+            <div className="mt-4 pt-4 border-t border-gray-600">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-blue-600 font-medium">{currentContent.hashtags}</p>
+                <p className="text-sm text-blue-400 font-medium">{currentContent.hashtags}</p>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => copyToClipboard(currentContent.content + '\n\n' + currentContent.hashtags, 'content')}
-                  className="flex items-center gap-1"
+                  className="flex items-center gap-1 bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
                 >
                   <Copy size={14} />
                   Copy Content
