@@ -581,9 +581,9 @@ const CookingGenerator = () => {
                                     variant="outline"
                                     size="sm"
                                     className="h-6 px-2 text-xs"
-                                    onClick={() => copyToClipboard(content.caption, `${methodName} ${content.platform} Caption`)}
+                                    onClick={() => copyToClipboard(content.caption, `${skillLevel} ${content.platforms[0]} Caption`)}
                                   >
-                                    {copiedText === `${methodName} ${content.platform} Caption` ? <Check size={12} /> : <Copy size={12} />}
+                                    {copiedText === `${skillLevel} ${content.platforms[0]} Caption` ? <Check size={12} /> : <Copy size={12} />}
                                   </Button>
                                 </div>
                                 <div className="bg-orange-50 p-2 rounded border border-orange-200 text-xs">
@@ -598,7 +598,7 @@ const CookingGenerator = () => {
                                 size="sm"
                                 onClick={() => copyToClipboard(
                                   `${content.script}\n\n${content.caption}\n\n${content.cta}\n\n${content.hashtags}`, 
-                                  `${methodName} ${content.platform} Complete`
+                                  `${skillLevel} ${content.platforms[0]} Complete`
                                 )}
                               >
                                 <Copy className="mr-1 h-3 w-3" />
