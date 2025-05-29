@@ -62,23 +62,157 @@ class CookingContentPipeline {
     return hash;
   }
 
-  async generateRecipeContent(ingredient: TrendingIngredient, method: string): Promise<RecipePayload> {
+  async generateRecipeContent(ingredient: TrendingIngredient, method: string): Promise<RecipePayload[]> {
     const recipeData = this.getRecipeData(ingredient.name, method);
+    const platforms = ['LinkedIn', 'Twitter', 'Instagram', 'TikTok', 'YouTube Shorts'];
     
-    return {
+    return platforms.map(platform => ({
       niche: "cooking",
       productName: ingredient.name,
       contentType: "recipePost",
-      script: recipeData.script,
-      caption: recipeData.caption,
-      hashtags: recipeData.hashtags,
+      script: this.getPlatformScript(recipeData, platform, method),
+      caption: this.getPlatformCaption(recipeData, platform),
+      hashtags: this.getPlatformHashtags(recipeData, platform),
       cta: `🍳 Get the best ${method.replace(' ', '')} for perfect results → https://www.amazon.com/s?k=${method.replace(' ', '+')}&tag=sgottshall199-20`,
-      platforms: ["TikTok", "Instagram", "Pinterest"],
-      videoDuration: "45s",
+      platforms: [platform],
+      videoDuration: this.getPlatformDuration(platform),
       imagePrompt: recipeData.imagePrompt,
       cookingMethod: method,
-      postType: "video"
-    };
+      postType: this.getPlatformType(platform),
+      platform: platform
+    }));
+  }
+
+  private getPlatformScript(recipeData: any, platform: string, method: string): string {
+    const baseScript = recipeData.script;
+    
+    switch (platform) {
+      case 'LinkedIn':
+        return `🔥 Professional Kitchen Tip: ${method} Mastery
+
+${baseScript}
+
+💼 Why this matters for busy professionals:
+• Quick, efficient cooking method
+• Consistent, restaurant-quality results
+• Perfect for meal prep and time management
+
+What's your go-to cooking method for busy weekdays?`;
+
+      case 'Twitter':
+        return `🔥 Quick ${method} tip thread 🧵
+
+${baseScript.split('\n').slice(0, 8).join('\n')}
+
+💡 Pro tip: This method saves 30% cooking time while maintaining perfect results!
+
+What's your favorite quick cooking hack? 👇`;
+
+      case 'Instagram':
+        return baseScript;
+
+      case 'TikTok':
+        return `🔥 ${method} hack that'll change your cooking game!
+
+${baseScript}
+
+✨ Follow for more cooking tips that actually work!
+📱 Tag a friend who needs to see this!`;
+
+      case 'YouTube Shorts':
+        return `🔥 ${method} Recipe in 60 Seconds!
+
+${baseScript}
+
+🎬 WATCH UNTIL THE END for the secret tip!
+👍 LIKE if this helped you!
+🔔 SUBSCRIBE for daily cooking shortcuts!`;
+
+      default:
+        return baseScript;
+    }
+  }
+
+  private getPlatformCaption(recipeData: any, platform: string): string {
+    const baseCaption = recipeData.caption;
+    
+    switch (platform) {
+      case 'LinkedIn':
+        return `${baseCaption} Perfect for busy professionals who want restaurant-quality meals at home. What's your go-to quick cooking method?`;
+
+      case 'Twitter':
+        return `${baseCaption} Quick thread below 👇`;
+
+      case 'Instagram':
+        return `${baseCaption} Double tap if you're trying this tonight! 💫`;
+
+      case 'TikTok':
+        return `${baseCaption} Follow for more cooking hacks! 🔥`;
+
+      case 'YouTube Shorts':
+        return `${baseCaption} LIKE & SUBSCRIBE for daily cooking tips! 🔔`;
+
+      default:
+        return baseCaption;
+    }
+  }
+
+  private getPlatformHashtags(recipeData: any, platform: string): string {
+    const baseHashtags = recipeData.hashtags;
+    
+    switch (platform) {
+      case 'LinkedIn':
+        return `${baseHashtags} #ProfessionalCooking #MealPrep #WorkLifeBalance #CookingTips`;
+
+      case 'Twitter':
+        return `${baseHashtags} #CookingThread #FoodieTwitter #QuickMeals`;
+
+      case 'Instagram':
+        return `${baseHashtags} #FoodieGram #InstaFood #CookingReels #FoodPhotography`;
+
+      case 'TikTok':
+        return `${baseHashtags} #CookingHacks #FoodTok #Recipe #Viral #FYP`;
+
+      case 'YouTube Shorts':
+        return `${baseHashtags} #Shorts #CookingShorts #Recipe #FoodHacks`;
+
+      default:
+        return baseHashtags;
+    }
+  }
+
+  private getPlatformDuration(platform: string): string {
+    switch (platform) {
+      case 'LinkedIn':
+        return '2-3 min';
+      case 'Twitter':
+        return '30s';
+      case 'Instagram':
+        return '60s';
+      case 'TikTok':
+        return '45s';
+      case 'YouTube Shorts':
+        return '60s';
+      default:
+        return '60s';
+    }
+  }
+
+  private getPlatformType(platform: string): string {
+    switch (platform) {
+      case 'LinkedIn':
+        return 'carousel';
+      case 'Twitter':
+        return 'thread';
+      case 'Instagram':
+        return 'reel';
+      case 'TikTok':
+        return 'video';
+      case 'YouTube Shorts':
+        return 'short';
+      default:
+        return 'video';
+    }
   }
 
   private getRecipeData(ingredient: string, method: string) {

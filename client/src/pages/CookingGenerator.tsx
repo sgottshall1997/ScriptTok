@@ -22,6 +22,7 @@ interface RecipePayload {
   imagePrompt: string;
   cookingMethod: string;
   postType: string;
+  platform: string;
 }
 
 interface TrendingIngredient {
@@ -35,7 +36,7 @@ const CookingGenerator = () => {
   const [selectedIngredient, setSelectedIngredient] = useState<string>("");
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [customIngredient, setCustomIngredient] = useState<string>("");
-  const [generatedContent, setGeneratedContent] = useState<RecipePayload | null>(null);
+  const [generatedContent, setGeneratedContent] = useState<RecipePayload[] | null>(null);
   const [copiedText, setCopiedText] = useState<string>("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -81,10 +82,10 @@ const CookingGenerator = () => {
       return response.json();
     },
     onSuccess: (data) => {
-      setGeneratedContent(data.recipe);
+      setGeneratedContent(data.recipes);
       toast({
         title: "Recipe generated!",
-        description: `${selectedMethod} ${selectedIngredient || customIngredient} content is ready`,
+        description: `${selectedMethod} ${selectedIngredient || customIngredient} content is ready for all platforms`,
       });
     },
     onError: () => {
@@ -281,105 +282,160 @@ const CookingGenerator = () => {
 
         {/* Generated Content Display */}
         {generatedContent && (
-          <Card className="bg-gray-800 text-white">
-            <CardHeader>
-              <CardTitle className="text-xl">{generatedContent.script.split('\n')[0]}</CardTitle>
-              <CardDescription className="text-gray-300">
-                {generatedContent.cookingMethod} • {generatedContent.videoDuration} • Ready for {generatedContent.platforms.join(', ')}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-6">
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold">Recipe Content Generated!</h2>
+              <p className="text-muted-foreground">Platform-specific content ready for {generatedContent[0]?.productName} using {generatedContent[0]?.cookingMethod}</p>
+            </div>
+            
+            {generatedContent.map((content, index) => {
+              const platformColors = {
+                'LinkedIn': 'bg-blue-50 border-blue-200',
+                'Twitter': 'bg-sky-50 border-sky-200', 
+                'Instagram': 'bg-pink-50 border-pink-200',
+                'TikTok': 'bg-red-50 border-red-200',
+                'YouTube Shorts': 'bg-red-50 border-red-200'
+              };
               
-              {/* Recipe Script */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Recipe Script</h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(generatedContent.script, 'Recipe Script')}
-                    className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
-                  >
-                    {copiedText === 'Recipe Script' ? <Check size={14} /> : <Copy size={14} />}
-                    <span className="ml-1">Copy</span>
-                  </Button>
-                </div>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <pre className="whitespace-pre-wrap text-gray-200 text-base leading-relaxed">
-                    {generatedContent.script}
-                  </pre>
-                </div>
-              </div>
+              const platformIcons = {
+                'LinkedIn': '💼',
+                'Twitter': '🐦',
+                'Instagram': '📸', 
+                'TikTok': '🎵',
+                'YouTube Shorts': '🎬'
+              };
+              
+              return (
+                <Card key={index} className={`${platformColors[content.platform as keyof typeof platformColors] || 'bg-gray-50 border-gray-200'}`}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3">
+                      <span className="text-2xl">{platformIcons[content.platform as keyof typeof platformIcons] || '📱'}</span>
+                      {content.platform}
+                      <Badge variant="outline" className="ml-auto">
+                        {content.postType} • {content.videoDuration}
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    
+                    {/* Script */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">Script</h4>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(content.script, `${content.platform} Script`)}
+                        >
+                          {copiedText === `${content.platform} Script` ? <Check size={14} /> : <Copy size={14} />}
+                          Copy
+                        </Button>
+                      </div>
+                      <div className="bg-white p-3 rounded border">
+                        <pre className="whitespace-pre-wrap text-sm">{content.script}</pre>
+                      </div>
+                    </div>
 
-              {/* Caption */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Social Media Caption</h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(generatedContent.caption, 'Caption')}
-                    className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
-                  >
-                    {copiedText === 'Caption' ? <Check size={14} /> : <Copy size={14} />}
-                    <span className="ml-1">Copy</span>
-                  </Button>
-                </div>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-gray-200">{generatedContent.caption}</p>
-                </div>
-              </div>
+                    {/* Caption */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">Caption</h4>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(content.caption, `${content.platform} Caption`)}
+                        >
+                          {copiedText === `${content.platform} Caption` ? <Check size={14} /> : <Copy size={14} />}
+                          Copy
+                        </Button>
+                      </div>
+                      <div className="bg-white p-3 rounded border">
+                        <p className="text-sm">{content.caption}</p>
+                      </div>
+                    </div>
 
-              {/* Call to Action */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold">Call to Action</h3>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-gray-200">{generatedContent.cta}</p>
-                </div>
-              </div>
+                    {/* CTA */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">Call-to-Action</h4>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(content.cta, `${content.platform} CTA`)}
+                        >
+                          {copiedText === `${content.platform} CTA` ? <Check size={14} /> : <Copy size={14} />}
+                          Copy
+                        </Button>
+                      </div>
+                      <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                        <p className="text-sm text-blue-800">{content.cta}</p>
+                      </div>
+                    </div>
 
-              {/* Hashtags */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold">Hashtags</h3>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => copyToClipboard(generatedContent.hashtags, 'Hashtags')}
-                    className="bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
-                  >
-                    {copiedText === 'Hashtags' ? <Check size={14} /> : <Copy size={14} />}
-                    <span className="ml-1">Copy</span>
-                  </Button>
-                </div>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-blue-400">{generatedContent.hashtags}</p>
-                </div>
-              </div>
+                    {/* Hashtags */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">Hashtags</h4>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(content.hashtags, `${content.platform} Hashtags`)}
+                        >
+                          {copiedText === `${content.platform} Hashtags` ? <Check size={14} /> : <Copy size={14} />}
+                          Copy
+                        </Button>
+                      </div>
+                      <div className="bg-purple-50 p-3 rounded border border-purple-200">
+                        <p className="text-sm text-purple-800">{content.hashtags}</p>
+                      </div>
+                    </div>
 
-              {/* Image Prompt */}
-              <div className="space-y-3">
-                <h3 className="text-lg font-semibold">Image/Video Prompt</h3>
-                <div className="bg-gray-900 p-4 rounded-lg">
-                  <p className="text-gray-200 italic">{generatedContent.imagePrompt}</p>
-                </div>
-              </div>
-
-              {/* Copy All Button */}
-              <div className="flex justify-center pt-4">
-                <Button
-                  onClick={() => copyToClipboard(
-                    `${generatedContent.script}\n\n${generatedContent.caption}\n\n${generatedContent.cta}\n\n${generatedContent.hashtags}`,
-                    'All Content'
-                  )}
-                  className="bg-orange-600 hover:bg-orange-700"
-                >
-                  {copiedText === 'All Content' ? <Check size={16} /> : <Copy size={16} />}
-                  <span className="ml-2">Copy Complete Post</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                    {/* Copy All for Platform */}
+                    <Button 
+                      className="w-full" 
+                      variant="default"
+                      onClick={() => copyToClipboard(
+                        `${content.script}\n\n${content.caption}\n\n${content.cta}\n\n${content.hashtags}`, 
+                        `Complete ${content.platform} Content`
+                      )}
+                    >
+                      <Copy className="mr-2 h-4 w-4" />
+                      Copy All {content.platform} Content
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+            
+            {/* Image Prompt (shared across platforms) */}
+            {generatedContent[0] && (
+              <Card className="bg-green-50 border-green-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    🎨 Image Prompt (All Platforms)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <h4 className="font-semibold">Visual Description</h4>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => copyToClipboard(generatedContent[0].imagePrompt, 'Image Prompt')}
+                      >
+                        {copiedText === 'Image Prompt' ? <Check size={14} /> : <Copy size={14} />}
+                        Copy
+                      </Button>
+                    </div>
+                    <div className="bg-white p-3 rounded border">
+                      <p className="text-sm">{generatedContent[0].imagePrompt}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </div>
         )}
       </div>
     </div>

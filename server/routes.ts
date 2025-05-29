@@ -174,8 +174,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         nutritionFacts: 'Nutritious and delicious' 
       };
       
-      const recipe = await cookingPipeline.generateRecipeContent(ingredientData, method);
-      res.json({ recipe });
+      const recipes = await cookingPipeline.generateRecipeContent(ingredientData, method);
+      res.json({ recipes });
     } catch (error) {
       console.error("Error generating recipe:", error);
       res.status(500).json({ error: "Failed to generate recipe content" });
