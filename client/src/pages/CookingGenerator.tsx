@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -37,9 +37,15 @@ const CookingGenerator = () => {
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [customIngredient, setCustomIngredient] = useState<string>("");
   const [generatedContent, setGeneratedContent] = useState<RecipePayload[] | null>(null);
+  const [batchContent, setBatchContent] = useState<RecipePayload[][] | null>(null);
   const [copiedText, setCopiedText] = useState<string>("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Scroll to top when component mounts
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const ingredients = [
     { value: "Chicken Breast", label: "🐔 Chicken Breast", popularity: 95, nutrition: "High protein, low fat" },

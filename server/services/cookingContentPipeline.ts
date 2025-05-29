@@ -44,10 +44,10 @@ class CookingContentPipeline {
   ];
 
   async selectTrendingIngredientOfDay(): Promise<TrendingIngredient> {
-    // Use date as seed for consistent daily selection
-    const today = new Date().toDateString();
-    const hash = this.stringToHash(today);
-    const index = Math.abs(hash) % this.trendingIngredients.length;
+    // Use day of year for daily rotation
+    const today = new Date();
+    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
+    const index = dayOfYear % this.trendingIngredients.length;
     
     return this.trendingIngredients[index];
   }
@@ -109,24 +109,15 @@ ${baseScript.split('\n').slice(0, 8).join('\n')}
 What's your favorite quick cooking hack? 👇`;
 
       case 'Instagram':
-        return baseScript;
-
       case 'TikTok':
+      case 'YouTube Shorts':
         return `🔥 ${method} hack that'll change your cooking game!
 
 ${baseScript}
 
 ✨ Follow for more cooking tips that actually work!
-📱 Tag a friend who needs to see this!`;
-
-      case 'YouTube Shorts':
-        return `🔥 ${method} Recipe in 60 Seconds!
-
-${baseScript}
-
-🎬 WATCH UNTIL THE END for the secret tip!
-👍 LIKE if this helped you!
-🔔 SUBSCRIBE for daily cooking shortcuts!`;
+📱 Tag a friend who needs to see this!
+🎬 WATCH UNTIL THE END for the secret tip!`;
 
       default:
         return baseScript;
@@ -188,13 +179,13 @@ ${baseScript}
       case 'Twitter':
         return '30s';
       case 'Instagram':
-        return '60s';
+        return '30-45s';
       case 'TikTok':
-        return '45s';
+        return '30-45s';
       case 'YouTube Shorts':
-        return '60s';
+        return '30-45s';
       default:
-        return '60s';
+        return '45s';
     }
   }
 
