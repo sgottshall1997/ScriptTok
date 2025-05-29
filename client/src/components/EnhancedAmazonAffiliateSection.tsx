@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Copy, ExternalLink, Check } from "lucide-react";
+import { Copy, ExternalLink, Check, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface AffiliateLink {
@@ -15,6 +15,144 @@ interface AmazonLinksResponse {
   niche: string;
   links: AffiliateLink[];
 }
+
+// Pre-cached content for each category
+const cachedContent = {
+  skincare: {
+    title: "✨ Skincare Routine That Actually Works",
+    content: `Ready to glow up? Here's your science-backed skincare routine:
+
+🌅 MORNING:
+• Gentle cleanser to remove overnight buildup
+• Vitamin C serum for antioxidant protection
+• Lightweight moisturizer with SPF 30+
+
+🌙 EVENING:
+• Double cleanse (oil + water-based)
+• Retinol or retinoid (start 2x/week)
+• Rich night moisturizer to repair overnight
+
+💡 Pro tip: The Mighty Patch is perfect for those surprise breakouts - it draws out impurities while you sleep!
+
+Remember: Consistency beats expensive products every time. Start simple, be patient, and your skin will thank you! ✨`,
+    hashtags: "#skincare #glowup #selfcare #beautyRoutine #healthySkin"
+  },
+  tech: {
+    title: "⚡ Tech Essentials for 2025",
+    content: `Level up your tech game with these must-haves:
+
+📱 PRODUCTIVITY POWERHOUSES:
+• Apple Watch SE - Health tracking meets smart notifications
+• Wireless earbuds for seamless calls and music
+• Fast charging cables that actually last
+
+🏠 HOME TECH UPGRADES:
+• Smart home devices for convenience
+• Quality webcam for remote work
+• Portable chargers for on-the-go power
+
+💡 Tech tip: Invest in quality accessories - they often outlast the devices themselves!
+
+The Apple Watch SE offers premium features at a more accessible price point. Perfect for fitness tracking and staying connected! ⌚`,
+    hashtags: "#tech #gadgets #productivity #smartHome #techReview"
+  },
+  fashion: {
+    title: "👗 Effortless Style Guide",
+    content: `Build a wardrobe that works for every occasion:
+
+👔 CAPSULE WARDROBE ESSENTIALS:
+• Classic shirt dress (like Costaric) - dress up or down
+• Well-fitted jeans in dark wash
+• Versatile blazer for instant polish
+
+🎨 STYLING SECRETS:
+• Stick to 3-color palette per outfit
+• Invest in quality basics, have fun with trends
+• Accessories can transform any look
+
+💡 Style tip: The shirt dress is your secret weapon - works for brunch, office, or date night with the right styling!
+
+Quality over quantity always wins. Build slowly, choose pieces you genuinely love! 👗`,
+    hashtags: "#fashion #style #wardrobe #outfitIdeas #fashionTips"
+  },
+  fitness: {
+    title: "💪 Home Workout Revolution",
+    content: `Transform your fitness routine at home:
+
+🏋️ ESSENTIAL EQUIPMENT:
+• Hex dumbbells for strength training
+• Resistance bands for versatile workouts
+• Quality yoga mat for floor exercises
+
+📅 WEEKLY WORKOUT SPLIT:
+• Monday: Upper body strength
+• Wednesday: Lower body + core
+• Friday: Full body circuit
+• Weekend: Active recovery (yoga, walks)
+
+💡 Fitness tip: Start with bodyweight exercises, then add equipment as you progress!
+
+Hex dumbbells are perfect for home gyms - the shape prevents rolling and the rubber coating protects your floors. Start with lighter weights and focus on form! 🏋️`,
+    hashtags: "#fitness #homeWorkout #strength #healthyLifestyle #fitnessMotivation"
+  },
+  kitchen: {
+    title: "🍳 Kitchen Game Changers",
+    content: `Upgrade your cooking with these essentials:
+
+👨‍🍳 MUST-HAVE APPLIANCES:
+• 8 QT Air Fryer for healthy, crispy meals
+• Quality knife set for efficient prep
+• Non-stick cookware that actually lasts
+
+🥗 MEAL PREP MASTERY:
+• Glass containers for storage
+• Prep vegetables on Sunday
+• Batch cook proteins and grains
+
+💡 Cooking tip: The air fryer isn't just for fries - try roasted vegetables, chicken, even baked goods!
+
+Large capacity air fryers like the 8 QT model are perfect for families or meal prep. Crispy results with 75% less oil! 🍳`,
+    hashtags: "#cooking #kitchen #mealPrep #healthyEating #airFryer"
+  },
+  travel: {
+    title: "✈️ Smart Travel Hacks",
+    content: `Pack like a pro and travel stress-free:
+
+🧳 PACKING ESSENTIALS:
+• Compression packing cubes to maximize space
+• Portable charger for all your devices
+• Versatile clothing that mixes and matches
+
+🗺️ TRAVEL PRODUCTIVITY:
+• Download offline maps before you go
+• Pack a portable WiFi hotspot
+• Keep important documents in cloud storage
+
+💡 Travel tip: Packing cubes aren't just organizers - compression ones can increase luggage space by 30%!
+
+The right packing system transforms chaotic suitcases into organized travel experiences. Invest in quality cubes that compress! 🧳`,
+    hashtags: "#travel #packing #travelTips #wanderlust #travelHacks"
+  },
+  pets: {
+    title: "🐾 Happy Pet, Happy Life",
+    content: `Keep your furry friends healthy and entertained:
+
+🐕 DAILY CARE ESSENTIALS:
+• High-quality treats like Chik 'n Hide Twists
+• Interactive toys for mental stimulation
+• Regular grooming routine
+
+🎾 ENRICHMENT IDEAS:
+• Puzzle feeders to slow eating
+• Rotating toy selection to prevent boredom
+• Training sessions for bonding
+
+💡 Pet tip: Dental chews like Chik 'n Hide Twists serve dual purposes - dental health and satisfying natural chew instincts!
+
+Mental stimulation is just as important as physical exercise for pets. Keep those tails wagging with engaging activities! 🐕`,
+    hashtags: "#pets #dogCare #petHealth #petToys #happyPets"
+  }
+};
 
 // Featured products with descriptions
 const featuredProducts = {
@@ -79,6 +217,7 @@ const featuredProducts = {
 export function EnhancedAmazonAffiliateSection() {
   const [selectedNiche, setSelectedNiche] = useState<string>("skincare");
   const [copiedLink, setCopiedLink] = useState<string>("");
+  const [showContent, setShowContent] = useState<boolean>(false);
   const { toast } = useToast();
 
   const niches = [
@@ -126,7 +265,16 @@ export function EnhancedAmazonAffiliateSection() {
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
+  const generateContent = () => {
+    setShowContent(true);
+    toast({
+      title: "Content generated!",
+      description: `${niches.find(n => n.value === selectedNiche)?.emoji} ${selectedNiche} content is ready to use`,
+    });
+  };
+
   const currentFeatured = featuredProducts[selectedNiche as keyof typeof featuredProducts] || [];
+  const currentContent = cachedContent[selectedNiche as keyof typeof cachedContent];
 
   return (
     <Card className="shadow-lg bg-gradient-to-br from-orange-50 to-amber-50 border border-orange-200">
@@ -160,6 +308,43 @@ export function EnhancedAmazonAffiliateSection() {
             </SelectContent>
           </Select>
         </div>
+
+        {/* Generate Content Button */}
+        <div className="flex justify-center">
+          <Button 
+            onClick={generateContent}
+            className="bg-gradient-to-r from-orange-600 to-red-600 hover:from-orange-700 hover:to-red-700 text-white px-6 py-2 flex items-center gap-2"
+          >
+            <Sparkles size={18} />
+            Generate {niches.find(n => n.value === selectedNiche)?.emoji} {selectedNiche} Content
+          </Button>
+        </div>
+
+        {/* Generated Content Display */}
+        {showContent && currentContent && (
+          <div className="bg-white rounded-lg p-6 border border-orange-200 shadow-sm">
+            <h3 className="text-xl font-bold text-gray-900 mb-4">{currentContent.title}</h3>
+            <div className="prose prose-sm max-w-none">
+              <pre className="whitespace-pre-wrap text-gray-700 font-sans leading-relaxed">
+                {currentContent.content}
+              </pre>
+            </div>
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-blue-600 font-medium">{currentContent.hashtags}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => copyToClipboard(currentContent.content + '\n\n' + currentContent.hashtags, 'content')}
+                  className="flex items-center gap-1"
+                >
+                  <Copy size={14} />
+                  Copy Content
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Featured Products Section */}
         {currentFeatured.length > 0 && (
