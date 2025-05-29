@@ -37,7 +37,7 @@ const CookingGenerator = () => {
   const [selectedMethod, setSelectedMethod] = useState<string>("");
   const [customIngredient, setCustomIngredient] = useState<string>("");
   const [generatedContent, setGeneratedContent] = useState<RecipePayload[] | null>(null);
-  const [batchContent, setBatchContent] = useState<RecipePayload[][] | null>(null);
+  const [batchContent, setBatchContent] = useState<{[key: string]: RecipePayload[]} | null>(null);
   const [copiedText, setCopiedText] = useState<string>("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -496,26 +496,36 @@ const CookingGenerator = () => {
           <div className="space-y-6">
             <div className="text-center">
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Daily Batch Content</h2>
-              <p className="text-gray-600">Content for all 5 cooking methods with today's trending ingredient</p>
+              <p className="text-gray-600">Content for 3 skill levels with today's trending ingredient and cooking method</p>
             </div>
             
-            {batchContent.map((methodRecipes, methodIndex) => {
-              const methodName = ['Grilling', 'Baking', 'Stir-frying', 'Slow cooking', 'Air frying'][methodIndex] || `Method ${methodIndex + 1}`;
+            {Object.entries(batchContent).map(([skillLevel, skillRecipes]) => {
+              const skillIcons = {
+                'Elite Chef': '👨‍🍳',
+                'Skilled Home Chef': '🏠',
+                'Beginner': '🔰'
+              };
+              
+              const skillColors = {
+                'Elite Chef': 'border-purple-200 bg-purple-50',
+                'Skilled Home Chef': 'border-blue-200 bg-blue-50',
+                'Beginner': 'border-green-200 bg-green-50'
+              };
               
               return (
-                <Card key={methodIndex} className="border-2 border-orange-200">
+                <Card key={skillLevel} className={`border-2 ${skillColors[skillLevel as keyof typeof skillColors]}`}>
                   <CardHeader>
                     <CardTitle className="flex items-center gap-3 text-xl">
-                      <ChefHat className="h-6 w-6 text-orange-600" />
-                      {methodName}
+                      <span className="text-2xl">{skillIcons[skillLevel as keyof typeof skillIcons]}</span>
+                      {skillLevel}
                       <Badge variant="secondary" className="ml-auto">
-                        {methodRecipes.length} platforms
+                        {skillRecipes.length} platforms
                       </Badge>
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {methodRecipes.map((content, contentIndex) => {
+                      {skillRecipes.map((content, contentIndex) => {
                         const platformColors = {
                           'LinkedIn': 'bg-blue-50 border-blue-200',
                           'Twitter': 'bg-sky-50 border-sky-200',
@@ -553,9 +563,9 @@ const CookingGenerator = () => {
                                     variant="outline"
                                     size="sm"
                                     className="h-6 px-2 text-xs"
-                                    onClick={() => copyToClipboard(content.script, `${methodName} ${content.platform} Script`)}
+                                    onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
                                   >
-                                    {copiedText === `${methodName} ${content.platform} Script` ? <Check size={12} /> : <Copy size={12} />}
+                                    {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={12} /> : <Copy size={12} />}
                                   </Button>
                                 </div>
                                 <div className="bg-white p-2 rounded border text-xs">

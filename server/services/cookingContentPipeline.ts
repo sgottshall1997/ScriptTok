@@ -62,6 +62,34 @@ class CookingContentPipeline {
     return hash;
   }
 
+  async generateRecipeContentWithSkillLevel(ingredient: TrendingIngredient, method: string, skillLevel: string): Promise<RecipePayload[]> {
+    const platforms = ['LinkedIn', 'Twitter', 'Instagram', 'TikTok', 'YouTube Shorts'];
+    const recipes: RecipePayload[] = [];
+
+    for (const platform of platforms) {
+      const recipeData = this.getRecipeDataWithSkillLevel(ingredient.name, method, skillLevel);
+      
+      const recipe: RecipePayload = {
+        niche: 'cooking',
+        productName: `${method} ${ingredient.name}`,
+        contentType: 'recipe',
+        script: this.getPlatformScriptWithSkillLevel(recipeData, platform, method, skillLevel),
+        caption: this.getPlatformCaptionWithSkillLevel(recipeData, platform, skillLevel),
+        hashtags: this.getPlatformHashtags(recipeData, platform),
+        cta: `Buy it here: https://www.amazon.com/dp/B08N5WRWNW?tag=sgottshall199-20`,
+        platforms: [platform],
+        videoDuration: this.getPlatformDuration(platform),
+        imagePrompt: `Professional food photography of ${method.toLowerCase()} ${ingredient.name.toLowerCase()}, beautifully plated, warm lighting, shallow depth of field, restaurant quality presentation`,
+        cookingMethod: method,
+        postType: this.getPlatformType(platform)
+      };
+
+      recipes.push(recipe);
+    }
+
+    return recipes;
+  }
+
   async generateRecipeContent(ingredient: TrendingIngredient, method: string): Promise<RecipePayload[]> {
     const recipeData = this.getRecipeData(ingredient.name, method);
     const platforms = ['LinkedIn', 'Twitter', 'Instagram', 'TikTok', 'YouTube Shorts'];
@@ -81,6 +109,35 @@ class CookingContentPipeline {
       postType: this.getPlatformType(platform),
       platform: platform
     }));
+  }
+
+  private getPlatformScriptWithSkillLevel(recipeData: any, platform: string, method: string, skillLevel: string): string {
+    const skillIntros = {
+      'Elite Chef': 'Here\'s a recipe for you elite chefs',
+      'Skilled Home Chef': 'Here\'s a recipe for you skilled home chefs', 
+      'Beginner': 'Here\'s a recipe for you beginners'
+    };
+
+    const intro = skillIntros[skillLevel as keyof typeof skillIntros];
+    const baseScript = this.getPlatformScript(recipeData, platform, method);
+    
+    return `${intro} - ${baseScript}`;
+  }
+
+  private getPlatformCaptionWithSkillLevel(recipeData: any, platform: string, skillLevel: string): string {
+    const skillIntros = {
+      'Elite Chef': 'For you elite chefs',
+      'Skilled Home Chef': 'For you skilled home chefs',
+      'Beginner': 'For you beginners'
+    };
+
+    const intro = skillIntros[skillLevel as keyof typeof skillIntros];
+    const baseCaption = this.getPlatformCaption(recipeData, platform);
+    
+    // Add app store CTA before hashtags
+    const captionWithCTA = `${intro} - ${baseCaption}\n\nTry us out for free in the iPhone App Store!`;
+    
+    return captionWithCTA;
   }
 
   private getPlatformScript(recipeData: any, platform: string, method: string): string {
@@ -206,6 +263,35 @@ ${baseScript}
     }
   }
 
+  private getRecipeDataWithSkillLevel(ingredient: string, method: string, skillLevel: string) {
+    const baseData = this.getRecipeData(ingredient, method);
+    
+    // Customize complexity based on skill level
+    const skillModifications = {
+      'Elite Chef': {
+        techniques: ['advanced knife work', 'precision temperature control', 'flavor layering', 'molecular gastronomy techniques'],
+        equipment: ['professional-grade tools', 'specialized equipment', 'precision instruments'],
+        complexity: 'restaurant-quality execution with advanced techniques'
+      },
+      'Skilled Home Chef': {
+        techniques: ['proper seasoning', 'temperature monitoring', 'multi-step preparation', 'flavor balance'],
+        equipment: ['quality home kitchen tools', 'digital thermometer', 'good knife skills'],
+        complexity: 'intermediate techniques with attention to detail'
+      },
+      'Beginner': {
+        techniques: ['basic cooking methods', 'simple seasoning', 'straightforward preparation'],
+        equipment: ['basic kitchen tools', 'simple equipment', 'beginner-friendly utensils'],
+        complexity: 'easy-to-follow steps with clear instructions'
+      }
+    };
+
+    return {
+      ...baseData,
+      skillLevel,
+      ...skillModifications[skillLevel as keyof typeof skillModifications]
+    };
+  }
+
   private getRecipeData(ingredient: string, method: string) {
     const recipeMap: Record<string, Record<string, any>> = {
       "Chicken Breast": {
@@ -323,13 +409,23 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
     return recipes;
   }
 
-  async generateDailyBatch(): Promise<RecipePayload[][]> {
+  async generateDailyBatch(): Promise<RecipePayload[]> {
     const ingredient = await this.selectTrendingIngredientOfDay();
-    const allRecipes: RecipePayload[][] = [];
     
-    for (const method of this.cookingMethods) {
-      const recipes = await this.generateRecipeContent(ingredient, method);
-      allRecipes.push(recipes);
+    // Select one cooking method per day (rotates daily)
+    const today = new Date();
+    const dayIndex = today.getDate() % this.cookingMethods.length;
+    const selectedMethod = this.cookingMethods[dayIndex];
+    
+    console.log(`🎯 Daily method: ${selectedMethod} for ingredient: ${ingredient.name}`);
+    
+    // Generate content for 3 skill levels with 5 platforms each
+    const skillLevels = ['Elite Chef', 'Skilled Home Chef', 'Beginner'];
+    const allRecipes: RecipePayload[] = [];
+    
+    for (const skillLevel of skillLevels) {
+      const recipes = await this.generateRecipeContentWithSkillLevel(ingredient, selectedMethod, skillLevel);
+      allRecipes.push(...recipes);
     }
     
     return allRecipes;

@@ -195,7 +195,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/cooking/generate-daily-batch', async (req, res) => {
     try {
       const batchRecipes = await cookingPipeline.generateDailyBatch();
-      res.json({ batchRecipes });
+      
+      // Group recipes by skill level for better organization
+      const groupedBySkill = {
+        'Elite Chef': batchRecipes.filter(recipe => recipe.script.includes('elite chefs')),
+        'Skilled Home Chef': batchRecipes.filter(recipe => recipe.script.includes('skilled home chefs')),
+        'Beginner': batchRecipes.filter(recipe => recipe.script.includes('beginners'))
+      };
+      
+      res.json({ batchRecipes: groupedBySkill });
     } catch (error) {
       console.error("Error generating daily batch:", error);
       res.status(500).json({ error: "Failed to generate daily batch content" });
