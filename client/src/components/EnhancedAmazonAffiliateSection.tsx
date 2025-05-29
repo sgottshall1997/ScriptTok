@@ -330,12 +330,17 @@ export function EnhancedAmazonAffiliateSection() {
               </pre>
             </div>
             <div className="mt-4 pt-4 border-t border-gray-600">
-              <div className="flex items-center justify-between">
+              <div className="mb-3">
+                <p className="text-sm text-gray-300 mb-2">
+                  Want to try it yourself? Buy it here: {currentFeatured[0]?.url}
+                </p>
                 <p className="text-sm text-blue-400 font-medium">{currentContent.hashtags}</p>
+              </div>
+              <div className="flex justify-end">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => copyToClipboard(currentContent.content + '\n\n' + currentContent.hashtags, 'content')}
+                  onClick={() => copyToClipboard(currentContent.content + '\n\nWant to try it yourself? Buy it here: ' + currentFeatured[0]?.url + '\n\n' + currentContent.hashtags, 'content')}
                   className="flex items-center gap-1 bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
                 >
                   <Copy size={14} />
