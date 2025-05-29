@@ -38,8 +38,7 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
         part: 'snippet',
         q: searchTerm,
         type: 'video',
-        order: 'viewCount',
-        publishedAfter: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // Last 7 days
+        order: 'relevance',
         maxResults: 20,
         relevanceLanguage: 'en'
       }
@@ -76,35 +75,68 @@ export async function getYouTubeTrending(niche: string = 'skincare'): Promise<Sc
       const title = video.snippet.title;
       const description = video.snippet.description || '';
       
-      // Look for product mentions in title and description
-      const productPattern = /(?:review|unboxing|haul|test|best)\s+([A-Z][a-zA-Z\s&]+(?:Pro|Max|Ultra|Plus|Mini|Air|One)?)/gi;
-      const matches = [...title.matchAll(productPattern), ...description.matchAll(productPattern)];
+      // Enhanced product pattern matching for different contexts
+      const productPatterns = [
+        // Brand + Product patterns
+        /([A-Z][a-zA-Z]+)\s+([A-Z][a-zA-Z\s]+(?:Serum|Cream|Cleanser|Moisturizer|Foundation|Mascara|Lipstick|Oil|Balm|Gel|Spray|Mist|Essence|Treatment|Mask|Scrub|Lotion|Powder|Primer|Toner))/gi,
+        // Review/unboxing patterns
+        /(?:review|unboxing|haul|testing|trying)\s+([A-Z][a-zA-Z\s&\-]+(?:Pro|Max|Ultra|Plus|Mini|Air|One)?)/gi,
+        // Product with brand patterns
+        /([A-Z][a-zA-Z\s&\-]+)\s+(?:from|by)\s+([A-Z][a-zA-Z\s&]+)/gi,
+        // Direct product mentions
+        /([A-Z][a-zA-Z]+\s+[A-Z][a-zA-Z\s]+)\s*(?:\||review|haul|unboxing)/gi
+      ];
       
-      matches.forEach(match => {
-        const productName = match[1].trim();
-        if (productName.length > 3 && productName.length < 50) {
-          products.push({
-            title: productName,
-            source: "youtube",
-            niche: niche,
-            mentions: Math.floor(viewCount / 1000), // Convert views to mention metric
-            sourceUrl: `https://www.youtube.com/watch?v=${video.id.videoId}`
-          });
-        }
+      productPatterns.forEach(pattern => {
+        const titleMatches = [...title.matchAll(pattern)];
+        const descMatches = [...description.substring(0, 200).matchAll(pattern)];
+        
+        [...titleMatches, ...descMatches].forEach(match => {
+          let productName = '';
+          
+          // Handle different match groups
+          if (match[1] && match[2]) {
+            productName = `${match[1]} ${match[2]}`.trim();
+          } else if (match[1]) {
+            productName = match[1].trim();
+          }
+          
+          // Clean and validate product name
+          productName = productName
+            .replace(/[^\w\s\-&]/g, '')
+            .replace(/\s+/g, ' ')
+            .trim();
+          
+          if (productName.length > 5 && productName.length < 60 && viewCount > 1000) {
+            products.push({
+              title: productName,
+              source: "youtube",
+              niche: niche,
+              mentions: Math.floor(viewCount / 1000), // Convert views to mention metric
+              sourceUrl: `https://www.youtube.com/watch?v=${video.id.videoId}`
+            });
+          }
+        });
       });
       
-      // If no products extracted, create one from the video title
-      if (matches.length === 0 && index < 5) {
-        const cleanTitle = title.replace(/[^\w\s]/g, '').trim();
-        if (cleanTitle.length > 10) {
-          products.push({
-            title: cleanTitle.substring(0, 40),
-            source: "youtube",
-            niche: niche,
-            mentions: Math.floor(viewCount / 1000),
-            sourceUrl: `https://www.youtube.com/watch?v=${video.id.videoId}`
-          });
-        }
+      // Extract from channel title for brand mentions
+      const channelTitle = video.snippet.channelTitle;
+      if (channelTitle && index < 3 && viewCount > 10000) {
+        const brandPattern = /([A-Z][a-zA-Z\s]+)\s*(?:Official|Beauty|Skincare|Cosmetics)/gi;
+        const brandMatches = [...channelTitle.matchAll(brandPattern)];
+        
+        brandMatches.forEach(match => {
+          const brandName = match[1].trim();
+          if (brandName.length > 3 && brandName.length < 30) {
+            products.push({
+              title: `${brandName} Products`,
+              source: "youtube",
+              niche: niche,
+              mentions: Math.floor(viewCount / 2000),
+              sourceUrl: `https://www.youtube.com/watch?v=${video.id.videoId}`
+            });
+          }
+        });
       }
     });
 
