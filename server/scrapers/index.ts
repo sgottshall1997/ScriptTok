@@ -5,252 +5,160 @@ import { getInstagramTrending } from './instagram';
 import { getAmazonTrending } from './amazon';
 import { getGoogleTrendingProducts } from './googleTrends';
 import type { TrendingProduct, InsertTrendingProduct } from '@shared/schema';
-import { ScraperPlatform, SCRAPER_PLATFORMS, ScraperStatusType } from '@shared/constants';
-import { 
-  ScrapedProduct, 
-  ScraperStatus, 
-  ScraperResult, 
-  toInsertTrendingProduct,
-  createErrorStatus,
-  createSuccessStatus
-} from './types';
 
-// Structure for platform status (legacy - will be replaced with ScraperStatus)
-interface PlatformStatus {
-  name: ScraperPlatform;
-  status: ScraperStatusType;
-  errorMessage?: string;
-}
-
-// Legacy interface for the old scraper return type (for backward compatibility)
 export interface ScraperReturn {
   products: InsertTrendingProduct[];
   status: {
-    status: ScraperStatusType;
+    status: 'active' | 'error' | 'gpt-fallback';
     errorMessage?: string;
   };
 }
 
-// Convert new ScraperResult to legacy ScraperReturn
-function convertToLegacyFormat(result: ScraperResult, niche: string): ScraperReturn {
-  return {
-    products: result.products.map(product => toInsertTrendingProduct({
-      ...product,
-      category: product.category || niche
-    })),
-    status: {
-      status: result.status.status,
-      errorMessage: result.status.message
-    }
-  };
+export interface ScraperStatus {
+  realDataCount: number;
+  aiDataCount: number;
+  message: string;
+  status: 'active' | 'error' | 'gpt-fallback';
+  errorMessage?: string;
 }
 
-// Interface for aggregated trending results (legacy version)
+export interface PlatformStatus {
+  name: 'tiktok' | 'instagram' | 'youtube' | 'reddit' | 'amazon' | 'google-trends';
+  status: 'active' | 'error' | 'gpt-fallback';
+  errorMessage?: string;
+}
+
 export interface ScraperResults {
   products: InsertTrendingProduct[];
   platforms: PlatformStatus[];
+  backgroundIntelligence: Record<string, any>;
 }
 
-// Enhanced interface for aggregated trending results with normalized data
-export interface EnhancedScraperResults {
-  products: ScrapedProduct[];
-  platformStatuses: ScraperStatus[];
-  rawDataByPlatform: Record<string, any>;
+// Background intelligence gathering for content creation
+export async function getBackgroundIntelligence(niche: string): Promise<Record<string, any>> {
+  console.log(`🔍 Gathering background intelligence for ${niche}`);
+  
+  const results = await Promise.allSettled([
+    getTikTokTrending(niche),
+    getRedditTrending(niche), 
+    getYouTubeTrending(niche),
+    getInstagramTrending(niche),
+    getGoogleTrendingProducts(niche)
+  ]);
+  
+  const intelligence: Record<string, any> = {};
+  const platforms = ['tiktok', 'reddit', 'youtube', 'instagram', 'google-trends'];
+  
+  results.forEach((result, index) => {
+    const platform = platforms[index];
+    if (result.status === 'fulfilled') {
+      intelligence[platform] = {
+        products: result.value.products || [],
+        status: result.value.status,
+        lastUpdated: new Date()
+      };
+    } else {
+      intelligence[platform] = {
+        products: [],
+        status: { status: 'error', errorMessage: result.reason.message },
+        lastUpdated: new Date()
+      };
+    }
+  });
+  
+  return intelligence;
 }
 
-// Get trending products from all platforms
+// Primary trending products source: Amazon
 export async function getAllTrendingProducts(niche: string = 'skincare'): Promise<ScraperResults> {
+  console.log(`🛍️ Getting trending products from Amazon for ${niche} niche`);
+  
   const platforms: PlatformStatus[] = [];
   let allProducts: InsertTrendingProduct[] = [];
   
-  // Run all scrapers in parallel with the specified niche
-  const results = await Promise.allSettled([
-    getTikTokTrending(niche),
-    getRedditTrending(niche),
-    getYouTubeTrending(niche),
-    getInstagramTrending(niche),
-    getAmazonTrending(niche),
-    getGoogleTrendingProducts(niche)
-  ]);
+  // Get trending products from Amazon (primary source)
+  const amazonResult = await getAmazonTrending(niche);
   
-  // Process each scraper's results
-  results.forEach((result, index) => {
-    const platform = SCRAPER_PLATFORMS[index];
-    
-    if (result.status === 'fulfilled') {
-      // Add products with source and AI generation flag
-      const products = result.value.products.map(item => {
-        // Check if this is a ScraperResult with the new ScraperStatus type
-        const hasScraperStatus = 'realDataCount' in result.value.status;
-        
-        // Determine if this is AI-generated based on status or data counts
-        const isAIGenerated = 
-          result.value.status.status === 'gpt-fallback' || 
-          (hasScraperStatus && (result.value.status as any).aiDataCount > 0);
-        
-        return {
-          ...item,
-          source: platform,
-          isAIGenerated: isAIGenerated,
-          errorReason: isAIGenerated ? 
-            (hasScraperStatus ? (result.value.status as any).message : result.value.status.errorMessage) : 
-            undefined
-        };
-      });
-      
-      allProducts = [...allProducts, ...products];
-      
-      // Get the platform status from the scraper result
-      platforms.push({
-        name: platform,
-        status: result.value.status.status,
-        errorMessage: 'message' in result.value.status ? 
-          (result.value.status as any).message : 
-          result.value.status.errorMessage
-      });
-    } else {
-      // Add platform status as error with the error message
-      platforms.push({
-        name: platform,
-        status: 'error',
-        errorMessage: result.reason?.message || 'Unknown error'
-      });
-      
-      console.error(`Error fetching from ${platform}:`, result.reason);
-    }
-  });
+  // Get background intelligence from other sources
+  const backgroundIntelligence = await getBackgroundIntelligence(niche);
   
-  // Sort by mentions (if available) or default order
-  allProducts.sort((a, b) => {
-    if (a.mentions && b.mentions) {
-      return b.mentions - a.mentions;
-    }
-    return 0;
-  });
-  
-  // Remove duplicate products (same title from different sources)
-  const uniqueProducts: InsertTrendingProduct[] = [];
-  const titleSet = new Set<string>();
-  
-  for (const product of allProducts) {
-    // Normalize title for comparison
-    const normalizedTitle = product.title.toLowerCase().trim();
-    if (!titleSet.has(normalizedTitle)) {
-      titleSet.add(normalizedTitle);
-      uniqueProducts.push(product);
-    }
+  // Process Amazon results (primary trending products)
+  if (amazonResult.products && amazonResult.products.length > 0) {
+    allProducts = amazonResult.products;
+    platforms.push({
+      name: 'amazon',
+      status: amazonResult.status.status,
+      errorMessage: amazonResult.status.errorMessage
+    });
+    console.log(`✅ Amazon: Found ${amazonResult.products.length} trending products for display`);
+  } else {
+    platforms.push({
+      name: 'amazon',
+      status: 'error',
+      errorMessage: amazonResult.status.errorMessage || 'No products found'
+    });
+    console.log(`❌ Amazon: No trending products found`);
   }
   
-  // Limit to top products
-  const topProducts = uniqueProducts.slice(0, 10);
+  // Add background intelligence sources to status
+  Object.keys(backgroundIntelligence).forEach(platform => {
+    const platformData = backgroundIntelligence[platform];
+    platforms.push({
+      name: platform as any,
+      status: platformData.status.status,
+      errorMessage: platformData.status.errorMessage
+    });
+  });
   
   return {
-    products: topProducts,
-    platforms
+    products: allProducts,
+    platforms: platforms,
+    backgroundIntelligence: backgroundIntelligence
   };
 }
 
-/**
- * Enhanced version of getAllTrendingProducts that returns normalized data
- * @param niche The product niche to scrape (e.g., 'skincare', 'tech')
- * @returns Normalized product data and scraper statuses
- */
-export async function getAllTrendingProductsEnhanced(niche: string = 'skincare'): Promise<EnhancedScraperResults> {
-  const platformStatuses: ScraperStatus[] = [];
-  const normalizedProducts: ScrapedProduct[] = [];
-  const rawDataByPlatform: Record<string, any> = {};
+// Function to get content intelligence for caption and hashtag generation
+export function getContentIntelligence(backgroundData: Record<string, any>, niche: string): {
+  trendingTopics: string[];
+  popularHashtags: string[];
+  contentThemes: string[];
+} {
+  const trendingTopics: string[] = [];
+  const popularHashtags: string[] = [];
+  const contentThemes: string[] = [];
   
-  // Run all scrapers in parallel with the specified niche
-  const results = await Promise.allSettled([
-    getTikTokTrending(niche),
-    getRedditTrending(niche),
-    getYouTubeTrending(niche),
-    getInstagramTrending(niche),
-    getAmazonTrending(niche),
-    getGoogleTrendingProducts(niche)
-  ]);
-  
-  // Process each scraper's results
-  results.forEach((result, index) => {
-    const platform = SCRAPER_PLATFORMS[index];
-    
-    if (result.status === 'fulfilled') {
-      // Get raw data for debugging if available
-      if ('rawData' in result.value.status) {
-        rawDataByPlatform[platform] = result.value.status.rawData;
-      }
-      
-      // Convert legacy format to normalized product format
-      const products = result.value.products.map((item): ScrapedProduct => {
-        // Check if a property is in the item using type guards
-        const hasProperty = <K extends string, T extends object>(obj: T, key: string): boolean => 
-          obj && typeof obj === 'object' && key in obj;
-        
-        // Create a normalized product structure
-        const normalizedProduct: ScrapedProduct = {
-          title: item.title,
-          platform: platform,
-          mentions: item.mentions || 0,
-          url: '',
-          isVerified: true, // Default to verified
-          category: niche,
-          timestamp: new Date()
-        };
-        
-        // Add URL if available
-        if ('sourceUrl' in item && item.sourceUrl) {
-          normalizedProduct.url = item.sourceUrl;
+  // Extract insights from background intelligence
+  Object.values(backgroundData).forEach((platformData: any) => {
+    if (platformData.products && Array.isArray(platformData.products)) {
+      platformData.products.forEach((product: any) => {
+        if (product.title) {
+          // Extract themes and topics
+          const title = product.title.toLowerCase();
+          if (title.includes('routine')) contentThemes.push('routine');
+          if (title.includes('trending')) contentThemes.push('trending');
+          if (title.includes('viral')) contentThemes.push('viral');
+          if (title.includes('review')) contentThemes.push('review');
         }
-        
-        // Check if we know if the data is AI generated by examining the item object
-        // We need to cast with 'as any' because the TypeScript type doesn't include this property
-        // This is a safe cast since we're using the 'in' operator to check property existence
-        if ('isAIGenerated' in item) {
-          const aiGenerated = (item as any).isAIGenerated;
-          normalizedProduct.isVerified = !aiGenerated;
-        }
-        
-        return normalizedProduct;
       });
-      
-      normalizedProducts.push(...products);
-      
-      // Create a normalized status
-      platformStatuses.push({
-        status: result.value.status.status,
-        message: result.value.status.errorMessage,
-        timestamp: new Date(),
-        realDataCount: products.filter(p => p.isVerified).length,
-        aiDataCount: products.filter(p => !p.isVerified).length
-      });
-    } else {
-      // Add error status
-      platformStatuses.push(createErrorStatus(result.reason?.message || 'Unknown error'));
-      console.error(`Error fetching from ${platform}:`, result.reason);
     }
   });
   
-  // Sort by mentions
-  normalizedProducts.sort((a, b) => b.mentions - a.mentions);
+  // Generate niche-specific hashtags
+  const nicheHashtags: Record<string, string[]> = {
+    'skincare': ['#skincare', '#beauty', '#glowup', '#selfcare', '#skincareroutine'],
+    'tech': ['#tech', '#gadgets', '#innovation', '#technology', '#techreview'],
+    'fashion': ['#fashion', '#style', '#ootd', '#trendy', '#fashionista'],
+    'fitness': ['#fitness', '#workout', '#health', '#gym', '#fitlife'],
+    'food': ['#food', '#cooking', '#recipe', '#foodie', '#kitchen'],
+    'pet': ['#pets', '#dogs', '#cats', '#petcare', '#animals'],
+    'travel': ['#travel', '#wanderlust', '#explore', '#adventure', '#vacation']
+  };
   
-  // Remove duplicates
-  const uniqueProducts: ScrapedProduct[] = [];
-  const titleSet = new Set<string>();
-  
-  for (const product of normalizedProducts) {
-    const normalizedTitle = product.title.toLowerCase().trim();
-    if (!titleSet.has(normalizedTitle)) {
-      titleSet.add(normalizedTitle);
-      uniqueProducts.push(product);
-    }
-  }
-  
-  // Limit to top products
-  const topProducts = uniqueProducts.slice(0, 10);
+  popularHashtags.push(...(nicheHashtags[niche] || nicheHashtags['skincare']));
   
   return {
-    products: topProducts,
-    platformStatuses,
-    rawDataByPlatform
+    trendingTopics: [...new Set(trendingTopics)],
+    popularHashtags: [...new Set(popularHashtags)],
+    contentThemes: [...new Set(contentThemes)]
   };
 }
