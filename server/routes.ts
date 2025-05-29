@@ -191,6 +191,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to run daily cooking pipeline" });
     }
   });
+
+  app.post('/api/cooking/generate-daily-batch', async (req, res) => {
+    try {
+      const batchRecipes = await cookingPipeline.generateDailyBatch();
+      res.json({ batchRecipes });
+    } catch (error) {
+      console.error("Error generating daily batch:", error);
+      res.status(500).json({ error: "Failed to generate daily batch content" });
+    }
+  });
   
   // Analytics endpoints are now handled by analyticsRouter
 

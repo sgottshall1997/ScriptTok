@@ -317,10 +317,22 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
 
     for (const method of selectedMethods) {
       const recipe = await this.generateRecipeContent(ingredient, method);
-      recipes.push(recipe);
+      recipes.push(...recipe); // Flatten array since generateRecipeContent now returns an array
     }
 
     return recipes;
+  }
+
+  async generateDailyBatch(): Promise<RecipePayload[][]> {
+    const ingredient = await this.selectTrendingIngredientOfDay();
+    const allRecipes: RecipePayload[][] = [];
+    
+    for (const method of this.cookingMethods) {
+      const recipes = await this.generateRecipeContent(ingredient, method);
+      allRecipes.push(recipes);
+    }
+    
+    return allRecipes;
   }
 
   async sendToMakeWebhook(recipes: RecipePayload[]): Promise<boolean> {

@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Sparkles, Copy, Check, ChefHat, Clock, Users } from "lucide-react";
+import { Sparkles, Copy, Check, ChefHat, Clock, Users, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface RecipePayload {
@@ -89,6 +89,7 @@ const CookingGenerator = () => {
     },
     onSuccess: (data) => {
       setGeneratedContent(data.recipes);
+      setBatchContent(null); // Clear batch content when generating single recipe
       toast({
         title: "Recipe generated!",
         description: `${selectedMethod} ${selectedIngredient || customIngredient} content is ready for all platforms`,
@@ -98,6 +99,33 @@ const CookingGenerator = () => {
       toast({
         title: "Generation failed",
         description: "Could not generate recipe content. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Generate daily batch mutation
+  const generateBatchMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/cooking/generate-daily-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error('Failed to generate batch content');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setBatchContent(data.batchRecipes);
+      setGeneratedContent(null); // Clear single content when generating batch
+      toast({
+        title: "Daily batch generated!",
+        description: `Content for all 5 cooking methods with today's trending ingredient`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Batch generation failed",
+        description: "Could not generate daily batch content. Please try again.",
         variant: "destructive",
       });
     }
@@ -263,8 +291,8 @@ const CookingGenerator = () => {
               </Select>
             </div>
 
-            {/* Generate Button */}
-            <div className="flex justify-center pt-4">
+            {/* Generate Buttons */}
+            <div className="flex justify-center gap-4 pt-4">
               <Button 
                 onClick={handleGenerate}
                 disabled={generateContentMutation.isPending || (!selectedIngredient && !customIngredient) || !selectedMethod}
@@ -279,6 +307,25 @@ const CookingGenerator = () => {
                   <>
                     <ChefHat className="h-4 w-4 mr-2" />
                     Generate Recipe Content
+                  </>
+                )}
+              </Button>
+              
+              <Button 
+                onClick={() => generateBatchMutation.mutate()}
+                disabled={generateBatchMutation.isPending}
+                variant="outline"
+                className="border-orange-600 text-orange-600 hover:bg-orange-50 px-8 py-3"
+              >
+                {generateBatchMutation.isPending ? (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2 animate-spin" />
+                    Generating Batch...
+                  </>
+                ) : (
+                  <>
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Generate Daily Batch
                   </>
                 )}
               </Button>
