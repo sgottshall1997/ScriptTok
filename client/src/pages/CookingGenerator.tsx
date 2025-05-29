@@ -490,6 +490,121 @@ const CookingGenerator = () => {
             )}
           </div>
         )}
+
+        {/* Batch Content Display */}
+        {batchContent && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">Daily Batch Content</h2>
+              <p className="text-gray-600">Content for all 5 cooking methods with today's trending ingredient</p>
+            </div>
+            
+            {batchContent.map((methodRecipes, methodIndex) => {
+              const methodName = ['Grilling', 'Baking', 'Stir-frying', 'Slow cooking', 'Air frying'][methodIndex] || `Method ${methodIndex + 1}`;
+              
+              return (
+                <Card key={methodIndex} className="border-2 border-orange-200">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-3 text-xl">
+                      <ChefHat className="h-6 w-6 text-orange-600" />
+                      {methodName}
+                      <Badge variant="secondary" className="ml-auto">
+                        {methodRecipes.length} platforms
+                      </Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {methodRecipes.map((content, contentIndex) => {
+                        const platformColors = {
+                          'LinkedIn': 'bg-blue-50 border-blue-200',
+                          'Twitter': 'bg-sky-50 border-sky-200',
+                          'Instagram': 'bg-pink-50 border-pink-200',
+                          'TikTok': 'bg-purple-50 border-purple-200',
+                          'YouTube Shorts': 'bg-red-50 border-red-200'
+                        };
+                        
+                        const platformIcons = {
+                          'LinkedIn': '💼',
+                          'Twitter': '🐦',
+                          'Instagram': '📸', 
+                          'TikTok': '🎵',
+                          'YouTube Shorts': '🎬'
+                        };
+                        
+                        return (
+                          <Card key={contentIndex} className={`${platformColors[content.platform as keyof typeof platformColors] || 'bg-gray-50 border-gray-200'} text-sm`}>
+                            <CardHeader className="pb-2">
+                              <CardTitle className="flex items-center gap-2 text-base">
+                                <span className="text-lg">{platformIcons[content.platform as keyof typeof platformIcons] || '📱'}</span>
+                                {content.platform}
+                                <Badge variant="outline" className="ml-auto text-xs">
+                                  {content.videoDuration}
+                                </Badge>
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className="space-y-3 pt-0">
+                              
+                              {/* Compact Script */}
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <h5 className="font-medium text-xs">Script</h5>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={() => copyToClipboard(content.script, `${methodName} ${content.platform} Script`)}
+                                  >
+                                    {copiedText === `${methodName} ${content.platform} Script` ? <Check size={12} /> : <Copy size={12} />}
+                                  </Button>
+                                </div>
+                                <div className="bg-white p-2 rounded border text-xs">
+                                  <div className="line-clamp-3">{content.script}</div>
+                                </div>
+                              </div>
+
+                              {/* Compact Caption */}
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between">
+                                  <h5 className="font-medium text-xs">Caption</h5>
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-6 px-2 text-xs"
+                                    onClick={() => copyToClipboard(content.caption, `${methodName} ${content.platform} Caption`)}
+                                  >
+                                    {copiedText === `${methodName} ${content.platform} Caption` ? <Check size={12} /> : <Copy size={12} />}
+                                  </Button>
+                                </div>
+                                <div className="bg-orange-50 p-2 rounded border border-orange-200 text-xs">
+                                  <div className="line-clamp-2">{content.caption}</div>
+                                </div>
+                              </div>
+
+                              {/* Copy All Button */}
+                              <Button 
+                                className="w-full h-7 text-xs" 
+                                variant="default"
+                                size="sm"
+                                onClick={() => copyToClipboard(
+                                  `${content.script}\n\n${content.caption}\n\n${content.cta}\n\n${content.hashtags}`, 
+                                  `${methodName} ${content.platform} Complete`
+                                )}
+                              >
+                                <Copy className="mr-1 h-3 w-3" />
+                                Copy All
+                              </Button>
+                            </CardContent>
+                          </Card>
+                        );
+                      })}
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
