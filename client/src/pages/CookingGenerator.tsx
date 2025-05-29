@@ -524,91 +524,127 @@ const CookingGenerator = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {skillRecipes.map((content, contentIndex) => {
-                        const platformColors = {
-                          'LinkedIn': 'bg-blue-50 border-blue-200',
-                          'Twitter': 'bg-sky-50 border-sky-200',
-                          'Instagram': 'bg-pink-50 border-pink-200',
-                          'TikTok': 'bg-purple-50 border-purple-200',
-                          'YouTube Shorts': 'bg-red-50 border-red-200'
-                        };
-                        
-                        const platformIcons = {
-                          'LinkedIn': '💼',
-                          'Twitter': '🐦',
-                          'Instagram': '📸', 
-                          'TikTok': '🎵',
-                          'YouTube Shorts': '🎬'
-                        };
-                        
-                        return (
-                          <Card key={contentIndex} className={`${platformColors[content.platform as keyof typeof platformColors] || 'bg-gray-50 border-gray-200'} text-sm`}>
-                            <CardHeader className="pb-2">
-                              <CardTitle className="flex items-center gap-2 text-base">
-                                <span className="text-lg">{platformIcons[content.platform as keyof typeof platformIcons] || '📱'}</span>
-                                {content.platform}
-                                <Badge variant="outline" className="ml-auto text-xs">
-                                  {content.videoDuration}
-                                </Badge>
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className="space-y-3 pt-0">
+                    {/* Group platforms by type */}
+                    {(() => {
+                      const videoPlatforms = skillRecipes.filter(recipe => 
+                        ['LinkedIn', 'TikTok', 'YouTube Shorts'].includes(recipe.platforms[0])
+                      );
+                      const otherPlatforms = skillRecipes.filter(recipe => 
+                        !['LinkedIn', 'TikTok', 'YouTube Shorts'].includes(recipe.platforms[0])
+                      );
+                      
+                      // Use the same caption for all platforms in this skill level
+                      const sharedCaption = skillRecipes[0]?.caption || '';
+                      const sharedHashtags = skillRecipes[0]?.hashtags || '';
+                      const sharedCTA = skillRecipes[0]?.cta || '';
+                      
+                      return (
+                        <div className="space-y-6">
+                          {/* Video Scripts Section */}
+                          {videoPlatforms.length > 0 && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900">Video Scripts</h4>
+                                <Badge variant="secondary">{videoPlatforms.length} platforms</Badge>
+                              </div>
                               
-                              {/* Compact Script */}
-                              <div className="space-y-1">
-                                <div className="flex items-center justify-between">
-                                  <h5 className="font-medium text-xs">Script</h5>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-6 px-2 text-xs"
-                                    onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
-                                  >
-                                    {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={12} /> : <Copy size={12} />}
-                                  </Button>
+                              <div className="space-y-4">
+                                {videoPlatforms.map((content, idx) => (
+                                  <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-900">{content.platforms[0]}</span>
+                                        <Badge variant="outline" className="text-xs">
+                                          {content.videoDuration}
+                                        </Badge>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-7 px-3 text-xs"
+                                        onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
+                                      >
+                                        {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={14} /> : <Copy size={14} />}
+                                        Copy Script
+                                      </Button>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
+                                      {content.script}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Other Platforms */}
+                          {otherPlatforms.length > 0 && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900">Other Platforms</h4>
+                                <Badge variant="secondary">{otherPlatforms.length} platforms</Badge>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                {otherPlatforms.map((content, idx) => (
+                                  <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <span className="font-medium text-gray-900">{content.platforms[0]}</span>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-7 px-3 text-xs"
+                                        onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
+                                      >
+                                        {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={14} /> : <Copy size={14} />}
+                                        Copy Script
+                                      </Button>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
+                                      {content.script}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Shared Caption Section */}
+                          <div className="space-y-3">
+                            <div className="flex items-center gap-2">
+                              <h4 className="font-semibold text-gray-900">Universal Caption</h4>
+                              <Badge variant="secondary">All platforms</Badge>
+                            </div>
+                            
+                            <div className="bg-white border border-gray-200 rounded-lg p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <span className="font-medium text-gray-700">Caption & CTA</span>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  className="h-7 px-3 text-xs"
+                                  onClick={() => copyToClipboard(`${sharedCaption}\n\n${sharedCTA}\n\n${sharedHashtags}`, `${skillLevel} Complete Caption`)}
+                                >
+                                  {copiedText === `${skillLevel} Complete Caption` ? <Check size={14} /> : <Copy size={14} />}
+                                  Copy All
+                                </Button>
+                              </div>
+                              <div className="space-y-3">
+                                <div className="bg-orange-50 p-3 rounded border border-orange-200 text-sm leading-relaxed">
+                                  {sharedCaption}
                                 </div>
-                                <div className="bg-white p-2 rounded border text-xs">
-                                  <div className="line-clamp-3">{content.script}</div>
+                                <div className="bg-green-50 p-2 rounded border border-green-200 text-sm font-medium">
+                                  {sharedCTA}
+                                </div>
+                                <div className="bg-blue-50 p-2 rounded border border-blue-200 text-sm">
+                                  {sharedHashtags}
                                 </div>
                               </div>
-
-                              {/* Compact Caption */}
-                              <div className="space-y-1">
-                                <div className="flex items-center justify-between">
-                                  <h5 className="font-medium text-xs">Caption</h5>
-                                  <Button
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-6 px-2 text-xs"
-                                    onClick={() => copyToClipboard(content.caption, `${skillLevel} ${content.platforms[0]} Caption`)}
-                                  >
-                                    {copiedText === `${skillLevel} ${content.platforms[0]} Caption` ? <Check size={12} /> : <Copy size={12} />}
-                                  </Button>
-                                </div>
-                                <div className="bg-orange-50 p-2 rounded border border-orange-200 text-xs">
-                                  <div className="line-clamp-2">{content.caption}</div>
-                                </div>
-                              </div>
-
-                              {/* Copy All Button */}
-                              <Button 
-                                className="w-full h-7 text-xs" 
-                                variant="default"
-                                size="sm"
-                                onClick={() => copyToClipboard(
-                                  `${content.script}\n\n${content.caption}\n\n${content.cta}\n\n${content.hashtags}`, 
-                                  `${skillLevel} ${content.platforms[0]} Complete`
-                                )}
-                              >
-                                <Copy className="mr-1 h-3 w-3" />
-                                Copy All
-                              </Button>
-                            </CardContent>
-                          </Card>
-                        );
-                      })}
-                    </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </CardContent>
                 </Card>
               );
