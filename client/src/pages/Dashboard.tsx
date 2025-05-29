@@ -142,22 +142,20 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Content Generation Section - Centered */}
-        <div className="flex justify-center">
-          <Card className="w-full max-w-lg">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-lg font-medium">Generate Content</CardTitle>
-              <ArrowRight className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Link href="/generate">
-                <Button className="w-full" size="lg">Start Creating with our AI Content Generator</Button>
-              </Link>
-              <DailyBatchButton />
-              <p className="text-xs text-muted-foreground text-center">Create high-converting content in seconds</p>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Content Generation Section - Full Width */}
+        <Card className="w-full">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-medium">Generate Content</CardTitle>
+            <ArrowRight className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <Link href="/generate">
+              <Button className="w-full" size="lg">Start Creating with our AI Content Generator</Button>
+            </Link>
+            <DailyBatchButton />
+            <p className="text-sm text-muted-foreground text-center">Create high-converting content in seconds</p>
+          </CardContent>
+        </Card>
 
         {/* Daily Content Showcase */}
         <DailyContentShowcase />

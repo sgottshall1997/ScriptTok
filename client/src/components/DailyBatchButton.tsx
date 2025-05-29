@@ -131,22 +131,22 @@ const DailyBatchButton = () => {
           {batchMutation.data.results && batchMutation.data.results.length > 0 && (
             <div className="space-y-3">
               <h3 className="text-lg font-semibold text-gray-900">📝 Generated Video Scripts (30-45 seconds)</h3>
-              <div className="grid gap-4">
+              <div className="grid gap-6">
                 {batchMutation.data.results.map((result: DailyBatchResult, index: number) => (
-                  <div key={index} className="bg-white border rounded-lg p-4 shadow-sm">
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                  <div key={index} className="bg-white border rounded-lg p-6 shadow-sm">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-3 flex-wrap">
+                        <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded">
                           {result.niche?.toUpperCase() || 'UNKNOWN'}
                         </span>
-                        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded">
+                        <span className="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded">
                           {result.platform || 'TikTok'}
                         </span>
-                        <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded">
+                        <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded">
                           {estimateVideoLength(result.script || '')}
                         </span>
                         {result.promptScore && (
-                          <span className={`px-2 py-1 text-xs font-medium rounded ${
+                          <span className={`px-3 py-1 text-sm font-medium rounded ${
                             result.promptScore >= 80 ? 'bg-emerald-100 text-emerald-800' :
                             result.promptScore >= 60 ? 'bg-yellow-100 text-yellow-800' :
                             'bg-red-100 text-red-800'
@@ -155,55 +155,56 @@ const DailyBatchButton = () => {
                           </span>
                         )}
                         {result.mentions && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-sm text-gray-600 font-medium">
                             {result.mentions.toLocaleString()} mentions
                           </span>
                         )}
                         {result.trendingDataUsed && (
-                          <span className="text-xs text-blue-600">
+                          <span className="text-sm text-blue-600 font-medium">
                             {result.trendingDataUsed} trends analyzed
                           </span>
                         )}
                       </div>
                       <button
                         onClick={() => navigator.clipboard.writeText(result.script || '')}
-                        className="text-xs text-blue-600 hover:text-blue-800 font-medium"
+                        className="text-sm text-blue-600 hover:text-blue-800 font-medium"
                       >
                         Copy Script
                       </button>
                     </div>
                     
-                    <div className="mb-3">
-                      <h4 className="font-medium text-gray-900 text-sm mb-1">
+                    <div className="mb-4">
+                      <h4 className="font-medium text-gray-900 text-base mb-1">
                         {result.product || 'Trending Product'}
                       </h4>
-                      <p className="text-xs text-gray-600">
+                      <p className="text-sm text-gray-600">
                         Template: {result.template} • Tone: {result.tone}
                       </p>
                     </div>
                     
-                    <div className="bg-gray-50 rounded p-3">
-                      <h5 className="text-xs font-medium text-gray-700 mb-2">🎬 Video Script:</h5>
-                      <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap">
+                    <div className="bg-gray-50 rounded p-4">
+                      <h5 className="text-sm font-medium text-gray-700 mb-2">🎬 Video Script:</h5>
+                      <p className="text-base text-gray-800 leading-relaxed whitespace-pre-wrap">
                         {result.script || 'Script content not available'}
                       </p>
                     </div>
                     
                     {result.promptFeedback && (
-                      <div className="bg-indigo-50 rounded p-3 mt-2">
-                        <h5 className="text-xs font-medium text-indigo-700 mb-1">🤖 AI Quality Analysis:</h5>
-                        <p className="text-xs text-indigo-600">
+                      <div className="bg-indigo-50 rounded p-4 mt-3">
+                        <h5 className="text-sm font-medium text-indigo-700 mb-2">🤖 AI Quality Analysis:</h5>
+                        <p className="text-sm text-indigo-700 leading-relaxed">
                           {result.promptFeedback}
                         </p>
                       </div>
                     )}
                     
-                    <div className="mt-3 pt-3 border-t border-gray-100">
-                      <div className="text-xs text-gray-600">
-                        <span className="font-medium">Caption:</span> {result.caption || ''}
+                    <div className="mt-4 pt-4 border-t border-gray-100">
+                      <div className="text-sm text-gray-700 mb-2">
+                        <span className="font-medium">Caption:</span> 
+                        <p className="mt-1 text-base text-gray-800 leading-relaxed">{result.caption || ''}</p>
                       </div>
                       {result.hashtags && (
-                        <div className="text-xs text-blue-600 mt-1">
+                        <div className="text-sm text-blue-600 mt-2 font-medium">
                           {result.hashtags}
                         </div>
                       )}
