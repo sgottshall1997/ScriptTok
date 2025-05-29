@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2, Download, Upload, Layout, Eye, LineChart, Sliders, Hash, Smile } from 'lucide-react';
+import { Home, Settings, FileText, Users, HelpCircle, Calendar, BarChart2, Download, Upload, Layout, Eye, LineChart, Sliders, Hash, Smile, ChefHat } from 'lucide-react';
 
 export default function Navbar() {
   return (

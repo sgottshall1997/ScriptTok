@@ -31,6 +31,7 @@ import { generateDailyBatch } from "./api/daily-batch";
 import { forceRefreshRouter } from "./api/force-refresh";
 import { amazonLinksRouter } from "./api/amazonLinks";
 import { testEnhancedPayloads } from "./api/test-enhanced-payloads";
+import { cookingPipeline } from "./services/cookingContentPipeline";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
@@ -144,6 +145,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching API usage:", error);
       res.status(500).json({ error: "Failed to fetch API usage" });
+    }
+  });
+
+  // Cooking content endpoints
+  app.get('/api/cooking/ingredient-of-day', async (req, res) => {
+    try {
+      const ingredient = await cookingPipeline.selectTrendingIngredientOfDay();
+      res.json(ingredient);
+    } catch (error) {
+      console.error("Error getting ingredient of day:", error);
+      res.status(500).json({ error: "Failed to get ingredient of day" });
+    }
+  });
+
+  app.post('/api/cooking/generate-recipe', async (req, res) => {
+    try {
+      const { ingredient, method } = req.body;
+      
+      if (!ingredient || !method) {
+        return res.status(400).json({ error: "Ingredient and method are required" });
+      }
+
+      const ingredientData = { 
+        name: ingredient, 
+        popularity: 85, 
+        seasonality: 'year-round', 
+        nutritionFacts: 'Nutritious and delicious' 
+      };
+      
+      const recipe = await cookingPipeline.generateRecipeContent(ingredientData, method);
+      res.json({ recipe });
+    } catch (error) {
+      console.error("Error generating recipe:", error);
+      res.status(500).json({ error: "Failed to generate recipe content" });
+    }
+  });
+
+  app.post('/api/cooking/run-daily-pipeline', async (req, res) => {
+    try {
+      const result = await cookingPipeline.runDailyPipeline();
+      res.json(result);
+    } catch (error) {
+      console.error("Error running daily cooking pipeline:", error);
+      res.status(500).json({ error: "Failed to run daily cooking pipeline" });
     }
   });
   
