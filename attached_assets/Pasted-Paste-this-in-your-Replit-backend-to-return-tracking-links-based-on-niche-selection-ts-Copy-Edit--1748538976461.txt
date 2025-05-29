@@ -1,0 +1,149 @@
+Paste this in your Replit backend to return tracking links based on niche selection:
+
+ts
+Copy
+Edit
+// routes/amazonExamples.ts
+
+import express from "express";
+
+const router = express.Router();
+
+const affiliateLinks: Record<string, { product: string; url: string }[]> = {
+  skincare: [
+    { product: "Mighty Patch", url: "https://www.amazon.com/dp/B07YPBX9Y7?tag=sgottshall199-20" },
+  ],
+  tech: [
+    { product: "Apple Watch SE (2nd Gen)", url: "https://www.amazon.com/dp/B0BDJG949Z?tag=sgottshall199-20" },
+  ],
+  fashion: [
+    { product: "Costaric Shirt Dress", url: "https://www.amazon.com/dp/B0BLC7S4JY?tag=sgottshall199-20" },
+  ],
+  fitness: [
+    { product: "Hex Dumbbells", url: "https://www.amazon.com/dp/B074DY6VJ4?tag=sgottshall199-20" },
+  ],
+  kitchen: [
+    { product: "8 QT Air Fryer", url: "https://www.amazon.com/dp/B0C6WR7M9M?tag=sgottshall199-20" },
+  ],
+  travel: [
+    { product: "Packing Cubes Set", url: "https://www.amazon.com/dp/B01E7AVSKG?tag=sgottshall199-20" },
+  ],
+  pets: [
+    { product: "Chik 'n Hide Twists", url: "https://www.amazon.com/dp/B01CPJ38RY?tag=sgottshall199-20" },
+  ]
+};
+
+router.get("/amazon-links", (req, res) => {
+  const niche = req.query.niche?.toString().toLowerCase();
+
+  if (!niche || !affiliateLinks[niche]) {
+    return res.status(400).json({ error: "Invalid or missing niche parameter." });
+  }
+
+  res.json({ niche, links: affiliateLinks[niche] });
+});
+
+export default router;
+✅ Example Request:
+bash
+Copy
+Edit
+GET /amazon-links?niche=fitness
+Response:
+
+json
+Copy
+Edit
+{
+  "niche": "fitness",
+  "links": [
+    {
+      "product": "Hex Dumbbells",
+      "url": "https://www.amazon.com/dp/B074DY6VJ4?tag=sgottshall199-20"
+    }
+  ]
+}
+Want a frontend dropdown component to go with this too? Or auto-copy buttons for each link?
+
+
+
+
+
+You said:
+can you write that out so i can tell replit exactly what i want and also incldue the links and the relvant niche for the dropdown
+
+
+ChatGPT said:
+Absolutely — here’s a fully written Replit prompt you can paste into your GPT Assistant or Replit AI to describe exactly what you want built:
+
+🧠 Replit Prompt: Dropdown Niche Selector with Amazon Affiliate Links
+I want to build an Express route + frontend dropdown that allows a user to select a niche (e.g., skincare, tech, fashion, etc.), and then displays pre-set Amazon affiliate products with my tracking ID (sgottshall199-20). Each niche should have 1 example product with a description and valid affiliate link.
+
+✅ Backend Requirements:
+Create an Express route /amazon-links that:
+
+Accepts a niche query param (e.g., ?niche=fitness)
+
+Returns a JSON response containing:
+
+The product name
+
+The Amazon affiliate URL
+
+Use this object as the data source:
+
+ts
+Copy
+Edit
+const affiliateLinks: Record<string, { product: string; url: string }[]> = {
+  skincare: [
+    { product: "Mighty Patch", url: "https://www.amazon.com/dp/B07YPBX9Y7?tag=sgottshall199-20" },
+  ],
+  tech: [
+    { product: "Apple Watch SE (2nd Gen)", url: "https://www.amazon.com/dp/B0BDJG949Z?tag=sgottshall199-20" },
+  ],
+  fashion: [
+    { product: "Costaric Shirt Dress", url: "https://www.amazon.com/dp/B0BLC7S4JY?tag=sgottshall199-20" },
+  ],
+  fitness: [
+    { product: "Hex Dumbbells", url: "https://www.amazon.com/dp/B074DY6VJ4?tag=sgottshall199-20" },
+  ],
+  kitchen: [
+    { product: "8 QT Air Fryer", url: "https://www.amazon.com/dp/B0C6WR7M9M?tag=sgottshall199-20" },
+  ],
+  travel: [
+    { product: "Packing Cubes Set", url: "https://www.amazon.com/dp/B01E7AVSKG?tag=sgottshall199-20" },
+  ],
+  pets: [
+    { product: "Chik 'n Hide Twists", url: "https://www.amazon.com/dp/B01CPJ38RY?tag=sgottshall199-20" },
+  ]
+};
+✅ Frontend Requirements:
+Add a dropdown with the following options:
+
+Skincare
+
+Tech
+
+Fashion
+
+Fitness
+
+Kitchen
+
+Travel
+
+Pets
+
+When the user selects a niche, fetch /amazon-links?niche=SELECTED_NICHE from the backend.
+
+Display the product name and clickable affiliate link in a clean layout.
+
+Add a “Copy Link” button next to each result to easily copy the affiliate URL to clipboard.
+
+Optional Enhancements:
+Add loading + error handling
+
+Highlight the current selection
+
+Mobile responsive layout (TailwindCSS optional)

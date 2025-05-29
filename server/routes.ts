@@ -29,6 +29,7 @@ import { generateMultiPlatformContent, scheduleMultiPlatformContent } from "./ap
 import { rewriteCaption } from "./api/post/rewrite-caption";
 import { generateDailyBatch } from "./api/daily-batch";
 import { forceRefreshRouter } from "./api/force-refresh";
+import { amazonLinksRouter } from "./api/amazonLinks";
 import { testEnhancedPayloads } from "./api/test-enhanced-payloads";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -55,6 +56,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/post/send-to-make', sendToMakeRouter);
   app.use('/api/post/send-batch', sendBatchRouter);
   app.use('/api/force-refresh', forceRefreshRouter);
+  app.use('/api/amazon-links', amazonLinksRouter);
   // Direct webhook test route
   app.get('/api/post/test-make-webhook', async (req, res) => {
     try {

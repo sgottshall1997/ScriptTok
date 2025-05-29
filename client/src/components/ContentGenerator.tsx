@@ -14,6 +14,7 @@ import {
 import NicheSelector from "./NicheSelector";
 import AffiliateLink from "./AffiliateLink";
 import MultiPlatformContentOutput from "./MultiPlatformContentOutput";
+import { AmazonAffiliateDropdown } from "./AmazonAffiliateDropdown";
 import { trackEvent } from "@/lib/analytics";
 
 interface ContentGeneratorProps {
@@ -270,6 +271,9 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
             <p className="mt-1 text-xs text-gray-500">Enter the product name you want to generate content for</p>
           </div>
           
+          {/* Amazon Affiliate Links Dropdown */}
+          <AmazonAffiliateDropdown />
+
           {/* Amazon Affiliate Link */}
           {niche && productName && (
             <AffiliateLink 
