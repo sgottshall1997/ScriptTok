@@ -35,6 +35,12 @@ export default function Navbar() {
               Templates
             </a>
           </Link>
+          <Link href="/cooking">
+            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
+              <ChefHat className="w-4 h-4 mr-1" />
+              Cooking
+            </a>
+          </Link>
           <Link href="/about">
             <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
               <Users className="w-4 h-4 mr-1" />
