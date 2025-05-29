@@ -324,8 +324,8 @@ export function EnhancedAmazonAffiliateSection() {
         {showContent && currentContent && (
           <div className="bg-gray-800 rounded-lg p-6 border border-orange-200 shadow-sm">
             <h3 className="text-xl font-bold text-white mb-4">{currentContent.title}</h3>
-            <div className="prose prose-sm max-w-none">
-              <pre className="whitespace-pre-wrap text-gray-200 font-sans leading-relaxed">
+            <div className="prose prose-base max-w-none">
+              <pre className="whitespace-pre-wrap text-gray-200 font-sans leading-relaxed text-base">
                 {currentContent.content}
               </pre>
             </div>
