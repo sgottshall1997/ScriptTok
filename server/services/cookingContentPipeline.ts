@@ -437,9 +437,7 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
   }
 
   async generateCookAIngAdContent(): Promise<any> {
-    try {
-      // Generate ad content directly without external AI calls for now
-      const adVideoScript = `Tired of staring at your fridge wondering what to cook?
+    const adVideoScript = `Tired of staring at your fridge wondering what to cook?
 
 You have ingredients but no inspiration. Meal planning feels overwhelming. Cooking the same boring meals every week.
 
@@ -458,7 +456,7 @@ Try us on the app store for free!
 
 #CookAIng #AIcooking #RecipeGenerator #MealPlanning #CookingHacks #FoodTech #KitchenAI #RecipeApp #CookingMadeEasy #FoodWaste #SmartCooking`;
 
-      const linkedinPost = `The future of home cooking is here.
+    const linkedinPost = `The future of home cooking is here.
 
 CookAIng is an AI-powered cooking assistant that solves one of the biggest challenges busy professionals face: deciding what to cook with limited time and ingredients.
 
@@ -472,19 +470,15 @@ Whether you're a seasoned chef or just starting your culinary journey, CookAIng 
 
 Ready to transform your kitchen experience? Try us on the app store for free!`;
 
-      const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Try us on the app store for free!`;
+    const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Try us on the app store for free!`;
 
-      return {
-        videoScript: adVideoScript,
-        linkedinPost: linkedinPost,
-        tweet: tweet,
-        videoDuration: "45-60 seconds",
-        platform: "Multi-platform CookAIng Ad"
-      };
-    } catch (error) {
-      console.error('Error generating CookAIng ad content:', error);
-      throw error;
-    }
+    return {
+      videoScript: adVideoScript,
+      linkedinPost: linkedinPost,
+      tweet: tweet,
+      videoDuration: "45-60 seconds",
+      platform: "Multi-platform CookAIng Ad"
+    };
   }
 
   private async generateAdVideoScript(): Promise<string> {
