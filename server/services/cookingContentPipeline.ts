@@ -451,59 +451,145 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
   }
 
   async generateCookAIngAdContent(): Promise<any> {
-    const adVideoScript = `Tired of staring at your fridge wondering what to cook?
+    const videoScriptPrompt = `You are a world-class video ad copywriter creating a compelling 45-60 second video script for CookAIng, an AI-powered kitchen assistant.
 
-You have ingredients but no inspiration. Meal planning feels overwhelming. Food goes to waste because you don't know what to make.
+ABOUT COOKAING:
+CookAIng is an all-in-one AI cooking assistant that turns your kitchen into a smart, personalized culinary studio. It's powered by GPT-4 with lightning-fast UX.
 
-Meet CookAIng - your AI-powered personal chef, meal planner, and pantry assistant.
+CORE FEATURES TO HIGHLIGHT:
+🍳 AI Recipe & Cooking Method Generator: Input any ingredient (salmon, tofu, zucchini) and get 5 different cooking methods (baked, grilled, steamed, air fried, etc.) tailored to your skill level (Elite Chef, Intermediate, Beginner) with dietary customizations (vegan, gluten-free, keto, paleo, etc.)
 
-Just input any ingredient - salmon, tofu, zucchini, anything - and CookAIng instantly generates 5 different cooking methods tailored to your skill level. Whether you're an elite chef or total beginner, you get recipes that match your abilities.
+📦 Smart Pantry Organizer: Add ingredients to virtual pantry, instantly see what you can make with what you have, get smart add-ons suggestions to stretch pantry into more meals. Reduces food waste, saves money, maximizes grocery trips.
 
-CookAIng's smart pantry organizer shows you exactly what you can make with what you already have. No more food waste, no more expensive grocery trips for missing ingredients.
+🗓️ AI Meal Plan Generator: Tell CookAIng your dietary goals (bulking, cutting, clean eating), preferences, and number of days. It builds personalized daily meal plans with breakfast, lunch, dinner, and snacks. Auto-aligns with pantry inventory. Adapts to specific diets like Mediterranean, Whole30, low-carb.
 
-Need a full meal plan? Tell CookAIng your dietary goals - bulking, cutting, keto, Mediterranean, vegan - and it builds personalized daily meal plans with breakfast, lunch, dinner and snacks, all aligned with your pantry inventory.
+📖 Custom Cookbook Generator: Creates personalized cookbooks based on your preferences and cooking history.
 
-Lightning-fast UX powered by GPT-4 integration. From ingredient to plate in seconds.
+TARGET PAIN POINTS: Staring at fridge with no inspiration, meal planning overwhelm, food waste, expensive grocery trips, cooking same boring meals.
 
-Download CookAIng today and turn your kitchen into a smart, personalized culinary studio.`;
+TONE: Friendly, modern, trustworthy. Direct-response focused.
+STRUCTURE: Hook → Problem → Solution → Demo/Features → Call to Action
+NO emojis in the script. Keep it conversational and engaging.
 
-    const adCaption = `Transform your kitchen into a smart culinary studio with CookAIng - your AI-powered personal chef, meal planner & pantry assistant.
+Write a fresh, compelling video script that varies from previous versions while hitting these key features.`;
 
-✨ AI Recipe Generator: Input any ingredient, get 5 cooking methods tailored to your skill level
-🍳 Smart Pantry Organizer: See what you can make with what you have - reduce waste, save money  
-📅 AI Meal Planner: Custom daily plans for any diet (keto, vegan, Mediterranean) aligned with your pantry
-⚡ Lightning-fast results powered by GPT-4
+    const captionPrompt = `Create an engaging social media caption for CookAIng that highlights its key features:
 
-From ingredient to plate in seconds. No more meal planning stress or food waste.
+CookAIng is an AI-powered personal chef, meal planner & pantry assistant with:
+- AI Recipe Generator (5 cooking methods per ingredient, skill-level customized)  
+- Smart Pantry Organizer (reduce waste, save money)
+- AI Meal Planner (custom daily plans for any diet)
+- Custom Cookbook Generator
+- Lightning-fast GPT-4 powered UX
 
-Try us on the app store for free!
+Include relevant hashtags and a clear call-to-action. Make it fresh and engaging while covering the core value props.`;
 
-#CookAIng #AIcooking #RecipeGenerator #MealPlanning #SmartPantry #FoodTech #KitchenAI #RecipeApp #CookingMadeEasy #FoodWaste #AI #PersonalChef`;
+    try {
+      // Generate video script
+      const scriptResponse = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: videoScriptPrompt }],
+        max_tokens: 600,
+        temperature: 0.8,
+      });
 
-    const linkedinPost = `The future of home cooking is here.
+      // Generate caption
+      const captionResponse = await openai.chat.completions.create({
+        model: "gpt-4o", 
+        messages: [{ role: "user", content: captionPrompt }],
+        max_tokens: 400,
+        temperature: 0.8,
+      });
+
+      const adVideoScript = scriptResponse.choices[0].message.content || 'Could not generate video script';
+      const adCaption = captionResponse.choices[0].message.content || 'Could not generate caption';
+
+      const linkedinPost = `The future of home cooking is here.
 
 CookAIng is an AI-powered cooking assistant that solves one of the biggest challenges busy professionals face: deciding what to cook with limited time and ingredients.
 
 Key benefits:
-- Instantly generates custom recipes from your available ingredients
-- Adapts to your dietary preferences and cooking skill level
-- Supports multiple cooking methods from air fryer to slow cooker
-- Reduces food waste and meal planning stress
+- Custom recipe generator with 5 cooking methods per ingredient
+- Smart pantry organizer that reduces food waste
+- AI meal planner for any dietary goal or restriction
+- Custom cookbook generator for personalized collections
+- Lightning-fast GPT-4 powered experience
 
 Whether you're a seasoned chef or just starting your culinary journey, CookAIng makes cooking accessible, efficient, and enjoyable.
 
 Ready to transform your kitchen experience? Try us on the app store for free!`;
 
-    const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Try us on the app store for free!`;
+      const tweet = `Stop staring at your fridge wondering what to cook. CookAIng's AI generates custom recipes, optimizes your pantry, and builds meal plans instantly. GPT-4 powered kitchen assistant. Try us free! #CookAIng #AI #Cooking`;
 
-    return {
-      videoScript: adVideoScript,
-      caption: adCaption,
-      linkedinPost: linkedinPost,
-      tweet: tweet,
-      videoDuration: "45-60 seconds",
-      platform: "Multi-platform CookAIng Ad"
-    };
+      return {
+        videoScript: adVideoScript,
+        caption: adCaption,
+        linkedinPost: linkedinPost,
+        tweet: tweet,
+        videoDuration: "45-60 seconds",
+        platform: "Multi-platform CookAIng Ad"
+      };
+
+    } catch (error) {
+      console.error('OpenAI failed for ad generation, trying Anthropic:', error);
+      
+      try {
+        // Fallback to Anthropic
+        const scriptResponse = await anthropic.messages.create({
+          model: "claude-3-7-sonnet-20250219",
+          max_tokens: 600,
+          messages: [{ role: "user", content: videoScriptPrompt }],
+        });
+
+        const captionResponse = await anthropic.messages.create({
+          model: "claude-3-7-sonnet-20250219", 
+          max_tokens: 400,
+          messages: [{ role: "user", content: captionPrompt }],
+        });
+
+        const adVideoScript = scriptResponse.content[0].type === 'text' ? scriptResponse.content[0].text : 'Could not generate video script';
+        const adCaption = captionResponse.content[0].type === 'text' ? captionResponse.content[0].text : 'Could not generate caption';
+
+        const linkedinPost = `The future of home cooking is here.
+
+CookAIng is an AI-powered cooking assistant that solves one of the biggest challenges busy professionals face: deciding what to cook with limited time and ingredients.
+
+Key benefits:
+- Custom recipe generator with 5 cooking methods per ingredient
+- Smart pantry organizer that reduces food waste  
+- AI meal planner for any dietary goal or restriction
+- Custom cookbook generator for personalized collections
+- Lightning-fast GPT-4 powered experience
+
+Whether you're a seasoned chef or just starting your culinary journey, CookAIng makes cooking accessible, efficient, and enjoyable.
+
+Ready to transform your kitchen experience? Try us on the app store for free!`;
+
+        const tweet = `Stop staring at your fridge wondering what to cook. CookAIng's AI generates custom recipes, optimizes your pantry, and builds meal plans instantly. GPT-4 powered kitchen assistant. Try us free! #CookAIng #AI #Cooking`;
+
+        return {
+          videoScript: adVideoScript,
+          caption: adCaption,
+          linkedinPost: linkedinPost,
+          tweet: tweet,
+          videoDuration: "45-60 seconds",
+          platform: "Multi-platform CookAIng Ad"
+        };
+
+      } catch (anthropicError) {
+        console.error('Both AI services failed for ad generation:', anthropicError);
+        
+        // Return fallback content if both AI services fail
+        return {
+          videoScript: "Could not generate video script - please try again",
+          caption: "Could not generate caption - please try again", 
+          linkedinPost: "Could not generate LinkedIn post - please try again",
+          tweet: "Could not generate tweet - please try again",
+          videoDuration: "45-60 seconds",
+          platform: "Multi-platform CookAIng Ad"
+        };
+      }
+    }
   }
 
 
