@@ -78,13 +78,14 @@ class CookingContentPipeline {
         productName: `${method} ${ingredient.name}`,
         contentType: 'recipe',
         script: this.getPlatformScriptWithSkillLevel(recipeData, platform, method, skillLevel),
-        captionAndHashtags: this.getCombinedCaptionAndHashtagsWithSkillLevel(recipeData, platform, method, skillLevel),
+        caption: this.getPlatformCaptionWithSkillLevel(recipeData, platform, skillLevel),
+        hashtags: this.getPlatformHashtags(recipeData, platform),
+        cta: `Buy it here: https://www.amazon.com/dp/B08N5WRWNW?tag=sgottshall199-20`,
         platforms: [platform],
         videoDuration: this.getPlatformDuration(platform),
         imagePrompt: `Professional food photography of ${method.toLowerCase()} ${ingredient.name.toLowerCase()}, beautifully plated, warm lighting, shallow depth of field, restaurant quality presentation`,
         cookingMethod: method,
-        postType: this.getPlatformType(platform),
-        platform: platform
+        postType: this.getPlatformType(platform)
       };
 
       recipes.push(recipe);
@@ -139,22 +140,6 @@ class CookingContentPipeline {
     const captionWithCTA = `${intro} - ${baseCaption}\n\nTry us out for free in the iPhone App Store!`;
     
     return captionWithCTA;
-  }
-
-  private getCombinedCaptionAndHashtagsWithSkillLevel(recipeData: any, platform: string, method: string, skillLevel: string): string {
-    const skillIntros = {
-      'Elite Chef': 'For you elite chefs',
-      'Skilled Home Chef': 'For you skilled home chefs',
-      'Beginner': 'For you beginners'
-    };
-
-    const intro = skillIntros[skillLevel as keyof typeof skillIntros];
-    const baseCaption = this.getPlatformCaption(recipeData, platform);
-    const cta = `🍳 Get the best ${method.replace(' ', '')} for perfect results → https://www.amazon.com/s?k=${method.replace(' ', '+')}&tag=sgottshall199-20`;
-    const hashtags = this.getPlatformHashtags(recipeData, platform);
-    
-    // Combine intro, caption, CTA, and hashtags in one flowing section
-    return `${intro} - ${baseCaption} ${cta}\n${hashtags}`;
   }
 
   private getPlatformScript(recipeData: any, platform: string, method: string): string {
@@ -493,15 +478,8 @@ Ready to transform your kitchen experience? Try us on the app store for free!`;
 
     const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Try us on the app store for free!`;
 
-    const captionAndHashtags = `Transform your kitchen chaos into culinary magic with CookAIng. Our AI cooking assistant turns whatever ingredients you have into personalized, delicious recipes in seconds. No more meal planning stress or food waste.
-
-Try us on the app store for free!
-
-#CookAIng #AIcooking #RecipeGenerator #MealPlanning #CookingHacks #FoodTech #KitchenAI #RecipeApp #CookingMadeEasy #FoodWaste #SmartCooking`;
-
     return {
       videoScript: adVideoScript,
-      captionAndHashtags: captionAndHashtags,
       linkedinPost: linkedinPost,
       tweet: tweet,
       videoDuration: "45-60 seconds",

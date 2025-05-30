@@ -14,7 +14,9 @@ interface RecipePayload {
   productName: string;
   contentType: string;
   script: string;
-  captionAndHashtags: string;
+  caption: string;
+  hashtags: string;
+  cta: string;
   platforms: string[];
   videoDuration: string;
   imagePrompt: string;
@@ -431,21 +433,57 @@ const CookingGenerator = () => {
                       </div>
                     </div>
 
-                    {/* Caption and Hashtags */}
+                    {/* Caption */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-semibold">Caption and Hashtags</h4>
+                        <h4 className="font-semibold">Caption</h4>
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyToClipboard(content.captionAndHashtags, `${content.platform} Caption and Hashtags`)}
+                          onClick={() => copyToClipboard(content.caption, `${content.platform} Caption`)}
                         >
-                          {copiedText === `${content.platform} Caption and Hashtags` ? <Check size={14} /> : <Copy size={14} />}
+                          {copiedText === `${content.platform} Caption` ? <Check size={14} /> : <Copy size={14} />}
                           Copy
                         </Button>
                       </div>
-                      <div className="bg-orange-50 p-3 rounded border border-orange-200">
-                        <p className="text-sm text-orange-800 whitespace-pre-line">{content.captionAndHashtags}</p>
+                      <div className="bg-white p-3 rounded border">
+                        <p className="text-sm">{content.caption}</p>
+                      </div>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">Call-to-Action</h4>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(content.cta, `${content.platform} CTA`)}
+                        >
+                          {copiedText === `${content.platform} CTA` ? <Check size={14} /> : <Copy size={14} />}
+                          Copy
+                        </Button>
+                      </div>
+                      <div className="bg-blue-50 p-3 rounded border border-blue-200">
+                        <p className="text-sm text-blue-800">{content.cta}</p>
+                      </div>
+                    </div>
+
+                    {/* Hashtags */}
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-semibold">Hashtags</h4>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => copyToClipboard(content.hashtags, `${content.platform} Hashtags`)}
+                        >
+                          {copiedText === `${content.platform} Hashtags` ? <Check size={14} /> : <Copy size={14} />}
+                          Copy
+                        </Button>
+                      </div>
+                      <div className="bg-purple-50 p-3 rounded border border-purple-200">
+                        <p className="text-sm text-purple-800">{content.hashtags}</p>
                       </div>
                     </div>
 
@@ -454,7 +492,7 @@ const CookingGenerator = () => {
                       className="w-full" 
                       variant="default"
                       onClick={() => copyToClipboard(
-                        `${content.script}\n\n${content.captionAndHashtags}`, 
+                        `${content.script}\n\n${content.caption}\n\n${content.cta}\n\n${content.hashtags}`, 
                         `Complete ${content.platform} Content`
                       )}
                     >
@@ -545,8 +583,10 @@ const CookingGenerator = () => {
                       // Create unified video script from all video platforms
                       const unifiedVideoScript = videoPlatforms.length > 0 ? videoPlatforms[0].script : '';
                       
-                      // Use the same caption and hashtags for all platforms in this skill level
-                      const sharedCaptionAndHashtags = skillRecipes[0]?.captionAndHashtags || '';
+                      // Use the same caption for all platforms in this skill level
+                      const sharedCaption = skillRecipes[0]?.caption || '';
+                      const sharedHashtags = skillRecipes[0]?.hashtags || '';
+                      const sharedCTA = skillRecipes[0]?.cta || '';
                       
                       return (
                         <div className="space-y-6">
@@ -668,19 +708,27 @@ const CookingGenerator = () => {
                             
                             <div className="bg-white border border-gray-200 rounded-lg p-4">
                               <div className="flex items-center justify-between mb-3">
-                                <span className="font-medium text-gray-700">Caption and Hashtags</span>
+                                <span className="font-medium text-gray-700">Caption & CTA</span>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   className="h-7 px-3 text-xs"
-                                  onClick={() => copyToClipboard(sharedCaptionAndHashtags, `${skillLevel} Caption and Hashtags`)}
+                                  onClick={() => copyToClipboard(`${sharedCaption}\n\n${sharedCTA}\n\n${sharedHashtags}`, `${skillLevel} Complete Caption`)}
                                 >
-                                  {copiedText === `${skillLevel} Caption and Hashtags` ? <Check size={14} /> : <Copy size={14} />}
+                                  {copiedText === `${skillLevel} Complete Caption` ? <Check size={14} /> : <Copy size={14} />}
                                   Copy All
                                 </Button>
                               </div>
-                              <div className="bg-orange-50 p-3 rounded border border-orange-200 text-sm leading-relaxed whitespace-pre-line">
-                                {sharedCaptionAndHashtags}
+                              <div className="space-y-3">
+                                <div className="bg-orange-50 p-3 rounded border border-orange-200 text-sm leading-relaxed">
+                                  {sharedCaption}
+                                </div>
+                                <div className="bg-green-50 p-2 rounded border border-green-200 text-sm font-medium">
+                                  {sharedCTA}
+                                </div>
+                                <div className="bg-blue-50 p-2 rounded border border-blue-200 text-sm">
+                                  {sharedHashtags}
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -749,31 +797,6 @@ const CookingGenerator = () => {
                   </div>
                   <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-wrap">
                     {adContent.linkedinPost}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Caption and Hashtags */}
-              <Card className="bg-orange-50 border-orange-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-3">
-                    📝 Caption and Hashtags
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-medium text-gray-700">Social Media Caption</span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => copyToClipboard(adContent.captionAndHashtags, 'Caption and Hashtags')}
-                    >
-                      {copiedText === 'Caption and Hashtags' ? <Check size={14} /> : <Copy size={14} />}
-                      Copy Caption
-                    </Button>
-                  </div>
-                  <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-line">
-                    {adContent.captionAndHashtags}
                   </div>
                 </CardContent>
               </Card>
