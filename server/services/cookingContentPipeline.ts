@@ -439,25 +439,16 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
   async generateCookAIngAdContent(): Promise<any> {
     try {
       // Generate ad content directly without external AI calls for now
-      const adVideoScript = `**Hook:**
-Tired of staring at your fridge wondering what to cook?
+      const adVideoScript = `Tired of staring at your fridge wondering what to cook?
 
-**Problem:**
 You have ingredients but no inspiration. Meal planning feels overwhelming. Cooking the same boring meals every week.
 
-**Solution:**
 Meet CookAIng - the AI cooking assistant that transforms whatever's in your kitchen into amazing recipes instantly.
 
-**Demo:**
 Just tell CookAIng what ingredients you have, and watch personalized recipes appear in seconds.
 
-**Features:**
-- Custom recipes based on your ingredients and dietary needs
-- Supports air fryer, oven, grill, and 10+ cooking methods
-- Built by professional chefs and AI experts
-- Saves time, money, and eliminates food waste
+Custom recipes based on your ingredients and dietary needs. Supports air fryer, oven, grill, and 10+ cooking methods. Built by professional chefs and AI experts. Saves time, money, and eliminates food waste.
 
-**Call to Action:**
 Download CookAIng today and never ask "what's for dinner?" again.`;
 
       const linkedinPost = `The future of home cooking is here.
