@@ -58,11 +58,15 @@ const CookingGenerator = () => {
   ];
 
   const cookingMethods = [
-    { value: "air fryer", label: "🔥 Air Fryer", time: "15-25 min", difficulty: "Easy" },
-    { value: "oven baked", label: "🏠 Oven Baked", time: "20-45 min", difficulty: "Easy" },
-    { value: "grilled", label: "🔥 Grilled", time: "10-30 min", difficulty: "Medium" },
-    { value: "pan seared", label: "🍳 Pan Seared", time: "5-15 min", difficulty: "Medium" },
-    { value: "slow cooker", label: "⏰ Slow Cooker", time: "2-8 hours", difficulty: "Easy" }
+    { value: "oven", label: "🔥 Oven", time: "20-45 min", difficulty: "Easy" },
+    { value: "stovetop", label: "🍳 Stovetop", time: "10-30 min", difficulty: "Medium" },
+    { value: "microwave", label: "⚡ Microwave", time: "2-10 min", difficulty: "Easy" },
+    { value: "grill", label: "🔥 Grill", time: "10-30 min", difficulty: "Medium" },
+    { value: "air fryer", label: "💨 Air Fryer", time: "15-25 min", difficulty: "Easy" },
+    { value: "slow cooker", label: "⏰ Slow Cooker", time: "2-8 hours", difficulty: "Easy" },
+    { value: "pressure cooker", label: "⚡ Pressure Cooker", time: "15-45 min", difficulty: "Medium" },
+    { value: "sous vide", label: "🌡️ Sous Vide", time: "1-4 hours", difficulty: "Hard" },
+    { value: "deep frying", label: "🍟 Deep Frying", time: "5-15 min", difficulty: "Hard" }
   ];
 
   // Get today's trending ingredient
