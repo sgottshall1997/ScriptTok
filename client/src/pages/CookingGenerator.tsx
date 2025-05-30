@@ -668,26 +668,20 @@ const CookingGenerator = () => {
                             
                             <div className="bg-white border border-gray-200 rounded-lg p-4">
                               <div className="flex items-center justify-between mb-3">
-                                <span className="font-medium text-gray-700">Caption & CTA</span>
+                                <span className="font-medium text-gray-700">Caption and Hashtags</span>
                                 <Button
                                   variant="outline"
                                   size="sm"
                                   className="h-7 px-3 text-xs"
-                                  onClick={() => copyToClipboard(`${sharedCaption}\n\n${sharedCTA}\n\n${sharedHashtags}`, `${skillLevel} Complete Caption`)}
+                                  onClick={() => copyToClipboard(sharedCaptionAndHashtags, `${skillLevel} Caption and Hashtags`)}
                                 >
-                                  {copiedText === `${skillLevel} Complete Caption` ? <Check size={14} /> : <Copy size={14} />}
+                                  {copiedText === `${skillLevel} Caption and Hashtags` ? <Check size={14} /> : <Copy size={14} />}
                                   Copy All
                                 </Button>
                               </div>
                               <div className="space-y-3">
                                 <div className="bg-orange-50 p-3 rounded border border-orange-200 text-sm leading-relaxed">
-                                  {sharedCaption}
-                                </div>
-                                <div className="bg-green-50 p-2 rounded border border-green-200 text-sm font-medium">
-                                  {sharedCTA}
-                                </div>
-                                <div className="bg-blue-50 p-2 rounded border border-blue-200 text-sm">
-                                  {sharedHashtags}
+                                  <pre className="whitespace-pre-wrap">{sharedCaptionAndHashtags}</pre>
                                 </div>
                               </div>
                             </div>
@@ -732,6 +726,31 @@ const CookingGenerator = () => {
                   </div>
                   <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-wrap">
                     {adContent.videoScript}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Video Caption */}
+              <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    💬 Video Caption
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium text-gray-700">Social Media Caption & Hashtags</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(adContent.caption, 'Video Caption')}
+                    >
+                      {copiedText === 'Video Caption' ? <Check size={14} /> : <Copy size={14} />}
+                      Copy Caption
+                    </Button>
+                  </div>
+                  <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-wrap">
+                    {adContent.caption}
                   </div>
                 </CardContent>
               </Card>
