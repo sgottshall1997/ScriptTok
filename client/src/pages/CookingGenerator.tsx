@@ -536,6 +536,9 @@ const CookingGenerator = () => {
                         recipe.platforms[0] === 'LinkedIn'
                       );
                       
+                      // Create unified video script from all video platforms
+                      const unifiedVideoScript = videoPlatforms.length > 0 ? videoPlatforms[0].script : '';
+                      
                       // Use the same caption for all platforms in this skill level
                       const sharedCaption = skillRecipes[0]?.caption || '';
                       const sharedHashtags = skillRecipes[0]?.hashtags || '';
@@ -543,39 +546,35 @@ const CookingGenerator = () => {
                       
                       return (
                         <div className="space-y-6">
-                          {/* Video Scripts Section - TikTok + YouTube Shorts + Instagram */}
+                          {/* Unified Video Scripts Section */}
                           {videoPlatforms.length > 0 && (
                             <div className="space-y-3">
                               <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-gray-900">Video Scripts</h4>
-                                <Badge variant="secondary">{videoPlatforms.length} platforms</Badge>
+                                <h4 className="font-semibold text-gray-900">Video Scripts (YouTube, Instagram, TikTok)</h4>
+                                <Badge variant="secondary">All video platforms</Badge>
                               </div>
                               
-                              <div className="space-y-4">
-                                {videoPlatforms.map((content, idx) => (
-                                  <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
-                                    <div className="flex items-center justify-between mb-3">
-                                      <div className="flex items-center gap-2">
-                                        <span className="font-medium text-gray-900">{content.platforms[0]}</span>
-                                        <Badge variant="outline" className="text-xs">
-                                          {content.videoDuration}
-                                        </Badge>
-                                      </div>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="h-7 px-3 text-xs"
-                                        onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
-                                      >
-                                        {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={14} /> : <Copy size={14} />}
-                                        Copy Script
-                                      </Button>
-                                    </div>
-                                    <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
-                                      {content.script}
-                                    </div>
+                              <div className="bg-white border border-gray-200 rounded-lg p-4">
+                                <div className="flex items-center justify-between mb-3">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-medium text-gray-900">Universal Video Script</span>
+                                    <Badge variant="outline" className="text-xs">
+                                      30-45 seconds
+                                    </Badge>
                                   </div>
-                                ))}
+                                  <Button
+                                    variant="outline"
+                                    size="sm"
+                                    className="h-7 px-3 text-xs"
+                                    onClick={() => copyToClipboard(unifiedVideoScript, `${skillLevel} Video Script`)}
+                                  >
+                                    {copiedText === `${skillLevel} Video Script` ? <Check size={14} /> : <Copy size={14} />}
+                                    Copy Script
+                                  </Button>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
+                                  {unifiedVideoScript}
+                                </div>
                               </div>
                             </div>
                           )}
