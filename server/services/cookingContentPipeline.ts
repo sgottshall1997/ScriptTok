@@ -493,8 +493,15 @@ Ready to transform your kitchen experience? Try us on the app store for free!`;
 
     const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Try us on the app store for free!`;
 
+    const captionAndHashtags = `Transform your kitchen chaos into culinary magic with CookAIng. Our AI cooking assistant turns whatever ingredients you have into personalized, delicious recipes in seconds. No more meal planning stress or food waste.
+
+Try us on the app store for free!
+
+#CookAIng #AIcooking #RecipeGenerator #MealPlanning #CookingHacks #FoodTech #KitchenAI #RecipeApp #CookingMadeEasy #FoodWaste #SmartCooking`;
+
     return {
       videoScript: adVideoScript,
+      captionAndHashtags: captionAndHashtags,
       linkedinPost: linkedinPost,
       tweet: tweet,
       videoDuration: "45-60 seconds",

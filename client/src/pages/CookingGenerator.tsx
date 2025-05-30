@@ -753,6 +753,31 @@ const CookingGenerator = () => {
                 </CardContent>
               </Card>
 
+              {/* Caption and Hashtags */}
+              <Card className="bg-orange-50 border-orange-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    📝 Caption and Hashtags
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium text-gray-700">Social Media Caption</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(adContent.captionAndHashtags, 'Caption and Hashtags')}
+                    >
+                      {copiedText === 'Caption and Hashtags' ? <Check size={14} /> : <Copy size={14} />}
+                      Copy Caption
+                    </Button>
+                  </div>
+                  <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-line">
+                    {adContent.captionAndHashtags}
+                  </div>
+                </CardContent>
+              </Card>
+
               {/* Twitter Post */}
               <Card className="bg-sky-50 border-sky-200">
                 <CardHeader>
