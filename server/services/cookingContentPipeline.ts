@@ -141,6 +141,22 @@ class CookingContentPipeline {
     return captionWithCTA;
   }
 
+  private getCombinedCaptionAndHashtagsWithSkillLevel(recipeData: any, platform: string, method: string, skillLevel: string): string {
+    const skillIntros = {
+      'Elite Chef': 'For you elite chefs',
+      'Skilled Home Chef': 'For you skilled home chefs',
+      'Beginner': 'For you beginners'
+    };
+
+    const intro = skillIntros[skillLevel as keyof typeof skillIntros];
+    const baseCaption = this.getPlatformCaption(recipeData, platform);
+    const cta = `🍳 Get the best ${method.replace(' ', '')} for perfect results → https://www.amazon.com/s?k=${method.replace(' ', '+')}&tag=sgottshall199-20`;
+    const hashtags = this.getPlatformHashtags(recipeData, platform);
+    
+    // Combine intro, caption, CTA, and hashtags in one flowing section
+    return `${intro} - ${baseCaption} ${cta}\n${hashtags}`;
+  }
+
   private getPlatformScript(recipeData: any, platform: string, method: string): string {
     const baseScript = recipeData.script;
     
