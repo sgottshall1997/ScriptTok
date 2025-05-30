@@ -451,7 +451,7 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
   }
 
   async generateCookAIngAdContent(): Promise<any> {
-    const videoScriptPrompt = `You are a world-class video ad copywriter creating a compelling 45-60 second video script for CookAIng, an AI-powered kitchen assistant.
+    const videoScriptPrompt = `You are a world-class video ad copywriter creating a clean 30-45 second spoken video script for CookAIng, an AI-powered kitchen assistant.
 
 ABOUT COOKAING:
 CookAIng is an all-in-one AI cooking assistant that turns your kitchen into a smart, personalized culinary studio. It's powered by GPT-4 with lightning-fast UX.
@@ -467,11 +467,19 @@ CORE FEATURES TO HIGHLIGHT:
 
 TARGET PAIN POINTS: Staring at fridge with no inspiration, meal planning overwhelm, food waste, expensive grocery trips, cooking same boring meals.
 
+CRITICAL FORMATTING REQUIREMENTS:
+- Output ONLY the spoken words that will be read by a text-to-speech system
+- NO stage directions, scene descriptions, or camera directions like "[Cut to...]" or "[Show...]"
+- NO character labels like "Narrator:" or "V.O.:" or "**Speaker:**"
+- NO formatting markup like **bold** or *italics*
+- NO brackets, parentheses for directions, or any production notes
+- Just clean, conversational spoken content that flows naturally for 30-45 seconds
+- Keep it direct, engaging, and focus on the key features
+
 TONE: Friendly, modern, trustworthy. Direct-response focused.
 STRUCTURE: Hook → Problem → Solution → Demo/Features → Call to Action
-NO emojis in the script. Keep it conversational and engaging.
 
-Write a fresh, compelling video script that varies from previous versions while hitting these key features.`;
+Write a fresh, compelling video script that is ONLY spoken content, ready for Pictory to read cleanly.`;
 
     const captionPrompt = `Create an engaging social media caption for CookAIng that highlights its key features:
 
