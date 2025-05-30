@@ -476,10 +476,18 @@ CRITICAL FORMATTING REQUIREMENTS:
 - Just clean, conversational spoken content that flows naturally for 30-45 seconds
 - Keep it direct, engaging, and focus on the key features
 
+EXAMPLE OF CORRECT FORMAT:
+"Tired of staring at your fridge with no idea what to cook? CookAIng is your AI-powered kitchen assistant that solves this problem instantly. Just type in any ingredient and get five different cooking methods tailored to your skill level. Our smart pantry organizer shows you what you can make with what you have, reducing food waste and saving money. Need a meal plan? CookAIng creates personalized daily plans for any diet while our cookbook generator builds custom collections just for you. Download CookAIng today and transform your kitchen experience."
+
+EXAMPLE OF INCORRECT FORMAT (DO NOT DO THIS):
+"[Scene opens with someone looking confused at their fridge]
+**Narrator (V.O.):** Tired of staring at your fridge...
+[Cut to app demonstration]"
+
 TONE: Friendly, modern, trustworthy. Direct-response focused.
 STRUCTURE: Hook → Problem → Solution → Demo/Features → Call to Action
 
-Write a fresh, compelling video script that is ONLY spoken content, ready for Pictory to read cleanly.`;
+Write ONLY the spoken script - no formatting, no directions, just the words to be spoken.`;
 
     const captionPrompt = `Create an engaging social media caption for CookAIng that highlights its key features:
 
