@@ -145,11 +145,11 @@ class CookingContentPipeline {
     
     switch (platform) {
       case 'LinkedIn':
-        return `🔥 Professional Kitchen Tip: ${method} Mastery
+        return `Professional Kitchen Tip: ${method} Mastery
 
 ${baseScript}
 
-💼 Why this matters for busy professionals:
+Why this matters for busy professionals:
 • Quick, efficient cooking method
 • Consistent, restaurant-quality results
 • Perfect for meal prep and time management
@@ -157,24 +157,24 @@ ${baseScript}
 What's your go-to cooking method for busy weekdays?`;
 
       case 'Twitter':
-        return `🔥 Quick ${method} tip thread 🧵
+        return `Quick ${method} tip thread
 
 ${baseScript.split('\n').slice(0, 8).join('\n')}
 
-💡 Pro tip: This method saves 30% cooking time while maintaining perfect results!
+Pro tip: This method saves 30% cooking time while maintaining perfect results!
 
-What's your favorite quick cooking hack? 👇`;
+What's your favorite quick cooking hack?`;
 
       case 'Instagram':
       case 'TikTok':
       case 'YouTube Shorts':
-        return `🔥 ${method} hack that'll change your cooking game!
+        return `${method} hack that'll change your cooking game!
 
 ${baseScript}
 
-✨ Follow for more cooking tips that actually work!
-📱 Tag a friend who needs to see this!
-🎬 WATCH UNTIL THE END for the secret tip!`;
+Follow for more cooking tips that actually work!
+Tag a friend who needs to see this!
+WATCH UNTIL THE END for the secret tip!`;
 
       default:
         return baseScript;

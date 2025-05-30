@@ -559,7 +559,7 @@ const CookingGenerator = () => {
                                   <div className="flex items-center gap-2">
                                     <span className="font-medium text-gray-900">Universal Video Script</span>
                                     <Badge variant="outline" className="text-xs">
-                                      30-45 seconds
+                                      37 seconds
                                     </Badge>
                                   </div>
                                   <Button
