@@ -419,13 +419,18 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
     
     console.log(`🎯 Daily method: ${selectedMethod} for ingredient: ${ingredient.name}`);
     
-    // Generate content for 3 skill levels with 5 platforms each
+    // Generate content for 3 skill levels with only 3 video platforms each
     const skillLevels = ['Elite Chef', 'Skilled Home Chef', 'Beginner'];
+    const videoPlatforms = ['TikTok', 'Instagram', 'YouTube Shorts'];
     const allRecipes: RecipePayload[] = [];
     
     for (const skillLevel of skillLevels) {
       const recipes = await this.generateRecipeContentWithSkillLevel(ingredient, selectedMethod, skillLevel);
-      allRecipes.push(...recipes);
+      // Filter to only include video platforms
+      const videoRecipes = recipes.filter(recipe => 
+        recipe.platforms.some(platform => videoPlatforms.includes(platform))
+      );
+      allRecipes.push(...videoRecipes);
     }
     
     return allRecipes;

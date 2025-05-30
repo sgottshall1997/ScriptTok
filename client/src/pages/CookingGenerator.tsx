@@ -524,13 +524,10 @@ const CookingGenerator = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {/* Group platforms by type */}
+                    {/* Simplified Video Scripts Section */}
                     {(() => {
                       const videoPlatforms = skillRecipes.filter(recipe => 
-                        ['LinkedIn', 'TikTok', 'YouTube Shorts'].includes(recipe.platforms[0])
-                      );
-                      const otherPlatforms = skillRecipes.filter(recipe => 
-                        !['LinkedIn', 'TikTok', 'YouTube Shorts'].includes(recipe.platforms[0])
+                        ['TikTok', 'Instagram', 'YouTube Shorts'].includes(recipe.platforms[0])
                       );
                       
                       // Use the same caption for all platforms in this skill level
@@ -540,11 +537,11 @@ const CookingGenerator = () => {
                       
                       return (
                         <div className="space-y-6">
-                          {/* Video Scripts Section */}
+                          {/* Video Scripts Section - Combined */}
                           {videoPlatforms.length > 0 && (
                             <div className="space-y-3">
                               <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-gray-900">Video Scripts</h4>
+                                <h4 className="font-semibold text-gray-900">Video Scripts (TikTok, Instagram, YouTube)</h4>
                                 <Badge variant="secondary">{videoPlatforms.length} platforms</Badge>
                               </div>
                               
@@ -558,38 +555,6 @@ const CookingGenerator = () => {
                                           {content.videoDuration}
                                         </Badge>
                                       </div>
-                                      <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="h-7 px-3 text-xs"
-                                        onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
-                                      >
-                                        {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={14} /> : <Copy size={14} />}
-                                        Copy Script
-                                      </Button>
-                                    </div>
-                                    <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
-                                      {content.script}
-                                    </div>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                          
-                          {/* Other Platforms */}
-                          {otherPlatforms.length > 0 && (
-                            <div className="space-y-3">
-                              <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-gray-900">Other Platforms</h4>
-                                <Badge variant="secondary">{otherPlatforms.length} platforms</Badge>
-                              </div>
-                              
-                              <div className="space-y-4">
-                                {otherPlatforms.map((content, idx) => (
-                                  <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
-                                    <div className="flex items-center justify-between mb-3">
-                                      <span className="font-medium text-gray-900">{content.platforms[0]}</span>
                                       <Button
                                         variant="outline"
                                         size="sm"
