@@ -453,21 +453,32 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
   async generateCookAIngAdContent(): Promise<any> {
     const adVideoScript = `Tired of staring at your fridge wondering what to cook?
 
-You have ingredients but no inspiration. Meal planning feels overwhelming. Cooking the same boring meals every week.
+You have ingredients but no inspiration. Meal planning feels overwhelming. Food goes to waste because you don't know what to make.
 
-Meet CookAIng - the AI cooking assistant that transforms whatever's in your kitchen into amazing recipes instantly.
+Meet CookAIng - your AI-powered personal chef, meal planner, and pantry assistant.
 
-Just tell CookAIng what ingredients you have, and watch personalized recipes appear in seconds.
+Just input any ingredient - salmon, tofu, zucchini, anything - and CookAIng instantly generates 5 different cooking methods tailored to your skill level. Whether you're an elite chef or total beginner, you get recipes that match your abilities.
 
-Custom recipes based on your ingredients and dietary needs. Supports air fryer, oven, grill, and 10+ cooking methods. Built by professional chefs and AI experts. Saves time, money, and eliminates food waste.
+CookAIng's smart pantry organizer shows you exactly what you can make with what you already have. No more food waste, no more expensive grocery trips for missing ingredients.
 
-Download CookAIng today and never ask "what's for dinner?" again.`;
+Need a full meal plan? Tell CookAIng your dietary goals - bulking, cutting, keto, Mediterranean, vegan - and it builds personalized daily meal plans with breakfast, lunch, dinner and snacks, all aligned with your pantry inventory.
 
-    const adCaption = `Transform your kitchen chaos into culinary magic with CookAIng. Our AI cooking assistant turns whatever ingredients you have into personalized, delicious recipes in seconds. No more meal planning stress or food waste.
+Lightning-fast UX powered by GPT-4 integration. From ingredient to plate in seconds.
+
+Download CookAIng today and turn your kitchen into a smart, personalized culinary studio.`;
+
+    const adCaption = `Transform your kitchen into a smart culinary studio with CookAIng - your AI-powered personal chef, meal planner & pantry assistant.
+
+✨ AI Recipe Generator: Input any ingredient, get 5 cooking methods tailored to your skill level
+🍳 Smart Pantry Organizer: See what you can make with what you have - reduce waste, save money  
+📅 AI Meal Planner: Custom daily plans for any diet (keto, vegan, Mediterranean) aligned with your pantry
+⚡ Lightning-fast results powered by GPT-4
+
+From ingredient to plate in seconds. No more meal planning stress or food waste.
 
 Try us on the app store for free!
 
-#CookAIng #AIcooking #RecipeGenerator #MealPlanning #CookingHacks #FoodTech #KitchenAI #RecipeApp #CookingMadeEasy #FoodWaste #SmartCooking`;
+#CookAIng #AIcooking #RecipeGenerator #MealPlanning #SmartPantry #FoodTech #KitchenAI #RecipeApp #CookingMadeEasy #FoodWaste #AI #PersonalChef`;
 
     const linkedinPost = `The future of home cooking is here.
 
