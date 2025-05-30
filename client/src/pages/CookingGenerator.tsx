@@ -14,9 +14,7 @@ interface RecipePayload {
   productName: string;
   contentType: string;
   script: string;
-  caption: string;
-  hashtags: string;
-  cta: string;
+  captionAndHashtags: string;
   platforms: string[];
   videoDuration: string;
   imagePrompt: string;
@@ -433,57 +431,21 @@ const CookingGenerator = () => {
                       </div>
                     </div>
 
-                    {/* Caption */}
+                    {/* Caption and Hashtags */}
                     <div className="space-y-2">
                       <div className="flex items-center justify-between">
-                        <h4 className="font-semibold">Caption</h4>
+                        <h4 className="font-semibold">Caption and Hashtags</h4>
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => copyToClipboard(content.caption, `${content.platform} Caption`)}
+                          onClick={() => copyToClipboard(content.captionAndHashtags, `${content.platform} Caption`)}
                         >
                           {copiedText === `${content.platform} Caption` ? <Check size={14} /> : <Copy size={14} />}
                           Copy
                         </Button>
                       </div>
                       <div className="bg-white p-3 rounded border">
-                        <p className="text-sm">{content.caption}</p>
-                      </div>
-                    </div>
-
-                    {/* CTA */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold">Call-to-Action</h4>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(content.cta, `${content.platform} CTA`)}
-                        >
-                          {copiedText === `${content.platform} CTA` ? <Check size={14} /> : <Copy size={14} />}
-                          Copy
-                        </Button>
-                      </div>
-                      <div className="bg-blue-50 p-3 rounded border border-blue-200">
-                        <p className="text-sm text-blue-800">{content.cta}</p>
-                      </div>
-                    </div>
-
-                    {/* Hashtags */}
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-semibold">Hashtags</h4>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(content.hashtags, `${content.platform} Hashtags`)}
-                        >
-                          {copiedText === `${content.platform} Hashtags` ? <Check size={14} /> : <Copy size={14} />}
-                          Copy
-                        </Button>
-                      </div>
-                      <div className="bg-purple-50 p-3 rounded border border-purple-200">
-                        <p className="text-sm text-purple-800">{content.hashtags}</p>
+                        <pre className="text-sm whitespace-pre-wrap">{content.captionAndHashtags}</pre>
                       </div>
                     </div>
 
@@ -492,7 +454,7 @@ const CookingGenerator = () => {
                       className="w-full" 
                       variant="default"
                       onClick={() => copyToClipboard(
-                        `${content.script}\n\n${content.caption}\n\n${content.cta}\n\n${content.hashtags}`, 
+                        `${content.script}\n\n${content.captionAndHashtags}`, 
                         `Complete ${content.platform} Content`
                       )}
                     >
@@ -583,10 +545,8 @@ const CookingGenerator = () => {
                       // Create unified video script from all video platforms
                       const unifiedVideoScript = videoPlatforms.length > 0 ? videoPlatforms[0].script : '';
                       
-                      // Use the same caption for all platforms in this skill level
-                      const sharedCaption = skillRecipes[0]?.caption || '';
-                      const sharedHashtags = skillRecipes[0]?.hashtags || '';
-                      const sharedCTA = skillRecipes[0]?.cta || '';
+                      // Use the same caption and hashtags for all platforms in this skill level
+                      const sharedCaptionAndHashtags = skillRecipes[0]?.captionAndHashtags || '';
                       
                       return (
                         <div className="space-y-6">

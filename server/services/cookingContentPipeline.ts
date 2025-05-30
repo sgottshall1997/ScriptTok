@@ -78,14 +78,13 @@ class CookingContentPipeline {
         productName: `${method} ${ingredient.name}`,
         contentType: 'recipe',
         script: this.getPlatformScriptWithSkillLevel(recipeData, platform, method, skillLevel),
-        caption: this.getPlatformCaptionWithSkillLevel(recipeData, platform, skillLevel),
-        hashtags: this.getPlatformHashtags(recipeData, platform),
-        cta: `Buy it here: https://www.amazon.com/dp/B08N5WRWNW?tag=sgottshall199-20`,
+        captionAndHashtags: this.getCombinedCaptionAndHashtagsWithSkillLevel(recipeData, platform, method, skillLevel),
         platforms: [platform],
         videoDuration: this.getPlatformDuration(platform),
         imagePrompt: `Professional food photography of ${method.toLowerCase()} ${ingredient.name.toLowerCase()}, beautifully plated, warm lighting, shallow depth of field, restaurant quality presentation`,
         cookingMethod: method,
-        postType: this.getPlatformType(platform)
+        postType: this.getPlatformType(platform),
+        platform: platform
       };
 
       recipes.push(recipe);
@@ -209,6 +208,15 @@ WATCH UNTIL THE END for the secret tip!`;
 
   private getCombinedCaptionAndHashtags(recipeData: any, platform: string, method: string): string {
     const baseCaption = this.getPlatformCaption(recipeData, platform);
+    const cta = `🍳 Get the best ${method.replace(' ', '')} for perfect results → https://www.amazon.com/s?k=${method.replace(' ', '+')}&tag=sgottshall199-20`;
+    const hashtags = this.getPlatformHashtags(recipeData, platform);
+    
+    // Combine caption, CTA, and hashtags in one flowing section
+    return `${baseCaption} ${cta}\n${hashtags}`;
+  }
+
+  private getCombinedCaptionAndHashtagsWithSkillLevel(recipeData: any, platform: string, method: string, skillLevel: string): string {
+    const baseCaption = this.getPlatformCaptionWithSkillLevel(recipeData, platform, skillLevel);
     const cta = `🍳 Get the best ${method.replace(' ', '')} for perfect results → https://www.amazon.com/s?k=${method.replace(' ', '+')}&tag=sgottshall199-20`;
     const hashtags = this.getPlatformHashtags(recipeData, platform);
     
