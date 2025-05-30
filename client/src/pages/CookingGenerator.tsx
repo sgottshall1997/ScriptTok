@@ -250,40 +250,13 @@ const CookingGenerator = () => {
             
             {/* Ingredient Selection */}
             <div className="space-y-3">
-              <label className="text-sm font-semibold">Choose Ingredient:</label>
-              <Select value={selectedIngredient} onValueChange={setSelectedIngredient}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select an ingredient..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {ingredients.map((ingredient) => (
-                    <SelectItem key={ingredient.value} value={ingredient.value}>
-                      <div className="flex items-center justify-between w-full">
-                        <span>{ingredient.label}</span>
-                        <Badge variant="outline" className="ml-2">
-                          {ingredient.popularity}%
-                        </Badge>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              
-              {selectedIngredientData && (
-                <div className="text-sm text-muted-foreground bg-muted p-3 rounded-lg">
-                  <strong>Nutrition:</strong> {selectedIngredientData.nutrition}
-                </div>
-              )}
-              
-              <div className="space-y-2">
-                <label className="text-xs text-muted-foreground">Or enter custom ingredient:</label>
-                <Textarea
-                  placeholder="Enter your own ingredient..."
-                  value={customIngredient}
-                  onChange={(e) => setCustomIngredient(e.target.value)}
-                  className="min-h-[60px]"
-                />
-              </div>
+              <label className="text-sm font-semibold">Enter Ingredient:</label>
+              <Textarea
+                placeholder="Type any ingredient (e.g., chicken, broccoli, salmon, sweet potato)..."
+                value={customIngredient}
+                onChange={(e) => setCustomIngredient(e.target.value)}
+                className="min-h-[80px]"
+              />
             </div>
 
             <Separator />
