@@ -438,9 +438,43 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
 
   async generateCookAIngAdContent(): Promise<any> {
     try {
-      const adVideoScript = await this.generateAdVideoScript();
-      const linkedinPost = await this.generateAdLinkedInPost();
-      const tweet = await this.generateAdTweet();
+      // Generate ad content directly without external AI calls for now
+      const adVideoScript = `**Hook:**
+Tired of staring at your fridge wondering what to cook?
+
+**Problem:**
+You have ingredients but no inspiration. Meal planning feels overwhelming. Cooking the same boring meals every week.
+
+**Solution:**
+Meet CookAIng - the AI cooking assistant that transforms whatever's in your kitchen into amazing recipes instantly.
+
+**Demo:**
+Just tell CookAIng what ingredients you have, and watch personalized recipes appear in seconds.
+
+**Features:**
+- Custom recipes based on your ingredients and dietary needs
+- Supports air fryer, oven, grill, and 10+ cooking methods
+- Built by professional chefs and AI experts
+- Saves time, money, and eliminates food waste
+
+**Call to Action:**
+Download CookAIng today and never ask "what's for dinner?" again.`;
+
+      const linkedinPost = `The future of home cooking is here.
+
+CookAIng is an AI-powered cooking assistant that solves one of the biggest challenges busy professionals face: deciding what to cook with limited time and ingredients.
+
+Key benefits:
+- Instantly generates custom recipes from your available ingredients
+- Adapts to your dietary preferences and cooking skill level
+- Supports multiple cooking methods from air fryer to slow cooker
+- Reduces food waste and meal planning stress
+
+Whether you're a seasoned chef or just starting your culinary journey, CookAIng makes cooking accessible, efficient, and enjoyable.
+
+Ready to transform your kitchen experience? Try CookAIng and discover how AI can revolutionize your daily cooking routine.`;
+
+      const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Download now and never wonder "what's for dinner?" again.`;
 
       return {
         videoScript: adVideoScript,
