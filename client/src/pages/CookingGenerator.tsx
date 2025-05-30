@@ -741,6 +741,93 @@ const CookingGenerator = () => {
             })}
           </div>
         )}
+
+        {/* Ad Content Display */}
+        {adContent && (
+          <div className="space-y-6">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">CookAIng Ad Content Generated!</h2>
+              <p className="text-gray-600">Promotional content ready for video, LinkedIn, and Twitter</p>
+            </div>
+
+            <div className="grid gap-6">
+              {/* Video Script */}
+              <Card className="bg-gradient-to-r from-orange-50 to-red-50 border-orange-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    🎬 Video Script ({adContent.videoDuration})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium text-gray-700">Pictory-Ready Ad Script</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(adContent.videoScript, 'Video Script')}
+                    >
+                      {copiedText === 'Video Script' ? <Check size={14} /> : <Copy size={14} />}
+                      Copy Script
+                    </Button>
+                  </div>
+                  <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-wrap">
+                    {adContent.videoScript}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* LinkedIn Post */}
+              <Card className="bg-blue-50 border-blue-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    💼 LinkedIn Post
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium text-gray-700">Professional Promotion</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(adContent.linkedinPost, 'LinkedIn Post')}
+                    >
+                      {copiedText === 'LinkedIn Post' ? <Check size={14} /> : <Copy size={14} />}
+                      Copy Post
+                    </Button>
+                  </div>
+                  <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-wrap">
+                    {adContent.linkedinPost}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Twitter Post */}
+              <Card className="bg-sky-50 border-sky-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-3">
+                    🐦 Twitter Post
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-medium text-gray-700">Social Media Promotion</span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => copyToClipboard(adContent.tweet, 'Twitter Post')}
+                    >
+                      {copiedText === 'Twitter Post' ? <Check size={14} /> : <Copy size={14} />}
+                      Copy Tweet
+                    </Button>
+                  </div>
+                  <div className="bg-white p-4 rounded border text-sm leading-relaxed whitespace-pre-wrap">
+                    {adContent.tweet}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

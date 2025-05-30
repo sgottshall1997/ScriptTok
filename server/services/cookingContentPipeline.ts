@@ -1,5 +1,10 @@
 import { db } from "../db";
 import { eq } from "drizzle-orm";
+import OpenAI from 'openai';
+import Anthropic from '@anthropic-ai/sdk';
+
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 interface RecipePayload {
   niche: string;
@@ -429,6 +434,132 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
     }
     
     return allRecipes;
+  }
+
+  async generateCookAIngAdContent(): Promise<any> {
+    try {
+      const adVideoScript = await this.generateAdVideoScript();
+      const linkedinPost = await this.generateAdLinkedInPost();
+      const tweet = await this.generateAdTweet();
+
+      return {
+        videoScript: adVideoScript,
+        linkedinPost: linkedinPost,
+        tweet: tweet,
+        videoDuration: "45-60 seconds",
+        platform: "Multi-platform CookAIng Ad"
+      };
+    } catch (error) {
+      console.error('Error generating CookAIng ad content:', error);
+      throw error;
+    }
+  }
+
+  private async generateAdVideoScript(): Promise<string> {
+    const prompt = `You are a world-class direct-response ad copywriter and video script strategist working for a viral food-tech startup.
+
+Write a polished, Pictory-ready video ad script (under 60 seconds) promoting CookAIng, an AI-powered cooking assistant app that generates custom recipes based on ingredients, dietary needs, and cooking methods.
+
+Structure:
+- Hook (1-2 lines) — Grab attention FAST
+- Problem (2-3 lines) — Common frustration with cooking
+- Solution (2-3 lines) — Introduce CookAIng as the fix
+- Demo Line (1-2 lines) — What does the user see? What's the "wow" moment?
+- Features (3-4 bullets) — What makes it great?
+- Call to Action — Get people to download the app
+
+Tone: Friendly, modern, trustworthy. Think: Tasty meets Headspace.
+
+Format it in clear sections with bold titles.
+
+Avoid fluff — make it conversion-focused. NO emojis.`;
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 800,
+        temperature: 0.7,
+      });
+      
+      return response.choices[0].message.content || 'Could not generate ad script';
+    } catch (error) {
+      console.error('OpenAI failed for ad script, trying Anthropic:', error);
+      
+      const response = await anthropic.messages.create({
+        model: "claude-3-7-sonnet-20250219",
+        max_tokens: 800,
+        messages: [{ role: "user", content: prompt }],
+      });
+      
+      return response.content[0].type === 'text' ? response.content[0].text : 'Could not generate ad script';
+    }
+  }
+
+  private async generateAdLinkedInPost(): Promise<string> {
+    const prompt = `Write a professional LinkedIn post promoting CookAIng, an AI cooking assistant app. 
+
+Keep it:
+- Professional but engaging
+- 150-200 words
+- Include a clear value proposition
+- End with a call to action
+- NO emojis
+- Professional tone suitable for LinkedIn audience`;
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 300,
+        temperature: 0.7,
+      });
+      
+      return response.choices[0].message.content || 'Could not generate LinkedIn post';
+    } catch (error) {
+      console.error('OpenAI failed for LinkedIn post, trying Anthropic:', error);
+      
+      const response = await anthropic.messages.create({
+        model: "claude-3-7-sonnet-20250219",
+        max_tokens: 300,
+        messages: [{ role: "user", content: prompt }],
+      });
+      
+      return response.content[0].type === 'text' ? response.content[0].text : 'Could not generate LinkedIn post';
+    }
+  }
+
+  private async generateAdTweet(): Promise<string> {
+    const prompt = `Write a compelling Twitter/X post promoting CookAIng, an AI cooking assistant app.
+
+Requirements:
+- Under 280 characters
+- Catchy and engaging
+- Clear value proposition
+- Include call to action
+- NO emojis
+- Twitter-appropriate tone`;
+
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 150,
+        temperature: 0.7,
+      });
+      
+      return response.choices[0].message.content || 'Could not generate tweet';
+    } catch (error) {
+      console.error('OpenAI failed for tweet, trying Anthropic:', error);
+      
+      const response = await anthropic.messages.create({
+        model: "claude-3-7-sonnet-20250219",
+        max_tokens: 150,
+        messages: [{ role: "user", content: prompt }],
+      });
+      
+      return response.content[0].type === 'text' ? response.content[0].text : 'Could not generate tweet';
+    }
   }
 
   async sendToMakeWebhook(recipes: RecipePayload[]): Promise<boolean> {
