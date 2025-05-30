@@ -38,6 +38,7 @@ const CookingGenerator = () => {
   const [customIngredient, setCustomIngredient] = useState<string>("");
   const [generatedContent, setGeneratedContent] = useState<RecipePayload[] | null>(null);
   const [batchContent, setBatchContent] = useState<{[key: string]: RecipePayload[]} | null>(null);
+  const [adContent, setAdContent] = useState<any | null>(null);
   const [copiedText, setCopiedText] = useState<string>("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -126,6 +127,32 @@ const CookingGenerator = () => {
       toast({
         title: "Batch generation failed",
         description: "Could not generate daily batch content. Please try again.",
+        variant: "destructive",
+      });
+    }
+  });
+
+  // Generate ad video mutation
+  const generateAdMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/cooking/generate-ad-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      if (!response.ok) throw new Error('Failed to generate ad content');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setAdContent(data.adContent);
+      toast({
+        title: "Ad video content generated!",
+        description: "CookAIng promotional content is ready",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Ad generation failed",
+        description: "Could not generate ad content. Please try again.",
         variant: "destructive",
       });
     }
@@ -326,6 +353,23 @@ const CookingGenerator = () => {
                   <>
                     <Calendar className="h-4 w-4 mr-2" />
                     Generate Daily Batch
+                  </>
+                )}
+              </Button>
+              
+              <Button 
+                onClick={() => generateAdMutation.mutate()}
+                disabled={generateAdMutation.isPending}
+                className="bg-gradient-to-r from-orange-400 to-red-500 text-white px-8 py-3 hover:scale-105 transition-all duration-200"
+              >
+                {generateAdMutation.isPending ? (
+                  <>
+                    <Sparkles className="h-4 w-4 mr-2 animate-spin" />
+                    Generating Ad...
+                  </>
+                ) : (
+                  <>
+                    🎬 Generate Ad Video
                   </>
                 )}
               </Button>

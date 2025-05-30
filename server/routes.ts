@@ -209,6 +209,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ error: "Failed to generate daily batch content" });
     }
   });
+
+  app.post('/api/cooking/generate-ad-video', async (req, res) => {
+    try {
+      const adContent = await cookingPipeline.generateCookAIngAdContent();
+      res.json({ adContent });
+    } catch (error) {
+      console.error("Error generating ad content:", error);
+      res.status(500).json({ error: "Failed to generate ad content" });
+    }
+  });
   
   // Analytics endpoints are now handled by analyticsRouter
 
