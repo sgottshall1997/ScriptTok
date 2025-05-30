@@ -450,6 +450,33 @@ Ready to transform your dinner routine? Let's cook! 🙌`,
     return allRecipes;
   }
 
+  // Function to clean video scripts for Pictory - removes markdown formatting
+  private cleanVideoScript(content: string): string {
+    return content
+      // Remove markdown headers (### Title:, #### Section:, etc.)
+      .replace(/#{1,6}\s+.*?:/g, '')
+      // Remove asterisks used for emphasis (**bold**, *italic*)
+      .replace(/\*{1,2}([^*]+)\*{1,2}/g, '$1')
+      // Remove markdown bullet points (- item, * item)
+      .replace(/^[\s]*[-*]\s+/gm, '')
+      // Remove numbered list formatting (1. item, 2. item)
+      .replace(/^\s*\d+\.\s+/gm, '')
+      // Remove stage directions and narrator labels
+      .replace(/\[.*?\]/g, '')
+      .replace(/\*\*.*?\*\*:/g, '')
+      .replace(/Narrator.*?:/g, '')
+      .replace(/V\.O\.:/g, '')
+      // Remove extra whitespace and line breaks
+      .replace(/\n{3,}/g, '\n\n')
+      // Remove leading/trailing whitespace
+      .trim()
+      // Ensure sentences flow naturally for video narration
+      .replace(/\n\n/g, ' ')
+      .replace(/\n/g, ' ')
+      // Clean up extra spaces
+      .replace(/\s+/g, ' ');
+  }
+
   async generateCookAIngAdContent(): Promise<any> {
     const videoScriptPrompt = `You are a world-class video ad copywriter creating a clean 30-45 second spoken video script for CookAIng, an AI-powered kitchen assistant.
 
@@ -517,7 +544,8 @@ Include relevant hashtags and a clear call-to-action. Make it fresh and engaging
         temperature: 0.8,
       });
 
-      const adVideoScript = scriptResponse.choices[0].message.content || 'Could not generate video script';
+      const rawVideoScript = scriptResponse.choices[0].message.content || 'Could not generate video script';
+      const adVideoScript = this.cleanVideoScript(rawVideoScript);
       const adCaption = captionResponse.choices[0].message.content || 'Could not generate caption';
 
       const linkedinPost = `The future of home cooking is here.
@@ -563,7 +591,8 @@ Ready to transform your kitchen experience? Try us on the app store for free!`;
           messages: [{ role: "user", content: captionPrompt }],
         });
 
-        const adVideoScript = scriptResponse.content[0].type === 'text' ? scriptResponse.content[0].text : 'Could not generate video script';
+        const rawVideoScript = scriptResponse.content[0].type === 'text' ? scriptResponse.content[0].text : 'Could not generate video script';
+        const adVideoScript = this.cleanVideoScript(rawVideoScript);
         const adCaption = captionResponse.content[0].type === 'text' ? captionResponse.content[0].text : 'Could not generate caption';
 
         const linkedinPost = `The future of home cooking is here.
