@@ -78,14 +78,13 @@ class CookingContentPipeline {
         productName: `${method} ${ingredient.name}`,
         contentType: 'recipe',
         script: this.getPlatformScriptWithSkillLevel(recipeData, platform, method, skillLevel),
-        caption: this.getPlatformCaptionWithSkillLevel(recipeData, platform, skillLevel),
-        hashtags: this.getPlatformHashtags(recipeData, platform),
-        cta: `Buy it here: https://www.amazon.com/dp/B08N5WRWNW?tag=sgottshall199-20`,
+        captionAndHashtags: this.getCombinedCaptionAndHashtagsWithSkillLevel(recipeData, platform, method, skillLevel),
         platforms: [platform],
         videoDuration: this.getPlatformDuration(platform),
         imagePrompt: `Professional food photography of ${method.toLowerCase()} ${ingredient.name.toLowerCase()}, beautifully plated, warm lighting, shallow depth of field, restaurant quality presentation`,
         cookingMethod: method,
-        postType: this.getPlatformType(platform)
+        postType: this.getPlatformType(platform),
+        platform: platform
       };
 
       recipes.push(recipe);
