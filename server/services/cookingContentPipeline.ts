@@ -449,7 +449,14 @@ Just tell CookAIng what ingredients you have, and watch personalized recipes app
 
 Custom recipes based on your ingredients and dietary needs. Supports air fryer, oven, grill, and 10+ cooking methods. Built by professional chefs and AI experts. Saves time, money, and eliminates food waste.
 
-Download CookAIng today and never ask "what's for dinner?" again.`;
+Download CookAIng today and never ask "what's for dinner?" again.
+
+CAPTION:
+Transform your kitchen chaos into culinary magic with CookAIng. Our AI cooking assistant turns whatever ingredients you have into personalized, delicious recipes in seconds. No more meal planning stress or food waste.
+
+Try us on the app store for free!
+
+#CookAIng #AIcooking #RecipeGenerator #MealPlanning #CookingHacks #FoodTech #KitchenAI #RecipeApp #CookingMadeEasy #FoodWaste #SmartCooking`;
 
       const linkedinPost = `The future of home cooking is here.
 
@@ -463,9 +470,9 @@ Key benefits:
 
 Whether you're a seasoned chef or just starting your culinary journey, CookAIng makes cooking accessible, efficient, and enjoyable.
 
-Ready to transform your kitchen experience? Try CookAIng and discover how AI can revolutionize your daily cooking routine.`;
+Ready to transform your kitchen experience? Try us on the app store for free!`;
 
-      const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Download now and never wonder "what's for dinner?" again.`;
+      const tweet = `Stop staring at your fridge wondering what to cook. CookAIng turns your random ingredients into amazing recipes instantly. AI-powered cooking made simple. Try us on the app store for free!`;
 
       return {
         videoScript: adVideoScript,
