@@ -11,14 +11,13 @@ interface RecipePayload {
   productName: string;
   contentType: string;
   script: string;
-  caption: string;
-  hashtags: string;
-  cta: string;
+  captionAndHashtags: string;
   platforms: string[];
   videoDuration: string;
   imagePrompt: string;
   cookingMethod: string;
   postType: string;
+  platform: string;
 }
 
 interface TrendingIngredient {
@@ -104,9 +103,7 @@ class CookingContentPipeline {
       productName: ingredient.name,
       contentType: "recipePost",
       script: this.getPlatformScript(recipeData, platform, method),
-      caption: this.getPlatformCaption(recipeData, platform),
-      hashtags: this.getPlatformHashtags(recipeData, platform),
-      cta: `🍳 Get the best ${method.replace(' ', '')} for perfect results → https://www.amazon.com/s?k=${method.replace(' ', '+')}&tag=sgottshall199-20`,
+      captionAndHashtags: this.getCombinedCaptionAndHashtags(recipeData, platform, method),
       platforms: [platform],
       videoDuration: this.getPlatformDuration(platform),
       imagePrompt: recipeData.imagePrompt,
@@ -208,6 +205,15 @@ WATCH UNTIL THE END for the secret tip!`;
       default:
         return baseCaption;
     }
+  }
+
+  private getCombinedCaptionAndHashtags(recipeData: any, platform: string, method: string): string {
+    const baseCaption = this.getPlatformCaption(recipeData, platform);
+    const cta = `🍳 Get the best ${method.replace(' ', '')} for perfect results → https://www.amazon.com/s?k=${method.replace(' ', '+')}&tag=sgottshall199-20`;
+    const hashtags = this.getPlatformHashtags(recipeData, platform);
+    
+    // Combine caption, CTA, and hashtags in one flowing section
+    return `${baseCaption} ${cta}\n${hashtags}`;
   }
 
   private getPlatformHashtags(recipeData: any, platform: string): string {
