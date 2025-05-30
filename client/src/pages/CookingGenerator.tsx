@@ -524,10 +524,19 @@ const CookingGenerator = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
-                    {/* Simplified Video Scripts Section */}
+                    {/* Organized Platform Sections */}
                     {(() => {
                       const videoPlatforms = skillRecipes.filter(recipe => 
-                        ['TikTok', 'Instagram', 'YouTube Shorts'].includes(recipe.platforms[0])
+                        ['TikTok', 'YouTube Shorts'].includes(recipe.platforms[0])
+                      );
+                      const twitterPlatforms = skillRecipes.filter(recipe => 
+                        recipe.platforms[0] === 'Twitter'
+                      );
+                      const linkedinPlatforms = skillRecipes.filter(recipe => 
+                        recipe.platforms[0] === 'LinkedIn'
+                      );
+                      const instagramPlatforms = skillRecipes.filter(recipe => 
+                        recipe.platforms[0] === 'Instagram'
                       );
                       
                       // Use the same caption for all platforms in this skill level
@@ -537,16 +546,127 @@ const CookingGenerator = () => {
                       
                       return (
                         <div className="space-y-6">
-                          {/* Video Scripts Section - Combined */}
+                          {/* Video Scripts Section - TikTok + YouTube Shorts */}
                           {videoPlatforms.length > 0 && (
                             <div className="space-y-3">
                               <div className="flex items-center gap-2">
-                                <h4 className="font-semibold text-gray-900">Video Scripts (TikTok, Instagram, YouTube)</h4>
+                                <h4 className="font-semibold text-gray-900">Video Scripts (TikTok, YouTube Shorts)</h4>
                                 <Badge variant="secondary">{videoPlatforms.length} platforms</Badge>
                               </div>
                               
                               <div className="space-y-4">
                                 {videoPlatforms.map((content, idx) => (
+                                  <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-900">{content.platforms[0]}</span>
+                                        <Badge variant="outline" className="text-xs">
+                                          {content.videoDuration}
+                                        </Badge>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-7 px-3 text-xs"
+                                        onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
+                                      >
+                                        {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={14} /> : <Copy size={14} />}
+                                        Copy Script
+                                      </Button>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
+                                      {content.script}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Twitter Section */}
+                          {twitterPlatforms.length > 0 && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900">Twitter</h4>
+                                <Badge variant="secondary">{twitterPlatforms.length} posts</Badge>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                {twitterPlatforms.map((content, idx) => (
+                                  <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-900">{content.platforms[0]}</span>
+                                        <Badge variant="outline" className="text-xs">
+                                          {content.videoDuration}
+                                        </Badge>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-7 px-3 text-xs"
+                                        onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
+                                      >
+                                        {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={14} /> : <Copy size={14} />}
+                                        Copy Script
+                                      </Button>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
+                                      {content.script}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* LinkedIn Section */}
+                          {linkedinPlatforms.length > 0 && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900">LinkedIn</h4>
+                                <Badge variant="secondary">{linkedinPlatforms.length} posts</Badge>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                {linkedinPlatforms.map((content, idx) => (
+                                  <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
+                                    <div className="flex items-center justify-between mb-3">
+                                      <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-900">{content.platforms[0]}</span>
+                                        <Badge variant="outline" className="text-xs">
+                                          {content.videoDuration}
+                                        </Badge>
+                                      </div>
+                                      <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="h-7 px-3 text-xs"
+                                        onClick={() => copyToClipboard(content.script, `${skillLevel} ${content.platforms[0]} Script`)}
+                                      >
+                                        {copiedText === `${skillLevel} ${content.platforms[0]} Script` ? <Check size={14} /> : <Copy size={14} />}
+                                        Copy Script
+                                      </Button>
+                                    </div>
+                                    <div className="bg-gray-50 p-3 rounded border text-sm leading-relaxed">
+                                      {content.script}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Instagram Section */}
+                          {instagramPlatforms.length > 0 && (
+                            <div className="space-y-3">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-semibold text-gray-900">Instagram</h4>
+                                <Badge variant="secondary">{instagramPlatforms.length} posts</Badge>
+                              </div>
+                              
+                              <div className="space-y-4">
+                                {instagramPlatforms.map((content, idx) => (
                                   <div key={idx} className="bg-white border border-gray-200 rounded-lg p-4">
                                     <div className="flex items-center justify-between mb-3">
                                       <div className="flex items-center gap-2">
