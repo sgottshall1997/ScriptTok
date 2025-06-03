@@ -29,7 +29,7 @@ import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
 import GenerateContent from "@/pages/GenerateContent";
-import CookingGenerator from "@/pages/CookingGenerator";
+
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -46,7 +46,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/home" component={Home} />
       <Route path="/generate" component={GenerateContent} />
-      <Route path="/cooking" component={CookingGenerator} />
+
       <Route path="/dashboard" component={Dashboard} />
 
       <Route path="/templates" component={TemplateExplorerPage} />
