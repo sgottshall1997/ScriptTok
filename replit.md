@@ -227,6 +227,13 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Both product name and niche are seamlessly transferred via URL parameters
   - ✅ Enhanced user experience with one-click content generation workflow
   - ✅ Fixed Wouter router compatibility issues with query parameter handling
+- July 08, 2025. **Amazon Associates Links Section**: Added monetization section to dashboard:
+  - ✅ Created dedicated Amazon Associates Links card positioned under main header
+  - ✅ Added Hero Balancing Capsule Skin Toner for Face with full affiliate link integration
+  - ✅ Added Mighty Patch™ Original patch from Hero Cosmetics with affiliate tracking
+  - ✅ Implemented green-themed design indicating monetization opportunities
+  - ✅ Two-column responsive grid layout with product descriptions and "View Product" buttons
+  - ✅ Links open in new tabs to preserve user session on dashboard
 
 ## User Preferences
 
