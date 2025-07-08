@@ -455,6 +455,16 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Database updates maintain full product metadata (mentions, insights, timestamps)
   - ✅ Users can now refresh specific products without affecting entire trending list
   - ✅ Enhanced user experience with granular control over individual product data freshness
+- July 08, 2025. **Amazon Affiliate Links Integration in Platform Captions**: Complete monetization system with automatic affiliate link generation:
+  - ✅ Enhanced `generatePlatformCaptions()` function to automatically generate Amazon affiliate links for all products
+  - ✅ Added `generateAmazonAffiliateLink()` utility function creating search-based affiliate URLs with customizable affiliate IDs
+  - ✅ Platform-specific affiliate link formatting (TikTok: "🛒 Shop here", Instagram: "🛍️ Shop the link", YouTube: "🔗 Amazon link", Twitter: "🛒", Other: "Shop on Amazon")
+  - ✅ Updated all content generation endpoints to pass affiliate IDs to platform caption generation
+  - ✅ Enhanced platform prompts to include clear calls-to-action directing users to purchase products
+  - ✅ Integrated affiliate link generation into unified content generator, automated bulk generator, and manual bulk generator
+  - ✅ Fallback captions system also includes affiliate links ensuring monetization across all generation paths
+  - ✅ Default affiliate ID "sgottshall107-20" with support for custom affiliate IDs in bulk generation workflows
+  - ✅ All platform-specific captions now automatically include Amazon affiliate links with native platform language and compelling CTAs
 
 ## User Preferences
 

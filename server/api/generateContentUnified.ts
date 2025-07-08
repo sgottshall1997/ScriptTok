@@ -129,13 +129,19 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     // Generate platform-specific captions if platforms are specified
     let platformCaptions: Record<string, string> = {};
     if (config.platforms && config.platforms.length > 0) {
+      // Extract affiliate ID from config.affiliateUrl or use default
+      const affiliateId = config.affiliateUrl ? 
+        config.affiliateUrl.match(/tag=([^&]+)/)?.[1] || "sgottshall107-20" : 
+        "sgottshall107-20";
+      
       platformCaptions = await generatePlatformCaptions({
         productName: config.productName,
         platforms: config.platforms,
         tone: config.tone,
         niche: config.niche,
         mainContent: mainContent.content,
-        viralInspiration
+        viralInspiration,
+        affiliateId
       });
     }
 

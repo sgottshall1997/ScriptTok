@@ -342,7 +342,8 @@ async function processAutomatedBulkJob(
                         niche,
                         mainContent,
                         viralInspiration,
-                        enforceCaptionUniqueness: true
+                        enforceCaptionUniqueness: true,
+                        affiliateId: jobData.affiliateId || "sgottshall107-20"
                       });
                       
                       // Map to expected field names for content history

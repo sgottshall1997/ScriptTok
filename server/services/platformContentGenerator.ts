@@ -44,6 +44,13 @@ function checkContentSimilarity(content1: string, content2: string): number {
   return (commonWords.length / totalWords) * 100;
 }
 
+// Generate Amazon affiliate link
+function generateAmazonAffiliateLink(productName: string, affiliateId: string = "sgottshall107-20"): string {
+  // Create a search-friendly version of the product name
+  const searchQuery = encodeURIComponent(productName.replace(/\s+/g, ' ').trim());
+  return `https://www.amazon.com/s?k=${searchQuery}&tag=${affiliateId}`;
+}
+
 // Reusable function for generating platform-specific captions
 export async function generatePlatformCaptions(params: {
   productName: string;
@@ -54,8 +61,9 @@ export async function generatePlatformCaptions(params: {
   viralInspiration?: any;
   bestRatedStyle?: any;
   enforceCaptionUniqueness?: boolean;
+  affiliateId?: string;
 }): Promise<Record<string, string>> {
-  const { productName, platforms, tone, niche, mainContent, viralInspiration, enforceCaptionUniqueness = true } = params;
+  const { productName, platforms, tone, niche, mainContent, viralInspiration, enforceCaptionUniqueness = true, affiliateId = "sgottshall107-20" } = params;
   
   console.log(`🎯 Generating platform captions for: ${platforms.join(", ")}`);
   
@@ -75,11 +83,11 @@ PLATFORM-SPECIFIC REQUIREMENTS:
 `;
 
   const platformPrompts = {
-    tiktok: `Write a short, punchy TikTok caption for "${productName}". Use slang, emojis (4-6), and Gen Z tone with viral hooks like "POV:", "No bc", "Tell me why". DO NOT reuse or reword the main product description. Add a strong hook and CTA.`,
-    instagram: `Write a polished, aesthetic Instagram caption for "${productName}". Use lifestyle language, light emojis (2-3), and hashtags. Sound like a lifestyle influencer. DO NOT copy or paraphrase the main product description.`,
-    youtube: `Write a YouTube Shorts description that sounds like a voiceover script for "${productName}". Aim for informative but casual tone with emphasis markers (*asterisks*). Include hashtags. DO NOT reuse the full content output.`,
-    twitter: `Write a clever, short X (Twitter) post about "${productName}". Include a bold claim or hot take under 280 characters. DO NOT reuse the original content. Include 1-2 trending hashtags.`,
-    other: `Write professional content for "${productName}" suitable for blogs, newsletters, or email marketing. Use business-appropriate tone. DO NOT copy from the main description.`
+    tiktok: `Write a short, punchy TikTok caption for "${productName}". Use slang, emojis (4-6), and Gen Z tone with viral hooks like "POV:", "No bc", "Tell me why". DO NOT reuse or reword the main product description. Add a strong hook and end with a clear CTA like "Get yours at the link in my bio!" or "Tap the link to buy now!"`,
+    instagram: `Write a polished, aesthetic Instagram caption for "${productName}". Use lifestyle language, light emojis (2-3), and hashtags. Sound like a lifestyle influencer. DO NOT copy or paraphrase the main product description. End with a clear CTA like "Link in bio to shop!" or "Get yours through my bio link!"`,
+    youtube: `Write a YouTube Shorts description that sounds like a voiceover script for "${productName}". Aim for informative but casual tone with emphasis markers (*asterisks*). Include hashtags. DO NOT reuse the full content output. End with "Check the description for the link to buy!"`,
+    twitter: `Write a clever, short X (Twitter) post about "${productName}". Include a bold claim or hot take under 280 characters. DO NOT reuse the original content. Include 1-2 trending hashtags. End with "Link below to buy 👇"`,
+    other: `Write professional content for "${productName}" suitable for blogs, newsletters, or email marketing. Use business-appropriate tone. DO NOT copy from the main description. Include a clear call-to-action to purchase with "Click here to buy on Amazon"`
   };
 
   platforms.forEach(platform => {
@@ -127,7 +135,39 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       // Parse JSON response
       const captions = JSON.parse(content);
       
-      // Check for similarity if enforcing uniqueness
+      // Generate Amazon affiliate link
+      const amazonLink = generateAmazonAffiliateLink(productName, affiliateId);
+      
+      // Append affiliate link to each caption with platform-specific formatting
+      const enhancedCaptions: Record<string, string> = {};
+      for (const [platform, caption] of Object.entries(captions)) {
+        let enhancedCaption = caption as string;
+        
+        // Add platform-specific affiliate link formatting
+        switch (platform.toLowerCase()) {
+          case 'tiktok':
+            enhancedCaption += `\n\n🛒 Shop here: ${amazonLink}`;
+            break;
+          case 'instagram':
+            enhancedCaption += `\n\n🛍️ Shop the link: ${amazonLink}`;
+            break;
+          case 'youtube':
+            enhancedCaption += `\n\n🔗 Amazon link: ${amazonLink}`;
+            break;
+          case 'twitter':
+            enhancedCaption += `\n\n🛒 ${amazonLink}`;
+            break;
+          case 'other':
+            enhancedCaption += `\n\nShop on Amazon: ${amazonLink}`;
+            break;
+          default:
+            enhancedCaption += `\n\n${amazonLink}`;
+        }
+        
+        enhancedCaptions[platform] = enhancedCaption;
+      }
+      
+      // Check for similarity if enforcing uniqueness (using original captions before enhancement)
       if (enforceCaptionUniqueness && mainContent) {
         let needsRetry = false;
         
@@ -148,44 +188,47 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         }
       }
       
-      console.log(`✅ Generated ${Object.keys(captions).length} platform captions`);
-      return captions;
+      console.log(`✅ Generated ${Object.keys(enhancedCaptions).length} platform captions with affiliate links`);
+      return enhancedCaptions;
 
     } catch (error) {
       console.error('Error generating platform captions:', error);
       attempts++;
       
       if (attempts >= maxAttempts) {
-        return generateFallbackCaptions(productName, platforms, niche);
+        return generateFallbackCaptions(productName, platforms, niche, affiliateId);
       }
     }
   }
   
   // Fallback if all attempts fail
-  return generateFallbackCaptions(productName, platforms, niche);
+  return generateFallbackCaptions(productName, platforms, niche, affiliateId);
 }
 
 // Fallback captions generator
-function generateFallbackCaptions(productName: string, platforms: string[], niche: string): Record<string, string> {
+function generateFallbackCaptions(productName: string, platforms: string[], niche: string, affiliateId: string = "sgottshall107-20"): Record<string, string> {
   const captions: Record<string, string> = {};
+  const amazonLink = generateAmazonAffiliateLink(productName, affiliateId);
   
   platforms.forEach(platform => {
+    let caption = '';
     switch (platform.toLowerCase()) {
       case 'tiktok':
-        captions[platform] = `✨ ${productName} is trending for a reason! This ${niche} find is about to blow up your feed 🔥 #fyp #viral`;
+        caption = `✨ ${productName} is trending for a reason! This ${niche} find is about to blow up your feed 🔥 #fyp #viral\n\n🛒 Shop here: ${amazonLink}`;
         break;
       case 'instagram':
-        captions[platform] = `Discovered this amazing ${productName} and had to share ✨ Perfect addition to my ${niche} routine #aesthetic #musthave`;
+        caption = `Discovered this amazing ${productName} and had to share ✨ Perfect addition to my ${niche} routine #aesthetic #musthave\n\n🛍️ Shop the link: ${amazonLink}`;
         break;
       case 'youtube':
-        captions[platform] = `In this video, I'm reviewing the *${productName}* - here's everything you need to know about this trending ${niche} product.`;
+        caption = `In this video, I'm reviewing the *${productName}* - here's everything you need to know about this trending ${niche} product.\n\n🔗 Amazon link: ${amazonLink}`;
         break;
       case 'twitter':
-        captions[platform] = `Plot twist: ${productName} actually lives up to the hype. Best ${niche} purchase this year.`;
+        caption = `Plot twist: ${productName} actually lives up to the hype. Best ${niche} purchase this year.\n\n🛒 ${amazonLink}`;
         break;
       default:
-        captions[platform] = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.`;
+        caption = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.\n\nShop on Amazon: ${amazonLink}`;
     }
+    captions[platform] = caption;
   });
   
   return captions;
