@@ -218,6 +218,10 @@ export default function TrendingPicksWidget({
                   <Calendar className="h-3 w-3" />
                   {new Date(product.createdAt).toLocaleDateString()}
                 </div>
+                {/* Why it's hot */}
+                <div className="text-xs text-gray-600">
+                  {product.reason ? (product.reason.length > 100 ? product.reason.slice(0, 100) + '...' : product.reason) : 'Viral trend with massive social engagement'}
+                </div>
               </CardContent>
             </Card>
           ))}

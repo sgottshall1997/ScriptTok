@@ -53,6 +53,8 @@ EXACT FORMAT - Return only this JSON structure:
   { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
 ]
 
+IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
+
 EXAMPLES (do NOT copy these):
 [
   { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 1280000, "reason": "Home gym convenience trend" },

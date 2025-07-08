@@ -335,7 +335,7 @@ export default function TrendingAIPicks() {
                 {/* Why it's hot */}
                 <div className="text-sm text-gray-600">
                   <span className="text-yellow-600">✨ Why it's hot:</span>
-                  <span className="ml-1">Trending on social media platforms</span>
+                  <span className="ml-1">{product.reason ? (product.reason.length > 100 ? product.reason.slice(0, 100) + '...' : product.reason) : 'Trending on social media platforms'}</span>
                 </div>
 
                 {/* Hashtags */}

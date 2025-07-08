@@ -251,6 +251,10 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
                         {formatNumber(product.mentions)} mentions
                       </div>
                     </div>
+                    {/* Why it's hot */}
+                    <div className="text-xs text-gray-600 mt-1 truncate">
+                      {product.reason ? (product.reason.length > 50 ? product.reason.slice(0, 50) + '...' : product.reason) : 'Viral trend with social engagement'}
+                    </div>
                   </div>
                 </div>
                 <div className="p-3 mt-auto flex justify-end bg-gray-50">
