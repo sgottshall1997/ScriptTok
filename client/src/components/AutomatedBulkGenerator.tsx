@@ -21,9 +21,11 @@ import {
   Users,
   BarChart3,
   Globe,
-  DollarSign
+  DollarSign,
+  Eye,
+  ShoppingCart
 } from 'lucide-react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
 
@@ -69,12 +71,39 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
   const [useManualAffiliateLinks, setUseManualAffiliateLinks] = useState(false);
   const [manualAffiliateLinks, setManualAffiliateLinks] = useState<Record<string, string>>({});
+  const [previewProducts, setPreviewProducts] = useState<Record<string, any>>({});
+  const [showPreview, setShowPreview] = useState(false);
   const [scheduleAfterGeneration, setScheduleAfterGeneration] = useState(false);
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch trending products for preview
+  const { data: trendingProducts } = useQuery({
+    queryKey: ['/api/trending/products'],
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
+  // Preview products for selected niches
+  const previewProductsForNiches = () => {
+    if (!trendingProducts) return;
+    
+    const productsByNiche: Record<string, any> = {};
+    
+    selectedNiches.forEach(niche => {
+      const nicheProducts = trendingProducts.filter((product: any) => product.niche === niche);
+      if (nicheProducts.length > 0) {
+        // Sort by mentions (descending) and take the top product
+        const sortedProducts = nicheProducts.sort((a: any, b: any) => (b.mentions || 0) - (a.mentions || 0));
+        productsByNiche[niche] = sortedProducts[0];
+      }
+    });
+    
+    setPreviewProducts(productsByNiche);
+    setShowPreview(true);
+  };
 
   const startAutomatedBulkMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -467,6 +496,47 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
             </div>
           </CollapsibleContent>
         </Collapsible>
+
+        {/* Preview Products Button */}
+        <div className="flex justify-center pt-4">
+          <Button 
+            onClick={previewProductsForNiches}
+            disabled={selectedNiches.length === 0 || !trendingProducts}
+            variant="outline"
+            size="lg"
+            className="w-full md:w-auto border-blue-300 text-blue-700 hover:bg-blue-50 mb-3"
+          >
+            <Eye className="mr-2 h-5 w-5" />
+            Preview Selected Products ({selectedNiches.length} niches)
+          </Button>
+        </div>
+
+        {/* Products Preview */}
+        {showPreview && Object.keys(previewProducts).length > 0 && (
+          <Card className="border-blue-200 bg-blue-50 mb-4">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <ShoppingCart className="h-4 w-4 text-blue-600" />
+                <h4 className="font-semibold text-blue-800">Products to be Selected</h4>
+              </div>
+              <div className="space-y-2">
+                {Object.entries(previewProducts).map(([niche, product]) => (
+                  <div key={niche} className="flex items-center justify-between p-2 bg-white rounded border">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {niche}
+                      </Badge>
+                      <span className="text-sm font-medium">{product.title}</span>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {product.mentions?.toLocaleString()} mentions
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Start Generation Button */}
         <div className="flex justify-center pt-4">
