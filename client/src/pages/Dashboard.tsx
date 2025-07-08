@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -17,13 +17,15 @@ import {
   Layers,
   Eye,
   Zap,
-  Target
+  Target,
+  RotateCcw
 } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
   const { toast } = useToast();
+  const queryClient = useQueryClient();
   const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
 
@@ -33,6 +35,40 @@ const Dashboard = () => {
     retry: false,
     staleTime: 0, // Always consider data stale
     cacheTime: 0, // Don't cache the data
+  });
+
+  // Individual product refresh mutation
+  const refreshIndividualMutation = useMutation({
+    mutationFn: async ({ productId, niche }: { productId: number; niche: string }) => {
+      const response = await fetch('/api/perplexity-trends/refresh-individual', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ productId, niche }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to refresh product');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Product Refreshed",
+        description: `Updated "${data.originalTitle}" to "${data.newTitle}"`,
+      });
+      // Invalidate and refetch trending products
+      queryClient.invalidateQueries({ queryKey: ['/api/trending'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Refresh Failed",
+        description: error instanceof Error ? error.message : "Failed to refresh product",
+        variant: "destructive",
+      });
+    },
   });
 
   // Get Perplexity products (exactly 3 per niche, balanced representation)
@@ -283,9 +319,19 @@ const Dashboard = () => {
                             Generate Content
                           </Button>
                         </Link>
-                        <Button size="sm" variant="outline" className="border-gray-300">
-                          <Eye className="h-3 w-3 mr-1" />
-                          View
+                        <Button 
+                          size="sm" 
+                          variant="outline" 
+                          className="border-gray-300"
+                          onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
+                          disabled={refreshIndividualMutation.isPending}
+                        >
+                          {refreshIndividualMutation.isPending ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            <RotateCcw className="h-3 w-3 mr-1" />
+                          )}
+                          Refresh
                         </Button>
                       </div>
                     </div>

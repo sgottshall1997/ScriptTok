@@ -445,6 +445,16 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Eliminated tech debt by consolidating 4 separate generation files into single, scalable endpoint
   - ✅ Enhanced error handling and logging throughout unified generation pipeline with detailed progress tracking
   - ✅ Platform captions now achieve true 70%+ content differentiation with platform-native language and engagement strategies
+- July 08, 2025. **Individual Perplexity Product Refresh Feature**: Added granular product refresh capability for trending picks:
+  - ✅ Created `/api/perplexity-trends/refresh-individual` endpoint for single product refresh functionality
+  - ✅ Built `refreshIndividualProduct()` backend function using niche-specific Perplexity fetchers
+  - ✅ Added individual "Refresh" button to each trending product card on dashboard
+  - ✅ Implemented loading states and error handling with toast notifications
+  - ✅ Random product selection from fresh Perplexity API results to ensure variety
+  - ✅ Automatic cache invalidation and UI updates after successful refresh
+  - ✅ Database updates maintain full product metadata (mentions, insights, timestamps)
+  - ✅ Users can now refresh specific products without affecting entire trending list
+  - ✅ Enhanced user experience with granular control over individual product data freshness
 
 ## User Preferences
 

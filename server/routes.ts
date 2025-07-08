@@ -40,6 +40,7 @@ import metricsRouter from "./api/metrics";
 import affiliateNetworksRouter from "./api/affiliate-networks";
 import perplexityTrendsRouter from "./api/perplexity-trends";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
+import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
@@ -83,6 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Perplexity trends
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
+  app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
   // Register API routes
   // Legacy endpoint (deprecated - use /api/generate-unified instead)
   app.use('/api/generate-content', generateContentRouter);
