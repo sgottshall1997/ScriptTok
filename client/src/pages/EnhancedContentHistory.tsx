@@ -184,19 +184,26 @@ const EnhancedContentHistory = () => {
     });
   };
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('en-US', {
-      month: 'short',
-      day: 'numeric',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
+  const formatDate = (dateInput: string | Date) => {
+    try {
+      if (!dateInput) return 'Unknown date';
+      const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+      if (isNaN(date.getTime())) return 'Invalid date';
+      return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      }).format(date);
+    } catch (error) {
+      return 'Invalid date';
+    }
   };
 
   // Extract unique values for filter dropdowns
   const uniqueNiches = Array.from(new Set(history.map(entry => entry.niche)));
-  const uniquePlatforms = Array.from(new Set(history.flatMap(entry => entry.platformsSelected)));
+  const uniquePlatforms = Array.from(new Set(history.flatMap(entry => entry.platformsSelected || [])));
   const uniqueTemplates = Array.from(new Set(
     history
       .map(entry => entry.templateUsed || entry.contentType)
@@ -335,15 +342,15 @@ const EnhancedContentHistory = () => {
                     <Badge className={getNicheColor(entry.niche)}>
                       {entry.niche.charAt(0).toUpperCase() + entry.niche.slice(1)}
                     </Badge>
-                    {entry.platformsSelected.map(platform => (
+                    {(entry.platformsSelected || []).map(platform => (
                       <Badge key={platform} className={getPlatformColor(platform)}>
                         {platform}
                       </Badge>
                     ))}
                   </div>
                   <p className="text-sm text-gray-600">
-                    Template: {entry.templateUsed.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())} | 
-                    Tone: {entry.tone} | 
+                    Template: {entry.templateUsed ? entry.templateUsed.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : (entry.contentType || 'Unknown')} | 
+                    Tone: {entry.tone || 'Unknown'} | 
                     <Calendar className="inline h-4 w-4 ml-2 mr-1" />
                     {formatDate(entry.timestamp)}
                   </p>
