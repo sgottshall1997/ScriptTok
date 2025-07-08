@@ -1,12 +1,14 @@
 import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'wouter';
-import { Sparkles, TrendingUp, DollarSign, Zap, Star, ArrowLeft, Home } from 'lucide-react';
+import { Sparkles, TrendingUp, DollarSign, Zap, Star, ArrowLeft, Home, RefreshCw, Loader2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
+import { apiRequest } from '@/lib/queryClient';
 
 interface TrendingProduct {
   id: number;
@@ -27,11 +29,36 @@ type SourceFilter = 'all' | 'gpt' | 'perplexity';
 
 export default function TrendingAIPicks() {
   const [selectedNiche, setSelectedNiche] = useState<string>('all');
-  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all');
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('perplexity'); // Default to Perplexity
   const [sortBy, setSortBy] = useState<SortOption>('viral');
+  
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: products = [], isLoading } = useQuery<TrendingProduct[]>({
     queryKey: ['/api/trending/products'],
+  });
+
+  // PART 3: Perplexity Fetch Mutation
+  const perplexityMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest('/api/pull-perplexity-trends', 'POST', {});
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Perplexity Fetch Complete",
+        description: `Added ${data.productsAdded} new trending products from Perplexity`,
+      });
+      // Refresh the products list
+      queryClient.invalidateQueries({ queryKey: ['/api/trending/products'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Fetch Failed",
+        description: error instanceof Error ? error.message : "Failed to fetch from Perplexity",
+        variant: "destructive",
+      });
+    },
   });
 
   // Get unique niches for filter dropdown
@@ -204,11 +231,28 @@ export default function TrendingAIPicks() {
           </div>
         </div>
 
-        {/* Results Count */}
-        <div className="text-sm text-gray-600">
-          Showing {filteredProducts.length} products
-          {selectedNiche !== 'all' && ` in ${selectedNiche}`}
-          {sourceFilter !== 'all' && ` from ${sourceFilter.toUpperCase()}`}
+        {/* Results Count and Perplexity Button */}
+        <div className="flex justify-between items-center">
+          <div className="text-sm text-gray-600">
+            Showing {filteredProducts.length} products
+            {selectedNiche !== 'all' && ` in ${selectedNiche}`}
+            {sourceFilter !== 'all' && ` from ${sourceFilter.toUpperCase()}`}
+          </div>
+          
+          {/* PART 3: Perplexity Fetch Button */}
+          <Button 
+            variant="outline" 
+            onClick={() => perplexityMutation.mutate()}
+            disabled={perplexityMutation.isPending}
+            className="flex items-center gap-2 bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 hover:from-purple-100 hover:to-indigo-100"
+          >
+            {perplexityMutation.isPending ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <RefreshCw className="h-4 w-4" />
+            )}
+            {perplexityMutation.isPending ? 'Fetching...' : '🔄 Run Perplexity Fetch'}
+          </Button>
         </div>
       </div>
 

@@ -4,6 +4,8 @@ dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import cron from "node-cron";
+import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 
 const app = express();
 app.use(express.json());
@@ -69,5 +71,20 @@ app.use((req, res, next) => {
     reusePort: true,
   }, () => {
     log(`serving on port ${port}`);
+    
+    // PART 4: Daily Cron Job - Run Perplexity trends at 5:00 AM ET
+    cron.schedule("0 5 * * *", async () => {
+      console.log('🕐 Running daily Perplexity trends fetch at 5:00 AM ET');
+      try {
+        const result = await pullPerplexityTrends();
+        console.log(`✅ Daily fetch complete: ${result.message}, added ${result.productsAdded} products`);
+      } catch (error) {
+        console.error('❌ Daily Perplexity fetch failed:', error);
+      }
+    }, {
+      timezone: "America/New_York"
+    });
+    
+    console.log('📅 Daily Perplexity cron job scheduled for 5:00 AM ET');
   });
 })();

@@ -104,6 +104,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
 
 - July 08, 2025. Initial setup
 - July 08, 2025. Perplexity API integration completed - Real-time trending product data with authentic social media metrics now operational
+- July 08, 2025. **Major Enhancement**: Complete Perplexity automation framework implemented:
+  - ✅ `pullPerplexityTrends()` backend function created with comprehensive product parsing
+  - ✅ `/api/pull-perplexity-trends` API route for manual triggering
+  - ✅ Trending AI Picks page enhanced with Perplexity fetch button and real-time updates
+  - ✅ Daily cron job scheduled for 5:00 AM ET automatic trend fetching
+  - ✅ Frontend filters updated to default to Perplexity-sourced products
+  - ✅ Database schema verified with source column for tracking data origin
+  - ✅ Comprehensive error handling, toast notifications, and loading states implemented
 
 ## User Preferences
 

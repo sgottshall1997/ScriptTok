@@ -1,0 +1,111 @@
+You are the GlowBot2 Automation & Frontend Enhancement Agent.
+
+Implement the following upgrades to the GlowBot2 app:
+
+---
+
+### 🧠 GOAL:
+Replace ChatGPT-based product discovery with real-time trend data from Perplexity, and display only Perplexity-sourced picks on the `/trending-ai-picks` page.
+
+---
+
+### ✅ PART 1: BACKEND FUNCTION – Perplexity Trend Fetcher
+
+1. Create a new async function named `pullPerplexityTrends()` in the backend.
+
+2. This function should:
+- Loop through this array of niches: `["skincare", "fitness", "tech", "fashion", "food", "travel", "pets"]`
+- For each niche, send a POST request to:
+  `https://api.perplexity.ai/chat/completions`
+- Use model: `"sonar-pro"`
+- Use prompt:
+What are 3 top trending Amazon affiliate products in the [NICHE] niche that are currently going viral on TikTok or Instagram? For each product, include:
+
+Product name
+
+One-line benefit
+
+Social virality metric (e.g. TikTok mentions)
+
+Price range (under $100)
+
+Reason it’s a great affiliate product
+
+markdown
+Copy
+Edit
+
+3. Parse the Perplexity response and extract the 3 product objects per niche with the following structure:
+- `productName`
+- `benefit`
+- `viralMetric`
+- `priceRange`
+- `affiliateReason`
+- `niche`
+- `source` (must be `'perplexity'`)
+- `created_at` (timestamp)
+
+4. Store the products in your existing `trending_products` table. If needed, run:
+```sql
+ALTER TABLE trending_products ADD COLUMN source TEXT DEFAULT 'gpt';
+✅ PART 2: API ROUTE – Manual Trigger Button
+Create a new backend API route: /api/pull-perplexity-trends
+
+This route should:
+
+Accept a POST request
+
+Run the pullPerplexityTrends() function
+
+Return a success/fail JSON response
+
+✅ PART 3: FRONTEND BUTTON – Run Perplexity Manually
+On your /trending-ai-picks page, add a dev-only button at the top:
+
+tsx
+Copy
+Edit
+<Button variant="outline" onClick={handleRunPerplexity}>
+  🔄 Run Perplexity Fetch
+</Button>
+When clicked, call POST /api/pull-perplexity-trends
+
+Disable the button and show a loading state until the fetch completes
+
+Optionally show a toast or success notification
+
+✅ PART 4: DAILY CRON JOB
+Set up a daily cron task to run pullPerplexityTrends() at 5:00 AM Eastern Time
+
+If using Node.js:
+
+ts
+Copy
+Edit
+const cron = require("node-cron");
+cron.schedule("0 5 * * *", pullPerplexityTrends, {
+  timezone: "America/New_York"
+});
+If using Make.com or Replit’s scheduler:
+
+Set the cron to 5:00 AM ET
+
+Send a webhook to /api/pull-perplexity-trends
+
+✅ PART 5: FILTER FRONTEND TO SHOW ONLY PERPLEXITY
+On the /trending-ai-picks page:
+
+By default, filter the product list to only show where source === 'perplexity'
+
+You can keep the GPT filter in the toggle menu but set 'Perplexity' as the default
+
+✅ FINAL CHECKLIST
+pgsql
+Copy
+Edit
+[ ] Perplexity fetcher function created
+[ ] API route `/api/pull-perplexity-trends` created
+[ ] Button on trending page triggers the fetch
+[ ] Products stored in DB with source = 'perplexity'
+[ ] Trending cards filtered to show Perplexity by default
+[ ] Cron job runs daily at 5 AM ET

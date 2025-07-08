@@ -39,6 +39,7 @@ import schedulingRouter from "./api/scheduling";
 import metricsRouter from "./api/metrics";
 import affiliateNetworksRouter from "./api/affiliate-networks";
 import perplexityTrendsRouter from "./api/perplexity-trends";
+import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -245,6 +246,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error generating ad content:", error);
       res.status(500).json({ error: "Failed to generate ad content" });
+    }
+  });
+
+  // PART 2: Perplexity Trend Fetcher API Route
+  app.post('/api/pull-perplexity-trends', async (req, res) => {
+    try {
+      console.log('🔄 Manual Perplexity trends fetch triggered');
+      const result = await pullPerplexityTrends();
+      
+      res.json({
+        success: result.success,
+        message: result.message,
+        productsAdded: result.productsAdded,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Error in Perplexity trends fetch:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString()
+      });
     }
   });
   
