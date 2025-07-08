@@ -8,11 +8,15 @@ import { getIconByName } from '@/lib/iconMapper';
 
 // Interface for template metadata from the API
 interface TemplateMetadata {
-  template: string;
-  title: string;
+  id: string;
+  name: string;
   description: string;
   icon: string;
-  exampleOutput: string;
+  example: string;
+  category: string;
+  platforms: string[];
+  estimatedLength: string;
+  useCase: string;
 }
 
 interface TemplatePreviewProps {
@@ -32,13 +36,17 @@ export const TemplatePreview: React.FC<TemplatePreviewProps> = ({
   
   // Fetch template metadata from the API
   const { data, isLoading, error } = useQuery({
-    queryKey: ['/api/templates', niche, templateType],
+    queryKey: ['/api/templates', templateType],
     queryFn: async () => {
-      const response = await fetch(`/api/templates/${niche}/${templateType}`);
+      const response = await fetch(`/api/templates/${templateType}`);
       if (!response.ok) {
         throw new Error('Failed to fetch template metadata');
       }
-      return response.json() as Promise<TemplateMetadata>;
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to fetch template metadata');
+      }
+      return result.template as TemplateMetadata;
     },
     // Don't refetch on window focus since template metadata rarely changes
     refetchOnWindowFocus: false, 
@@ -93,16 +101,16 @@ export const TemplatePreview: React.FC<TemplatePreviewProps> = ({
   }
   
   // Truncate example output to a reasonable length for preview
-  const truncatedExample = data.exampleOutput.length > 150 
-    ? `${data.exampleOutput.substring(0, 150)}...`
-    : data.exampleOutput;
+  const truncatedExample = data.example && data.example.length > 150 
+    ? `${data.example.substring(0, 150)}...`
+    : data.example || 'No example available';
   
   return (
     <Card className={`w-full h-full transition-all hover:shadow-md ${selected ? 'border-2 border-primary' : ''}`}>
       <CardHeader>
         <div className="flex items-center gap-2">
           <IconComponent className="h-5 w-5 text-primary" />
-          <CardTitle>{data.title}</CardTitle>
+          <CardTitle>{data.name}</CardTitle>
         </div>
         <CardDescription>{data.description}</CardDescription>
       </CardHeader>
