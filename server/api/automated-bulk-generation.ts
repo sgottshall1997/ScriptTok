@@ -424,7 +424,7 @@ async function processAutomatedBulkJob(
                   console.log(`✅ Saved content to history for ${productName} (${niche})`);
                   
                   // Send to Make.com webhook if platforms are configured
-                  if (platforms && platforms.length > 0 && enhancedPlatformCaptions) {
+                  if (platforms && platforms.length > 0 && platformCaptions) {
                     try {
                       console.log(`📤 Sending bulk content to Make.com for ${productName} on platforms: ${platforms.join(', ')}`);
                       const webhookService = new WebhookService();
@@ -433,7 +433,7 @@ async function processAutomatedBulkJob(
                       const platformContent: any = {};
                       platforms.forEach(platform => {
                         platformContent[platform] = {
-                          caption: enhancedPlatformCaptions[platform] || platformCaptions[`${platform}Caption`] || '',
+                          caption: platformCaptions[`${platform}Caption`] || '',
                           script: outputText,
                           type: 'bulk_content',
                           postInstructions: `Auto-post this ${platform} content for ${productName} from bulk generation`,
@@ -453,12 +453,13 @@ async function processAutomatedBulkJob(
                           templateType: template,
                           useSmartStyle: jobData.useSmartStyle || false,
                           jobType: 'automated_bulk',
-                          jobId: savedContent.bulkJobId,
+                          jobId: savedContent?.bulkJobId || sessionId,
                           affiliateUrl: affiliateLink,
-                          topRatedStyleUsed: contentResult.topRatedStyleUsed || ''
+                          affiliateLink: affiliateLink,
+                          topRatedStyleUsed: ''
                         },
                         contentData: {
-                          fullOutput: contentResult.content,
+                          fullOutput: outputText,
                           platformCaptions: platformCaptions,
                           viralInspiration: viralInspiration
                         }

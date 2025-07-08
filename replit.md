@@ -275,6 +275,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Three-tab interface (Automated, Manual, Jobs) providing complete bulk content generation workflow
   - ✅ Real-time progress tracking with detailed error logging, content variation counting, and platform-specific output
   - ✅ Enhanced BulkContentGeneration page with automation-first design and comprehensive job tracking capabilities
+- July 08, 2025. **Webhook Integration Debug and Repair**: Fixed critical webhook delivery issues across all content generation workflows:
+  - ✅ Resolved environment variable override issue where old webhook URL was cached in system environment
+  - ✅ Updated webhook service priority logic to use database configuration over environment variables
+  - ✅ Fixed automated bulk generator webhook integration with undefined variable references (enhancedPlatformCaptions → platformCaptions)
+  - ✅ Enhanced webhook payload structure with comprehensive affiliate link field variations for Make.com compatibility
+  - ✅ Added debug logging to track webhook URL usage and delivery success across unified and automated generators
+  - ✅ Verified all 24 CSV-compatible fields are properly transmitted including Affiliate Link, postType, hashtags, and source
+  - ✅ Both unified content generator and automated bulk generator now successfully deliver webhooks to Make.com
 - July 08, 2025. **Complete Viral Content Factory Niche Fix**: Final resolution of skincare to beauty migration:
   - ✅ Fixed hardcoded 'skincare' fallback in GenerateContent.tsx defaulting to 'beauty' instead
   - ✅ Updated all remaining API endpoints and template files to use 'beauty' consistently
