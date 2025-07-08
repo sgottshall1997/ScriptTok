@@ -45,7 +45,7 @@ const GenerateContent = () => {
 
   // State management
   const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'skincare');
-  const [selectedProduct, setSelectedProduct] = useState(productFromUrl || '');
+  const [selectedProduct, setSelectedProduct] = useState(productFromUrl || 'CeraVe Daily Moisturizer');
   const [productUrl, setProductUrl] = useState('');
   const [affiliateNetwork, setAffiliateNetwork] = useState('amazon');
   const [affiliateId, setAffiliateId] = useState('');
@@ -122,8 +122,14 @@ const GenerateContent = () => {
 
   // Watch for product name changes to fetch viral inspiration
   useEffect(() => {
+    console.log('useEffect triggered:', { selectedProduct, selectedNiche });
     fetchViralInspirationForProduct(selectedProduct);
   }, [selectedProduct, selectedNiche]);
+
+  // Debug: Log viralInspo state changes
+  useEffect(() => {
+    console.log('viralInspo state changed:', viralInspo);
+  }, [viralInspo]);
 
   // Copy to clipboard helper
   const copyToClipboard = (text: string, label: string) => {
@@ -402,13 +408,19 @@ ${config.hashtags.join(' ')}`;
 
         {/* Viral Inspiration Preview */}
         {viralInspo && (
-          <div className="mt-4 p-3 bg-[#fff9f0] border border-orange-300 rounded-lg shadow-sm">
-            <h3 className="font-semibold text-orange-700 mb-2">🎯 Viral Inspiration Found</h3>
-            <p><strong>Hook:</strong> {viralInspo.hook}</p>
-            <p><strong>Format:</strong> {viralInspo.format}</p>
-            <p><strong>Caption:</strong> {viralInspo.caption}</p>
-            <p><strong>Hashtags:</strong> {viralInspo.hashtags?.join(" ")}</p>
-          </div>
+          <Card className="shadow-lg bg-[#fff9f0] border border-orange-300">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-orange-700 flex items-center gap-2">
+                🎯 Viral Inspiration Found
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <p><strong>Hook:</strong> {viralInspo.hook}</p>
+              <p><strong>Format:</strong> {viralInspo.format}</p>
+              <p><strong>Caption:</strong> {viralInspo.caption}</p>
+              <p><strong>Hashtags:</strong> {viralInspo.hashtags?.join(" ")}</p>
+            </CardContent>
+          </Card>
         )}
 
         {/* Content Setup */}
