@@ -79,28 +79,33 @@ const EnhancedContentHistory = () => {
     
     // Add database history if available
     if (dbHistory && Array.isArray(dbHistory)) {
-      const dbHistoryConverted = dbHistory.map((item: any) => ({
-        id: `db_${item.id}`,
-        databaseId: item.id, // Preserve the actual database ID for rating system
-        timestamp: new Date(item.createdAt).toISOString(),
-        productName: item.productName,
-        niche: item.niche,
-        tone: item.tone,
-        contentType: item.contentType,
-        promptText: item.promptText,
-        outputText: item.outputText,
-        platformsSelected: item.platformsSelected || [],
-        generatedOutput: {
-          ...item.generatedOutput,
-          content: item.outputText,
-          hook: item.generatedOutput?.hook || 'Generated content',
-          hashtags: item.generatedOutput?.hashtags || [],
-          affiliateLink: item.affiliateLink,
-          viralInspo: item.viralInspiration,
-          ...item.generatedOutput
-        },
-        source: 'database'
-      }));
+      console.log('🔍 Debug: Database history items:', dbHistory.slice(0, 2)); // Debug first 2 items
+      const dbHistoryConverted = dbHistory.map((item: any) => {
+        console.log('🔍 Debug: Converting item with ID:', item.id, 'to databaseId:', item.id);
+        return {
+          id: `db_${item.id}`,
+          databaseId: item.id, // Preserve the actual database ID for rating system
+          timestamp: new Date(item.createdAt).toISOString(),
+          productName: item.productName,
+          niche: item.niche,
+          tone: item.tone,
+          contentType: item.contentType,
+          promptText: item.promptText,
+          outputText: item.outputText,
+          platformsSelected: item.platformsSelected || [],
+          generatedOutput: {
+            ...item.generatedOutput,
+            content: item.outputText,
+            hook: item.generatedOutput?.hook || 'Generated content',
+            hashtags: item.generatedOutput?.hashtags || [],
+            affiliateLink: item.affiliateLink,
+            viralInspo: item.viralInspiration,
+            ...item.generatedOutput
+          },
+          source: 'database'
+        };
+      });
+      console.log('🔍 Debug: First converted entry databaseId:', dbHistoryConverted[0]?.databaseId);
       combinedHistory.push(...dbHistoryConverted);
     }
     
@@ -635,7 +640,9 @@ const EnhancedContentHistory = () => {
                       />
                     ) : (
                       <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50">
-                        <span className="text-sm text-gray-500">Rating available for database-saved content only</span>
+                        <span className="text-sm text-gray-500">
+                          Rating available for database-saved content only (ID: {entry.id}, dbID: {entry.databaseId})
+                        </span>
                       </div>
                     )}
                   </div>
