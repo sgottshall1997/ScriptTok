@@ -128,6 +128,7 @@ export const trendingProducts = pgTable("trending_products", {
   sourceUrl: text("source_url"),
   niche: text("niche").notNull().default("skincare"),
   dataSource: text("data_source").default("gpt"), // 'gpt', 'perplexity', 'scraper'
+  reason: text("reason"), // Why this product is trending - from Perplexity or other sources
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

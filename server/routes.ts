@@ -292,10 +292,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
                 source: 'perplexity',
                 mentions: product.mentions,
                 niche: nicheResult.niche,
-                dataSource: 'perplexity'
+                dataSource: 'perplexity',
+                reason: product.reason || null
               });
               totalProductsAdded++;
-              console.log(`✅ Added ${nicheResult.niche} product: ${product.product}`);
+              console.log(`✅ Added ${nicheResult.niche} product: ${product.product} (reason: "${product.reason || 'no reason provided'}")`);
             }
           } catch (dbError) {
             console.error(`❌ Database error for ${nicheResult.niche}:`, dbError);

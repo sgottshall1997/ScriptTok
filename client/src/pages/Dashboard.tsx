@@ -227,7 +227,8 @@ const Dashboard = () => {
                       
                       {/* Why it's hot */}
                       <div className="text-sm text-gray-600">
-                        {product.reason || 'Why it\'s hot: Viral trend with massive social engagement'}
+                        <span className="text-yellow-600">✨ Why it's hot:</span>
+                        <span className="ml-1">{product.reason || 'No trending insight available'}</span>
                       </div>
                       
                       {/* Action Buttons */}
