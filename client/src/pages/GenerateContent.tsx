@@ -47,7 +47,7 @@ const GenerateContent = () => {
   // console.log('🔍 URL Debug:', { location, search: window.location.search, productFromUrl, nicheFromUrl });
 
   // State management
-  const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'skincare');
+  const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'beauty');
   const [selectedProduct, setSelectedProduct] = useState(productFromUrl || '');
   
   // Update state when URL parameters change
