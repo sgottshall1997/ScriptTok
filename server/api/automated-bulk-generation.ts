@@ -31,7 +31,7 @@ async function fetchViralVideoInspiration(productName: string, niche: string) {
   }
 }
 
-// Import all niche-specific Perplexity fetchers
+// Import all niche-specific Perplexity fetchers (optional for fresh data)
 import { fetchTrendingBeautyProducts } from '../services/perplexity/perplexityFetchBeauty.js';
 import { fetchTrendingTechProducts } from '../services/perplexity/perplexityFetchTech.js';
 import { fetchTrendingFitnessProducts } from '../services/perplexity/perplexityFetchFitness.js';
@@ -39,13 +39,16 @@ import { fetchTrendingFashionProducts } from '../services/perplexity/perplexityF
 import { fetchTrendingFoodProducts } from '../services/perplexity/perplexityFetchFood.js';
 import { fetchTrendingTravelProducts } from '../services/perplexity/perplexityFetchTravel.js';
 import { fetchTrendingPetsProducts } from '../services/perplexity/perplexityFetchPets.js';
+import { trendingProducts } from '@shared/schema';
 
 const automatedBulkSchema = z.object({
   selectedNiches: z.array(z.string()).min(1, "At least one niche must be selected"),
   tones: z.array(z.string()).min(1, "At least one tone must be selected"),
   templates: z.array(z.string()).min(1, "At least one template must be selected"),
   platforms: z.array(z.string()).min(1, "At least one platform must be selected"),
-  autoGenerateTrendingProducts: z.boolean().default(true),
+  useExistingProducts: z.boolean().default(true),
+  generateAffiliateLinks: z.boolean().default(false),
+  affiliateId: z.string().optional(),
   scheduleAfterGeneration: z.boolean().default(false),
   scheduledTime: z.string().datetime().optional(),
   makeWebhookUrl: z.string().url().optional(),
@@ -77,9 +80,9 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
     
     for (const niche of validatedData.selectedNiches) {
       try {
-        console.log(`🎯 Auto-selecting trending products for ${niche} niche...`);
+        console.log(`🎯 Selecting trending products for ${niche} niche...`);
         
-        if (validatedData.autoGenerateTrendingProducts && NICHE_FETCHERS[niche as keyof typeof NICHE_FETCHERS]) {
+        if (!validatedData.useExistingProducts && NICHE_FETCHERS[niche as keyof typeof NICHE_FETCHERS]) {
           // Fetch fresh trending products from Perplexity
           const fetcherFunction = NICHE_FETCHERS[niche as keyof typeof NICHE_FETCHERS];
           const freshProducts = await fetcherFunction();
@@ -272,8 +275,13 @@ async function processAutomatedBulkJob(
               
               const generationTime = Date.now() - startTime;
               
-              // Generate affiliate link
-              const affiliateLink = `https://amazon.com/dp/EXAMPLE?tag=${AFFILIATE_ID}`;
+              // Generate affiliate link if requested
+              let affiliateLink = null;
+              if (jobData.generateAffiliateLinks && jobData.affiliateId) {
+                // Simple Amazon search link with affiliate ID
+                const searchQuery = encodeURIComponent(productName);
+                affiliateLink = `https://www.amazon.com/s?k=${searchQuery}&tag=${jobData.affiliateId}`;
+              }
               
               // Step 5: Save generated content to database
               const [savedContent] = await db.insert(bulkGeneratedContent).values({

@@ -339,6 +339,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Real-time data validation with form error handling and success notifications
   - ✅ Dynamic dashboard that only shows charts and metrics when real data exists
   - ✅ Professional interface that guides users to track authentic performance metrics
+- July 08, 2025. **Enhanced Automated Bulk Generator**: Upgraded to use existing trending products and Amazon affiliate monetization:
+  - ✅ Modified automated bulk generator to select from existing trending products database instead of Perplexity API calls
+  - ✅ Added Amazon affiliate link generation with customizable affiliate ID (defaults to "sgottshall107-20")
+  - ✅ Enhanced UI with toggle switches for "Use Existing Products" and "Generate Affiliate Links"
+  - ✅ Created database table bulk_generated_content for comprehensive content tracking
+  - ✅ Fixed database query issues and missing column errors for stable automated processing
+  - ✅ Updated backend API to support affiliate link integration and existing product selection
+  - ✅ System now efficiently uses database trending products while maintaining full automation capabilities
 
 ## User Preferences
 

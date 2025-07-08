@@ -20,7 +20,8 @@ import {
   Sparkles,
   Users,
   BarChart3,
-  Globe
+  Globe,
+  DollarSign
 } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
@@ -63,7 +64,9 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>(['Product Review', 'Viral Hook', 'Short-Form Video Script']);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
-  const [autoGenerateTrending, setAutoGenerateTrending] = useState(true);
+  const [useExistingProducts, setUseExistingProducts] = useState(true);
+  const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
+  const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
   const [scheduleAfterGeneration, setScheduleAfterGeneration] = useState(false);
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -168,7 +171,9 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       tones: selectedTones,
       templates: selectedTemplates,
       platforms: selectedPlatforms,
-      autoGenerateTrendingProducts: autoGenerateTrending,
+      useExistingProducts,
+      generateAffiliateLinks,
+      affiliateId: generateAffiliateLinks ? affiliateId : undefined,
       scheduleAfterGeneration,
       makeWebhookUrl: makeWebhookUrl || undefined,
     };
@@ -195,22 +200,52 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       </CardHeader>
 
       <CardContent className="space-y-6">
-        {/* Auto-Generate Toggle */}
-        <Card className="border-dashed border-2 border-green-200 bg-green-50">
-          <CardContent className="p-4">
+        {/* Product Selection Options */}
+        <Card className="border-dashed border-2 border-blue-200 bg-blue-50">
+          <CardContent className="p-4 space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <TrendingUp className="h-5 w-5 text-green-600" />
+                <TrendingUp className="h-5 w-5 text-blue-600" />
                 <div>
-                  <h3 className="font-semibold text-green-800">Auto-Generate Trending Products</h3>
-                  <p className="text-sm text-green-600">Automatically select one trending product per niche using Perplexity AI</p>
+                  <h3 className="font-semibold text-blue-800">Use Existing Trending Products</h3>
+                  <p className="text-sm text-blue-600">Select products from your trending products database (recommended)</p>
                 </div>
               </div>
               <Switch
-                checked={autoGenerateTrending}
-                onCheckedChange={setAutoGenerateTrending}
+                checked={useExistingProducts}
+                onCheckedChange={setUseExistingProducts}
               />
             </div>
+            
+            {/* Affiliate Links Section */}
+            <div className="flex items-center justify-between pt-2 border-t border-blue-200">
+              <div className="flex items-center gap-3">
+                <DollarSign className="h-5 w-5 text-green-600" />
+                <div>
+                  <h3 className="font-semibold text-green-800">Generate Amazon Affiliate Links</h3>
+                  <p className="text-sm text-green-600">Automatically add affiliate links for monetization</p>
+                </div>
+              </div>
+              <Switch
+                checked={generateAffiliateLinks}
+                onCheckedChange={setGenerateAffiliateLinks}
+              />
+            </div>
+            
+            {generateAffiliateLinks && (
+              <div className="mt-3">
+                <Label htmlFor="affiliateId" className="text-sm font-medium text-green-700">
+                  Amazon Affiliate ID
+                </Label>
+                <Input
+                  id="affiliateId"
+                  value={affiliateId}
+                  onChange={(e) => setAffiliateId(e.target.value)}
+                  placeholder="your-affiliate-id"
+                  className="mt-1 border-green-300 focus:border-green-500"
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
 
