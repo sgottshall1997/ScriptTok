@@ -96,11 +96,19 @@ Always respond with valid JSON in this exact format:
 
       const claudeContent = JSON.parse(claudeResponse.content[0].text);
       
-      return {
+      const result = {
         videoScript: contentType === "video" ? claudeContent.videoScript : undefined,
         photoDescription: contentType === "photo" ? claudeContent.photoDescription : undefined,
         socialCaptions: claudeContent.socialCaptions || {}
       };
+
+      // Validate content uniqueness
+      const validation = validateContentUniqueness(result, result.videoScript || result.photoDescription);
+      if (!validation.isValid) {
+        console.warn('⚠️ Platform Content Similarity Warnings:', validation.warnings);
+      }
+      
+      return result;
 
     } catch (claudeError) {
       console.error("Claude fallback error:", claudeError);
@@ -109,6 +117,61 @@ Always respond with valid JSON in this exact format:
       return generateFallbackContent(request);
     }
   }
+}
+
+// Content similarity check function
+function calculateSimilarity(text1: string, text2: string): number {
+  if (!text1 || !text2) return 0;
+  
+  // Normalize texts for comparison
+  const normalize = (text: string) => text.toLowerCase().replace(/[^a-z0-9\s]/g, '').trim();
+  const norm1 = normalize(text1);
+  const norm2 = normalize(text2);
+  
+  // Simple word overlap similarity
+  const words1 = new Set(norm1.split(/\s+/));
+  const words2 = new Set(norm2.split(/\s+/));
+  
+  const intersection = new Set([...words1].filter(x => words2.has(x)));
+  const union = new Set([...words1, ...words2]);
+  
+  return intersection.size / union.size;
+}
+
+// Validation function to check content uniqueness
+function validateContentUniqueness(result: PlatformSpecificContent, mainContent?: string): { 
+  warnings: string[], 
+  isValid: boolean 
+} {
+  const warnings: string[] = [];
+  const captions = Object.values(result.socialCaptions).map(c => c.caption);
+  
+  // Check similarity between platform captions
+  for (let i = 0; i < captions.length; i++) {
+    for (let j = i + 1; j < captions.length; j++) {
+      const similarity = calculateSimilarity(captions[i], captions[j]);
+      if (similarity > 0.7) {
+        const platforms = Object.keys(result.socialCaptions);
+        warnings.push(`High similarity (${Math.round(similarity * 100)}%) between ${platforms[i]} and ${platforms[j]} captions`);
+      }
+    }
+  }
+  
+  // Check similarity with main content if provided
+  if (mainContent) {
+    captions.forEach((caption, index) => {
+      const similarity = calculateSimilarity(caption, mainContent);
+      if (similarity > 0.7) {
+        const platform = Object.keys(result.socialCaptions)[index];
+        warnings.push(`${platform} caption has ${Math.round(similarity * 100)}% similarity with main content`);
+      }
+    });
+  }
+  
+  return {
+    warnings,
+    isValid: warnings.length === 0
+  };
 }
 
 // Platform ID to display name mapping
@@ -129,58 +192,66 @@ function buildPlatformPrompt(request: PlatformContentRequest): string {
   const platformInstructions = {
     "Instagram": {
       video: {
-        captionStyle: "Aesthetic, lifestyle-driven language focusing on visuals and routines. Clean CTA with light emoji use.",
+        captionStyle: "Aesthetic, lifestyle-driven language focusing on visuals and routines. Clean CTA with light emoji use. More polished and aspirational.",
         postInstructions: "Post between 6-9 PM, use trending audio, add CTA in caption, create story highlights, tag product location",
         audienceContext: "Lifestyle enthusiasts who value aesthetics and personal branding",
-        examplePattern: "Your new skincare shelf essential. ✨ #skincaregoals"
+        examplePattern: "Your new skincare shelf essential. ✨ #skincaregoals",
+        specificRequirements: "Focus on AESTHETIC APPEAL and LIFESTYLE INTEGRATION. Use clean, aspirational language. Include light emoji use (2-3 max). Mention visual elements like 'shelf essential' or 'routine upgrade'. Sound polished and Instagram-worthy."
       },
       photo: {
         captionStyle: "Story-style caption emphasizing aesthetic appeal and lifestyle integration with strategic emoji placement",
         postInstructions: "Best posting time: 11 AM-1 PM and 6-9 PM, use carousel for multiple angles, add story highlights",
         audienceContext: "Visual-focused audience seeking lifestyle inspiration",
-        examplePattern: "Morning routine upgrade with this game-changer ✨"
+        examplePattern: "Morning routine upgrade with this game-changer ✨",
+        specificRequirements: "Create VISUAL STORYTELLING captions. Focus on how the product fits into their aesthetic lifestyle. Use words like 'essential', 'upgrade', 'obsessed', 'shelf-worthy'."
       }
     },
     "TikTok": {
       video: {
-        captionStyle: "Hook-driven, uses slang, emojis, and short punchy sentences. Encourages trends, humor, or urgency.",
+        captionStyle: "Hook-driven, uses slang, emojis, and short punchy sentences. Encourages trends, humor, or urgency. Maximum viral potential.",
         postInstructions: "Hook in first 3 seconds, use trending sounds, quick cuts, text overlays, post 6-10 PM",
         audienceContext: "Gen Z audience that responds to viral trends, authenticity, and quick entertainment",
-        examplePattern: "✨ TikTok made me buy it — again. #acnehack"
+        examplePattern: "✨ TikTok made me buy it — again. #acnehack",
+        specificRequirements: "PRIORITIZE HOOKS, SLANG, AND VIRAL LANGUAGE. Use trending phrases like 'TikTok made me buy it', 'POV:', 'Tell me why', 'No bc'. Include plenty of emojis (4-6). Create urgency and FOMO. Sound conversational and authentic, not polished."
       },
       photo: {
         captionStyle: "Viral, conversational tone with trending slang and emojis that sparks immediate engagement",
         postInstructions: "Use carousel format, trending audio for slideshow, text overlays on images",
         audienceContext: "Young, trend-conscious users seeking authentic product recommendations",
-        examplePattern: "POV: You found the holy grail product 😍 #fyp"
+        examplePattern: "POV: You found the holy grail product 😍 #fyp",
+        specificRequirements: "Use VIRAL SLANG and TRENDING FORMATS. Start with 'POV:', 'No bc', 'Tell me why'. Include reaction emojis and trending hashtags like #fyp. Sound like a friend sharing a secret discovery."
       }
     },
     "YouTube Shorts": {
       video: {
-        captionStyle: "Slightly longer, informative tone that sounds like a voiceover or quick script snippet.",
+        captionStyle: "Slightly longer, informative tone that sounds like a voiceover or quick script snippet. Educational but engaging.",
         postInstructions: "Strong thumbnail, subscribe CTA, vertical format 9:16, end screen with related videos",
         audienceContext: "Viewers seeking educational content and detailed product information",
-        examplePattern: "This patch pulls the gunk out *overnight*. Let me show you why it's viral."
+        examplePattern: "This patch pulls the gunk out *overnight*. Let me show you why it's viral.",
+        specificRequirements: "Write like a VOICEOVER SCRIPT. Slightly longer and more informative than TikTok. Use phrases like 'Let me show you', 'Here's why', 'The reason this works'. Sound educational but still engaging. Include emphasis with *asterisks* or ALL CAPS for key points."
       },
       photo: {
         captionStyle: "Educational, informative captions that provide value and encourage subscriptions",
         postInstructions: "Use slideshow format with audio, clear thumbnail text, subscribe reminder",
         audienceContext: "Content seekers who want to learn and discover new products",
-        examplePattern: "Here's exactly why dermatologists recommend this specific ingredient"
+        examplePattern: "Here's exactly why dermatologists recommend this specific ingredient",
+        specificRequirements: "EDUCATIONAL AND INFORMATIVE tone. Use phrases like 'Here's exactly why', 'The science behind', 'What dermatologists say'. Provide VALUE and learning. Sound like a mini-tutorial or explanation."
       }
     },
     "X (Twitter)": {
       video: {
-        captionStyle: "Short, punchy, clever. Lean into hot takes, jokes, or bold claims with minimal hashtags.",
+        captionStyle: "Short, punchy, clever. Lean into hot takes, jokes, or bold claims with minimal hashtags. Maximum wit and personality.",
         postInstructions: "Tweet during trending times 8-10 AM, retweet for reach, use Twitter polls, engage with replies",
         audienceContext: "Quick-witted audience that appreciates humor, hot takes, and concise insights",
-        examplePattern: "Amazon has no business selling skincare this good for $11."
+        examplePattern: "Amazon has no business selling skincare this good for $11.",
+        specificRequirements: "BE PUNCHY AND CLEVER. Create HOT TAKES, JOKES, or BOLD CLAIMS. Use phrases like 'has no business being this good', 'Plot twist:', 'Unpopular opinion:'. Keep it under 280 characters. Sound witty and quotable."
       },
       photo: {
         captionStyle: "Witty, controversial, or bold statements that spark conversation and engagement",
         postInstructions: "Tweet 8-10 AM or 7-9 PM, use alt text for accessibility, retweet with comment",
         audienceContext: "Engagement-focused users who enjoy debates and quick insights",
-        examplePattern: "Plot twist: The $12 drugstore buy works better than my $60 serum"
+        examplePattern: "Plot twist: The $12 drugstore buy works better than my $60 serum",
+        specificRequirements: "Create BOLD STATEMENTS and HOT TAKES. Use conversation starters like 'Plot twist:', 'Unpopular opinion:', 'Why is nobody talking about'. Make it quotable and shareable. Spark debate or surprise."
       }
     },
     "Pinterest": {
@@ -216,13 +287,15 @@ function buildPlatformPrompt(request: PlatformContentRequest): string {
         captionStyle: "Professional, versatile content suitable for blogs, newsletters, or general purpose use",
         postInstructions: "Optimize for readability, include clear call-to-action, focus on value proposition",
         audienceContext: "General audience seeking informative and engaging content about products",
-        examplePattern: "Discover why this product is making waves in the industry..."
+        examplePattern: "Discover why this product is making waves in the industry...",
+        specificRequirements: "Create PROFESSIONAL, VERSATILE CONTENT. Use clear, informative language suitable for blogs, newsletters, or business communications. Focus on value proposition and benefits. Sound authoritative but accessible."
       },
       photo: {
         captionStyle: "Informative, professional tone perfect for blog posts, articles, or email content",
         postInstructions: "Include descriptive alt text, optimize for SEO, maintain professional formatting",
         audienceContext: "Readers seeking detailed product information and honest recommendations",
-        examplePattern: "A comprehensive look at this trending product and what makes it special"
+        examplePattern: "A comprehensive look at this trending product and what makes it special",
+        specificRequirements: "Write PROFESSIONAL, BUSINESS-APPROPRIATE content. Use authoritative language with clear benefits and features. Suitable for email marketing, website copy, or blog posts. Sound professional and trustworthy."
       }
     }
   };
@@ -268,7 +341,9 @@ PLATFORM-SPECIFIC GUIDELINES:
 - Style: ${instructions.captionStyle}
 - Example Pattern: "${instructions.examplePattern}"
 - Post Strategy: ${instructions.postInstructions}
-- REQUIREMENT: Write a completely original caption that feels native to ${displayName}, NOT adapted from other content
+- SPECIFIC REQUIREMENTS: ${instructions.specificRequirements}
+- CRITICAL: Write a completely original caption that feels native to ${displayName}, NOT adapted from other content
+- VALIDATION: Caption must vary significantly (70%+ different) from main content and other platform captions
 
 `;
   });
