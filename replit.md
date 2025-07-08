@@ -533,6 +533,8 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Enhanced content generation system to automatically include Amazon Associates and FTC-compliant language per Section 5 of Amazon Operating Agreement
   - ✅ Added real-time compliance checking with specific error reporting for missing disclosures or violations
   - ✅ **100% COMPLIANCE VERIFIED**: All generated affiliate content now meets Amazon Associates Program Operating Agreement requirements with prominent, clear disclosure placement
+  - ✅ **GLOBAL COMPLIANCE HEADER**: Added GlobalComplianceHeader component displaying "As an Amazon Associate I earn from qualifying purchases" prominently at top of every page
+  - ✅ Removed duplicate disclosures from Dashboard and Footer components to prevent redundancy while maintaining compliance
   - ✅ Full integration with existing content generation workflows ensuring all output meets legal requirements
 - July 08, 2025. **Complete Niche-Specific Template System Verification**: Final validation and repair of template system across all generators:
   - ✅ Fixed template API mapping issue where 'beauty' niche wasn't accessing Skincare category templates
