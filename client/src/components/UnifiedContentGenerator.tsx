@@ -28,6 +28,8 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     useSmartStyle: false,
     generateAffiliateLinks: false,
     affiliateId: 'sgottshall107-20',
+    useManualAffiliateLink: false,
+    manualAffiliateLink: '',
     sendToMakeWebhook: true
   });
 
@@ -106,7 +108,9 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
       tone: formData.tone,
       platforms: formData.platforms,
       contentType: 'video',
-      affiliateUrl: formData.generateAffiliateLinks ? `https://amazon.com/dp/PRODUCT_ID?tag=${formData.affiliateId}` : undefined,
+      affiliateUrl: formData.generateAffiliateLinks && !formData.useManualAffiliateLink 
+        ? `https://amazon.com/dp/PRODUCT_ID?tag=${formData.affiliateId}` 
+        : formData.useManualAffiliateLink ? formData.manualAffiliateLink : undefined,
       useSmartStyle: formData.useSmartStyle
     };
 
@@ -235,15 +239,50 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
           </div>
 
           {formData.generateAffiliateLinks && (
-            <div>
-              <label className="text-sm font-medium mb-2 block">Affiliate ID</label>
-              <input
-                type="text"
-                value={formData.affiliateId}
-                onChange={(e) => setFormData(prev => ({...prev, affiliateId: e.target.value}))}
-                className="w-full p-3 border rounded-lg"
-                placeholder="your-affiliate-id"
-              />
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-medium text-sm">Affiliate Link Method</p>
+                  <p className="text-xs text-gray-500">Choose between auto-generation or manual entry</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-600">Auto-generate</span>
+                  <input
+                    type="checkbox"
+                    checked={formData.useManualAffiliateLink}
+                    onChange={(e) => setFormData(prev => ({...prev, useManualAffiliateLink: e.target.checked}))}
+                    className="rounded"
+                  />
+                  <span className="text-xs text-gray-600">Manual entry</span>
+                </div>
+              </div>
+              
+              {!formData.useManualAffiliateLink ? (
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Amazon Affiliate ID</label>
+                  <input
+                    type="text"
+                    value={formData.affiliateId}
+                    onChange={(e) => setFormData(prev => ({...prev, affiliateId: e.target.value}))}
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="your-affiliate-id"
+                  />
+                </div>
+              ) : (
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Manual Affiliate Link</label>
+                  <input
+                    type="text"
+                    value={formData.manualAffiliateLink}
+                    onChange={(e) => setFormData(prev => ({...prev, manualAffiliateLink: e.target.value}))}
+                    className="w-full p-3 border rounded-lg"
+                    placeholder="https://amazon.com/product-link?tag=your-id"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Enter your complete Amazon affiliate link for this specific product
+                  </p>
+                </div>
+              )}
             </div>
           )}
         </div>
