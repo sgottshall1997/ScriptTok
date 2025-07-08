@@ -1,0 +1,93 @@
+Here’s your **GlowBot2 x BTB Playbook Roadmap** – optimized for speed, automation, and scaling income streams exactly as outlined in *"Automated Business Ideas in Under 10 Minutes."*
+
+---
+
+## 🔥 PHASE 1: Lock in the BTB Core Flywheel (You're \~85% Done)
+
+### ✅ 1. Daily Trend-Based Generation (COMPLETE / TUNING)
+
+* [x] 7 niches: skincare, fitness, tech, fashion, cooking, travel, pets
+* [x] Trending product scraping (Amazon + fallback)
+* [x] PromptFactory creates optimized GPT payloads
+* [x] Webhook sends payloads to Make.com
+
+**→ To polish:**
+
+* [ ] Add influencer-specific angles in prompt (e.g., "A personal trainer explains...")
+* [ ] Ensure trend data is cached and rotates only 1x/day (5 AM cron ✅)
+
+---
+
+### ✅ 2. Content Structuring & Distribution
+
+* [x] Scripts + captions structured into JSON
+* [x] Uploaded to Google Docs via Make.com
+* [x] Scripts ready for Pictory import
+
+**→ To finish:**
+
+* [ ] Autoname Google Docs using `[niche] – [product]`
+* [ ] Add platform checkboxes in frontend (Instagram, TikTok, Twitter, etc.)
+* [ ] Generate post format specific to each (video + caption vs tweet vs blog)
+
+---
+
+### ✅ 3. Affiliate-Ready Redirect Links
+
+* [x] Amazon product links in payload
+* [ ] Smart redirect link generator (e.g., `/go/[slug]`)
+* [ ] Track click count, source platform, timestamp → store in SQLite
+
+---
+
+## ⚙️ PHASE 2: Add Traffic & Monetization Layer
+
+### 🟨 4. Automated Cross-Posting
+
+* [ ] Make.com scenario posts to Instagram, TikTok, Twitter
+* [ ] Use platform-specific formatting (e.g., video script/caption vs tweet text)
+
+### 🟨 5. Content Performance Feedback Loop
+
+* [ ] Input post metadata (views, likes, comments, purchases)
+* [ ] AI Score + Quality Analysis fields added to SQLite
+* [ ] Use this to identify top-performers and refine future prompts
+
+---
+
+## 🧠 PHASE 3: Full Agent Mode (Future-Proofing)
+
+### 🟪 6. Self-Iterating Agent (Optional but Powerful)
+
+* [ ] Agent auto-creates test scripts using new viral formats
+* [ ] Scores outputs using GPT
+* [ ] Saves and reuses best-performing hooks
+
+---
+
+## 💸 PHASE 4: Monetization + Scaling
+
+### 🟦 7. Expand Affiliate Networks
+
+* [ ] Apply for ShareASale, CJ, LTK, or niche skincare programs
+* [ ] Add “Affiliate Provider” field to payload
+
+### 🟦 8. Add Paid Content Option
+
+* [ ] Generate email list (use lead magnet like "Top 10 Beauty Hacks from Viral Creators")
+* [ ] Email weekly bundles of content or early access to trending picks
+
+---
+
+## ✨ BONUS: BTB-Fueled Growth Ideas
+
+| Idea                  | Implementation                                                                            |
+| --------------------- | ----------------------------------------------------------------------------------------- |
+| **UGC Play**          | Add prompt template to generate user-style selfie captions (“My skin after 3 days…”)      |
+| **Product Bundles**   | Auto-generate comparison posts (e.g., “Top 3 Red Light Devices for Wrinkles”)             |
+| **Agent Wrapping**    | Wrap your tool in a single "GlowAgent" UI that picks niche → generates → posts            |
+| **Mobile-first site** | Make a landing page to host your top content (like a Pinterest board + CTA to follow/buy) |
+
+---
+
+### Want me to turn this into a living Trello or Notion board you can work off of daily?
