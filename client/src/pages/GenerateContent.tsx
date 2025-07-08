@@ -1,323 +1,529 @@
-import { FC, useState, useEffect } from 'react';
-import { useLocation, useParams } from 'wouter';
-import ContentGenerator from '@/components/ContentGenerator';
-import MultiPlatformContentOutput from '@/components/MultiPlatformContentOutput';
-import { GenerationResponse, DashboardTrendingResponse, TrendingProduct } from '@/lib/types';
-import { useQuery } from "@tanstack/react-query";
+import React, { useState, useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { TrendingProductCard } from "@/components/TrendingProductCard";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { 
+  TrendingUp, 
+  Sparkles, 
+  Clock, 
+  Copy, 
+  RefreshCw, 
+  Edit,
+  ChevronDown,
+  Zap,
+  ExternalLink,
+  Target
+} from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2 } from "lucide-react";
-import { PlatformSelector } from "@/components/PlatformSelector";
-import { HookGenerator } from "@/components/HookGenerator";
-import { AffiliateNetworkSelector } from "@/components/AffiliateNetworkSelector";
-import { MetricsInputForm } from "@/components/MetricsInputForm";
+import { useToast } from "@/hooks/use-toast";
+import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 
-// Niche data
-const niches = [
-  { id: 'skincare', name: 'Skincare', icon: '✨', color: 'from-pink-400 to-rose-500' },
-  { id: 'tech', name: 'Tech', icon: '📱', color: 'from-blue-400 to-indigo-500' },
-  { id: 'fashion', name: 'Fashion', icon: '👗', color: 'from-purple-400 to-pink-500' },
-  { id: 'fitness', name: 'Fitness', icon: '💪', color: 'from-green-400 to-emerald-500' },
-  { id: 'food', name: 'Food', icon: '🍳', color: 'from-orange-400 to-red-500' },
-  { id: 'travel', name: 'Travel', icon: '✈️', color: 'from-cyan-400 to-blue-500' },
-  { id: 'pet', name: 'Pet', icon: '🐾', color: 'from-yellow-400 to-orange-500' }
-];
+interface GeneratedContent {
+  content: string;
+  hook: string;
+  platform: string;
+  niche: string;
+}
 
-const GenerateContent: FC = () => {
+const GenerateContent = () => {
   const [location] = useLocation();
-  const params = useParams<{ niche?: string }>();
-  const [generatedContent, setGeneratedContent] = useState<any>(null);
-  const [isMultiPlatform, setIsMultiPlatform] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<string>('');
-  const [selectedProductNiche, setSelectedProductNiche] = useState<string>('');
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram']);
+  const { toast } = useToast();
+  
+  // Extract niche from URL path
+  const urlParts = location.split('/');
+  const nicheFromUrl = urlParts[2]; // /niche/skincare -> skincare
+  
+  // Extract template and product from query params
+  const urlParams = new URLSearchParams(location.split('?')[1] || '');
+  const templateFromUrl = urlParams.get('template');
+  const productFromUrl = urlParams.get('product');
+
+  // State management
+  const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'skincare');
+  const [selectedProduct, setSelectedProduct] = useState(productFromUrl || '');
+  const [productUrl, setProductUrl] = useState('');
+  const [affiliateNetwork, setAffiliateNetwork] = useState('amazon');
+  const [affiliateId, setAffiliateId] = useState('');
+  const [smartRedirectUrl, setSmartRedirectUrl] = useState('');
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok']);
   const [scheduleTime, setScheduleTime] = useState('now');
-  const [selectedHook, setSelectedHook] = useState<string>('');
-  const [generatedAffiliateLink, setGeneratedAffiliateLink] = useState<any>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
+  const [templateType, setTemplateType] = useState(templateFromUrl || 'social_media_post');
+  const [tone, setTone] = useState('enthusiastic');
+  const [isHookGeneratorOpen, setIsHookGeneratorOpen] = useState(false);
+  const [customHook, setCustomHook] = useState('');
+  const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  // Check for URL parameters and route parameters to auto-populate form
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const productParam = searchParams.get('product');
-    const nicheParam = searchParams.get('niche');
-    const templateParam = searchParams.get('template');
-    
-    // Use route parameter for niche if available, otherwise URL param
-    const routeNiche = params.niche;
-    const finalNiche = routeNiche || nicheParam;
-    
-    if (productParam) {
-      setSelectedProduct(productParam);
-    }
-    if (finalNiche) {
-      setSelectedProductNiche(finalNiche);
-    }
-    if (templateParam) {
-      setSelectedTemplate(templateParam);
-    }
-  }, [location]);
-
-  // Fetch trending products for all niches
+  // Fetch trending products
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
     retry: false,
   });
 
-  const handleGenerate = (content: any) => {
-    console.log('Generated content received:', content);
-    setGeneratedContent(content);
-    
-    // Check if this is multi-platform content
-    if (content.platformContent && content.metadata) {
-      setIsMultiPlatform(true);
-    } else {
-      setIsMultiPlatform(false);
-    }
+  // Get Perplexity products for current niche (limit 3)
+  const getPerplexityProductsForNiche = (niche: string) => {
+    if (!trendingProducts?.data?.[niche]) return [];
+    return trendingProducts.data[niche]
+      .filter(p => p.source === 'perplexity')
+      .slice(0, 3);
   };
 
+  // Handle product selection
   const handleUseProduct = (product: TrendingProduct) => {
     setSelectedProduct(product.title);
-    setSelectedProductNiche(product.niche || '');
+    setSelectedNiche(product.niche);
+    setProductUrl(product.url || '');
+    toast({
+      title: "Product Selected",
+      description: `Selected ${product.title} for content generation`,
+    });
+  };
+
+  // Generate smart redirect URL
+  const generateRedirectUrl = () => {
+    if (!productUrl || !affiliateId) return;
     
-    // Scroll to the content generator form
-    const formElement = document.getElementById('content-generator-form');
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const baseUrl = window.location.origin;
+    const redirectId = Math.random().toString(36).substr(2, 9);
+    const url = `${baseUrl}/r/${redirectId}`;
+    setSmartRedirectUrl(url);
+  };
+
+  // Handle content generation
+  const handleGenerateContent = async () => {
+    if (!selectedProduct) {
+      toast({
+        title: "Missing Product",
+        description: "Please select a product first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/generate-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: selectedProduct,
+          niche: selectedNiche,
+          platforms: selectedPlatforms,
+          templateType,
+          tone,
+          customHook,
+          affiliateUrl: smartRedirectUrl || productUrl,
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        setGeneratedContent(result);
+        toast({
+          title: "Content Generated!",
+          description: "Your viral content is ready",
+        });
+      } else {
+        throw new Error('Generation failed');
+      }
+    } catch (error) {
+      toast({
+        title: "Generation Failed",
+        description: "Please try again",
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
     }
   };
 
-  // Safely access trending products with defaults
-  const nicheProducts: Record<string, TrendingProduct[]> = {};
-  
-  // Prepare niche products with proper fallbacks for each niche
-  niches.forEach(niche => {
-    if (trendingProducts?.data && trendingProducts.data[niche.id]) {
-      nicheProducts[niche.id] = trendingProducts.data[niche.id];
-    } else {
-      nicheProducts[niche.id] = [];
-    }
-  });
+  // Platform toggle
+  const togglePlatform = (platform: string) => {
+    setSelectedPlatforms(prev => 
+      prev.includes(platform) 
+        ? prev.filter(p => p !== platform)
+        : [...prev, platform]
+    );
+  };
+
+  // Niche data
+  const niches = [
+    { id: 'skincare', name: 'Skincare', color: 'bg-pink-100 text-pink-800' },
+    { id: 'tech', name: 'Tech', color: 'bg-blue-100 text-blue-800' },
+    { id: 'fashion', name: 'Fashion', color: 'bg-purple-100 text-purple-800' },
+    { id: 'fitness', name: 'Fitness', color: 'bg-green-100 text-green-800' },
+    { id: 'food', name: 'Food', color: 'bg-orange-100 text-orange-800' },
+    { id: 'travel', name: 'Travel', color: 'bg-cyan-100 text-cyan-800' },
+    { id: 'pet', name: 'Pet', color: 'bg-yellow-100 text-yellow-800' },
+  ];
+
+  const platforms = [
+    { id: 'tiktok', name: 'TikTok', color: 'bg-black text-white' },
+    { id: 'instagram', name: 'Instagram', color: 'bg-gradient-to-r from-purple-400 to-pink-400 text-white' },
+    { id: 'youtube', name: 'YouTube', color: 'bg-red-500 text-white' },
+    { id: 'twitter', name: 'Twitter', color: 'bg-blue-400 text-white' },
+  ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-blue-50 to-indigo-100 p-4">
-      <div className="max-w-6xl mx-auto space-y-8">
-        
-        {/* Header */}
-        <div className="text-center py-8">
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-600 to-blue-600 bg-clip-text text-transparent mb-4">
-            AI Content Generator
-          </h1>
-          <p className="text-gray-600 text-lg">
-            Create optimized, multi-platform content with AI intelligence
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900">⚡ Viral Content Factory</h1>
+        <p className="text-lg text-muted-foreground">
+          From trending product to viral content in under 60 seconds
+        </p>
+      </div>
+
+      {/* 1️⃣ Browse Trending Products */}
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-orange-500" />
+            🔥 Browse Trending Products
+          </CardTitle>
+          <p className="text-sm text-muted-foreground">
+            Select a hot product to create viral content around
           </p>
-        </div>
-
-        {/* Browse Products by Niche */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold tracking-tight">Browse Trending Products</h2>
-              <p className="text-muted-foreground">
-                Select a niche to explore trending products and generate content for them.
-              </p>
-            </div>
-            
-            <Tabs defaultValue="skincare" className="w-full">
-              <TabsList className="grid grid-cols-4 md:grid-cols-7 mb-6 h-auto p-1">
-                {niches.map(niche => (
-                  <TabsTrigger 
-                    key={niche.id} 
-                    value={niche.id}
-                    className="text-xs md:text-sm flex flex-col md:flex-row items-center gap-1 md:gap-2 py-3 px-2 md:px-4 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"
-                  >
-                    <span className="text-lg md:text-base">{niche.icon}</span>
-                    <span className="text-xs md:text-sm font-medium">{niche.name}</span>
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-              
-              {niches.map(niche => (
-                <TabsContent key={niche.id} value={niche.id} className="mt-6">
-                  <div className="space-y-4">
-                    {/* Niche Header */}
-                    <div className="flex items-center gap-3 pb-4 border-b">
-                      <div className={`w-10 h-10 rounded-full bg-gradient-to-r ${niche.color} flex items-center justify-center text-white text-lg font-bold`}>
-                        {niche.icon}
-                      </div>
-                      <div>
-                        <h3 className="text-lg font-semibold">{niche.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {nicheProducts[niche.id]?.length || 0} trending products available
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {/* Products Grid */}
-                    <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
-                      {trendingLoading ? (
-                        // Loading skeleton cards
-                        Array(4).fill(0).map((_, i) => (
-                          <Card key={i} className="overflow-hidden">
-                            <CardContent className="p-4">
-                              <div className="flex items-center gap-2 mb-3">
-                                <Loader2 className="h-4 w-4 animate-spin text-primary" />
-                                <span className="text-sm text-muted-foreground">Loading...</span>
-                              </div>
-                              <Skeleton className="h-4 w-3/4 mb-2" />
-                              <Skeleton className="h-3 w-1/2 mb-4" />
-                              <Skeleton className="h-8 w-full" />
-                            </CardContent>
-                          </Card>
-                        ))
-                      ) : nicheProducts[niche.id]?.length > 0 ? (
-                        nicheProducts[niche.id].map((product, index) => (
-                          <TrendingProductCard 
-                            key={product.id} 
-                            product={product}
-                            rank={index + 1}
-                            onUseProduct={handleUseProduct}
-                          />
-                        ))
-                      ) : (
-                        <div className="col-span-full text-center py-8">
-                          <p className="text-muted-foreground">No trending products available for {niche.name} yet.</p>
-                          <p className="text-sm text-muted-foreground mt-1">Check back later for updates!</p>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </TabsContent>
+        </CardHeader>
+        <CardContent>
+          <Tabs value={selectedNiche} onValueChange={setSelectedNiche}>
+            <TabsList className="grid w-full grid-cols-7">
+              {niches.map((niche) => (
+                <TabsTrigger key={niche.id} value={niche.id} className="text-xs">
+                  {niche.name}
+                </TabsTrigger>
               ))}
-            </Tabs>
-          </div>
-        </div>
+            </TabsList>
+            
+            {niches.map((niche) => (
+              <TabsContent key={niche.id} value={niche.id}>
+                <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
+                  {trendingLoading ? (
+                    Array(3).fill(0).map((_, i) => (
+                      <Card key={i} className="p-4">
+                        <Skeleton className="h-4 w-3/4 mb-2" />
+                        <Skeleton className="h-3 w-1/2 mb-4" />
+                        <Skeleton className="h-8 w-full" />
+                      </Card>
+                    ))
+                  ) : (
+                    getPerplexityProductsForNiche(niche.id).map((product, index) => (
+                      <Card key={product.id} className="hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="space-y-3">
+                            <div className="flex items-start justify-between">
+                              <h3 className="font-semibold text-sm leading-tight line-clamp-2">
+                                {product.title}
+                              </h3>
+                              <Badge className={niche.color} variant="secondary">
+                                #{index + 1}
+                              </Badge>
+                            </div>
+                            
+                            <div className="text-xs text-muted-foreground">
+                              🔥 {product.mentions?.toLocaleString() || '0'} mentions
+                            </div>
+                            
+                            <Button 
+                              size="sm" 
+                              className="w-full"
+                              onClick={() => handleUseProduct(product)}
+                            >
+                              <Target className="h-3 w-3 mr-1" />
+                              Use Product
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              </TabsContent>
+            ))}
+          </Tabs>
+        </CardContent>
+      </Card>
 
-        {/* BTB Automation Components */}
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-6 mb-8">
-          {/* Platform Selection & Scheduling */}
-          <PlatformSelector
-            selectedPlatforms={selectedPlatforms}
-            onPlatformsChange={setSelectedPlatforms}
-            scheduleTime={scheduleTime}
-            onScheduleChange={setScheduleTime}
-          />
-          
-          {/* Hook Generator */}
-          <HookGenerator
-            product={selectedProduct}
-            niche={selectedProductNiche}
-            onHookSelect={setSelectedHook}
-          />
-        </div>
+      {/* 2️⃣ Content Generation Module - Two Column Layout */}
+      <div className="grid lg:grid-cols-2 gap-6">
+        {/* Left Column: Product & Affiliate Setup */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-blue-500" />
+              📄 Product & Affiliate Setup
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Product Name */}
+            <div>
+              <Label htmlFor="product">Product Name</Label>
+              <Input
+                id="product"
+                value={selectedProduct}
+                onChange={(e) => setSelectedProduct(e.target.value)}
+                placeholder="Enter product name..."
+              />
+            </div>
 
-        {/* Affiliate Network Integration */}
-        <div className="max-w-4xl mx-auto mb-8">
-          <AffiliateNetworkSelector
-            productUrl=""
-            product={selectedProduct}
-            niche={selectedProductNiche}
-            onLinkGenerated={setGeneratedAffiliateLink}
-          />
-        </div>
+            {/* Niche */}
+            <div>
+              <Label htmlFor="niche">Niche</Label>
+              <Select value={selectedNiche} onValueChange={setSelectedNiche}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {niches.map((niche) => (
+                    <SelectItem key={niche.id} value={niche.id}>
+                      {niche.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-        {/* Content Generator Form */}
-        <div className="max-w-4xl mx-auto">
-          <div id="content-generator-form">
-            <ContentGenerator 
-              onGenerate={handleGenerate}
-              scrollToTopOnGenerate={false}
-              selectedProduct={selectedProduct}
-              selectedProductNiche={selectedProductNiche}
-              initialNiche={selectedProductNiche}
-              initialTemplate={selectedTemplate}
-            />
-          </div>
-        </div>
+            {/* Affiliate Link Generator */}
+            <div className="border rounded-lg p-4 space-y-3 bg-gray-50">
+              <h4 className="font-medium text-sm">🔗 Affiliate Link Generator</h4>
+              
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <Label htmlFor="network" className="text-xs">Network</Label>
+                  <Select value={affiliateNetwork} onValueChange={setAffiliateNetwork}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="amazon">Amazon</SelectItem>
+                      <SelectItem value="shareasale">ShareASale</SelectItem>
+                      <SelectItem value="cj">Commission Junction</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="affiliate-id" className="text-xs">Affiliate ID</Label>
+                  <Input
+                    id="affiliate-id"
+                    className="h-8"
+                    value={affiliateId}
+                    onChange={(e) => setAffiliateId(e.target.value)}
+                    placeholder="Your ID..."
+                  />
+                </div>
+              </div>
 
-        {/* Generated Content Display Section */}
-        <div className="max-w-6xl mx-auto mt-12">
-          {generatedContent ? (
-            <div className="space-y-8">
-              {isMultiPlatform ? (
-                <MultiPlatformContentOutput data={generatedContent} />
-              ) : (
-                <div className="bg-white rounded-lg shadow-xl p-6">
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">
-                    Generated Content
-                  </h3>
-                  <div className="prose max-w-none">
-                    {JSON.stringify(generatedContent, null, 2)}
-                  </div>
+              <div>
+                <Label htmlFor="product-url" className="text-xs">Product URL</Label>
+                <Input
+                  id="product-url"
+                  className="h-8"
+                  value={productUrl}
+                  onChange={(e) => setProductUrl(e.target.value)}
+                  placeholder="https://..."
+                />
+              </div>
+
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="w-full h-8"
+                onClick={generateRedirectUrl}
+                disabled={!productUrl || !affiliateId}
+              >
+                ✅ Create Smart Redirect
+              </Button>
+
+              {smartRedirectUrl && (
+                <div className="text-xs bg-white p-2 rounded border">
+                  <span className="text-green-600">✅ Redirect URL:</span>
+                  <code className="block mt-1">{smartRedirectUrl}</code>
                 </div>
               )}
-              
-              {/* Performance Metrics Input */}
-              <div className="grid lg:grid-cols-2 gap-6">
-                <MetricsInputForm
-                  contentId={generatedContent.id || 'generated-content'}
-                  onMetricsSubmitted={(metrics) => {
-                    console.log('Metrics submitted:', metrics);
-                  }}
-                />
-                
-                {/* Additional info panel */}
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Content Summary</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-3">
-                    {selectedHook && (
-                      <div>
-                        <span className="text-sm font-medium">Selected Hook:</span>
-                        <p className="text-sm text-gray-600 mt-1">{selectedHook}</p>
-                      </div>
-                    )}
-                    {selectedPlatforms.length > 0 && (
-                      <div>
-                        <span className="text-sm font-medium">Platforms:</span>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {selectedPlatforms.join(', ')}
-                        </p>
-                      </div>
-                    )}
-                    {generatedAffiliateLink && (
-                      <div>
-                        <span className="text-sm font-medium">Affiliate Network:</span>
-                        <p className="text-sm text-gray-600 mt-1">
-                          {generatedAffiliateLink.network}
-                        </p>
-                      </div>
-                    )}
-                    <div>
-                      <span className="text-sm font-medium">Schedule:</span>
-                      <p className="text-sm text-gray-600 mt-1">
-                        {scheduleTime === 'now' ? 'Post immediately' : scheduleTime}
-                      </p>
-                    </div>
-                  </CardContent>
-                </Card>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Right Column: Content Setup */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Zap className="h-5 w-5 text-purple-500" />
+              🚀 Content Setup
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {/* Platform Selector */}
+            <div>
+              <Label className="text-sm font-medium">Platforms</Label>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {platforms.map((platform) => (
+                  <Button
+                    key={platform.id}
+                    size="sm"
+                    variant={selectedPlatforms.includes(platform.id) ? "default" : "outline"}
+                    className={selectedPlatforms.includes(platform.id) ? platform.color : ""}
+                    onClick={() => togglePlatform(platform.id)}
+                  >
+                    {platform.name}
+                  </Button>
+                ))}
               </div>
             </div>
-          ) : (
-            <div className="bg-white/50 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">
-              <div className="text-gray-400">
-                <svg className="mx-auto h-12 w-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                </svg>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No content generated yet
-                </h3>
-                <p className="text-gray-500">
-                  Fill out the form above and click "Generate Content" to see your AI-powered content here
-                </p>
-              </div>
+
+            {/* Schedule */}
+            <div>
+              <Label htmlFor="schedule">Schedule</Label>
+              <Select value={scheduleTime} onValueChange={setScheduleTime}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="now">Post Now</SelectItem>
+                  <SelectItem value="1hour">1 Hour Later</SelectItem>
+                  <SelectItem value="custom">Schedule Later</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          )}
-        </div>
+
+            {/* Template Type */}
+            <div>
+              <Label htmlFor="template">Template Type</Label>
+              <Select value={templateType} onValueChange={setTemplateType}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="social_media_post">Social Media Post</SelectItem>
+                  <SelectItem value="product_review">Product Review</SelectItem>
+                  <SelectItem value="comparison">Comparison Post</SelectItem>
+                  <SelectItem value="tutorial">Tutorial</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Tone */}
+            <div>
+              <Label htmlFor="tone">Tone</Label>
+              <Select value={tone} onValueChange={setTone}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="enthusiastic">Enthusiastic</SelectItem>
+                  <SelectItem value="professional">Professional</SelectItem>
+                  <SelectItem value="casual">Casual</SelectItem>
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Generate Button */}
+            <Button 
+              className="w-full h-12 text-lg font-semibold"
+              onClick={handleGenerateContent}
+              disabled={isGenerating || !selectedProduct}
+            >
+              {isGenerating ? (
+                <>
+                  <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
+                  Generating...
+                </>
+              ) : (
+                <>
+                  <Zap className="h-5 w-5 mr-2" />
+                  ⚡️ Generate Content
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* 3️⃣ Optional Hook Generator */}
+      <Collapsible open={isHookGeneratorOpen} onOpenChange={setIsHookGeneratorOpen}>
+        <Card className="shadow-lg">
+          <CollapsibleTrigger asChild>
+            <CardHeader className="cursor-pointer hover:bg-gray-50">
+              <CardTitle className="flex items-center justify-between">
+                <span className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-yellow-500" />
+                  🎨 Viral Hook Generator (Optional)
+                </span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${isHookGeneratorOpen ? 'rotate-180' : ''}`} />
+              </CardTitle>
+            </CardHeader>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <CardContent>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="custom-hook">Custom Hook</Label>
+                  <Textarea
+                    id="custom-hook"
+                    value={customHook}
+                    onChange={(e) => setCustomHook(e.target.value)}
+                    placeholder="Enter a custom hook or leave blank for AI-generated..."
+                    rows={3}
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </CollapsibleContent>
+        </Card>
+      </Collapsible>
+
+      {/* 4️⃣ Generated Content Output */}
+      {generatedContent && (
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-green-500" />
+              ✨ Generated Content
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <h4 className="font-medium mb-2">Content:</h4>
+                <p className="whitespace-pre-wrap">{generatedContent.content}</p>
+              </div>
+              
+              {generatedContent.hook && (
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <h4 className="font-medium mb-2">Hook:</h4>
+                  <p>{generatedContent.hook}</p>
+                </div>
+              )}
+
+              <div className="flex gap-2">
+                <Button size="sm" variant="outline">
+                  <Copy className="h-4 w-4 mr-1" />
+                  Copy Content
+                </Button>
+                <Button size="sm" variant="outline">
+                  <Edit className="h-4 w-4 mr-1" />
+                  Edit Hook
+                </Button>
+                <Button size="sm" variant="outline" onClick={handleGenerateContent}>
+                  <RefreshCw className="h-4 w-4 mr-1" />
+                  Regenerate
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

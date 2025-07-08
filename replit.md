@@ -127,6 +127,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Daily content showcase placeholder with clear call-to-action messaging
   - ✅ Future automation pipeline preview section for upcoming Make.com integration
   - ✅ One-click content generation from trending picks with pre-populated templates
+- July 08, 2025. **Content Generation Page Overhaul**: Streamlined BTB viral content factory:
+  - ✅ "Viral Content Factory" header with 60-second promise for user urgency
+  - ✅ Above-the-fold trending products browser with 7 niche tabs showing 3 Perplexity items each
+  - ✅ Two-column layout: Product/Affiliate setup (left) + Content configuration (right)
+  - ✅ Smart redirect URL generator with affiliate network integration (Amazon, ShareASale, CJ)
+  - ✅ Platform selector with color-coded toggle pills for TikTok, Instagram, YouTube, Twitter
+  - ✅ Collapsible viral hook generator section (optional, defaults closed)
+  - ✅ Enhanced content output with copy, edit, and regenerate functionality
+  - ✅ One-click product selection with auto-population of all relevant fields
 
 ## User Preferences
 
