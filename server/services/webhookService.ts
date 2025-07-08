@@ -139,8 +139,9 @@ export class WebhookService {
         const scheduledTime = data.platformSchedules[platform] || '';
 
         // Create comprehensive CSV-compatible payload for Make.com
+        // Field order must match CSV: Timestamp,Product,Niche,Platform,Tone,Template,useSmartStyle,Full Output,TikTok Caption,IG Caption,YT Caption,X Caption,TikTok Rating,IG Rating,YT Rating,X Rating,Full Output Rating,TopRatedStyleUsed,postType,hashtags,source,Affiliate Link
         const flatPayload = {
-          // Core CSV Fields
+          // Core CSV Fields (exact order and case as CSV header)
           Timestamp: new Date().toISOString(),
           Product: data.metadata?.product || data.metadata?.productName || '',
           Niche: data.metadata?.niche || '',
@@ -148,7 +149,6 @@ export class WebhookService {
           Tone: data.metadata?.tone || '',
           Template: data.metadata?.template || data.metadata?.templateType || '',
           useSmartStyle: data.metadata?.useSmartStyle || false,
-          AffiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
           
           // Content Fields
           'Full Output': data.contentData?.fullOutput || platformData.script || '',
@@ -165,14 +165,17 @@ export class WebhookService {
           'Full Output Rating': '',
           TopRatedStyleUsed: data.metadata?.topRatedStyleUsed || '',
           
-          // Legacy fields for backward compatibility
+          // Additional required fields
           postType: platformData.type || 'content',
-          caption: platformData.caption || '',
           hashtags: Array.isArray(platformData.hashtags) ? platformData.hashtags.join(' ') : '',
+          source: 'GlowBot',
+          'Affiliate Link': data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
+          
+          // Legacy fields for backward compatibility
+          caption: platformData.caption || '',
           script: platformData.script || '',
           postInstructions: platformData.postInstructions || '',
-          scheduledTime: scheduledTime,
-          source: 'GlowBot'
+          scheduledTime: scheduledTime
         };
 
         console.log(`📤 Sending ${platform} content to Make.com:`, {
