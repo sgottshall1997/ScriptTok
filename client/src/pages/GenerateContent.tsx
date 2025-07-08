@@ -45,7 +45,7 @@ const GenerateContent = () => {
 
   // State management
   const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'skincare');
-  const [selectedProduct, setSelectedProduct] = useState(productFromUrl || 'CeraVe Daily Moisturizer');
+  const [selectedProduct, setSelectedProduct] = useState(productFromUrl || '');
   const [productUrl, setProductUrl] = useState('');
   const [affiliateNetwork, setAffiliateNetwork] = useState('amazon');
   const [affiliateId, setAffiliateId] = useState('');
@@ -67,6 +67,7 @@ const GenerateContent = () => {
     caption: string;
     hashtags: string[];
   } | null>(null);
+  const [viralInspoLoading, setViralInspoLoading] = useState(false);
 
 
 
@@ -80,49 +81,34 @@ const GenerateContent = () => {
     setSmartRedirectUrl(url);
   };
 
-  // Fetch viral inspiration using Perplexity API for trending insights
+  // Fetch viral inspiration using Perplexity API for real trending insights
   const fetchViralInspirationForProduct = async (productName: string) => {
     if (!productName.trim()) {
       setViralInspo(null);
+      setViralInspoLoading(false);
       return;
     }
 
+    setViralInspoLoading(true);
+    
     try {
-      console.log('Fetching viral inspiration for:', productName, 'in niche:', selectedNiche);
+      // Import and use the utility function
+      const { fetchViralVideoInspo } = await import('@/lib/fetchViralVideoInspo');
+      const inspiration = await fetchViralVideoInspo(productName, selectedNiche);
       
-      const response = await fetch('/api/perplexity-trends/viral-inspiration', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          product: productName,
-          niche: selectedNiche
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to fetch viral inspiration');
-      }
-
-      const data = await response.json();
-      console.log('Viral inspiration response:', data);
-      
-      if (data.success && data.inspiration) {
-        setViralInspo(data.inspiration);
+      if (inspiration) {
+        console.log('✅ Setting viral inspiration:', inspiration);
+        setViralInspo(inspiration);
       } else {
-        throw new Error(data.error || 'No inspiration data received');
+        // If no real data found, clear state
+        setViralInspo(null);
+        console.warn('No recent viral examples found for', productName);
       }
     } catch (error) {
       console.error('Error fetching viral inspiration:', error);
-      
-      // Fallback to basic inspiration if API fails
-      const fallbackInspiration = {
-        hook: `${productName} is trending right now`,
-        format: "Product showcase + User testimonial",
-        caption: `Just tried ${productName} and the results speak for themselves! This is exactly what I've been looking for.`,
-        hashtags: [`#${selectedNiche}`, "#trending", "#musthave", "#viral"]
-      };
-      
-      setViralInspo(fallbackInspiration);
+      setViralInspo(null);
+    } finally {
+      setViralInspoLoading(false);
     }
   };
 
@@ -134,7 +120,7 @@ const GenerateContent = () => {
 
   // Debug: Log viralInspo state changes
   useEffect(() => {
-    console.log('viralInspo state changed:', viralInspo);
+    console.log('🎯 Viral inspiration updated:', viralInspo);
   }, [viralInspo]);
 
   // Copy to clipboard helper
@@ -413,18 +399,35 @@ ${config.hashtags.join(' ')}`;
         </Card>
 
         {/* Viral Inspiration Preview */}
-        {viralInspo && (
+        {selectedProduct && (viralInspoLoading || viralInspo) && (
           <Card className="shadow-lg bg-[#fff9f0] border border-orange-300">
             <CardHeader className="pb-3">
               <CardTitle className="text-orange-700 flex items-center gap-2">
-                🎯 Viral Inspiration Found
+                {viralInspoLoading ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    Analyzing Viral Trends...
+                  </>
+                ) : (
+                  <>🎯 Viral Inspiration Found</>
+                )}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
-              <p><strong>Hook:</strong> {viralInspo.hook}</p>
-              <p><strong>Format:</strong> {viralInspo.format}</p>
-              <p><strong>Caption:</strong> {viralInspo.caption}</p>
-              <p><strong>Hashtags:</strong> {viralInspo.hashtags?.join(" ")}</p>
+              {viralInspoLoading ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-orange-600">Searching TikTok and Instagram for viral content patterns...</p>
+                </div>
+              ) : viralInspo ? (
+                <>
+                  <p><strong>Hook:</strong> {viralInspo.hook}</p>
+                  <p><strong>Format:</strong> {viralInspo.format}</p>
+                  <p><strong>Caption:</strong> {viralInspo.caption}</p>
+                  <p><strong>Hashtags:</strong> {viralInspo.hashtags?.join(" ")}</p>
+                </>
+              ) : (
+                <p className="text-sm text-orange-600">No recent viral examples found — try refreshing or selecting another product.</p>
+              )}
             </CardContent>
           </Card>
         )}

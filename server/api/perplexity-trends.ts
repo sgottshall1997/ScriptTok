@@ -5,6 +5,7 @@
 
 import { Router } from 'express';
 import { fetchTrendingProductsFromPerplexity, fetchAllNicheTrendsFromPerplexity } from '../services/perplexityTrends';
+import { fetchViralInspiration } from './viral-inspiration';
 import { storage } from '../storage';
 
 const router = Router();
@@ -116,5 +117,10 @@ router.get('/test', async (req, res) => {
     });
   }
 });
+
+/**
+ * Fetch viral video inspiration for a specific product
+ */
+router.post('/viral-inspiration', fetchViralInspiration);
 
 export default router;

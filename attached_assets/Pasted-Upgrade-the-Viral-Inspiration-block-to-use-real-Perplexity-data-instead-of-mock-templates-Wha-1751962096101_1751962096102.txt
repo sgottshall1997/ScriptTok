@@ -1,0 +1,59 @@
+Upgrade the Viral Inspiration block to use real Perplexity data instead of mock templates.
+
+🔧 What to change:
+
+1. Remove all sample/template-based logic from the viralInspo block
+   - Do not randomly generate or hardcode inspiration
+   - Do not reuse info from trending product data
+   - Instead, connect this to a real Perplexity API call
+
+---
+
+📦 2. Create a utility file `fetchViralVideoInspo.ts`
+   - Export an async function: fetchViralVideoInspo(productName: string, niche: string)
+   - This should call Perplexity or GPT with the following prompt:
+
+   Prompt:
+   """
+   You are a viral trend analyst. Find 1 real TikTok or Instagram video that went viral recently for a product like "[productName]" in the [niche] niche.
+
+   Return JSON only:
+   {
+     "hook": "text used at the start of the video",
+     "format": "e.g. Voiceover demo, On-screen captions, etc.",
+     "caption": "the video’s original caption",
+     "hashtags": ["#tag1", "#tag2", "#tag3"]
+   }
+
+   Only return real, plausible video structures. No placeholders or templates.
+   """
+
+   - Use model: `sonar-pro`
+   - Temperature: 0.04
+   - Search domains: ["tiktok.com", "instagram.com"]
+   - Recency: "week"
+
+---
+
+⚙️ 3. Auto-trigger this fetch on product selection
+
+When a user selects a product (either via "Use Product" or manual entry):
+- Call `fetchViralVideoInspo(product.name, product.niche)`
+- Store result in state variable: `viralInspo`
+- Display it inside the existing “🎯 Viral Inspiration” UI block
+
+---
+
+📋 4. Validation + Fallback
+
+- If the Perplexity response fails or returns malformed JSON:
+  - Retry once with a fallback query (less strict)
+  - Otherwise, show a friendly error or empty state
+
+Example fallback text: “No recent viral examples found — try refreshing or selecting another product.”
+
+---
+
+🎯 Final Outcome:
+- Viral Inspiration block now shows **real**, product-specific hooks, formats, captions, and hashtags
+- This makes each piece of generated content feel tailored to what’s currently trending on social
