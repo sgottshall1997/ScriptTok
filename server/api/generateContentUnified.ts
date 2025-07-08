@@ -217,10 +217,19 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           platformSchedules: {},
           metadata: {
             product: config.productName,
+            productName: config.productName,
             niche: config.niche,
             tone: config.tone,
+            template: config.templateType,
             templateType: config.templateType,
-            affiliateUrl: config.affiliateUrl
+            useSmartStyle: config.useSmartStyle || false,
+            affiliateUrl: config.affiliateUrl,
+            topRatedStyleUsed: mainContent.topRatedStyleUsed || ''
+          },
+          contentData: {
+            fullOutput: mainContent.content,
+            platformCaptions: platformCaptions,
+            viralInspiration: viralInspiration
           }
         });
         console.log(`✅ Content sent to Make.com successfully`);

@@ -446,12 +446,21 @@ async function processAutomatedBulkJob(
                         platformSchedules: {},
                         metadata: {
                           product: productName,
+                          productName: productName,
                           niche,
                           tone,
+                          template: template,
                           templateType: template,
+                          useSmartStyle: jobData.useSmartStyle || false,
                           jobType: 'automated_bulk',
                           jobId: savedContent.bulkJobId,
-                          affiliateUrl: affiliateLink
+                          affiliateUrl: affiliateLink,
+                          topRatedStyleUsed: contentResult.topRatedStyleUsed || ''
+                        },
+                        contentData: {
+                          fullOutput: contentResult.content,
+                          platformCaptions: platformCaptions,
+                          viralInspiration: viralInspiration
                         }
                       });
                       console.log(`✅ Bulk content sent to Make.com for ${productName}`);

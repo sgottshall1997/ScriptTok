@@ -115,6 +115,7 @@ export class WebhookService {
     platformContent: any;
     platformSchedules: any;
     metadata: any;
+    contentData?: any; // Full content generation data for CSV fields
   }): Promise<{ success: boolean; error?: string }> {
     try {
       const webhookUrl = process.env.MAKE_WEBHOOK_URL || webhookConfig.url;
@@ -123,28 +124,53 @@ export class WebhookService {
         throw new Error('Make.com webhook URL not configured');
       }
 
-      // Send each platform as a separate flattened payload
+      // Send comprehensive payload with all CSV fields
       const platforms = Object.keys(data.platformContent);
       const results = [];
+
+      // Extract platform-specific captions
+      const tiktokCaption = data.platformContent?.tiktok?.caption || '';
+      const igCaption = data.platformContent?.instagram?.caption || '';
+      const ytCaption = data.platformContent?.youtube?.caption || '';
+      const xCaption = data.platformContent?.twitter?.caption || data.platformContent?.x?.caption || '';
 
       for (const platform of platforms) {
         const platformData = data.platformContent[platform];
         const scheduledTime = data.platformSchedules[platform] || '';
 
-        // Create clean, flattened JSON payload for Make.com
+        // Create comprehensive CSV-compatible payload for Make.com
         const flatPayload = {
-          platform,
+          // Core CSV Fields
+          Timestamp: new Date().toISOString(),
+          Product: data.metadata?.product || data.metadata?.productName || '',
+          Niche: data.metadata?.niche || '',
+          Platform: platform,
+          Tone: data.metadata?.tone || '',
+          Template: data.metadata?.template || data.metadata?.templateType || '',
+          useSmartStyle: data.metadata?.useSmartStyle || false,
+          
+          // Content Fields
+          'Full Output': data.contentData?.fullOutput || platformData.script || '',
+          'TikTok Caption': tiktokCaption,
+          'IG Caption': igCaption,
+          'YT Caption': ytCaption,
+          'X Caption': xCaption,
+          
+          // Rating Fields (placeholders for user input)
+          'TikTok Rating': '',
+          'IG Rating': '',
+          'YT Rating': '',
+          'X Rating': '',
+          'Full Output Rating': '',
+          'TopRatedStyleUsed': data.metadata?.topRatedStyleUsed || '',
+          
+          // Legacy fields for backward compatibility
           postType: platformData.type || 'content',
           caption: platformData.caption || '',
           hashtags: Array.isArray(platformData.hashtags) ? platformData.hashtags.join(' ') : '',
           script: platformData.script || '',
           postInstructions: platformData.postInstructions || '',
-          product: data.metadata?.product || '',
-          niche: data.metadata?.niche || '',
-          tone: data.metadata?.tone || '',
-          templateType: data.metadata?.templateType || '',
           scheduledTime: scheduledTime,
-          timestamp: new Date().toISOString(),
           source: 'GlowBot'
         };
 
