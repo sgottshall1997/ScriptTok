@@ -50,7 +50,6 @@ const sidebarData: SidebarCategory[] = [
     items: [
       { name: "Dashboard", href: "/", icon: Home },
       { name: "Unified Generator", href: "/unified-generator", icon: Sparkles },
-      { name: "Content Generator", href: "/generate", icon: FileText },
       { name: "Template Explorer", href: "/templates", icon: Layers },
     ]
   },
@@ -66,7 +65,6 @@ const sidebarData: SidebarCategory[] = [
     name: "Framework",
     items: [
       { name: "Cross-Platform Scheduling", href: "/cross-platform-scheduling", icon: Calendar },
-      { name: "Bulk Content Generation", href: "/bulk-content-generation", icon: Package },
       { name: "Performance Analytics", href: "/performance-analytics", icon: DollarSign },
     ]
   },
