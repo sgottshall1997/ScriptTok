@@ -30,6 +30,16 @@ interface Rating {
 }
 
 export function ContentRating({ contentHistoryId, userId, isExpanded = false, onToggle }: ContentRatingProps) {
+  // Validate contentHistoryId
+  if (!contentHistoryId || isNaN(contentHistoryId)) {
+    console.warn('ContentRating: Invalid contentHistoryId:', contentHistoryId);
+    return (
+      <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50">
+        <span className="text-sm text-gray-500">Rating unavailable - invalid content ID</span>
+      </div>
+    );
+  }
+
   const [ratings, setRatings] = useState<Rating>({
     contentHistoryId,
     userId,
@@ -111,12 +121,28 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
   };
 
   const handleSave = () => {
+    // Validate contentHistoryId before saving
+    if (!contentHistoryId || isNaN(contentHistoryId)) {
+      toast({
+        title: "Error",
+        description: "Cannot save rating - invalid content ID",
+        variant: "destructive",
+      });
+      return;
+    }
+
     // Filter out undefined values for API call
     const filteredRatings = Object.fromEntries(
       Object.entries(ratings).filter(([_, value]) => value !== undefined && value !== '')
     );
     
-    saveRatingMutation.mutate(filteredRatings as Rating);
+    // Ensure contentHistoryId is included and valid
+    const validatedRatings = {
+      ...filteredRatings,
+      contentHistoryId: contentHistoryId,
+    };
+    
+    saveRatingMutation.mutate(validatedRatings as Rating);
   };
 
   const getRatingBadge = (rating?: number) => {

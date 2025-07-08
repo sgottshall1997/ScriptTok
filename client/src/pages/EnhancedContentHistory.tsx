@@ -626,7 +626,7 @@ const EnhancedContentHistory = () => {
                   {/* Content Rating System */}
                   <div className="border-t pt-4 mt-4">
                     <ContentRating
-                      contentHistoryId={parseInt(entry.id.toString().replace('db_', ''))}
+                      contentHistoryId={entry.databaseId || Math.floor(Math.random() * 2147483647)}
                       userId={1}
                       isExpanded={expandedRatings[entry.id]}
                       onToggle={() => toggleRatingExpanded(entry.id)}
