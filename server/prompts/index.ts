@@ -15,6 +15,14 @@ import {
   NicheInfo
 } from './templates';
 import { getToneInstructions, getToneDescription } from './tones';
+import { getTopRatedContentForStyle } from '../services/ratingSystem';
+
+export interface BestRatedStyle {
+  toneSummary: string; // e.g., "bold, punchy, sarcastic"
+  structureHint: string; // e.g., "Hook → 3 Benefits → Call to Action"
+  topHashtags: string[]; // array of 3–5 relevant hashtags
+  highRatedCaptionExample?: string; // actual caption content to learn from, optional
+}
 
 export interface PromptParams {
   niche: string;
@@ -27,6 +35,68 @@ export interface PromptParams {
     mostUsedTone: string | null;
     mostUsedTemplateType: string | null;
   };
+  useSmartStyle?: boolean; // Whether to use smart style learning
+  bestRatedStyle?: BestRatedStyle; // Dynamic learning data from top-rated outputs
+  platform?: string; // Platform for smart style filtering
+}
+
+/**
+ * Enhanced prompt factory function with dynamic learning support
+ * This function creates prompts that can learn from top-rated past outputs
+ */
+export async function promptFactory(params: {
+  productName: string;
+  tone: ToneOption;
+  template: TemplateType;
+  platform?: string;
+  niche: string;
+  useSmartStyle?: boolean;
+  userId?: number;
+  bestRatedStyle?: BestRatedStyle;
+  trendingProducts?: TrendingProduct[];
+}): Promise<string> {
+  const { productName, tone, template, platform, niche, useSmartStyle, userId, bestRatedStyle, trendingProducts = [] } = params;
+
+  // If useSmartStyle is enabled and no bestRatedStyle provided, fetch it
+  let smartStyleData = bestRatedStyle;
+  if (useSmartStyle && !smartStyleData && userId) {
+    try {
+      smartStyleData = await getTopRatedContentForStyle(userId, niche, platform, tone, template);
+      console.log('🎯 Smart style data fetched:', smartStyleData ? 'Found patterns from high-rated content' : 'No high-rated content available');
+    } catch (error) {
+      console.error('Error fetching smart style data:', error);
+    }
+  }
+
+  // Log smart style usage for analytics
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    userId: userId || 1,
+    niche,
+    templateType: template,
+    tone,
+    platform: platform || 'general',
+    useSmartStyle: useSmartStyle || false,
+    hasSmartStyleData: !!smartStyleData,
+    toneSummary: smartStyleData?.toneSummary || null,
+    structureHint: smartStyleData?.structureHint || null,
+    topHashtagsCount: smartStyleData?.topHashtags?.length || 0
+  };
+  console.log('📊 PromptFactory Smart Style Log:', JSON.stringify(logEntry, null, 2));
+
+  // Use standard generatePrompt with enhanced parameters
+  const promptParams: PromptParams = {
+    niche,
+    productName,
+    templateType: template,
+    tone,
+    trendingProducts,
+    useSmartStyle,
+    bestRatedStyle: smartStyleData,
+    platform
+  };
+
+  return generatePrompt(promptParams);
 }
 
 /**
@@ -100,6 +170,22 @@ Note: A specific template for this combination wasn't found, so this is using a 
     }
   }
   
+  // Inject smart style recommendations if available
+  let smartStyleInstructions = '';
+  if (params.useSmartStyle && params.bestRatedStyle) {
+    const style = params.bestRatedStyle;
+    smartStyleInstructions = `\n\n🎯 SMART STYLE LEARNING (Based on your highest-rated content):
+- Use a tone similar to: ${style.toneSummary}
+- Follow this proven structure: ${style.structureHint}
+- Include these successful hashtags: ${style.topHashtags.join(', ')}`;
+    
+    if (style.highRatedCaptionExample) {
+      smartStyleInstructions += `\n- Reference this high-performing example style: "${style.highRatedCaptionExample}"`;
+    }
+    
+    smartStyleInstructions += '\n\nMimic the patterns from your best-rated content while creating fresh, engaging content for this new product.';
+  }
+
   // Replace placeholders in the template
   const filledPrompt = promptTemplate
     .replace(/{product}/g, productName)
@@ -107,7 +193,7 @@ Note: A specific template for this combination wasn't found, so this is using a 
     .replace(/{trendContext}/g, trendContext);
   
   // Add optimization notes based on successful patterns
-  const finalPrompt = filledPrompt + optimizationNote;
+  const finalPrompt = filledPrompt + optimizationNote + smartStyleInstructions;
   
   return finalPrompt;
 }

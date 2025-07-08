@@ -1,0 +1,49 @@
+Extend the `promptFactory()` function to support dynamic learning based on top-rated past outputs.
+
+Requirements:
+
+1. Modify `promptFactory()` to accept a new optional input:
+   - `bestRatedStyle` object that includes:
+     - `toneSummary` (e.g., "bold, punchy, sarcastic")
+     - `structureHint` (e.g., "Hook → 3 Benefits → Call to Action")
+     - `topHashtags` (an array of 3–5 relevant hashtags)
+     - `highRatedCaptionExample` (actual caption content to learn from, optional)
+
+2. When `useSmartStyle = true`, fetch the best-rated content for the current:
+   - Niche
+   - Platform
+   - (Optionally) tone or template match
+   - You can pull this from the connected Google Sheet or DB, filtered for:
+     - `rating >= 90`
+     - `sameNiche && samePlatform`
+
+3. Use that top-rated content to populate the `bestRatedStyle` object.
+
+4. Update the prompt structure inside `promptFactory()` to conditionally include this smart styling:
+   - If `bestRatedStyle` exists, inject:
+     - Style hints (“Use a tone similar to: ${toneSummary}”)
+     - Structure hints (“Follow this format: ${structureHint}”)
+     - Reference hashtags and example caption if available
+   - If not present or `useSmartStyle = false`, fall back to standard prompt logic
+
+5. Make sure `promptFactory()` always remains modular and can work whether or not smartStyle data is present.
+
+Example call:
+
+```ts
+promptFactory({
+  productName: 'Vitamin C Serum',
+  tone: 'Bold',
+  template: 'Routine Example',
+  platform: 'Instagram',
+  useSmartStyle: true,
+  bestRatedStyle: {
+    toneSummary: 'Energetic, cheeky, uses slang',
+    structureHint: 'Start with problem, quick fix, then CTA',
+    topHashtags: ['#glowup', '#skingoals'],
+    highRatedCaptionExample: 'Tired of dull skin? Hit it with this citrus bomb 🍊'
+  }
+});
+Ensure the generation log includes whether useSmartStyle was used and what bestRatedStyle values were referenced (toneSummary, structureHint, etc.).
+
+This makes the content engine adaptive based on user feedback and completes the intelligent prompt chaining system.

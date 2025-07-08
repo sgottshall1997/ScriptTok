@@ -177,21 +177,47 @@ export async function generateContent(
       console.log('No successful patterns found yet, using provided parameters');
     }
 
-    // First try using the new modular prompt system
-    const promptParams: PromptParams = {
-      niche,
-      productName: product,
-      templateType,
-      tone,
-      trendingProducts,
-      fallbackLevel: 'exact', // Initialize with default value
-      successfulPatterns // Pass successful patterns to enhance prompt generation
-    };
+    // Use promptFactory for smart style support or generatePrompt for standard generation
+    let prompt: string;
+    let fallbackLevel: 'exact' | 'default' | 'generic' = 'exact';
     
-    const prompt = await generatePrompt(promptParams);
-    
-    // Get the fallbackLevel that was set during prompt generation
-    const fallbackLevel = promptParams.fallbackLevel || 'exact';
+    if (smartStyleRecommendations) {
+      // Convert smart style recommendations to BestRatedStyle format
+      const bestRatedStyle = {
+        toneSummary: smartStyleRecommendations.recommendation.split('.')[0] || 'engaging, authentic',
+        structureHint: smartStyleRecommendations.patterns.topPerformingStructures[0] || 'Hook → Key Benefits → Call to Action',
+        topHashtags: ['#trending', '#viral'], // Default hashtags since smart recommendations don't include these yet
+        highRatedCaptionExample: smartStyleRecommendations.patterns.commonTones.join(' and ') || undefined
+      };
+
+      // Import and use promptFactory for enhanced style learning
+      const { promptFactory } = await import('../prompts');
+      prompt = await promptFactory({
+        productName: product,
+        tone,
+        template: templateType,
+        platform: 'general', // Could be enhanced to detect platform
+        niche,
+        useSmartStyle: true,
+        userId: 1, // Demo user ID
+        bestRatedStyle,
+        trendingProducts
+      });
+    } else {
+      // Use standard generatePrompt
+      const promptParams: PromptParams = {
+        niche,
+        productName: product,
+        templateType,
+        tone,
+        trendingProducts,
+        fallbackLevel: 'exact',
+        successfulPatterns
+      };
+      
+      prompt = await generatePrompt(promptParams);
+      fallbackLevel = promptParams.fallbackLevel || 'exact';
+    }
     
     // Get optimized AI model configuration for this specific content generation
     const modelConfig = getModelConfig({

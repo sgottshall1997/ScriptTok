@@ -472,3 +472,112 @@ function generateStyleRecommendation(
     ? recommendations.join('. ') + '.'
     : 'Generate more content and rate it to build personalized recommendations.';
 }
+
+// Get top-rated content for style learning (for promptFactory)
+export async function getTopRatedContentForStyle(
+  userId: number,
+  niche: string,
+  platform?: string,
+  tone?: string,
+  templateType?: string
+): Promise<{
+  toneSummary: string;
+  structureHint: string;
+  topHashtags: string[];
+  highRatedCaptionExample?: string;
+} | null> {
+  try {
+    // Fetch highly rated content (90+) for the user in this niche and platform
+    const query = db
+      .select({
+        rating: contentRatings,
+        contentHistory: contentHistory
+      })
+      .from(contentRatings)
+      .innerJoin(contentHistory, eq(contentRatings.contentHistoryId, contentHistory.id))
+      .where(
+        and(
+          eq(contentRatings.userId, userId),
+          gte(contentRatings.overallRating, 90),
+          eq(contentHistory.niche, niche)
+        )
+      )
+      .orderBy(desc(contentRatings.overallRating))
+      .limit(10);
+
+    const highRatedContent = await query;
+
+    if (highRatedContent.length === 0) {
+      return null;
+    }
+
+    // Analyze the content to extract patterns
+    const contentAnalyses = highRatedContent.map(item => {
+      const content = item.contentHistory.outputText || '';
+      return {
+        content,
+        analysis: analyzeContent(content),
+        rating: item.rating.overallRating || 0
+      };
+    });
+
+    // Extract tone patterns from highest-rated content
+    const tonePatterns = contentAnalyses.map(item => item.analysis.emotionalTone);
+    const mostCommonTone = getMostFrequent(tonePatterns);
+    
+    // Extract structure patterns
+    const structurePatterns = contentAnalyses.map(item => {
+      const sentences = item.analysis.sentences.length;
+      const hookType = item.analysis.hookType;
+      const ctaStyle = item.analysis.callToActionStyle;
+      return `${hookType} → ${sentences} key points → ${ctaStyle}`;
+    });
+    const mostCommonStructure = getMostFrequent(structurePatterns);
+
+    // Extract hashtags from content
+    const allHashtags: string[] = [];
+    contentAnalyses.forEach(item => {
+      const hashtagMatches = item.content.match(/#\w+/g);
+      if (hashtagMatches) {
+        allHashtags.push(...hashtagMatches);
+      }
+    });
+    
+    // Get top 5 most frequently used hashtags
+    const hashtagFrequency = getFrequencyMap(allHashtags);
+    const topHashtags = Object.entries(hashtagFrequency)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 5)
+      .map(([hashtag]) => hashtag);
+
+    // Get the highest-rated caption as an example
+    const bestExample = contentAnalyses
+      .sort((a, b) => b.rating - a.rating)[0]?.content;
+
+    return {
+      toneSummary: mostCommonTone || 'engaging, authentic',
+      structureHint: mostCommonStructure || 'Hook → Key Benefits → Call to Action',
+      topHashtags: topHashtags.length > 0 ? topHashtags : ['#trending', '#viral'],
+      highRatedCaptionExample: bestExample?.slice(0, 200) // Truncate for brevity
+    };
+
+  } catch (error) {
+    console.error('Error getting top-rated content for style:', error);
+    return null;
+  }
+}
+
+// Helper function to get most frequent item in array
+function getMostFrequent(arr: string[]): string {
+  const frequency = getFrequencyMap(arr);
+  return Object.entries(frequency)
+    .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
+}
+
+// Helper function to create frequency map
+function getFrequencyMap(arr: string[]): Record<string, number> {
+  return arr.reduce((freq, item) => {
+    freq[item] = (freq[item] || 0) + 1;
+    return freq;
+  }, {} as Record<string, number>);
+}
