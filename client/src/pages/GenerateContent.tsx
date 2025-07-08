@@ -202,30 +202,31 @@ const GenerateContent = () => {
   ];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">⚡ Viral Content Factory</h1>
-        <p className="text-lg text-muted-foreground">
-          From trending product to viral content in under 60 seconds
-        </p>
-      </div>
-
-      {/* 1️⃣ Browse Trending Products */}
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-orange-500" />
-            🔥 Browse Trending Products
-          </CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Select a hot product to create viral content around
+    <div className="min-h-screen bg-gray-50 pb-32">
+      <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl font-bold text-gray-900">⚡ Viral Content Factory</h1>
+          <p className="text-lg text-muted-foreground">
+            From trending product to viral content in under 60 seconds
           </p>
-        </CardHeader>
-        <CardContent>
-          <Tabs value={selectedNiche} onValueChange={setSelectedNiche}>
-            <TabsList className="grid w-full grid-cols-7">
-              {niches.map((niche) => (
+        </div>
+
+        {/* 1️⃣ Browse Trending Products */}
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="h-5 w-5 text-orange-500" />
+              🔥 Browse Trending Products
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Select a hot product to create viral content around
+            </p>
+          </CardHeader>
+          <CardContent>
+            <Tabs value={selectedNiche} onValueChange={setSelectedNiche}>
+              <TabsList className="grid w-full grid-cols-7">
+                {niches.map((niche) => (
                 <TabsTrigger key={niche.id} value={niche.id} className="text-xs">
                   {niche.name}
                 </TabsTrigger>
@@ -276,22 +277,22 @@ const GenerateContent = () => {
                   )}
                 </div>
               </TabsContent>
-            ))}
-          </Tabs>
-        </CardContent>
-      </Card>
+                ))}
+              </Tabs>
+            </CardContent>
+          </Card>
 
-      {/* 2️⃣ Content Generation Module - Two Column Layout */}
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left Column: Product & Affiliate Setup */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-blue-500" />
-              📄 Product & Affiliate Setup
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
+        {/* 2️⃣ Content Generation Module - Two Column Layout */}
+        <div className="grid lg:grid-cols-2 gap-6">
+          {/* Left Column: Product & Affiliate Setup */}
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-blue-500" />
+                📄 Product & Affiliate Setup
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
             {/* Product Name */}
             <div>
               <Label htmlFor="product">Product Name</Label>
@@ -468,26 +469,26 @@ const GenerateContent = () => {
                 </>
               )}
             </Button>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
 
-      {/* 3️⃣ Optional Hook Generator */}
-      <Collapsible open={isHookGeneratorOpen} onOpenChange={setIsHookGeneratorOpen}>
-        <Card className="shadow-lg">
-          <CollapsibleTrigger asChild>
-            <CardHeader className="cursor-pointer hover:bg-gray-50">
-              <CardTitle className="flex items-center justify-between">
-                <span className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-yellow-500" />
-                  🎨 Viral Hook Generator (Optional)
-                </span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${isHookGeneratorOpen ? 'rotate-180' : ''}`} />
-              </CardTitle>
-            </CardHeader>
-          </CollapsibleTrigger>
-          <CollapsibleContent>
-            <CardContent>
+        {/* 3️⃣ Optional Hook Generator */}
+        <Collapsible open={isHookGeneratorOpen} onOpenChange={setIsHookGeneratorOpen}>
+          <Card className="shadow-lg">
+            <CollapsibleTrigger asChild>
+              <CardHeader className="cursor-pointer hover:bg-gray-50">
+                <CardTitle className="flex items-center justify-between">
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-yellow-500" />
+                    🎨 Viral Hook Generator (Optional)
+                  </span>
+                  <ChevronDown className={`h-4 w-4 transition-transform ${isHookGeneratorOpen ? 'rotate-180' : ''}`} />
+                </CardTitle>
+              </CardHeader>
+            </CollapsibleTrigger>
+            <CollapsibleContent>
+              <CardContent>
               <div className="space-y-4">
                 <div>
                   <Label htmlFor="custom-hook">Custom Hook</Label>
@@ -499,37 +500,41 @@ const GenerateContent = () => {
                     rows={3}
                   />
                 </div>
-              </div>
-            </CardContent>
-          </CollapsibleContent>
-        </Card>
-      </Collapsible>
+                </div>
+              </CardContent>
+            </CollapsibleContent>
+          </Card>
+        </Collapsible>
 
-      {/* 4️⃣ Generated Content Output */}
-      {generatedContent && (
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-green-500" />
-              ✨ Generated Content
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-2">Generated Content:</h4>
-                <div className="text-sm text-gray-600 mb-2">
-                  Template: {templateType} | Tone: {tone} | Niche: {selectedNiche}
+        {/* 4️⃣ Generated Content Output */}
+        {generatedContent && (
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-green-500" />
+                ✨ Generated Content
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-green-500">
+                  <h4 className="font-semibold mb-3 text-lg">Generated Content:</h4>
+                  <div className="text-sm text-gray-600 mb-4 flex gap-4">
+                    <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                    <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
+                    <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
+                  </div>
+                  <div className="prose prose-sm max-w-none">
+                    <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">{generatedContent.content}</p>
+                  </div>
                 </div>
-                <p className="whitespace-pre-wrap text-gray-900">{generatedContent.content}</p>
-              </div>
               
-              {generatedContent.hook && (
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <h4 className="font-medium mb-2">Hook:</h4>
-                  <p>{generatedContent.hook}</p>
-                </div>
-              )}
+                {generatedContent.hook && (
+                  <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                    <h4 className="font-semibold mb-2">Viral Hook:</h4>
+                    <p className="text-blue-900 font-medium">{generatedContent.hook}</p>
+                  </div>
+                )}
 
               <div className="flex gap-2">
                 <Button 
@@ -561,9 +566,10 @@ const GenerateContent = () => {
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </div>
   );
 };
