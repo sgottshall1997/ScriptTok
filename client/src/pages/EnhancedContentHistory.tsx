@@ -78,12 +78,17 @@ const EnhancedContentHistory = () => {
     
     // Add database history if available (these can be rated)
     if (dbHistory && Array.isArray(dbHistory)) {
+      console.log('🔧 DEBUG: Raw dbHistory received:', dbHistory.length, 'items');
+      console.log('🔧 DEBUG: First item raw:', dbHistory[0]);
+      
       const dbHistoryConverted = dbHistory.map((item: any) => {
+        console.log('🔧 DEBUG: Processing item with ID:', item.id, 'type:', typeof item.id);
+        
         // Handle null/undefined values from database
         const parsedGeneratedOutput = item.generatedOutput ? 
           (typeof item.generatedOutput === 'string' ? JSON.parse(item.generatedOutput) : item.generatedOutput) : {};
         
-        return {
+        const convertedItem = {
           id: `db_${item.id}`,
           databaseId: item.id, // Preserve the actual database ID for rating system
           timestamp: new Date(item.createdAt).toISOString(),
@@ -106,7 +111,12 @@ const EnhancedContentHistory = () => {
           },
           source: 'database'
         };
+        
+        console.log('🔧 DEBUG: Converted item databaseId:', convertedItem.databaseId, 'type:', typeof convertedItem.databaseId);
+        return convertedItem;
       });
+      
+      console.log('🔧 DEBUG: Total converted items:', dbHistoryConverted.length);
       combinedHistory.push(...dbHistoryConverted);
     }
     
@@ -636,9 +646,14 @@ const EnhancedContentHistory = () => {
 
                   {/* Content Rating System */}
                   <div className="border-t pt-4 mt-4">
+                    <div className="text-xs text-gray-400 mb-2">
+                      🔧 RATING DEBUG: entry.id={entry.id}, entry.databaseId={entry.databaseId}, 
+                      type={typeof entry.databaseId}, source={entry.source}, 
+                      truthyCheck={!!entry.databaseId}
+                    </div>
                     {entry.databaseId ? (
                       <>
-                        <div className="text-xs text-gray-400 mb-2">Debug: databaseId = {entry.databaseId}, type = {typeof entry.databaseId}</div>
+                        <div className="text-xs text-green-600 mb-2">✅ RATING ENABLED: databaseId = {entry.databaseId}</div>
                         <ContentRating
                           contentHistoryId={entry.databaseId}
                           userId={1}
