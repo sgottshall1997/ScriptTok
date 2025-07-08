@@ -7,6 +7,36 @@ import { getModelConfig, getTokenLimit } from './aiModelSelector';
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
 
+// Smart style usage logging function (for future Google Sheets integration)
+export function logSmartStyleUsage(params: {
+  userId: number;
+  niche: string;
+  templateType: string;
+  tone: string;
+  useSmartStyle: boolean;
+  hasRecommendations: boolean;
+  averageRating?: number;
+  sampleCount?: number;
+}) {
+  const logEntry = {
+    timestamp: new Date().toISOString(),
+    userId: params.userId,
+    niche: params.niche,
+    templateType: params.templateType,
+    tone: params.tone,
+    useSmartStyle: params.useSmartStyle,
+    hasRecommendations: params.hasRecommendations,
+    averageRating: params.averageRating || null,
+    sampleCount: params.sampleCount || null
+  };
+
+  // Log to console for now (future: Google Sheets API integration)
+  console.log('📊 Smart Style Usage Log:', JSON.stringify(logEntry, null, 2));
+  
+  // TODO: Implement Google Sheets API logging
+  // This could be done via Google Sheets API or webhook to Google Apps Script
+}
+
 // Function to clean video scripts for Pictory - removes markdown formatting and hashtags
 function cleanVideoScript(content: string): string {
   return content
@@ -122,7 +152,8 @@ export async function generateContent(
   trendingProducts: TrendingProduct[],
   niche: Niche = "skincare",
   model: string = "gpt-4o",
-  viralInspiration?: ViralInspiration
+  viralInspiration?: ViralInspiration,
+  smartStyleRecommendations?: any
 ): Promise<{ 
   content: string; 
   fallbackLevel?: 'exact' | 'default' | 'generic';
@@ -207,6 +238,39 @@ PRODUCT DETAILS:
 - Tone: ${tone}
 
 Generate a highly engaging script that mimics this viral format, tone, and pacing. Include a call-to-action to click the affiliate link. Output: Only the clean spoken script.`;
+    }
+
+    // Inject smart style recommendations if available
+    if (smartStyleRecommendations) {
+      console.log('🎯 Using smart style recommendations from user\'s best-rated content:', smartStyleRecommendations.recommendation);
+      
+      // Log smart style usage for analytics (future Google Sheets integration)
+      logSmartStyleUsage({
+        userId: 1, // Demo user ID
+        niche,
+        templateType,
+        tone,
+        useSmartStyle: true,
+        hasRecommendations: true,
+        averageRating: smartStyleRecommendations.averageRating,
+        sampleCount: smartStyleRecommendations.sampleCount
+      });
+      
+      systemPrompt += `\n\nSMART STYLE ENHANCEMENT: This user has high-performing content patterns. Apply these insights:
+${smartStyleRecommendations.recommendation}
+
+BEST PERFORMING EXAMPLES:
+${smartStyleRecommendations.patterns.bestContent.slice(0, 2).map((content: string, index: number) => 
+  `Example ${index + 1}: ${content.substring(0, 200)}...`
+).join('\n')}
+
+Match the structure, tone patterns, and successful elements from these high-rated posts (${smartStyleRecommendations.averageRating}/100 average).`;
+      
+      userPrompt += `\n\nUSER'S BEST-RATED STYLE:
+Apply these successful patterns from your previous high-rated content:
+- ${smartStyleRecommendations.recommendation}
+- Average rating of reference content: ${smartStyleRecommendations.averageRating}/100
+- Based on ${smartStyleRecommendations.sampleCount} high-performing posts`;
     }
 
     // Call OpenAI with the enhanced prompt and optimized parameters

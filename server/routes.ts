@@ -196,7 +196,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     updatePreferences, 
     getSuggestions, 
     trackApplication, 
-    getRatingStats 
+    getRatingStats,
+    getSmartStyleRecommendations
   } = await import('./api/rating');
 
   // Rating system endpoints
@@ -208,6 +209,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/rating/suggestions', getSuggestions);
   app.post('/api/rating/track-application', trackApplication);
   app.get('/api/rating/stats', getRatingStats);
+  app.get('/api/rating/smart-style', getSmartStyleRecommendations);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {

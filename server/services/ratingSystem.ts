@@ -327,3 +327,148 @@ export async function trackPatternApplication(data: {
     return null;
   }
 }
+
+// Get smart style recommendations based on user's best-rated content
+export async function getSmartStyleRecommendations(
+  userId: number,
+  niche: string,
+  templateType?: string,
+  tone?: string,
+  platform?: string
+) {
+  try {
+    // Build query conditions
+    const conditions = [
+      eq(contentRatings.userId, userId),
+      gte(contentRatings.overallRating, 80), // High-rated content (80+)
+    ];
+
+    // Add content history filters if provided
+    const contentHistoryConditions = [];
+    if (niche) {
+      contentHistoryConditions.push(eq(contentHistory.niche, niche));
+    }
+
+    // Get high-rated content for this user
+    let query = db
+      .select({
+        contentHistory: contentHistory,
+        rating: contentRatings,
+      })
+      .from(contentRatings)
+      .innerJoin(contentHistory, eq(contentRatings.contentHistoryId, contentHistory.id))
+      .where(and(...conditions));
+
+    if (contentHistoryConditions.length > 0) {
+      query = query.where(and(...contentHistoryConditions));
+    }
+
+    const highRatedContent = await query
+      .orderBy(desc(contentRatings.overallRating))
+      .limit(10);
+
+    if (highRatedContent.length === 0) {
+      return null;
+    }
+
+    // Extract patterns from the best content
+    const patterns = {
+      commonTones: [] as string[],
+      successfulTemplates: [] as string[],
+      averageRating: 0,
+      topPerformingStructures: [] as string[],
+      platformSpecificInsights: {} as Record<string, any>,
+      bestContent: [] as string[]
+    };
+
+    // Analyze tone patterns
+    const tones = highRatedContent.map(item => item.contentHistory.tone).filter(Boolean);
+    patterns.commonTones = [...new Set(tones)];
+
+    // Analyze template patterns  
+    const templates = highRatedContent.map(item => item.contentHistory.contentType).filter(Boolean);
+    patterns.successfulTemplates = [...new Set(templates)];
+
+    // Calculate average rating
+    patterns.averageRating = Math.round(
+      highRatedContent.reduce((sum, item) => sum + (item.rating.overallRating || 0), 0) / 
+      highRatedContent.length
+    );
+
+    // Get top content examples
+    patterns.bestContent = highRatedContent
+      .slice(0, 3)
+      .map(item => item.contentHistory.outputText || '')
+      .filter(Boolean);
+
+    // Analyze platform-specific performance
+    if (platform) {
+      const platformKey = `${platform.toLowerCase()}Rating` as keyof typeof contentRatings.$inferSelect;
+      const platformRatings = highRatedContent
+        .map(item => item.rating[platformKey])
+        .filter(Boolean) as number[];
+      
+      if (platformRatings.length > 0) {
+        patterns.platformSpecificInsights[platform] = {
+          averageRating: Math.round(platformRatings.reduce((sum, rating) => sum + rating, 0) / platformRatings.length),
+          sampleCount: platformRatings.length
+        };
+      }
+    }
+
+    // Extract structural patterns from content
+    const contentAnalyses = highRatedContent.map(item => {
+      const content = item.contentHistory.outputText || '';
+      return analyzeContent(content);
+    });
+
+    // Find common structural elements
+    const structures = contentAnalyses.map(analysis => 
+      `${analysis.sentences.length} sentences, ${analysis.hookType} hook, ${analysis.callToActionStyle} CTA`
+    );
+    patterns.topPerformingStructures = [...new Set(structures)].slice(0, 3);
+
+    return {
+      patterns,
+      sampleCount: highRatedContent.length,
+      averageRating: patterns.averageRating,
+      recommendation: generateStyleRecommendation(patterns, niche, templateType, tone, platform)
+    };
+
+  } catch (error) {
+    console.error('Error getting smart style recommendations:', error);
+    return null;
+  }
+}
+
+// Generate style recommendation text
+function generateStyleRecommendation(
+  patterns: any,
+  niche: string,
+  templateType?: string,
+  tone?: string,
+  platform?: string
+): string {
+  const recommendations = [];
+
+  if (patterns.commonTones.length > 0) {
+    recommendations.push(`Your highest-rated content uses ${patterns.commonTones.join(' and ')} tones`);
+  }
+
+  if (patterns.successfulTemplates.length > 0) {
+    recommendations.push(`${patterns.successfulTemplates.join(' and ')} templates perform best for you`);
+  }
+
+  if (patterns.topPerformingStructures.length > 0) {
+    recommendations.push(`Successful structure: ${patterns.topPerformingStructures[0]}`);
+  }
+
+  if (platform && patterns.platformSpecificInsights[platform]) {
+    const insight = patterns.platformSpecificInsights[platform];
+    recommendations.push(`Your ${platform} content averages ${insight.averageRating}/100`);
+  }
+
+  return recommendations.length > 0 
+    ? recommendations.join('. ') + '.'
+    : 'Generate more content and rate it to build personalized recommendations.';
+}

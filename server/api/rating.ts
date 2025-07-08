@@ -240,3 +240,39 @@ export async function getRatingStats(req: Request, res: Response) {
     });
   }
 }
+
+// Get smart style recommendations for content generation
+export async function getSmartStyleRecommendations(req: Request, res: Response) {
+  try {
+    const { userId, niche, templateType, tone, platform } = req.query;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        error: 'User ID is required'
+      });
+    }
+
+    const { getSmartStyleRecommendations: getRecommendations } = await import('../services/ratingSystem');
+    
+    const recommendations = await getRecommendations(
+      parseInt(userId as string),
+      niche as string,
+      templateType as string,
+      tone as string,
+      platform as string
+    );
+
+    res.json({
+      success: true,
+      recommendations,
+      hasRecommendations: !!recommendations
+    });
+  } catch (error) {
+    console.error('Error getting smart style recommendations:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get smart style recommendations'
+    });
+  }
+}

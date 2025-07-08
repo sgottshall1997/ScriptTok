@@ -93,6 +93,7 @@ const GenerateContent = () => {
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
+  const [useSmartStyle, setUseSmartStyle] = useState(false);
   
   // Viral inspiration data (will be populated when product is selected)
   const [viralInspo, setViralInspo] = useState<{
@@ -377,6 +378,8 @@ ${config.hashtags.join(' ')}`;
           affiliateUrl: smartRedirectUrl || productUrl,
           viralInspiration: viralInspo, // Include viral inspiration data
           templateSource, // Track how template was selected
+          useSmartStyle, // Enable smart style recommendations
+          userId: 1 // Demo user ID for rating system
         }),
       });
 
@@ -715,6 +718,23 @@ ${config.hashtags.join(' ')}`;
                   <SelectItem value="urgent">Urgent</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* Smart Style Toggle */}
+            <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+              <div className="flex-1">
+                <Label htmlFor="smart-style" className="text-sm font-medium text-purple-800">
+                  Use My Best-Rated Style
+                </Label>
+                <p className="text-xs text-purple-600 mt-1">
+                  Generate content based on your highest-rated posts (80+ rating)
+                </p>
+              </div>
+              <Switch
+                id="smart-style"
+                checked={useSmartStyle}
+                onCheckedChange={setUseSmartStyle}
+              />
             </div>
 
             {/* Generate Button */}

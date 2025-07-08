@@ -58,6 +58,8 @@ const automatedBulkSchema = z.object({
   scheduleAfterGeneration: z.boolean().default(false),
   scheduledTime: z.string().datetime().optional(),
   makeWebhookUrl: z.string().url().optional(),
+  useSmartStyle: z.boolean().default(false),
+  userId: z.number().optional(),
 });
 
 const NICHE_FETCHERS = {
@@ -278,7 +280,9 @@ async function processAutomatedBulkJob(
                 template,
                 platforms: jobData.platforms,
                 viralInspiration,
-                productData
+                productData,
+                useSmartStyle: jobData.useSmartStyle,
+                userId: jobData.userId
               });
               
               const generationTime = Date.now() - startTime;
@@ -455,8 +459,10 @@ async function generateComprehensiveContent(params: {
   platforms: string[];
   viralInspiration: any;
   productData: any;
+  useSmartStyle?: boolean;
+  userId?: number;
 }) {
-  const { productName, niche, tone, template, platforms, viralInspiration, productData } = params;
+  const { productName, niche, tone, template, platforms, viralInspiration, productData, useSmartStyle, userId } = params;
   
   // Build comprehensive prompt incorporating viral inspiration
   const prompt = `
@@ -520,6 +526,42 @@ Return as JSON with this exact structure:
     // Use the same content generation pipeline as the standard generator
     const trendingProducts = []; // We don't need trending products for this specific call
     
+    // Fetch smart style recommendations if enabled
+    let smartStyleRecommendations = null;
+    if (useSmartStyle && userId) {
+      try {
+        const { getSmartStyleRecommendations } = await import('../services/ratingSystem');
+        smartStyleRecommendations = await getSmartStyleRecommendations(
+          userId,
+          niche,
+          template,
+          tone,
+          platforms[0] // Use first platform for recommendations
+        );
+      } catch (error) {
+        console.error('Error fetching smart style recommendations in bulk:', error);
+      }
+    }
+
+    // Log smart style toggle usage for analytics (bulk generation)
+    if (useSmartStyle !== undefined) {
+      try {
+        const { logSmartStyleUsage } = await import('../services/contentGenerator');
+        logSmartStyleUsage({
+          userId: userId || 1,
+          niche,
+          templateType: template,
+          tone,
+          useSmartStyle: useSmartStyle || false,
+          hasRecommendations: !!smartStyleRecommendations,
+          averageRating: smartStyleRecommendations?.averageRating,
+          sampleCount: smartStyleRecommendations?.sampleCount
+        });
+      } catch (error) {
+        console.error('Error logging smart style usage in bulk:', error);
+      }
+    }
+
     // Generate main content using the same function as standard generator
     const mainContent = await generateContent(
       productName,
@@ -528,7 +570,8 @@ Return as JSON with this exact structure:
       trendingProducts,
       niche as any,
       'gpt-4o',
-      viralInspiration
+      viralInspiration,
+      smartStyleRecommendations
     );
 
     // Generate platform-specific content using the same function as standard generator

@@ -64,6 +64,8 @@ const generateContentSchema = z.object({
   affiliateUrl: z.string().optional(),
   viralInspiration: viralInspirationSchema,
   templateSource: z.string().optional(),
+  useSmartStyle: z.boolean().optional().default(false),
+  userId: z.number().optional(),
 });
 
 // Helper functions to check if tone and template exist in the system
@@ -204,15 +206,54 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       }
     }
     
-    const { product, tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength } = result.data;
+    const { product, tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength, useSmartStyle, userId } = result.data;
     const templateType = finalTemplateType;
+    
+    // Get smart style recommendations if enabled
+    let smartStyleRecommendations = null;
+    if (useSmartStyle && userId) {
+      try {
+        const { getSmartStyleRecommendations } = await import('../services/ratingSystem');
+        smartStyleRecommendations = await getSmartStyleRecommendations(
+          userId,
+          niche,
+          templateType,
+          tone,
+          platforms[0] // Use first platform for recommendations
+        );
+        
+        if (smartStyleRecommendations) {
+          console.log(`🎯 Smart style recommendations found for user ${userId}: ${smartStyleRecommendations.recommendation}`);
+        } else {
+          console.log(`ℹ️ No smart style recommendations available for user ${userId} (need 80+ rated content)`);
+        }
+      } catch (error) {
+        console.error('Error fetching smart style recommendations:', error);
+      }
+    }
+
+    // Log smart style toggle usage for analytics
+    if (useSmartStyle !== undefined) {
+      const { logSmartStyleUsage } = await import('../services/contentGenerator');
+      logSmartStyleUsage({
+        userId: userId || 1,
+        niche,
+        templateType,
+        tone,
+        useSmartStyle: useSmartStyle || false,
+        hasRecommendations: !!smartStyleRecommendations,
+        averageRating: smartStyleRecommendations?.averageRating,
+        sampleCount: smartStyleRecommendations?.sampleCount
+      });
+    }
     
     // Create cache parameters object
     const cacheParams = {
       product: product.toLowerCase().trim(),
       templateType,
       tone,
-      niche
+      niche,
+      useSmartStyle: useSmartStyle || false
     };
     
     // Generate cache key from parameters
@@ -307,7 +348,8 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         trendingProducts, 
         niche, 
         'gpt-4o', // model
-        validatedData.viralInspiration // Pass viral inspiration
+        validatedData.viralInspiration, // Pass viral inspiration
+        smartStyleRecommendations // Pass smart style recommendations
       );
       content = result.content;
       fallbackLevel = result.fallbackLevel;

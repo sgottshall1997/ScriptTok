@@ -76,6 +76,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [scheduleAfterGeneration, setScheduleAfterGeneration] = useState(false);
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
+  const [useSmartStyle, setUseSmartStyle] = useState(false);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -209,6 +210,8 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       manualAffiliateLinks: useManualAffiliateLinks ? manualAffiliateLinks : undefined,
       scheduleAfterGeneration,
       makeWebhookUrl: makeWebhookUrl || undefined,
+      useSmartStyle,
+      userId: 1, // Demo user ID for rating system
     };
 
     startAutomatedBulkMutation.mutate(bulkData);
@@ -513,7 +516,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </CollapsibleTrigger>
           <CollapsibleContent className="space-y-4 mt-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
+              <div className="space-y-3">
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="schedule-after"
@@ -521,6 +524,18 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
                     onCheckedChange={setScheduleAfterGeneration}
                   />
                   <Label htmlFor="schedule-after">Schedule after generation</Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="use-smart-style"
+                    checked={useSmartStyle}
+                    onCheckedChange={setUseSmartStyle}
+                  />
+                  <Label htmlFor="use-smart-style" className="text-sm">
+                    <span className="font-medium">Use My Best-Rated Style</span>
+                    <p className="text-xs text-gray-500 mt-1">Apply patterns from your highest-rated content (80+ rating)</p>
+                  </Label>
                 </div>
               </div>
               
