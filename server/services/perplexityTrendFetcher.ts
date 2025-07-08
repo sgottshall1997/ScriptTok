@@ -96,7 +96,7 @@ Format: Product Name | Brand | Social Mentions | Why Trending`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'llama-3.1-sonar-small-128k-online',
+          model: 'sonar-pro', // Updated model - llama-3.1-sonar deprecated Feb 2025
           messages: [
             {
               role: 'system',
@@ -121,6 +121,8 @@ Format: Product Name | Brand | Social Mentions | Why Trending`;
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`❌ Perplexity API error for ${niche}:`, response.status, errorText);
+        console.error(`❌ Request model: sonar-pro`);
+        console.error(`❌ Full error response:`, errorText);
         errors.push(`${niche}: ${response.status} ${errorText}`);
         continue;
       }
