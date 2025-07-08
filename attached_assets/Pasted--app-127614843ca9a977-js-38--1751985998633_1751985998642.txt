@@ -1,0 +1,366 @@
+_app-127614843ca9a977.js:38 
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      
+_app-127614843ca9a977.js:38 [LaunchDarkly] LaunchDarkly client initialized
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+Error while parsing the 'sandbox' attribute: 'allow-downloads-without-user-activation' is an invalid sandbox flag.
+framework-4945b215c7ace337.js:1 Unrecognized feature: 'ambient-light-sensor'.
+_ @ framework-4945b215c7ace337.js:1
+framework-4945b215c7ace337.js:1 Unrecognized feature: 'battery'.
+_ @ framework-4945b215c7ace337.js:1
+framework-4945b215c7ace337.js:1 Unrecognized feature: 'execution-while-not-rendered'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'execution-while-out-of-viewport'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'layout-animations'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'legacy-image-formats'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'navigation-override'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'oversized-images'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'publickey-credentials'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'speaker-selection'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'unoptimized-images'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'unsized-media'.
+_ @ framework-4945b215c7ace337.js:1
+ Unrecognized feature: 'pointer-lock'.
+_ @ framework-4945b215c7ace337.js:1
+ Allow attribute will take precedence over 'allowfullscreen'.
+_ @ framework-4945b215c7ace337.js:1
+ Allow attribute will take precedence over 'allowpaymentrequest'.
+_ @ framework-4945b215c7ace337.js:1
+GlowBot:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+attached_assets/image_1751958073711.png:1  Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1751958084897.png:1  Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1751958657047.png:1  Failed to load resource: the server responded with a status of 404 ()
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+Unchecked runtime.lastError: The message port closed before a response was received.
+ stallwart: failed ping 1
+attached_assets/image_1751961557241.png:1  Failed to load resource: the server responded with a status of 404 ()
+api.sorryapp.com/v1/pages/27c7b5fc:1 
+            
+            
+           Failed to load resource: net::ERR_SSL_PROTOCOL_ERROR
+ stallwart: failed ping 1
+ stallwart: failed ping 2
+ stallwart: failed ping 1
+_app-127614843ca9a977.js:38 Measure loop restarted more than 5 times
+(anonymous) @ _app-127614843ca9a977.js:38
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+api.sorryapp.com/v1/pages/27c7b5fc:1 
+            
+            
+           Failed to load resource: net::ERR_SSL_PROTOCOL_ERROR
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+ stallwart: failed ping 1
+attached_assets/image_1751967055670.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 3
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 3
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 1
+stallwart.build.js:1 stallwart: failed ping 2
+stallwart.build.js:1 stallwart: failed ping 3
+stallwart.build.js:1 stallwart: failed ping 4
+stallwart.build.js:1 stallwart: failed ping 5
+stallwart.build.js:1 stallwart: session stalled
+attached_assets/image_1751969342594.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1751972613392.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+/~:1 Banner not shown: beforeinstallpromptevent.preventDefault() called. The page must call beforeinstallpromptevent.prompt() to show the banner.
+2656-e15efee19568a688.js:1 WebSocket connection to 'wss://eval.spock.platform.replit.com/wsv2/v2.public.Q2dZSXNZQzB3d1lTQmdqUW5MVERCaUlGYzNCdlkyc3dBRHJPQVFva01HTTBPVE00WXpZdFpHWXdNaTAwTnpVeExUZzFaakl0TjJWbU5tWmpaVGRoTURabUVnTnVhWGdhRjNKbGNHeHBkQzF5WlhCc0xXWnBiR1Z6TFhOd2IyTnJJZ2RIYkc5M1FtOTBLZzV6WjI5MGRITm9ZV3hzTVRrNU4wSlJDaGh5WlhCc2FYUXRjbVZ3YkMxaWJHOWphM010YzNCdlkyc1NGbkpsY0d4cGRDMXlaWEJzTFcxbGRHRXRjM0J2WTJzYUhYSmxjR3hwZEMxdFlYSm5ZWEpwYm1VdFlteHZZMnR6TFhOd2IyTnJTZ2NJaXVlWkZCQUJVQUJhRDJsdWRHVnVkRjl3WlhKemIyNWhiSGdBVWlNSUFSQ0FnSUNBSUJrQUFBQUFBQUFRUUNFQUFBQUF...OWW1rMk5HY2xNa1k1ZFRWSldtVTVkV1JzUmxKR016WXdieVV5Um5sdGFtY3lZVllsTWtKaWRGZHpTMjFGVlZKWmIwZzVSRE5oYTFKalduVkhaSE01VW1WUFlYWnhVWGRpWkU1U1pISXlXRTVvUzJOblFsQkZhV3BWYjFOUVVsQnFhSEpESlRKQ1EzQXhibEV3Y2twTWRGaG9NbVZqWldsT2ExZzJPWGxCV0doYVZHTkpORUpwUzA0bE1rWnNObWhwYVZCMFp6Vm5lVnBGZUU1VFdEVlViblJJWXpNbE1rSkRjVUZNSlRKQ0pUSkdWVVJTUzBwVFJtNDBZblZuU1c1aEpUSkdNMlJGVkRGUk0ycHVkMnhqUW5jbE0wUWxNMFE92OKZIgyA7fiByEYSySozRsTrhxksCuNNNWvr6QlKSD-Xrs9E00iqlyp0XAmt8sIZn531e4znxR80ji0sky05Ag.Q2dad2NtOWtPak1pQ25KbGNHeHBkQzVqYjIwPQ' failed: 
+connect @ 2656-e15efee19568a688.js:1
+_app-127614843ca9a977.js:38 [ChromeTransport] chrome runtime disconnected
+(anonymous) @ _app-127614843ca9a977.js:38
+inpage.js:1 [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+inpage.js:1 [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+ [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+inpage.js:1 [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+inpage.js:1 [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+ [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+ [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+inpage.js:1 [ChromeTransport] chrome runtime disconnected
+(anonymous) @ inpage.js:1
+attached_assets/image_1751979041593.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+GlowBot:1 Access to fetch at 'https://sp.replit.com/v1/t' from origin 'https://replit.com' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+sp.replit.com/v1/t:1 
+            
+            
+           Failed to load resource: net::ERR_FAILED
+attached_assets/image_1751980504252.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+attached_assets/image_1751980479251.png:1 
+            
+            
+           Failed to load resource: the server responded with a status of 404 ()
+inpage.js:1 [ChromeTransport] connectChrome error: Error: MetaMask extension not found
+    at inpage.js:1:16512
+connect @ inpage.js:1
+Console.js:61 Console was cleared
+Console.js:61 📊 GlowBot Trending Products 📊
+Console.js:61 🤖 Data source: AI-generated data (all scrapers)
+Console.js:61 Total products: 50
+Console.js:61 
+Console.js:61 📌 About Mention Counts:
+Console.js:61   🌐 Real scraped data: Actual mention counts from source websites
+Console.js:61   🤖 AI-generated data: Estimated mention counts (not actual data)
+Console.js:61 --------------------------------------------------
+Console.js:61 Products by Source:
+Console.js:61 perplexity (50 products)
+Console.js:61   1. 🌐 Niacinamide 10% + Zinc 1% Serum 30ml (1,850,000 mentions)
+Console.js:61   2. 🌐 Sony WH-1000XM5 Wireless Headphones (1,850,000 mentions)
+Console.js:61   3. 🌐 Adjustable Dumbbells 55lb Pair (1,850,000 mentions)
+Console.js:61   ... 47 more products
+Console.js:61 --------------------------------------------------
+Console.js:61 Products by Niche:
+Console.js:61 beauty (4 products)
+Console.js:61   1. 🌐 Niacinamide 10% + Zinc 1% Serum 30ml (1,850,000 mentions)
+Console.js:61   2. 🌐 Moisturizing Cream 19oz (1,200,000 mentions)
+Console.js:61   3. 🌐 Gloss Bomb Universal Lip Luminizer in Fenty Glow (970,000 mentions)
+Console.js:61   ... 1 more products
+Console.js:61 tech (10 products)
+Console.js:61   1. 🌐 Sony WH-1000XM5 Wireless Headphones (1,850,000 mentions)
+Console.js:61   2. 🌐 Echo Dot 5th Generation Smart Speaker (1,800,000 mentions)
+Console.js:61   3. 🌐 AirPods Pro (2nd Generation) (1,650,000 mentions)
+Console.js:61   ... 7 more products
+Console.js:61 fitness (5 products)
+Console.js:61   1. 🌐 Adjustable Dumbbells 55lb Pair (1,850,000 mentions)
+Console.js:61   2. 🌐 Adjustable Dumbbells 55lb Pair (1,750,000 mentions)
+Console.js:61   3. 🌐 UA Tech 2.0 Short Sleeve T-Shirt (920,000 mentions)
+Console.js:61   ... 2 more products
+Console.js:61 pets (7 products)
+Console.js:61   1. 🌐 Automatic Cat Feeder WiFi Enabled 4L (1,780,000 mentions)
+Console.js:61   2. 🌐 Automatic Cat Feeder WiFi Enabled 4L (1,780,000 mentions)
+Console.js:61   3. 🌐 360° Dog Camera Treat Dispenser (1,290,000 mentions)
+Console.js:61   ... 4 more products
+Console.js:61 food (7 products)
+Console.js:61   1. 🌐 Prime Hydration Drink Blue Raspberry 16.9oz 12-Pack (1,420,000 mentions)
+Console.js:61   2. 🌐 Prime Hydration Drink Lemonade 16.9oz 12-Pack (1,420,000 mentions)
+Console.js:61   3. 🌐 Prime Hydration Drink Lemonade 16.9oz 12-Pack (1,420,000 mentions)
+Console.js:61   ... 4 more products
+Console.js:61 fashion (5 products)
+Console.js:61   1. 🌐 High Waisted Wide Leg Jeans Light Wash (1,420,000 mentions)
+Console.js:61   2. 🌐 High Waisted 501 Original Shorts Light Wash (1,120,000 mentions)
+Console.js:61   3. 🌐 Women's Linen Blend Two-Piece Set Beige (870,000 mentions)
+Console.js:61   ... 2 more products
+Console.js:61 travel (12 products)
+Console.js:61   1. 🌐 Compression Packing Cubes 6-Set (1,180,000 mentions)
+Console.js:61   2. 🌐 Compression Packing Cubes 6-Set (1,180,000 mentions)
+Console.js:61   3. 🌐 Compression Packing Cubes 6-Set (1,180,000 mentions)
+Console.js:61   ... 9 more products
+Console.js:61 --------------------------------------------------
+Console.js:61 To refresh trending products, call window.checkTrendingProducts()
+Console.js:61 To manually trigger a new scrape, call window.refreshTrendingProducts()
+content-history:1 Unchecked runtime.lastError: The message port closed before a response was received.

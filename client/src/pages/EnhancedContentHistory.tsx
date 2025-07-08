@@ -73,41 +73,40 @@ const EnhancedContentHistory = () => {
   }, [dbHistory]);
 
   const loadHistory = () => {
-    // Combine local storage history with database history
-    const localHistory = ContentHistoryManager.getHistory();
-    const combinedHistory = [...localHistory];
+    // Prioritize database history, add local storage as fallback
+    let combinedHistory: any[] = [];
     
-    // Add database history if available
+    // Add database history if available (these can be rated)
     if (dbHistory && Array.isArray(dbHistory)) {
-      console.log('🔍 Debug: Database history items:', dbHistory.slice(0, 2)); // Debug first 2 items
-      const dbHistoryConverted = dbHistory.map((item: any) => {
-        console.log('🔍 Debug: Converting item with ID:', item.id, 'to databaseId:', item.id);
-        return {
-          id: `db_${item.id}`,
-          databaseId: item.id, // Preserve the actual database ID for rating system
-          timestamp: new Date(item.createdAt).toISOString(),
-          productName: item.productName,
-          niche: item.niche,
-          tone: item.tone,
-          contentType: item.contentType,
-          promptText: item.promptText,
-          outputText: item.outputText,
-          platformsSelected: item.platformsSelected || [],
-          generatedOutput: {
-            ...item.generatedOutput,
-            content: item.outputText,
-            hook: item.generatedOutput?.hook || 'Generated content',
-            hashtags: item.generatedOutput?.hashtags || [],
-            affiliateLink: item.affiliateLink,
-            viralInspo: item.viralInspiration,
-            ...item.generatedOutput
-          },
-          source: 'database'
-        };
-      });
-      console.log('🔍 Debug: First converted entry databaseId:', dbHistoryConverted[0]?.databaseId);
+      const dbHistoryConverted = dbHistory.map((item: any) => ({
+        id: `db_${item.id}`,
+        databaseId: item.id, // Preserve the actual database ID for rating system
+        timestamp: new Date(item.createdAt).toISOString(),
+        productName: item.productName,
+        niche: item.niche,
+        tone: item.tone,
+        contentType: item.contentType,
+        templateUsed: item.templateUsed || item.contentType,
+        promptText: item.promptText,
+        outputText: item.outputText,
+        platformsSelected: item.platformsSelected || [],
+        generatedOutput: {
+          ...item.generatedOutput,
+          content: item.outputText,
+          hook: item.generatedOutput?.hook || 'Generated content',
+          hashtags: item.generatedOutput?.hashtags || [],
+          affiliateLink: item.affiliateLink,
+          viralInspo: item.viralInspiration,
+          ...item.generatedOutput
+        },
+        source: 'database'
+      }));
       combinedHistory.push(...dbHistoryConverted);
     }
+    
+    // Add local storage history (these cannot be rated)
+    const localHistory = ContentHistoryManager.getHistory();
+    combinedHistory.push(...localHistory);
     
     // Sort by timestamp (newest first)
     combinedHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -632,16 +631,19 @@ const EnhancedContentHistory = () => {
                   {/* Content Rating System */}
                   <div className="border-t pt-4 mt-4">
                     {entry.databaseId ? (
-                      <ContentRating
-                        contentHistoryId={entry.databaseId}
-                        userId={1}
-                        isExpanded={expandedRatings[entry.id]}
-                        onToggle={() => toggleRatingExpanded(entry.id)}
-                      />
+                      <>
+                        <div className="text-xs text-gray-400 mb-2">Debug: databaseId = {entry.databaseId}, type = {typeof entry.databaseId}</div>
+                        <ContentRating
+                          contentHistoryId={entry.databaseId}
+                          userId={1}
+                          isExpanded={expandedRatings[entry.id]}
+                          onToggle={() => toggleRatingExpanded(entry.id)}
+                        />
+                      </>
                     ) : (
                       <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50">
                         <span className="text-sm text-gray-500">
-                          Rating available for database-saved content only (ID: {entry.id}, dbID: {entry.databaseId})
+                          Rating available for database-saved content only
                         </span>
                       </div>
                     )}
