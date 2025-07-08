@@ -150,25 +150,25 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       for (const [platform, caption] of Object.entries(captions)) {
         let enhancedCaption = caption as string;
         
-        // Add platform-specific affiliate link formatting
+        // Add platform-specific affiliate link formatting with required Amazon Associates disclosure
         switch (platform.toLowerCase()) {
           case 'tiktok':
-            enhancedCaption += `\n\n🛒 Shop here: ${amazonLink}`;
+            enhancedCaption += `\n\n🛒 Shop here: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
             break;
           case 'instagram':
-            enhancedCaption += `\n\n🛍️ Shop the link: ${amazonLink}`;
+            enhancedCaption += `\n\n🛍️ Shop the link: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
             break;
           case 'youtube':
-            enhancedCaption += `\n\n🔗 Amazon link: ${amazonLink}`;
+            enhancedCaption += `\n\n🔗 Amazon link: ${amazonLink}\n\n📝 Disclosure: As an Amazon Associate I earn from qualifying purchases.`;
             break;
           case 'twitter':
-            enhancedCaption += `\n\n🛒 ${amazonLink}`;
+            enhancedCaption += `\n\n🛒 ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
             break;
           case 'other':
-            enhancedCaption += `\n\nShop on Amazon: ${amazonLink}`;
+            enhancedCaption += `\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
             break;
           default:
-            enhancedCaption += `\n\n${amazonLink}`;
+            enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
         }
         
         enhancedCaptions[platform] = enhancedCaption;
@@ -221,19 +221,19 @@ function generateFallbackCaptions(productName: string, platforms: string[], nich
     let caption = '';
     switch (platform.toLowerCase()) {
       case 'tiktok':
-        caption = `✨ ${productName} is trending for a reason! This ${niche} find is about to blow up your feed 🔥 #fyp #viral\n\n🛒 Shop here: ${amazonLink}`;
+        caption = `✨ ${productName} is trending for a reason! This ${niche} find is about to blow up your feed 🔥 #fyp #viral\n\n🛒 Shop here: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
         break;
       case 'instagram':
-        caption = `Discovered this amazing ${productName} and had to share ✨ Perfect addition to my ${niche} routine #aesthetic #musthave\n\n🛍️ Shop the link: ${amazonLink}`;
+        caption = `Discovered this amazing ${productName} and had to share ✨ Perfect addition to my ${niche} routine #aesthetic #musthave\n\n🛍️ Shop the link: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
         break;
       case 'youtube':
-        caption = `In this video, I'm reviewing the *${productName}* - here's everything you need to know about this trending ${niche} product.\n\n🔗 Amazon link: ${amazonLink}`;
+        caption = `In this video, I'm reviewing the *${productName}* - here's everything you need to know about this trending ${niche} product.\n\n🔗 Amazon link: ${amazonLink}\n\n📝 Disclosure: As an Amazon Associate I earn from qualifying purchases.`;
         break;
       case 'twitter':
-        caption = `Plot twist: ${productName} actually lives up to the hype. Best ${niche} purchase this year.\n\n🛒 ${amazonLink}`;
+        caption = `Plot twist: ${productName} actually lives up to the hype. Best ${niche} purchase this year.\n\n🛒 ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
         break;
       default:
-        caption = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.\n\nShop on Amazon: ${amazonLink}`;
+        caption = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
     }
     captions[platform] = caption;
   });
