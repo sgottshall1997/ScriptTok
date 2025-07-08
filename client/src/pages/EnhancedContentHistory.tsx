@@ -394,7 +394,7 @@ const EnhancedContentHistory = () => {
                           </Button>
                         </div>
                       </div>
-                      <div className="bg-white p-3 rounded border text-sm text-blue-600 truncate">
+                      <div className="bg-white p-3 rounded border text-sm text-blue-600 break-all whitespace-normal">
                         {entry.generatedOutput.affiliateLink}
                       </div>
                     </div>
