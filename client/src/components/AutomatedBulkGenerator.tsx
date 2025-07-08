@@ -44,11 +44,7 @@ const CONTENT_TONES = [
   'Playful', 'Inspirational', 'Educational', 'Trendy', 'Persuasive', 'Authentic'
 ];
 
-const CONTENT_TEMPLATES = [
-  'Product Review', 'Viral Hook', 'Short-Form Video Script', 
-  'Instagram Story', 'YouTube Description', 'TikTok Caption',
-  'Tutorial Guide', 'Before/After', 'Unboxing Experience'
-];
+// Templates will be fetched dynamically based on selected niches
 
 const PLATFORMS = [
   { id: 'tiktok', name: 'TikTok', color: 'bg-black text-white' },
@@ -65,7 +61,7 @@ interface AutomatedBulkGeneratorProps {
 export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGeneratorProps) {
   const [selectedNiches, setSelectedNiches] = useState<string[]>(['beauty', 'fitness', 'tech']);
   const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
-  const [selectedTemplates, setSelectedTemplates] = useState<string[]>(['Product Review', 'Viral Hook', 'Short-Form Video Script']);
+  const [selectedTemplates, setSelectedTemplates] = useState<string[]>(['product_review', 'viral_hook', 'short_video']);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
   const [useExistingProducts, setUseExistingProducts] = useState(true);
   const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
@@ -87,6 +83,36 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
     queryKey: ['/api/trending/products'],
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
+
+  // Fetch templates for all selected niches combined
+  const { data: allTemplatesData, isLoading: templatesLoading } = useQuery({
+    queryKey: ['/api/templates/all-niches', selectedNiches],
+    queryFn: async () => {
+      if (selectedNiches.length === 0) return { templates: [] };
+      
+      // Fetch templates for all selected niches and combine them
+      const templatePromises = selectedNiches.map(async (niche) => {
+        const response = await fetch(`/api/templates?niche=${niche}`);
+        if (!response.ok) throw new Error(`Failed to fetch templates for ${niche}`);
+        const data = await response.json();
+        return data.templates || [];
+      });
+      
+      const allTemplateArrays = await Promise.all(templatePromises);
+      const allTemplates = allTemplateArrays.flat();
+      
+      // Remove duplicates based on template id
+      const uniqueTemplates = allTemplates.filter((template, index, self) => 
+        index === self.findIndex(t => t.id === template.id)
+      );
+      
+      return { templates: uniqueTemplates };
+    },
+    staleTime: 300000, // 5 minutes
+    enabled: selectedNiches.length > 0,
+  });
+
+  const availableTemplates = allTemplatesData?.templates || [];
 
   // Preview products for selected niches (matches backend selection logic)
   const previewProductsForNiches = () => {
@@ -442,20 +468,34 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
             <div className="flex items-center gap-2">
               <BarChart3 className="h-5 w-5 text-green-600" />
               <h3 className="font-semibold">Content Templates ({selectedTemplates.length})</h3>
+              {templatesLoading && <span className="text-sm text-gray-500">(Loading...)</span>}
             </div>
             <div className="grid grid-cols-1 gap-2 max-h-48 overflow-y-auto">
-              {CONTENT_TEMPLATES.map((template) => (
-                <div key={template} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`template-${template}`}
-                    checked={selectedTemplates.includes(template)}
-                    onCheckedChange={() => handleTemplateToggle(template)}
-                  />
-                  <Label htmlFor={`template-${template}`} className="text-sm cursor-pointer">
-                    {template}
-                  </Label>
-                </div>
-              ))}
+              {templatesLoading ? (
+                <div className="text-center text-gray-500 py-4 text-sm">Loading templates...</div>
+              ) : availableTemplates.length > 0 ? (
+                availableTemplates.map((template: any) => (
+                  <div key={template.id} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={`template-${template.id}`}
+                      checked={selectedTemplates.includes(template.id)}
+                      onCheckedChange={() => handleTemplateToggle(template.id)}
+                    />
+                    <Label htmlFor={`template-${template.id}`} className="text-sm cursor-pointer">
+                      <div className="flex items-center gap-2">
+                        <span>{template.name}</span>
+                        <Badge variant="secondary" className="text-xs">
+                          {template.category}
+                        </Badge>
+                      </div>
+                    </Label>
+                  </div>
+                ))
+              ) : selectedNiches.length === 0 ? (
+                <div className="text-center text-gray-500 py-4 text-sm">Select niches to see available templates</div>
+              ) : (
+                <div className="text-center text-gray-500 py-4 text-sm">No templates available for selected niches</div>
+              )}
             </div>
           </div>
         </div>

@@ -50,7 +50,6 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
 
   const NICHES = ['beauty', 'tech', 'fitness', 'fashion', 'food', 'travel', 'pets'];
   const TONES = ['Enthusiastic', 'Professional', 'Friendly', 'Educational', 'Humorous', 'Inspiring', 'Urgent', 'Casual', 'Authoritative', 'Empathetic', 'Trendy'];
-  const TEMPLATES = ['Short-Form Video Script', 'Product Review Template', 'Unboxing Experience', 'Tutorial Guide', 'Comparison Template', 'Problem-Solution Template', 'Behind-the-Scenes', 'User Testimonial', 'Seasonal Content', 'Trend Analysis'];
   const PLATFORMS = [
     { id: 'tiktok', name: 'TikTok' },
     { id: 'instagram', name: 'Instagram' },
@@ -58,6 +57,26 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     { id: 'twitter', name: 'X (Twitter)' },
     { id: 'other', name: 'Other' }
   ];
+
+  // Fetch templates for selected niche
+  const { data: templatesData, isLoading: templatesLoading } = useQuery({
+    queryKey: ['/api/templates', formData.niche],
+    queryFn: async () => {
+      const response = await fetch(`/api/templates?niche=${formData.niche}`);
+      if (!response.ok) throw new Error('Failed to fetch templates');
+      return response.json();
+    },
+    staleTime: 300000, // 5 minutes
+  });
+
+  const availableTemplates = templatesData?.templates || [];
+  
+  // Auto-select first template when niche changes
+  useEffect(() => {
+    if (availableTemplates.length > 0 && !availableTemplates.some((t: any) => t.name === formData.template)) {
+      setFormData(prev => ({ ...prev, template: availableTemplates[0].name }));
+    }
+  }, [availableTemplates, formData.template]);
 
   const generateMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -184,10 +203,17 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
               value={formData.template}
               onChange={(e) => setFormData(prev => ({...prev, template: e.target.value}))}
               className="w-full p-3 border rounded-lg"
+              disabled={templatesLoading}
             >
-              {TEMPLATES.map(template => (
-                <option key={template} value={template}>{template}</option>
-              ))}
+              {templatesLoading ? (
+                <option>Loading templates...</option>
+              ) : availableTemplates.length > 0 ? (
+                availableTemplates.map((template: any) => (
+                  <option key={template.id} value={template.name}>{template.name}</option>
+                ))
+              ) : (
+                <option>No templates available</option>
+              )}
             </select>
           </div>
         </div>

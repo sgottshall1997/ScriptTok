@@ -20,13 +20,7 @@ const TONES = [
   { id: 'educational', name: 'Educational', description: 'Informative and helpful' },
 ];
 
-const TEMPLATES = [
-  { id: 'product_review', name: 'Product Review', description: 'Detailed product analysis' },
-  { id: 'viral_hook', name: 'Viral Hook', description: 'Attention-grabbing opener' },
-  { id: 'unboxing', name: 'Unboxing', description: 'First impression experience' },
-  { id: 'comparison', name: 'Comparison', description: 'Product vs alternatives' },
-  { id: 'tutorial', name: 'Tutorial', description: 'How-to and usage guide' },
-];
+// Templates will be fetched dynamically based on selected niche
 
 const PLATFORMS = [
   { id: 'tiktok', name: 'TikTok' },
@@ -60,6 +54,19 @@ export default function BulkGenerationForm() {
     queryKey: ['/api/trending/products'],
     staleTime: 60000,
   });
+
+  // Fetch templates for selected niche
+  const { data: templatesData, isLoading: templatesLoading } = useQuery({
+    queryKey: ['/api/templates', formData.niche],
+    queryFn: async () => {
+      const response = await fetch(`/api/templates?niche=${formData.niche}`);
+      if (!response.ok) throw new Error('Failed to fetch templates');
+      return response.json();
+    },
+    staleTime: 300000, // 5 minutes
+  });
+
+  const availableTemplates = templatesData?.templates || [];
 
   // Start bulk generation mutation
   const startBulkMutation = useMutation({
@@ -277,32 +284,47 @@ export default function BulkGenerationForm() {
       <div className="space-y-3">
         <Label className="text-base font-medium">
           Select Templates ({formData.selectedTemplates.length} selected)
+          {templatesLoading && <span className="text-sm text-gray-500 ml-2">(Loading...)</span>}
         </Label>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {TEMPLATES.map((template) => {
-            const isSelected = formData.selectedTemplates.includes(template.id);
-            return (
-              <Card 
-                key={template.id}
-                className={`cursor-pointer transition-all duration-200 ${
-                  isSelected 
-                    ? 'ring-2 ring-purple-500 bg-purple-50 border-purple-200' 
-                    : 'hover:bg-gray-50 border-gray-200'
-                }`}
-                onClick={() => handleTemplateToggle(template.id)}
-              >
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <Checkbox checked={isSelected} onChange={() => {}} className="mt-1" />
-                    <div>
-                      <h3 className="font-medium">{template.name}</h3>
-                      <p className="text-sm text-gray-600">{template.description}</p>
+          {templatesLoading ? (
+            <div className="col-span-2 text-center text-gray-500 py-4">Loading templates...</div>
+          ) : availableTemplates.length > 0 ? (
+            availableTemplates.map((template: any) => {
+              const isSelected = formData.selectedTemplates.includes(template.id);
+              return (
+                <Card 
+                  key={template.id}
+                  className={`cursor-pointer transition-all duration-200 ${
+                    isSelected 
+                      ? 'ring-2 ring-purple-500 bg-purple-50 border-purple-200' 
+                      : 'hover:bg-gray-50 border-gray-200'
+                  }`}
+                  onClick={() => handleTemplateToggle(template.id)}
+                >
+                  <CardContent className="p-4">
+                    <div className="flex items-start gap-3">
+                      <Checkbox checked={isSelected} onChange={() => {}} className="mt-1" />
+                      <div>
+                        <h3 className="font-medium">{template.name}</h3>
+                        <p className="text-sm text-gray-600">{template.description}</p>
+                        <div className="flex items-center gap-1 mt-1">
+                          <Badge variant="secondary" className="text-xs">
+                            {template.category}
+                          </Badge>
+                          <span className="text-xs text-gray-500">
+                            {template.estimatedLength}
+                          </span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  </CardContent>
+                </Card>
+              );
+            })
+          ) : (
+            <div className="col-span-2 text-center text-gray-500 py-4">No templates available for {formData.niche}</div>
+          )}
         </div>
       </div>
 
