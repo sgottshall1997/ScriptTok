@@ -314,7 +314,7 @@ const Dashboard = () => {
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2">
                         <Link 
-                          href={`/generate?product=${encodeURIComponent(product.title)}&niche=${product.niche}`}
+                          href={`/unified-generator?product=${encodeURIComponent(product.title)}&niche=${product.niche}`}
                           onClick={() => trackEvent('trending_product_click', 'research', `${product.niche}_${product.title}`, 1)}
                         >
                           <Button size="sm" className="flex-1 bg-red-500 hover:bg-red-600 text-white">
@@ -353,7 +353,7 @@ const Dashboard = () => {
 
       {/* 3️⃣ Fast-Action Buttons Panel */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link href="/generate">
+        <Link href="/unified-generator">
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="p-6 text-center">
               <Wand2 className="h-8 w-8 mx-auto mb-3 text-blue-600" />
