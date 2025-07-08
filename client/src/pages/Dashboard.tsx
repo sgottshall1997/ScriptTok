@@ -271,6 +271,11 @@ const Dashboard = () => {
             </Button>
           </div>
         </CardHeader>
+        <div className="px-6 pb-2">
+          <p className="text-red-600 font-semibold text-sm text-center">
+            (PLEASE DO NOT PRESS)
+          </p>
+        </div>
         <CardContent>
           {trendingLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
