@@ -44,32 +44,34 @@ export async function fetchTrendingFashionProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `Only return 3 REAL, purchasable fashion products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
+  const prompt = `You are a fashion product research API. Return 3 trending fashion products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+
+You MUST include a unique and specific reason why each product is trending. Avoid generic phrases like 'trending product', 'popular item', or 'viral'. The reason should reflect current trends, influencer mentions, seasonal hype, or specific use cases.
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
 ]
 
-IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
-
-EXAMPLES (do NOT copy these):
+FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "High Waisted Wide Leg Jeans", "brand": "Levi's", "mentions": 1340000, "reason": "Y2K fashion comeback viral" },
-  { "product": "Oversized Blazer Women's Medium", "brand": "The Drop", "mentions": 950000, "reason": "Professional chic outfit trend" }
+  { "product": "High Waisted Wide Leg Jeans Light Wash", "brand": "Levi's", "mentions": 1340000, "reason": "Y2K denim revival with fashion influencers" },
+  { "product": "Oversized Blazer Women's Medium Black", "brand": "The Drop", "mentions": 950000, "reason": "Office siren aesthetic trending on TikTok" },
+  { "product": "Chunky Gold Chain Necklace 18 inch", "brand": "Mejuri", "mentions": 780000, "reason": "Layered jewelry trend with content creators" }
 ]
 
 STRICT REQUIREMENTS:
-- Real Amazon fashion products only (clothing, accessories, jewelry, shoes)
-- Established brands: Levi's, Nike, Adidas, The Drop, Amazon Essentials, etc.
+- Real Amazon fashion products only (clothing, accessories, jewelry, shoes, handbags)
+- Established brands: Levi's, Nike, Adidas, The Drop, Amazon Essentials, Mejuri, etc.
 - Mentions: 50,000-2,000,000 range
-- NO generic terms like "trending product", "fashion item"
-- NO template headers like "Name | Brand"
-- Product names must be specific with details (size, color, style)
+- Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- NO generic terms like "trending product", "fashion item", "popular", "viral"
+- NO template headers like "Name | Brand" or "Product | Brand"
+- Product names must include specific details (size, color, style, material)
 
-Return ONLY the JSON array:`;
+Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or explanation.`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {

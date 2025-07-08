@@ -44,32 +44,34 @@ export async function fetchTrendingTechProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `Only return 3 REAL, purchasable tech products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
+  const prompt = `You are a tech product research API. Return 3 trending tech products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+
+You MUST include a unique and specific reason why each product is trending. Avoid generic phrases like 'trending product', 'popular item', or 'viral'. The reason should reflect current trends, influencer mentions, seasonal hype, or specific use cases.
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
 ]
 
-IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
-
-EXAMPLES (do NOT copy these):
+FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "AirPods Pro 2nd Generation", "brand": "Apple", "mentions": 1650000, "reason": "Noise cancellation upgrade reviews" },
-  { "product": "Echo Dot 5th Gen Smart Speaker", "brand": "Amazon", "mentions": 890000, "reason": "Voice control home automation" }
+  { "product": "AirPods Pro 2nd Generation", "brand": "Apple", "mentions": 1650000, "reason": "Noise cancellation upgrade in tech reviews" },
+  { "product": "Echo Dot 5th Gen Smart Speaker", "brand": "Amazon", "mentions": 890000, "reason": "Voice control smart home automation setups" },
+  { "product": "Galaxy S24 Ultra 256GB", "brand": "Samsung", "mentions": 1200000, "reason": "AI camera features showcased by creators" }
 ]
 
 STRICT REQUIREMENTS:
-- Real Amazon tech products only (headphones, phones, gadgets, smart devices)
-- Established brands: Apple, Samsung, Sony, JBL, Anker, etc.
+- Real Amazon tech products only (headphones, phones, gadgets, smart devices, gaming gear)
+- Established brands: Apple, Samsung, Sony, JBL, Anker, Nintendo, PlayStation, etc.
 - Mentions: 50,000-2,000,000 range
-- NO generic terms like "trending product", "tech item"
-- NO template headers like "Name | Brand"
-- Product names must be specific with details (model, generation, size)
+- Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- NO generic terms like "trending product", "tech item", "popular", "viral"
+- NO template headers like "Name | Brand" or "Product | Brand"
+- Product names must include specific details (model, generation, storage, size)
 
-Return ONLY the JSON array:`;
+Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or explanation.`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {

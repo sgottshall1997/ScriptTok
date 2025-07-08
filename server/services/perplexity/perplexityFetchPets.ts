@@ -44,32 +44,34 @@ export async function fetchTrendingPetsProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `Only return 3 REAL, purchasable pet products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
+  const prompt = `You are a pet product research API. Return 3 trending pet products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+
+You MUST include a unique and specific reason why each product is trending. Avoid generic phrases like 'trending product', 'popular item', or 'viral'. The reason should reflect current trends, influencer mentions, seasonal hype, or specific use cases.
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
 ]
 
-IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
-
-EXAMPLES (do NOT copy these):
+FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "360° Dog Camera Treat Dispenser", "brand": "Furbo", "mentions": 1290000, "reason": "Remote pet monitoring viral trend" },
-  { "product": "Slow Feeder Dog Bowl Large", "brand": "Outward Hound", "mentions": 850000, "reason": "Healthy eating pet hack" }
+  { "product": "360° Dog Camera Treat Dispenser WiFi", "brand": "Furbo", "mentions": 1290000, "reason": "Remote pet monitoring for working owners" },
+  { "product": "Slow Feeder Dog Bowl Large Anti-Gulp", "brand": "Outward Hound", "mentions": 850000, "reason": "Healthy eating habits promoted by pet influencers" },
+  { "product": "Interactive Puzzle Plush Dog Toy Large", "brand": "Nina Ottosson", "mentions": 650000, "reason": "Mental stimulation toys for anxious pets" }
 ]
 
 STRICT REQUIREMENTS:
-- Real Amazon pet products only (toys, food, accessories, care items)
-- Established brands: Furbo, Blue Buffalo, Hill's, PetSafe, Outward Hound, etc.
+- Real Amazon pet products only (toys, food, accessories, care items, tech gadgets)
+- Established brands: Furbo, Blue Buffalo, Hill's, PetSafe, Outward Hound, Nina Ottosson, etc.
 - Mentions: 50,000-2,000,000 range
-- NO generic terms like "trending product", "pet item"
-- NO template headers like "Name | Brand"
-- Product names must be specific with details (size, capacity, breed)
+- Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- NO generic terms like "trending product", "pet item", "popular", "viral"
+- NO template headers like "Name | Brand" or "Product | Brand"
+- Product names must include specific details (size, capacity, breed, age range)
 
-Return ONLY the JSON array:`;
+Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or explanation.`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {

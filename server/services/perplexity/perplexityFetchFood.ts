@@ -44,32 +44,34 @@ export async function fetchTrendingFoodProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `Only return 3 REAL, purchasable food products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
+  const prompt = `You are a food product research API. Return 3 trending food and beverage products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+
+You MUST include a unique and specific reason why each product is trending. Avoid generic phrases like 'trending product', 'popular item', or 'viral'. The reason should reflect current trends, influencer mentions, seasonal hype, or specific use cases.
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
 ]
 
-IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
-
-EXAMPLES (do NOT copy these):
+FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Prime Hydration Drink Ice Pop", "brand": "Prime", "mentions": 1420000, "reason": "Logan Paul collaboration viral trend" },
-  { "product": "Grass Fed Beef Sticks Original", "brand": "Chomps", "mentions": 780000, "reason": "High protein snack viral" }
+  { "product": "Prime Hydration Drink Ice Pop 16.9oz", "brand": "Prime", "mentions": 1420000, "reason": "Logan Paul collaboration with summer athletes" },
+  { "product": "Grass Fed Beef Sticks Original 12-Pack", "brand": "Chomps", "mentions": 780000, "reason": "High protein snacks for fitness content creators" },
+  { "product": "Prebiotic Soda Classic Cola 12oz 12-Pack", "brand": "OLIPOP", "mentions": 890000, "reason": "Gut health drinks promoted by wellness influencers" }
 ]
 
 STRICT REQUIREMENTS:
-- Real Amazon food products only (snacks, drinks, supplements, specialty foods)
-- Established brands: Prime, OLIPOP, Kind, Chomps, Liquid Death, etc.
+- Real Amazon food products only (snacks, drinks, supplements, specialty foods, healthy alternatives)
+- Established brands: Prime, OLIPOP, Kind, Chomps, Liquid Death, Athletic Greens, etc.
 - Mentions: 50,000-2,000,000 range
-- NO generic terms like "trending product", "food item"
-- NO template headers like "Name | Brand"
-- Product names must be specific with details (flavor, size, type)
+- Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- NO generic terms like "trending product", "food item", "popular", "viral"
+- NO template headers like "Name | Brand" or "Product | Brand"
+- Product names must include specific details (flavor, size, pack count, type)
 
-Return ONLY the JSON array:`;
+Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or explanation.`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {

@@ -257,6 +257,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Updated "No trending insight available" fallback message to "Trending across social platforms"
   - ✅ Dashboard now properly shows 3 beauty products instead of 1, with balanced niche representation
   - ✅ All trending products now display meaningful insights or appropriate fallback messaging
+- July 08, 2025. **Enhanced Perplexity Fetcher Reason Validation**: Comprehensive upgrade to all seven niche-specific fetchers:
+  - ✅ Updated prompts with mandatory specific reason requirements (4-12 words explaining WHY trending)
+  - ✅ Added comprehensive few-shot examples for each niche with realistic trending reasons
+  - ✅ Enhanced validation logic rejecting vague reasons like "trending", "popular", "viral"
+  - ✅ Implemented strict reason length validation (10-80 characters) and banned terms filtering
+  - ✅ All fetchers now enforce "Respond ONLY with valid JSON array" with no markdown/headers
+  - ✅ Fitness, beauty, tech, fashion, food, travel, and pets fetchers completely upgraded
+  - ✅ Strong reason validation prevents generic fallback messages in trending insights
 
 ## User Preferences
 

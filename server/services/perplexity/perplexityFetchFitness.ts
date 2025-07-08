@@ -3,7 +3,7 @@
  * Fetches trending fitness products with specialized prompts
  */
 
-// Enhanced validation function
+// Enhanced validation function with strong reason validation
 function isValidProduct(item: any): boolean {
   // Basic type and existence checks
   if (typeof item.product !== 'string' || item.product.length <= 4) return false;
@@ -13,6 +13,24 @@ function isValidProduct(item: any): boolean {
 
   const productLower = item.product.toLowerCase();
   const brandLower = item.brand.toLowerCase();
+  const reasonLower = item.reason.toLowerCase();
+
+  // Enhanced reason validation - reject vague or generic reasons
+  if (
+    !item.reason ||
+    reasonLower.includes("no trending insight") ||
+    reasonLower.includes("placeholder") ||
+    reasonLower.includes("trending product") ||
+    reasonLower.includes("popular item") ||
+    reasonLower === "viral" ||
+    reasonLower === "trending" ||
+    reasonLower === "popular" ||
+    item.reason.length < 10 ||
+    item.reason.length > 80
+  ) {
+    console.log(`❌ Rejected invalid reason: "${item.reason}"`);
+    return false;
+  }
 
   // Hard filters against invalid entries
   const bannedTerms = [
@@ -22,6 +40,7 @@ function isValidProduct(item: any): boolean {
   
   if (bannedTerms.some(term => productLower.includes(term))) return false;
   if (bannedTerms.some(term => brandLower.includes(term))) return false;
+  if (bannedTerms.some(term => reasonLower.includes(term))) return false;
   
   // Regex patterns for template headers
   if (/^name\s*\|\s*brand/i.test(item.product)) return false;
@@ -35,6 +54,7 @@ function isValidProduct(item: any): boolean {
   const genericBrandTerms = ['brand', 'company', 'fitness', 'workout', 'exercise'];
   if (genericBrandTerms.some(term => brandLower === term)) return false;
   
+  console.log(`✅ Valid fitness product: ${item.product} by ${item.brand} (reason: ${item.reason})`);
   return true;
 }
 
@@ -44,32 +64,34 @@ export async function fetchTrendingFitnessProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `Only return 3 REAL, purchasable fitness products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
+  const prompt = `You are a fitness product research API. Return 3 trending fitness products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+
+You MUST include a unique and specific reason why each product is trending. Avoid generic phrases like 'trending product', 'popular item', or 'viral'. The reason should reflect current trends, influencer mentions, seasonal hype, or specific use cases.
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
 ]
 
-IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
-
-EXAMPLES (do NOT copy these):
+FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 1280000, "reason": "Home gym convenience trend" },
-  { "product": "Yoga Mat Extra Thick 6mm", "brand": "Gaiam", "mentions": 890000, "reason": "Comfort workout viral videos" }
+  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 1200000, "reason": "Home workouts with influencer shoutouts" },
+  { "product": "Lululemon ABC Joggers", "brand": "Lululemon", "mentions": 950000, "reason": "Worn in trending gym fit videos" },
+  { "product": "Adjustable Dumbbells 5-52.5 lbs", "brand": "PowerBlocks", "mentions": 780000, "reason": "Space-saving apartment gym setups" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon fitness products only (equipment, supplements, apparel, accessories)
-- Established brands: Nike, Adidas, Gaiam, Bodylastics, Under Armour, etc.
+- Established brands: Nike, Adidas, Gaiam, Bodylastics, Under Armour, Lululemon, etc.
 - Mentions: 50,000-2,000,000 range
-- NO generic terms like "trending product", "fitness item"
-- NO template headers like "Name | Brand"
-- Product names must be specific with details (weight, size, material)
+- Each reason must be unique, specific, and 4-10 words explaining WHY it's trending
+- NO generic terms like "trending product", "fitness item", "popular", "viral"
+- NO template headers like "Name | Brand" or "Product | Brand"
+- Product names must be specific with details (weight, size, material, model)
 
-Return ONLY the JSON array:`;
+Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or explanation.`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {
@@ -127,7 +149,7 @@ Return ONLY the JSON array:`;
       throw new Error('Response is not a JSON array');
     }
 
-    // Enhanced validation and filtering
+    // Enhanced validation and filtering with strong reason validation
     const validProducts = parsedData.filter(item => {
       return isValidProduct(item);
     });

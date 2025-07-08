@@ -44,35 +44,34 @@ export async function fetchTrendingBeautyProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `You are a product research API. Return 3 trending beauty and personal care products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+  const prompt = `You are a beauty product research API. Return 3 trending beauty and personal care products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+
+You MUST include a unique and specific reason why each product is trending. Avoid generic phrases like 'trending product', 'popular item', or 'viral'. The reason should reflect current trends, influencer mentions, seasonal hype, or specific use cases.
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
 ]
 
-REQUIREMENTS:
-- Real products only: makeup, skincare, haircare, grooming, personal care items
-- Specific brand names: The Ordinary, Fenty Beauty, OUAI, Native, CeraVe, Glossier, etc.
-- Mentions: 50,000–2,000,000 range
-- Unique trending reason (max 8 words) for each product
-- Product names must include specific details (size, shade, type)
-
-EXAMPLES (do NOT copy these):
+FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Glossy Lip Balm in Cherry", "brand": "Glossier", "mentions": 890000, "reason": "Clean girl makeup trend" },
-  { "product": "Hair Treatment Masque 8oz", "brand": "OUAI", "mentions": 650000, "reason": "Viral hair repair routine" }
+  { "product": "Glossy Lip Balm in Cherry", "brand": "Glossier", "mentions": 890000, "reason": "Clean girl makeup trend with influencers" },
+  { "product": "Hair Treatment Masque 8oz", "brand": "OUAI", "mentions": 650000, "reason": "Celebrity hairstylist recommended routine" },
+  { "product": "Daily Moisturizing Lotion 19oz", "brand": "CeraVe", "mentions": 1200000, "reason": "Dermatologist-approved skincare on TikTok" }
 ]
 
 STRICT REQUIREMENTS:
-- NO generic terms like "trending product", "beauty item"
-- NO template headers like "Name | Brand"
-- Include diverse categories: skincare, makeup, haircare, grooming
-- Real Amazon beauty and personal care products only
+- Real Amazon beauty products only: makeup, skincare, haircare, grooming, personal care
+- Established brands: The Ordinary, Fenty Beauty, OUAI, Native, CeraVe, Glossier, Rare Beauty, etc.
+- Mentions: 50,000-2,000,000 range  
+- Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- NO generic terms like "trending product", "beauty item", "popular", "viral"
+- NO template headers like "Name | Brand" or "Product | Brand"
+- Product names must include specific details (size, shade, type, volume)
 
-Return ONLY the JSON array:`;
+Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or explanation.`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {
@@ -130,7 +129,7 @@ Return ONLY the JSON array:`;
       throw new Error('Response is not a JSON array');
     }
 
-    // Enhanced validation and filtering
+    // Enhanced validation and filtering with strong reason validation
     const validProducts = parsedData.filter(item => {
       return isValidProduct(item);
     });

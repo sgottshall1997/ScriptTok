@@ -44,32 +44,34 @@ export async function fetchTrendingTravelProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `Only return 3 REAL, purchasable travel products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
+  const prompt = `You are a travel product research API. Return 3 trending travel products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
+
+You MUST include a unique and specific reason why each product is trending. Avoid generic phrases like 'trending product', 'popular item', or 'viral'. The reason should reflect current trends, influencer mentions, seasonal hype, or specific use cases.
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
 ]
 
-IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
-
-EXAMPLES (do NOT copy these):
+FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Compression Packing Cubes 6-Set", "brand": "BAGSMART", "mentions": 1180000, "reason": "Space saving packing viral hack" },
-  { "product": "Portable Phone Charger 20000mAh", "brand": "Anker", "mentions": 950000, "reason": "Essential travel power bank" }
+  { "product": "Compression Packing Cubes 6-Set Medium", "brand": "BAGSMART", "mentions": 1180000, "reason": "Space-saving packing hacks by travel creators" },
+  { "product": "Portable Phone Charger PowerCore 20000mAh", "brand": "Anker", "mentions": 950000, "reason": "Essential power bank for digital nomads" },
+  { "product": "Travel Neck Pillow Memory Foam", "brand": "Cabeau", "mentions": 670000, "reason": "Comfortable long-haul flight accessories trending" }
 ]
 
 STRICT REQUIREMENTS:
-- Real Amazon travel products only (luggage, accessories, tech, organizers)
-- Established brands: BAGSMART, Anker, Samsonite, Away, Cabeau, etc.
+- Real Amazon travel products only (luggage, accessories, tech, organizers, comfort items)
+- Established brands: BAGSMART, Anker, Samsonite, Away, Cabeau, Eagle Creek, etc.
 - Mentions: 50,000-2,000,000 range
-- NO generic terms like "trending product", "travel item"
-- NO template headers like "Name | Brand"
-- Product names must be specific with details (capacity, size, material)
+- Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- NO generic terms like "trending product", "travel item", "popular", "viral"
+- NO template headers like "Name | Brand" or "Product | Brand"
+- Product names must include specific details (capacity, size, material, model)
 
-Return ONLY the JSON array:`;
+Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or explanation.`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {
