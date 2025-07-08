@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Link } from 'wouter';
-import { Sparkles, TrendingUp, DollarSign, Zap, Star } from 'lucide-react';
+import { Sparkles, TrendingUp, DollarSign, Zap, Star, ArrowLeft, Home } from 'lucide-react';
 
 interface TrendingProduct {
   id: number;
@@ -133,6 +133,18 @@ export default function TrendingAIPicks() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {/* Navigation */}
+      <div className="mb-6">
+        <nav className="flex items-center gap-4 text-sm text-gray-600">
+          <Link href="/" className="flex items-center gap-2 hover:text-blue-600 transition-colors">
+            <Home size={16} />
+            Dashboard
+          </Link>
+          <span>/</span>
+          <span className="text-gray-900 font-medium">AI Trending Picks</span>
+        </nav>
+      </div>
+
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
