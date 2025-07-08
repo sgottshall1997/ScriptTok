@@ -88,7 +88,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
-  // Preview products for selected niches
+  // Preview products for selected niches (matches backend selection logic)
   const previewProductsForNiches = () => {
     if (!trendingProducts) return;
     
@@ -97,8 +97,12 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
     selectedNiches.forEach(niche => {
       const nicheProducts = trendingProducts.filter((product: any) => product.niche === niche);
       if (nicheProducts.length > 0) {
-        // Sort by mentions (descending) and take the top product
-        const sortedProducts = nicheProducts.sort((a: any, b: any) => (b.mentions || 0) - (a.mentions || 0));
+        // Sort by creation date (newest first) to match backend selection logic
+        const sortedProducts = nicheProducts.sort((a: any, b: any) => {
+          const dateA = new Date(a.createdAt || '1970-01-01').getTime();
+          const dateB = new Date(b.createdAt || '1970-01-01').getTime();
+          return dateB - dateA; // Newest first
+        });
         productsByNiche[niche] = sortedProducts[0];
       }
     });
