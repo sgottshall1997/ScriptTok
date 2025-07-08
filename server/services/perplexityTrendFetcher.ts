@@ -35,17 +35,47 @@ const REQUIRED_BRAND_INDICATORS = [
 function validateProductQuality(productName: string): { isValid: boolean; reason?: string } {
   const lowercaseName = productName.toLowerCase();
   
+  // Check for template/header patterns first
+  const templatePatterns = [
+    /^name\s*\|\s*brand/i,
+    /product\s*name.*brand.*mentions/i,
+    /\|\s*brand\s*\|\s*social\s*mentions/i,
+    /why\s*tre?$/i,
+    /^format:/i,
+    /example.*response/i,
+    /^\[product\s*name\]/i,
+    /^\[brand.*name\]/i
+  ];
+
+  for (const pattern of templatePatterns) {
+    if (pattern.test(productName.trim())) {
+      return { isValid: false, reason: "Template or header format detected" };
+    }
+  }
+  
   // Check minimum word count
   const wordCount = productName.trim().split(/\s+/).length;
   if (wordCount < 3) {
     return { isValid: false, reason: 'Too few words' };
   }
   
+  // Enhanced banned terms list
+  const enhancedBannedTerms = [
+    ...BANNED_TERMS,
+    'placeholder', 'template', 'example', 'format', 'sample',
+    'here', 'name here', 'brand here', 'mentions here'
+  ];
+  
   // Check for banned terms
-  for (const term of BANNED_TERMS) {
+  for (const term of enhancedBannedTerms) {
     if (lowercaseName.includes(term.toLowerCase())) {
       return { isValid: false, reason: `Contains banned term: ${term}` };
     }
+  }
+  
+  // Check for truncated responses (incomplete data)
+  if (productName.length < 10 || productName.endsWith('...') || productName.includes('...')) {
+    return { isValid: false, reason: "Truncated or incomplete response" };
   }
   
   // Check for brand indicators (more lenient now)
@@ -78,16 +108,21 @@ export async function pullPerplexityTrends(): Promise<{ success: boolean; messag
       const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
       const currentYear = new Date().getFullYear();
       
-      const prompt = `Top trending Amazon ${niche} products ${currentMonth} ${currentYear} with specific brand names that are popular on TikTok or Instagram.
+      const prompt = `Find the top 3 trending ${niche} products on Amazon for ${currentMonth} ${currentYear} that are viral on TikTok or Instagram.
 
-Requirements:
-- List exactly 3 specific products with full brand names
-- Include exact product names (e.g., "Stanley Quencher Tumbler 40oz" not just "Tumbler")
-- Provide estimated social media mentions
-- No vague terms like "trending product" or "popular item"
-- Must be real, purchasable products
+CRITICAL: Provide ONLY real product data. No templates, headers, or format examples.
 
-Format: Product Name | Brand | Social Mentions | Why Trending`;
+GOOD EXAMPLES:
+Fenty Beauty Gloss Bomb | Fenty Beauty | 890,000 | Rihanna's brand trending on TikTok
+Nike Air Force 1 Low White | Nike | 1,450,000 | Classic sneaker viral comeback
+Stanley Adventure Quencher 40oz | Stanley | 1,200,000 | Hydration trend on social media
+
+BAD EXAMPLES (DO NOT USE):
+- "Product Name | Brand | Mentions | Reason" (template)
+- "Trending Product | Brand Name | Count | Why" (generic)
+- "Name | Brand | Social Mentions | Why Tre" (cut-off template)
+
+Provide 3 REAL ${niche} products in format: ProductName | BrandName | MentionCount | TrendingReason`;
 
       const response = await fetch(PERPLEXITY_API_URL, {
         method: 'POST',
@@ -100,15 +135,15 @@ Format: Product Name | Brand | Social Mentions | Why Trending`;
           messages: [
             {
               role: 'system',
-              content: 'You are a product research specialist. Only provide specific, real product names with clear brand identifiers. Reject any vague or generic terms.'
+              content: 'You are an expert product research analyst. Your responses must contain ONLY real product data with specific brand names and product models. Never include templates, headers, placeholders, or format examples in your response.'
             },
             {
               role: 'user',
               content: prompt
             }
           ],
-          max_tokens: 1000,
-          temperature: 0.1, // Lower temperature for more focused results
+          max_tokens: 700, // Reduced for concise responses
+          temperature: 0.04, // Very low for deterministic results
           top_p: 0.8,
           search_domain_filter: ["amazon.com", "tiktok.com", "instagram.com"],
           return_images: false,

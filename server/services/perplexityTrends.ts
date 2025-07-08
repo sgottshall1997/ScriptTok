@@ -42,17 +42,47 @@ const REQUIRED_BRAND_INDICATORS = [
 function validateProductQuality(productName: string): { isValid: boolean; reason?: string } {
   const lowercaseName = productName.toLowerCase();
   
+  // Check for template/header patterns first
+  const templatePatterns = [
+    /^name\s*\|\s*brand/i,
+    /product\s*name.*brand.*mentions/i,
+    /\|\s*brand\s*\|\s*social\s*mentions/i,
+    /why\s*tre?$/i,
+    /^format:/i,
+    /example.*response/i,
+    /^\[product\s*name\]/i,
+    /^\[brand.*name\]/i
+  ];
+
+  for (const pattern of templatePatterns) {
+    if (pattern.test(productName.trim())) {
+      return { isValid: false, reason: "Template or header format detected" };
+    }
+  }
+  
   // Check minimum word count
   const wordCount = productName.trim().split(/\s+/).length;
   if (wordCount < 3) {
     return { isValid: false, reason: 'Too few words' };
   }
   
+  // Enhanced banned terms list
+  const enhancedBannedTerms = [
+    ...BANNED_TERMS,
+    'placeholder', 'template', 'example', 'format', 'sample',
+    'here', 'name here', 'brand here', 'mentions here'
+  ];
+  
   // Check for banned terms
-  for (const term of BANNED_TERMS) {
+  for (const term of enhancedBannedTerms) {
     if (lowercaseName.includes(term.toLowerCase())) {
       return { isValid: false, reason: `Contains banned term: ${term}` };
     }
+  }
+  
+  // Check for truncated responses (incomplete data)
+  if (productName.length < 10 || productName.endsWith('...') || productName.includes('...')) {
+    return { isValid: false, reason: "Truncated or incomplete response" };
   }
   
   // Check for brand indicators (more lenient now)
@@ -100,16 +130,28 @@ export async function fetchTrendingProductsFromPerplexity(niche: string): Promis
 
     const strictQuery = generateStrictQuery(niche);
     
-    const prompt = `${strictQuery}
+    const prompt = `You are a product research expert. Find 3 trending ${niche} products on Amazon that are viral on TikTok/Instagram in July 2025.
+
+CRITICAL INSTRUCTION: Respond ONLY with a JSON array. No text before or after. No explanations.
+
+Required JSON format:
+[
+  {"product": "Actual Product Name", "brand": "Real Brand", "mentions": 850000, "reason": "Why it's trending"},
+  {"product": "Actual Product Name", "brand": "Real Brand", "mentions": 650000, "reason": "Why it's trending"},
+  {"product": "Actual Product Name", "brand": "Real Brand", "mentions": 400000, "reason": "Why it's trending"}
+]
+
+Examples for reference (DO NOT copy these exact products):
+- {"product": "Stanley Adventure Quencher 40oz", "brand": "Stanley", "mentions": 1200000, "reason": "Viral TikTok hydration trend"}
+- {"product": "CeraVe Foaming Facial Cleanser", "brand": "CeraVe", "mentions": 850000, "reason": "Dermatologist recommended on Instagram"}
 
 Requirements:
-- List exactly 3 specific products with full brand names
-- Include exact product names (e.g., "Stanley Quencher Tumbler 40oz" not just "Tumbler")
-- Provide estimated social media mentions
-- No vague terms like "trending product" or "popular item"
-- Must be real, purchasable products
+- Use REAL product names with specific models/versions
+- Include actual brand names (Nike, Apple, CeraVe, Stanley, etc.)
+- Mentions between 50,000-2,000,000
+- Brief trending reason (max 8 words)
 
-Format: Product Name | Brand | Social Mentions | Why Trending`;
+Respond with JSON array only:`;
 
     console.log(`🔍 Fetching trending ${niche} products from Perplexity with strict filtering...`);
 
@@ -124,15 +166,15 @@ Format: Product Name | Brand | Social Mentions | Why Trending`;
         messages: [
           {
             role: "system",
-            content: "You are a product research specialist. Only provide specific, real product names with clear brand identifiers. Reject any vague or generic terms."
+            content: "You are a product research API. Return ONLY valid JSON arrays with real product data. Never include explanatory text, templates, or format examples. All products must be real items available on Amazon with specific brand names."
           },
           {
             role: "user",
             content: prompt
           }
         ],
-        max_tokens: 1000,
-        temperature: 0.1, // Lower temperature for more focused results
+        max_tokens: 800, // Reduced to force concise, specific responses
+        temperature: 0.05, // Much lower temperature for deterministic results
         top_p: 0.8,
         search_domain_filter: ["amazon.com", "tiktok.com", "instagram.com"],
         return_images: false,
@@ -263,15 +305,15 @@ async function fetchWithFallbackModel(niche: string, prompt: string): Promise<In
         messages: [
           {
             role: "system",
-            content: "You are a product research specialist. Only provide specific, real product names with clear brand identifiers."
+            content: "You are an expert product research analyst. Provide ONLY real product data with specific brand names. Never include templates, headers, or placeholder text in your response."
           },
           {
             role: "user",
-            content: prompt
+            content: `List 3 real trending ${niche} products from Amazon with actual brand names and specific product models. Format: ProductName | BrandName | MentionCount | TrendingReason`
           }
         ],
-        max_tokens: 800,
-        temperature: 0.2,
+        max_tokens: 600,
+        temperature: 0.03, // Even lower for fallback
         search_recency_filter: "month",
         stream: false
       })
