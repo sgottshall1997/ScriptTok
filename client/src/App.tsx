@@ -32,6 +32,9 @@ import GenerateContent from "@/pages/GenerateContent";
 import ClickTracking from "@/pages/ClickTracking";
 import BTBStatus from "@/pages/BTBStatus";
 import TrendingAIPicks from "@/pages/TrendingAIPicks";
+import CrossPlatformScheduling from "@/pages/CrossPlatformScheduling";
+import BulkContentGeneration from "@/pages/BulkContentGeneration";
+import PerformanceAnalytics from "@/pages/PerformanceAnalytics";
 
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
@@ -78,6 +81,12 @@ function Router() {
       <Route path="/click-tracking" component={ClickTracking} />
       <Route path="/btb-status" component={BTBStatus} />
       <Route path="/trending-ai-picks" component={TrendingAIPicks} />
+      
+      {/* BTB Framework Pages */}
+      <Route path="/cross-platform-scheduling" component={CrossPlatformScheduling} />
+      <Route path="/bulk-content-generation" component={BulkContentGeneration} />
+      <Route path="/performance-analytics" component={PerformanceAnalytics} />
+      
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>

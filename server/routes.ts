@@ -40,6 +40,9 @@ import metricsRouter from "./api/metrics";
 import affiliateNetworksRouter from "./api/affiliate-networks";
 import perplexityTrendsRouter from "./api/perplexity-trends";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
+import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
+import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
+import { recordAnalytics, getROIDashboard, getPerformanceTrends, getContentComparison, updateAnalyticsFromWebhook } from "./api/performance-analytics";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -465,6 +468,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // NEW FEATURES: Cross-platform scheduling, bulk generation, and performance analytics
+  
+  // Cross-Platform Scheduling
+  app.post('/api/scheduling/schedule-content', scheduleContent);
+  app.get('/api/scheduling/posts', getScheduledPosts);
+  app.post('/api/scheduling/process', processScheduledPosts);
+  
+  // Bulk Content Generation
+  app.post('/api/bulk/start-generation', startBulkGeneration);
+  app.get('/api/bulk/job/:jobId', getBulkJobStatus);
+  app.get('/api/bulk/jobs', getBulkJobs);
+  
+  // Performance Analytics & ROI Tracking
+  app.post('/api/analytics/record', recordAnalytics);
+  app.get('/api/analytics/dashboard', getROIDashboard);
+  app.get('/api/analytics/trends', getPerformanceTrends);
+  app.get('/api/analytics/comparison', getContentComparison);
+  app.post('/api/analytics/webhook', updateAnalyticsFromWebhook);
 
   const httpServer = createServer(app);
   return httpServer;

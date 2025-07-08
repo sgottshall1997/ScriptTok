@@ -379,6 +379,71 @@ export const clickEvents = pgTable("click_events", {
   clickedAt: timestamp("clicked_at").defaultNow().notNull(),
 });
 
+// Scheduled posts for cross-platform automation
+export const scheduledPosts = pgTable("scheduled_posts", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").notNull().references(() => contentGenerations.id, { onDelete: 'cascade' }),
+  platforms: text("platforms").array().notNull(), // ["tiktok", "instagram", "youtube"]
+  scheduledTime: timestamp("scheduled_time").notNull(),
+  status: text("status").notNull().default("pending"), // pending, processing, completed, failed
+  bulkJobId: text("bulk_job_id"), // For grouping bulk operations
+  makeWebhookUrl: text("make_webhook_url"), // Make.com webhook for automation
+  platformResults: jsonb("platform_results"), // Results from each platform
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Bulk content jobs for generating multiple variations
+export const bulkContentJobs = pgTable("bulk_content_jobs", {
+  id: serial("id").primaryKey(),
+  jobId: text("job_id").notNull().unique(),
+  productName: text("product_name").notNull(),
+  niche: text("niche").notNull(),
+  totalVariations: integer("total_variations").notNull(),
+  completedVariations: integer("completed_variations").default(0),
+  status: text("status").notNull().default("pending"), // pending, processing, completed, failed
+  platforms: text("platforms").array().notNull(),
+  tones: text("tones").array().notNull(),
+  templates: text("templates").array().notNull(),
+  scheduleAfterGeneration: boolean("schedule_after_generation").default(false),
+  scheduledTime: timestamp("scheduled_time"),
+  makeWebhookUrl: text("make_webhook_url"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// ROI Analytics and Performance Tracking
+export const performanceAnalytics = pgTable("performance_analytics", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").references(() => contentGenerations.id),
+  scheduledPostId: integer("scheduled_post_id").references(() => scheduledPosts.id),
+  platform: text("platform").notNull(),
+  // Engagement metrics
+  views: integer("views").default(0),
+  likes: integer("likes").default(0),
+  comments: integer("comments").default(0),
+  shares: integer("shares").default(0),
+  saves: integer("saves").default(0),
+  // Traffic metrics  
+  clicks: integer("clicks").default(0),
+  clickThroughRate: decimal("click_through_rate").default("0"),
+  // Revenue metrics
+  conversions: integer("conversions").default(0),
+  conversionRate: decimal("conversion_rate").default("0"),
+  revenue: decimal("revenue").default("0"),
+  commission: decimal("commission").default("0"),
+  roi: decimal("roi").default("0"),
+  // Cost metrics
+  adSpend: decimal("ad_spend").default("0"),
+  cpc: decimal("cpc").default("0"), // cost per click
+  cpm: decimal("cpm").default("0"), // cost per mille
+  // Time tracking
+  recordedAt: timestamp("recorded_at").defaultNow().notNull(),
+  dateRange: text("date_range"), // "2025-01-01_2025-01-07" for weekly reports
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Post metrics for performance tracking
 export const postMetrics = pgTable("post_metrics", {
   id: serial("id").primaryKey(),
@@ -810,3 +875,62 @@ export type InsertContentHook = z.infer<typeof insertContentHookSchema>;
 
 export type PlatformContent = typeof platformContent.$inferSelect;
 export type InsertPlatformContent = z.infer<typeof insertPlatformContentSchema>;
+
+// Insert schemas for new feature tables
+export const insertScheduledPostSchema = createInsertSchema(scheduledPosts).pick({
+  contentId: true,
+  platforms: true,
+  scheduledTime: true,
+  status: true,
+  bulkJobId: true,
+  makeWebhookUrl: true,
+  platformResults: true,
+  errorMessage: true,
+});
+
+export const insertBulkContentJobSchema = createInsertSchema(bulkContentJobs).pick({
+  jobId: true,
+  productName: true,
+  niche: true,
+  totalVariations: true,
+  completedVariations: true,
+  status: true,
+  platforms: true,
+  tones: true,
+  templates: true,
+  scheduleAfterGeneration: true,
+  scheduledTime: true,
+  makeWebhookUrl: true,
+});
+
+export const insertPerformanceAnalyticsSchema = createInsertSchema(performanceAnalytics).pick({
+  contentId: true,
+  scheduledPostId: true,
+  platform: true,
+  views: true,
+  likes: true,
+  comments: true,
+  shares: true,
+  saves: true,
+  clicks: true,
+  clickThroughRate: true,
+  conversions: true,
+  conversionRate: true,
+  revenue: true,
+  commission: true,
+  roi: true,
+  adSpend: true,
+  cpc: true,
+  cpm: true,
+  dateRange: true,
+});
+
+// Type exports for new feature tables
+export type ScheduledPost = typeof scheduledPosts.$inferSelect;
+export type InsertScheduledPost = z.infer<typeof insertScheduledPostSchema>;
+
+export type BulkContentJob = typeof bulkContentJobs.$inferSelect;
+export type InsertBulkContentJob = z.infer<typeof insertBulkContentJobSchema>;
+
+export type PerformanceAnalytics = typeof performanceAnalytics.$inferSelect;
+export type InsertPerformanceAnalytics = z.infer<typeof insertPerformanceAnalyticsSchema>;

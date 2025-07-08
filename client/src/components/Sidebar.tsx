@@ -26,7 +26,10 @@ import {
   Settings,
   History,
   TestTube,
-  Layers
+  Layers,
+  Package,
+  Clock,
+  DollarSign
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -56,6 +59,14 @@ const sidebarData: SidebarCategory[] = [
       { name: "Content History", href: "/history", icon: History },
       { name: "Analytics Dashboard", href: "/analytics", icon: BarChart3 },
       { name: "Content Calendar", href: "/content-calendar", icon: Calendar },
+    ]
+  },
+  {
+    name: "BTB Framework",
+    items: [
+      { name: "Cross-Platform Scheduling", href: "/cross-platform-scheduling", icon: Calendar },
+      { name: "Bulk Content Generation", href: "/bulk-content-generation", icon: Package },
+      { name: "Performance Analytics", href: "/performance-analytics", icon: DollarSign },
     ]
   },
   {
