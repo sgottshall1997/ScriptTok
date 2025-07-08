@@ -120,14 +120,9 @@ const EnhancedContentHistory = () => {
       combinedHistory.push(...dbHistoryConverted);
     }
     
-    // Add local storage history (these cannot be rated) - only if no database entries exist
-    const localHistory = ContentHistoryManager.getHistory();
-    if (combinedHistory.length === 0) {
-      combinedHistory.push(...localHistory);
-    } else {
-      // Add a few recent local entries for context, but prioritize database entries
-      combinedHistory.push(...localHistory.slice(0, 3));
-    }
+    // Only show database entries on this page since they support rating
+    // Local storage entries are shown on other pages but not here
+    console.log('🔧 DEBUG: Final combined history length:', combinedHistory.length);
     
     // Sort by timestamp (newest first)
     combinedHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
