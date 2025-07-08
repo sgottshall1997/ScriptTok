@@ -32,8 +32,16 @@ import { forceRefreshRouter } from "./api/force-refresh";
 import { amazonLinksRouter } from "./api/amazonLinks";
 import { testEnhancedPayloads } from "./api/test-enhanced-payloads";
 import { cookingPipeline } from "./services/cookingContentPipeline";
+import redirectRouter from "./api/redirect";
+import platformContentRouter from "./api/platform-content";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Redirect system for affiliate tracking
+  app.use('/api/redirect', redirectRouter);
+  app.use('/go', redirectRouter);
+  
+  // Platform-specific content generation
+  app.use('/api/platform-content', platformContentRouter);
   // Register API routes
   app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);

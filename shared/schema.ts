@@ -341,6 +341,78 @@ export const contentHistory = pgTable("content_history", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Click tracking for redirect links
+export const clickLogs = pgTable("click_logs", {
+  id: serial("id").primaryKey(),
+  slug: text("slug").notNull().unique(),
+  affiliateUrl: text("affiliate_url").notNull(),
+  product: text("product").notNull(),
+  niche: text("niche").notNull(),
+  platform: text("platform"), // instagram, tiktok, youtube, twitter, etc.
+  contentType: text("content_type"), // viral_hook, product_review, etc.
+  source: text("source"), // organic, paid, etc.
+  clicks: integer("clicks").notNull().default(0),
+  lastClickAt: timestamp("last_click_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Individual click events for detailed tracking
+export const clickEvents = pgTable("click_events", {
+  id: serial("id").primaryKey(),
+  slugId: integer("slug_id").notNull().references(() => clickLogs.id, { onDelete: 'cascade' }),
+  ipAddress: text("ip_address"),
+  userAgent: text("user_agent"),
+  referrer: text("referrer"),
+  clickedAt: timestamp("clicked_at").defaultNow().notNull(),
+});
+
+// Post metrics for performance tracking
+export const postMetrics = pgTable("post_metrics", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").references(() => contentGenerations.id),
+  slugId: integer("slug_id").references(() => clickLogs.id),
+  platform: text("platform").notNull(),
+  views: integer("views").default(0),
+  likes: integer("likes").default(0),
+  comments: integer("comments").default(0),
+  shares: integer("shares").default(0),
+  clicks: integer("clicks").default(0),
+  purchases: integer("purchases").default(0),
+  ctr: decimal("ctr"), // click-through rate
+  conversionRate: decimal("conversion_rate"),
+  aiScore: decimal("ai_score"), // AI-generated quality score
+  gptAnalysis: text("gpt_analysis"), // GPT feedback and suggestions
+  recordedAt: timestamp("recorded_at").defaultNow().notNull(),
+});
+
+// Hook variations for A/B testing
+export const contentHooks = pgTable("content_hooks", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").notNull().references(() => contentGenerations.id, { onDelete: 'cascade' }),
+  hookText: text("hook_text").notNull(),
+  viralityScore: decimal("virality_score"), // 0-1 GPT score for viral potential
+  clarityScore: decimal("clarity_score"), // 0-1 GPT score for clarity
+  emotionalScore: decimal("emotional_score"), // 0-1 GPT score for emotional impact
+  overallScore: decimal("overall_score"), // Combined weighted score
+  isSelected: boolean("is_selected").default(false), // Which hook was chosen
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Platform-specific content formatting
+export const platformContent = pgTable("platform_content", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").notNull().references(() => contentGenerations.id, { onDelete: 'cascade' }),
+  platform: text("platform").notNull(), // instagram, tiktok, youtube, twitter, threads
+  formattedContent: text("formatted_content").notNull(),
+  hashtags: text("hashtags").array(),
+  title: text("title"), // For YouTube
+  tags: text("tags").array(), // For YouTube
+  scheduledTime: timestamp("scheduled_time"),
+  publishedAt: timestamp("published_at"),
+  publishStatus: text("publish_status").default("draft"), // draft, scheduled, published, failed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Daily scraper cache for storing all scraper results
 export const dailyScraperCache = pgTable("daily_scraper_cache", {
   id: serial("id").primaryKey(),
@@ -653,3 +725,75 @@ export const insertContentHistorySchema = createInsertSchema(contentHistory).pic
 
 export type ContentHistory = typeof contentHistory.$inferSelect;
 export type InsertContentHistory = z.infer<typeof insertContentHistorySchema>;
+
+// Insert schemas for new tracking tables
+export const insertClickLogSchema = createInsertSchema(clickLogs).pick({
+  slug: true,
+  affiliateUrl: true,
+  product: true,
+  niche: true,
+  platform: true,
+  contentType: true,
+  source: true,
+});
+
+export const insertClickEventSchema = createInsertSchema(clickEvents).pick({
+  slugId: true,
+  ipAddress: true,
+  userAgent: true,
+  referrer: true,
+});
+
+export const insertPostMetricSchema = createInsertSchema(postMetrics).pick({
+  contentId: true,
+  slugId: true,
+  platform: true,
+  views: true,
+  likes: true,
+  comments: true,
+  shares: true,
+  clicks: true,
+  purchases: true,
+  ctr: true,
+  conversionRate: true,
+  aiScore: true,
+  gptAnalysis: true,
+});
+
+export const insertContentHookSchema = createInsertSchema(contentHooks).pick({
+  contentId: true,
+  hookText: true,
+  viralityScore: true,
+  clarityScore: true,
+  emotionalScore: true,
+  overallScore: true,
+  isSelected: true,
+});
+
+export const insertPlatformContentSchema = createInsertSchema(platformContent).pick({
+  contentId: true,
+  platform: true,
+  formattedContent: true,
+  hashtags: true,
+  title: true,
+  tags: true,
+  scheduledTime: true,
+  publishedAt: true,
+  publishStatus: true,
+});
+
+// Type exports for new tables
+export type ClickLog = typeof clickLogs.$inferSelect;
+export type InsertClickLog = z.infer<typeof insertClickLogSchema>;
+
+export type ClickEvent = typeof clickEvents.$inferSelect;
+export type InsertClickEvent = z.infer<typeof insertClickEventSchema>;
+
+export type PostMetric = typeof postMetrics.$inferSelect;
+export type InsertPostMetric = z.infer<typeof insertPostMetricSchema>;
+
+export type ContentHook = typeof contentHooks.$inferSelect;
+export type InsertContentHook = z.infer<typeof insertContentHookSchema>;
+
+export type PlatformContent = typeof platformContent.$inferSelect;
+export type InsertPlatformContent = z.infer<typeof insertPlatformContentSchema>;

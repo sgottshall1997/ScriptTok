@@ -15,6 +15,7 @@ import NicheSelector from "./NicheSelector";
 import AffiliateLink from "./AffiliateLink";
 import MultiPlatformContentOutput from "./MultiPlatformContentOutput";
 import { AmazonAffiliateDropdown } from "./AmazonAffiliateDropdown";
+import { PlatformSelector } from "./PlatformSelector";
 import { trackEvent } from "@/lib/analytics";
 
 interface ContentGeneratorProps {
@@ -47,7 +48,8 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
   const [productName, setProductName] = useState('');
   
   // Multi-platform content mapping state
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['instagram']);
+  const [showRedirectCreation, setShowRedirectCreation] = useState(false);
   const [platformContentMap, setPlatformContentMap] = useState<{
     [platform: string]: "video" | "photo" | "other";
   }>({});
@@ -282,94 +284,12 @@ const ContentGenerator: FC<ContentGeneratorProps> = ({
             />
           )}
 
-          {/* Multi-Platform Content Targeting Section */}
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg shadow-sm p-4 border border-green-200">
-            <h3 className="text-sm font-medium text-green-700 mb-3">🎯 Multi-Platform Content Targeting</h3>
-            
-            {/* Platform Selection with Content Type Mapping */}
-            <div className="mb-4">
-              <label className="block text-sm font-medium text-green-700 mb-2">
-                Select Platforms & Content Types
-              </label>
-              <div className="space-y-3">
-                {availablePlatforms.map((platform) => (
-                  <div key={platform} className="flex items-center justify-between p-3 bg-white rounded-lg border border-green-100">
-                    <label className="flex items-center space-x-2 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={selectedPlatforms.includes(platform)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedPlatforms([...selectedPlatforms, platform]);
-                            // Default to photo content type when platform is selected
-                            setPlatformContentMap(prev => ({ ...prev, [platform]: "photo" }));
-                          } else {
-                            setSelectedPlatforms(selectedPlatforms.filter(p => p !== platform));
-                            setPlatformContentMap(prev => {
-                              const newMap = { ...prev };
-                              delete newMap[platform];
-                              return newMap;
-                            });
-                          }
-                        }}
-                        className="w-4 h-4 text-green-600 bg-gray-100 border-gray-300 rounded focus:ring-green-500 focus:ring-2"
-                      />
-                      <span className="text-sm font-medium text-gray-700">{platform}</span>
-                    </label>
-                    
-                    {/* Content Type Selector for Selected Platform */}
-                    {selectedPlatforms.includes(platform) && (
-                      <div className="flex space-x-2">
-                        {["video", "photo", "other"].map((type) => (
-                          <label key={type} className="flex items-center space-x-1 cursor-pointer">
-                            <input
-                              type="radio"
-                              name={`contentType-${platform}`}
-                              value={type}
-                              checked={platformContentMap[platform] === type}
-                              onChange={() => {
-                                setPlatformContentMap(prev => ({ ...prev, [platform]: type as "video" | "photo" | "other" }));
-                              }}
-                              className="w-3 h-3 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-1"
-                            />
-                            <span className="text-xs text-gray-600">
-                              {type === "video" ? "🎬" : type === "photo" ? "📸" : "📝"}
-                            </span>
-                          </label>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-              
-              {selectedPlatforms.length === 0 && (
-                <p className="text-xs text-orange-600 mt-1">⚠️ Select at least one platform</p>
-              )}
-            </div>
-
-            {/* Video Duration Options - appears when any platform has video content */}
-            {Object.values(platformContentMap).includes("video") && (
-              <div className="mt-4 p-3 bg-white rounded-lg border border-green-200">
-                <label htmlFor="video-duration" className="block text-sm font-medium text-green-700 mb-2">
-                  📹 Video Duration (for video content)
-                </label>
-                <Select value={videoDuration} onValueChange={setVideoDuration}>
-                  <SelectTrigger id="video-duration" className="w-full border-green-200 focus:border-green-400 focus:ring-2 focus:ring-green-100">
-                    <SelectValue placeholder="Select duration" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="30">30 seconds</SelectItem>
-                    <SelectItem value="45">45 seconds</SelectItem>
-                    <SelectItem value="60">60 seconds</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="mt-1 text-xs text-green-600">
-                  ✨ Will generate video script and caption with hashtags for each selected platform
-                </p>
-              </div>
-            )}
-          </div>
+          {/* Platform Selection */}
+          <PlatformSelector
+            selectedPlatforms={selectedPlatforms}
+            onPlatformChange={setSelectedPlatforms}
+            className="mb-4"
+          />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             

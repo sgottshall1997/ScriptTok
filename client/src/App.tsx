@@ -29,6 +29,7 @@ import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
 import GenerateContent from "@/pages/GenerateContent";
+import ClickTracking from "@/pages/ClickTracking";
 
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
@@ -70,6 +71,7 @@ function Router() {
       <Route path="/emoji-hashtag-test" component={EmojiHashtagTestPage} />
       <Route path="/api-integration-hub" component={ApiIntegrationHubPage} />
       <Route path="/webhook-settings" component={WebhookSettings} />
+      <Route path="/click-tracking" component={ClickTracking} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
