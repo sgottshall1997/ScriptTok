@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link, useLocation } from "wouter";
-import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw } from "lucide-react";
+import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw, Sparkles } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import DailyContentShowcase from "@/components/DailyContentShowcase";
 import DailyBatchButton from "@/components/DailyBatchButton";
@@ -197,6 +197,13 @@ const Dashboard = () => {
                 </Badge>
               )}
             </div>
+            <Link href="/trending-ai-picks">
+              <Button variant="outline" className="flex items-center gap-2 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200 hover:from-purple-100 hover:to-blue-100">
+                <TrendingUp className="h-4 w-4 text-purple-600" />
+                AI Trending Picks
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            </Link>
             <div className="flex items-center gap-4">
               <Button 
                 variant="outline" 
