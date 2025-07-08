@@ -206,28 +206,73 @@ Respond with JSON array only:`;
       throw new Error('No content received from Perplexity API');
     }
 
-    console.log(`📊 Perplexity raw response for ${niche}:`, content.substring(0, 500));
-
-    // Parse and filter products
-    const rawProducts = parsePerplexityProductList(content, niche);
-    const validProducts = rawProducts.filter(product => {
-      const validation = validateProductQuality(product.title);
-      if (!validation.isValid) {
-        console.log(`🚫 Filtered out "${product.title}": ${validation.reason}`);
-        return false;
+    console.log(`📝 Parsing JSON response for ${niche}...`);
+    console.log(`📊 Raw response preview: ${content.substring(0, 200)}...`);
+    
+    try {
+      // Clean and parse JSON response
+      let cleanContent = content.trim();
+      
+      // Remove any non-JSON text before/after the array
+      const jsonMatch = cleanContent.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        cleanContent = jsonMatch[0];
       }
-      return true;
-    });
-    
-    console.log(`✅ Found ${validProducts.length} valid ${niche} products from Perplexity (${rawProducts.length} total, ${rawProducts.length - validProducts.length} filtered)`);
-    
-    // If we have too few valid products, try a retry with different query
-    if (validProducts.length < 2) {
-      console.log(`🔄 Retrying ${niche} query with different approach...`);
-      return await retryWithAlternativeQuery(niche);
+      
+      const parsedData = JSON.parse(cleanContent);
+      
+      if (!Array.isArray(parsedData)) {
+        throw new Error('Response is not a JSON array');
+      }
+      
+      const products: InsertTrendingProduct[] = parsedData.map((item: any) => ({
+        title: item.product || item.name || item.title || 'Unknown Product',
+        source: 'perplexity',
+        niche,
+        mentions: typeof item.mentions === 'number' ? item.mentions : 100000
+      }));
+      
+      // Apply quality filtering
+      const validProducts = products.filter(product => {
+        const validation = validateProductQuality(product.title);
+        if (!validation.isValid) {
+          console.log(`🚫 Filtered out "${product.title}": ${validation.reason}`);
+          return false;
+        }
+        return true;
+      });
+
+      console.log(`✅ Found ${validProducts.length} valid ${niche} products from JSON (${products.length} total, ${products.length - validProducts.length} filtered)`);
+
+      if (validProducts.length === 0) {
+        console.log(`⚠️ No valid products after filtering for ${niche}, trying alternative query...`);
+        return await retryWithAlternativeQuery(niche);
+      }
+
+      return validProducts;
+      
+    } catch (jsonError) {
+      console.error(`❌ Failed to parse JSON response for ${niche}:`, jsonError);
+      console.log(`📝 Falling back to text parsing...`);
+      
+      // Fallback to old parsing method if JSON fails
+      const rawProducts = parsePerplexityProductList(content, niche);
+      const validProducts = rawProducts.filter(product => {
+        const validation = validateProductQuality(product.title);
+        if (!validation.isValid) {
+          console.log(`🚫 Filtered out "${product.title}": ${validation.reason}`);
+          return false;
+        }
+        return true;
+      });
+      
+      if (validProducts.length < 2) {
+        console.log(`🔄 Retrying ${niche} query with different approach...`);
+        return await retryWithAlternativeQuery(niche);
+      }
+      
+      return validProducts;
     }
-    
-    return validProducts;
 
   } catch (error) {
     console.error(`❌ Perplexity API error for ${niche}:`, error);

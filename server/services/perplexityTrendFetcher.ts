@@ -108,21 +108,30 @@ export async function pullPerplexityTrends(): Promise<{ success: boolean; messag
       const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
       const currentYear = new Date().getFullYear();
       
-      const prompt = `Find the top 3 trending ${niche} products on Amazon for ${currentMonth} ${currentYear} that are viral on TikTok or Instagram.
+      const prompt = `Find 3 trending ${niche} products on Amazon for ${currentMonth} ${currentYear} that are viral on TikTok/Instagram.
 
-CRITICAL: Provide ONLY real product data. No templates, headers, or format examples.
+CRITICAL: Respond with ONLY a JSON array. No text before or after.
 
-GOOD EXAMPLES:
-Fenty Beauty Gloss Bomb | Fenty Beauty | 890,000 | Rihanna's brand trending on TikTok
-Nike Air Force 1 Low White | Nike | 1,450,000 | Classic sneaker viral comeback
-Stanley Adventure Quencher 40oz | Stanley | 1,200,000 | Hydration trend on social media
+Required JSON format:
+[
+  {"product": "Specific Product Name", "brand": "Brand Name", "mentions": 650000, "reason": "Why trending"},
+  {"product": "Specific Product Name", "brand": "Brand Name", "mentions": 450000, "reason": "Why trending"},
+  {"product": "Specific Product Name", "brand": "Brand Name", "mentions": 350000, "reason": "Why trending"}
+]
 
-BAD EXAMPLES (DO NOT USE):
-- "Product Name | Brand | Mentions | Reason" (template)
-- "Trending Product | Brand Name | Count | Why" (generic)
-- "Name | Brand | Social Mentions | Why Tre" (cut-off template)
+Examples (DON'T copy these exact products):
+[
+  {"product": "Stanley Adventure Quencher 40oz", "brand": "Stanley", "mentions": 1200000, "reason": "Viral hydration trend"},
+  {"product": "CeraVe Foaming Facial Cleanser", "brand": "CeraVe", "mentions": 850000, "reason": "Dermatologist recommended"}
+]
 
-Provide 3 REAL ${niche} products in format: ProductName | BrandName | MentionCount | TrendingReason`;
+Requirements:
+- Real products with specific names/models only
+- Actual brand names (Nike, Apple, CeraVe, Stanley, etc.)
+- Mentions: 50,000-2,000,000 range
+- Brief reason (max 6 words)
+
+JSON array only:`;
 
       const response = await fetch(PERPLEXITY_API_URL, {
         method: 'POST',
@@ -135,7 +144,7 @@ Provide 3 REAL ${niche} products in format: ProductName | BrandName | MentionCou
           messages: [
             {
               role: 'system',
-              content: 'You are an expert product research analyst. Your responses must contain ONLY real product data with specific brand names and product models. Never include templates, headers, placeholders, or format examples in your response.'
+              content: 'You are a product research API. Return ONLY valid JSON arrays with real product data. Never include explanatory text, templates, or format examples. All products must be real items with specific brand names.'
             },
             {
               role: 'user',
@@ -171,19 +180,71 @@ Provide 3 REAL ${niche} products in format: ProductName | BrandName | MentionCou
         continue;
       }
 
-      console.log(`📝 Parsing response for ${niche}...`);
-      const rawProducts = parsePerplexityResponse(content, niche);
+      console.log(`📝 Parsing JSON response for ${niche}...`);
       
-      // Apply quality filtering
-      const validProducts = rawProducts.filter(product => {
-        const validation = validateProductQuality(product.productName);
-        if (!validation.isValid) {
-          console.log(`🚫 Filtered out "${product.productName}": ${validation.reason}`);
-          totalFiltered++;
-          return false;
+      let validProducts: any[] = [];
+      
+      try {
+        // Clean and parse JSON response
+        let cleanContent = content.trim();
+        
+        // Remove any non-JSON text before/after the array
+        const jsonMatch = cleanContent.match(/\[[\s\S]*\]/);
+        if (jsonMatch) {
+          cleanContent = jsonMatch[0];
         }
-        return true;
-      });
+        
+        const parsedData = JSON.parse(cleanContent);
+        
+        if (!Array.isArray(parsedData)) {
+          throw new Error('Response is not a JSON array');
+        }
+        
+        const rawProducts = parsedData.map((item: any) => ({
+          productName: item.product || item.name || item.title || 'Unknown Product',
+          mentions: typeof item.mentions === 'number' ? item.mentions : 100000,
+          source: 'perplexity',
+          niche,
+          viralMetric: item.mentions || 100000
+        }));
+        
+        // Apply quality filtering
+        validProducts = rawProducts.filter(product => {
+          const validation = validateProductQuality(product.productName);
+          if (!validation.isValid) {
+            console.log(`🚫 Filtered out "${product.productName}": ${validation.reason}`);
+            totalFiltered++;
+            return false;
+          }
+          return true;
+        });
+        
+        console.log(`✅ JSON parsing successful for ${niche}: ${validProducts.length} valid products`);
+        
+      } catch (jsonError) {
+        console.error(`❌ JSON parsing failed for ${niche}, falling back to text parsing:`, jsonError);
+        const rawProducts = parsePerplexityResponse(content, niche);
+        
+        validProducts = rawProducts.filter(product => {
+          const validation = validateProductQuality(product.productName);
+          if (!validation.isValid) {
+            console.log(`🚫 Filtered out "${product.productName}": ${validation.reason}`);
+            totalFiltered++;
+            return false;
+          }
+          return true;
+        });
+        
+        console.log(`✅ Text parsing fallback for ${niche}: ${validProducts.length} valid products`);
+      }
+      
+      // Ensure validProducts is always an array before iteration
+      if (!Array.isArray(validProducts)) {
+        console.error(`❌ validProducts is not an array for ${niche}:`, typeof validProducts);
+        validProducts = [];
+      }
+      
+      console.log(`✅ Ready to store ${validProducts.length} valid ${niche} products`);
       
       // Store valid products in database
       for (const product of validProducts) {
@@ -191,7 +252,7 @@ Provide 3 REAL ${niche} products in format: ProductName | BrandName | MentionCou
           await db.insert(trendingProducts).values({
             title: product.productName,
             source: 'perplexity',
-            mentions: extractNumericValue(product.viralMetric),
+            mentions: typeof product.viralMetric === 'number' ? product.viralMetric : extractNumericValue(product.viralMetric),
             niche: product.niche,
             dataSource: 'perplexity'
           });
