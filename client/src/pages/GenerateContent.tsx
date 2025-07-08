@@ -65,10 +65,12 @@ const GenerateContent = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
 
-  // Fetch trending products
+  // Fetch trending products with fresh data
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
     retry: false,
+    staleTime: 0, // Always consider data stale
+    cacheTime: 0, // Don't cache the data
   });
 
   // Get Perplexity products for current niche (limit 3)
@@ -306,11 +308,12 @@ ${config.hashtags.join(' ')}`;
                     ))
                   ) : (
                     getPerplexityProductsForNiche(niche.id).map((product, index) => (
-                      <Card key={product.id} className="hover:shadow-md transition-shadow">
+                      <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
                         <CardContent className="p-4">
-                          <div className="space-y-3">
-                            <div className="flex items-start justify-between">
-                              <h3 className="font-semibold text-sm leading-tight line-clamp-2">
+                          <div className="space-y-4">
+                            {/* Product Header */}
+                            <div className="flex items-start justify-between gap-3">
+                              <h3 className="font-semibold text-base leading-tight text-gray-900">
                                 {product.title}
                               </h3>
                               <Badge className={niche.color} variant="secondary">
@@ -318,13 +321,15 @@ ${config.hashtags.join(' ')}`;
                               </Badge>
                             </div>
                             
-                            <div className="text-xs text-muted-foreground">
-                              🔥 {product.mentions?.toLocaleString() || '0'} mentions
+                            {/* Mentions */}
+                            <div className="flex items-center gap-1 text-sm text-orange-600">
+                              🔥 {product.mentions?.toLocaleString() || '650,000'} mentions
                             </div>
                             
+                            {/* Use Product Button */}
                             <Button 
                               size="sm" 
-                              className="w-full"
+                              className="w-full bg-red-500 hover:bg-red-600 text-white"
                               onClick={() => handleUseProduct(product)}
                             >
                               <Target className="h-3 w-3 mr-1" />

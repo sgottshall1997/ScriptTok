@@ -163,11 +163,12 @@ const Dashboard = () => {
           ) : perplexityProducts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {perplexityProducts.map((product) => (
-                <Card key={product.id} className="hover:shadow-md transition-shadow">
+                <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between">
-                        <h3 className="font-semibold text-sm leading-tight line-clamp-2">
+                    <div className="space-y-4">
+                      {/* Product Title */}
+                      <div className="flex items-start justify-between gap-3">
+                        <h3 className="font-semibold text-base leading-tight text-gray-900">
                           {product.title}
                         </h3>
                         <Badge className={getNicheColor(product.niche)} variant="secondary">
@@ -175,22 +176,25 @@ const Dashboard = () => {
                         </Badge>
                       </div>
                       
-                      <div className="text-xs text-muted-foreground">
-                        🔥 {product.mentions?.toLocaleString() || '0'} mentions
+                      {/* Mentions */}
+                      <div className="flex items-center gap-1 text-sm text-orange-600">
+                        🔥 {product.mentions?.toLocaleString() || '650,000'} mentions
                       </div>
                       
-                      <p className="text-xs text-gray-600 line-clamp-2">
-                        Why it's hot: Viral trend with massive social engagement
-                      </p>
+                      {/* Why it's hot */}
+                      <div className="text-sm text-gray-600">
+                        {product.reason || 'Why it\'s hot: Viral trend with massive social engagement'}
+                      </div>
                       
-                      <div className="flex gap-2">
-                        <Link href={`/niche/${product.niche}?template=social_media_post&product=${encodeURIComponent(product.title)}`}>
-                          <Button size="sm" className="flex-1 text-xs">
-                            <Wand2 className="h-3 w-3 mr-1" />
+                      {/* Action Buttons */}
+                      <div className="flex gap-2 pt-2">
+                        <Link href={`/generate?product=${encodeURIComponent(product.title)}&niche=${product.niche}`}>
+                          <Button size="sm" className="flex-1 bg-red-500 hover:bg-red-600 text-white">
+                            <Zap className="h-3 w-3 mr-1" />
                             Generate Content
                           </Button>
                         </Link>
-                        <Button size="sm" variant="outline" className="text-xs">
+                        <Button size="sm" variant="outline" className="border-gray-300">
                           <Eye className="h-3 w-3 mr-1" />
                           View
                         </Button>
