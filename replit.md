@@ -284,6 +284,7 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Database migration to add new content_history fields for comprehensive tracking
   - ✅ Individual entry deletion with confirmation and bulk "Clear All" functionality
   - ✅ Enhanced sidebar navigation with "Enhanced Content History" link for easy access
+  - ✅ Removed original content history tab and consolidated to single enhanced version at /content-history
 
 ## User Preferences
 

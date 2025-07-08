@@ -56,8 +56,7 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "Content Management",
     items: [
-      { name: "Content History", href: "/history", icon: History },
-      { name: "Enhanced Content History", href: "/content-history", icon: FileText },
+      { name: "Content History", href: "/content-history", icon: History },
       { name: "Analytics Dashboard", href: "/analytics", icon: BarChart3 },
       { name: "Content Calendar", href: "/content-calendar", icon: Calendar },
     ]
