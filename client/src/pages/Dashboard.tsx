@@ -382,36 +382,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* 4️⃣ Stats Summary Strip */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-orange-600">{totalProducts}</div>
-            <div className="text-xs text-muted-foreground">🔥 Trending Products</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-blue-600">{activeNiches}</div>
-            <div className="text-xs text-muted-foreground">🧠 Niches Active</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-green-600">2,400</div>
-            <div className="text-xs text-muted-foreground">✍️ AI Scripts Generated</div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardContent className="p-4 text-center">
-            <div className="text-2xl font-bold text-purple-600">97%</div>
-            <div className="text-xs text-muted-foreground">✅ Success Rate</div>
-          </CardContent>
-        </Card>
-      </div>
+
 
       {/* 5️⃣ Daily Content Showcase */}
       <Card>
