@@ -6,23 +6,20 @@ export const UNIVERSAL_TEMPLATE_TYPES = [
   "short_video",        // Short-Form Video Script (TikTok, Reels, YT Shorts)
   "influencer_caption", // Influencer Caption (with hashtags, emojis, CTAs)
   "product_comparison", // Product Comparison (X vs Y, Pros/Cons breakdown)
-  "routine_kit",        // "Routine" or "Kit" Builder (Bundles or usage flows)
   "bullet_points",      // Bullet-Point Summary (for newsletters or carousel posts)
-  "trending_explainer", // "Why It's Trending" Explainer
-  "buyer_persona",      // Buyer Persona Targeting (Gen Z, moms, etc.)
-  "affiliate_email"     // Affiliate Email Blurb (1-2 paragraph product promo)
+  "review_style",       // Honest review with pros, cons, and rating
+  "tutorial_guide",     // Step-by-step instructional content
+  "trending_news",      // Current events and trending topics
+  "surprise_me"         // Random template selection
 ] as const;
 
 // Beauty & Personal Care specific templates
 export const BEAUTY_TEMPLATE_TYPES = [
   "beauty_routine",     // "Morning & Night Beauty Routine" Templates
-  "derm_approved",      // "Dermatologist-Approved" TikTok Skits
-  "transformation",     // "Before & After Transformation" Captions
-  "skin_type_list",     // "5 Must-Haves for [Skin Type]" Listicles
-  "dupe_alert",         // "Dupe Alert" Product Comparison
-  "makeup_tutorial",    // "Get Ready With Me" Makeup Tutorials
-  "haircare_routine",   // "Hair Care Routine" Templates
-  "grooming_guide"      // "Personal Care & Grooming Guide"
+  "expert_approved",    // "Dermatologist-Approved" TikTok Skits
+  "transformation_story", // "Before & After Transformation" Captions
+  "product_type_list",  // "5 Must-Haves for [Skin Type]" Listicles
+  "dupe_alert"          // "Dupe Alert" Product Comparison
 ] as const;
 
 // Supplements & Fitness specific templates
@@ -43,13 +40,13 @@ export const TECH_TEMPLATE_TYPES = [
   "hidden_features"     // "Hidden Features" Carousel
 ] as const;
 
-// Home & Kitchen specific templates
-export const HOME_TEMPLATE_TYPES = [
-  "pinterest_style",    // "Pinterest-Style" Descriptions
-  "product_recipe",     // "Recipe Featuring Product"
-  "why_switched",       // "Why I Switched" Personal Narrative
-  "amazon_finds",       // "Amazon Finds Under $50" Captions
-  "kitchen_must_haves"  // "Kitchen Must-Haves" Blog Listicles
+// Food & Kitchen specific templates  
+export const FOOD_TEMPLATE_TYPES = [
+  "recipe_featuring",   // "Recipe Featuring Product"
+  "kitchen_must_haves", // Essential kitchen tools and gadgets
+  "meal_prep_guide",    // Weekly meal preparation tips and tools
+  "food_trend_analysis", // Analysis of current food trends
+  "budget_cooking"      // Affordable recipes and money-saving tips
 ] as const;
 
 // Pet Products specific templates
@@ -104,7 +101,7 @@ export const TEMPLATE_TYPES = [
   ...BEAUTY_TEMPLATE_TYPES,
   ...FITNESS_TEMPLATE_TYPES,
   ...TECH_TEMPLATE_TYPES,
-  ...HOME_TEMPLATE_TYPES,
+  ...FOOD_TEMPLATE_TYPES,
   ...PET_TEMPLATE_TYPES,
   ...FASHION_TEMPLATE_TYPES,
   ...OUTDOOR_TEMPLATE_TYPES,
