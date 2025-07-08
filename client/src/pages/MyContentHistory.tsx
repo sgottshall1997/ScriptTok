@@ -54,8 +54,8 @@ const MyContentHistory: React.FC = () => {
   const { toast } = useToast();
   const [expandedCards, setExpandedCards] = useState<Record<number, boolean>>({});
   const [copiedCards, setCopiedCards] = useState<Record<number, boolean>>({});
-  const [selectedNiche, setSelectedNiche] = useState<string>('');
-  const [selectedTone, setSelectedTone] = useState<string>('');
+  const [selectedNiche, setSelectedNiche] = useState<string>('all');
+  const [selectedTone, setSelectedTone] = useState<string>('all');
 
   // Fetch history data
   const { data, isLoading, isError } = useQuery<ContentHistoryResponse>({
@@ -103,8 +103,8 @@ const MyContentHistory: React.FC = () => {
 
   // Filter history based on selected niche and tone
   const filteredHistory = data?.history.filter(item => {
-    const matchesNiche = !selectedNiche || item.niche === selectedNiche;
-    const matchesTone = !selectedTone || item.tone === selectedTone;
+    const matchesNiche = selectedNiche === 'all' || item.niche === selectedNiche;
+    const matchesTone = selectedTone === 'all' || item.tone === selectedTone;
     return matchesNiche && matchesTone;
   }) || [];
 
@@ -143,10 +143,10 @@ const MyContentHistory: React.FC = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Niches</SelectLabel>
-                    <SelectItem value="">All Niches</SelectItem>
+                    <SelectItem value="all">All Niches</SelectItem>
                     {uniqueNiches.map(niche => (
-                      <SelectItem key={niche} value={niche}>
-                        {niche.charAt(0).toUpperCase() + niche.slice(1)}
+                      <SelectItem key={niche} value={niche || "unknown"}>
+                        {niche ? niche.charAt(0).toUpperCase() + niche.slice(1) : "Unknown"}
                       </SelectItem>
                     ))}
                   </SelectGroup>
@@ -162,10 +162,10 @@ const MyContentHistory: React.FC = () => {
                 <SelectContent>
                   <SelectGroup>
                     <SelectLabel>Tones</SelectLabel>
-                    <SelectItem value="">All Tones</SelectItem>
+                    <SelectItem value="all">All Tones</SelectItem>
                     {uniqueTones.map(tone => (
-                      <SelectItem key={tone} value={tone}>
-                        {tone.charAt(0).toUpperCase() + tone.slice(1)}
+                      <SelectItem key={tone} value={tone || "unknown"}>
+                        {tone ? tone.charAt(0).toUpperCase() + tone.slice(1) : "Unknown"}
                       </SelectItem>
                     ))}
                   </SelectGroup>

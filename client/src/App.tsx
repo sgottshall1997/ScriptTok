@@ -9,6 +9,7 @@ import Home from "@/pages/home";
 
 import Dashboard from "@/pages/Dashboard";
 import MyContentHistory from "@/pages/MyContentHistory";
+import EnhancedContentHistory from "@/pages/EnhancedContentHistory";
 import AnalyticsDashboard from "@/pages/AnalyticsDashboard";
 import TemplateExplorerPage from "@/pages/template-explorer";
 import AboutPage from "@/pages/about";
@@ -59,6 +60,7 @@ function Router() {
 
       <Route path="/templates" component={TemplateExplorerPage} />
       <Route path="/history" component={MyContentHistory} />
+      <Route path="/content-history" component={EnhancedContentHistory} />
       <Route path="/analytics" component={AnalyticsDashboard} />
       {/* Static pages */}
       <Route path="/about" component={AboutPage} />

@@ -328,18 +328,24 @@ export const trendingEmojisHashtags = pgTable("trending_emojis_hashtags", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Content generation history for tracking and analytics
+// Enhanced Content generation history for tracking and analytics
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),
   userId: integer("user_id"), // Optional user reference
+  sessionId: text("session_id"), // For preventing duplicates within sessions
   niche: text("niche").notNull(),
   contentType: text("content_type").notNull(), // Maps to templateType
   tone: text("tone").notNull(),
   productName: text("product_name").notNull(),
   promptText: text("prompt_text").notNull(),
   outputText: text("output_text").notNull(),
+  platformsSelected: jsonb("platforms_selected"), // array of platforms like ["TikTok", "Instagram"]
+  generatedOutput: jsonb("generated_output"), // full JSON response from content generation
+  affiliateLink: text("affiliate_link"), // generated affiliate link if any
+  viralInspo: jsonb("viral_inspo"), // viral inspiration data if fetched
   modelUsed: text("model_used").notNull(),
   tokenCount: integer("token_count").notNull(),
+  fallbackLevel: text("fallback_level"), // For tracking AI fallbacks
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

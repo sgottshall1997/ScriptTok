@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 
 
 import { Input } from "@/components/ui/input";
@@ -291,6 +292,26 @@ ${config.hashtags.join(' ')}`;
           };
           
           setGeneratedContent(contentData);
+          
+          // Save to content generation history
+          ContentHistoryManager.saveEntry({
+            productName: selectedProduct,
+            niche: selectedNiche,
+            platformsSelected: selectedPlatforms,
+            templateUsed: templateType,
+            tone: tone,
+            generatedOutput: {
+              content: result.data.content,
+              hook: result.data.customHook || '',
+              platform: selectedPlatforms[0] || 'tiktok',
+              niche: selectedNiche,
+              hashtags: result.data.hashtags || [],
+              affiliateLink: smartRedirectUrl || '',
+              viralInspo: viralInspo || undefined
+            },
+            sessionId: `session_${Date.now()}`
+          });
+          
           toast({
             title: "Content Generated!",
             description: `Your ${templateType} content is ready`,
