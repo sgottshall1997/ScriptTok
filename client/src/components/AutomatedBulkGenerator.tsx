@@ -359,6 +359,47 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </div>
         </div>
 
+        {/* Preview Products Button */}
+        <div className="flex justify-center">
+          <Button 
+            onClick={previewProductsForNiches}
+            disabled={selectedNiches.length === 0 || !trendingProducts}
+            variant="outline"
+            size="lg"
+            className="w-full md:w-auto border-blue-300 text-blue-700 hover:bg-blue-50"
+          >
+            <Eye className="mr-2 h-5 w-5" />
+            Preview Selected Products ({selectedNiches.length} niches)
+          </Button>
+        </div>
+
+        {/* Products Preview */}
+        {showPreview && Object.keys(previewProducts).length > 0 && (
+          <Card className="border-blue-200 bg-blue-50">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <ShoppingCart className="h-4 w-4 text-blue-600" />
+                <h4 className="font-semibold text-blue-800">Products to be Selected</h4>
+              </div>
+              <div className="space-y-2">
+                {Object.entries(previewProducts).map(([niche, product]) => (
+                  <div key={niche} className="flex items-center justify-between p-2 bg-white rounded border">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="outline" className="text-xs">
+                        {niche}
+                      </Badge>
+                      <span className="text-sm font-medium">{product.title}</span>
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {product.mentions?.toLocaleString()} mentions
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         <Separator />
 
         {/* Content Settings */}
@@ -497,46 +538,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </CollapsibleContent>
         </Collapsible>
 
-        {/* Preview Products Button */}
-        <div className="flex justify-center pt-4">
-          <Button 
-            onClick={previewProductsForNiches}
-            disabled={selectedNiches.length === 0 || !trendingProducts}
-            variant="outline"
-            size="lg"
-            className="w-full md:w-auto border-blue-300 text-blue-700 hover:bg-blue-50 mb-3"
-          >
-            <Eye className="mr-2 h-5 w-5" />
-            Preview Selected Products ({selectedNiches.length} niches)
-          </Button>
-        </div>
 
-        {/* Products Preview */}
-        {showPreview && Object.keys(previewProducts).length > 0 && (
-          <Card className="border-blue-200 bg-blue-50 mb-4">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <ShoppingCart className="h-4 w-4 text-blue-600" />
-                <h4 className="font-semibold text-blue-800">Products to be Selected</h4>
-              </div>
-              <div className="space-y-2">
-                {Object.entries(previewProducts).map(([niche, product]) => (
-                  <div key={niche} className="flex items-center justify-between p-2 bg-white rounded border">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {niche}
-                      </Badge>
-                      <span className="text-sm font-medium">{product.title}</span>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {product.mentions?.toLocaleString()} mentions
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
         {/* Start Generation Button */}
         <div className="flex justify-center pt-4">
