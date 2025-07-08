@@ -26,7 +26,8 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     platforms: ['tiktok', 'instagram'],
     useSmartStyle: false,
     generateAffiliateLinks: false,
-    affiliateId: 'sgottshall107-20'
+    affiliateId: 'sgottshall107-20',
+    sendToMakeWebhook: true
   });
 
   const NICHES = ['beauty', 'tech', 'fitness', 'fashion', 'food', 'travel', 'pets'];

@@ -12,6 +12,7 @@ import { eq, desc, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { generateContent } from '../services/contentGenerator';
 import { generatePlatformSpecificContent, generatePlatformCaptions } from '../services/platformContentGenerator';
+import { WebhookService } from '../services/webhookService';
 
 // Import viral inspiration function from viral-inspiration API
 async function fetchViralVideoInspiration(productName: string, niche: string) {
@@ -421,6 +422,44 @@ async function processAutomatedBulkJob(
                   });
 
                   console.log(`✅ Saved content to history for ${productName} (${niche})`);
+                  
+                  // Send to Make.com webhook if platforms are configured
+                  if (platforms && platforms.length > 0 && enhancedPlatformCaptions) {
+                    try {
+                      console.log(`📤 Sending bulk content to Make.com for ${productName} on platforms: ${platforms.join(', ')}`);
+                      const webhookService = new WebhookService();
+                      
+                      // Create platform content object
+                      const platformContent: any = {};
+                      platforms.forEach(platform => {
+                        platformContent[platform] = {
+                          caption: enhancedPlatformCaptions[platform] || platformCaptions[`${platform}Caption`] || '',
+                          script: outputText,
+                          type: 'bulk_content',
+                          postInstructions: `Auto-post this ${platform} content for ${productName} from bulk generation`,
+                          hashtags: viralInspiration?.hashtags || [`#${niche}`, '#trending']
+                        };
+                      });
+                      
+                      await webhookService.sendMultiPlatformContent({
+                        platformContent,
+                        platformSchedules: {},
+                        metadata: {
+                          product: productName,
+                          niche,
+                          tone,
+                          templateType: template,
+                          jobType: 'automated_bulk',
+                          jobId: savedContent.bulkJobId,
+                          affiliateUrl: affiliateLink
+                        }
+                      });
+                      console.log(`✅ Bulk content sent to Make.com for ${productName}`);
+                    } catch (webhookError) {
+                      console.error(`⚠️ Webhook failed for ${productName}:`, webhookError);
+                      // Continue processing even if webhook fails
+                    }
+                  }
                 } catch (historyError) {
                   console.error('Error saving to content history:', historyError);
                   // Continue with bulk generation even if history save fails

@@ -6,7 +6,7 @@ import { generateContent, estimateVideoDuration } from "../services/contentGener
 import { generatePlatformCaptions } from "../services/platformContentGenerator";
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema, trendingProducts } from "@shared/schema";
-import { sendWebhookNotification } from "../services/webhookService";
+import { sendWebhookNotification, WebhookService } from "../services/webhookService";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
@@ -193,6 +193,43 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     });
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
+    
+    // Send to Make.com webhook if platforms are selected
+    if (config.platforms && config.platforms.length > 0 && platformCaptions) {
+      try {
+        console.log(`📤 Sending content to Make.com for platforms: ${config.platforms.join(', ')}`);
+        const webhookService = new WebhookService();
+        
+        // Create platform content object
+        const platformContent: any = {};
+        config.platforms.forEach(platform => {
+          platformContent[platform] = {
+            caption: platformCaptions[platform] || '',
+            script: mainContent.content,
+            type: 'content',
+            postInstructions: `Post this ${platform} content for ${config.productName}`,
+            hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending']
+          };
+        });
+        
+        await webhookService.sendMultiPlatformContent({
+          platformContent,
+          platformSchedules: {},
+          metadata: {
+            product: config.productName,
+            niche: config.niche,
+            tone: config.tone,
+            templateType: config.templateType,
+            affiliateUrl: config.affiliateUrl
+          }
+        });
+        console.log(`✅ Content sent to Make.com successfully`);
+      } catch (webhookError) {
+        console.error(`⚠️ Webhook failed but content generation succeeded:`, webhookError);
+        // Don't fail the whole request if webhook fails
+      }
+    }
+    
     return result;
 
   } catch (error) {
