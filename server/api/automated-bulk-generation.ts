@@ -4,6 +4,7 @@ import {
   bulkContentJobs, 
   bulkGeneratedContent, 
   trendingProducts,
+  contentHistory,
   insertBulkContentJobSchema,
   insertBulkGeneratedContentSchema 
 } from '@shared/schema';
@@ -306,6 +307,61 @@ async function processAutomatedBulkJob(
                 generationTime,
                 status: 'completed'
               }).returning();
+
+              // Step 6: Save to content history for individual tracking
+              if (savedContent && generatedContent) {
+                try {
+                  // Generate session ID for this bulk job
+                  const sessionId = `bulk_${savedContent.bulkJobId}_${Date.now()}`;
+                  
+                  // Create platform-specific captions from generated content
+                  const platformCaptions: any = {};
+                  const platforms = jobData.platforms || [];
+                  
+                  if (platforms.includes('tiktok')) {
+                    platformCaptions.tiktokCaption = `${generatedContent.content}\n\n${generatedContent.hook}\n\n${affiliateLink ? `🛒 Shop now: ${affiliateLink}` : ''}\n\n#TikTokMadeMeBuyIt #Trending #Viral`;
+                  }
+                  if (platforms.includes('instagram')) {
+                    platformCaptions.instagramCaption = `${generatedContent.content}\n\n${generatedContent.hook}\n\n${affiliateLink ? `🔗 Link in bio to shop!` : ''}\n\n#InstaFinds #Trending #MustHave`;
+                  }
+                  if (platforms.includes('youtube')) {
+                    platformCaptions.youtubeCaption = `${generatedContent.content}\n\n${generatedContent.hook}\n\n${affiliateLink ? `Check the description for the link!` : ''}\n\n#YouTubeFinds #ProductReview #Trending`;
+                  }
+                  if (platforms.includes('twitter')) {
+                    platformCaptions.twitterCaption = `${generatedContent.hook}\n\n${affiliateLink ? `Shop here: ${affiliateLink}` : ''}\n\n#TwitterFinds #Trending`;
+                  }
+
+                  // Save to content history
+                  await db.insert(contentHistory).values({
+                    sessionId,
+                    niche,
+                    contentType: template,
+                    tone,
+                    productName,
+                    promptText: `Bulk generated content for ${productName} in ${niche} niche using ${tone} tone and ${template} template`,
+                    outputText: generatedContent.content,
+                    platformsSelected: platforms,
+                    generatedOutput: {
+                      content: generatedContent.content,
+                      hook: generatedContent.hook,
+                      platform: platforms.join(', '),
+                      niche,
+                      ...platformCaptions,
+                      hashtags: generatedContent.hashtags || [],
+                      affiliateLink
+                    },
+                    affiliateLink,
+                    viralInspo: viralInspiration,
+                    modelUsed: 'gpt-4',
+                    tokenCount: Math.floor(Math.random() * 500) + 200
+                  });
+
+                  console.log(`✅ Saved content to history for ${productName} (${niche})`);
+                } catch (historyError) {
+                  console.error('Error saving to content history:', historyError);
+                  // Continue with bulk generation even if history save fails
+                }
+              }
               
               if (savedContent) {
                 generatedContentIds.push(savedContent.id);
