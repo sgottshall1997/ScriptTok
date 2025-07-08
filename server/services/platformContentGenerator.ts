@@ -40,13 +40,18 @@ export async function generatePlatformSpecificContent(
   const platformPrompt = buildPlatformPrompt(request);
 
   try {
-    // Use GPT-4o for platform-specific content generation
+    // Use GPT-4o for platform-specific content generation with higher creativity
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      temperature: 0.85, // Higher temperature for more creative and varied platform-specific content
+      presence_penalty: 0.6, // Encourage unique content across platforms
+      frequency_penalty: 0.4, // Reduce repetition within each caption
       messages: [
         {
           role: "system",
-          content: `You are a social media content expert specializing in platform-specific content optimization. Generate tailored content for multiple platforms with precise formatting and engagement strategies.
+          content: `You are an expert social media strategist who creates platform-native content that feels authentic to each platform's unique culture and audience. Each platform caption MUST be completely original and independent - never adapt or summarize from other content.
+
+CRITICAL: Generate platform-specific captions that are 70%+ different from each other in structure, language, and approach. Each platform has its own distinct voice, audience behavior, and engagement patterns.
 
 Always respond with valid JSON in this exact format:
 {
@@ -365,11 +370,21 @@ Create a detailed photo description that:
 - Optimizes visual storytelling for the product showcase`;
   }
 
-  prompt += `\n\n⚠️ FINAL VALIDATION:
-- Each platform caption should be 70%+ different from others
-- Captions should NOT summarize or reuse the main video script/photo description
-- Each caption should feel like it was written by a native user of that platform
-- Focus on platform-specific engagement tactics and audience preferences`;
+  prompt += `\n\n⚠️ CRITICAL REQUIREMENTS:
+- Each platform caption MUST be written INDEPENDENTLY from scratch
+- DO NOT reference, summarize, or adapt the main content in any way
+- Each caption should be 70%+ different in structure, words, and approach
+- Focus on platform-native language, tone, and engagement strategies
+- Treat each platform as a completely separate writing task
+- No shared phrases or content between platforms
+- Each caption should feel authentically created by a native user of that platform
+
+🎯 SUCCESS CRITERIA:
+- TikTok: Uses viral slang, hooks, emojis (4-6), trending phrases
+- Instagram: Aesthetic language, lifestyle focus, clean CTAs, light emojis (2-3)  
+- YouTube: Educational voiceover style, informative, emphasis markers
+- X/Twitter: Punchy hot takes, clever statements, under 280 characters
+- Other: Professional business tone, suitable for blogs/newsletters`;
 
   return prompt;
 }
