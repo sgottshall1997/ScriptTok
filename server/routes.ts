@@ -43,6 +43,7 @@ import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { recordAnalytics, getROIDashboard, getPerformanceTrends, getContentComparison, updateAnalyticsFromWebhook } from "./api/performance-analytics";
+import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -487,6 +488,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/analytics/trends', getPerformanceTrends);
   app.get('/api/analytics/comparison', getContentComparison);
   app.post('/api/analytics/webhook', updateAnalyticsFromWebhook);
+
+  // Smart Redirect API
+  app.post('/api/create-redirect', createRedirect);
+  app.get('/r/:id', handleRedirect);
+  app.get('/api/redirect-stats', getRedirectStats);
 
   const httpServer = createServer(app);
   return httpServer;

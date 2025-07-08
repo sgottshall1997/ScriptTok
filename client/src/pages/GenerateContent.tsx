@@ -95,13 +95,51 @@ const GenerateContent = () => {
 
 
   // Generate smart redirect URL
-  const generateRedirectUrl = () => {
-    if (!productUrl || !affiliateId) return;
+  const generateRedirectUrl = async () => {
+    if (!productUrl || !affiliateId) {
+      toast({
+        title: "Missing Information",
+        description: "Please enter both Product URL and Affiliate ID",
+        variant: "destructive",
+      });
+      return;
+    }
     
-    const baseUrl = window.location.origin;
-    const redirectId = Math.random().toString(36).substr(2, 9);
-    const url = `${baseUrl}/r/${redirectId}`;
-    setSmartRedirectUrl(url);
+    try {
+      // Create the redirect mapping on the server
+      const response = await fetch('/api/create-redirect', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productUrl,
+          affiliateId,
+          affiliateNetwork,
+          productName: selectedProduct,
+          niche: selectedNiche
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to create redirect');
+      }
+      
+      const data = await response.json();
+      setSmartRedirectUrl(data.redirectUrl);
+      
+      toast({
+        title: "Smart Redirect Created",
+        description: "Your trackable affiliate link is ready!",
+      });
+    } catch (error) {
+      console.error('Error creating redirect:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create smart redirect. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   // Fetch viral inspiration using Perplexity API for real trending insights
@@ -478,9 +516,21 @@ ${config.hashtags.join(' ')}`;
               </Button>
 
               {smartRedirectUrl && (
-                <div className="text-xs bg-white p-2 rounded border">
-                  <span className="text-green-600">✅ Redirect URL:</span>
-                  <code className="block mt-1">{smartRedirectUrl}</code>
+                <div className="text-xs bg-green-50 p-3 rounded border border-green-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-green-700 font-medium">✅ Smart Redirect Created</span>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => copyToClipboard(smartRedirectUrl, 'Redirect URL')}
+                      className="h-6 px-2 text-xs"
+                    >
+                      <Copy className="h-3 w-3 mr-1" />
+                      Copy
+                    </Button>
+                  </div>
+                  <code className="block text-green-800 bg-white p-2 rounded border text-xs">{smartRedirectUrl}</code>
+                  <p className="text-green-600 text-xs mt-2">This trackable link includes your affiliate ID and click analytics.</p>
                 </div>
               )}
             </div>
