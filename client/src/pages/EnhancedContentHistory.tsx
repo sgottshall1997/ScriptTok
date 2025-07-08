@@ -197,7 +197,11 @@ const EnhancedContentHistory = () => {
   // Extract unique values for filter dropdowns
   const uniqueNiches = Array.from(new Set(history.map(entry => entry.niche)));
   const uniquePlatforms = Array.from(new Set(history.flatMap(entry => entry.platformsSelected)));
-  const uniqueTemplates = Array.from(new Set(history.map(entry => entry.templateUsed)));
+  const uniqueTemplates = Array.from(new Set(
+    history
+      .map(entry => entry.templateUsed || entry.contentType)
+      .filter(template => template && typeof template === 'string')
+  ));
 
   const getPlatformColor = (platform: string) => {
     const colors: Record<string, string> = {
@@ -303,8 +307,8 @@ const EnhancedContentHistory = () => {
               <SelectContent>
                 <SelectItem value="all">All Templates</SelectItem>
                 {uniqueTemplates.map(template => (
-                  <SelectItem key={template} value={template}>
-                    {template.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                  <SelectItem key={template || 'unknown'} value={template || 'unknown'}>
+                    {template ? template.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : 'Unknown Template'}
                   </SelectItem>
                 ))}
               </SelectContent>
