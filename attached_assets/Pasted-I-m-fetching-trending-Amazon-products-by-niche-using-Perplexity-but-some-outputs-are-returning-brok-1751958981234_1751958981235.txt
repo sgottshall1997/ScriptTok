@@ -1,0 +1,82 @@
+I'm fetching trending Amazon products by niche using Perplexity, but some outputs are returning broken or fake data like:
+
+- Template headers (e.g., "Name | Brand | Social Mentions | Why Tre")
+- Vague placeholders like "Trending Product"
+- Incomplete brand or product names
+
+I want to ensure that each niche fetch (fitness, skincare, travel, tech, fashion, food, pets) returns exactly 3 real, authentic products.
+
+Please help me do the following for each niche fetch file (e.g. perplexityFetchSkincare.ts):
+
+---
+
+🧠 1. Enforce JSON Output Only:
+- The prompt must instruct Perplexity to **return ONLY a valid JSON array**
+- No markdown, no prose, no explanation text
+
+---
+
+🔍 2. Add Few-Shot Examples:
+- For each niche, include 2 JSON examples inside the prompt
+- Use real brand + product combos (from Amazon or TikTok)
+- Do **not** copy between niches
+
+---
+
+🚫 3. Add Hard Filters Against Invalid Entries:
+- Reject any item where:
+  - The product name includes “Trending Product”
+  - The string matches or resembles a header like “Name | Brand”
+  - Mentions fall outside 50,000–2,000,000
+  - Brand is missing or not a recognized company
+  - JSON is malformed or incomplete
+
+Use regex patterns like:
+- `/^Name\s*\|\s*Brand/i`
+- `/Trending Product/i`
+
+---
+
+⚙️ 4. Add Result Validator (code):
+- Parse and validate each item like so:
+```ts
+function isValidProduct(item) {
+  return (
+    typeof item.product === 'string' &&
+    item.product.length > 4 &&
+    typeof item.brand === 'string' &&
+    item.brand.length > 2 &&
+    typeof item.mentions === 'number' &&
+    item.mentions >= 50000 &&
+    item.mentions <= 2000000 &&
+    typeof item.reason === 'string' &&
+    item.reason.length > 2 &&
+    !item.product.toLowerCase().includes("trending product") &&
+    !/^name\s*\|\s*brand/i.test(item.product)
+  );
+}
+Filter out bad results, and if fewer than 3 valid remain, trigger a retry or fallback
+
+🧰 5. Update the Prompt:
+Ensure the current prompt for each niche explicitly says:
+
+"Only return 3 REAL, purchasable products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array."
+
+🧪 6. Add a CLI Test Script:
+Create testPerplexityFetchers.ts that:
+
+Imports and runs all 7 fetchers
+
+Logs a green ✅ for each valid niche and a red ❌ if validation fails
+
+Reports total time and response count
+
+This prompt should result in fully valid, reliable Perplexity outputs across all 7 niches, preventing broken UI cards like “Name | Brand” or generic filler items.
+
+yaml
+Copy
+Edit
+
+---
+
+Once this is implemented, you’ll stop seeing junk entries and guarantee that **only 3 real, niche-specific products sh

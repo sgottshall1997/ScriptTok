@@ -3,34 +3,71 @@
  * Fetches trending fitness products with specialized prompts
  */
 
+// Enhanced validation function
+function isValidProduct(item: any): boolean {
+  // Basic type and existence checks
+  if (typeof item.product !== 'string' || item.product.length <= 4) return false;
+  if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
+
+  const productLower = item.product.toLowerCase();
+  const brandLower = item.brand.toLowerCase();
+
+  // Hard filters against invalid entries
+  const bannedTerms = [
+    'trending product', 'fitness item', 'product name', 'brand name',
+    'template', 'placeholder', 'example', 'format', '...', 'item'
+  ];
+  
+  if (bannedTerms.some(term => productLower.includes(term))) return false;
+  if (bannedTerms.some(term => brandLower.includes(term))) return false;
+  
+  // Regex patterns for template headers
+  if (/^name\s*\|\s*brand/i.test(item.product)) return false;
+  if (/\|\s*(social\s*mentions|why\s*tre|mentions)/i.test(item.product)) return false;
+  
+  // Must have at least 2 words in product name
+  const words = item.product.split(' ').filter(w => w.length > 0);
+  if (words.length < 2) return false;
+  
+  // Brand validation - must be real brand-like (not generic terms)
+  const genericBrandTerms = ['brand', 'company', 'fitness', 'workout', 'exercise'];
+  if (genericBrandTerms.some(term => brandLower === term)) return false;
+  
+  return true;
+}
+
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 export async function fetchTrendingFitnessProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `You are a product research API. Return 3 trending fitness products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}. Respond ONLY with a JSON array and nothing else. Follow this structure exactly:
+  const prompt = `Only return 3 REAL, purchasable fitness products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
 
+EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "...", "brand": "...", "mentions": 1230000, "reason": "..." },
-  { "product": "...", "brand": "...", "mentions": 850000, "reason": "..." },
-  { "product": "...", "brand": "...", "mentions": 620000, "reason": "..." }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
 ]
 
-Example (do NOT copy these exact products):
+EXAMPLES (do NOT copy these):
 [
-  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 1450000, "reason": "Home gym convenience trend" },
-  { "product": "Yoga Mat Extra Thick 6mm", "brand": "Gaiam", "mentions": 980000, "reason": "Comfort workout viral videos" },
-  { "product": "Adjustable Dumbbells 50lb Set", "brand": "PowerBlocks", "mentions": 720000, "reason": "Space saving home fitness" }
+  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 1280000, "reason": "Home gym convenience trend" },
+  { "product": "Yoga Mat Extra Thick 6mm", "brand": "Gaiam", "mentions": 890000, "reason": "Comfort workout viral videos" }
 ]
 
-Requirements:
-- Real fitness products only (equipment, supplements, apparel)
-- Specific brand names (Nike, Adidas, Under Armour, etc.)
+STRICT REQUIREMENTS:
+- Real Amazon fitness products only (equipment, supplements, apparel, accessories)
+- Established brands: Nike, Adidas, Gaiam, Bodylastics, Under Armour, etc.
 - Mentions: 50,000-2,000,000 range
-- Brief trending reason (max 8 words)
+- NO generic terms like "trending product", "fitness item"
+- NO template headers like "Name | Brand"
+- Product names must be specific with details (weight, size, material)
 
-JSON array only:`;
+Return ONLY the JSON array:`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {
@@ -88,27 +125,19 @@ JSON array only:`;
       throw new Error('Response is not a JSON array');
     }
 
-    // Validate and filter products
+    // Enhanced validation and filtering
     const validProducts = parsedData.filter(item => {
-      if (!item.product || !item.brand || typeof item.mentions !== 'number') {
-        return false;
-      }
-      
-      // Check for banned terms
-      const bannedTerms = ['template', 'placeholder', 'example', 'product name', 'trending product'];
-      const productLower = item.product.toLowerCase();
-      
-      if (bannedTerms.some(term => productLower.includes(term))) {
-        return false;
-      }
-      
-      // Must have at least 2 words and contain fitness-related terms
-      const words = item.product.split(' ').filter(w => w.length > 0);
-      return words.length >= 2;
+      return isValidProduct(item);
     });
-
-    console.log(`✅ Fitness fetcher: Found ${validProducts.length} valid products`);
-    return validProducts;
+    
+    console.log(`✅ Fitness fetcher: Parsed ${parsedData.length} items, ${validProducts.length} valid products`);
+    
+    // If we don't have enough valid products, throw error to trigger retry
+    if (validProducts.length < 3) {
+      throw new Error(`Only ${validProducts.length} valid fitness products found, need 3`);
+    }
+    
+    return validProducts.slice(0, 3);
 
   } catch (error) {
     console.error('❌ Fitness fetcher error:', error);

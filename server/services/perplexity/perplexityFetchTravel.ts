@@ -3,34 +3,71 @@
  * Fetches trending travel products with specialized prompts
  */
 
+// Enhanced validation function
+function isValidProduct(item: any): boolean {
+  // Basic type and existence checks
+  if (typeof item.product !== 'string' || item.product.length <= 4) return false;
+  if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
+
+  const productLower = item.product.toLowerCase();
+  const brandLower = item.brand.toLowerCase();
+
+  // Hard filters against invalid entries
+  const bannedTerms = [
+    'trending product', 'travel item', 'product name', 'brand name',
+    'template', 'placeholder', 'example', 'format', '...', 'item'
+  ];
+  
+  if (bannedTerms.some(term => productLower.includes(term))) return false;
+  if (bannedTerms.some(term => brandLower.includes(term))) return false;
+  
+  // Regex patterns for template headers
+  if (/^name\s*\|\s*brand/i.test(item.product)) return false;
+  if (/\|\s*(social\s*mentions|why\s*tre|mentions)/i.test(item.product)) return false;
+  
+  // Must have at least 2 words in product name
+  const words = item.product.split(' ').filter(w => w.length > 0);
+  if (words.length < 2) return false;
+  
+  // Brand validation - must be real brand-like (not generic terms)
+  const genericBrandTerms = ['brand', 'company', 'travel', 'luggage', 'accessories'];
+  if (genericBrandTerms.some(term => brandLower === term)) return false;
+  
+  return true;
+}
+
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
 export async function fetchTrendingTravelProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `You are a product research API. Return 3 trending travel products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}. Respond ONLY with a JSON array and nothing else. Follow this structure exactly:
+  const prompt = `Only return 3 REAL, purchasable travel products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
 
+EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "...", "brand": "...", "mentions": 1230000, "reason": "..." },
-  { "product": "...", "brand": "...", "mentions": 850000, "reason": "..." },
-  { "product": "...", "brand": "...", "mentions": 620000, "reason": "..." }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
 ]
 
-Example (do NOT copy these exact products):
+EXAMPLES (do NOT copy these):
 [
-  { "product": "Compression Packing Cubes 6-Set", "brand": "BAGSMART", "mentions": 1340000, "reason": "Space saving packing viral hack" },
-  { "product": "Portable Phone Charger 20000mAh", "brand": "Anker", "mentions": 1100000, "reason": "Essential travel power bank" },
-  { "product": "Travel Neck Pillow Memory Foam", "brand": "Cabeau", "mentions": 780000, "reason": "Comfort travel accessory trend" }
+  { "product": "Compression Packing Cubes 6-Set", "brand": "BAGSMART", "mentions": 1180000, "reason": "Space saving packing viral hack" },
+  { "product": "Portable Phone Charger 20000mAh", "brand": "Anker", "mentions": 950000, "reason": "Essential travel power bank" }
 ]
 
-Requirements:
-- Real travel products only (luggage, accessories, tech, organizers)
-- Specific brand names (Samsonite, Away, Anker, BAGSMART, etc.)
+STRICT REQUIREMENTS:
+- Real Amazon travel products only (luggage, accessories, tech, organizers)
+- Established brands: BAGSMART, Anker, Samsonite, Away, Cabeau, etc.
 - Mentions: 50,000-2,000,000 range
-- Brief trending reason (max 8 words)
+- NO generic terms like "trending product", "travel item"
+- NO template headers like "Name | Brand"
+- Product names must be specific with details (capacity, size, material)
 
-JSON array only:`;
+Return ONLY the JSON array:`;
 
   try {
     const response = await fetch(PERPLEXITY_API_URL, {
@@ -88,27 +125,19 @@ JSON array only:`;
       throw new Error('Response is not a JSON array');
     }
 
-    // Validate and filter products
+    // Enhanced validation and filtering
     const validProducts = parsedData.filter(item => {
-      if (!item.product || !item.brand || typeof item.mentions !== 'number') {
-        return false;
-      }
-      
-      // Check for banned terms
-      const bannedTerms = ['template', 'placeholder', 'example', 'product name', 'trending product'];
-      const productLower = item.product.toLowerCase();
-      
-      if (bannedTerms.some(term => productLower.includes(term))) {
-        return false;
-      }
-      
-      // Must have at least 2 words
-      const words = item.product.split(' ').filter(w => w.length > 0);
-      return words.length >= 2;
+      return isValidProduct(item);
     });
-
-    console.log(`✅ Travel fetcher: Found ${validProducts.length} valid products`);
-    return validProducts;
+    
+    console.log(`✅ Travel fetcher: Parsed ${parsedData.length} items, ${validProducts.length} valid products`);
+    
+    // If we don't have enough valid products, throw error to trigger retry
+    if (validProducts.length < 3) {
+      throw new Error(`Only ${validProducts.length} valid travel products found, need 3`);
+    }
+    
+    return validProducts.slice(0, 3);
 
   } catch (error) {
     console.error('❌ Travel fetcher error:', error);
