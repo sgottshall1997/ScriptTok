@@ -129,6 +129,14 @@ export default function TrendingPicksWidget({
           </Button>
         )}
       </div>
+      
+      {showFetchButton && (
+        <div className="mb-4 text-center">
+          <p className="text-red-600 font-semibold text-sm">
+            (PLEASE DO NOT PRESS)
+          </p>
+        </div>
+      )}
 
       <div className="mb-4 text-sm text-muted-foreground">
         🔍 High-converting affiliate products selected by real-time trend analysis from Perplexity AI.
