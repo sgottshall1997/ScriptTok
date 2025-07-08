@@ -120,9 +120,14 @@ const EnhancedContentHistory = () => {
       combinedHistory.push(...dbHistoryConverted);
     }
     
-    // Add local storage history (these cannot be rated)
+    // Add local storage history (these cannot be rated) - only if no database entries exist
     const localHistory = ContentHistoryManager.getHistory();
-    combinedHistory.push(...localHistory);
+    if (combinedHistory.length === 0) {
+      combinedHistory.push(...localHistory);
+    } else {
+      // Add a few recent local entries for context, but prioritize database entries
+      combinedHistory.push(...localHistory.slice(0, 3));
+    }
     
     // Sort by timestamp (newest first)
     combinedHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
