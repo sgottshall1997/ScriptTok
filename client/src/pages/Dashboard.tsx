@@ -29,19 +29,36 @@ const Dashboard = () => {
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
     retry: false,
+    staleTime: 0, // Always consider data stale
+    cacheTime: 0, // Don't cache the data
   });
 
-  // Get Perplexity products (limit 3 per niche)
+  // Get Perplexity products (limit 3 per niche, deduplicated)
   const getPerplexityProducts = () => {
     if (!trendingProducts?.data) return [];
     
     const perplexityProducts: TrendingProduct[] = [];
     Object.entries(trendingProducts.data).forEach(([niche, products]) => {
-      const perplexityItems = products
+      // Get unique products by title within each niche
+      const uniqueProducts = products
         .filter(p => p.source === 'perplexity')
+        .reduce((unique: TrendingProduct[], current) => {
+          if (!unique.some(p => p.title === current.title)) {
+            unique.push(current);
+          }
+          return unique;
+        }, [])
         .slice(0, 3);
-      perplexityProducts.push(...perplexityItems);
+      perplexityProducts.push(...uniqueProducts);
     });
+    
+    // Debug logging to see what products we're getting
+    console.log('🔍 Dashboard Debug - Unique Perplexity products:', perplexityProducts.length);
+    perplexityProducts.forEach((p, i) => {
+      console.log(`  ${i+1}. ${p.title} (${p.niche}) - Created: ${p.createdAt}`);
+    });
+    
+    console.log('🎯 Products that should be displayed on dashboard:', perplexityProducts.slice(0, 12).map(p => p.title));
     
     return perplexityProducts.slice(0, 12); // Max 12 total
   };
