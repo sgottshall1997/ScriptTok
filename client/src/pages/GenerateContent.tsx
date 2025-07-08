@@ -128,18 +128,45 @@ const GenerateContent = () => {
 
       if (response.ok) {
         const result = await response.json();
-        setGeneratedContent(result);
-        toast({
-          title: "Content Generated!",
-          description: "Your viral content is ready",
-        });
+        console.log('API Response:', result); // Debug log
+        
+        if (result.success && result.data) {
+          // Extract content from the API response structure
+          const contentData: GeneratedContent = {
+            content: result.data.content,
+            hook: result.data.customHook || '',
+            platform: selectedPlatforms[0] || 'tiktok',
+            niche: selectedNiche,
+          };
+          
+          setGeneratedContent(contentData);
+          toast({
+            title: "Content Generated!",
+            description: `Your ${templateType} content is ready`,
+          });
+          
+          // Show Surprise Me reasoning if available
+          if (result.data.surpriseMeReasoning) {
+            toast({
+              title: "🎲 Surprise Me Selection",
+              description: result.data.surpriseMeReasoning,
+              duration: 5000,
+            });
+          }
+        } else {
+          console.error('API Response Error:', result);
+          throw new Error(result.error || 'Generation failed');
+        }
       } else {
-        throw new Error('Generation failed');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Generation failed');
       }
     } catch (error) {
+      console.error('Content generation error:', error); // Debug log
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       toast({
         title: "Generation Failed",
-        description: "Please try again",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -432,12 +459,12 @@ const GenerateContent = () => {
               {isGenerating ? (
                 <>
                   <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
-                  Generating...
+                  Generating Content...
                 </>
               ) : (
                 <>
                   <Zap className="h-5 w-5 mr-2" />
-                  ⚡️ Generate Content
+                  🚀 Generate Viral Content (60s)
                 </>
               )}
             </Button>
@@ -490,8 +517,11 @@ const GenerateContent = () => {
           <CardContent>
             <div className="space-y-4">
               <div className="bg-gray-50 p-4 rounded-lg">
-                <h4 className="font-medium mb-2">Content:</h4>
-                <p className="whitespace-pre-wrap">{generatedContent.content}</p>
+                <h4 className="font-medium mb-2">Generated Content:</h4>
+                <div className="text-sm text-gray-600 mb-2">
+                  Template: {templateType} | Tone: {tone} | Niche: {selectedNiche}
+                </div>
+                <p className="whitespace-pre-wrap text-gray-900">{generatedContent.content}</p>
               </div>
               
               {generatedContent.hook && (
@@ -502,7 +532,17 @@ const GenerateContent = () => {
               )}
 
               <div className="flex gap-2">
-                <Button size="sm" variant="outline">
+                <Button 
+                  size="sm" 
+                  variant="outline"
+                  onClick={() => {
+                    navigator.clipboard.writeText(generatedContent.content);
+                    toast({
+                      title: "Copied!",
+                      description: "Content copied to clipboard",
+                    });
+                  }}
+                >
                   <Copy className="h-4 w-4 mr-1" />
                   Copy Content
                 </Button>
@@ -510,9 +550,14 @@ const GenerateContent = () => {
                   <Edit className="h-4 w-4 mr-1" />
                   Edit Hook
                 </Button>
-                <Button size="sm" variant="outline" onClick={handleGenerateContent}>
-                  <RefreshCw className="h-4 w-4 mr-1" />
-                  Regenerate
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={handleGenerateContent}
+                  disabled={isGenerating}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
+                  {isGenerating ? 'Generating...' : 'Regenerate'}
                 </Button>
               </div>
             </div>
