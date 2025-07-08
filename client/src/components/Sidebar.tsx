@@ -141,13 +141,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
       )}
       
       {/* Sidebar */}
-      <div className={cn(
-        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:inset-0",
-        isCollapsed ? "-translate-x-full" : "translate-x-0",
+      <aside className={cn(
+        "fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out flex flex-col",
+        "lg:relative lg:translate-x-0 lg:h-screen lg:flex-shrink-0",
+        isCollapsed ? "-translate-x-full lg:translate-x-0" : "translate-x-0",
         className
       )}>
         {/* Header */}
-        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200">
+        <div className="flex items-center justify-between h-16 px-6 border-b border-gray-200 flex-shrink-0">
           <div className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <Sparkles className="h-5 w-5 text-white" />
@@ -162,7 +163,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
           </button>
         </div>
 
-        {/* Navigation */}
+        {/* Navigation - Scrollable */}
         <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
           {sidebarData.map((category) => (
             <div key={category.name}>
@@ -202,12 +203,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200 flex-shrink-0">
           <div className="text-xs text-gray-500 text-center">
             AI-Powered Content Engine
           </div>
         </div>
-      </div>
+      </aside>
 
       {/* Mobile menu button */}
       <button
