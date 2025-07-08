@@ -270,20 +270,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // PART 2: Perplexity Trend Fetcher API Route
+  // PART 2: Perplexity Trend Fetcher API Route - Now using niche-specific modules
   app.post('/api/pull-perplexity-trends', async (req, res) => {
     try {
-      console.log('🔄 Manual Perplexity trends fetch triggered');
-      const result = await pullPerplexityTrends();
+      console.log('🔄 Manual Perplexity trends fetch triggered - using new niche-specific modules');
+      const { runAllPerplexityFetchers } = await import('./services/perplexity/runAllFetchers');
+      const result = await runAllPerplexityFetchers();
+      
+      let totalProductsAdded = 0;
+      
+      // Store products from each niche in database
+      for (const nicheResult of result.results) {
+        if (nicheResult.success && nicheResult.products.length > 0) {
+          try {
+            const { trendingProducts } = await import('@shared/schema');
+            const { db } = await import('./db');
+            
+            for (const product of nicheResult.products) {
+              await db.insert(trendingProducts).values({
+                title: product.product,
+                source: 'perplexity',
+                mentions: product.mentions,
+                niche: nicheResult.niche,
+                dataSource: 'perplexity'
+              });
+              totalProductsAdded++;
+              console.log(`✅ Added ${nicheResult.niche} product: ${product.product}`);
+            }
+          } catch (dbError) {
+            console.error(`❌ Database error for ${nicheResult.niche}:`, dbError);
+          }
+        }
+      }
       
       res.json({
-        success: result.success,
-        message: result.message,
-        productsAdded: result.productsAdded,
+        success: true,
+        message: `Niche-specific fetch completed. Added ${totalProductsAdded} products from ${result.summary.successful}/${result.summary.totalFetchers} fetchers`,
+        productsAdded: totalProductsAdded,
+        fetcherResults: result.summary,
         timestamp: new Date().toISOString()
       });
     } catch (error) {
-      console.error('❌ Error in Perplexity trends fetch:', error);
+      console.error('❌ Error in niche-specific Perplexity fetch:', error);
       res.status(500).json({
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred',
