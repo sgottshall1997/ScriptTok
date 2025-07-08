@@ -31,6 +31,19 @@ interface PlatformSpecificContent {
   };
 }
 
+// Check content similarity to avoid repetition
+function checkContentSimilarity(content1: string, content2: string): number {
+  if (!content1 || !content2) return 0;
+  
+  const words1 = content1.toLowerCase().split(/\s+/);
+  const words2 = content2.toLowerCase().split(/\s+/);
+  
+  const commonWords = words1.filter(word => words2.includes(word));
+  const totalWords = Math.max(words1.length, words2.length);
+  
+  return (commonWords.length / totalWords) * 100;
+}
+
 // Reusable function for generating platform-specific captions
 export async function generatePlatformCaptions(params: {
   productName: string;
@@ -40,8 +53,9 @@ export async function generatePlatformCaptions(params: {
   mainContent?: string;
   viralInspiration?: any;
   bestRatedStyle?: any;
+  enforceCaptionUniqueness?: boolean;
 }): Promise<Record<string, string>> {
-  const { productName, platforms, tone, niche, viralInspiration } = params;
+  const { productName, platforms, tone, niche, mainContent, viralInspiration, enforceCaptionUniqueness = true } = params;
   
   console.log(`🎯 Generating platform captions for: ${platforms.join(", ")}`);
   
@@ -50,28 +64,31 @@ export async function generatePlatformCaptions(params: {
 
 CRITICAL REQUIREMENTS:
 - Each platform caption MUST be written INDEPENDENTLY from scratch
-- DO NOT reference, summarize, or adapt any other content
+- DO NOT reference, summarize, or adapt the main product description
 - Each caption should be 70%+ different in structure, words, and approach
 - Focus on platform-native language, tone, and engagement strategies
+- NEVER reuse phrases or closely paraphrase existing content
+
+${mainContent ? `\nAVOID REPEATING THIS CONTENT: "${mainContent.substring(0, 200)}..."` : ''}
 
 PLATFORM-SPECIFIC REQUIREMENTS:
 `;
 
-  const platformInstructions = {
-    tiktok: "VIRAL HOOKS with slang, emojis (4-6), trending phrases like 'POV:', 'No bc', 'Tell me why'. Short punchy sentences.",
-    instagram: "AESTHETIC language focused on lifestyle, clean CTAs, light emojis (2-3). Sounds like lifestyle influencer.",
-    youtube: "EDUCATIONAL voiceover style with emphasis markers (*asterisks*), informative tone, sounds like spoken script.",
-    twitter: "PUNCHY hot takes under 280 characters, clever statements, conversation starters like 'Plot twist:'",
-    other: "PROFESSIONAL business tone suitable for blogs, newsletters, email marketing"
+  const platformPrompts = {
+    tiktok: `Write a short, punchy TikTok caption for "${productName}". Use slang, emojis (4-6), and Gen Z tone with viral hooks like "POV:", "No bc", "Tell me why". DO NOT reuse or reword the main product description. Add a strong hook and CTA.`,
+    instagram: `Write a polished, aesthetic Instagram caption for "${productName}". Use lifestyle language, light emojis (2-3), and hashtags. Sound like a lifestyle influencer. DO NOT copy or paraphrase the main product description.`,
+    youtube: `Write a YouTube Shorts description that sounds like a voiceover script for "${productName}". Aim for informative but casual tone with emphasis markers (*asterisks*). Include hashtags. DO NOT reuse the full content output.`,
+    twitter: `Write a clever, short X (Twitter) post about "${productName}". Include a bold claim or hot take under 280 characters. DO NOT reuse the original content. Include 1-2 trending hashtags.`,
+    other: `Write professional content for "${productName}" suitable for blogs, newsletters, or email marketing. Use business-appropriate tone. DO NOT copy from the main description.`
   };
 
   platforms.forEach(platform => {
-    const instruction = platformInstructions[platform.toLowerCase()] || platformInstructions.other;
-    prompt += `\n${platform.toUpperCase()}: ${instruction}`;
+    const instruction = platformPrompts[platform.toLowerCase()] || platformPrompts.other;
+    prompt += `\n\n${platform.toUpperCase()}: ${instruction}`;
   });
 
   if (viralInspiration) {
-    prompt += `\n\nVIRAL CONTEXT: ${viralInspiration.caption || ''}`;
+    prompt += `\n\nVIRAL CONTEXT (for inspiration only, don't copy): ${viralInspiration.caption || ''}`;
   }
 
   prompt += `\n\nRespond with ONLY a JSON object in this format:
@@ -79,40 +96,73 @@ PLATFORM-SPECIFIC REQUIREMENTS:
   ${platforms.map(p => `"${p.toLowerCase()}": "caption text here"`).join(',\n  ')}
 }`;
 
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o",
-      temperature: 0.85,
-      presence_penalty: 0.6,
-      frequency_penalty: 0.4,
-      messages: [
-        {
-          role: "system",
-          content: "You are an expert social media strategist who creates platform-native content. Each platform caption must be completely original and independent."
-        },
-        {
-          role: "user",
-          content: prompt
+  let attempts = 0;
+  const maxAttempts = 2;
+  
+  while (attempts < maxAttempts) {
+    try {
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o",
+        temperature: 0.9,
+        presence_penalty: 0.8,
+        frequency_penalty: 0.5,
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert social media strategist who creates platform-native content. Each platform caption must be completely original, independent, and never repeat existing content."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        max_tokens: 1000
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        throw new Error('No content generated from OpenAI');
+      }
+
+      // Parse JSON response
+      const captions = JSON.parse(content);
+      
+      // Check for similarity if enforcing uniqueness
+      if (enforceCaptionUniqueness && mainContent) {
+        let needsRetry = false;
+        
+        for (const [platform, caption] of Object.entries(captions)) {
+          const similarity = checkContentSimilarity(mainContent, caption as string);
+          if (similarity > 70) {
+            console.log(`⚠️ High similarity detected for ${platform}: ${similarity.toFixed(1)}%`);
+            needsRetry = true;
+            break;
+          }
         }
-      ],
-      max_tokens: 1000
-    });
+        
+        if (needsRetry && attempts < maxAttempts - 1) {
+          console.log(`🔄 Retrying caption generation due to high similarity (attempt ${attempts + 1})`);
+          attempts++;
+          prompt += `\n\nIMPORTANT: Previous attempt was too similar to main content. Generate completely different captions with unique structure and wording.`;
+          continue;
+        }
+      }
+      
+      console.log(`✅ Generated ${Object.keys(captions).length} platform captions`);
+      return captions;
 
-    const content = response.choices[0]?.message?.content;
-    if (!content) {
-      throw new Error('No content generated from OpenAI');
+    } catch (error) {
+      console.error('Error generating platform captions:', error);
+      attempts++;
+      
+      if (attempts >= maxAttempts) {
+        return generateFallbackCaptions(productName, platforms, niche);
+      }
     }
-
-    // Parse JSON response
-    const captions = JSON.parse(content);
-    
-    console.log(`✅ Generated ${Object.keys(captions).length} platform captions`);
-    return captions;
-
-  } catch (error) {
-    console.error('Error generating platform captions:', error);
-    return generateFallbackCaptions(productName, platforms, niche);
   }
+  
+  // Fallback if all attempts fail
+  return generateFallbackCaptions(productName, platforms, niche);
 }
 
 // Fallback captions generator

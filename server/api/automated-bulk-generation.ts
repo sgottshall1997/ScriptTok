@@ -11,7 +11,7 @@ import {
 import { eq, desc, sql } from 'drizzle-orm';
 import { z } from 'zod';
 import { generateContent } from '../services/contentGenerator';
-import { generatePlatformSpecificContent } from '../services/platformContentGenerator';
+import { generatePlatformSpecificContent, generatePlatformCaptions } from '../services/platformContentGenerator';
 
 // Import viral inspiration function from viral-inspiration API
 async function fetchViralVideoInspiration(productName: string, niche: string) {
@@ -323,24 +323,69 @@ async function processAutomatedBulkJob(
                   // Generate session ID for this bulk job
                   const sessionId = `bulk_${savedContent.bulkJobId}_${Date.now()}`;
                   
-                  // Create platform-specific captions from generated content
-                  const platformCaptions: any = {};
+                  // Generate platform-specific captions using enhanced generator
                   const platforms = jobData.platforms || [];
+                  let platformCaptions: any = {};
                   
-                  const hookText = generatedContent.viralHooks?.[0] || viralInspiration?.hook || 'Check this out!';
-                  const contentText = generatedContent.productDescription || 'Amazing product';
+                  const mainContent = generatedContent.productDescription || 
+                                     generatedContent.viralHooks?.[0] || 
+                                     generatedContent.videoScript || 
+                                     'Generated content';
                   
-                  if (platforms.includes('tiktok')) {
-                    platformCaptions.tiktokCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `🛒 Shop now: ${affiliateLink}` : ''}\n\n#TikTokMadeMeBuyIt #Trending #Viral`;
-                  }
-                  if (platforms.includes('instagram')) {
-                    platformCaptions.instagramCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `🔗 Link in bio to shop!` : ''}\n\n#InstaFinds #Trending #MustHave`;
-                  }
-                  if (platforms.includes('youtube')) {
-                    platformCaptions.youtubeCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `Check the description for the link!` : ''}\n\n#YouTubeFinds #ProductReview #Trending`;
-                  }
-                  if (platforms.includes('twitter')) {
-                    platformCaptions.twitterCaption = `${hookText}\n\n${affiliateLink ? `Shop here: ${affiliateLink}` : ''}\n\n#TwitterFinds #Trending`;
+                  if (platforms.length > 0) {
+                    try {
+                      const enhancedPlatformCaptions = await generatePlatformCaptions({
+                        productName,
+                        platforms,
+                        tone,
+                        niche,
+                        mainContent,
+                        viralInspiration,
+                        enforceCaptionUniqueness: true
+                      });
+                      
+                      // Map to expected field names for content history
+                      if (enhancedPlatformCaptions.tiktok) {
+                        platformCaptions.tiktokCaption = enhancedPlatformCaptions.tiktok;
+                      }
+                      if (enhancedPlatformCaptions.instagram) {
+                        platformCaptions.instagramCaption = enhancedPlatformCaptions.instagram;
+                      }
+                      if (enhancedPlatformCaptions.youtube) {
+                        platformCaptions.youtubeCaption = enhancedPlatformCaptions.youtube;
+                      }
+                      if (enhancedPlatformCaptions.twitter) {
+                        platformCaptions.twitterCaption = enhancedPlatformCaptions.twitter;
+                      }
+                      if (enhancedPlatformCaptions.other) {
+                        platformCaptions.otherCaption = enhancedPlatformCaptions.other;
+                      }
+                      
+                      // Store the enhanced captions in the generated content
+                      generatedContent.platformCaptions = enhancedPlatformCaptions;
+                      
+                      console.log(`✅ Enhanced platform captions generated for ${productName}`);
+                      
+                    } catch (platformError) {
+                      console.error('Error generating enhanced platform captions:', platformError);
+                      
+                      // Fallback to simple captions if enhancement fails
+                      const hookText = generatedContent.viralHooks?.[0] || viralInspiration?.hook || 'Check this out!';
+                      const contentText = generatedContent.productDescription || 'Amazing product';
+                      
+                      if (platforms.includes('tiktok')) {
+                        platformCaptions.tiktokCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `🛒 Shop now: ${affiliateLink}` : ''}\n\n#TikTokMadeMeBuyIt #Trending #Viral`;
+                      }
+                      if (platforms.includes('instagram')) {
+                        platformCaptions.instagramCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `🔗 Link in bio to shop!` : ''}\n\n#InstaFinds #Trending #MustHave`;
+                      }
+                      if (platforms.includes('youtube')) {
+                        platformCaptions.youtubeCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `Check the description for the link!` : ''}\n\n#YouTubeFinds #ProductReview #Trending`;
+                      }
+                      if (platforms.includes('twitter')) {
+                        platformCaptions.twitterCaption = `${hookText}\n\n${affiliateLink ? `Shop here: ${affiliateLink}` : ''}\n\n#TwitterFinds #Trending`;
+                      }
+                    }
                   }
 
                   // Save to content history
