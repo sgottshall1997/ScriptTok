@@ -52,11 +52,18 @@ export const trackEvent = (
   label?: string, 
   value?: number
 ) => {
-  if (typeof window === 'undefined' || !window.gtag) return;
+  if (typeof window === 'undefined' || !window.gtag) {
+    console.log('Analytics not initialized or window not available');
+    return;
+  }
   
-  window.gtag('event', action, {
-    event_category: category,
-    event_label: label,
-    value: value,
-  });
+  try {
+    window.gtag('event', action, {
+      event_category: category,
+      event_label: label,
+      value: value,
+    });
+  } catch (error) {
+    console.warn('Failed to track event:', error);
+  }
 };

@@ -109,7 +109,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
       platforms: formData.platforms,
       contentType: 'video',
       affiliateUrl: formData.generateAffiliateLinks && !formData.useManualAffiliateLink 
-        ? `https://amazon.com/dp/PRODUCT_ID?tag=${formData.affiliateId}` 
+        ? `https://www.amazon.com/s?k=${encodeURIComponent(formData.productName)}&tag=${formData.affiliateId}` 
         : formData.useManualAffiliateLink ? formData.manualAffiliateLink : undefined,
       useSmartStyle: formData.useSmartStyle
     };

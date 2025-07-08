@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Copy, Edit, RefreshCw, Star } from 'lucide-react';
+import { Copy, Edit, RefreshCw, Star, ExternalLink } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { ContentRating } from './ContentRating';
 
