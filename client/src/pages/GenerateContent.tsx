@@ -71,7 +71,7 @@ const GenerateContent = () => {
   }, [location, window.location.search]);
   const [productUrl, setProductUrl] = useState('');
   const [affiliateNetwork, setAffiliateNetwork] = useState('amazon');
-  const [affiliateId, setAffiliateId] = useState('');
+  const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
   const [smartRedirectUrl, setSmartRedirectUrl] = useState('');
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok']);
   const [scheduleTime, setScheduleTime] = useState('now');

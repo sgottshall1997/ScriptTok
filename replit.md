@@ -285,6 +285,7 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Individual entry deletion with confirmation and bulk "Clear All" functionality
   - ✅ Enhanced sidebar navigation with "Enhanced Content History" link for easy access
   - ✅ Removed original content history tab and consolidated to single enhanced version at /content-history
+  - ✅ Auto-populated affiliate ID "sgottshall107-20" permanently in Content Generator for streamlined workflow
 
 ## User Preferences
 
