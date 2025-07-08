@@ -256,26 +256,26 @@ const Dashboard = () => {
                 ))}
               </SelectContent>
             </Select>
-            <Button 
-              onClick={handlePerplexityFetch}
-              disabled={isPerplexityLoading}
-              variant="outline"
-              size="sm"
-            >
-              {isPerplexityLoading ? (
-                <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              ) : (
-                <RefreshCw className="h-4 w-4 mr-2" />
-              )}
-              Run Perplexity Fetch
-            </Button>
+            <div className="flex flex-col items-center">
+              <p className="text-red-600 font-semibold text-xs mb-1">
+                (PLEASE DO NOT PRESS)
+              </p>
+              <Button 
+                onClick={handlePerplexityFetch}
+                disabled={isPerplexityLoading}
+                variant="outline"
+                size="sm"
+              >
+                {isPerplexityLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                )}
+                Run Perplexity Fetch
+              </Button>
+            </div>
           </div>
         </CardHeader>
-        <div className="px-6 pb-2">
-          <p className="text-red-600 font-semibold text-sm text-center">
-            (PLEASE DO NOT PRESS)
-          </p>
-        </div>
         <CardContent>
           {trendingLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
