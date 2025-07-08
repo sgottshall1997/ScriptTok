@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
-import { ComplianceWrapper } from '@/components/ComplianceWrapper';
+
 import { 
   ArrowRight, 
   TrendingUp, 
@@ -180,7 +180,6 @@ const Dashboard = () => {
   };
 
   return (
-    <ComplianceWrapper hasAffiliateLinks={true} showDetailedDisclosure={false}>
       <div className="space-y-6">
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-2">
@@ -425,7 +424,6 @@ const Dashboard = () => {
         </CardContent>
       </Card>
       </div>
-    </ComplianceWrapper>
   );
 };
 
