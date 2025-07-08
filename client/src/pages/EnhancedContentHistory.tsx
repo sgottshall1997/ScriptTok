@@ -101,6 +101,17 @@ const EnhancedContentHistory = () => {
     });
   };
 
+  const deleteAllEntries = () => {
+    if (window.confirm('Are you sure you want to delete all content history? This action cannot be undone.')) {
+      ContentHistoryManager.clearHistory();
+      loadHistory();
+      toast({
+        title: "All history cleared",
+        description: "All content generation entries have been removed",
+      });
+    }
+  };
+
   const clearAllHistory = () => {
     ContentHistoryManager.clearHistory();
     loadHistory();
@@ -179,7 +190,7 @@ const EnhancedContentHistory = () => {
           </div>
           <Button 
             variant="outline" 
-            onClick={clearAllHistory}
+            onClick={deleteAllEntries}
             className="text-red-600 hover:text-red-700"
           >
             <Trash2 className="h-4 w-4 mr-2" />
@@ -275,6 +286,7 @@ const EnhancedContentHistory = () => {
                   size="sm"
                   onClick={() => deleteEntry(entry.id)}
                   className="text-red-500 hover:text-red-700"
+                  title="Delete this entry"
                 >
                   <Trash2 className="h-4 w-4" />
                 </Button>
