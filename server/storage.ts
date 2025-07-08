@@ -479,10 +479,23 @@ export class MemStorage implements IStorage {
   }
   
   async getTrendingProductsByNiche(niche: string, limit = 3): Promise<TrendingProduct[]> {
-    // First get products matching the specific niche
+    // First get products matching the specific niche, prioritizing newest with reasons
     let nicheProducts = Array.from(this.trendingProducts.values())
       .filter(product => product.niche === niche)
       .sort((a, b) => {
+        // First priority: products with reasons (newest first)
+        const aHasReason = a.reason && a.reason.trim() !== '';
+        const bHasReason = b.reason && b.reason.trim() !== '';
+        
+        if (aHasReason && !bHasReason) return -1;
+        if (!aHasReason && bHasReason) return 1;
+        
+        // Second priority: newest products first (by createdAt)
+        if (a.createdAt && b.createdAt) {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        }
+        
+        // Third priority: mentions count
         if (a.mentions && b.mentions) {
           return b.mentions - a.mentions;
         }
