@@ -32,8 +32,8 @@ const BTB_FEATURES: FeatureStatus[] = [
   {
     feature: 'Platform checkboxes in UI',
     status: 'complete',
-    description: 'Multi-platform content selection',
-    implementation: ['PlatformSelector component', 'ContentGenerator integration']
+    description: 'Multi-platform content selection with scheduling',
+    implementation: ['PlatformSelector component', 'GenerateContent page integration', 'Platform scheduling UI']
   },
   {
     feature: 'GPT platform-specific prompts',
@@ -74,8 +74,8 @@ const BTB_FEATURES: FeatureStatus[] = [
   {
     feature: 'Manual input UI',
     status: 'complete',
-    description: 'Manual performance metrics entry',
-    implementation: ['ClickTrackingDashboard', 'metrics/manual endpoint', 'analytics UI']
+    description: 'Manual performance metrics entry with AI analysis',
+    implementation: ['MetricsInputForm component', 'GenerateContent integration', 'metrics/manual endpoint', 'AI feedback system']
   },
   {
     feature: 'GPT feedback analyzer',

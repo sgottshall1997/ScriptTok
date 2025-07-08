@@ -9,6 +9,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { TrendingProductCard } from "@/components/TrendingProductCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Loader2 } from "lucide-react";
+import { PlatformSelector } from "@/components/PlatformSelector";
+import { HookGenerator } from "@/components/HookGenerator";
+import { AffiliateNetworkSelector } from "@/components/AffiliateNetworkSelector";
+import { MetricsInputForm } from "@/components/MetricsInputForm";
 
 // Niche data
 const niches = [
@@ -27,6 +31,10 @@ const GenerateContent: FC = () => {
   const [isMultiPlatform, setIsMultiPlatform] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
   const [selectedProductNiche, setSelectedProductNiche] = useState<string>('');
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram']);
+  const [scheduleTime, setScheduleTime] = useState('now');
+  const [selectedHook, setSelectedHook] = useState<string>('');
+  const [generatedAffiliateLink, setGeneratedAffiliateLink] = useState<any>(null);
 
   // Check for URL parameters to auto-populate form
   useEffect(() => {
@@ -177,6 +185,34 @@ const GenerateContent: FC = () => {
           </div>
         </div>
 
+        {/* BTB Automation Components */}
+        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-6 mb-8">
+          {/* Platform Selection & Scheduling */}
+          <PlatformSelector
+            selectedPlatforms={selectedPlatforms}
+            onPlatformsChange={setSelectedPlatforms}
+            scheduleTime={scheduleTime}
+            onScheduleChange={setScheduleTime}
+          />
+          
+          {/* Hook Generator */}
+          <HookGenerator
+            product={selectedProduct}
+            niche={selectedProductNiche}
+            onHookSelect={setSelectedHook}
+          />
+        </div>
+
+        {/* Affiliate Network Integration */}
+        <div className="max-w-4xl mx-auto mb-8">
+          <AffiliateNetworkSelector
+            productUrl=""
+            product={selectedProduct}
+            niche={selectedProductNiche}
+            onLinkGenerated={setGeneratedAffiliateLink}
+          />
+        </div>
+
         {/* Content Generator Form */}
         <div className="max-w-4xl mx-auto">
           <div id="content-generator-form">
@@ -192,7 +228,7 @@ const GenerateContent: FC = () => {
         {/* Generated Content Display Section */}
         <div className="max-w-6xl mx-auto mt-12">
           {generatedContent ? (
-            <div>
+            <div className="space-y-8">
               {isMultiPlatform ? (
                 <MultiPlatformContentOutput data={generatedContent} />
               ) : (
@@ -205,6 +241,53 @@ const GenerateContent: FC = () => {
                   </div>
                 </div>
               )}
+              
+              {/* Performance Metrics Input */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                <MetricsInputForm
+                  contentId={generatedContent.id || 'generated-content'}
+                  onMetricsSubmitted={(metrics) => {
+                    console.log('Metrics submitted:', metrics);
+                  }}
+                />
+                
+                {/* Additional info panel */}
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Content Summary</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-3">
+                    {selectedHook && (
+                      <div>
+                        <span className="text-sm font-medium">Selected Hook:</span>
+                        <p className="text-sm text-gray-600 mt-1">{selectedHook}</p>
+                      </div>
+                    )}
+                    {selectedPlatforms.length > 0 && (
+                      <div>
+                        <span className="text-sm font-medium">Platforms:</span>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {selectedPlatforms.join(', ')}
+                        </p>
+                      </div>
+                    )}
+                    {generatedAffiliateLink && (
+                      <div>
+                        <span className="text-sm font-medium">Affiliate Network:</span>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {generatedAffiliateLink.network}
+                        </p>
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-sm font-medium">Schedule:</span>
+                      <p className="text-sm text-gray-600 mt-1">
+                        {scheduleTime === 'now' ? 'Post immediately' : scheduleTime}
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             </div>
           ) : (
             <div className="bg-white/50 rounded-lg border-2 border-dashed border-gray-300 p-12 text-center">

@@ -1,161 +1,222 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Calendar, Clock } from 'lucide-react';
 
 interface Platform {
   id: string;
   name: string;
   icon: string;
-  color: string;
-  maxLength: number;
+  maxChars: number;
   features: string[];
 }
 
 const PLATFORMS: Platform[] = [
   {
-    id: 'instagram',
-    name: 'Instagram',
-    icon: '📸',
-    color: 'bg-gradient-to-r from-purple-500 to-pink-500',
-    maxLength: 2200,
-    features: ['Image', 'Video', 'Carousel', 'Hashtags']
-  },
-  {
     id: 'tiktok',
     name: 'TikTok',
     icon: '🎵',
-    color: 'bg-gradient-to-r from-black to-red-500',
-    maxLength: 300,
-    features: ['Video', 'Trending Sounds', 'Hashtags']
+    maxChars: 2200,
+    features: ['hashtags', 'trending_sounds', 'viral_hooks']
+  },
+  {
+    id: 'instagram',
+    name: 'Instagram',
+    icon: '📸',
+    maxChars: 2200,
+    features: ['hashtags', 'stories', 'reels']
   },
   {
     id: 'youtube',
     name: 'YouTube',
-    icon: '🎥',
-    color: 'bg-gradient-to-r from-red-500 to-red-600',
-    maxLength: 5000,
-    features: ['Video', 'Title', 'Description', 'Tags']
+    icon: '📺',
+    maxChars: 5000,
+    features: ['tags', 'timestamps', 'descriptions']
   },
   {
     id: 'twitter',
-    name: 'X/Twitter',
+    name: 'Twitter/X',
     icon: '🐦',
-    color: 'bg-gradient-to-r from-blue-400 to-blue-600',
-    maxLength: 280,
-    features: ['Text', 'Hashtags', 'Link']
+    maxChars: 280,
+    features: ['hashtags', 'threads', 'mentions']
   },
   {
     id: 'threads',
     name: 'Threads',
     icon: '🧵',
-    color: 'bg-gradient-to-r from-gray-700 to-gray-900',
-    maxLength: 500,
-    features: ['Text', 'Image', 'Hashtags']
+    maxChars: 500,
+    features: ['hashtags', 'replies', 'mentions']
+  },
+  {
+    id: 'pinterest',
+    name: 'Pinterest',
+    icon: '📌',
+    maxChars: 500,
+    features: ['boards', 'rich_pins', 'hashtags']
   }
+];
+
+const SCHEDULE_OPTIONS = [
+  { value: 'now', label: 'Post Now' },
+  { value: 'optimal', label: 'Optimal Time (AI Selected)' },
+  { value: 'morning', label: 'Morning (8-10 AM)' },
+  { value: 'afternoon', label: 'Afternoon (12-2 PM)' },
+  { value: 'evening', label: 'Evening (6-8 PM)' },
+  { value: 'custom', label: 'Custom Time' }
 ];
 
 interface PlatformSelectorProps {
   selectedPlatforms: string[];
-  onPlatformChange: (platforms: string[]) => void;
-  className?: string;
+  onPlatformsChange: (platforms: string[]) => void;
+  scheduleTime?: string;
+  onScheduleChange?: (schedule: string) => void;
+  showScheduling?: boolean;
 }
 
 export function PlatformSelector({ 
   selectedPlatforms, 
-  onPlatformChange, 
-  className = "" 
+  onPlatformsChange, 
+  scheduleTime = 'now',
+  onScheduleChange,
+  showScheduling = true 
 }: PlatformSelectorProps) {
-  
-  const handlePlatformToggle = (platformId: string, checked: boolean) => {
-    if (checked) {
-      onPlatformChange([...selectedPlatforms, platformId]);
-    } else {
-      onPlatformChange(selectedPlatforms.filter(id => id !== platformId));
+  const [customTime, setCustomTime] = useState('');
+
+  const handlePlatformToggle = (platformId: string) => {
+    const updated = selectedPlatforms.includes(platformId)
+      ? selectedPlatforms.filter(id => id !== platformId)
+      : [...selectedPlatforms, platformId];
+    onPlatformsChange(updated);
+  };
+
+  const handleScheduleTimeChange = (value: string) => {
+    if (onScheduleChange) {
+      onScheduleChange(value);
     }
   };
 
   return (
-    <Card className={className}>
+    <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          📱 Select Publishing Platforms
+          <span>📱</span>
+          Platform Selection & Scheduling
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Choose which platforms to optimize your content for
-        </p>
       </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {PLATFORMS.map((platform) => {
-            const isSelected = selectedPlatforms.includes(platform.id);
-            
-            return (
+      <CardContent className="space-y-6">
+        {/* Platform Selection */}
+        <div>
+          <h3 className="font-medium mb-3">Select Platforms</h3>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {PLATFORMS.map((platform) => (
               <div
                 key={platform.id}
-                className={`
-                  relative rounded-lg border-2 p-4 cursor-pointer transition-all duration-200
-                  ${isSelected 
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-                    : 'border-gray-200 hover:border-gray-300 dark:border-gray-700 dark:hover:border-gray-600'
-                  }
-                `}
-                onClick={() => handlePlatformToggle(platform.id, !isSelected)}
+                className={`flex items-center space-x-3 p-3 border rounded-lg cursor-pointer transition-colors ${
+                  selectedPlatforms.includes(platform.id)
+                    ? 'border-blue-500 bg-blue-50'
+                    : 'border-gray-200 hover:border-gray-300'
+                }`}
+                onClick={() => handlePlatformToggle(platform.id)}
               >
-                <div className="flex items-start gap-3">
-                  <Checkbox
-                    id={platform.id}
-                    checked={isSelected}
-                    onCheckedChange={(checked) => 
-                      handlePlatformToggle(platform.id, checked as boolean)
-                    }
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <div className="flex-1 min-w-0">
-                    <Label 
-                      htmlFor={platform.id}
-                      className="cursor-pointer flex items-center gap-2 font-medium"
-                    >
-                      <span className="text-lg">{platform.icon}</span>
+                <Checkbox
+                  checked={selectedPlatforms.includes(platform.id)}
+                  onChange={() => handlePlatformToggle(platform.id)}
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg">{platform.icon}</span>
+                    <Label className="text-sm font-medium cursor-pointer">
                       {platform.name}
                     </Label>
-                    
-                    <div className="mt-2 space-y-1">
-                      <div className="text-xs text-muted-foreground">
-                        Max length: {platform.maxLength.toLocaleString()} chars
-                      </div>
-                      
-                      <div className="flex flex-wrap gap-1">
-                        {platform.features.map((feature) => (
-                          <span
-                            key={feature}
-                            className="inline-block px-2 py-1 text-xs bg-gray-100 dark:bg-gray-800 rounded-full"
-                          >
-                            {feature}
-                          </span>
-                        ))}
-                      </div>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Max: {platform.maxChars} chars
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {selectedPlatforms.length > 0 && (
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-sm text-green-800">
+                Selected: {selectedPlatforms.map(id => 
+                  PLATFORMS.find(p => p.id === id)?.name
+                ).join(', ')}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* Scheduling Options */}
+        {showScheduling && (
+          <div>
+            <h3 className="font-medium mb-3 flex items-center gap-2">
+              <Clock className="h-4 w-4" />
+              Schedule Publishing
+            </h3>
+            <div className="space-y-3">
+              <Select value={scheduleTime} onValueChange={handleScheduleTimeChange}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select posting time" />
+                </SelectTrigger>
+                <SelectContent>
+                  {SCHEDULE_OPTIONS.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {scheduleTime === 'custom' && (
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <input
+                    type="datetime-local"
+                    value={customTime}
+                    onChange={(e) => setCustomTime(e.target.value)}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+                  />
+                </div>
+              )}
+
+              {scheduleTime === 'optimal' && (
+                <div className="p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    AI will analyze your audience engagement patterns and select the optimal posting time for maximum reach.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Platform Features Preview */}
+        {selectedPlatforms.length > 0 && (
+          <div>
+            <h3 className="font-medium mb-3">Platform Features</h3>
+            <div className="space-y-2">
+              {selectedPlatforms.map(platformId => {
+                const platform = PLATFORMS.find(p => p.id === platformId);
+                return platform ? (
+                  <div key={platformId} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                    <span className="text-sm font-medium">
+                      {platform.icon} {platform.name}
+                    </span>
+                    <div className="flex gap-1">
+                      {platform.features.map(feature => (
+                        <span key={feature} className="text-xs bg-white px-2 py-1 rounded border">
+                          {feature.replace('_', ' ')}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                </div>
-                
-                {isSelected && (
-                  <div className="absolute top-2 right-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-        
-        {selectedPlatforms.length > 0 && (
-          <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800">
-            <div className="text-sm text-green-800 dark:text-green-200">
-              ✅ {selectedPlatforms.length} platform{selectedPlatforms.length !== 1 ? 's' : ''} selected
-            </div>
-            <div className="text-xs text-green-600 dark:text-green-300 mt-1">
-              Content will be optimized for: {selectedPlatforms.join(', ')}
+                ) : null;
+              })}
             </div>
           </div>
         )}
