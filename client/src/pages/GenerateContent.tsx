@@ -26,6 +26,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
+import { TemplateSelector } from "@/components/TemplateSelector";
 
 interface GeneratedContent {
   content: string;
@@ -399,17 +400,11 @@ const GenerateContent = () => {
             {/* Template Type */}
             <div>
               <Label htmlFor="template">Template Type</Label>
-              <Select value={templateType} onValueChange={setTemplateType}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="social_media_post">Social Media Post</SelectItem>
-                  <SelectItem value="product_review">Product Review</SelectItem>
-                  <SelectItem value="comparison">Comparison Post</SelectItem>
-                  <SelectItem value="tutorial">Tutorial</SelectItem>
-                </SelectContent>
-              </Select>
+              <TemplateSelector 
+                value={templateType} 
+                onChange={setTemplateType}
+                selectedNiche={selectedNiche}
+              />
             </div>
 
             {/* Tone */}

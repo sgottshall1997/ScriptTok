@@ -1,0 +1,68 @@
+You are GlowBot2’s UI and backend enhancement engineer.
+
+Your task is to **ensure all content template types** are available, clearly presented, and functionally wired into the content generation process.
+
+---
+
+🎯 OBJECTIVE:
+Integrate **all template types** into the generator UI and ensure the correct one is passed to the OpenAI backend for content generation.
+
+---
+
+🧠 BACKEND LOGIC:
+
+- Pull all available template types from `/templates` or the configured enum/object in code.
+- Example list (add if missing):
+  - SEO Blog Post
+  - Listicle
+  - Comparison Breakdown
+  - Product Demo Script
+  - Influencer Caption
+  - Pros & Cons
+  - “Surprise Me” (random selection or GPT-decided)
+  - Video Hook + Short Script
+  - Platform-Specific Caption (Twitter post, IG caption, etc.)
+  - Skit or Ad Style Script
+  - Buyer’s Guide
+  - Routine Example
+  - Meme-style Post
+  - Informational Thread
+
+- Store each template’s name, slug, description (optional), and platform compatibility.
+
+---
+
+🖼️ FRONTEND UI INTEGRATION:
+
+- Add a `Template Type` dropdown (or segmented tabs) in the content generator form.
+- Default selection: **SEO Blog Post**
+- If user selects “Surprise Me,” call GPT with a system prompt:  
+  `"Based on the product and niche, pick the best-performing content format from our library. Justify briefly."`
+
+- On selection, update content payload:
+  ```json
+  {
+    "templateType": "comparison-breakdown",
+    ...
+  }
+Optional: Show tooltips or info icons next to each template explaining its use case.
+
+⚙️ CHECKLIST TO COMPLETE:
+
+ Fetch or define full list of templates globally
+
+ Display all templates in generator UI
+
+ Ensure selected template gets passed to OpenAI in templateType field
+
+ Add "Surprise Me" mode that GPT can dynamically select
+
+ Make UI mobile-responsive and clean (accordion or dropdown)
+
+ Ensure platform compatibility (some formats only apply to specific platforms like TikTok or Twitter)
+
+🧪 BONUS:
+
+Add a debug/test button (visible in dev only) to preview all templates side-by-side for QA review — each with mock content and structure.
+
+GlowBot2 should empower users to generate any type of content they need, in one tap.

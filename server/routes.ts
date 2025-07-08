@@ -69,6 +69,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/analytics', analyticsRouter);
   app.use('/api/template-test', templateTestRouter);
   app.use('/api/templates', templateRouter);
+  
+  // Enhanced template management API
+  app.get('/api/templates', async (req, res) => {
+    const { getTemplates } = await import('./api/templates');
+    await getTemplates(req, res);
+  });
+  
+  app.get('/api/templates/popular', async (req, res) => {
+    const { getPopularTemplates } = await import('./api/templates');
+    await getPopularTemplates(req, res);
+  });
+  
+  app.get('/api/templates/recommendations', async (req, res) => {
+    const { getTemplateRecommendations } = await import('./api/templates');
+    await getTemplateRecommendations(req, res);
+  });
+  
+  app.get('/api/templates/:id', async (req, res) => {
+    const { getTemplateById } = await import('./api/templates');
+    await getTemplateById(req, res);
+  });
   app.use('/api/scraper-status', scraperStatusRouter);
   app.use('/api/custom-template', customTemplateTestRouter);
   app.use('/api/ai-model-config', aiModelConfigRouter);

@@ -10,6 +10,7 @@ import { insertContentHistorySchema } from "@shared/schema";
 import { sendWebhookNotification } from "../services/webhookService";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
+import { selectBestTemplate } from "../services/surpriseMeSelector";
 
 // Helper function to extract hashtags from text
 function extractHashtags(text: string): string[] {
@@ -50,6 +51,8 @@ const generateContentSchema = z.object({
   contentType: z.enum(["video", "photo"]).default("video"),
   isVideoContent: z.boolean().optional().default(false),
   videoDuration: z.enum(["30", "45", "60"]).optional(),
+  customHook: z.string().optional(),
+  affiliateUrl: z.string().optional(),
 });
 
 // Helper functions to check if tone and template exist in the system
@@ -153,19 +156,40 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       });
     }
     
-    // Check if the template type exists for the requested niche, with automatic fallback
+    // Handle "Surprise Me" template selection
     let finalTemplateType = validatedData.templateType;
-    const templateExists = await isValidTemplateType(validatedData.templateType, validatedData.niche);
-    if (!templateExists) {
-      // If requested template doesn't exist, use the first available template for the niche
-      const availableTemplates = await getAvailableTemplateTypes(validatedData.niche);
-      if (availableTemplates.length > 0) {
-        finalTemplateType = availableTemplates[0];
-        console.log(`Template "${validatedData.templateType}" not found for ${validatedData.niche}, using fallback: ${finalTemplateType}`);
-      } else {
-        // If no templates available, use skincare_routine as ultimate fallback
-        finalTemplateType = "skincare_routine";
-        console.log(`No templates found for ${validatedData.niche}, using ultimate fallback: ${finalTemplateType}`);
+    let surpriseMeReasoning = '';
+    
+    if (validatedData.templateType === 'surprise_me') {
+      console.log('🎲 Surprise Me mode activated - using AI to select optimal template');
+      try {
+        const aiSelection = await selectBestTemplate(
+          validatedData.product,
+          validatedData.niche,
+          validatedData.platforms,
+          validatedData.tone
+        );
+        finalTemplateType = aiSelection.selectedTemplate;
+        surpriseMeReasoning = aiSelection.reasoning;
+        console.log(`🎯 AI selected template: ${finalTemplateType} (confidence: ${aiSelection.confidence})`);
+      } catch (error) {
+        console.error('Surprise Me selection failed, using fallback:', error);
+        finalTemplateType = 'influencer_caption'; // Safe fallback
+      }
+    } else {
+      // Check if the template type exists for the requested niche, with automatic fallback
+      const templateExists = await isValidTemplateType(validatedData.templateType, validatedData.niche);
+      if (!templateExists) {
+        // If requested template doesn't exist, use the first available template for the niche
+        const availableTemplates = await getAvailableTemplateTypes(validatedData.niche);
+        if (availableTemplates.length > 0) {
+          finalTemplateType = availableTemplates[0];
+          console.log(`Template "${validatedData.templateType}" not found for ${validatedData.niche}, using fallback: ${finalTemplateType}`);
+        } else {
+          // If no templates available, use skincare_routine as ultimate fallback
+          finalTemplateType = "skincare_routine";
+          console.log(`No templates found for ${validatedData.niche}, using ultimate fallback: ${finalTemplateType}`);
+        }
       }
     }
     
@@ -463,7 +487,11 @@ Experience the difference today! #${niche} #trending`;
         contentType,
         platformContent: platformContent || null,
         // Webhook automation ready data
-        webhookData
+        webhookData,
+        // Enhanced template system data
+        ...(surpriseMeReasoning && { surpriseMeReasoning }),
+        affiliateUrl: validatedData.affiliateUrl || null,
+        customHook: validatedData.customHook || null
       },
       error: null
     });

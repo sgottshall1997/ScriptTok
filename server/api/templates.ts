@@ -1,163 +1,179 @@
-/**
- * Enhanced Template API Endpoints
- * Provides access to the enhanced template system with metadata
- */
-import { Router, Request, Response } from 'express';
-import { TemplateType } from '@shared/constants';
-import { 
-  getTemplateInfo, 
-  getAllTemplatesForNiche, 
-  getNicheInfo, 
-  getAllNicheInfo 
-} from '../prompts';
-import { reloadTemplates } from '../prompts/templates';
+import { Request, Response } from 'express';
+import { TEMPLATE_METADATA, getTemplatesByCategory } from '@shared/templateMetadata';
+import { TemplateType, TEMPLATE_TYPES } from '@shared/constants';
 
-// Create a router for template endpoints
-export const templateRouter = Router();
-
-/**
- * GET /api/templates
- * Get all available template metadata for all niches
- */
-templateRouter.get('/', async (req: Request, res: Response) => {
+// Get all available templates with metadata
+export const getTemplates = async (req: Request, res: Response) => {
   try {
-    const allNicheInfo = await getAllNicheInfo();
+    const { niche, category } = req.query;
     
-    // For each niche, get all templates
-    const result: Record<string, any> = {
-      niches: {},
-    };
+    let templates = Object.values(TEMPLATE_METADATA);
     
-    // Process each niche
-    for (const [nicheId, nicheInfo] of Object.entries(allNicheInfo)) {
-      const templates = await getAllTemplatesForNiche(nicheId);
-      
-      result.niches[nicheId] = {
-        info: nicheInfo,
-        templates: templates,
+    // Filter by category if specified
+    if (category && typeof category === 'string') {
+      templates = templates.filter(template => 
+        template.category.toLowerCase() === category.toLowerCase()
+      );
+    }
+    
+    // Filter by niche relevance if specified
+    if (niche && typeof niche === 'string') {
+      const nicheMap: Record<string, string[]> = {
+        'skincare': ['Universal', 'Skincare'],
+        'tech': ['Universal', 'Tech'], 
+        'fashion': ['Universal', 'Fashion'],
+        'fitness': ['Universal', 'Fitness'],
+        'food': ['Universal', 'Food', 'Home'],
+        'travel': ['Universal', 'Travel'],
+        'pet': ['Universal', 'Pet']
       };
+      
+      const relevantCategories = nicheMap[niche.toLowerCase()] || ['Universal'];
+      templates = templates.filter(template =>
+        relevantCategories.includes(template.category)
+      );
     }
     
-    res.json(result);
-  } catch (error) {
-    console.error('Error getting all templates:', error);
-    res.status(500).json({ error: 'Failed to get templates' });
-  }
-});
-
-/**
- * GET /api/templates/:niche
- * Get template metadata for a specific niche
- */
-templateRouter.get('/:niche', async (req: Request, res: Response) => {
-  try {
-    const { niche } = req.params;
-    
-    const nicheInfo = await getNicheInfo(niche);
-    if (!nicheInfo) {
-      return res.status(404).json({ error: `Niche '${niche}' not found` });
-    }
-    
-    const templates = await getAllTemplatesForNiche(niche);
+    const categorizedTemplates = getTemplatesByCategory();
     
     res.json({
-      info: nicheInfo,
+      success: true,
       templates: templates,
+      categories: categorizedTemplates,
+      totalCount: templates.length
     });
   } catch (error) {
-    console.error(`Error getting templates for niche ${req.params.niche}:`, error);
-    res.status(500).json({ error: 'Failed to get templates' });
+    console.error('Error fetching templates:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch templates'
+    });
   }
-});
+};
 
-/**
- * Helper functions for generating sample data for template previews
- */
-function getSampleProductForNiche(niche: string): string {
-  const nicheProducts: Record<string, string> = {
-    skincare: "CeraVe Hydrating Facial Cleanser",
-    tech: "iPhone 15 Pro",
-    fashion: "Levi's 501 Original Fit Jeans",
-    fitness: "Nike Air Zoom Pegasus 39",
-    food: "Lodge Cast Iron Skillet",
-    home: "Dyson V11 Cordless Vacuum",
-    pet: "Purina Pro Plan Dog Food",
-    travel: "Away Carry-On Suitcase",
-    default: "Sample Product"
-  };
-  
-  return nicheProducts[niche] || nicheProducts.default;
-}
-
-function getSampleTrendsForNiche(niche: string): string {
-  const nicheTrends: Record<string, string> = {
-    skincare: "Consider these trending skincare products: The Ordinary Niacinamide Serum (viral on TikTok with 820K mentions), CeraVe Moisturizing Cream (featured by top dermatologists), and Paula's Choice BHA Liquid Exfoliant (mentioned in 15 'Best of 2023' lists).",
-    tech: "Consider these trending tech products: Sony WH-1000XM5 Headphones (trending on Reddit tech communities), Samsung Galaxy S23 Ultra (featured in top YouTube reviews), and Apple MacBook Air M2 (mentioned in 20+ 'Best laptops of 2023' roundups).",
-    fashion: "Consider these trending fashion items: Reformation Cynthia High Rise Straight Jeans (spotted on multiple celebrities), Skims Soft Lounge Dress (selling out after viral TikTok reviews), and Loewe Puzzle Bag (mentioned across Instagram fashion influencer posts).",
-    fitness: "Consider these trending fitness products: Hoka Clifton 8 Running Shoes (discussed in runner communities), Lululemon Align Leggings (consistently trending across social platforms), and Hydro Flask Water Bottle (featured in fitness influencer content).",
-    food: "Consider these trending kitchen products: Our Place Always Pan (viral across social media), Ninja Creami Ice Cream Maker (trending in cooking groups), and GreenPan Valencia Pro Ceramic Cookware (featured in cooking influencer content).",
-    home: "Consider these trending home products: Ruggable Washable Rugs (popular in home decor communities), Levoit Air Purifier (trending in wellness spaces), and Brooklinen Luxe Sheet Set (mentioned across home influencer content).",
-    pet: "Consider these trending pet products: Catit Flower Water Fountain (viral among cat owners), Wild One Dog Harness (popular on pet Instagram accounts), and Furbo Dog Camera (featured in pet tech roundups).",
-    travel: "Consider these trending travel products: Beis Weekender Bag (featured by travel influencers), Patagonia Black Hole Duffel (popular in travel communities), and Apple AirTag (mentioned in countless travel security guides).",
-    default: "Consider these trending products: The Ordinary Niacinamide Serum, Apple AirPods Pro, and Dyson Airwrap."
-  };
-  
-  return nicheTrends[niche] || nicheTrends.default;
-}
-
-/**
- * GET /api/templates/:niche/:templateType
- * Get metadata for a specific template in a specific niche
- */
-templateRouter.get('/:niche/:templateType', async (req: Request, res: Response) => {
+// Get specific template by ID
+export const getTemplateById = async (req: Request, res: Response) => {
   try {
-    const { niche, templateType } = req.params;
-    const preview = req.query.preview === 'true';
+    const { id } = req.params;
     
-    const templateInfo = await getTemplateInfo(niche, templateType as TemplateType);
-    if (!templateInfo) {
-      return res.status(404).json({ 
-        error: `Template '${templateType}' not found for niche '${niche}'` 
+    if (!id || !TEMPLATE_TYPES.includes(id as TemplateType)) {
+      return res.status(404).json({
+        success: false,
+        error: 'Template not found'
       });
     }
     
-    // If preview is requested, add a preview by filling in placeholders with sample data
-    if (preview && templateInfo.template) {
-      const sampleProduct = getSampleProductForNiche(niche);
-      const sampleTrends = getSampleTrendsForNiche(niche);
-      
-      // Create a preview version with sample data
-      const previewTemplate = templateInfo.template
-        .replace(/{{productName}}/g, sampleProduct)
-        .replace(/{{trendingProducts}}/g, sampleTrends)
-        .replace(/{{tone}}/g, 'conversational');
-      
-      return res.json({
-        ...templateInfo,
-        preview: previewTemplate
-      });
+    const template = TEMPLATE_METADATA[id as TemplateType];
+    
+    res.json({
+      success: true,
+      template
+    });
+  } catch (error) {
+    console.error('Error fetching template:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch template'
+    });
+  }
+};
+
+// Get popular templates based on usage stats
+export const getPopularTemplates = async (req: Request, res: Response) => {
+  try {
+    // These would normally come from analytics/usage data
+    const popularTemplateIds: TemplateType[] = [
+      'short_video',
+      'influencer_caption',
+      'product_comparison', 
+      'seo_blog',
+      'unboxing',
+      'skincare_routine',
+      'surprise_me'
+    ];
+    
+    const popularTemplates = popularTemplateIds
+      .map(id => TEMPLATE_METADATA[id])
+      .filter(Boolean);
+    
+    res.json({
+      success: true,
+      templates: popularTemplates
+    });
+  } catch (error) {
+    console.error('Error fetching popular templates:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch popular templates'
+    });
+  }
+};
+
+// Get template recommendations based on product and niche
+export const getTemplateRecommendations = async (req: Request, res: Response) => {
+  try {
+    const { product, niche, platform } = req.query;
+    
+    // AI-powered template selection logic
+    let recommendedTemplates: TemplateType[] = [];
+    
+    // Default recommendations based on niche
+    const nicheRecommendations: Record<string, TemplateType[]> = {
+      'skincare': ['skincare_routine', 'derm_approved', 'transformation', 'dupe_alert'],
+      'tech': ['unboxing', 'worth_it', 'setup_guide', 'hidden_features'],
+      'fashion': ['style_this', 'outfit_inspo', 'dupes_lookalikes', 'haul_review'],
+      'fitness': ['supplement_stack', 'eat_in_day', 'fitness_influencer', 'myth_busting'],
+      'food': ['product_recipe', 'kitchen_must_haves', 'amazon_finds'],
+      'travel': ['packlist', 'adventure_vlog', 'gear_breakdown'],
+      'pet': ['dog_testimonial', 'pet_owner_tips', 'trainer_tip']
+    };
+    
+    // Platform-specific recommendations
+    const platformRecommendations: Record<string, TemplateType[]> = {
+      'tiktok': ['short_video', 'dupe_alert', 'myth_busting', 'hidden_features'],
+      'instagram': ['influencer_caption', 'transformation', 'outfit_inspo', 'unboxing'],
+      'youtube': ['unboxing', 'setup_guide', 'adventure_vlog', 'haul_review'],
+      'blog': ['seo_blog', 'product_comparison', 'buyer_persona', 'routine_kit']
+    };
+    
+    if (niche && typeof niche === 'string') {
+      recommendedTemplates.push(...(nicheRecommendations[niche.toLowerCase()] || []));
     }
     
-    res.json(templateInfo);
-  } catch (error) {
-    console.error(`Error getting template info for ${req.params.niche}/${req.params.templateType}:`, error);
-    res.status(500).json({ error: 'Failed to get template info' });
-  }
-});
-
-/**
- * POST /api/templates/reload
- * Force reload of all templates from disk
- * Useful during development or after template updates
- */
-templateRouter.post('/reload', async (req: Request, res: Response) => {
-  try {
-    // This will reload templates for all niches
-    await reloadTemplates();
+    if (platform && typeof platform === 'string') {
+      recommendedTemplates.push(...(platformRecommendations[platform.toLowerCase()] || []));
+    }
     
-    res.json({ success: true, message: 'Templates reloaded successfully' });
+    // Add universal templates that work for everything
+    recommendedTemplates.push('product_comparison', 'bullet_points', 'trending_explainer');
+    
+    // Remove duplicates and get template metadata
+    const uniqueTemplates = [...new Set(recommendedTemplates)];
+    const templates = uniqueTemplates
+      .map(id => TEMPLATE_METADATA[id])
+      .filter(Boolean)
+      .slice(0, 10); // Limit to top 10 recommendations
+    
+    res.json({
+      success: true,
+      templates,
+      reasoning: `Recommendations based on ${niche ? `${niche} niche` : 'universal templates'}${platform ? ` and ${platform} platform` : ''}`
+    });
   } catch (error) {
-    console.error('Error reloading templates:', error);
-    res.status(500).json({ error: 'Failed to reload templates' });
+    console.error('Error getting template recommendations:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get template recommendations'
+    });
   }
-});
+};
+
+// Create and export the router
+import { Router } from 'express';
+
+export const templateRouter = Router();
+
+templateRouter.get('/', getTemplates);
+templateRouter.get('/popular', getPopularTemplates);
+templateRouter.get('/recommendations', getTemplateRecommendations);
+templateRouter.get('/:id', getTemplateById);
