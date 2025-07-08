@@ -38,6 +38,7 @@ import hooksRouter from "./api/hooks";
 import schedulingRouter from "./api/scheduling";
 import metricsRouter from "./api/metrics";
 import affiliateNetworksRouter from "./api/affiliate-networks";
+import perplexityTrendingRouter from "./api/perplexity-trending";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -58,6 +59,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Affiliate networks
   app.use('/api/affiliate-networks', affiliateNetworksRouter);
+  
+  // Perplexity trending products
+  app.use('/api/perplexity-trending', perplexityTrendingRouter);
   // Register API routes
   app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);

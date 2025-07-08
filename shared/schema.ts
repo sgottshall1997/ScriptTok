@@ -808,3 +808,30 @@ export type InsertContentHook = z.infer<typeof insertContentHookSchema>;
 
 export type PlatformContent = typeof platformContent.$inferSelect;
 export type InsertPlatformContent = z.infer<typeof insertPlatformContentSchema>;
+
+// Perplexity trending products table
+export const perplexityTrendingProducts = pgTable("perplexity_trending_products", {
+  id: serial("id").primaryKey(),
+  niche: text("niche").notNull(),
+  productName: text("product_name").notNull(),
+  benefit: text("benefit").notNull(),
+  viralMetric: text("viral_metric"),
+  priceRange: text("price_range"),
+  affiliateReason: text("affiliate_reason"),
+  amazonLink: text("amazon_link"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const insertPerplexityTrendingProductSchema = createInsertSchema(perplexityTrendingProducts).pick({
+  niche: true,
+  productName: true,
+  benefit: true,
+  viralMetric: true,
+  priceRange: true,
+  affiliateReason: true,
+  amazonLink: true,
+});
+
+export type PerplexityTrendingProduct = typeof perplexityTrendingProducts.$inferSelect;
+export type InsertPerplexityTrendingProduct = z.infer<typeof insertPerplexityTrendingProductSchema>;
