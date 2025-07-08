@@ -8,10 +8,10 @@ export interface WebhookConfig {
   secret?: string;  // For webhook signature verification if needed
 }
 
-// Store webhook configuration - Auto-configure from environment
+// Store webhook configuration - Force correct URL
 let webhookConfig: WebhookConfig = {
-  url: process.env.MAKE_WEBHOOK_URL || '',
-  enabled: Boolean(process.env.MAKE_WEBHOOK_URL)
+  url: 'https://hook.us2.make.com/rrdlmayg3mvi68p2jxhdxbg2ohy41pn4',
+  enabled: true
 };
 
 /**
