@@ -42,6 +42,7 @@ import perplexityTrendsRouter from "./api/perplexity-trends";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
+import aiAnalyticsRouter from "./api/ai-analytics";
 
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
 
@@ -106,6 +107,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/options', optionsRouter);
   app.use('/api/history', historyRouter);
   app.use('/api/usage-summary', usageSummaryRouter);
+  app.use('/api/ai-analytics', aiAnalyticsRouter);
   app.use('/api/webhooks', webhooksRouter);
   app.use('/api/webhooks/test', webhookTestRouter);
   app.use('/api/post/send-to-make', sendToMakeRouter);

@@ -58,6 +58,22 @@ export default function PerformanceAnalytics() {
     staleTime: 120000,
   });
 
+  // AI Analytics data
+  const { data: aiAnalyticsData, isLoading: aiAnalyticsLoading } = useQuery({
+    queryKey: ['/api/ai-analytics/model-usage', timeRange],
+    staleTime: 30000,
+  });
+
+  const { data: perplexityStats, isLoading: perplexityLoading } = useQuery({
+    queryKey: ['/api/ai-analytics/perplexity-stats', timeRange],
+    staleTime: 30000,
+  });
+
+  const { data: aiComparison, isLoading: aiComparisonLoading } = useQuery({
+    queryKey: ['/api/ai-analytics/comparison', timeRange],
+    staleTime: 30000,
+  });
+
   // Form for manual data input
   const form = useForm<MetricsForm>({
     resolver: zodResolver(metricsSchema),
@@ -366,11 +382,12 @@ export default function PerformanceAnalytics() {
 
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="dashboard">ROI Dashboard</TabsTrigger>
           <TabsTrigger value="trends">Performance Trends</TabsTrigger>
           <TabsTrigger value="content">Content Analysis</TabsTrigger>
           <TabsTrigger value="platforms">Platform Comparison</TabsTrigger>
+          <TabsTrigger value="ai-analytics">AI Analytics</TabsTrigger>
         </TabsList>
 
         <TabsContent value="dashboard" className="space-y-6">
@@ -564,6 +581,252 @@ export default function PerformanceAnalytics() {
                 </ResponsiveContainer>
               </CardContent>
             </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="ai-analytics" className="space-y-6">
+          {aiAnalyticsLoading ? (
+            <Card>
+              <CardContent className="p-8 text-center">
+                <div className="animate-spin h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-gray-600">Loading AI analytics...</p>
+              </CardContent>
+            </Card>
+          ) : !aiAnalyticsData || aiAnalyticsData.data?.providerUsage?.length === 0 ? (
+            <EmptyState 
+              title="No AI Usage Data" 
+              description="Start generating content to track OpenAI vs Perplexity usage analytics and performance metrics."
+            />
+          ) : (
+            <>
+              {/* AI Provider Overview */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {aiAnalyticsData.data.providerUsage.map((provider: any, index: number) => (
+                  <Card key={provider.provider}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm font-medium text-gray-600">{provider.provider}</p>
+                          <p className="text-2xl font-bold" style={{ color: provider.provider === 'OpenAI' ? '#10B981' : provider.provider === 'Perplexity' ? '#8B5CF6' : '#F59E0B' }}>
+                            {provider.count.toLocaleString()}
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">{provider.totalTokens?.toLocaleString() || '0'} tokens</p>
+                        </div>
+                        <div className="w-12 h-12 rounded-full flex items-center justify-center" style={{ 
+                          backgroundColor: provider.provider === 'OpenAI' ? '#10B981' : provider.provider === 'Perplexity' ? '#8B5CF6' : '#F59E0B',
+                          opacity: 0.1
+                        }}>
+                          {provider.provider === 'OpenAI' && <span className="text-lg">🤖</span>}
+                          {provider.provider === 'Perplexity' && <span className="text-lg">🔍</span>}
+                          {provider.provider === 'Anthropic' && <span className="text-lg">🧠</span>}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+
+              {/* AI Usage Distribution */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>AI Provider Distribution</CardTitle>
+                  <CardDescription>Content generation breakdown by AI provider</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={aiAnalyticsData.data.providerUsage}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        fill="#8884d8"
+                        dataKey="count"
+                        label={({ provider, count }) => `${provider}: ${count}`}
+                      >
+                        {aiAnalyticsData.data.providerUsage.map((entry: any, index: number) => (
+                          <Cell key={`cell-${index}`} fill={entry.provider === 'OpenAI' ? '#10B981' : entry.provider === 'Perplexity' ? '#8B5CF6' : '#F59E0B'} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+
+              {/* Detailed Model Breakdown */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Model Usage Details</CardTitle>
+                  <CardDescription>Detailed breakdown of specific AI models used</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {aiAnalyticsData.data.modelBreakdown.map((model: any, index: number) => (
+                      <div key={index} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center" style={{
+                            backgroundColor: model.model.includes('gpt') ? '#10B981' : 
+                                           model.model.includes('sonar') || model.model.includes('perplexity') ? '#8B5CF6' : 
+                                           model.model.includes('claude') ? '#F59E0B' : '#6B7280',
+                            opacity: 0.2
+                          }}>
+                            <span className="text-sm font-medium" style={{
+                              color: model.model.includes('gpt') ? '#10B981' : 
+                                    model.model.includes('sonar') || model.model.includes('perplexity') ? '#8B5CF6' : 
+                                    model.model.includes('claude') ? '#F59E0B' : '#6B7280'
+                            }}>
+                              {model.model.includes('gpt') ? 'AI' : 
+                               model.model.includes('sonar') || model.model.includes('perplexity') ? 'PX' : 
+                               model.model.includes('claude') ? 'CL' : 'UN'}
+                            </span>
+                          </div>
+                          <div>
+                            <p className="font-medium">{model.model}</p>
+                            <p className="text-sm text-gray-600">{model.count} generations • Avg: {Math.round(model.avgTokens || 0)} tokens</p>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <p className="font-bold text-blue-600">{(model.totalTokens || 0).toLocaleString()}</p>
+                          <p className="text-xs text-gray-500">Total tokens</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Daily Usage Trends */}
+              {aiAnalyticsData.data.dailyTrends && aiAnalyticsData.data.dailyTrends.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Daily AI Usage Trends</CardTitle>
+                    <CardDescription>Track daily content generation by AI provider</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <ResponsiveContainer width="100%" height={400}>
+                      <BarChart data={aiAnalyticsData.data.dailyTrends}>
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="date" />
+                        <YAxis />
+                        <Tooltip />
+                        <Bar dataKey="count" stackId="a" fill="#8884d8" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Perplexity Specific Stats */}
+              {perplexityStats && perplexityStats.data?.perplexityUsage?.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <span className="text-2xl">🔍</span>
+                      Perplexity Intelligence Analytics
+                    </CardTitle>
+                    <CardDescription>Detailed Perplexity usage statistics and trending data quality</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Perplexity Models */}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-purple-700">Perplexity Models Used</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {perplexityStats.data.perplexityUsage.map((model: any, index: number) => (
+                          <div key={index} className="bg-purple-50 p-4 rounded-lg">
+                            <p className="font-medium text-purple-900">{model.model}</p>
+                            <p className="text-sm text-purple-700">{model.count} generations</p>
+                            <p className="text-xs text-purple-600">{(model.totalTokens || 0).toLocaleString()} tokens</p>
+                            <p className="text-xs text-purple-500 mt-1">Niches: {model.byNiche}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Recent Perplexity Generations */}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-purple-700">Recent Perplexity Generations</h4>
+                      <div className="space-y-2">
+                        {perplexityStats.data.recentGenerations.slice(0, 5).map((gen: any, index: number) => (
+                          <div key={index} className="flex items-center justify-between p-3 bg-purple-50 rounded">
+                            <div>
+                              <p className="font-medium text-purple-900">{gen.productName}</p>
+                              <p className="text-sm text-purple-600">{gen.niche} • {gen.model}</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-sm text-purple-700">{gen.tokenCount} tokens</p>
+                              <p className="text-xs text-purple-500">{new Date(gen.createdAt).toLocaleDateString()}</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Content Type Usage for Perplexity */}
+                    <div>
+                      <h4 className="font-semibold mb-3 text-purple-700">Perplexity Content Types</h4>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        {perplexityStats.data.contentTypeUsage.map((type: any, index: number) => (
+                          <div key={index} className="bg-purple-50 p-4 rounded-lg text-center">
+                            <p className="text-2xl font-bold text-purple-600">{type.count}</p>
+                            <p className="text-sm text-purple-700">{type.contentType}</p>
+                            <p className="text-xs text-purple-500">{Math.round(type.avgTokens || 0)} avg tokens</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* AI Comparison */}
+              {aiComparison && aiComparison.data?.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>OpenAI vs Perplexity Comparison</CardTitle>
+                    <CardDescription>Side-by-side performance comparison of AI providers</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                      {aiComparison.data.map((provider: any, index: number) => (
+                        <div key={index} className="border rounded-lg p-4" style={{
+                          borderColor: provider.provider === 'OpenAI' ? '#10B981' : '#8B5CF6',
+                          backgroundColor: provider.provider === 'OpenAI' ? '#F0FDF4' : '#FAF5FF'
+                        }}>
+                          <h4 className="font-semibold mb-3 flex items-center gap-2" style={{
+                            color: provider.provider === 'OpenAI' ? '#10B981' : '#8B5CF6'
+                          }}>
+                            {provider.provider === 'OpenAI' ? '🤖' : '🔍'} {provider.provider}
+                          </h4>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex justify-between">
+                              <span>Total Generations:</span>
+                              <span className="font-medium">{provider.totalGenerations.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Total Tokens:</span>
+                              <span className="font-medium">{(provider.totalTokens || 0).toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Avg Tokens/Gen:</span>
+                              <span className="font-medium">{Math.round(provider.avgTokensPerGeneration || 0)}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Unique Niches:</span>
+                              <span className="font-medium">{provider.uniqueNiches}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Content Types:</span>
+                              <span className="font-medium">{provider.uniqueContentTypes}</span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+            </>
           )}
         </TabsContent>
       </Tabs>
