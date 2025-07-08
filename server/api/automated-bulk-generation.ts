@@ -10,6 +10,9 @@ import {
 } from '@shared/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { generateContent } from '../services/contentGenerator';
+import { generatePlatformSpecificContent } from '../services/platformContentGenerator';
+
 // Import viral inspiration function from viral-inspiration API
 async function fetchViralVideoInspiration(productName: string, niche: string) {
   try {
@@ -514,30 +517,79 @@ Return as JSON with this exact structure:
 `;
 
   try {
-    // Simulate OpenAI call for now - replace with actual OpenAI integration
+    // Use the same content generation pipeline as the standard generator
+    const trendingProducts = []; // We don't need trending products for this specific call
+    
+    // Generate main content using the same function as standard generator
+    const mainContent = await generateContent(
+      productName,
+      template as any,
+      tone as any,
+      trendingProducts,
+      niche as any,
+      'gpt-4o',
+      viralInspiration
+    );
+
+    // Generate platform-specific content using the same function as standard generator
+    const platformContent = await generatePlatformSpecificContent({
+      product: productName,
+      niche: niche as any,
+      platforms,
+      contentType: "video",
+      templateType: template,
+      tone,
+      trendingData: viralInspiration
+    });
+
+    // Extract platform captions from the generated platform content
+    const platformCaptions: Record<string, string> = {};
+    if (platformContent?.socialCaptions) {
+      Object.entries(platformContent.socialCaptions).forEach(([platform, data]: [string, any]) => {
+        platformCaptions[platform.toLowerCase()] = data.caption || `Amazing ${productName}! ${mainContent.content}`;
+      });
+    } else {
+      // Fallback to generating platform captions manually if needed
+      platforms.forEach(platform => {
+        const platformLower = platform.toLowerCase();
+        let caption = `✨ ${viralInspiration?.caption || productName} \n\n${mainContent.content}`;
+        
+        // Add platform-specific CTAs
+        if (platformLower === 'tiktok') {
+          caption += `\n\nTap the link to grab it now! 👆`;
+        } else if (platformLower === 'instagram') {
+          caption += `\n\n🔗 Link in bio to shop!`;
+        } else if (platformLower === 'youtube') {
+          caption += `\n\nCheck the description for the link!`;
+        } else if (platformLower === 'twitter') {
+          caption += `\n\nShop here 👇`;
+        }
+        
+        caption += `\n\n${viralInspiration?.hashtags?.join(' ') || '#trending #viral'}`;
+        platformCaptions[platformLower] = caption;
+      });
+    }
+
+    // Create the exact same structure as the standard generator
     const generatedContent = {
       viralHooks: [
-        `${viralInspiration.hook}`,
-        `You won't believe what ${productName} can do for your ${niche} routine!`,
-        `This ${productName} hack is going viral for a reason - here's why:`
+        viralInspiration?.hook || 'Check this out!',
+        `This ${productName} is going viral for a reason!`,
+        `You won't believe what ${productName} can do!`
       ],
-      productDescription: `${productName} by ${productData.brand} is taking ${niche} by storm with ${productData.mentions?.toLocaleString()} social mentions. ${productData.reason} This trending must-have delivers exceptional results that ${niche} enthusiasts can't stop talking about.`,
-      videoScript: `Scene 1: Hook with ${viralInspiration.hook}\nScene 2: Product showcase demonstrating key benefits\nScene 3: Before/after or results reveal\nScene 4: Call-to-action with affiliate link\nNarration: ${tone} tone throughout, emphasizing viral aspects and ${niche} benefits.`,
-      platformCaptions: platforms.reduce((acc, platform) => {
-        acc[platform.toLowerCase()] = `✨ ${viralInspiration.caption} \n\n${productName} is trending for a reason! Perfect for ${niche} lovers. Link in bio for exclusive deals! 🔗`;
-        return acc;
-      }, {} as Record<string, string>),
-      hashtags: [
+      productDescription: mainContent.content,
+      videoScript: platformContent?.videoScript || `Amazing ${productName} showcase with ${viralInspiration?.format || 'engaging visuals'}`,
+      platformCaptions,
+      hashtags: viralInspiration?.hashtags || [
         `#${niche}`,
         "#trending",
-        "#viral",
-        "#musthave",
-        `#${productName.replace(/\s+/g, '')}`,
-        ...(viralInspiration.hashtags || [])
+        "#viral", 
+        "#musthave"
       ],
-      callToAction: `Tap the link in bio to get your ${productName} with exclusive affiliate discount! 🛒✨`
+      callToAction: `Get your ${productName} now! Link in bio 🛒`
     };
     
+    console.log('✅ Real content generated using standard pipeline for bulk job:', productName);
     return generatedContent;
     
   } catch (error) {
