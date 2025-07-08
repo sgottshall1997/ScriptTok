@@ -73,11 +73,18 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
 
   const startAutomatedBulkMutation = useMutation({
     mutationFn: async (data: any) => {
-      return apiRequest('/api/automated-bulk/start', {
+      const response = await fetch('/api/automated-bulk/start', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to start automated bulk generation');
+      }
+      
+      return response.json();
     },
     onSuccess: (data) => {
       toast({
