@@ -37,6 +37,7 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
 
 ### Trend Detection System
 - **Multi-Platform Scrapers**: Amazon, TikTok, YouTube, Instagram, Reddit, and Google Trends
+- **Perplexity Intelligence**: Real-time trend data from Perplexity API with authentic product research
 - **AI Fallback**: When scrapers fail, GPT generates realistic trending products
 - **Cache Management**: Smart caching to avoid rate limits and improve performance
 - **Real-time Updates**: Configurable refresh intervals for trending data
@@ -102,6 +103,7 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
 ## Changelog
 
 - July 08, 2025. Initial setup
+- July 08, 2025. Perplexity API integration completed - Real-time trending product data with authentic social media metrics now operational
 
 ## User Preferences
 

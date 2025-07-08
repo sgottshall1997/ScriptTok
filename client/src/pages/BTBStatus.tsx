@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { CheckCircle, Circle, Clock, AlertCircle } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { CheckCircle, Circle, Clock, AlertCircle, Zap } from 'lucide-react';
+import { apiRequest } from '@/lib/queryClient';
 
 interface FeatureStatus {
   feature: string;
@@ -178,10 +180,37 @@ const BTB_FEATURES: FeatureStatus[] = [
     status: 'pending',
     description: 'AI-powered posting time optimization',
     implementation: []
+  },
+  {
+    feature: 'Perplexity trend search integration',
+    status: 'complete',
+    description: 'Real-time trend data from Perplexity API with authentic product intelligence',
+    implementation: ['server/services/perplexityTrends.ts', 'API endpoint /api/perplexity-trends', 'TikTok scraper integration', 'Smart product parsing with mention extraction']
   }
 ];
 
 export default function BTBStatus() {
+  const [perplexityLoading, setPerplexityLoading] = useState(false);
+  const [perplexityResult, setPerplexityResult] = useState<any>(null);
+
+  const testPerplexityIntegration = async () => {
+    setPerplexityLoading(true);
+    setPerplexityResult(null);
+    
+    try {
+      const response = await apiRequest('GET', '/api/perplexity-trends/test');
+      const data = await response.json();
+      setPerplexityResult(data);
+    } catch (error) {
+      setPerplexityResult({
+        success: false,
+        error: error instanceof Error ? error.message : 'Test failed'
+      });
+    } finally {
+      setPerplexityLoading(false);
+    }
+  };
+
   const getStatusIcon = (status: FeatureStatus['status']) => {
     switch (status) {
       case 'complete':
@@ -251,6 +280,42 @@ export default function BTBStatus() {
             </CardContent>
           </Card>
         </div>
+        
+        {/* Perplexity Integration Test */}
+        <Card className="border-purple-200 bg-purple-50">
+          <CardHeader>
+            <CardTitle className="text-purple-700 flex items-center gap-2">
+              <Zap className="h-5 w-5" />
+              🔍 Perplexity Trend Search Integration
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-sm text-purple-600">
+                Test the new Perplexity API integration that replaces GPT-based trend generation with authentic real-time trend data.
+              </p>
+              
+              <Button 
+                onClick={testPerplexityIntegration}
+                disabled={perplexityLoading}
+                className="bg-purple-600 hover:bg-purple-700"
+              >
+                {perplexityLoading ? 'Testing...' : 'Test Perplexity Integration'}
+              </Button>
+              
+              {perplexityResult && (
+                <div className={`p-4 rounded-lg ${perplexityResult.success ? 'bg-green-100 border border-green-200' : 'bg-red-100 border border-red-200'}`}>
+                  <h4 className={`font-medium ${perplexityResult.success ? 'text-green-800' : 'text-red-800'}`}>
+                    {perplexityResult.success ? '✅ Perplexity Integration Working' : '❌ Perplexity Test Failed'}
+                  </h4>
+                  <pre className="text-xs mt-2 overflow-auto">
+                    {JSON.stringify(perplexityResult, null, 2)}
+                  </pre>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       <div className="space-y-6">

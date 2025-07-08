@@ -123,10 +123,11 @@ export const contentGenerations = pgTable("content_generations", {
 export const trendingProducts = pgTable("trending_products", {
   id: serial("id").primaryKey(),
   title: text("title").notNull(),
-  source: text("source").notNull(),
+  source: text("source").notNull(), // tiktok, instagram, youtube, reddit, amazon, google-trends, perplexity
   mentions: integer("mentions"),
   sourceUrl: text("source_url"),
   niche: text("niche").notNull().default("skincare"),
+  dataSource: text("data_source").default("gpt"), // 'gpt', 'perplexity', 'scraper'
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

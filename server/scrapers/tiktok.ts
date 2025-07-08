@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio';
 import { openai } from '../services/openai';
 import { ScraperReturn } from './index';
 import { ScraperStatusType } from '@shared/constants';
+import { fetchTrendingProductsFromPerplexity } from '../services/perplexityTrends';
 
 // TikTok trending products scraper with web approach
 export async function getTikTokTrending(niche: string = 'skincare'): Promise<ScraperReturn> {
@@ -294,9 +295,40 @@ export async function getTikTokTrending(niche: string = 'skincare'): Promise<Scr
     throw new Error('Could not extract product mentions from TikTok data');
     
   } catch (scrapingError) {
-    console.error('TikTok scraping failed, falling back to OpenAI:', scrapingError);
+    console.error('TikTok scraping failed, trying Perplexity then OpenAI:', scrapingError);
     
-    // Fallback to OpenAI if real scraping fails
+    // First try Perplexity for authentic trend data
+    try {
+      if (process.env.PERPLEXITY_API_KEY) {
+        console.log(`🔍 Using Perplexity for ${niche} TikTok trends...`);
+        
+        const perplexityProducts = await fetchTrendingProductsFromPerplexity(niche);
+        
+        if (perplexityProducts.length > 0) {
+          // Map Perplexity products to TikTok format
+          const products: InsertTrendingProduct[] = perplexityProducts.slice(0, 5).map(product => ({
+            ...product,
+            source: 'tiktok',
+            dataSource: 'perplexity'
+          }));
+          
+          console.log(`✅ Perplexity provided ${products.length} authentic TikTok ${niche} products`);
+          console.log('TikTok Perplexity products:', products.map(p => `"${p.title}" (${p.mentions} mentions)`).join(', '));
+          
+          return {
+            products,
+            status: {
+              status: 'perplexity-fallback' as ScraperStatusType,
+              errorMessage: `TikTok scraping failed, using Perplexity: ${scrapingError instanceof Error ? scrapingError.message : 'Unknown error'}`
+            }
+          };
+        }
+      }
+    } catch (perplexityError) {
+      console.error('Perplexity fallback failed, trying OpenAI:', perplexityError);
+    }
+    
+    // Final fallback to OpenAI if real scraping fails
     try {
       // Define niche-specific prompts
       const nicheSystemPrompts: Record<string, string> = {
