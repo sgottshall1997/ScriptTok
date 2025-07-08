@@ -249,7 +249,7 @@ export default function BTBStatus() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">BTB Automation Framework Status</h1>
+        <h1 className="text-3xl font-bold mb-2">Automation Framework Status</h1>
         <p className="text-muted-foreground mb-4">
           Complete implementation status of the BowTied Bull automation checklist
         </p>
@@ -378,7 +378,7 @@ export default function BTBStatus() {
         {/* All Other Features */}
         <Card>
           <CardHeader>
-            <CardTitle>All BTB Features</CardTitle>
+            <CardTitle>All Automation Features</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="space-y-3">
