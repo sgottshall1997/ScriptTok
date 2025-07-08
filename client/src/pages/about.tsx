@@ -101,6 +101,8 @@ const AboutPage: React.FC = () => {
           </p>
         </CardContent>
       </Card>
+
+
     </div>
   );
 };
