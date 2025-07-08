@@ -38,14 +38,36 @@ const GenerateContent = () => {
   const urlParts = location.split('/');
   const nicheFromUrl = urlParts[2]; // /niche/skincare -> skincare
   
-  // Extract template and product from query params
-  const urlParams = new URLSearchParams(location.split('?')[1] || '');
+  // Extract template and product from query params using window.location.search
+  const urlParams = new URLSearchParams(window.location.search);
   const templateFromUrl = urlParams.get('template');
   const productFromUrl = urlParams.get('product');
+  
+  // Debug logging to see what we're getting
+  // console.log('🔍 URL Debug:', { location, search: window.location.search, productFromUrl, nicheFromUrl });
 
   // State management
   const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'skincare');
   const [selectedProduct, setSelectedProduct] = useState(productFromUrl || '');
+  
+  // Update state when URL parameters change
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productParam = urlParams.get('product');
+    const nicheParam = urlParams.get('niche');
+    
+    // console.log('🔍 useEffect URL parsing:', { productParam, nicheParam });
+    
+    if (productParam && productParam !== selectedProduct) {
+      setSelectedProduct(productParam);
+      // console.log('🔍 Setting product from URL:', productParam);
+    }
+    
+    if (nicheParam && nicheParam !== selectedNiche) {
+      setSelectedNiche(nicheParam);
+      // console.log('🔍 Setting niche from URL:', nicheParam);
+    }
+  }, [location, window.location.search]);
   const [productUrl, setProductUrl] = useState('');
   const [affiliateNetwork, setAffiliateNetwork] = useState('amazon');
   const [affiliateId, setAffiliateId] = useState('');

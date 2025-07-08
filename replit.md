@@ -220,6 +220,13 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Successfully tested with CeraVe: found 5 real TikTok videos with authentic hooks and hashtags
   - ✅ System now analyzes actual viral video patterns instead of using template/placeholder content
   - ✅ Viral inspiration loading takes 2-3 seconds to fetch real data vs instant mock responses
+- July 08, 2025. **Product Auto-Fill Enhancement**: Fixed dashboard to viral content factory navigation:
+  - ✅ Corrected URL parameter parsing in GenerateContent component using window.location.search
+  - ✅ Added useEffect to update state when URL parameters change for proper navigation handling
+  - ✅ Dashboard "Generate Content" buttons now automatically populate Product Name field
+  - ✅ Both product name and niche are seamlessly transferred via URL parameters
+  - ✅ Enhanced user experience with one-click content generation workflow
+  - ✅ Fixed Wouter router compatibility issues with query parameter handling
 
 ## User Preferences
 
