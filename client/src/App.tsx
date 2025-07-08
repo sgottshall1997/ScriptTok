@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { initGA } from "./lib/analytics";
+import { useAnalytics } from "./hooks/use-analytics";
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -39,9 +41,6 @@ import PerformanceAnalytics from "@/pages/PerformanceAnalytics";
 
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
-import { useEffect } from "react";
-import { initGA } from "./lib/analytics";
-import { useAnalytics } from "./hooks/use-analytics";
 import { initScraperConsole } from "./lib/scraperConsole";
 
 function Router() {

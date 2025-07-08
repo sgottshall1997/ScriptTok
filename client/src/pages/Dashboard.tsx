@@ -313,7 +313,10 @@ const Dashboard = () => {
                       
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2">
-                        <Link href={`/generate?product=${encodeURIComponent(product.title)}&niche=${product.niche}`}>
+                        <Link 
+                          href={`/generate?product=${encodeURIComponent(product.title)}&niche=${product.niche}`}
+                          onClick={() => trackEvent('trending_product_click', 'research', `${product.niche}_${product.title}`, 1)}
+                        >
                           <Button size="sm" className="flex-1 bg-red-500 hover:bg-red-600 text-white">
                             <Zap className="h-3 w-3 mr-1" />
                             Generate Content

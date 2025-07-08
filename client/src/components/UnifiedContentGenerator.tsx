@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { trackEvent } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -50,6 +51,11 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
       if (data.success) {
         const results = Array.isArray(data.data.results) ? data.data.results : [data.data];
         onContentGenerated(results);
+        
+        // Track analytics
+        trackEvent('content_generated', 'content', `${formData.niche}_${formData.template}`, 1);
+        trackEvent('platform_selection', 'content', formData.platforms.join(','), formData.platforms.length);
+        
         toast({
           title: "Content generated successfully",
           description: "Single product content created",
