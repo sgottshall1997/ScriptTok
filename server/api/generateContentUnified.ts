@@ -189,7 +189,9 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         affiliateUrl: config.affiliateUrl
       },
       affiliateLink: config.affiliateUrl,
-      viralInspo: viralInspiration
+      viralInspo: viralInspiration,
+      modelUsed: mainContent.model || "gpt-4o",
+      tokenCount: mainContent.tokens || 0
     });
 
     console.log(`✅ Content generated successfully for ${config.productName}`);

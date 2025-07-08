@@ -132,8 +132,15 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         throw new Error('No content generated from OpenAI');
       }
 
-      // Parse JSON response
-      const captions = JSON.parse(content);
+      // Parse JSON response - handle markdown code blocks
+      let cleanContent = content.trim();
+      if (cleanContent.startsWith('```json')) {
+        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+      } else if (cleanContent.startsWith('```')) {
+        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
+      }
+      
+      const captions = JSON.parse(cleanContent);
       
       // Generate Amazon affiliate link
       const amazonLink = generateAmazonAffiliateLink(productName, affiliateId);
