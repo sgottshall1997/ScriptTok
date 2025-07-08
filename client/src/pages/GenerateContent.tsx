@@ -63,6 +63,7 @@ const GenerateContent = () => {
   const [customHook, setCustomHook] = useState('');
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
 
   // Fetch trending products
   const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
@@ -97,6 +98,65 @@ const GenerateContent = () => {
     const redirectId = Math.random().toString(36).substr(2, 9);
     const url = `${baseUrl}/r/${redirectId}`;
     setSmartRedirectUrl(url);
+  };
+
+  // Copy to clipboard helper
+  const copyToClipboard = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    toast({
+      title: "Copied!",
+      description: `${label} copied to clipboard`,
+    });
+  };
+
+  // Generate platform-specific captions
+  const generatePlatformCaption = (platform: string): string => {
+    if (!generatedContent || !selectedProduct) return '';
+
+    const productName = selectedProduct;
+    const mainContent = generatedContent.content;
+    const linkUrl = smartRedirectUrl || productUrl || '#';
+    
+    // Extract first sentence or create a short description
+    const shortDesc = mainContent.split('.')[0] + (mainContent.split('.').length > 1 ? '.' : '');
+    
+    const platformConfigs = {
+      tiktok: {
+        cta: "Tap the link to grab it now! 👆",
+        hashtags: ["#fyp", "#viral", `#${selectedNiche}`, "#trending"],
+        maxLength: 150
+      },
+      instagram: {
+        cta: "Link in bio to get yours! ✨",
+        hashtags: [`#${selectedNiche}`, "#aesthetic", "#musthave", "#lifestyle"],
+        maxLength: 200
+      },
+      youtube: {
+        cta: "Check the description for the link! 📝",
+        hashtags: [`#${selectedNiche}`, "#review", "#recommendation", "#shopping"],
+        maxLength: 250
+      }
+    };
+
+    const config = platformConfigs[platform as keyof typeof platformConfigs];
+    if (!config) return '';
+
+    // Create caption components
+    const hook = generatedContent.hook || `🔥 ${productName} is trending!`;
+    const description = shortDesc.length > config.maxLength ? 
+      shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
+    
+    const caption = `${hook}
+
+${description}
+
+${config.cta}
+
+${linkUrl}
+
+${config.hashtags.join(' ')}`;
+
+    return caption;
   };
 
   // Handle content generation
@@ -535,6 +595,96 @@ const GenerateContent = () => {
                     <p className="text-blue-900 font-medium">{generatedContent.hook}</p>
                   </div>
                 )}
+
+                {/* Platform-Specific Captions */}
+                <div className="space-y-4 border-t pt-6">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-lg flex items-center gap-2">
+                      🎯 Platform-Specific Captions
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <Switch 
+                        checked={showPlatformCaptions}
+                        onCheckedChange={setShowPlatformCaptions}
+                        id="platform-captions"
+                      />
+                      <Label htmlFor="platform-captions" className="text-sm font-medium">Show Captions</Label>
+                    </div>
+                  </div>
+                  
+                  {!showPlatformCaptions && (
+                    <p className="text-sm text-muted-foreground">
+                      Toggle to show platform-optimized captions with hashtags and CTAs
+                    </p>
+                  )}
+                  
+                  {showPlatformCaptions && (
+                    <div className="space-y-4">
+                      {/* TikTok Caption */}
+                      <div className="bg-black text-white p-4 rounded-lg border">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="font-semibold flex items-center gap-2 text-white">
+                            📱 TikTok Caption
+                          </h5>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(generatePlatformCaption('tiktok'), 'TikTok caption')}
+                            className="text-xs bg-white text-black hover:bg-gray-100"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                        <div className="bg-gray-900 p-4 rounded border border-gray-700 text-sm font-mono whitespace-pre-wrap text-gray-100 leading-relaxed max-h-40 overflow-y-auto">
+                          {generatePlatformCaption('tiktok')}
+                        </div>
+                      </div>
+
+                      {/* Instagram Caption */}
+                      <div className="bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white p-4 rounded-lg border">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="font-semibold flex items-center gap-2 text-white">
+                            📸 Instagram Caption
+                          </h5>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(generatePlatformCaption('instagram'), 'Instagram caption')}
+                            className="text-xs bg-white text-purple-600 hover:bg-gray-100"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                        <div className="bg-black bg-opacity-30 backdrop-blur-sm p-4 rounded border border-white/20 text-sm font-mono whitespace-pre-wrap text-white leading-relaxed max-h-40 overflow-y-auto">
+                          {generatePlatformCaption('instagram')}
+                        </div>
+                      </div>
+
+                      {/* YouTube Caption */}
+                      <div className="bg-red-600 text-white p-4 rounded-lg border">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="font-semibold flex items-center gap-2 text-white">
+                            ▶️ YouTube Caption
+                          </h5>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(generatePlatformCaption('youtube'), 'YouTube caption')}
+                            className="text-xs bg-white text-red-600 hover:bg-gray-100"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                        <div className="bg-red-800 p-4 rounded border border-red-700 text-sm font-mono whitespace-pre-wrap text-red-100 leading-relaxed max-h-40 overflow-y-auto">
+                          {generatePlatformCaption('youtube')}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
 
               <div className="flex gap-2">
                 <Button 
