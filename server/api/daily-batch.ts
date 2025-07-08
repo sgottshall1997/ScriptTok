@@ -4,9 +4,9 @@ import { getAmazonAffiliateLink } from "../services/amazonAffiliate";
 // Generate dynamic captions based on niche and product
 function generateDynamicCaption(niche: string, product: string, template: string): string {
   const captions = {
-    skincare: [
+    beauty: [
       `Transform your skin with ${product}! ✨ Your glow-up starts here 🌟`,
-      `This ${product} is about to change your skincare game! 💆‍♀️`,
+      `This ${product} is about to change your beauty game! 💆‍♀️`,
       `POV: You found the holy grail of skincare - ${product} 🧴✨`,
       `${product} just gave me glass skin! Skincare girlies, run! 🏃‍♀️💨`,
       `When ${product} hits different... my skin said THANK YOU! 🙏`,

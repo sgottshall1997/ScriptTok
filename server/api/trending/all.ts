@@ -10,7 +10,7 @@ import { getTrendingProductsRefreshTime } from "../../services/trendRefresher";
 export async function getAllNichesTrendingProducts(req: Request, res: Response) {
   try {
     // Get available niches
-    const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
+    const niches = ['beauty', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
     
     // Get the last refresh time
     const { lastRefresh, nextRefresh } = getTrendingProductsRefreshTime();

@@ -1,11 +1,11 @@
 {
   "niche_info": {
-    "name": "skincare",
-    "description": "Skincare and beauty products",
+    "name": "beauty",
+    "description": "Beauty and personal care products",
     "icon": "✨",
     "primary_color": "#EC4899",
     "secondary_color": "#F9A8D4",
-    "keywords": ["skincare", "beauty", "cosmetics", "makeup", "face", "skin", "moisturizer", "cleanser", "serum"]
+    "keywords": ["beauty", "skincare", "cosmetics", "makeup", "face", "skin", "moisturizer", "cleanser", "serum", "haircare", "bodycare"]
   },
   "templates": {
     "skincare_routine": {

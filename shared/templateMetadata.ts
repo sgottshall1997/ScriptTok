@@ -114,45 +114,45 @@ export const TEMPLATE_METADATA: Record<TemplateType, TemplateMetadata> = {
     example: 'Subject line + personal story + product pitch + link'
   },
 
-  // Skincare Specific
+  // Beauty & Personal Care Specific
   'skincare_routine': {
     id: 'skincare_routine',
-    name: 'Skincare Routine',
-    description: 'Morning and night skincare routine templates',
-    category: 'Skincare',
+    name: 'Beauty Routine',
+    description: 'Morning and night beauty routine templates',
+    category: 'Beauty & Personal Care',
     icon: '🧴',
     platforms: ['All'],
     estimatedLength: '200-400 words',
-    useCase: 'Educational skincare content',
+    useCase: 'Educational beauty content',
     example: 'AM/PM routine with product order and benefits'
   },
   'derm_approved': {
     id: 'derm_approved',
-    name: 'Dermatologist Approved',
+    name: 'Expert Approved',
     description: 'Professional-backed product recommendations',
-    category: 'Skincare',
+    category: 'Beauty & Personal Care',
     icon: '👩‍⚕️',
     platforms: ['TikTok', 'Instagram'],
     estimatedLength: '30-60 seconds',
     useCase: 'Build trust with professional credibility',
-    example: 'Dermatologist explains why this ingredient works'
+    example: 'Expert explains why this ingredient works'
   },
   'transformation': {
     id: 'transformation',
     name: 'Transformation Story',
     description: 'Before and after transformation captions',
-    category: 'Skincare',
+    category: 'Beauty & Personal Care',
     icon: '✨',
     platforms: ['Instagram', 'TikTok'],
     estimatedLength: '100-200 words',
     useCase: 'Visual proof of product effectiveness',
-    example: 'My skin journey using this product for 30 days'
+    example: 'My beauty journey using this product for 30 days'
   },
   'skin_type_list': {
     id: 'skin_type_list',
-    name: 'Skin Type List',
-    description: 'Product recommendations by skin type',
-    category: 'Skincare',
+    name: 'Product Type List',
+    description: 'Product recommendations by personal needs',
+    category: 'Beauty & Personal Care',
     icon: '📝',
     platforms: ['All'],
     estimatedLength: '300-500 words',

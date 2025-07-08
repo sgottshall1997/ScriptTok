@@ -95,12 +95,12 @@ Focus on engagement potential, shareability, and ${nicheContext.specificFocus}.`
  */
 function getNicheContext(niche: string): { audience: string; viralFactors: string[]; specificFocus: string } {
   const contexts: Record<string, { audience: string; viralFactors: string[]; specificFocus: string }> = {
-    skincare: {
+    beauty: {
       audience: "Gen Z and millennial beauty enthusiasts",
       viralFactors: [
         "Before/after transformation potential",
         "Ingredient transparency and education",
-        "Relatable skin struggles",
+        "Relatable beauty struggles",
         "Quick tips and hacks",
         "Authentic testimonials"
       ],
