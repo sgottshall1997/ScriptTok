@@ -510,6 +510,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Comprehensive CSV-compatible data structure enabling external analytics and tracking
   - ✅ Verified webhook payload structure matches CSV format exactly for seamless data import
   - ✅ Backward compatibility maintained for existing Make.com automation workflows
+- July 08, 2025. **Dashboard to Unified Generator Navigation Fix**: Complete seamless workflow integration:
+  - ✅ Fixed dashboard "Generate Content" buttons to navigate to `/unified-generator` instead of deprecated `/generate`
+  - ✅ Updated fast-action "Generate Content Now" button to use unified generator interface
+  - ✅ Added comprehensive URL parameter handling with useEffect in SingleProductGenerator component
+  - ✅ Automatic population of Product Name field from `?product=` URL parameter with proper decoding
+  - ✅ Automatic niche selection from `?niche=` URL parameter for seamless workflow
+  - ✅ Enhanced user experience with one-click trending product to content generation workflow
+  - ✅ Complete integration: Dashboard → Unified Generator → Content Creation → Make.com Webhook → Google Sheets
 
 ## User Preferences
 

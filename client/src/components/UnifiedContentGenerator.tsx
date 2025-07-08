@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { trackEvent } from '@/lib/analytics';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -30,6 +30,21 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     affiliateId: 'sgottshall107-20',
     sendToMakeWebhook: true
   });
+
+  // Handle URL parameters for auto-population
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const productParam = urlParams.get('product');
+    const nicheParam = urlParams.get('niche');
+    
+    if (productParam || nicheParam) {
+      setFormData(prev => ({
+        ...prev,
+        ...(productParam && { productName: decodeURIComponent(productParam) }),
+        ...(nicheParam && { niche: nicheParam })
+      }));
+    }
+  }, []);
 
   const NICHES = ['beauty', 'tech', 'fitness', 'fashion', 'food', 'travel', 'pets'];
   const TONES = ['Enthusiastic', 'Professional', 'Friendly', 'Educational', 'Humorous', 'Inspiring', 'Urgent', 'Casual', 'Authoritative', 'Empathetic', 'Trendy'];
