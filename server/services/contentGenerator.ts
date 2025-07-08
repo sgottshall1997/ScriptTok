@@ -48,13 +48,21 @@ interface VideoDuration {
  * @param trendingProducts Trending products to use as context
  * @returns Generated content as string
  */
+export interface ViralInspiration {
+  hook: string;
+  format: string;
+  caption: string;
+  hashtags: string[];
+}
+
 export async function generateContent(
   product: string,
   templateType: TemplateType,
   tone: ToneOption,
   trendingProducts: TrendingProduct[],
   niche: Niche = "skincare",
-  model: string = "gpt-4o"
+  model: string = "gpt-4o",
+  viralInspiration?: ViralInspiration
 ): Promise<{ 
   content: string; 
   fallbackLevel?: 'exact' | 'default' | 'generic';
@@ -106,17 +114,51 @@ export async function generateContent(
     // Log the content generation request for analytics
     console.log(`Generating ${templateType} content for ${product} in ${niche} niche using ${tone} tone.`);
     
-    // Call OpenAI with the generated prompt and optimized parameters
+    // Enhanced system prompt with viral inspiration integration
+    let systemPrompt = "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause.";
+    
+    // Enhanced user prompt with viral inspiration context
+    let userPrompt = `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`;
+    
+    // Inject viral inspiration if available
+    if (viralInspiration) {
+      console.log('🎯 Using viral inspiration to enhance content generation:', viralInspiration);
+      
+      systemPrompt += `\n\nIMPORTANT: Use this real viral inspiration to guide the tone and structure of your content:
+- Hook Style: ${viralInspiration.hook}
+- Format: ${viralInspiration.format}
+- Caption Style: ${viralInspiration.caption}
+- Popular Hashtags: ${viralInspiration.hashtags.join(" ")}
+
+Mimic the viral format, tone, and pacing while adapting it for the new product. Include a call-to-action to click the affiliate link.`;
+      
+      userPrompt = `You are creating a viral short-form video script for TikTok/Instagram. Use this real viral inspiration to guide the tone and structure:
+
+VIRAL INSPIRATION:
+- Hook: ${viralInspiration.hook}
+- Format: ${viralInspiration.format}
+- Caption Style: ${viralInspiration.caption}
+- Hashtags: ${viralInspiration.hashtags.join(" ")}
+
+PRODUCT DETAILS:
+- Product: ${product}
+- Niche: ${niche}
+- Tone: ${tone}
+
+Generate a highly engaging script that mimics this viral format, tone, and pacing. Include a call-to-action to click the affiliate link. Output: Only the clean spoken script.`;
+    }
+
+    // Call OpenAI with the enhanced prompt and optimized parameters
     const completion = await openai.chat.completions.create({
       model: model, // Use the model parameter passed to the function (supports fallback to gpt-3.5-turbo)
       messages: [
         {
           role: "system",
-          content: "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause."
+          content: systemPrompt
         },
         {
           role: "user",
-          content: `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`
+          content: userPrompt
         }
       ],
       temperature: modelConfig.temperature,

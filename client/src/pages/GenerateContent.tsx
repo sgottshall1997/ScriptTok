@@ -183,6 +183,29 @@ ${config.hashtags.join(' ')}`;
   };
 
   // Handle content generation
+  // Auto-suggest template based on viral inspiration format
+  const autoSuggestTemplate = (viralFormat: string): string => {
+    const format = viralFormat.toLowerCase();
+    
+    // Map viral formats to available template types
+    if (format.includes('demo') || format.includes('demonstration')) return 'demo_script';
+    if (format.includes('voiceover') && format.includes('story')) return 'pov_story';
+    if (format.includes('skit') || format.includes('dialogue')) return 'skit_dialogue';
+    if (format.includes('reaction') || format.includes('react')) return 'reaction_video';
+    if (format.includes('tutorial') || format.includes('how-to')) return 'tutorial_guide';
+    if (format.includes('unboxing') || format.includes('unbox')) return 'unboxing_reveal';
+    if (format.includes('review') || format.includes('testing')) return 'product_review';
+    if (format.includes('comparison') || format.includes('vs')) return 'comparison_test';
+    if (format.includes('testimonial') || format.includes('before_after')) return 'testimonial';
+    if (format.includes('lifestyle') || format.includes('day_in_life')) return 'lifestyle_integration';
+    
+    // Default fallbacks based on common patterns
+    if (format.includes('quick') || format.includes('60_second')) return 'quick_review';
+    if (format.includes('hook') || format.includes('attention')) return 'viral_hook';
+    
+    return 'surprise_me'; // fallback to let AI choose
+  };
+
   const handleGenerateContent = async () => {
     if (!selectedProduct) {
       toast({
@@ -193,6 +216,27 @@ ${config.hashtags.join(' ')}`;
       return;
     }
 
+    // Auto-suggest template if viral inspiration is available and user hasn't manually selected one
+    let finalTemplateType = templateType;
+    let templateSource = 'manual';
+    
+    if (viralInspo && (templateType === 'surprise-me' || !templateType || templateType === 'original')) {
+      finalTemplateType = autoSuggestTemplate(viralInspo.format);
+      templateSource = `auto-suggested from format: ${viralInspo.format}`;
+      
+      // Update the UI to show the auto-suggested template
+      setTemplateType(finalTemplateType);
+      
+      toast({
+        title: "🎯 Auto-Template Selection",
+        description: `Selected "${finalTemplateType}" based on viral format: ${viralInspo.format}`,
+        duration: 4000,
+      });
+    }
+    
+    console.log("Template source:", templateSource);
+    console.log("Selected template:", finalTemplateType);
+
     setIsGenerating(true);
     try {
       const response = await fetch('/api/generate-content', {
@@ -202,10 +246,12 @@ ${config.hashtags.join(' ')}`;
           product: selectedProduct,
           niche: selectedNiche,
           platforms: selectedPlatforms,
-          templateType,
+          templateType: finalTemplateType,
           tone,
           customHook,
           affiliateUrl: smartRedirectUrl || productUrl,
+          viralInspiration: viralInspo, // Include viral inspiration data
+          templateSource, // Track how template was selected
         }),
       });
 

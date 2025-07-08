@@ -40,6 +40,15 @@ const contentGenerationLimiter = rateLimit({
 // Import tone definitions
 import { TONES } from '../prompts/tones';
 import { loadPromptTemplates } from '../prompts/templates';
+import { ViralInspiration } from '../services/contentGenerator';
+
+// Viral inspiration schema
+const viralInspirationSchema = z.object({
+  hook: z.string(),
+  format: z.string(),
+  caption: z.string(),
+  hashtags: z.array(z.string()),
+}).optional();
 
 // Validate request body schema with basic type checking
 const generateContentSchema = z.object({
@@ -53,6 +62,8 @@ const generateContentSchema = z.object({
   videoDuration: z.enum(["30", "45", "60"]).optional(),
   customHook: z.string().optional(),
   affiliateUrl: z.string().optional(),
+  viralInspiration: viralInspirationSchema,
+  templateSource: z.string().optional(),
 });
 
 // Helper functions to check if tone and template exist in the system
@@ -284,7 +295,20 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     let content, fallbackLevel, prompt, model, tokens;
     
     try {
-      const result = await generateContent(product, templateType, tone, trendingProducts, niche);
+      // Log template source for debugging
+      if (validatedData.templateSource) {
+        console.log('🎯 Template source:', validatedData.templateSource);
+      }
+      
+      const result = await generateContent(
+        product, 
+        templateType, 
+        tone, 
+        trendingProducts, 
+        niche, 
+        'gpt-4o', // model
+        validatedData.viralInspiration // Pass viral inspiration
+      );
       content = result.content;
       fallbackLevel = result.fallbackLevel;
       prompt = result.prompt;
@@ -304,8 +328,16 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         console.log('OpenAI quota exceeded, attempting fallback to GPT-3.5-turbo...');
         
         try {
-          // Retry with GPT-3.5-turbo
-          const fallbackResult = await generateContent(product, templateType, tone, trendingProducts, niche, 'gpt-3.5-turbo');
+          // Retry with GPT-3.5-turbo, including viral inspiration
+          const fallbackResult = await generateContent(
+            product, 
+            templateType, 
+            tone, 
+            trendingProducts, 
+            niche, 
+            'gpt-3.5-turbo',
+            validatedData.viralInspiration
+          );
           content = fallbackResult.content;
           fallbackLevel = fallbackResult.fallbackLevel;
           prompt = fallbackResult.prompt;
