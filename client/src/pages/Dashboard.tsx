@@ -300,10 +300,10 @@ const Dashboard = () => {
                         </Badge>
                       </div>
                       
-                      {/* Mentions */}
-                      <div className="flex items-center gap-1 text-sm text-orange-600">
-                        🔥 {product.mentions?.toLocaleString() || '650,000'} mentions
-                      </div>
+                      {/* Mentions - Hidden for cleaner look */}
+                      {/* <div className="flex items-center gap-1 text-sm text-orange-600">
+                        🔥 {product.mentions?.toLocaleString() || '15,000'} mentions
+                      </div> */}
                       
                       {/* Why it's hot */}
                       <div className="text-sm text-gray-600">

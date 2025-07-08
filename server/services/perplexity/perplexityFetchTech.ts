@@ -57,15 +57,15 @@ EXACT FORMAT - Return only this JSON structure:
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "AirPods Pro 2nd Generation", "brand": "Apple", "mentions": 1650000, "reason": "Noise cancellation upgrade in tech reviews" },
-  { "product": "Echo Dot 5th Gen Smart Speaker", "brand": "Amazon", "mentions": 890000, "reason": "Voice control smart home automation setups" },
-  { "product": "Galaxy S24 Ultra 256GB", "brand": "Samsung", "mentions": 1200000, "reason": "AI camera features showcased by creators" }
+  { "product": "AirPods Pro 2nd Generation", "brand": "Apple", "mentions": 35000, "reason": "Noise cancellation upgrade in tech reviews" },
+  { "product": "Echo Dot 5th Gen Smart Speaker", "brand": "Amazon", "mentions": 22000, "reason": "Voice control smart home automation setups" },
+  { "product": "Galaxy S24 Ultra 256GB", "brand": "Samsung", "mentions": 41000, "reason": "AI camera features showcased by creators" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon tech products only (headphones, phones, gadgets, smart devices, gaming gear)
 - Established brands: Apple, Samsung, Sony, JBL, Anker, Nintendo, PlayStation, etc.
-- Mentions: 50,000-2,000,000 range
+- Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
 - NO generic terms like "trending product", "tech item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"

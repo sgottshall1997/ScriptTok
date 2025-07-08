@@ -8,7 +8,7 @@ function isValidProduct(item: any): boolean {
   // Basic type and existence checks
   if (typeof item.product !== 'string' || item.product.length <= 4) return false;
   if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
-  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 5000 || item.mentions > 50000) return false;
   if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
 
   const productLower = item.product.toLowerCase();
@@ -57,15 +57,15 @@ EXACT FORMAT - Return only this JSON structure:
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Prime Hydration Drink Ice Pop 16.9oz", "brand": "Prime", "mentions": 1420000, "reason": "Logan Paul collaboration with summer athletes" },
-  { "product": "Grass Fed Beef Sticks Original 12-Pack", "brand": "Chomps", "mentions": 780000, "reason": "High protein snacks for fitness content creators" },
-  { "product": "Prebiotic Soda Classic Cola 12oz 12-Pack", "brand": "OLIPOP", "mentions": 890000, "reason": "Gut health drinks promoted by wellness influencers" }
+  { "product": "Prime Hydration Drink Ice Pop 16.9oz", "brand": "Prime", "mentions": 42000, "reason": "Logan Paul collaboration with summer athletes" },
+  { "product": "Grass Fed Beef Sticks Original 12-Pack", "brand": "Chomps", "mentions": 18000, "reason": "High protein snacks for fitness content creators" },
+  { "product": "Prebiotic Soda Classic Cola 12oz 12-Pack", "brand": "OLIPOP", "mentions": 29000, "reason": "Gut health drinks promoted by wellness influencers" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon food products only (snacks, drinks, supplements, specialty foods, healthy alternatives)
 - Established brands: Prime, OLIPOP, Kind, Chomps, Liquid Death, Athletic Greens, etc.
-- Mentions: 50,000-2,000,000 range
+- Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
 - NO generic terms like "trending product", "food item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"

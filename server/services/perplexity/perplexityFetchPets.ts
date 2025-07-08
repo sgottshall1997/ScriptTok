@@ -8,7 +8,7 @@ function isValidProduct(item: any): boolean {
   // Basic type and existence checks
   if (typeof item.product !== 'string' || item.product.length <= 4) return false;
   if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
-  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 5000 || item.mentions > 50000) return false;
   if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
 
   const productLower = item.product.toLowerCase();
@@ -57,15 +57,15 @@ EXACT FORMAT - Return only this JSON structure:
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "360° Dog Camera Treat Dispenser WiFi", "brand": "Furbo", "mentions": 1290000, "reason": "Remote pet monitoring for working owners" },
-  { "product": "Slow Feeder Dog Bowl Large Anti-Gulp", "brand": "Outward Hound", "mentions": 850000, "reason": "Healthy eating habits promoted by pet influencers" },
-  { "product": "Interactive Puzzle Plush Dog Toy Large", "brand": "Nina Ottosson", "mentions": 650000, "reason": "Mental stimulation toys for anxious pets" }
+  { "product": "360° Dog Camera Treat Dispenser WiFi", "brand": "Furbo", "mentions": 32000, "reason": "Remote pet monitoring for working owners" },
+  { "product": "Slow Feeder Dog Bowl Large Anti-Gulp", "brand": "Outward Hound", "mentions": 21000, "reason": "Healthy eating habits promoted by pet influencers" },
+  { "product": "Interactive Puzzle Plush Dog Toy Large", "brand": "Nina Ottosson", "mentions": 16000, "reason": "Mental stimulation toys for anxious pets" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon pet products only (toys, food, accessories, care items, tech gadgets)
 - Established brands: Furbo, Blue Buffalo, Hill's, PetSafe, Outward Hound, Nina Ottosson, etc.
-- Mentions: 50,000-2,000,000 range
+- Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
 - NO generic terms like "trending product", "pet item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"

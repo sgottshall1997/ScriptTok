@@ -8,7 +8,7 @@ function isValidProduct(item: any): boolean {
   // Basic type and existence checks
   if (typeof item.product !== 'string' || item.product.length <= 4) return false;
   if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
-  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 5000 || item.mentions > 50000) return false;
   if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
 
   const productLower = item.product.toLowerCase();
@@ -57,15 +57,15 @@ EXACT FORMAT - Return only this JSON structure:
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Compression Packing Cubes 6-Set Medium", "brand": "BAGSMART", "mentions": 1180000, "reason": "Space-saving packing hacks by travel creators" },
-  { "product": "Portable Phone Charger PowerCore 20000mAh", "brand": "Anker", "mentions": 950000, "reason": "Essential power bank for digital nomads" },
-  { "product": "Travel Neck Pillow Memory Foam", "brand": "Cabeau", "mentions": 670000, "reason": "Comfortable long-haul flight accessories trending" }
+  { "product": "Compression Packing Cubes 6-Set Medium", "brand": "BAGSMART", "mentions": 23000, "reason": "Space-saving packing hacks by travel creators" },
+  { "product": "Portable Phone Charger PowerCore 20000mAh", "brand": "Anker", "mentions": 19000, "reason": "Essential power bank for digital nomads" },
+  { "product": "Travel Neck Pillow Memory Foam", "brand": "Cabeau", "mentions": 16000, "reason": "Comfortable long-haul flight accessories trending" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon travel products only (luggage, accessories, tech, organizers, comfort items)
 - Established brands: BAGSMART, Anker, Samsonite, Away, Cabeau, Eagle Creek, etc.
-- Mentions: 50,000-2,000,000 range
+- Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
 - NO generic terms like "trending product", "travel item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"

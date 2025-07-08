@@ -8,7 +8,7 @@ function isValidProduct(item: any): boolean {
   // Basic type and existence checks
   if (typeof item.product !== 'string' || item.product.length <= 4) return false;
   if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
-  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 5000 || item.mentions > 50000) return false;
   if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
 
   const productLower = item.product.toLowerCase();
@@ -57,15 +57,15 @@ EXACT FORMAT - Return only this JSON structure:
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "High Waisted Wide Leg Jeans Light Wash", "brand": "Levi's", "mentions": 1340000, "reason": "Y2K denim revival with fashion influencers" },
-  { "product": "Oversized Blazer Women's Medium Black", "brand": "The Drop", "mentions": 950000, "reason": "Office siren aesthetic trending on TikTok" },
-  { "product": "Chunky Gold Chain Necklace 18 inch", "brand": "Mejuri", "mentions": 780000, "reason": "Layered jewelry trend with content creators" }
+  { "product": "High Waisted Wide Leg Jeans Light Wash", "brand": "Levi's", "mentions": 34000, "reason": "Y2K denim revival with fashion influencers" },
+  { "product": "Oversized Blazer Women's Medium Black", "brand": "The Drop", "mentions": 19000, "reason": "Office siren aesthetic trending on TikTok" },
+  { "product": "Chunky Gold Chain Necklace 18 inch", "brand": "Mejuri", "mentions": 26000, "reason": "Layered jewelry trend with content creators" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon fashion products only (clothing, accessories, jewelry, shoes, handbags)
 - Established brands: Levi's, Nike, Adidas, The Drop, Amazon Essentials, Mejuri, etc.
-- Mentions: 50,000-2,000,000 range
+- Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
 - NO generic terms like "trending product", "fashion item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"

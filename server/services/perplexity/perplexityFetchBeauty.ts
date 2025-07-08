@@ -8,7 +8,7 @@ function isValidProduct(item: any): boolean {
   // Basic type and existence checks
   if (typeof item.product !== 'string' || item.product.length <= 4) return false;
   if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
-  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 5000 || item.mentions > 50000) return false;
   if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
 
   const productLower = item.product.toLowerCase();
@@ -57,15 +57,15 @@ EXACT FORMAT - Return only this JSON structure:
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Glossy Lip Balm in Cherry", "brand": "Glossier", "mentions": 890000, "reason": "Clean girl makeup trend with influencers" },
-  { "product": "Hair Treatment Masque 8oz", "brand": "OUAI", "mentions": 650000, "reason": "Celebrity hairstylist recommended routine" },
-  { "product": "Daily Moisturizing Lotion 19oz", "brand": "CeraVe", "mentions": 1200000, "reason": "Dermatologist-approved skincare on TikTok" }
+  { "product": "Glossy Lip Balm in Cherry", "brand": "Glossier", "mentions": 28000, "reason": "Clean girl makeup trend with influencers" },
+  { "product": "Hair Treatment Masque 8oz", "brand": "OUAI", "mentions": 15000, "reason": "Celebrity hairstylist recommended routine" },
+  { "product": "Daily Moisturizing Lotion 19oz", "brand": "CeraVe", "mentions": 42000, "reason": "Dermatologist-approved skincare on TikTok" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon beauty products only: makeup, skincare, haircare, grooming, personal care
 - Established brands: The Ordinary, Fenty Beauty, OUAI, Native, CeraVe, Glossier, Rare Beauty, etc.
-- Mentions: 50,000-2,000,000 range  
+- Mentions: 5,000-50,000 range  
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
 - NO generic terms like "trending product", "beauty item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"

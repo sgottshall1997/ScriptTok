@@ -8,7 +8,7 @@ function isValidProduct(item: any): boolean {
   // Basic type and existence checks
   if (typeof item.product !== 'string' || item.product.length <= 4) return false;
   if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
-  if (typeof item.mentions !== 'number' || item.mentions < 50000 || item.mentions > 2000000) return false;
+  if (typeof item.mentions !== 'number' || item.mentions < 5000 || item.mentions > 50000) return false;
   if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
 
   const productLower = item.product.toLowerCase();
@@ -77,15 +77,15 @@ EXACT FORMAT - Return only this JSON structure:
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 1200000, "reason": "Home workouts with influencer shoutouts" },
-  { "product": "Lululemon ABC Joggers", "brand": "Lululemon", "mentions": 950000, "reason": "Worn in trending gym fit videos" },
-  { "product": "Adjustable Dumbbells 5-52.5 lbs", "brand": "PowerBlocks", "mentions": 780000, "reason": "Space-saving apartment gym setups" }
+  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 31000, "reason": "Home workouts with influencer shoutouts" },
+  { "product": "Lululemon ABC Joggers", "brand": "Lululemon", "mentions": 24000, "reason": "Worn in trending gym fit videos" },
+  { "product": "Adjustable Dumbbells 5-52.5 lbs", "brand": "PowerBlocks", "mentions": 18000, "reason": "Space-saving apartment gym setups" }
 ]
 
 STRICT REQUIREMENTS:
 - Real Amazon fitness products only (equipment, supplements, apparel, accessories)
 - Established brands: Nike, Adidas, Gaiam, Bodylastics, Under Armour, Lululemon, etc.
-- Mentions: 50,000-2,000,000 range
+- Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-10 words explaining WHY it's trending
 - NO generic terms like "trending product", "fitness item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"
