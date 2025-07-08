@@ -270,6 +270,8 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Updated all remaining API endpoints and template files to use 'beauty' consistently
   - ✅ Viral inspiration system now properly references "beauty" niche throughout entire application
   - ✅ Dashboard and content generator display consistent "beauty" niche across all components
+  - ✅ Fixed hardcoded niches array in GenerateContent.tsx replacing 'skincare' with 'beauty'
+  - ✅ Niche dropdown in viral content factory now shows "Beauty & Personal Care" instead of "Skincare"
   - ✅ Complete niche migration from "skincare" to "Beauty & Personal Care" successfully completed
 
 ## User Preferences
