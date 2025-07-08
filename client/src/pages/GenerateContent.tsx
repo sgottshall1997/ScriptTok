@@ -238,7 +238,7 @@ const GenerateContent = () => {
     if (!config) return '';
 
     // Create caption components
-    const hook = generatedContent.hook || `🔥 ${productName} is trending!`;
+    const hook = generatedContent.hook || generateDynamicHook(productName, selectedNiche);
     const description = shortDesc.length > config.maxLength ? 
       shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
     
@@ -256,6 +256,79 @@ ${config.hashtags.join(' ')}`;
   };
 
   // Generate platform-specific captions for saving to history (uses provided data)
+  // Dynamic hook generator for varied, engaging hooks
+  const generateDynamicHook = (productName: string, niche: string): string => {
+    const hooks = [
+      `💫 ${productName} is a game changer!`,
+      `🌟 ${productName} is a life saver!`,
+      `✨ ${productName} changed everything for me!`,
+      `🔥 ${productName} is absolutely incredible!`,
+      `🚀 ${productName} is revolutionary!`,
+      `💎 ${productName} is pure magic!`,
+      `⚡ ${productName} is mind-blowing!`,
+      `🎯 ${productName} hits different!`,
+      `💝 ${productName} is everything!`,
+      `🌈 ${productName} is perfection!`,
+      `🔮 ${productName} is the secret weapon!`,
+      `💖 ${productName} stole my heart!`,
+      `🎊 ${productName} is the real deal!`,
+      `⭐ ${productName} exceeds expectations!`,
+      `🏆 ${productName} wins every time!`
+    ];
+    
+    // Add niche-specific hooks
+    const nicheHooks: { [key: string]: string[] } = {
+      beauty: [
+        `💄 ${productName} is my new obsession!`,
+        `✨ ${productName} gave me confidence!`,
+        `🌸 ${productName} is skincare gold!`,
+        `💅 ${productName} is my holy grail!`
+      ],
+      tech: [
+        `⚡ ${productName} is next level tech!`,
+        `🤖 ${productName} is the future!`,
+        `💻 ${productName} changed my workflow!`,
+        `🔌 ${productName} is pure innovation!`
+      ],
+      fitness: [
+        `💪 ${productName} transformed my workouts!`,
+        `🏋️ ${productName} is my fitness secret!`,
+        `🔥 ${productName} gets results!`,
+        `⚡ ${productName} powers my training!`
+      ],
+      fashion: [
+        `👗 ${productName} is my style staple!`,
+        `✨ ${productName} completes every outfit!`,
+        `💫 ${productName} is fashion perfection!`,
+        `🌟 ${productName} makes me feel amazing!`
+      ],
+      food: [
+        `🍽️ ${productName} is flavor paradise!`,
+        `😋 ${productName} satisfies every craving!`,
+        `🔥 ${productName} is deliciously addictive!`,
+        `✨ ${productName} elevates every meal!`
+      ],
+      travel: [
+        `✈️ ${productName} is my travel essential!`,
+        `🌍 ${productName} makes adventures easier!`,
+        `🧳 ${productName} is the perfect companion!`,
+        `🗺️ ${productName} enhances every trip!`
+      ],
+      pets: [
+        `🐾 ${productName} makes my pet happy!`,
+        `💕 ${productName} is pet parent approved!`,
+        `🐕 ${productName} is a furry friend favorite!`,
+        `✨ ${productName} keeps pets healthy!`
+      ]
+    };
+    
+    // Combine general and niche-specific hooks
+    const allHooks = [...hooks, ...(nicheHooks[niche] || [])];
+    
+    // Return random hook
+    return allHooks[Math.floor(Math.random() * allHooks.length)];
+  };
+
   const generatePlatformCaptionForSaving = (platform: string, contentData: GeneratedContent, productName: string, linkUrl: string, niche: string): string => {
     if (!contentData || !productName) return '';
 
@@ -291,7 +364,7 @@ ${config.hashtags.join(' ')}`;
     if (!config) return '';
 
     // Create caption components
-    const hook = contentData.hook || `🔥 ${productName} is trending!`;
+    const hook = contentData.hook || generateDynamicHook(productName, niche);
     const description = shortDesc.length > config.maxLength ? 
       shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
     
