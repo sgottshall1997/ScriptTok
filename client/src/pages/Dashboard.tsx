@@ -148,7 +148,7 @@ const Dashboard = () => {
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
-          🚀 GlowBot AI: Your BTB Command Center
+          🚀 GlowBot AI: Your Content Command Center
         </h1>
         <p className="text-lg text-muted-foreground">
           Trend-to-traffic in under 10 minutes. Powered by Perplexity + GPT.

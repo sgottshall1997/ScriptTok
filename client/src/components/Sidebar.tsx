@@ -62,7 +62,7 @@ const sidebarData: SidebarCategory[] = [
     ]
   },
   {
-    name: "BTB Framework",
+    name: "Framework",
     items: [
       { name: "Cross-Platform Scheduling", href: "/cross-platform-scheduling", icon: Calendar },
       { name: "Bulk Content Generation", href: "/bulk-content-generation", icon: Package },
@@ -99,7 +99,7 @@ const sidebarData: SidebarCategory[] = [
     items: [
       { name: "Webhook Settings", href: "/webhook-settings", icon: Webhook },
       { name: "API Integration Hub", href: "/api-integration-hub", icon: Zap },
-      { name: "BTB Automation", href: "/btb-status", icon: Activity },
+      { name: "Automation Checklist", href: "/btb-status", icon: Activity },
     ]
   },
   {
