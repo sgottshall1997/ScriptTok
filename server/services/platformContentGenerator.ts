@@ -117,68 +117,93 @@ function buildPlatformPrompt(request: PlatformContentRequest): string {
   const platformInstructions = {
     "Instagram": {
       video: {
-        captionStyle: "Story-style caption with emojis and line breaks, 2-3 hashtags max, engaging hook",
-        postInstructions: "Post between 6-9 PM, use trending audio, add CTA in caption, create story highlights, tag product location"
+        captionStyle: "Aesthetic, lifestyle-driven language focusing on visuals and routines. Clean CTA with light emoji use.",
+        postInstructions: "Post between 6-9 PM, use trending audio, add CTA in caption, create story highlights, tag product location",
+        audienceContext: "Lifestyle enthusiasts who value aesthetics and personal branding",
+        examplePattern: "Your new skincare shelf essential. ✨ #skincaregoals"
       },
       photo: {
-        captionStyle: "Short story-style caption with emojis, lifestyle context, 3-5 hashtags at end",
-        postInstructions: "Best posting time: 11 AM-1 PM and 6-9 PM, use carousel for multiple angles, add story highlights"
+        captionStyle: "Story-style caption emphasizing aesthetic appeal and lifestyle integration with strategic emoji placement",
+        postInstructions: "Best posting time: 11 AM-1 PM and 6-9 PM, use carousel for multiple angles, add story highlights",
+        audienceContext: "Visual-focused audience seeking lifestyle inspiration",
+        examplePattern: "Morning routine upgrade with this game-changer ✨"
       }
     },
     "TikTok": {
       video: {
-        captionStyle: "Hook-driven short caption, 3 viral hashtags, trending keywords, mention trending audio",
-        postInstructions: "Hook in first 3 seconds, use trending sounds, quick cuts, text overlays, post 6-10 PM"
+        captionStyle: "Hook-driven, uses slang, emojis, and short punchy sentences. Encourages trends, humor, or urgency.",
+        postInstructions: "Hook in first 3 seconds, use trending sounds, quick cuts, text overlays, post 6-10 PM",
+        audienceContext: "Gen Z audience that responds to viral trends, authenticity, and quick entertainment",
+        examplePattern: "✨ TikTok made me buy it — again. #acnehack"
       },
       photo: {
-        captionStyle: "Short catchy caption, 3 viral hashtags, call-to-action",
-        postInstructions: "Use carousel format, trending audio for slideshow, text overlays on images"
+        captionStyle: "Viral, conversational tone with trending slang and emojis that sparks immediate engagement",
+        postInstructions: "Use carousel format, trending audio for slideshow, text overlays on images",
+        audienceContext: "Young, trend-conscious users seeking authentic product recommendations",
+        examplePattern: "POV: You found the holy grail product 😍 #fyp"
       }
     },
     "YouTube Shorts": {
       video: {
-        captionStyle: "SEO-optimized title + detailed description + 5-8 hashtags",
-        postInstructions: "Strong thumbnail, subscribe CTA, vertical format 9:16, end screen with related videos"
+        captionStyle: "Slightly longer, informative tone that sounds like a voiceover or quick script snippet.",
+        postInstructions: "Strong thumbnail, subscribe CTA, vertical format 9:16, end screen with related videos",
+        audienceContext: "Viewers seeking educational content and detailed product information",
+        examplePattern: "This patch pulls the gunk out *overnight*. Let me show you why it's viral."
       },
       photo: {
-        captionStyle: "SEO title + bullet-point description + hashtags",
-        postInstructions: "Use slideshow format with audio, clear thumbnail text, subscribe reminder"
-      }
-    },
-    "Pinterest": {
-      video: {
-        captionStyle: "Product benefits summary, keyword-rich, 3-5 hashtags, seasonal context",
-        postInstructions: "Vertical 9:16 format, text overlay on video, seasonal board placement"
-      },
-      photo: {
-        captionStyle: "Product pin summary focusing on benefits, keyword-heavy, seasonal relevance",
-        postInstructions: "Vertical 2:3 ratio, text overlay on image, seasonal keywords, create themed boards"
-      }
-    },
-    "Facebook": {
-      video: {
-        captionStyle: "Conversational tone, community-focused, minimal hashtags, personal story",
-        postInstructions: "Native video upload, engage in comments, post during peak hours 1-3 PM, use Facebook Groups"
-      },
-      photo: {
-        captionStyle: "Community-focused caption, storytelling approach, ask questions",
-        postInstructions: "Upload high-res images, post 1-3 PM, encourage comments, share in relevant groups"
+        captionStyle: "Educational, informative captions that provide value and encourage subscriptions",
+        postInstructions: "Use slideshow format with audio, clear thumbnail text, subscribe reminder",
+        audienceContext: "Content seekers who want to learn and discover new products",
+        examplePattern: "Here's exactly why dermatologists recommend this specific ingredient"
       }
     },
     "X (Twitter)": {
       video: {
-        captionStyle: "Concise tweet, 1-2 hashtags max, witty or informative thread if needed",
-        postInstructions: "Tweet during trending times 8-10 AM, retweet for reach, use Twitter polls, engage with replies"
+        captionStyle: "Short, punchy, clever. Lean into hot takes, jokes, or bold claims with minimal hashtags.",
+        postInstructions: "Tweet during trending times 8-10 AM, retweet for reach, use Twitter polls, engage with replies",
+        audienceContext: "Quick-witted audience that appreciates humor, hot takes, and concise insights",
+        examplePattern: "Amazon has no business selling skincare this good for $11."
       },
       photo: {
-        captionStyle: "Single concise tweet, no line breaks, emojis optional, 1-2 hashtags",
-        postInstructions: "Tweet 8-10 AM or 7-9 PM, use alt text for accessibility, retweet with comment"
+        captionStyle: "Witty, controversial, or bold statements that spark conversation and engagement",
+        postInstructions: "Tweet 8-10 AM or 7-9 PM, use alt text for accessibility, retweet with comment",
+        audienceContext: "Engagement-focused users who enjoy debates and quick insights",
+        examplePattern: "Plot twist: The $12 drugstore buy works better than my $60 serum"
+      }
+    },
+    "Pinterest": {
+      video: {
+        captionStyle: "Product benefits summary, keyword-rich, seasonal context with search optimization focus",
+        postInstructions: "Vertical 9:16 format, text overlay on video, seasonal board placement",
+        audienceContext: "Users actively searching for solutions and product recommendations",
+        examplePattern: "5 Winter Skincare Must-Haves for Dry Skin Solutions"
+      },
+      photo: {
+        captionStyle: "SEO-optimized, benefit-focused descriptions that help users find solutions",
+        postInstructions: "Vertical 2:3 ratio, text overlay on image, seasonal keywords, create themed boards",
+        audienceContext: "Goal-oriented users seeking specific solutions and inspiration",
+        examplePattern: "DIY Skincare Routine: Budget-Friendly Products That Actually Work"
+      }
+    },
+    "Facebook": {
+      video: {
+        captionStyle: "Conversational, community-focused with personal storytelling and minimal hashtags",
+        postInstructions: "Native video upload, engage in comments, post during peak hours 1-3 PM, use Facebook Groups",
+        audienceContext: "Community-oriented users who value detailed discussions and personal experiences",
+        examplePattern: "Let me tell you about this product that completely changed my routine..."
+      },
+      photo: {
+        captionStyle: "Community-focused with storytelling approach that encourages meaningful conversations",
+        postInstructions: "Upload high-res images, post 1-3 PM, encourage comments, share in relevant groups",
+        audienceContext: "Users seeking genuine community connections and detailed product discussions",
+        examplePattern: "Has anyone else tried this? I'm curious about your experience because..."
       }
     }
   };
 
-  let prompt = `Generate ${contentType} content for the product "${product}" in the ${niche} niche.
+  let prompt = `CRITICAL: You must create UNIQUE, PLATFORM-SPECIFIC captions that are completely independent from each other and from any main content. DO NOT reuse, summarize, or adapt content across platforms.
 
+Product: "${product}" (${niche} niche)
 Template Type: ${templateType}
 Tone: ${tone}
 Target Platforms: ${platforms.join(", ")}`;
@@ -191,7 +216,14 @@ Target Platforms: ${platforms.join(", ")}`;
     prompt += `\nTrending Context: ${JSON.stringify(trendingData, null, 2)}`;
   }
 
-  prompt += `\n\nFor each platform, create optimized content following these guidelines:
+  prompt += `\n\n🚨 PLATFORM CAPTION REQUIREMENTS:
+Each platform caption must be:
+1. ORIGINAL and written from scratch for that specific platform
+2. Tailored to that platform's unique audience and engagement style  
+3. Different in structure, tone, and approach from other platforms
+4. Maximized for that platform's specific algorithm and user behavior
+
+PLATFORM-SPECIFIC GUIDELINES:
 
 `;
 
@@ -199,29 +231,43 @@ Target Platforms: ${platforms.join(", ")}`;
     const platformData = platformInstructions[platform as keyof typeof platformInstructions];
     const instructions = platformData?.[contentType] || {
       captionStyle: "Platform-appropriate style for " + contentType,
-      postInstructions: "Follow platform best practices"
+      postInstructions: "Follow platform best practices",
+      audienceContext: "Platform-specific audience",
+      examplePattern: "Platform-appropriate example"
     };
     
-    prompt += `${platform} (${contentType}):
-- Caption Style: ${instructions.captionStyle}
-- Post Instructions: ${instructions.postInstructions}
+    prompt += `📱 ${platform.toUpperCase()} CAPTION:
+- Audience: ${instructions.audienceContext}
+- Style: ${instructions.captionStyle}
+- Example Pattern: "${instructions.examplePattern}"
+- Post Strategy: ${instructions.postInstructions}
+- REQUIREMENT: Write a completely original caption that feels native to ${platform}, NOT adapted from other content
 
 `;
   });
 
   if (contentType === "video") {
-    prompt += `\nInclude a detailed video script optimized for ${videoDuration} seconds that:
-- Starts with a strong hook (first 3 seconds)
-- Highlights key product benefits
-- Includes a clear call-to-action
-- Uses trending language and phrases`;
+    prompt += `\n🎥 VIDEO SCRIPT REQUIREMENTS:
+Create a detailed video script optimized for ${videoDuration} seconds that:
+- Opens with a platform-appropriate hook (differs by platform audience)
+- Highlights key product benefits in engaging way
+- Includes clear, compelling call-to-action
+- Uses current trending language and phrases
+- Sounds natural when spoken aloud`;
   } else {
-    prompt += `\nInclude a detailed photo description that:
-- Describes the ideal shot composition
-- Suggests lighting and styling
-- Recommends props and background
-- Optimizes for product showcase`;
+    prompt += `\n📸 PHOTO DESCRIPTION REQUIREMENTS:
+Create a detailed photo description that:
+- Describes ideal shot composition for maximum engagement
+- Suggests optimal lighting and styling approach
+- Recommends props and background that enhance product appeal
+- Optimizes visual storytelling for the product showcase`;
   }
+
+  prompt += `\n\n⚠️ FINAL VALIDATION:
+- Each platform caption should be 70%+ different from others
+- Captions should NOT summarize or reuse the main video script/photo description
+- Each caption should feel like it was written by a native user of that platform
+- Focus on platform-specific engagement tactics and audience preferences`;
 
   return prompt;
 }

@@ -501,8 +501,23 @@ Generate comprehensive content with:
    - Include specific scenes and visual cues
    - Incorporate viral format patterns
 
-4. PLATFORM-SPECIFIC CAPTIONS:
-   ${platforms.map(platform => `- ${platform.toUpperCase()}: Optimized for ${platform} audience and character limits`).join('\n   ')}
+4. PLATFORM-SPECIFIC CAPTIONS (Each caption must be UNIQUE and platform-native):
+   ${platforms.map(platform => {
+     const platformGuidelines = {
+       'TikTok': 'Hook-driven, uses slang, emojis, short punchy sentences. Encourages trends, humor, urgency. Example style: "✨ TikTok made me buy it — again. #acnehack"',
+       'Instagram': 'Aesthetic, lifestyle-driven language focusing on visuals and routines. Clean CTA with light emoji use. Example style: "Your new skincare shelf essential. ✨ #skincaregoals"',
+       'YouTube Shorts': 'Slightly longer, informative tone that sounds like a voiceover or quick script snippet. Example style: "This patch pulls the gunk out *overnight*. Let me show you why it\'s viral."',
+       'X (Twitter)': 'Short, punchy, clever. Lean into hot takes, jokes, or bold claims with minimal hashtags. Example style: "Amazon has no business selling skincare this good for $11."'
+     };
+     const guidelines = platformGuidelines[platform] || 'Platform-appropriate style';
+     return `- ${platform.toUpperCase()}: ${guidelines}`;
+   }).join('\n   ')}
+   
+   CRITICAL: Each platform caption MUST be:
+   - Written independently from scratch for that specific platform
+   - 70%+ different from other platform captions
+   - Tailored to that platform's unique audience and engagement style
+   - NOT a summary or adaptation of the main content
 
 5. HASHTAGS & CTA:
    - Mix of trending and niche-specific hashtags

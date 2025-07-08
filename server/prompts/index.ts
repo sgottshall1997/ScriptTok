@@ -186,6 +186,44 @@ Note: A specific template for this combination wasn't found, so this is using a 
     smartStyleInstructions += '\n\nMimic the patterns from your best-rated content while creating fresh, engaging content for this new product.';
   }
 
+  // Add platform-specific caption instructions if platform is specified
+  let platformInstructions = '';
+  if (params.platform && params.platform !== 'general') {
+    const platformGuidelines = {
+      'TikTok': {
+        style: 'Hook-driven, uses slang, emojis, and short punchy sentences. Encourages trends, humor, or urgency.',
+        audience: 'Gen Z audience that responds to viral trends, authenticity, and quick entertainment',
+        example: '✨ TikTok made me buy it — again. #acnehack'
+      },
+      'Instagram': {
+        style: 'Aesthetic, lifestyle-driven language focusing on visuals and routines. Clean CTA with light emoji use.',
+        audience: 'Lifestyle enthusiasts who value aesthetics and personal branding',
+        example: 'Your new skincare shelf essential. ✨ #skincaregoals'
+      },
+      'YouTube Shorts': {
+        style: 'Slightly longer, informative tone that sounds like a voiceover or quick script snippet.',
+        audience: 'Viewers seeking educational content and detailed product information',
+        example: 'This patch pulls the gunk out *overnight*. Let me show you why it\'s viral.'
+      },
+      'X (Twitter)': {
+        style: 'Short, punchy, clever. Lean into hot takes, jokes, or bold claims with minimal hashtags.',
+        audience: 'Quick-witted audience that appreciates humor, hot takes, and concise insights',
+        example: 'Amazon has no business selling skincare this good for $11.'
+      }
+    };
+
+    const platformData = platformGuidelines[params.platform as keyof typeof platformGuidelines];
+    if (platformData) {
+      platformInstructions = `\n\n📱 PLATFORM-SPECIFIC INSTRUCTIONS FOR ${params.platform.toUpperCase()}:
+- Target Audience: ${platformData.audience}
+- Caption Style: ${platformData.style}
+- Example Pattern: "${platformData.example}"
+- CRITICAL: Write content that feels native to ${params.platform}, NOT adapted from other platforms
+- Make this caption 70%+ different from what you'd write for other platforms
+- Focus on ${params.platform}-specific engagement tactics and user behavior patterns`;
+    }
+  }
+
   // Replace placeholders in the template
   const filledPrompt = promptTemplate
     .replace(/{product}/g, productName)
@@ -193,7 +231,7 @@ Note: A specific template for this combination wasn't found, so this is using a 
     .replace(/{trendContext}/g, trendContext);
   
   // Add optimization notes based on successful patterns
-  const finalPrompt = filledPrompt + optimizationNote + smartStyleInstructions;
+  const finalPrompt = filledPrompt + optimizationNote + smartStyleInstructions + platformInstructions;
   
   return finalPrompt;
 }
