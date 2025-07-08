@@ -405,6 +405,9 @@ ${config.hashtags.join(' ')}`;
           });
 
           // Save to content generation history
+          const directAffiliateLink = productUrl && affiliateId ? 
+            `${productUrl}${productUrl.includes('?') ? '&' : '?'}tag=${affiliateId}` : '';
+          
           ContentHistoryManager.saveEntry({
             productName: selectedProduct,
             niche: selectedNiche,
@@ -417,7 +420,7 @@ ${config.hashtags.join(' ')}`;
               platform: selectedPlatforms[0] || 'tiktok',
               niche: selectedNiche,
               hashtags: result.data.hashtags || [],
-              affiliateLink: smartRedirectUrl || '',
+              affiliateLink: directAffiliateLink,
               viralInspo: viralInspo || undefined,
               ...platformCaptions
             },
@@ -579,32 +582,22 @@ ${config.hashtags.join(' ')}`;
                 />
               </div>
 
-              <Button 
-                size="sm" 
-                variant="outline" 
-                className="w-full h-8"
-                onClick={generateRedirectUrl}
-                disabled={!productUrl || !affiliateId}
-              >
-                ✅ Create Smart Redirect
-              </Button>
-
-              {smartRedirectUrl && (
-                <div className="text-xs bg-green-50 p-3 rounded border border-green-200">
+              {productUrl && affiliateId && (
+                <div className="text-xs bg-blue-50 p-3 rounded border border-blue-200">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-green-700 font-medium">✅ Smart Redirect Created</span>
+                    <span className="text-blue-700 font-medium">✅ Amazon Affiliate Link</span>
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => copyToClipboard(smartRedirectUrl, 'Redirect URL')}
+                      onClick={() => copyToClipboard(`${productUrl}${productUrl.includes('?') ? '&' : '?'}tag=${affiliateId}`, 'Amazon affiliate link')}
                       className="h-6 px-2 text-xs"
                     >
                       <Copy className="h-3 w-3 mr-1" />
                       Copy
                     </Button>
                   </div>
-                  <code className="block text-green-800 bg-white p-2 rounded border text-xs">{smartRedirectUrl}</code>
-                  <p className="text-green-600 text-xs mt-2">This trackable link includes your affiliate ID and click analytics.</p>
+                  <code className="block text-blue-800 bg-white p-2 rounded border text-xs">{`${productUrl}${productUrl.includes('?') ? '&' : '?'}tag=${affiliateId}`}</code>
+                  <p className="text-blue-600 text-xs mt-2">Direct Amazon link with your associate tag for proper tracking.</p>
                 </div>
               )}
             </div>
