@@ -128,12 +128,18 @@ const TemplateExplorerPage: React.FC = () => {
 
   // When niche changes, update template list
   useEffect(() => {
-    if (nicheTemplatesData?.templates) {
-      const templateKeys = Object.keys(nicheTemplatesData.templates);
-      setTemplateList(templateKeys);
-      // Auto-select the first template if available
-      if (templateKeys.length > 0 && !templateKeys.includes(selectedTemplate)) {
-        setSelectedTemplate(templateKeys[0]);
+    if (nicheTemplatesData?.templates && typeof nicheTemplatesData.templates === 'object' && nicheTemplatesData.templates !== null) {
+      try {
+        const templateKeys = Object.keys(nicheTemplatesData.templates);
+        setTemplateList(templateKeys);
+        // Auto-select the first template if available
+        if (templateKeys.length > 0 && !templateKeys.includes(selectedTemplate)) {
+          setSelectedTemplate(templateKeys[0]);
+        }
+      } catch (error) {
+        console.error('Error processing templates:', error);
+        setTemplateList([]);
+        setSelectedTemplate('');
       }
     } else {
       setTemplateList([]);
@@ -180,7 +186,7 @@ const TemplateExplorerPage: React.FC = () => {
   };
 
   // Extract the list of available niches
-  const niches = allNichesData 
+  const niches = allNichesData?.niches && typeof allNichesData.niches === 'object' && allNichesData.niches !== null
     ? Object.keys(allNichesData.niches) 
     : [];
 
