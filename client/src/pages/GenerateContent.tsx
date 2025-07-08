@@ -80,44 +80,50 @@ const GenerateContent = () => {
     setSmartRedirectUrl(url);
   };
 
-  // Simulate fetching viral inspiration when product changes
-  // TODO: Replace with actual API call to fetch trending insights for the product
-  const fetchViralInspirationForProduct = (productName: string) => {
+  // Fetch viral inspiration using Perplexity API for trending insights
+  const fetchViralInspirationForProduct = async (productName: string) => {
     if (!productName.trim()) {
       setViralInspo(null);
       return;
     }
 
-    // Simulate viral inspiration based on product
-    const sampleInspirations = [
-      {
-        hook: "POV: You found the secret to glowing skin",
-        format: "Tutorial + Before/After",
-        caption: "This skincare routine changed everything for me! No more dull skin days 🌟",
-        hashtags: ["#skincare", "#glowup", "#skincareroutine", "#selfcare"]
-      },
-      {
-        hook: "Everyone's talking about this trending gadget",
-        format: "Unboxing + Demo",
-        caption: "I can't believe how much this tech upgrade improved my daily routine! 🚀",
-        hashtags: ["#tech", "#gadget", "#productivity", "#innovation"]
-      },
-      {
-        hook: "This outfit hack will save your wardrobe",
-        format: "Style Transformation",
-        caption: "From basic to stunning in 60 seconds! This styling trick works every time ✨",
-        hashtags: ["#fashion", "#style", "#ootd", "#styling"]
+    try {
+      console.log('Fetching viral inspiration for:', productName, 'in niche:', selectedNiche);
+      
+      const response = await fetch('/api/perplexity-trends/viral-inspiration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: productName,
+          niche: selectedNiche
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch viral inspiration');
       }
-    ];
 
-    // Simple logic to pick inspiration based on niche
-    let inspiration;
-    if (selectedNiche === 'skincare') inspiration = sampleInspirations[0];
-    else if (selectedNiche === 'tech') inspiration = sampleInspirations[1];
-    else if (selectedNiche === 'fashion') inspiration = sampleInspirations[2];
-    else inspiration = sampleInspirations[Math.floor(Math.random() * sampleInspirations.length)];
-
-    setViralInspo(inspiration);
+      const data = await response.json();
+      console.log('Viral inspiration response:', data);
+      
+      if (data.success && data.inspiration) {
+        setViralInspo(data.inspiration);
+      } else {
+        throw new Error(data.error || 'No inspiration data received');
+      }
+    } catch (error) {
+      console.error('Error fetching viral inspiration:', error);
+      
+      // Fallback to basic inspiration if API fails
+      const fallbackInspiration = {
+        hook: `${productName} is trending right now`,
+        format: "Product showcase + User testimonial",
+        caption: `Just tried ${productName} and the results speak for themselves! This is exactly what I've been looking for.`,
+        hashtags: [`#${selectedNiche}`, "#trending", "#musthave", "#viral"]
+      };
+      
+      setViralInspo(fallbackInspiration);
+    }
   };
 
   // Watch for product name changes to fetch viral inspiration
