@@ -118,7 +118,12 @@ export class WebhookService {
     contentData?: any; // Full content generation data for CSV fields
   }): Promise<{ success: boolean; error?: string }> {
     try {
-      const webhookUrl = process.env.MAKE_WEBHOOK_URL || webhookConfig.url;
+      // Prioritize database configuration over environment variable
+      const webhookUrl = webhookConfig.url || process.env.MAKE_WEBHOOK_URL;
+      
+      console.log(`🔍 DEBUG: Using webhook URL: ${webhookUrl}`);
+      console.log(`🔍 DEBUG: webhookConfig.url = ${webhookConfig.url}`);
+      console.log(`🔍 DEBUG: process.env.MAKE_WEBHOOK_URL = ${process.env.MAKE_WEBHOOK_URL}`);
       
       if (!webhookUrl) {
         throw new Error('Make.com webhook URL not configured');
