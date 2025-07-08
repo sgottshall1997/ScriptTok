@@ -160,6 +160,7 @@ const Dashboard = () => {
         <CardHeader>
           <CardTitle className="text-lg text-green-800">💰 Amazon Associates Links</CardTitle>
           <p className="text-sm text-green-700">Quick access to your monetized affiliate links</p>
+          <p className="text-xs text-green-600 mt-2 italic">Disclosure: As an Amazon Associate, I earn from qualifying purchases.</p>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

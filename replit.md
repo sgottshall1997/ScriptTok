@@ -234,6 +234,7 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Implemented green-themed design indicating monetization opportunities
   - ✅ Two-column responsive grid layout with product descriptions and "View Product" buttons
   - ✅ Links open in new tabs to preserve user session on dashboard
+  - ✅ Added FTC-compliant Amazon Associates disclosure statement for transparency
 
 ## User Preferences
 
