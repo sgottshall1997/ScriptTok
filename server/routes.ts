@@ -42,8 +42,11 @@ import perplexityTrendsRouter from "./api/perplexity-trends";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
-import { startAutomatedBulkGeneration, getBulkJobDetails } from "./api/automated-bulk-generation";
+import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
 import aiAnalyticsRouter from "./api/ai-analytics";
+import { bulkGeneratedContent } from "@shared/schema";
+import { eq } from "drizzle-orm";
+import { db } from "./db";
 
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
 
@@ -484,6 +487,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/bulk/start-generation', startBulkGeneration);
   app.get('/api/bulk/job/:jobId', getBulkJobStatus);
   app.get('/api/bulk/jobs', getBulkJobs);
+  app.get('/api/bulk/content/:jobId', getBulkContentByJobId);
   
   // Automated bulk generation with trending product auto-selection
   app.post('/api/automated-bulk/start', startAutomatedBulkGeneration);

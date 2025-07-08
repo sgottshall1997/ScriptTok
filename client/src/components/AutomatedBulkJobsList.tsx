@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import BulkContentViewer from './BulkContentViewer';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -51,6 +52,7 @@ interface AutomatedBulkJobsListProps {
 export default function AutomatedBulkJobsList({ jobs }: AutomatedBulkJobsListProps) {
   const [expandedJobs, setExpandedJobs] = useState<Set<string>>(new Set());
   const [selectedJobDetails, setSelectedJobDetails] = useState<string | null>(null);
+  const [viewingJobId, setViewingJobId] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Fetch detailed job information when expanded
@@ -360,10 +362,13 @@ export default function AutomatedBulkJobsList({ jobs }: AutomatedBulkJobsListPro
                   {/* View Generated Content Button */}
                   {job.status === 'completed' && job.completedVariations > 0 && (
                     <div className="flex justify-center pt-4">
-                      <Button variant="outline" className="gap-2">
+                      <Button 
+                        variant="outline" 
+                        className="gap-2"
+                        onClick={() => setViewingJobId(job.jobId)}
+                      >
                         <Eye className="h-4 w-4" />
                         View Generated Content ({job.completedVariations} pieces)
-                        <ExternalLink className="h-4 w-4" />
                       </Button>
                     </div>
                   )}
@@ -373,6 +378,13 @@ export default function AutomatedBulkJobsList({ jobs }: AutomatedBulkJobsListPro
           </Card>
         ))}
       </div>
+      
+      {/* Bulk Content Viewer Modal */}
+      <BulkContentViewer 
+        jobId={viewingJobId || ''}
+        isOpen={!!viewingJobId}
+        onClose={() => setViewingJobId(null)}
+      />
     </div>
   );
 }

@@ -544,6 +544,25 @@ Return as JSON with this exact structure:
   }
 }
 
+// Get bulk generated content by job ID
+export async function getBulkContentByJobId(req: Request, res: Response) {
+  try {
+    const jobId = req.params.jobId;
+    const content = await db.select().from(bulkGeneratedContent).where(eq(bulkGeneratedContent.bulkJobId, jobId));
+    
+    res.json({
+      success: true,
+      content
+    });
+  } catch (error) {
+    console.error('Error fetching bulk content:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch bulk content'
+    });
+  }
+}
+
 // Get all bulk jobs with filtering and search
 export async function getBulkJobs(req: Request, res: Response) {
   try {

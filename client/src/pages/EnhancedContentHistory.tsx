@@ -24,6 +24,7 @@ import {
   Zap
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from '@tanstack/react-query';
 import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 
@@ -39,27 +40,89 @@ const EnhancedContentHistory = () => {
     template: 'all'
   });
 
+  // Load history from database API
+  const { data: dbHistory, refetch: refetchDbHistory } = useQuery({
+    queryKey: ['/api/history'],
+    queryFn: async () => {
+      const response = await fetch('/api/history');
+      const data = await response.json();
+      return data.success ? data.history : [];
+    },
+    staleTime: 0,
+    cacheTime: 0
+  });
+
   // Load history on component mount
   useEffect(() => {
     loadHistory();
   }, []);
 
-  // Apply filters when history or filters change
+  // Apply filters when history or filters change, and reload when db data changes
   useEffect(() => {
     applyFilters();
   }, [history, filters]);
 
+  useEffect(() => {
+    if (dbHistory) {
+      loadHistory();
+    }
+  }, [dbHistory]);
+
   const loadHistory = () => {
-    const loadedHistory = ContentHistoryManager.getHistory();
-    setHistory(loadedHistory);
+    // Combine local storage history with database history
+    const localHistory = ContentHistoryManager.getHistory();
+    const combinedHistory = [...localHistory];
+    
+    // Add database history if available
+    if (dbHistory && Array.isArray(dbHistory)) {
+      const dbHistoryConverted = dbHistory.map((item: any) => ({
+        id: `db_${item.id}`,
+        timestamp: new Date(item.createdAt).toISOString(),
+        productName: item.productName,
+        niche: item.niche,
+        tone: item.tone,
+        contentType: item.contentType,
+        promptText: item.promptText,
+        outputText: item.outputText,
+        platformsSelected: item.platformsSelected || [],
+        generatedOutput: {
+          ...item.generatedOutput,
+          content: item.outputText,
+          hook: item.generatedOutput?.hook || 'Generated content',
+          hashtags: item.generatedOutput?.hashtags || [],
+          affiliateLink: item.affiliateLink,
+          viralInspo: item.viralInspiration,
+          ...item.generatedOutput
+        },
+        source: 'database'
+      }));
+      combinedHistory.push(...dbHistoryConverted);
+    }
+    
+    // Sort by timestamp (newest first)
+    combinedHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+    
+    setHistory(combinedHistory);
   };
 
   const applyFilters = () => {
-    const filtered = ContentHistoryManager.filterHistory({
-      niche: filters.niche === 'all' ? undefined : filters.niche,
-      platform: filters.platform === 'all' ? undefined : filters.platform,
-      template: filters.template === 'all' ? undefined : filters.template
-    });
+    // Filter from the combined history instead of using ContentHistoryManager
+    let filtered = history;
+    
+    if (filters.niche !== 'all') {
+      filtered = filtered.filter(item => item.niche === filters.niche);
+    }
+    
+    if (filters.platform !== 'all') {
+      filtered = filtered.filter(item => 
+        item.platformsSelected && item.platformsSelected.includes(filters.platform)
+      );
+    }
+    
+    if (filters.template !== 'all') {
+      filtered = filtered.filter(item => item.contentType === filters.template);
+    }
+    
     setFilteredHistory(filtered);
   };
 
