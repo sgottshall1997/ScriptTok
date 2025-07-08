@@ -288,6 +288,7 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Auto-populated affiliate ID "sgottshall107-20" permanently in Content Generator for streamlined workflow
   - ✅ Fixed smart redirect functionality with proper backend API and affiliate link generation
   - ✅ Enhanced redirect URL display with copy functionality and click tracking analytics
+  - ✅ Added platform-specific captions display in Content History with individual copy buttons for TikTok, Instagram, YouTube, and Twitter
 
 ## User Preferences
 
