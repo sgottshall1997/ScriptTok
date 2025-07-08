@@ -126,7 +126,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Simple test payload
       const mockPayload = {
         "test_field_1": "Hello from GlowBot",
-        "test_field_2": "skincare",
+        "test_field_2": "beauty",
         "test_field_3": "instagram",
         "caption": "This is a test caption",
         "hashtags": "#test #glowbot",
@@ -377,7 +377,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/test-niche-fetcher/:niche', async (req, res) => {
     try {
       const { niche } = req.params;
-      const validNiches = ['fitness', 'skincare', 'travel', 'tech', 'fashion', 'food', 'pets'];
+      const validNiches = ['fitness', 'beauty', 'travel', 'tech', 'fashion', 'food', 'pets'];
       
       if (!validNiches.includes(niche)) {
         return res.status(400).json({
@@ -391,7 +391,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Dynamic import based on niche
       const fetcherMap = {
         fitness: () => import('./services/perplexity/perplexityFetchFitness').then(m => m.fetchTrendingFitnessProducts),
-        skincare: () => import('./services/perplexity/perplexityFetchSkincare').then(m => m.fetchTrendingSkincareProducts),
+        beauty: () => import('./services/perplexity/perplexityFetchBeauty').then(m => m.fetchTrendingBeautyProducts),
         travel: () => import('./services/perplexity/perplexityFetchTravel').then(m => m.fetchTrendingTravelProducts),
         tech: () => import('./services/perplexity/perplexityFetchTech').then(m => m.fetchTrendingTechProducts),
         fashion: () => import('./services/perplexity/perplexityFetchFashion').then(m => m.fetchTrendingFashionProducts),

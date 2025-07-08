@@ -22,7 +22,7 @@ router.get('/', async (req, res) => {
     // Simple test payload that Make.com should definitely parse
     const mockPayload = {
       "test_field_1": "Hello from GlowBot",
-      "test_field_2": "skincare",
+      "test_field_2": "beauty",
       "test_field_3": "instagram",
       "caption": "This is a test caption",
       "hashtags": "#test #glowbot",

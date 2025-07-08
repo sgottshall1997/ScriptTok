@@ -80,7 +80,7 @@ const TrendingProductsList: FC<TrendingProductsListProps> = ({ products, isLoadi
         // Logic to determine if product is relevant to niche
         // For now, use a simple matching logic that can be improved later
         const nicheKeywords: Record<string, string[]> = {
-          skincare: ['serum', 'cream', 'cleanser', 'mask', 'moisturizer', 'spf', 'sunscreen', 'facial', 'hydrating', 'exfoliating', 'collagen'],
+          beauty: ['serum', 'cream', 'cleanser', 'mask', 'moisturizer', 'spf', 'sunscreen', 'facial', 'hydrating', 'exfoliating', 'collagen', 'makeup', 'lipstick', 'foundation'],
           tech: ['phone', 'laptop', 'gadget', 'device', 'smart', 'wireless', 'bluetooth', 'audio', 'charger', 'battery'],
           fashion: ['cloth', 'wear', 'apparel', 'outfit', 'style', 'fashion', 'accessory', 'bag', 'shoe', 'jewelry'],
           fitness: ['workout', 'fitness', 'exercise', 'protein', 'supplement', 'gym', 'muscle', 'training', 'vitamin', 'nutrition'],

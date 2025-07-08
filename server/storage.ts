@@ -356,7 +356,7 @@ export class MemStorage implements IStorage {
     const generation: ContentGeneration = { 
       ...insertGeneration, 
       id, 
-      niche: insertGeneration.niche || 'skincare', // Ensure niche is always set 
+      niche: insertGeneration.niche || 'beauty', // Ensure niche is always set 
       createdAt: new Date() 
     };
     
@@ -431,7 +431,7 @@ export class MemStorage implements IStorage {
       ...insertProduct,
       id,
       createdAt: new Date(),
-      niche: insertProduct.niche || 'skincare', // Ensure niche is always set
+      niche: insertProduct.niche || 'beauty', // Ensure niche is always set
       mentions: insertProduct.mentions || null,
       sourceUrl: insertProduct.sourceUrl || null
     };

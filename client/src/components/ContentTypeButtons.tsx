@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { 
   UNIVERSAL_TEMPLATE_TYPES, 
-  SKINCARE_TEMPLATE_TYPES,
+  BEAUTY_TEMPLATE_TYPES,
   TECH_TEMPLATE_TYPES,
   FASHION_TEMPLATE_TYPES,
   FITNESS_TEMPLATE_TYPES,
@@ -52,8 +52,8 @@ export function ContentTypeButtons({
   // Get template types based on selected niche
   const getNicheTemplates = (currentNiche: string): TemplateType[] => {
     switch (currentNiche) {
-      case "skincare":
-        return [...SKINCARE_TEMPLATE_TYPES];
+      case "beauty":
+        return [...BEAUTY_TEMPLATE_TYPES];
       case "tech":
         return [...TECH_TEMPLATE_TYPES];
       case "fashion":

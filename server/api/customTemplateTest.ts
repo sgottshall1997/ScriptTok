@@ -16,7 +16,7 @@ const testTemplateSchema = z.object({
   templateContent: z.string().min(10, "Template content is required"),
   productName: z.string().min(1, "Product name is required"),
   tone: z.enum(TONE_OPTIONS).default("friendly"),
-  niche: z.enum(NICHES).default("skincare"),
+  niche: z.enum(NICHES).default("beauty"),
 });
 
 /**

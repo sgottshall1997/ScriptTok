@@ -21,7 +21,7 @@ interface NicheCardProps {
 
 // Map of niche names to SVG icons or emoji representations
 const nicheIcons: Record<string, React.ReactNode> = {
-  skincare: '✨',
+  beauty: '✨',
   tech: '📱',
   fashion: '👕',
   fitness: '🏋️',
@@ -32,7 +32,7 @@ const nicheIcons: Record<string, React.ReactNode> = {
 
 // Map of niche names to background gradient classes
 const nicheBgClasses: Record<string, string> = {
-  skincare: 'from-pink-100 to-purple-100',
+  beauty: 'from-pink-100 to-purple-100',
   tech: 'from-blue-100 to-cyan-100',
   fashion: 'from-amber-100 to-yellow-100',
   fitness: 'from-green-100 to-emerald-100',
@@ -43,7 +43,7 @@ const nicheBgClasses: Record<string, string> = {
 
 // Map of niche names to text color classes
 const nicheTextClasses: Record<string, string> = {
-  skincare: 'text-pink-600',
+  beauty: 'text-pink-600',
   tech: 'text-blue-600',
   fashion: 'text-amber-600',
   fitness: 'text-green-600',
@@ -54,7 +54,7 @@ const nicheTextClasses: Record<string, string> = {
 
 // Map of niche names to border color classes
 const nicheBorderClasses: Record<string, string> = {
-  skincare: 'border-pink-200 hover:border-pink-300',
+  beauty: 'border-pink-200 hover:border-pink-300',
   tech: 'border-blue-200 hover:border-blue-300',
   fashion: 'border-amber-200 hover:border-amber-300',
   fitness: 'border-green-200 hover:border-green-300',
@@ -65,7 +65,7 @@ const nicheBorderClasses: Record<string, string> = {
 
 // Map of niches to relevant keywords
 const nicheKeywords: Record<string, string[]> = {
-  skincare: ['Moisturizer', 'Serum', 'Cleanser', 'Sunscreen', 'Toner'],
+  beauty: ['Moisturizer', 'Serum', 'Cleanser', 'Sunscreen', 'Toner', 'Makeup', 'Lipstick'],
   tech: ['Gadgets', 'Phones', 'Laptops', 'Headphones', 'Smart Home'],
   fashion: ['Apparel', 'Shoes', 'Accessories', 'Watches', 'Bags'],
   fitness: ['Supplements', 'Equipment', 'Apparel', 'Tracking', 'Nutrition'],

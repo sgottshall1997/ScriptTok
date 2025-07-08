@@ -38,7 +38,7 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
   // Filter templates based on niche relevance
   const getRelevantTemplates = () => {
     const nicheMap: Record<string, string[]> = {
-      'skincare': ['Universal', 'Skincare'],
+      'beauty': ['Universal', 'Beauty & Personal Care'],
       'tech': ['Universal', 'Tech'],
       'fashion': ['Universal', 'Fashion'],
       'fitness': ['Universal', 'Fitness'],

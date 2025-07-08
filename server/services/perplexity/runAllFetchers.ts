@@ -4,7 +4,7 @@
  */
 
 import { fetchTrendingFitnessProducts } from './perplexityFetchFitness';
-import { fetchTrendingSkincareProducts } from './perplexityFetchSkincare';
+import { fetchTrendingBeautyProducts } from './perplexityFetchBeauty';
 import { fetchTrendingTravelProducts } from './perplexityFetchTravel';
 import { fetchTrendingTechProducts } from './perplexityFetchTech';
 import { fetchTrendingFashionProducts } from './perplexityFetchFashion';
@@ -32,7 +32,7 @@ export async function runAllPerplexityFetchers(): Promise<{
   
   const fetchers = [
     { name: 'fitness', fetcher: fetchTrendingFitnessProducts },
-    { name: 'skincare', fetcher: fetchTrendingSkincareProducts },
+    { name: 'beauty', fetcher: fetchTrendingBeautyProducts },
     { name: 'travel', fetcher: fetchTrendingTravelProducts },
     { name: 'tech', fetcher: fetchTrendingTechProducts },
     { name: 'fashion', fetcher: fetchTrendingFashionProducts },
@@ -111,7 +111,7 @@ export async function runAllPerplexityFetchers(): Promise<{
 // Export individual fetchers for direct use
 export {
   fetchTrendingFitnessProducts,
-  fetchTrendingSkincareProducts,
+  fetchTrendingBeautyProducts,
   fetchTrendingTravelProducts,
   fetchTrendingTechProducts,
   fetchTrendingFashionProducts,

@@ -127,7 +127,7 @@ const VideoScriptGenerator: FC<VideoScriptGeneratorProps> = ({ onSuccess }) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       productName: "",
-      niche: "skincare",
+      niche: "beauty",
       tone: "friendly",
       platform: "tiktok",
       scriptType: "product_review",

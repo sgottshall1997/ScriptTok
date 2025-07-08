@@ -15,7 +15,7 @@ import { apiRequest } from "@/lib/queryClient";
 // Maps niche to a Tailwind color
 const getNicheColor = (niche?: string): string => {
   const colorMap: Record<string, string> = {
-    skincare: 'pink',
+    beauty: 'pink',
     tech: 'blue',
     fashion: 'purple',
     fitness: 'green',
@@ -151,7 +151,7 @@ const ContentOutput: FC<ContentOutputProps> = ({ content }) => {
   // Define niche-specific styling
   const getNicheStyles = (niche?: string) => {
     const styles: Record<string, { bgGradient: string, textGradient: string, icon: JSX.Element }> = {
-      skincare: {
+      beauty: {
         bgGradient: "from-pink-50 to-purple-50",
         textGradient: "from-pink-600 to-purple-600",
         icon: (

@@ -81,7 +81,7 @@ export default function ContentCalendar() {
   const [eventEnd, setEventEnd] = useState<Date>(
     addMinutes(new Date(), 60)
   );
-  const [eventNiche, setEventNiche] = useState('skincare');
+  const [eventNiche, setEventNiche] = useState('beauty');
   const [eventPlatform, setEventPlatform] = useState('Instagram');
   const [eventContent, setEventContent] = useState('');
   const [eventTone, setEventTone] = useState('friendly');

@@ -21,7 +21,7 @@ router.get("/", async (req, res) => {
     console.log("🔄 API request: Getting trending products organized by niche");
     
     // Get trending products from storage for all niches
-    const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
+    const niches = ['beauty', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
     const organizedProducts: any = {};
     let totalCount = 0;
     

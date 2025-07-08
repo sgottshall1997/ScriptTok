@@ -21,7 +21,7 @@ interface NicheSelectorProps {
 const NicheSelector: FC<NicheSelectorProps> = ({ value, onChange }) => {
   // Get niche labels with proper formatting for display
   const nicheLabels: Record<string, string> = {
-    skincare: "Skincare & Beauty",
+    beauty: "Beauty & Personal Care",
     tech: "Technology & Gadgets",
     fashion: "Fashion & Apparel",
     fitness: "Fitness & Wellness",
@@ -32,7 +32,7 @@ const NicheSelector: FC<NicheSelectorProps> = ({ value, onChange }) => {
 
   // Icons for each niche (using emoji as placeholders, can be replaced with SVG/icon components)
   const nicheIcons: Record<string, string> = {
-    skincare: "✨",
+    beauty: "✨",
     tech: "📱",
     fashion: "👕",
     fitness: "🏋️",

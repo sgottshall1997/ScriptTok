@@ -54,8 +54,8 @@ Make your content compelling, well-structured, and optimized for engagement.`;
 
   // Add niche-specific instructions
   switch (niche) {
-    case 'skincare':
-      systemPrompt += `\nInclude scientifically accurate information about skincare ingredients and their benefits.
+    case 'beauty':
+      systemPrompt += `\nInclude scientifically accurate information about beauty ingredients, skincare formulations, and their benefits.
 Avoid making exaggerated claims about products. Be honest about potential side effects.
 Use terminology that demonstrates expertise in dermatology and cosmetic science.`;
       break;

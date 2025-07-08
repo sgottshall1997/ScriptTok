@@ -87,7 +87,7 @@ const AIConfigurationPanel: FC<AIConfigurationPanelProps> = ({ onConfigChange })
 
   // Default configuration values
   const defaultValues: ModelConfiguration = {
-    niche: "skincare",
+    niche: "beauty",
     templateType: "original",
     tone: "friendly",
     temperature: 0.7,

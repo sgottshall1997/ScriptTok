@@ -22,7 +22,7 @@ export function AmazonAffiliateDropdown() {
   const { toast } = useToast();
 
   const niches = [
-    { value: "skincare", label: "Skincare" },
+    { value: "beauty", label: "Beauty & Personal Care" },
     { value: "tech", label: "Tech" },
     { value: "fashion", label: "Fashion" },
     { value: "fitness", label: "Fitness" },

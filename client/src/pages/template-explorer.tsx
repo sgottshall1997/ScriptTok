@@ -57,7 +57,7 @@ const TemplateExplorerPage: React.FC = () => {
   
   // Niche labels with proper formatting for display
   const nicheLabels: Record<string, string> = {
-    skincare: "Skincare & Beauty",
+    beauty: "Beauty & Personal Care",
     tech: "Technology & Gadgets",
     fashion: "Fashion & Apparel",
     fitness: "Fitness & Wellness",
@@ -68,7 +68,7 @@ const TemplateExplorerPage: React.FC = () => {
   
   // Descriptions for each niche
   const nicheDescriptions: Record<string, string> = {
-    skincare: "Generate content for skincare, beauty, and cosmetic products with specialized templates for routines, ingredient analysis, and before-after comparisons.",
+    beauty: "Generate content for beauty, personal care, makeup, haircare, and grooming products with specialized templates for routines, ingredient analysis, and before-after transformations.",
     tech: "Create tech reviews, comparisons, and tutorials for gadgets, software, and electronics with specifications and feature-focused templates.",
     fashion: "Produce stylish content for apparel, accessories, and footwear with outfit pairing guides, seasonal collections, and style trend analysis.",
     fitness: "Develop workout routines, supplement reviews, and equipment guides with templates designed for fitness enthusiasts and wellness products.",

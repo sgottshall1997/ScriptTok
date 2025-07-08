@@ -7,7 +7,7 @@ import { trackEvent } from '@/lib/analytics';
 
 // Map of niche descriptions - should be loaded from backend in production
 const nicheDescriptions: Record<string, string> = {
-  skincare: "Generate content for skincare, beauty, and cosmetic products with specialized templates for routines, ingredient analysis, and before-after comparisons.",
+  beauty: "Generate content for beauty, personal care, makeup, haircare, and grooming products with specialized templates for routines, ingredient analysis, and before-after transformations.",
   tech: "Create tech reviews, comparisons, and tutorials for gadgets, software, and electronics with specifications and feature-focused templates.",
   fashion: "Produce stylish content for apparel, accessories, and footwear with outfit pairing guides, seasonal collections, and style trend analysis.",
   fitness: "Develop workout routines, supplement reviews, and equipment guides with templates designed for fitness enthusiasts and wellness products.",
@@ -18,7 +18,7 @@ const nicheDescriptions: Record<string, string> = {
 
 // Map of template counts for each niche
 const nicheTemplateCounts: Record<string, number> = {
-  skincare: 18,
+  beauty: 20,
   tech: 14,
   fashion: 12,
   fitness: 15,
@@ -29,7 +29,7 @@ const nicheTemplateCounts: Record<string, number> = {
 
 // Map of niche titles with proper capitalization and formatting
 const nicheTitles: Record<string, string> = {
-  skincare: "Skincare & Beauty",
+  beauty: "Beauty & Personal Care",
   tech: "Technology & Gadgets",
   fashion: "Fashion & Apparel",
   fitness: "Fitness & Wellness",

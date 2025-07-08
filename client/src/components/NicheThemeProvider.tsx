@@ -8,7 +8,7 @@ interface NicheThemeProviderProps {
 
 // Theme colors for each niche
 const nicheThemes: Record<string, { primary: string; secondary: string }> = {
-  skincare: { 
+  beauty: { 
     primary: "pink-600", 
     secondary: "purple-600" 
   },

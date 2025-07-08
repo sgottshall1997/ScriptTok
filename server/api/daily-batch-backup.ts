@@ -4,7 +4,7 @@ import { generateContent } from '../services/contentGenerator';
 import { WebhookService } from '../services/webhookService';
 
 const DAILY_NICHES = [
-  'skincare',
+  'beauty',
   'tech', 
   'fashion',
   'fitness',

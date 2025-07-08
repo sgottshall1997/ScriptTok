@@ -32,7 +32,7 @@ export default function ClaudeContentGenerator() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       prompt: '',
-      niche: 'skincare',
+      niche: 'beauty',
       tone: 'friendly',
       temperature: 0.7,
       includeProducts: true,

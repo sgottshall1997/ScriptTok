@@ -307,7 +307,7 @@ const WebhookSettings = () => {
                 timestamp: new Date().toISOString(),
                 content_metadata: {
                   id: 123,
-                  niche: "skincare",
+                  niche: "beauty",
                   contentType: "instagram_post",
                   tone: "professional",
                   productName: "Example Product",

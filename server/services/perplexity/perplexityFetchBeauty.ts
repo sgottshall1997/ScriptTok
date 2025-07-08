@@ -1,6 +1,6 @@
 /**
- * Skincare-specific Perplexity trend fetcher
- * Fetches trending skincare products with specialized prompts
+ * Beauty and Personal Care-specific Perplexity trend fetcher
+ * Fetches trending beauty and personal care products with specialized prompts
  */
 
 // Enhanced validation function
@@ -16,7 +16,7 @@ function isValidProduct(item: any): boolean {
 
   // Hard filters against invalid entries
   const bannedTerms = [
-    'trending product', 'skincare item', 'product name', 'brand name',
+    'trending product', 'beauty item', 'skincare item', 'product name', 'brand name',
     'template', 'placeholder', 'example', 'format', '...', 'item'
   ];
   
@@ -32,7 +32,7 @@ function isValidProduct(item: any): boolean {
   if (words.length < 2) return false;
   
   // Brand validation - must be real brand-like (not generic terms)
-  const genericBrandTerms = ['brand', 'company', 'skincare', 'beauty', 'cosmetics'];
+  const genericBrandTerms = ['brand', 'company', 'skincare', 'beauty', 'cosmetics', 'personal care'];
   if (genericBrandTerms.some(term => brandLower === term)) return false;
   
   return true;
@@ -40,11 +40,11 @@ function isValidProduct(item: any): boolean {
 
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 
-export async function fetchTrendingSkincareProducts(): Promise<any[]> {
+export async function fetchTrendingBeautyProducts(): Promise<any[]> {
   const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
   const currentYear = new Date().getFullYear();
   
-  const prompt = `Only return 3 REAL, purchasable skincare products from Amazon with brand names. No placeholders, templates, or format rows. Output must be a valid JSON array.
+  const prompt = `You are a product research API. Return 3 trending beauty and personal care products from Amazon that are viral on TikTok or Instagram as of ${currentMonth} ${currentYear}.
 
 EXACT FORMAT - Return only this JSON structure:
 [
@@ -53,21 +53,24 @@ EXACT FORMAT - Return only this JSON structure:
   { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Brief reason" }
 ]
 
-IMPORTANT: Include a brief, unique reason (max 8 words) why each product is trending. Must be different for each product.
+REQUIREMENTS:
+- Real products only: makeup, skincare, haircare, grooming, personal care items
+- Specific brand names: The Ordinary, Fenty Beauty, OUAI, Native, CeraVe, Glossier, etc.
+- Mentions: 50,000–2,000,000 range
+- Unique trending reason (max 8 words) for each product
+- Product names must include specific details (size, shade, type)
 
 EXAMPLES (do NOT copy these):
 [
-  { "product": "Daily Moisturizing Lotion 12oz", "brand": "CeraVe", "mentions": 1450000, "reason": "Dermatologist recommended routine" },
-  { "product": "Niacinamide 10% + Zinc 1%", "brand": "The Ordinary", "mentions": 980000, "reason": "Acne treatment viral trend" }
+  { "product": "Glossy Lip Balm in Cherry", "brand": "Glossier", "mentions": 890000, "reason": "Clean girl makeup trend" },
+  { "product": "Hair Treatment Masque 8oz", "brand": "OUAI", "mentions": 650000, "reason": "Viral hair repair routine" }
 ]
 
 STRICT REQUIREMENTS:
-- Real Amazon skincare products only (serums, moisturizers, cleansers)
-- Established brands: CeraVe, The Ordinary, Neutrogena, Olay, etc.
-- Mentions: 50,000-2,000,000 range
-- NO generic terms like "trending product", "skincare item"
+- NO generic terms like "trending product", "beauty item"
 - NO template headers like "Name | Brand"
-- Product names must be specific with details (size, type, etc.)
+- Include diverse categories: skincare, makeup, haircare, grooming
+- Real Amazon beauty and personal care products only
 
 Return ONLY the JSON array:`;
 
@@ -83,7 +86,7 @@ Return ONLY the JSON array:`;
         messages: [
           {
             role: 'system',
-            content: 'You are a product trend research engine. Only respond with valid JSON containing real, purchasable skincare products. No placeholders or generic terms. No templates. Reject vague outputs.'
+            content: 'You are a product trend research engine. Only respond with valid JSON containing real, purchasable beauty and personal care products. No placeholders or generic terms. No templates. Include makeup, skincare, haircare, and grooming products.'
           },
           {
             role: 'user',
@@ -132,11 +135,11 @@ Return ONLY the JSON array:`;
       return isValidProduct(item);
     });
     
-    console.log(`✅ Skincare fetcher: Parsed ${parsedData.length} items, ${validProducts.length} valid products`);
+    console.log(`✅ Beauty fetcher: Parsed ${parsedData.length} items, ${validProducts.length} valid products`);
     
     // If we don't have enough valid products, throw error to trigger retry
     if (validProducts.length < 3) {
-      throw new Error(`Only ${validProducts.length} valid skincare products found, need 3`);
+      throw new Error(`Only ${validProducts.length} valid beauty and personal care products found, need 3`);
     }
     
     return validProducts.slice(0, 3);
@@ -144,7 +147,7 @@ Return ONLY the JSON array:`;
 
 
   } catch (error) {
-    console.error('❌ Skincare fetcher error:', error);
+    console.error('❌ Beauty fetcher error:', error);
     throw error;
   }
 }

@@ -47,7 +47,7 @@ const AffiliateLink: React.FC<AffiliateLinkProps> = ({ niche, productName = '' }
   // Get niche-specific tips for affiliate links
   const getAffiliateTips = () => {
     const nicheTips: Record<string, string> = {
-      skincare: "Create detailed product reviews comparing ingredients, effectiveness, and value for money.",
+      beauty: "Create detailed product reviews comparing makeup, skincare, haircare, and personal care products for effectiveness and value.",
       tech: "Focus on detailed specs, compatibility, and user experience in your tech reviews.",
       fashion: "Include style suggestions, size fit information, and seasonal trends.",
       fitness: "Emphasize benefits, durability, and how products fit into different workout routines.",

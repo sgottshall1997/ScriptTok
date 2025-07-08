@@ -52,7 +52,7 @@ interface ModelConfigDetails {
 
 function AIModelTestPage() {
   const [product, setProduct] = useState<string>('Test Product');
-  const [niche, setNiche] = useState<string>('skincare');
+  const [niche, setNiche] = useState<string>('beauty');
   const [templateType, setTemplateType] = useState<string>('original');
   const [tone, setTone] = useState<string>('friendly');
   const [generatedContent, setGeneratedContent] = useState<GenerationResponse | null>(null);

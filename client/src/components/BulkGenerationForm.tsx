@@ -36,13 +36,13 @@ const PLATFORMS = [
 ];
 
 const NICHES = [
-  'skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'
+  'beauty', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'
 ];
 
 export default function BulkGenerationForm() {
   const [formData, setFormData] = useState({
     productName: '',
-    niche: 'skincare',
+    niche: 'beauty',
     selectedTones: ['friendly', 'enthusiastic'],
     selectedTemplates: ['product_review', 'viral_hook'],
     selectedPlatforms: ['tiktok', 'instagram'],
@@ -76,7 +76,7 @@ export default function BulkGenerationForm() {
       // Reset form
       setFormData({
         productName: '',
-        niche: 'skincare',
+        niche: 'beauty',
         selectedTones: ['friendly', 'enthusiastic'],
         selectedTemplates: ['product_review', 'viral_hook'],
         selectedPlatforms: ['tiktok', 'instagram'],

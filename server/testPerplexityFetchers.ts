@@ -3,7 +3,7 @@
  * Tests all 7 niche-specific fetchers and validates their outputs
  */
 
-import { fetchTrendingSkincareProducts } from './services/perplexity/perplexityFetchSkincare.js';
+import { fetchTrendingBeautyProducts } from './services/perplexity/perplexityFetchBeauty.js';
 import { fetchTrendingTechProducts } from './services/perplexity/perplexityFetchTech.js';
 import { fetchTrendingFashionProducts } from './services/perplexity/perplexityFetchFashion.js';
 import { fetchTrendingFitnessProducts } from './services/perplexity/perplexityFetchFitness.js';
@@ -28,7 +28,7 @@ interface FetcherTest {
 }
 
 const fetchers: FetcherTest[] = [
-  { name: 'Skincare', niche: 'skincare', fetcher: fetchTrendingSkincareProducts },
+  { name: 'Beauty', niche: 'beauty', fetcher: fetchTrendingBeautyProducts },
   { name: 'Tech', niche: 'tech', fetcher: fetchTrendingTechProducts },
   { name: 'Fashion', niche: 'fashion', fetcher: fetchTrendingFashionProducts },
   { name: 'Fitness', niche: 'fitness', fetcher: fetchTrendingFitnessProducts },

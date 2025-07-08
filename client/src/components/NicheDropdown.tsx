@@ -41,7 +41,7 @@ export function NicheDropdown({
 }: NicheDropdownProps) {
   // Default nice icons if no rich info is provided
   const defaultIcons: Record<string, string> = {
-    skincare: "✨",
+    beauty: "✨",
     tech: "💻",
     fashion: "👗",
     fitness: "💪",

@@ -15,7 +15,7 @@ export const hashtagEmojiRouter = Router();
 // Validate request schema
 const hashtagEmojiRequestSchema = z.object({
   content: z.string().min(1, "Content is required"),
-  niche: z.enum(NICHES).default("skincare"),
+  niche: z.enum(NICHES).default("beauty"),
   product: z.string().min(1, "Product name is required"),
 });
 

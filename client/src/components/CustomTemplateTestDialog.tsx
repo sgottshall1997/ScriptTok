@@ -80,7 +80,7 @@ const CustomTemplateTestDialog: FC<CustomTemplateTestDialogProps> = ({
       templateContent: initialTemplate,
       productName: "",
       tone: "friendly",
-      niche: "skincare",
+      niche: "beauty",
     },
   });
 

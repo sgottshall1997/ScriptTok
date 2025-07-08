@@ -106,7 +106,7 @@ export default function DailyContentShowcase() {
 
   const getBadgeColor = (niche: string) => {
     const colors: Record<string, string> = {
-      skincare: 'bg-pink-100 text-pink-800',
+      beauty: 'bg-pink-100 text-pink-800',
       tech: 'bg-blue-100 text-blue-800',
       fashion: 'bg-purple-100 text-purple-800',
       fitness: 'bg-green-100 text-green-800',

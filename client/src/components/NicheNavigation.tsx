@@ -11,7 +11,7 @@ const NicheNavigation: FC<NicheNavigationProps> = ({ currentNiche }) => {
   
   // Get niche labels with proper formatting for display
   const nicheLabels: Record<string, string> = {
-    skincare: "Skincare & Beauty",
+    beauty: "Beauty & Personal Care",
     tech: "Technology & Gadgets",
     fashion: "Fashion & Apparel",
     fitness: "Fitness & Wellness",
@@ -22,7 +22,7 @@ const NicheNavigation: FC<NicheNavigationProps> = ({ currentNiche }) => {
 
   // Icons for each niche
   const nicheIcons: Record<string, string> = {
-    skincare: "✨",
+    beauty: "✨",
     tech: "📱",
     fashion: "👕",
     fitness: "🏋️",
@@ -33,7 +33,7 @@ const NicheNavigation: FC<NicheNavigationProps> = ({ currentNiche }) => {
 
   // Color classes for each niche
   const nicheColors: Record<string, string> = {
-    skincare: "bg-pink-100 text-pink-800 hover:bg-pink-200",
+    beauty: "bg-pink-100 text-pink-800 hover:bg-pink-200",
     tech: "bg-blue-100 text-blue-800 hover:bg-blue-200",
     fashion: "bg-purple-100 text-purple-800 hover:bg-purple-200",
     fitness: "bg-green-100 text-green-800 hover:bg-green-200",

@@ -74,7 +74,7 @@ export default function TrendingPicksWidget({
     },
   });
 
-  const niches = ['all', 'skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
+  const niches = ['all', 'beauty', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
 
   const filteredProducts = products
     .filter(product => selectedNiche === 'all' || product.niche === selectedNiche)

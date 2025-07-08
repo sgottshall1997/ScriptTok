@@ -18,9 +18,9 @@ interface AmazonLinksResponse {
 
 // Pre-cached content for each category
 const cachedContent = {
-  skincare: {
-    title: "✨ Skincare Routine That Actually Works",
-    content: `Ready to glow up? Here's your science-backed skincare routine:
+  beauty: {
+    title: "✨ Beauty & Personal Care Essentials",
+    content: `Ready to glow up? Here's your complete beauty and personal care routine:
 
 🌅 MORNING:
 • Gentle cleanser to remove overnight buildup
@@ -35,7 +35,7 @@ const cachedContent = {
 💡 Pro tip: The Mighty Patch is perfect for those surprise breakouts - it draws out impurities while you sleep!
 
 Remember: Consistency beats expensive products every time. Start simple, be patient, and your skin will thank you! ✨`,
-    hashtags: "#skincare #glowup #selfcare #beautyRoutine #healthySkin"
+    hashtags: "#beauty #skincare #glowup #selfcare #beautyRoutine #healthySkin #personalcare"
   },
   tech: {
     title: "⚡ Tech Essentials for 2025",
@@ -156,7 +156,7 @@ Mental stimulation is just as important as physical exercise for pets. Keep thos
 
 // Featured products with descriptions
 const featuredProducts = {
-  skincare: [
+  beauty: [
     {
       name: "Mighty Patch",
       url: "https://www.amazon.com/dp/B07YPBX9Y7?tag=sgottshall199-20",
@@ -215,13 +215,13 @@ const featuredProducts = {
 };
 
 export function EnhancedAmazonAffiliateSection() {
-  const [selectedNiche, setSelectedNiche] = useState<string>("skincare");
+  const [selectedNiche, setSelectedNiche] = useState<string>("beauty");
   const [copiedLink, setCopiedLink] = useState<string>("");
   const [showContent, setShowContent] = useState<boolean>(false);
   const { toast } = useToast();
 
   const niches = [
-    { value: "skincare", label: "Skincare", emoji: "✨" },
+    { value: "beauty", label: "Beauty & Personal Care", emoji: "✨" },
     { value: "tech", label: "Tech", emoji: "⚡" },
     { value: "fashion", label: "Fashion", emoji: "👗" },
     { value: "fitness", label: "Fitness", emoji: "💪" },

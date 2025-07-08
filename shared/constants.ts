@@ -13,13 +13,16 @@ export const UNIVERSAL_TEMPLATE_TYPES = [
   "affiliate_email"     // Affiliate Email Blurb (1-2 paragraph product promo)
 ] as const;
 
-// Skincare & Beauty specific templates
-export const SKINCARE_TEMPLATE_TYPES = [
-  "skincare_routine",   // "Morning & Night Routine" Templates
+// Beauty & Personal Care specific templates
+export const BEAUTY_TEMPLATE_TYPES = [
+  "beauty_routine",     // "Morning & Night Beauty Routine" Templates
   "derm_approved",      // "Dermatologist-Approved" TikTok Skits
   "transformation",     // "Before & After Transformation" Captions
   "skin_type_list",     // "5 Must-Haves for [Skin Type]" Listicles
-  "dupe_alert"          // "Dupe Alert" Product Comparison
+  "dupe_alert",         // "Dupe Alert" Product Comparison
+  "makeup_tutorial",    // "Get Ready With Me" Makeup Tutorials
+  "haircare_routine",   // "Hair Care Routine" Templates
+  "grooming_guide"      // "Personal Care & Grooming Guide"
 ] as const;
 
 // Supplements & Fitness specific templates
@@ -82,8 +85,8 @@ export const LEGACY_TEMPLATE_TYPES = [
   "comparison",         // Product comparison
   "caption",            // Social media caption
   "pros_cons",          // Pros and cons list
-  "routine",            // Skincare routine
-  "beginner_kit",       // Beginner skincare kit
+  "routine",            // Beauty routine
+  "beginner_kit",       // Beginner beauty kit
   "demo_script",        // Product demo script
   "drugstore_dupe",     // Drugstore dupe review
   "personal_review",    // Personal product review
@@ -98,7 +101,7 @@ export const LEGACY_TEMPLATE_TYPES = [
 // Combined template types for validation
 export const TEMPLATE_TYPES = [
   ...UNIVERSAL_TEMPLATE_TYPES,
-  ...SKINCARE_TEMPLATE_TYPES,
+  ...BEAUTY_TEMPLATE_TYPES,
   ...FITNESS_TEMPLATE_TYPES,
   ...TECH_TEMPLATE_TYPES,
   ...HOME_TEMPLATE_TYPES,
@@ -112,7 +115,7 @@ export type TemplateType = typeof TEMPLATE_TYPES[number];
 
 // Supported content niches
 export const NICHES = [
-  "skincare",     // Skincare and beauty products
+  "beauty",       // Beauty and personal care products
   "tech",         // Technology and gadgets
   "fashion",      // Clothing and accessories
   "fitness",      // Fitness equipment and supplements

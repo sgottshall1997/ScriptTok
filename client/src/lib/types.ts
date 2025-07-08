@@ -49,7 +49,7 @@ export const UNIVERSAL_TEMPLATE_OPTIONS = [
 
 // Niche-specific template options
 export const NICHE_TEMPLATE_MAP: Record<string, Array<{value: string, label: string}>> = {
-  "skincare": [
+  "beauty": [
     { value: "skin_routine", label: "Skincare Routine" },
     { value: "ingredient_analysis", label: "Ingredient Analysis" },
     { value: "skin_type_guide", label: "Skin Type Guide" }

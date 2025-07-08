@@ -12,7 +12,7 @@ export const trendingEmojisHashtagsRouter = Router();
 
 // Default hashtag sets for different niches
 const DEFAULT_HASHTAGS: Record<string, string[]> = {
-  skincare: ['#skincare', '#beauty', '#skincareroutine', '#selfcare', '#skincareproducts', '#glowingskin'],
+  beauty: ['#beauty', '#skincare', '#personalcare', '#selfcare', '#beautyproducts', '#glowingskin', '#makeup', '#haircare'],
   tech: ['#tech', '#technology', '#gadgets', '#innovation', '#smartphone', '#techreview'],
   fashion: ['#fashion', '#style', '#ootd', '#fashionstyle', '#trendy', '#outfitinspo'],
   fitness: ['#fitness', '#workout', '#fitnessmotivation', '#gym', '#healthylifestyle', '#fitfam'],
@@ -23,7 +23,7 @@ const DEFAULT_HASHTAGS: Record<string, string[]> = {
 
 // Default emoji sets for different niches
 const DEFAULT_EMOJIS: Record<string, string[]> = {
-  skincare: ['✨', '💫', '💆‍♀️', '🧴', '💦', '🌿', '💯', '🌟'],
+  beauty: ['✨', '💫', '💆‍♀️', '🧴', '💦', '🌿', '💯', '🌟', '💄', '💅'],
   tech: ['📱', '💻', '🔋', '🔌', '📡', '🖥️', '⌨️', '🖱️'],
   fashion: ['👗', '👠', '👜', '🧣', '👢', '👚', '👒', '🕶️'],
   fitness: ['💪', '🏋️‍♀️', '🧘‍♀️', '🏃‍♂️', '🥗', '🍎', '⚡', '🔥'],

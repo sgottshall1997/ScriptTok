@@ -75,7 +75,7 @@ export default function ExportImportSystem() {
       // Create metadata for GlowBot format
       const metadata = {
         title: exportTitle || 'Untitled Content',
-        niche: importNiche || 'skincare',
+        niche: importNiche || 'beauty',
         platform: importPlatform || 'Instagram',
         tone: importTone || 'professional',
         generatedAt: new Date().toISOString(),
@@ -211,7 +211,7 @@ export default function ExportImportSystem() {
           content: importContent,
           metadata: {
             title: 'Imported Content',
-            niche: importNiche || 'skincare',
+            niche: importNiche || 'beauty',
             platform: importPlatform || 'Instagram',
             tone: importTone || 'professional',
             generatedAt: new Date().toISOString(),
