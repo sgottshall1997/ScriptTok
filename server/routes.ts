@@ -61,6 +61,7 @@ import {
 } from "./api/rating";
 
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
+import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -85,6 +86,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Perplexity trends
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
+  
+  // Compliance API routes
+  app.post('/api/compliance/enhance', enhanceCompliance);
+  app.post('/api/compliance/validate', validateCompliance);
+  app.get('/api/compliance/guidelines/:platform', getGuidelines);
+  app.get('/api/compliance/platforms', getSupportedPlatforms);
   // Register API routes
   // Legacy endpoint (deprecated - use /api/generate-unified instead)
   app.use('/api/generate-content', generateContentRouter);

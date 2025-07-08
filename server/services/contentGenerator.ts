@@ -6,6 +6,7 @@ import { generatePrompt, PromptParams } from '../prompts';
 import { getModelConfig, getTokenLimit } from './aiModelSelector';
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
+import { enhanceContentCompliance, ComplianceOptions } from './complianceEnhancer';
 
 // Smart style usage logging function (for future Google Sheets integration)
 export function logSmartStyleUsage(params: {

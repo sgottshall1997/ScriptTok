@@ -102,13 +102,19 @@ const sidebarData: SidebarCategory[] = [
     ]
   },
   {
+    name: "Legal & Compliance",
+    items: [
+      { name: "Compliance Center", href: "/compliance", icon: Shield },
+      { name: "Privacy Policy", href: "/privacy", icon: Shield },
+      { name: "Terms of Service", href: "/terms", icon: FileCheck },
+    ]
+  },
+  {
     name: "Support",
     items: [
       { name: "About", href: "/about", icon: Info },
       { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
       { name: "FAQ", href: "/faq", icon: MessageCircle },
-      { name: "Privacy", href: "/privacy", icon: Shield },
-      { name: "Terms", href: "/terms", icon: FileCheck },
       { name: "Contact", href: "/contact", icon: MessageCircle },
     ]
   }

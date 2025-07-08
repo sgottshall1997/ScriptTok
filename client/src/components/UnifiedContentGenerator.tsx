@@ -14,6 +14,8 @@ import BulkGenerationForm from './BulkGenerationForm';
 import AutomatedBulkGenerator from './AutomatedBulkGenerator';
 import BulkJobsList from './BulkJobsList';
 import AutomatedBulkJobsList from './AutomatedBulkJobsList';
+import { ComplianceWrapper } from './ComplianceWrapper';
+import { FTCCompliantContentGenerator } from './FTCCompliantContentGenerator';
 
 // Single Product Generator Component (like original Content Generator but simpler)
 const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) => void }> = ({ onContentGenerated }) => {
@@ -364,7 +366,11 @@ const UnifiedContentGenerator: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <ComplianceWrapper 
+      hasAffiliateLinks={true} 
+      showDetailedDisclosure={true}
+      className="container mx-auto px-4 py-8 max-w-7xl"
+    >
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
@@ -549,7 +555,7 @@ const UnifiedContentGenerator: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </ComplianceWrapper>
   );
 };
 

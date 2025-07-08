@@ -38,6 +38,7 @@ import TrendingAIPicks from "@/pages/TrendingAIPicks";
 import CrossPlatformScheduling from "@/pages/CrossPlatformScheduling";
 import BulkContentGeneration from "@/pages/BulkContentGeneration";
 import PerformanceAnalytics from "@/pages/PerformanceAnalytics";
+import CompliancePage from "@/pages/CompliancePage";
 
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
@@ -87,6 +88,7 @@ function Router() {
       <Route path="/cross-platform-scheduling" component={CrossPlatformScheduling} />
       <Route path="/bulk-content-generation" component={BulkContentGeneration} />
       <Route path="/performance-analytics" component={PerformanceAnalytics} />
+      <Route path="/compliance" component={CompliancePage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
