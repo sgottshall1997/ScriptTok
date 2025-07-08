@@ -1,218 +1,288 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Link, useLocation } from "wouter";
-import { ArrowRight, TrendingUp, BarChart3, Clock, Loader2, RefreshCw, Sparkles } from "lucide-react";
+import { Link } from "wouter";
+import { 
+  ArrowRight, 
+  TrendingUp, 
+  BarChart3, 
+  Clock, 
+  Loader2, 
+  RefreshCw, 
+  Sparkles,
+  Wand2,
+  Layers,
+  Eye,
+  Zap,
+  Target
+} from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
-import DailyContentShowcase from "@/components/DailyContentShowcase";
-import DailyBatchButton from "@/components/DailyBatchButton";
-import { EnhancedAmazonAffiliateSection } from "@/components/EnhancedAmazonAffiliateSection";
-import TrendingPicksWidget from "@/components/TrendingPicksWidget";
+import { useToast } from "@/hooks/use-toast";
 
 const Dashboard = () => {
-  const [loadingTimeElapsed, setLoadingTimeElapsed] = useState(0);
-  const [, setLocation] = useLocation();
-  const [nextRefreshIn, setNextRefreshIn] = useState<string>("");
+  const { toast } = useToast();
+  const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
 
   // Fetch trending products for all niches
-  const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
+  const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
     retry: false,
   });
 
-  // Timer for loading time elapsed
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
-    if (trendingLoading) {
-      interval = setInterval(() => {
-        setLoadingTimeElapsed(prev => prev + 1);
-      }, 1000);
-    } else {
-      setLoadingTimeElapsed(0);
+  // Get Perplexity products (limit 3 per niche)
+  const getPerplexityProducts = () => {
+    if (!trendingProducts?.data) return [];
+    
+    const perplexityProducts: TrendingProduct[] = [];
+    Object.entries(trendingProducts.data).forEach(([niche, products]) => {
+      const perplexityItems = products
+        .filter(p => p.source === 'perplexity')
+        .slice(0, 3);
+      perplexityProducts.push(...perplexityItems);
+    });
+    
+    return perplexityProducts.slice(0, 12); // Max 12 total
+  };
+
+  // Run Perplexity fetch
+  const handlePerplexityFetch = async () => {
+    setIsPerplexityLoading(true);
+    try {
+      const response = await fetch('/api/pull-perplexity-trends', {
+        method: 'POST',
+      });
+      
+      if (response.ok) {
+        toast({
+          title: "Success!",
+          description: "Fresh trending data fetched from Perplexity",
+        });
+        refetchTrending();
+      } else {
+        throw new Error('Failed to fetch');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch Perplexity trends",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPerplexityLoading(false);
     }
-    return () => clearInterval(interval);
-  }, [trendingLoading]);
+  };
 
-  // Calculate countdown to next automatic refresh
-  useEffect(() => {
-    const updateCountdown = () => {
-      const now = new Date();
-      const nextHour = new Date(now);
-      nextHour.setHours(now.getHours() + 1, 0, 0, 0);
-      
-      const diffMs = nextHour.getTime() - now.getTime();
-      const minutes = Math.floor(diffMs / 60000);
-      const seconds = Math.floor((diffMs % 60000) / 1000);
-      
-      setNextRefreshIn(`${minutes}m ${seconds}s`);
+  const perplexityProducts = getPerplexityProducts();
+  const totalProducts = trendingProducts?.count || 0;
+  const activeNiches = trendingProducts?.data ? Object.keys(trendingProducts.data).length : 0;
+
+  // Niche color mapping
+  const getNicheColor = (niche: string) => {
+    const colors: Record<string, string> = {
+      'skincare': 'bg-pink-100 text-pink-800',
+      'tech': 'bg-blue-100 text-blue-800', 
+      'fashion': 'bg-purple-100 text-purple-800',
+      'fitness': 'bg-green-100 text-green-800',
+      'food': 'bg-orange-100 text-orange-800',
+      'travel': 'bg-cyan-100 text-cyan-800',
+      'pet': 'bg-yellow-100 text-yellow-800',
     };
-
-    updateCountdown();
-    const interval = setInterval(updateCountdown, 1000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Format loading time nicely
-  const formatLoadingTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return mins > 0 ? `${mins}m ${secs}s` : `${secs}s`;
+    return colors[niche] || 'bg-gray-100 text-gray-800';
   };
 
   return (
-    <div className="space-y-8">
-      {/* Header Section */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">GlowBot Dashboard</h1>
-          <p className="text-muted-foreground">
-            AI-powered content generation for multi-niche affiliate marketing
-          </p>
-        </div>
+    <div className="space-y-6">
+      {/* 1️⃣ Hero Header */}
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900">
+          🚀 GlowBot AI: Your BTB Command Center
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Trend-to-traffic in under 10 minutes. Powered by Perplexity + GPT.
+        </p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Trending Products
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">
-              {trendingProducts?.count || 0}
+      {/* 2️⃣ AI-Powered Trending Picks (Perplexity) */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <div>
+            <CardTitle className="text-xl">🔥 AI-Powered Trending Picks</CardTitle>
+            <p className="text-sm text-muted-foreground">Hottest products discovered by Perplexity AI</p>
+          </div>
+          <Button 
+            onClick={handlePerplexityFetch}
+            disabled={isPerplexityLoading}
+            variant="outline"
+            size="sm"
+          >
+            {isPerplexityLoading ? (
+              <Loader2 className="h-4 w-4 animate-spin mr-2" />
+            ) : (
+              <RefreshCw className="h-4 w-4 mr-2" />
+            )}
+            Run Perplexity Fetch
+          </Button>
+        </CardHeader>
+        <CardContent>
+          {trendingLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array(6).fill(0).map((_, i) => (
+                <Card key={i} className="p-4">
+                  <div className="space-y-3">
+                    <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                    <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3" />
+                    <div className="h-8 bg-gray-200 rounded animate-pulse" />
+                  </div>
+                </Card>
+              ))}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Across all niches
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Active Niches
-            </CardTitle>
-            <BarChart3 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">7</div>
-            <p className="text-xs text-muted-foreground">
-              Skincare, Tech, Fashion, etc.
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Content Generated
-            </CardTitle>
-            <Sparkles className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">2.4K</div>
-            <p className="text-xs text-muted-foreground">
-              This month
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">
-              Success Rate
-            </CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">97%</div>
-            <p className="text-xs text-muted-foreground">
-              Content generation success
-            </p>
+          ) : perplexityProducts.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {perplexityProducts.map((product) => (
+                <Card key={product.id} className="hover:shadow-md transition-shadow">
+                  <CardContent className="p-4">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between">
+                        <h3 className="font-semibold text-sm leading-tight line-clamp-2">
+                          {product.title}
+                        </h3>
+                        <Badge className={getNicheColor(product.niche)} variant="secondary">
+                          {product.niche}
+                        </Badge>
+                      </div>
+                      
+                      <div className="text-xs text-muted-foreground">
+                        🔥 {product.mentions?.toLocaleString() || '0'} mentions
+                      </div>
+                      
+                      <p className="text-xs text-gray-600 line-clamp-2">
+                        Why it's hot: Viral trend with massive social engagement
+                      </p>
+                      
+                      <div className="flex gap-2">
+                        <Link href={`/niche/${product.niche}?template=social_media_post&product=${encodeURIComponent(product.title)}`}>
+                          <Button size="sm" className="flex-1 text-xs">
+                            <Wand2 className="h-3 w-3 mr-1" />
+                            Generate Content
+                          </Button>
+                        </Link>
+                        <Button size="sm" variant="outline" className="text-xs">
+                          <Eye className="h-3 w-3 mr-1" />
+                          View
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-muted-foreground">
+              <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
+              <p>No Perplexity trends available. Click "Run Perplexity Fetch" to get started!</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* 3️⃣ Fast-Action Buttons Panel */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <Link href="/generate">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+            <CardContent className="p-6 text-center">
+              <Wand2 className="h-8 w-8 mx-auto mb-3 text-blue-600" />
+              <h3 className="font-semibold text-blue-900">🪄 Generate Content Now</h3>
+              <p className="text-sm text-blue-700 mt-1">Create viral content in seconds</p>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Link href="/templates">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+            <CardContent className="p-6 text-center">
+              <Layers className="h-8 w-8 mx-auto mb-3 text-purple-600" />
+              <h3 className="font-semibold text-purple-900">🧩 Manage Templates</h3>
+              <p className="text-sm text-purple-700 mt-1">Browse and customize templates</p>
+            </CardContent>
+          </Card>
+        </Link>
+
+        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+          <CardContent className="p-6 text-center">
+            <Zap className="h-8 w-8 mx-auto mb-3 text-green-600" />
+            <h3 className="font-semibold text-green-900">⚡ Generate Daily Batch</h3>
+            <p className="text-sm text-green-700 mt-1">Bulk content generation</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {/* Generate Content Card */}
-        <Card className="bg-gradient-to-br from-blue-50 to-indigo-100 border-blue-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-blue-600" />
-              Generate Content
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Create AI-powered affiliate content instantly
-            </p>
-            <Button 
-              className="w-full bg-blue-600 hover:bg-blue-700"
-              onClick={() => setLocation('/templates')}
-            >
-              Start Creating
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+      {/* 4️⃣ Stats Summary Strip */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-orange-600">{totalProducts}</div>
+            <div className="text-xs text-muted-foreground">🔥 Trending Products</div>
           </CardContent>
         </Card>
-
-        {/* Templates Card */}
-        <Card className="bg-gradient-to-br from-purple-50 to-pink-100 border-purple-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BarChart3 className="h-5 w-5 text-purple-600" />
-              Manage Templates
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Customize content templates for each niche
-            </p>
-            <Button 
-              variant="outline" 
-              className="w-full border-purple-200 hover:bg-purple-50"
-              onClick={() => setLocation('/templates')}
-            >
-              View Templates
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
+        
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-blue-600">{activeNiches}</div>
+            <div className="text-xs text-muted-foreground">🧠 Niches Active</div>
           </CardContent>
         </Card>
-
-        {/* Daily Batch Generation */}
-        <Card className="bg-gradient-to-br from-green-50 to-emerald-100 border-green-200">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <RefreshCw className="h-5 w-5 text-green-600" />
-              Daily Batch
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <DailyBatchButton />
-            <p className="text-sm text-muted-foreground text-center">Create high-converting content in seconds</p>
+        
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-green-600">2,400</div>
+            <div className="text-xs text-muted-foreground">✍️ AI Scripts Generated</div>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardContent className="p-4 text-center">
+            <div className="text-2xl font-bold text-purple-600">97%</div>
+            <div className="text-xs text-muted-foreground">✅ Success Rate</div>
           </CardContent>
         </Card>
       </div>
 
-      {/* Daily Content Showcase */}
-      <DailyContentShowcase />
+      {/* 5️⃣ Daily Content Showcase */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">🧠 Daily Content Showcase</CardTitle>
+          <p className="text-sm text-muted-foreground">Latest high-performing AI-generated content</p>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8 text-muted-foreground">
+            <Sparkles className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <p>No showcase content yet today. Start by generating from a trending pick above!</p>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* AI-Powered Trending Picks */}
-      <TrendingPicksWidget 
-        showFetchButton={true}
-        maxItems={18}
-        title="🔥 AI-Powered Trending Picks"
-      />
-      
-      {/* Enhanced Amazon Affiliate Section */}
-      <EnhancedAmazonAffiliateSection />
+      {/* 6️⃣ Future Automation Preview */}
+      <Card className="bg-gradient-to-r from-gray-50 to-slate-50 border-dashed">
+        <CardContent className="p-8 text-center">
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-800">🧠 Automation Pipeline Preview</h3>
+            <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
+              <span>Perplexity</span>
+              <ArrowRight className="h-4 w-4" />
+              <span>Content</span>
+              <ArrowRight className="h-4 w-4" />
+              <span>Make.com</span>
+              <ArrowRight className="h-4 w-4" />
+              <span>Performance Loop</span>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Coming Soon: Full automation pipeline for hands-free content marketing
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };
