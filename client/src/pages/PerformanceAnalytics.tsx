@@ -248,6 +248,7 @@ export default function PerformanceAnalytics() {
                             <SelectItem value="instagram">Instagram</SelectItem>
                             <SelectItem value="youtube">YouTube</SelectItem>
                             <SelectItem value="twitter">Twitter</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

@@ -33,6 +33,7 @@ const PLATFORMS = [
   { id: 'instagram', name: 'Instagram' },
   { id: 'youtube', name: 'YouTube' },
   { id: 'twitter', name: 'Twitter' },
+  { id: 'other', name: 'Other' },
 ];
 
 const NICHES = [

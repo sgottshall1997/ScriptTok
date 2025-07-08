@@ -500,6 +500,7 @@ ${config.hashtags.join(' ')}`;
     { id: 'instagram', name: 'Instagram', color: 'bg-gradient-to-r from-purple-400 to-pink-400 text-white' },
     { id: 'youtube', name: 'YouTube', color: 'bg-red-500 text-white' },
     { id: 'twitter', name: 'Twitter', color: 'bg-blue-400 text-white' },
+    { id: 'other', name: 'Other', color: 'bg-gray-500 text-white' },
   ];
 
   return (

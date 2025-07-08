@@ -55,6 +55,7 @@ const PLATFORMS = [
   { id: 'instagram', name: 'Instagram', color: 'bg-gradient-to-r from-purple-500 to-pink-500 text-white' },
   { id: 'youtube', name: 'YouTube', color: 'bg-red-600 text-white' },
   { id: 'twitter', name: 'Twitter', color: 'bg-blue-500 text-white' },
+  { id: 'other', name: 'Other', color: 'bg-gray-600 text-white' },
 ];
 
 interface AutomatedBulkGeneratorProps {

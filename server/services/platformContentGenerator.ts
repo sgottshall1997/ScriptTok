@@ -111,6 +111,18 @@ Always respond with valid JSON in this exact format:
   }
 }
 
+// Platform ID to display name mapping
+function getPlatformDisplayName(platformId: string): string {
+  const platformMap: { [key: string]: string } = {
+    'tiktok': 'TikTok',
+    'instagram': 'Instagram', 
+    'youtube': 'YouTube Shorts',
+    'twitter': 'X (Twitter)',
+    'other': 'Other'
+  };
+  return platformMap[platformId] || platformId;
+}
+
 function buildPlatformPrompt(request: PlatformContentRequest): string {
   const { product, niche, platforms, contentType, templateType, tone, videoDuration, trendingData } = request;
 
@@ -198,6 +210,20 @@ function buildPlatformPrompt(request: PlatformContentRequest): string {
         audienceContext: "Users seeking genuine community connections and detailed product discussions",
         examplePattern: "Has anyone else tried this? I'm curious about your experience because..."
       }
+    },
+    "Other": {
+      video: {
+        captionStyle: "Professional, versatile content suitable for blogs, newsletters, or general purpose use",
+        postInstructions: "Optimize for readability, include clear call-to-action, focus on value proposition",
+        audienceContext: "General audience seeking informative and engaging content about products",
+        examplePattern: "Discover why this product is making waves in the industry..."
+      },
+      photo: {
+        captionStyle: "Informative, professional tone perfect for blog posts, articles, or email content",
+        postInstructions: "Include descriptive alt text, optimize for SEO, maintain professional formatting",
+        audienceContext: "Readers seeking detailed product information and honest recommendations",
+        examplePattern: "A comprehensive look at this trending product and what makes it special"
+      }
     }
   };
 
@@ -228,7 +254,8 @@ PLATFORM-SPECIFIC GUIDELINES:
 `;
 
   platforms.forEach(platform => {
-    const platformData = platformInstructions[platform as keyof typeof platformInstructions];
+    const displayName = getPlatformDisplayName(platform);
+    const platformData = platformInstructions[displayName as keyof typeof platformInstructions];
     const instructions = platformData?.[contentType] || {
       captionStyle: "Platform-appropriate style for " + contentType,
       postInstructions: "Follow platform best practices",
@@ -236,12 +263,12 @@ PLATFORM-SPECIFIC GUIDELINES:
       examplePattern: "Platform-appropriate example"
     };
     
-    prompt += `📱 ${platform.toUpperCase()} CAPTION:
+    prompt += `📱 ${displayName.toUpperCase()} CAPTION:
 - Audience: ${instructions.audienceContext}
 - Style: ${instructions.captionStyle}
 - Example Pattern: "${instructions.examplePattern}"
 - Post Strategy: ${instructions.postInstructions}
-- REQUIREMENT: Write a completely original caption that feels native to ${platform}, NOT adapted from other content
+- REQUIREMENT: Write a completely original caption that feels native to ${displayName}, NOT adapted from other content
 
 `;
   });
