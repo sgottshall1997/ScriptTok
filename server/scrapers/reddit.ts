@@ -39,7 +39,7 @@ export async function getRedditTrending(niche: string = 'skincare'): Promise<Scr
       'fashion': ['femalefashionadvice', 'malefashionadvice', 'streetwear', 'frugalfemalefashion'],
       'fitness': ['fitness', 'homegym', 'bodyweightfitness', 'xxfitness'],
       'food': ['MealPrepSunday', 'Cooking', 'AskCulinary', 'KitchenConfidential'],
-      'pet': ['dogs', 'cats', 'pets', 'puppy101'],
+      'pets': ['dogs', 'cats', 'pets', 'puppy101'],
       'travel': ['travel', 'solotravel', 'backpacking', 'digitalnomad']
     };
 

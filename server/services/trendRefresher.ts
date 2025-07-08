@@ -161,7 +161,7 @@ export async function getRefreshedTrendingProducts() {
   await refreshTrendingProductsIfOld();
   
   // Return all trending products
-  const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
+  const niches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
   const result: {
     byNiche: Record<string, any[]>,
     count: number,
