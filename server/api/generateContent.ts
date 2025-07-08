@@ -508,8 +508,8 @@ Experience the difference today! #${niche} #trending`;
       }
     }
     
-    // Use video duration from content generation or estimate it
-    const estimatedVideoDuration = videoDuration || estimateVideoDuration(content, tone, templateType);
+    // Calculate video duration from the generated content
+    const estimatedVideoDuration = estimateVideoDuration(content);
     
     // 📊 Log feedback to SQLite database
     try {
