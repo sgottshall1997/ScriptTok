@@ -29,6 +29,7 @@ import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
 import GenerateContent from "@/pages/GenerateContent";
+import UnifiedContentGeneration from "@/pages/UnifiedContentGeneration";
 import ClickTracking from "@/pages/ClickTracking";
 import BTBStatus from "@/pages/BTBStatus";
 import TrendingAIPicks from "@/pages/TrendingAIPicks";
@@ -53,6 +54,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/home" component={Home} />
       <Route path="/generate" component={GenerateContent} />
+      <Route path="/unified-generator" component={UnifiedContentGeneration} />
       <Route path="/niche/:niche" component={GenerateContent} />
 
       <Route path="/dashboard" component={Dashboard} />

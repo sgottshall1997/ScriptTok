@@ -49,7 +49,8 @@ const sidebarData: SidebarCategory[] = [
     name: "Core",
     items: [
       { name: "Dashboard", href: "/", icon: Home },
-      { name: "Content Generator", href: "/generate", icon: Sparkles },
+      { name: "Unified Generator", href: "/unified-generator", icon: Sparkles },
+      { name: "Content Generator", href: "/generate", icon: FileText },
       { name: "Template Explorer", href: "/templates", icon: Layers },
     ]
   },
