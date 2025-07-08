@@ -35,14 +35,14 @@ const Dashboard = () => {
     cacheTime: 0, // Don't cache the data
   });
 
-  // Get Perplexity products (balanced representation from all niches)
+  // Get Perplexity products (exactly 3 per niche, balanced representation)
   const getPerplexityProducts = () => {
     if (!trendingProducts?.data) return [];
     
     const allNiches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
     const perplexityProducts: TrendingProduct[] = [];
     
-    // Ensure all 7 niches get representation (2 products each, then 1 additional)
+    // Get exactly 3 products from each niche
     allNiches.forEach(niche => {
       const nicheProducts = trendingProducts.data[niche] || [];
       const uniqueProducts = nicheProducts
@@ -53,18 +53,8 @@ const Dashboard = () => {
           }
           return unique;
         }, [])
-        .slice(0, 2); // Take top 2 from each niche first
+        .slice(0, 3); // Take exactly 3 from each niche
       perplexityProducts.push(...uniqueProducts);
-    });
-    
-    // Add one more product from each niche if available (up to 21 total: 3 per niche)
-    allNiches.forEach(niche => {
-      const nicheProducts = trendingProducts.data[niche] || [];
-      const alreadyIncluded = new Set(perplexityProducts.map(p => p.title));
-      const additionalProduct = nicheProducts
-        .filter(p => p.source === 'perplexity' && !alreadyIncluded.has(p.title))
-        .slice(0, 1);
-      perplexityProducts.push(...additionalProduct);
     });
     
     // Debug logging to see what products we're getting
@@ -81,6 +71,7 @@ const Dashboard = () => {
     }, {} as Record<string, string[]>);
     
     console.log('🎯 Products by niche on dashboard:', byNiche);
+    console.log('📊 Products count by niche:', Object.entries(byNiche).map(([niche, products]) => `${niche}: ${products.length}`).join(', '));
     
     return perplexityProducts; // Return all products (up to 21)
   };
