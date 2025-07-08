@@ -1082,13 +1082,28 @@ export class DatabaseStorage implements IStorage {
   }
   
   async getTrendingProductsByNiche(niche: string, limit = 3): Promise<TrendingProduct[]> {
-    // First try to get products specifically for this niche
-    const nicheProducts = await db
+    // Get all products for this niche ordered by created date (most recent first)
+    const allNicheProducts = await db
       .select()
       .from(trendingProducts)
       .where(eq(trendingProducts.niche, niche))
-      .orderBy(desc(trendingProducts.mentions))
-      .limit(limit);
+      .orderBy(desc(trendingProducts.createdAt));
+    
+    // Manual deduplication by title, keeping the most recent version
+    const seenTitles = new Set<string>();
+    const uniqueProducts: typeof allNicheProducts = [];
+    
+    for (const product of allNicheProducts) {
+      if (!seenTitles.has(product.title)) {
+        seenTitles.add(product.title);
+        uniqueProducts.push(product);
+      }
+    }
+    
+    // Sort by mentions descending and take the requested limit
+    const nicheProducts = uniqueProducts
+      .sort((a, b) => (b.mentions || 0) - (a.mentions || 0))
+      .slice(0, limit);
     
     // If we have exactly the requested number of products, return them
     if (nicheProducts.length === limit) {

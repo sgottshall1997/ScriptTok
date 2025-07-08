@@ -169,6 +169,13 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Improved system messages emphasizing real product data only, never format examples
   - ✅ Enhanced banned terms list to include "placeholder", "template", "example", "format"
   - ✅ Added pattern detection for truncated responses and incomplete data
+- July 08, 2025. **Dashboard Product Display Fix**: Resolved duplicate product filtering for balanced niche representation:
+  - ✅ Fixed deduplication logic in `getTrendingProductsByNiche()` to prevent duplicate products by title
+  - ✅ Enhanced database query to fetch unique products by title while keeping most recent versions
+  - ✅ Implemented balanced dashboard algorithm ensuring exactly 3 products per niche are displayed
+  - ✅ All 7 niches (skincare, tech, fashion, fitness, food, travel, pets) now properly visible on dashboard
+  - ✅ Skincare niche now displays full 3 unique products instead of being limited to 2
+  - ✅ Travel and pets products successfully integrated into dashboard display
 - July 08, 2025. **Niche-Specific Perplexity Fetcher Modules**: Complete separation of fetch logic by niche:
   - ✅ Created 7 dedicated TypeScript modules: perplexityFetchFitness.ts, perplexityFetchSkincare.ts, etc.
   - ✅ Each module exports async function `fetchTrending[Niche]Products()` with niche-specific prompts
