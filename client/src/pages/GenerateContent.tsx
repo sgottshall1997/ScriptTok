@@ -193,7 +193,7 @@ const GenerateContent = () => {
     });
   };
 
-  // Generate platform-specific captions
+  // Generate platform-specific captions for displaying in UI (uses current state)
   const generatePlatformCaption = (platform: string): string => {
     if (!generatedContent || !selectedProduct) return '';
 
@@ -227,6 +227,59 @@ const GenerateContent = () => {
 
     // Create caption components
     const hook = generatedContent.hook || `🔥 ${productName} is trending!`;
+    const description = shortDesc.length > config.maxLength ? 
+      shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
+    
+    const caption = `${hook}
+
+${description}
+
+${config.cta}
+
+${linkUrl}
+
+${config.hashtags.join(' ')}`;
+
+    return caption;
+  };
+
+  // Generate platform-specific captions for saving to history (uses provided data)
+  const generatePlatformCaptionForSaving = (platform: string, contentData: GeneratedContent, productName: string, linkUrl: string, niche: string): string => {
+    if (!contentData || !productName) return '';
+
+    const mainContent = contentData.content;
+    
+    // Extract first sentence or create a short description
+    const shortDesc = mainContent.split('.')[0] + (mainContent.split('.').length > 1 ? '.' : '');
+    
+    const platformConfigs = {
+      tiktok: {
+        cta: "Tap the link to grab it now! 👆",
+        hashtags: ["#fyp", "#viral", `#${niche}`, "#trending"],
+        maxLength: 150
+      },
+      instagram: {
+        cta: "Link in bio to get yours! ✨",
+        hashtags: [`#${niche}`, "#aesthetic", "#musthave", "#lifestyle"],
+        maxLength: 200
+      },
+      youtube: {
+        cta: "Check the description for the link! 📝",
+        hashtags: [`#${niche}`, "#review", "#recommendation", "#shopping"],
+        maxLength: 250
+      },
+      twitter: {
+        cta: "Check the link! 🔗",
+        hashtags: [`#${niche}`, "#trending", "#musthave"],
+        maxLength: 200
+      }
+    };
+
+    const config = platformConfigs[platform as keyof typeof platformConfigs];
+    if (!config) return '';
+
+    // Create caption components
+    const hook = contentData.hook || `🔥 ${productName} is trending!`;
     const description = shortDesc.length > config.maxLength ? 
       shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
     
@@ -331,10 +384,10 @@ ${config.hashtags.join(' ')}`;
           
           setGeneratedContent(contentData);
           
-          // Generate platform-specific captions using the helper function
+          // Generate platform-specific captions for saving to history
           const platformCaptions: any = {};
           selectedPlatforms.forEach(platform => {
-            const caption = generatePlatformCaption(platform);
+            const caption = generatePlatformCaptionForSaving(platform, contentData, selectedProduct, smartRedirectUrl || productUrl, selectedNiche);
             switch(platform) {
               case 'tiktok':
                 platformCaptions.tiktokCaption = caption;
