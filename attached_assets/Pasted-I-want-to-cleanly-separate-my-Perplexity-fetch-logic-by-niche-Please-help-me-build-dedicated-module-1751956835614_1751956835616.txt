@@ -1,0 +1,65 @@
+I want to cleanly separate my Perplexity fetch logic by niche. Please help me build dedicated modules for each of the following niches:
+
+- fitness
+- skincare
+- travel
+- tech
+- fashion
+- food
+- pets
+
+🔧 OBJECTIVE:
+Create 7 individual TypeScript files:
+
+- perplexityFetchFitness.ts
+- perplexityFetchSkincare.ts
+- perplexityFetchTravel.ts
+- perplexityFetchTech.ts
+- perplexityFetchFashion.ts
+- perplexityFetchFood.ts
+- perplexityFetchPets.ts
+
+Each file should:
+1. Export an async function `fetchTrending[Niche]Products()` — use PascalCase per niche.
+2. Call Perplexity (or GPT wrapper) with a **niche-specific prompt**.
+3. Return a **strict JSON array of exactly 3 real products**, each with:
+   - `product`: full name (e.g., “Stanley Quencher 40oz”)
+   - `brand`: actual brand (e.g., “Stanley”)
+   - `mentions`: estimated social media mentions (between 50,000 and 2,000,000)
+   - `reason`: short reason why it's trending (max 8 words)
+
+📦 FORMAT:
+Return data only as valid JSON — no headers, no explanations, no markdown.
+
+✅ PROMPT STRUCTURE:
+“You are a product research API. Return 3 trending [NICHE] products from Amazon that are viral on TikTok or Instagram as of July 2025. Respond ONLY with a JSON array and nothing else. Follow this structure exactly:
+[
+  { "product": "...", "brand": "...", "mentions": 1230000, "reason": "..." },
+  ...
+]”
+
+✍️ Include a few-shot example *inside* each prompt using realistic products from that niche (do not reuse examples between niches).
+
+🧠 SYSTEM MESSAGE:
+“You are a product trend research engine. Only respond with valid JSON containing real, purchasable products. No placeholders or generic terms. No templates. Reject vague outputs.”
+
+🔐 MODEL SETTINGS:
+- Model: `sonar-pro`
+- Temperature: 0.04
+- Recency: "week"
+- Domains: ["amazon.com", "tiktok.com", "instagram.com"]
+
+🛑 FILTERING & VALIDATION:
+- Add parsing logic to detect and reject:
+   - Truncated JSON
+   - Header lines (e.g. “Name | Brand…”)
+   - Vague entries like “Trending Product”
+   - Banned terms: “template”, “placeholder”, “example”, “product name”
+
+📊 EXTRA:
+At the end, generate a utility file called `runAllFetchers.ts` that:
+- Imports and runs all 7 fetchers
+- Logs each output cleanly
+- Prepares for future webhook integration (leave TODO comment where webhook push would go)
+
+This will allow me to test and validate output per niche individually before merging into my content pipeline.

@@ -320,6 +320,77 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Test enhanced payloads endpoint
   app.post('/api/test/enhanced-payloads', testEnhancedPayloads);
 
+  // Test all niche-specific Perplexity fetchers
+  app.post('/api/test-niche-fetchers', async (req, res) => {
+    try {
+      const { runAllPerplexityFetchers } = await import('./services/perplexity/runAllFetchers');
+      const result = await runAllPerplexityFetchers();
+      res.json({
+        success: true,
+        message: `Tested ${result.summary.totalFetchers} fetchers: ${result.summary.successful} successful, ${result.summary.failed} failed`,
+        summary: result.summary,
+        results: result.results
+      });
+    } catch (error) {
+      console.error("❌ Error testing niche fetchers:", error);
+      res.status(500).json({ 
+        success: false, 
+        message: "Failed to test niche fetchers",
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
+  // Test individual niche fetcher
+  app.post('/api/test-niche-fetcher/:niche', async (req, res) => {
+    try {
+      const { niche } = req.params;
+      const validNiches = ['fitness', 'skincare', 'travel', 'tech', 'fashion', 'food', 'pets'];
+      
+      if (!validNiches.includes(niche)) {
+        return res.status(400).json({
+          success: false,
+          message: `Invalid niche. Must be one of: ${validNiches.join(', ')}`
+        });
+      }
+
+      const startTime = Date.now();
+      
+      // Dynamic import based on niche
+      const fetcherMap = {
+        fitness: () => import('./services/perplexity/perplexityFetchFitness').then(m => m.fetchTrendingFitnessProducts),
+        skincare: () => import('./services/perplexity/perplexityFetchSkincare').then(m => m.fetchTrendingSkincareProducts),
+        travel: () => import('./services/perplexity/perplexityFetchTravel').then(m => m.fetchTrendingTravelProducts),
+        tech: () => import('./services/perplexity/perplexityFetchTech').then(m => m.fetchTrendingTechProducts),
+        fashion: () => import('./services/perplexity/perplexityFetchFashion').then(m => m.fetchTrendingFashionProducts),
+        food: () => import('./services/perplexity/perplexityFetchFood').then(m => m.fetchTrendingFoodProducts),
+        pets: () => import('./services/perplexity/perplexityFetchPets').then(m => m.fetchTrendingPetsProducts)
+      };
+
+      const fetcherFunction = await fetcherMap[niche as keyof typeof fetcherMap]();
+      const products = await fetcherFunction();
+      const duration = Date.now() - startTime;
+
+      res.json({
+        success: true,
+        niche,
+        products,
+        count: products.length,
+        duration: `${duration}ms`,
+        message: `Successfully fetched ${products.length} ${niche} products`
+      });
+
+    } catch (error) {
+      console.error(`❌ Error testing ${req.params.niche} fetcher:`, error);
+      res.status(500).json({ 
+        success: false, 
+        niche: req.params.niche,
+        message: `Failed to test ${req.params.niche} fetcher`,
+        error: error instanceof Error ? error.message : String(error)
+      });
+    }
+  });
+
   // Amazon Beauty Products endpoint
   app.get('/api/trending-amazon-beauty', async (req, res) => {
     try {

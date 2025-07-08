@@ -169,6 +169,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Improved system messages emphasizing real product data only, never format examples
   - ✅ Enhanced banned terms list to include "placeholder", "template", "example", "format"
   - ✅ Added pattern detection for truncated responses and incomplete data
+- July 08, 2025. **Niche-Specific Perplexity Fetcher Modules**: Complete separation of fetch logic by niche:
+  - ✅ Created 7 dedicated TypeScript modules: perplexityFetchFitness.ts, perplexityFetchSkincare.ts, etc.
+  - ✅ Each module exports async function `fetchTrending[Niche]Products()` with niche-specific prompts
+  - ✅ Strict JSON array format returning exactly 3 real products with product/brand/mentions/reason
+  - ✅ Comprehensive quality filtering with banned terms validation and brand verification
+  - ✅ Individual testing endpoints: `/api/test-niche-fetcher/:niche` for isolated testing
+  - ✅ Coordination module `runAllFetchers.ts` to test all fetchers simultaneously
+  - ✅ Proven success with authentic products like "Witch Hazel Toner" by Thayers, "d'Alba White Truffle Serum"
+  - ✅ Temperature 0.04, recency filtering, domain filtering for maximum authenticity
 
 ## User Preferences
 
