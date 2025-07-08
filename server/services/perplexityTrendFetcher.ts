@@ -91,15 +91,10 @@ Format your response as a numbered list with clear sections for each product.`;
         try {
           await db.insert(trendingProducts).values({
             title: product.productName,
-            content: product.benefit,
-            niche: product.niche,
-            mentions: extractNumericValue(product.viralMetric),
-            engagement: Math.floor(Math.random() * 50000) + 10000, // Estimated engagement
             source: 'perplexity',
-            dataSource: 'perplexity',
-            hashtags: generateHashtags(product.productName, product.niche),
-            emojis: generateEmojis(product.niche),
-            createdAt: new Date().toISOString()
+            mentions: extractNumericValue(product.viralMetric),
+            niche: product.niche,
+            dataSource: 'perplexity'
           });
           
           totalProductsAdded++;
@@ -172,25 +167,29 @@ function parsePerplexityResponse(content: string, niche: string): PerplexityProd
 }
 
 function extractProductName(text: string): string {
-  // Look for product names in various formats
+  // Look for product names in various formats, limiting to reasonable length
   const patterns = [
-    /(?:Product[:\s]+)([^.\n]+)/i,
-    /(?:Name[:\s]+)([^.\n]+)/i,
-    /^\s*([^.\n:]+?)(?:\s*[-–]\s*)/,
-    /^([^.\n]+?)(?:\s*:|\s*-)/,
+    /(?:Product[:\s]+)([^.\n]{3,40})/i,
+    /(?:Name[:\s]+)([^.\n]{3,40})/i,
+    /^\s*([^.\n:]{3,40})(?:\s*[-–]\s*)/,
+    /^([^.\n]{3,40})(?:\s*:|\s*-)/,
     /([A-Z][^.\n]*?(?:Serum|Cream|Tool|Device|Supplement|Kit|Set|Pro|Plus|Max))/i
   ];
   
   for (const pattern of patterns) {
     const match = text.match(pattern);
-    if (match && match[1] && match[1].trim().length > 3) {
-      return match[1].trim().replace(/["""]/g, '');
+    if (match && match[1] && match[1].trim().length >= 3 && match[1].trim().length <= 40) {
+      return match[1].trim().replace(/["""*]/g, '').substring(0, 40);
     }
   }
   
-  // Fallback: take first meaningful line
-  const lines = text.split('\n').filter(line => line.trim().length > 10);
-  return lines[0]?.trim().substring(0, 50) || 'Trending Product';
+  // Fallback: take first meaningful line, limit length
+  const lines = text.split('\n').filter(line => line.trim().length > 3 && line.trim().length <= 40);
+  if (lines.length > 0) {
+    return lines[0].trim().replace(/["""*]/g, '').substring(0, 40);
+  }
+  
+  return 'Trending Product';
 }
 
 function extractBenefit(text: string): string {

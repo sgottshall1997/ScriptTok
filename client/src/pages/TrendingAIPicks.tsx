@@ -42,7 +42,18 @@ export default function TrendingAIPicks() {
   // PART 3: Perplexity Fetch Mutation
   const perplexityMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest('/api/pull-perplexity-trends', 'POST', {});
+      const response = await fetch('/api/pull-perplexity-trends', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
     },
     onSuccess: (data) => {
       toast({

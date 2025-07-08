@@ -1,0 +1,82 @@
+You are the GlowBot2 Debug Agent. Fix the bug shown in the overlay error related to `/api/pull-perplexity-trends`.
+
+---
+
+### 🧠 PROBLEM:
+The frontend is trying to run a fetch call to `/api/pull-perplexity-trends` but it's failing with:
+[plugin:runtime-error-plugin] Failed to execute 'fetch' on 'Window': '/api/pull-perplexity-trends' is not a valid HTTP method.
+
+yaml
+Copy
+Edit
+This happens because:
+- The endpoint may not exist
+- The method might be wrong or not explicitly set
+- The frontend may be attempting to call it with an incorrect URL or via an invalid fetch config
+
+---
+
+### ✅ OBJECTIVES
+
+1. **Create a proper backend route** `/api/pull-perplexity-trends`
+   - Must accept a `POST` request
+   - Should call `pullPerplexityTrends()` and return JSON `{ success: true }` or `{ error }`
+
+   If using Express-style:
+   ```ts
+   app.post('/api/pull-perplexity-trends', async (req, res) => {
+     try {
+       await pullPerplexityTrends();
+       res.json({ success: true });
+     } catch (err) {
+       res.status(500).json({ success: false, error: err.message });
+     }
+   });
+If using Next.js-style api/pull-perplexity-trends.ts:
+
+ts
+Copy
+Edit
+export default async function handler(req, res) {
+  if (req.method !== 'POST') return res.status(405).end('Method Not Allowed');
+
+  try {
+    await pullPerplexityTrends();
+    res.status(200).json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e.message });
+  }
+}
+Update the frontend call to include method: "POST"
+
+In TrendingAIPicks.tsx, change the fetch call to:
+
+ts
+Copy
+Edit
+await fetch("/api/pull-perplexity-trends", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+});
+(Optional) Add UI feedback:
+
+Disable the button while loading
+
+Show success or error toast
+
+Re-fetch trending products after completion
+
+✅ FINAL CHECKLIST
+less
+Copy
+Edit
+[ ] Backend route /api/pull-perplexity-trends exists
+[ ] Accepts POST only and runs pullPerplexityTrends()
+[ ] Frontend calls it with method: POST
+[ ] Loading state + optional toast added
+[ ] Errors caught and handled gracefully
+After this, the “Run Perplexity Fetch” button will work without runtime errors.
+
+yaml
+Copy
+Edit
