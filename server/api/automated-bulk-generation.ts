@@ -100,11 +100,11 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
             console.log(`✅ Auto-selected ${freshProducts[0].product} for ${niche}`);
           } else {
             // Fallback to existing trending products in database
-            // Sort by mentions (descending) to match frontend preview logic
+            // Prioritize freshest data (newest first) to get latest Perplexity updates
             const [existingProduct] = await db.select()
               .from(trendingProducts)
               .where(eq(trendingProducts.niche, niche))
-              .orderBy(desc(trendingProducts.mentions))
+              .orderBy(desc(trendingProducts.createdAt))
               .limit(1);
             
             if (existingProduct) {
@@ -120,11 +120,11 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
           }
         } else {
           // Use existing trending products from database
-          // Sort by mentions (descending) to match frontend preview logic
+          // Prioritize Perplexity sources and sort by creation date (newest first) to get freshest data
           const [existingProduct] = await db.select()
             .from(trendingProducts)
             .where(eq(trendingProducts.niche, niche))
-            .orderBy(desc(trendingProducts.mentions))
+            .orderBy(desc(trendingProducts.createdAt))
             .limit(1);
           
           if (existingProduct) {
