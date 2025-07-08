@@ -22,7 +22,7 @@ import ClaudeGeneratorPage from "@/pages/claude-generator";
 import ContentCalendarPage from "@/pages/content-calendar";
 import CompetitiveAnalysisPage from "@/pages/competitive-analysis";
 import ExportImportPage from "@/pages/export-import";
-import PlatformPreviewPage from "@/pages/platform-preview";
+
 
 import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
@@ -72,7 +72,7 @@ function Router() {
       <Route path="/content-calendar" component={ContentCalendarPage} />
       <Route path="/competitive-analysis" component={CompetitiveAnalysisPage} />
       <Route path="/export-import" component={ExportImportPage} />
-      <Route path="/platform-preview" component={PlatformPreviewPage} />
+
 
       <Route path="/ai-model-config" component={AiModelConfigPage} />
       <Route path="/emoji-hashtag-test" component={EmojiHashtagTestPage} />

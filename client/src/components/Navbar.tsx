@@ -71,18 +71,6 @@ export default function Navbar() {
               Export/Import
             </a>
           </Link>
-          <Link href="/platform-preview">
-            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
-              <Layout className="w-4 h-4 mr-1" />
-              Platform Preview
-            </a>
-          </Link>
-          <Link href="/performance-tracker">
-            <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
-              <LineChart className="w-4 h-4 mr-1" />
-              Performance Tracker
-            </a>
-          </Link>
           <Link href="/ai-model-config">
             <a className="text-gray-600 hover:text-indigo-600 text-sm font-medium flex items-center">
               <Sliders className="w-4 h-4 mr-1" />

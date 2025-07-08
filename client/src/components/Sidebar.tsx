@@ -81,7 +81,7 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "Advanced Tools",
     items: [
-      { name: "Platform Preview", href: "/platform-preview", icon: Eye },
+
       { name: "Emoji & Hashtag Test", href: "/emoji-hashtag-test", icon: Hash },
       { name: "Competitive Analysis", href: "/competitive-analysis", icon: Target },
     ]
