@@ -7,9 +7,11 @@ import { getModelConfig, getTokenLimit } from './aiModelSelector';
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
 
-// Function to clean video scripts for Pictory - removes markdown formatting
+// Function to clean video scripts for Pictory - removes markdown formatting and hashtags
 function cleanVideoScript(content: string): string {
   return content
+    // Remove hashtags completely from the content
+    .replace(/#\w+/g, '')
     // Remove markdown headers (### Title:, #### Section:, etc.)
     .replace(/#{1,6}\s+.*?:/g, '')
     // Remove asterisks used for emphasis (**bold**, *italic*)
@@ -28,6 +30,64 @@ function cleanVideoScript(content: string): string {
     // Clean up extra spaces
     .replace(/\s+/g, ' ');
 }
+
+// Function to estimate video duration based on content
+function estimateVideoDuration(content: string): VideoDuration {
+  const words = content.trim().split(/\s+/).filter(word => word.length > 0);
+  const wordCount = words.length;
+  
+  // Average speaking rates for different content types
+  const wordsPerSecond = {
+    slow: 2.0,     // Deliberate, clear pace for tutorials
+    moderate: 2.5, // Normal conversational pace  
+    fast: 3.0      // Energetic, TikTok-style pace
+  };
+  
+  // Determine pacing based on content length and style
+  let pacing: 'slow' | 'moderate' | 'fast';
+  if (wordCount < 50) {
+    pacing = 'fast'; // Short content tends to be punchy
+  } else if (wordCount < 100) {
+    pacing = 'moderate'; 
+  } else {
+    pacing = 'slow'; // Longer content needs clearer delivery
+  }
+  
+  const seconds = Math.round(wordCount / wordsPerSecond[pacing]);
+  
+  // Format readable time
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  const readableTime = minutes > 0 
+    ? `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
+    : `${seconds}s`;
+  
+  // Ideal length feedback for social media
+  const isIdealLength = seconds >= 15 && seconds <= 60; // Sweet spot for TikTok/Instagram
+  
+  let lengthFeedback: string;
+  if (seconds < 15) {
+    lengthFeedback = "Consider adding more detail - very short for engagement";
+  } else if (seconds <= 30) {
+    lengthFeedback = "Perfect length for TikTok and Instagram Reels";
+  } else if (seconds <= 60) {
+    lengthFeedback = "Great length for detailed product showcase";
+  } else {
+    lengthFeedback = "Consider shortening for better social media performance";
+  }
+  
+  return {
+    seconds,
+    readableTime,
+    wordCount,
+    pacing,
+    isIdealLength,
+    lengthFeedback
+  };
+}
+
+// Export the estimateVideoDuration function
+export { estimateVideoDuration };
 
 // Video duration estimation interface
 interface VideoDuration {
@@ -69,6 +129,7 @@ export async function generateContent(
   prompt?: string;
   model?: string;
   tokens?: number;
+  videoDuration?: VideoDuration;
 }> {
   try {
     // 🎯 Get most successful patterns from user feedback
@@ -171,13 +232,17 @@ Generate a highly engaging script that mimics this viral format, tone, and pacin
     const rawContent = completion.choices[0].message.content || "Could not generate content. Please try again.";
     const cleanedContent = cleanVideoScript(rawContent);
 
+    // Estimate video duration for the cleaned content
+    const videoDuration = estimateVideoDuration(cleanedContent);
+
     // Return additional metadata for history tracking
     return {
       content: cleanedContent,
       fallbackLevel,
       prompt,
       model: model,
-      tokens: completion.usage?.total_tokens || 0
+      tokens: completion.usage?.total_tokens || 0,
+      videoDuration
     };
       
   } catch (error) {
@@ -214,13 +279,15 @@ Generate a highly engaging script that mimics this viral format, tone, and pacin
       // Clean up the fallback content for video scripts too
       const fallbackContent = fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.";
       const cleanedFallbackContent = cleanVideoScript(fallbackContent);
+      const fallbackVideoDuration = estimateVideoDuration(cleanedFallbackContent);
 
       return {
         content: cleanedFallbackContent,
         fallbackLevel: 'generic', // Model fallback is considered generic
         prompt: genericPrompt,
         model: "gpt-4o",
-        tokens: fallbackCompletion.usage?.total_tokens || 0
+        tokens: fallbackCompletion.usage?.total_tokens || 0,
+        videoDuration: fallbackVideoDuration
       };
       
     } catch (fallbackError) {
@@ -281,133 +348,16 @@ Generate a highly engaging script that mimics this viral format, tone, and pacin
       }
       
       const legacyPrompt = `Create ${templateType} content for ${product} using legacy templates in a ${tone} tone. This is for the ${niche} niche.`;
+      const legacyVideoDuration = estimateVideoDuration(legacyContent);
       
       return {
         content: legacyContent,
         fallbackLevel: 'generic', // Consider legacy system as generic fallback
         prompt: legacyPrompt,
         model: "gpt-4o",
-        tokens: 0 // We don't have token usage from legacy system
+        tokens: 0, // We don't have token usage from legacy system
+        videoDuration: legacyVideoDuration
       };
     }
   }
-}
-
-// Function to estimate video duration based on content
-export function estimateVideoDuration(content: string, tone: ToneOption, templateType: TemplateType): VideoDuration {
-  // Strip HTML tags to get clean text
-  const plainText = content.replace(/<[^>]*>?/gm, '');
-  
-  // Calculate word count
-  const words = plainText.trim().split(/\s+/).length;
-  
-  // Estimate words per minute based on tone and template
-  let wordsPerMinute = 150; // Default moderate pace
-  
-  // Adjust for tone - enthusiastic is faster, professional is slower
-  switch (tone) {
-    case 'enthusiastic':
-      wordsPerMinute = 180; // Faster pace
-      break;
-    case 'professional':
-      wordsPerMinute = 130; // Slower, more deliberate pace
-      break;
-    case 'minimalist':
-      wordsPerMinute = 160; // Slightly faster than moderate
-      break;
-    case 'trendy':
-      wordsPerMinute = 185; // Very fast pace for trendy content
-      break;
-    case 'scientific':
-      wordsPerMinute = 120; // Slowest pace for technical content
-      break;
-    case 'educational':
-      wordsPerMinute = 135; // Slower for explanation
-      break;
-    case 'luxurious':
-      wordsPerMinute = 125; // Slower, elegant pace
-      break;
-    case 'poetic':
-      wordsPerMinute = 120; // Slow, measured pace
-      break;
-    case 'humorous':
-      wordsPerMinute = 165; // Slightly faster for humor
-      break;
-    case 'casual':
-      wordsPerMinute = 155; // Slightly above moderate
-      break;
-    case 'friendly':
-    default:
-      wordsPerMinute = 150; // Moderate pace
-  }
-  
-  // Adjust for template type - captions are faster, detailed reviews slower
-  switch (templateType) {
-    case 'caption':
-    case 'influencer_caption':
-      wordsPerMinute += 30; // Social media captions are read faster
-      break;
-    case 'original':
-    case 'pros_cons':
-      wordsPerMinute -= 10; // Detailed reviews need more time
-      break;
-    case 'comparison':
-      wordsPerMinute -= 20; // Comparisons need more explanation time
-      break;
-    case 'routine':
-      wordsPerMinute -= 15; // Routines need demonstration time
-      break;
-    case 'recipe':
-      wordsPerMinute -= 25; // Recipes need detailed explanation
-      break;
-    case 'demo_script':
-      wordsPerMinute -= 20; // Demonstration scripts need visual explanation time
-      break;
-    case 'packing_list':
-      wordsPerMinute -= 5; // Lists are a bit slower than baseline
-      break;
-    case 'tiktok_breakdown':
-      wordsPerMinute += 20; // TikTok content is fast-paced
-      break;
-  }
-  
-  // Calculate seconds
-  const seconds = Math.round((words / wordsPerMinute) * 60);
-  
-  // Determine pacing category
-  let pacing: 'slow' | 'moderate' | 'fast';
-  if (wordsPerMinute < 140) pacing = 'slow';
-  else if (wordsPerMinute > 170) pacing = 'fast';
-  else pacing = 'moderate';
-  
-  // Format readable time (MM:SS)
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  const readableTime = `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`;
-  
-  // Determine if this is an ideal length for social media (30-60 seconds)
-  const isIdealLength = seconds >= 30 && seconds <= 65; // Give a little extra buffer
-  
-  // Generate feedback based on length
-  let lengthFeedback = '';
-  if (seconds < 20) {
-    lengthFeedback = "Content is too short for effective engagement. Consider adding more details or examples.";
-  } else if (seconds < 30) {
-    lengthFeedback = "Content is slightly shorter than ideal. A few more details could improve engagement.";
-  } else if (seconds <= 60) {
-    lengthFeedback = "Perfect length for social media! This content hits the ideal 30-60 second sweet spot.";
-  } else if (seconds <= 90) {
-    lengthFeedback = "Content is slightly longer than ideal. Consider trimming some details for better engagement.";
-  } else {
-    lengthFeedback = "Content is too long for optimal social media engagement. Try to condense the main points.";
-  }
-  
-  return {
-    seconds,
-    readableTime,
-    wordCount: words,
-    pacing,
-    isIdealLength,
-    lengthFeedback
-  };
 }

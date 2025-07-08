@@ -314,6 +314,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       prompt = result.prompt;
       model = result.model;
       tokens = result.tokens;
+      const videoDuration = result.videoDuration;
       
       // Ensure we have valid content
       if (!content || content.trim().length === 0) {
@@ -343,6 +344,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
           prompt = fallbackResult.prompt;
           model = 'gpt-3.5-turbo';
           tokens = fallbackResult.tokens;
+          const videoDuration = fallbackResult.videoDuration;
           
           if (!content || content.trim().length === 0) {
             throw new Error('Fallback generation also returned empty content');
@@ -464,8 +466,8 @@ Experience the difference today! #${niche} #trending`;
       }
     }
     
-    // Estimate video duration
-    const estimatedVideoDuration = estimateVideoDuration(content, tone, templateType);
+    // Use video duration from content generation or estimate it
+    const estimatedVideoDuration = videoDuration || estimateVideoDuration(content, tone, templateType);
     
     // 📊 Log feedback to SQLite database
     try {
@@ -512,7 +514,7 @@ Experience the difference today! #${niche} #trending`;
         niche,
         fallbackLevel,
         fromCache: false,
-        videoDuration: videoLength || undefined,
+        videoDuration: estimatedVideoDuration,
         model: model || "gpt-4o",
         // Platform-specific content
         platforms: platforms || [],

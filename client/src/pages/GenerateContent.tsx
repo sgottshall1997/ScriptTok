@@ -24,11 +24,22 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { TemplateSelector } from "@/components/TemplateSelector";
 
+// Video duration interface
+interface VideoDuration {
+  seconds: number;
+  readableTime: string;
+  wordCount: number;
+  pacing: 'slow' | 'moderate' | 'fast';
+  isIdealLength: boolean;
+  lengthFeedback: string;
+}
+
 interface GeneratedContent {
   content: string;
   hook: string;
   platform: string;
   niche: string;
+  videoDuration?: VideoDuration;
 }
 
 const GenerateContent = () => {
@@ -774,10 +785,25 @@ ${config.hashtags.join(' ')}`;
               <div className="space-y-4">
                 <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-green-500">
                   <h4 className="font-semibold mb-3 text-lg">Generated Content:</h4>
-                  <div className="text-sm text-gray-600 mb-4 flex gap-4">
+                  <div className="text-sm text-gray-600 mb-4 flex gap-4 flex-wrap">
                     <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
                     <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
                     <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
+                    {generatedContent.videoDuration && (
+                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
+                        ⏱️ Est. Duration: {generatedContent.videoDuration.readableTime} ({generatedContent.videoDuration.wordCount} words)
+                      </span>
+                    )}
+                    {generatedContent.videoDuration?.isIdealLength && (
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                        ✅ Perfect for social media
+                      </span>
+                    )}
+                    {generatedContent.videoDuration && !generatedContent.videoDuration.isIdealLength && (
+                      <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs" title={generatedContent.videoDuration.lengthFeedback}>
+                        ⚠️ {generatedContent.videoDuration.lengthFeedback.includes('short') ? 'Too short' : 'Too long'}
+                      </span>
+                    )}
                   </div>
                   <div className="prose prose-sm max-w-none">
                     <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">{generatedContent.content}</p>
