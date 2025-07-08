@@ -44,7 +44,16 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     if (productParam || nicheParam) {
       setFormData(prev => ({
         ...prev,
-        ...(productParam && { productName: decodeURIComponent(productParam) }),
+        ...(productParam && { 
+          productName: (() => {
+            try {
+              return decodeURIComponent(productParam);
+            } catch (error) {
+              console.warn('Failed to decode product parameter:', error);
+              return productParam; // Use original parameter if decoding fails
+            }
+          })()
+        }),
         ...(nicheParam && { niche: nicheParam })
       }));
     }
@@ -91,8 +100,12 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
         onContentGenerated(results);
         
         // Track analytics
-        trackEvent('content_generated', 'content', `${formData.niche}_${formData.template}`, 1);
-        trackEvent('platform_selection', 'content', formData.platforms.join(','), formData.platforms.length);
+        try {
+          trackEvent('content_generated', 'content', `${formData.niche}_${formData.template}`, 1);
+          trackEvent('platform_selection', 'content', formData.platforms.join(','), formData.platforms.length);
+        } catch (error) {
+          console.warn('Analytics tracking failed:', error);
+        }
         
         toast({
           title: "Content generated successfully",
