@@ -162,7 +162,7 @@ export class WebhookService {
           'YT Rating': '',
           'X Rating': '',
           'Full Output Rating': '',
-          'TopRatedStyleUsed': data.metadata?.topRatedStyleUsed || '',
+          TopRatedStyleUsed: data.metadata?.topRatedStyleUsed || '',
           
           // Legacy fields for backward compatibility
           postType: platformData.type || 'content',
