@@ -34,6 +34,10 @@ import { testEnhancedPayloads } from "./api/test-enhanced-payloads";
 import { cookingPipeline } from "./services/cookingContentPipeline";
 import redirectRouter from "./api/redirect";
 import platformContentRouter from "./api/platform-content";
+import hooksRouter from "./api/hooks";
+import schedulingRouter from "./api/scheduling";
+import metricsRouter from "./api/metrics";
+import affiliateNetworksRouter from "./api/affiliate-networks";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -42,6 +46,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Platform-specific content generation
   app.use('/api/platform-content', platformContentRouter);
+  
+  // Hook engine
+  app.use('/api/hooks', hooksRouter);
+  
+  // Scheduling system
+  app.use('/api/scheduling', schedulingRouter);
+  
+  // Performance metrics
+  app.use('/api/metrics', metricsRouter);
+  
+  // Affiliate networks
+  app.use('/api/affiliate-networks', affiliateNetworksRouter);
   // Register API routes
   app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);

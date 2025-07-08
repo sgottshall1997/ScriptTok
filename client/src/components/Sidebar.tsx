@@ -90,6 +90,12 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </svg>
                 <span>Click Tracking</span>
             </Link>
+            <Link href="/btb-status" className={`flex items-center px-3 py-2 text-base font-medium rounded-md ${isActive('/btb-status') ? 'bg-sidebar-accent text-sidebar-primary' : 'text-sidebar-foreground hover:bg-sidebar-accent/50'}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>BTB Status</span>
+            </Link>
             <Link href="/saved" className={`flex items-center px-3 py-2 text-base font-medium rounded-md ${isActive('/saved') ? 'bg-sidebar-accent text-sidebar-primary' : 'text-sidebar-foreground hover:bg-sidebar-accent/50'}`}>
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />

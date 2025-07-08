@@ -352,8 +352,19 @@ export const clickLogs = pgTable("click_logs", {
   contentType: text("content_type"), // viral_hook, product_review, etc.
   source: text("source"), // organic, paid, etc.
   clicks: integer("clicks").notNull().default(0),
+  views: integer("views").default(0),
+  likes: integer("likes").default(0),
+  shares: integer("shares").default(0),
+  comments: integer("comments").default(0),
+  clickThrough: decimal("click_through").default("0"),
+  conversions: integer("conversions").default(0),
+  revenue: decimal("revenue").default("0"),
+  network: text("network"),
+  estimatedCommission: decimal("estimated_commission").default("0"),
+  contentId: text("content_id"),
   lastClickAt: timestamp("last_click_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // Individual click events for detailed tracking

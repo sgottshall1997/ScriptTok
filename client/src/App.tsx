@@ -30,6 +30,7 @@ import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
 import GenerateContent from "@/pages/GenerateContent";
 import ClickTracking from "@/pages/ClickTracking";
+import BTBStatus from "@/pages/BTBStatus";
 
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
@@ -72,6 +73,7 @@ function Router() {
       <Route path="/api-integration-hub" component={ApiIntegrationHubPage} />
       <Route path="/webhook-settings" component={WebhookSettings} />
       <Route path="/click-tracking" component={ClickTracking} />
+      <Route path="/btb-status" component={BTBStatus} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
