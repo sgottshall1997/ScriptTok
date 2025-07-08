@@ -163,61 +163,37 @@ const Dashboard = () => {
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-3 bg-white rounded-lg border border-green-200">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">Hero Balancing Capsule Skin Toner for Face</h4>
-                  <p className="text-sm text-gray-600">Clear Collective skincare toner</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    window.open('https://www.amazon.com/Clear-Collective-Balancing-Capsule-Cosmetics/dp/B08ZC9TDK1?crid=3MOXKHJ60L9OO&dib=eyJ2IjoiMSJ9.t-qLuRQDg3jvZzYqGoZnJgWgpH04WhI4HjnM5D9VuWoUfMcbfznQ_jYuso0Smrpc.CYZuI41q95ZFy7oeuyyPkWXhd2wZkeIg_plh16oWNV0&dib_tag=se&keywords=Hero+My+First+Serum+1.69+fl+oz&qid=1751963188&sprefix=hero+my+first+serum+1.69+fl+oz%2Caps%2C86&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1&linkCode=ll1&tag=sgottshall107-20&linkId=9066da88b48cf8c3ecd45a95550bbaa8&language=en_US&ref_=as_li_ss_tl', '_blank');
-                  }}
-                  className="text-green-700 border-green-300 hover:bg-green-100"
-                >
-                  View Product
-                </Button>
+            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-green-200">
+              <div className="flex-1">
+                <h4 className="font-medium text-gray-900">Hero Balancing Capsule Skin Toner for Face</h4>
+                <p className="text-sm text-gray-600">Clear Collective skincare toner</p>
               </div>
-              <div className="border-t border-green-100 pt-2">
-                <a
-                  href="https://www.amazon.com/dp/B07L9BDY3T/?tag=sgottshall107-20"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-green-600 hover:text-green-800 hover:underline break-all"
-                >
-                  https://www.amazon.com/dp/B07L9BDY3T/?tag=sgottshall107-20
-                </a>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  window.open('https://www.amazon.com/Clear-Collective-Balancing-Capsule-Cosmetics/dp/B08ZC9TDK1?crid=3MOXKHJ60L9OO&dib=eyJ2IjoiMSJ9.t-qLuRQDg3jvZzYqGoZnJgWgpH04WhI4HjnM5D9VuWoUfMcbfznQ_jYuso0Smrpc.CYZuI41q95ZFy7oeuyyPkWXhd2wZkeIg_plh16oWNV0&dib_tag=se&keywords=Hero+My+First+Serum+1.69+fl+oz&qid=1751963188&sprefix=hero+my+first+serum+1.69+fl+oz%2Caps%2C86&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&psc=1&linkCode=ll1&tag=sgottshall107-20&linkId=9066da88b48cf8c3ecd45a95550bbaa8&language=en_US&ref_=as_li_ss_tl', '_blank');
+                }}
+                className="text-green-700 border-green-300 hover:bg-green-100"
+              >
+                View Product
+              </Button>
             </div>
-            <div className="p-3 bg-white rounded-lg border border-green-200">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex-1">
-                  <h4 className="font-medium text-gray-900">Mighty Patch™ Original patch from Hero Cosmetics</h4>
-                  <p className="text-sm text-gray-600">Hydrocolloid acne patches</p>
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    window.open('https://www.amazon.com/Mighty-Patch-Hydrocolloid-Absorbing-count/dp/B074PVTPBW?crid=L3MKDR9O518A&dib=eyJ2IjoiMSJ9.ZqkNz1mKqBfuWXjhTF80erAbYqDKd-5BZvwgUXNPN4ccey7JLc1B7pNY8H6e-HMn9OTSA2N0c2AZvg5rLuLUdxBPsUdWRvhySJEcvwH0VH83awIxKTR1R0kjbr1StNtbtKugjVluAT0w757UzdoHrPBmXyLLQgdCFZoLvdxuQ0X_HY-0tQa1i6KeI62kXW5zMvqerYgKjVxgzoGxjWRT2D9NU64glAoDSrO4OYIpU5PcS0I0l7tIS2UxL8x4i7MYHkw_cTtzSGY57KzkwaBcFmf8Ub1cmfa1CpxES0wOBlU.oOHtP44MOGQL4Ayq9g-5KuMKc-yjrINQ7Hp6FjzyKGM&dib_tag=se&keywords=might%2Bpatch&qid=1751963397&sprefix=might%2Bpatch%2Caps%2C126&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&linkCode=ll1&tag=sgottshall107-20&linkId=0c6ee4ac6ddb66dbe13b0d16dc1c3fda&language=en_US&ref_=as_li_ss_tl', '_blank');
-                  }}
-                  className="text-green-700 border-green-300 hover:bg-green-100"
-                >
-                  View Product
-                </Button>
+            <div className="flex items-center justify-between p-3 bg-white rounded-lg border border-green-200">
+              <div className="flex-1">
+                <h4 className="font-medium text-gray-900">Mighty Patch™ Original patch from Hero Cosmetics</h4>
+                <p className="text-sm text-gray-600">Hydrocolloid acne patches</p>
               </div>
-              <div className="border-t border-green-100 pt-2">
-                <a
-                  href="https://www.amazon.com/dp/B0BJZV26HN/?tag=sgottshall107-20"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-green-600 hover:text-green-800 hover:underline break-all"
-                >
-                  https://www.amazon.com/dp/B0BJZV26HN/?tag=sgottshall107-20
-                </a>
-              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  window.open('https://www.amazon.com/Mighty-Patch-Hydrocolloid-Absorbing-count/dp/B074PVTPBW?crid=L3MKDR9O518A&dib=eyJ2IjoiMSJ9.ZqkNz1mKqBfuWXjhTF80erAbYqDKd-5BZvwgUXNPN4ccey7JLc1B7pNY8H6e-HMn9OTSA2N0c2AZvg5rLuLUdxBPsUdWRvhySJEcvwH0VH83awIxKTR1R0kjbr1StNtbtKugjVluAT0w757UzdoHrPBmXyLLQgdCFZoLvdxuQ0X_HY-0tQa1i6KeI62kXW5zMvqerYgKjVxgzoGxjWRT2D9NU64glAoDSrO4OYIpU5PcS0I0l7tIS2UxL8x4i7MYHkw_cTtzSGY57KzkwaBcFmf8Ub1cmfa1CpxES0wOBlU.oOHtP44MOGQL4Ayq9g-5KuMKc-yjrINQ7Hp6FjzyKGM&dib_tag=se&keywords=might%2Bpatch&qid=1751963397&sprefix=might%2Bpatch%2Caps%2C126&sr=8-1-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&linkCode=ll1&tag=sgottshall107-20&linkId=0c6ee4ac6ddb66dbe13b0d16dc1c3fda&language=en_US&ref_=as_li_ss_tl', '_blank');
+                }}
+                className="text-green-700 border-green-300 hover:bg-green-100"
+              >
+                View Product
+              </Button>
             </div>
           </div>
         </CardContent>
