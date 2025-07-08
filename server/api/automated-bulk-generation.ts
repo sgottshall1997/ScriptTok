@@ -318,20 +318,28 @@ async function processAutomatedBulkJob(
                   const platformCaptions: any = {};
                   const platforms = jobData.platforms || [];
                   
+                  const hookText = generatedContent.viralHooks?.[0] || viralInspiration?.hook || 'Check this out!';
+                  const contentText = generatedContent.productDescription || 'Amazing product';
+                  
                   if (platforms.includes('tiktok')) {
-                    platformCaptions.tiktokCaption = `${generatedContent.content}\n\n${generatedContent.hook}\n\n${affiliateLink ? `🛒 Shop now: ${affiliateLink}` : ''}\n\n#TikTokMadeMeBuyIt #Trending #Viral`;
+                    platformCaptions.tiktokCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `🛒 Shop now: ${affiliateLink}` : ''}\n\n#TikTokMadeMeBuyIt #Trending #Viral`;
                   }
                   if (platforms.includes('instagram')) {
-                    platformCaptions.instagramCaption = `${generatedContent.content}\n\n${generatedContent.hook}\n\n${affiliateLink ? `🔗 Link in bio to shop!` : ''}\n\n#InstaFinds #Trending #MustHave`;
+                    platformCaptions.instagramCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `🔗 Link in bio to shop!` : ''}\n\n#InstaFinds #Trending #MustHave`;
                   }
                   if (platforms.includes('youtube')) {
-                    platformCaptions.youtubeCaption = `${generatedContent.content}\n\n${generatedContent.hook}\n\n${affiliateLink ? `Check the description for the link!` : ''}\n\n#YouTubeFinds #ProductReview #Trending`;
+                    platformCaptions.youtubeCaption = `${contentText}\n\n${hookText}\n\n${affiliateLink ? `Check the description for the link!` : ''}\n\n#YouTubeFinds #ProductReview #Trending`;
                   }
                   if (platforms.includes('twitter')) {
-                    platformCaptions.twitterCaption = `${generatedContent.hook}\n\n${affiliateLink ? `Shop here: ${affiliateLink}` : ''}\n\n#TwitterFinds #Trending`;
+                    platformCaptions.twitterCaption = `${hookText}\n\n${affiliateLink ? `Shop here: ${affiliateLink}` : ''}\n\n#TwitterFinds #Trending`;
                   }
 
                   // Save to content history
+                  const outputText = generatedContent.productDescription || 
+                                   generatedContent.viralHooks?.[0] || 
+                                   generatedContent.videoScript || 
+                                   'Generated content';
+                  
                   await db.insert(contentHistory).values({
                     sessionId,
                     niche,
@@ -339,15 +347,15 @@ async function processAutomatedBulkJob(
                     tone,
                     productName,
                     promptText: `Bulk generated content for ${productName} in ${niche} niche using ${tone} tone and ${template} template`,
-                    outputText: generatedContent.content,
+                    outputText,
                     platformsSelected: platforms,
                     generatedOutput: {
-                      content: generatedContent.content,
-                      hook: generatedContent.hook,
+                      content: generatedContent.productDescription || generatedContent.viralHooks?.[0] || 'Generated content',
+                      hook: generatedContent.viralHooks?.[0] || viralInspiration?.hook || 'Generated hook',
                       platform: platforms.join(', '),
                       niche,
                       ...platformCaptions,
-                      hashtags: generatedContent.hashtags || [],
+                      hashtags: generatedContent.hashtags || viralInspiration?.hashtags || [],
                       affiliateLink
                     },
                     affiliateLink,
