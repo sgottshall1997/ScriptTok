@@ -331,6 +331,26 @@ ${config.hashtags.join(' ')}`;
           
           setGeneratedContent(contentData);
           
+          // Generate platform-specific captions using the helper function
+          const platformCaptions: any = {};
+          selectedPlatforms.forEach(platform => {
+            const caption = generatePlatformCaption(platform);
+            switch(platform) {
+              case 'tiktok':
+                platformCaptions.tiktokCaption = caption;
+                break;
+              case 'instagram':
+                platformCaptions.instagramCaption = caption;
+                break;
+              case 'youtube':
+                platformCaptions.youtubeCaption = caption;
+                break;
+              case 'twitter':
+                platformCaptions.twitterCaption = caption;
+                break;
+            }
+          });
+
           // Save to content generation history
           ContentHistoryManager.saveEntry({
             productName: selectedProduct,
@@ -345,7 +365,8 @@ ${config.hashtags.join(' ')}`;
               niche: selectedNiche,
               hashtags: result.data.hashtags || [],
               affiliateLink: smartRedirectUrl || '',
-              viralInspo: viralInspo || undefined
+              viralInspo: viralInspo || undefined,
+              ...platformCaptions
             },
             sessionId: `session_${Date.now()}`
           });
