@@ -148,6 +148,7 @@ export class WebhookService {
           Tone: data.metadata?.tone || '',
           Template: data.metadata?.template || data.metadata?.templateType || '',
           useSmartStyle: data.metadata?.useSmartStyle || false,
+          AffiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
           
           // Content Fields
           'Full Output': data.contentData?.fullOutput || platformData.script || '',
