@@ -400,23 +400,47 @@ export const scheduledPosts = pgTable("scheduled_posts", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-// Bulk content jobs for generating multiple variations
+// Enhanced Bulk content generation jobs with auto-trending product selection
 export const bulkContentJobs = pgTable("bulk_content_jobs", {
   id: serial("id").primaryKey(),
   jobId: text("job_id").notNull().unique(),
-  productName: text("product_name").notNull(),
-  niche: text("niche").notNull(),
-  totalVariations: integer("total_variations").notNull(),
-  completedVariations: integer("completed_variations").default(0),
+  userId: integer("user_id"), // Optional user reference
   status: text("status").notNull().default("pending"), // pending, processing, completed, failed
-  platforms: text("platforms").array().notNull(),
+  totalVariations: integer("total_variations").notNull().default(0),
+  completedVariations: integer("completed_variations").notNull().default(0),
+  autoSelectedProducts: jsonb("auto_selected_products"), // Array of selected products per niche
+  selectedNiches: text("selected_niches").array().notNull(), // Which niches to generate for
   tones: text("tones").array().notNull(),
   templates: text("templates").array().notNull(),
+  platforms: text("platforms").array().notNull(),
   scheduleAfterGeneration: boolean("schedule_after_generation").default(false),
   scheduledTime: timestamp("scheduled_time"),
   makeWebhookUrl: text("make_webhook_url"),
+  viralInspiration: jsonb("viral_inspiration"), // Perplexity viral data for each product
+  progressLog: jsonb("progress_log"), // Detailed progress tracking
+  errorLog: jsonb("error_log"), // Error details if any
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Generated content from bulk jobs
+export const bulkGeneratedContent = pgTable("bulk_generated_content", {
+  id: serial("id").primaryKey(),
+  bulkJobId: text("bulk_job_id").notNull().references(() => bulkContentJobs.jobId, { onDelete: 'cascade' }),
+  productName: text("product_name").notNull(),
+  niche: text("niche").notNull(),
+  tone: text("tone").notNull(),
+  template: text("template").notNull(),
+  platforms: text("platforms").array().notNull(),
+  generatedContent: jsonb("generated_content").notNull(), // Full content with hooks, scripts, captions
+  viralInspiration: jsonb("viral_inspiration"), // Product-specific viral data
+  affiliateLink: text("affiliate_link"),
+  modelUsed: text("model_used").notNull(),
+  tokenCount: integer("token_count").notNull(),
+  generationTime: integer("generation_time"), // Time taken in ms
+  status: text("status").notNull().default("completed"), // completed, failed
+  errorMessage: text("error_message"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // ROI Analytics and Performance Tracking
@@ -810,6 +834,40 @@ export const insertContentHistorySchema = createInsertSchema(contentHistory).pic
 export type ContentHistory = typeof contentHistory.$inferSelect;
 export type InsertContentHistory = z.infer<typeof insertContentHistorySchema>;
 
+export const insertBulkContentJobSchema = createInsertSchema(bulkContentJobs).pick({
+  jobId: true,
+  userId: true,
+  autoSelectedProducts: true,
+  selectedNiches: true,
+  tones: true,
+  templates: true,
+  platforms: true,
+  scheduleAfterGeneration: true,
+  scheduledTime: true,
+  makeWebhookUrl: true,
+});
+
+export const insertBulkGeneratedContentSchema = createInsertSchema(bulkGeneratedContent).pick({
+  bulkJobId: true,
+  productName: true,
+  niche: true,
+  tone: true,
+  template: true,
+  platforms: true,
+  generatedContent: true,
+  viralInspiration: true,
+  affiliateLink: true,
+  modelUsed: true,
+  tokenCount: true,
+  generationTime: true,
+});
+
+export type BulkContentJob = typeof bulkContentJobs.$inferSelect;
+export type InsertBulkContentJob = z.infer<typeof insertBulkContentJobSchema>;
+
+export type BulkGeneratedContent = typeof bulkGeneratedContent.$inferSelect;
+export type InsertBulkGeneratedContent = z.infer<typeof insertBulkGeneratedContentSchema>;
+
 // Insert schemas for new tracking tables
 export const insertClickLogSchema = createInsertSchema(clickLogs).pick({
   slug: true,
@@ -892,21 +950,6 @@ export const insertScheduledPostSchema = createInsertSchema(scheduledPosts).pick
   makeWebhookUrl: true,
   platformResults: true,
   errorMessage: true,
-});
-
-export const insertBulkContentJobSchema = createInsertSchema(bulkContentJobs).pick({
-  jobId: true,
-  productName: true,
-  niche: true,
-  totalVariations: true,
-  completedVariations: true,
-  status: true,
-  platforms: true,
-  tones: true,
-  templates: true,
-  scheduleAfterGeneration: true,
-  scheduledTime: true,
-  makeWebhookUrl: true,
 });
 
 export const insertPerformanceAnalyticsSchema = createInsertSchema(performanceAnalytics).pick({

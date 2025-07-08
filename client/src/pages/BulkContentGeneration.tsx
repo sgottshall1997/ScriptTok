@@ -9,10 +9,12 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import BulkGenerationForm from '@/components/BulkGenerationForm';
 import BulkJobsList from '@/components/BulkJobsList';
+import AutomatedBulkGenerator from '@/components/AutomatedBulkGenerator';
+import AutomatedBulkJobsList from '@/components/AutomatedBulkJobsList';
 import { useToast } from '@/hooks/use-toast';
 
 export default function BulkContentGeneration() {
-  const [activeTab, setActiveTab] = useState('generate');
+  const [activeTab, setActiveTab] = useState('automated');
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -122,12 +124,28 @@ export default function BulkContentGeneration() {
       {/* Main Content */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="generate">Start Bulk Generation</TabsTrigger>
-          <TabsTrigger value="jobs">Active Jobs</TabsTrigger>
-          <TabsTrigger value="templates">Template Matrix</TabsTrigger>
+          <TabsTrigger value="automated" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            🚀 Automated
+          </TabsTrigger>
+          <TabsTrigger value="manual" className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            Manual
+          </TabsTrigger>
+          <TabsTrigger value="jobs" className="flex items-center gap-2">
+            <Layers className="h-4 w-4" />
+            Jobs ({totalJobs})
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="generate" className="space-y-6">
+        <TabsContent value="automated" className="space-y-6">
+          <AutomatedBulkGenerator onJobCreated={(jobData) => {
+            setActiveTab('jobs');
+            queryClient.invalidateQueries({ queryKey: ['/api/bulk/jobs'] });
+          }} />
+        </TabsContent>
+
+        <TabsContent value="manual" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
