@@ -156,12 +156,34 @@ const EnhancedContentHistory = () => {
   };
 
   const deleteEntry = (id: string) => {
-    ContentHistoryManager.removeEntry(id);
-    loadHistory();
-    toast({
-      title: "Entry deleted",
-      description: "Content generation entry removed from history",
-    });
+    // Check if it's a database entry (starts with 'db_')
+    if (id.startsWith('db_')) {
+      // For database entries, we need to delete from the database via API
+      fetch(`/api/history/${id.replace('db_', '')}`, {
+        method: 'DELETE',
+      }).then(() => {
+        refetchDbHistory(); // Refresh database data
+        loadHistory(); // Reload combined history
+        toast({
+          title: "Entry deleted",
+          description: "Content generation entry removed from database",
+        });
+      }).catch(() => {
+        toast({
+          title: "Delete failed",
+          description: "Could not delete entry from database",
+          variant: "destructive"
+        });
+      });
+    } else {
+      // For local storage entries
+      ContentHistoryManager.removeEntry(id);
+      loadHistory();
+      toast({
+        title: "Entry deleted",
+        description: "Content generation entry removed from history",
+      });
+    }
   };
 
   const deleteAllEntries = () => {

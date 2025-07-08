@@ -160,4 +160,31 @@ router.post('/', async (req, res) => {
   }
 });
 
+// DELETE /api/history/:id - Delete content history entry
+router.delete('/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid ID format'
+      });
+    }
+    
+    await storage.deleteContentHistory(id);
+    
+    res.json({
+      success: true,
+      message: 'Content history entry deleted successfully'
+    });
+  } catch (error: any) {
+    console.error('Error deleting content history:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to delete content history entry',
+      message: error.message
+    });
+  }
+});
+
 export const historyRouter = router;

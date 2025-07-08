@@ -126,6 +126,7 @@ export interface IStorage {
   getContentHistoryByUserId(userId: number, limit?: number, offset?: number): Promise<ContentHistory[]>;
   getAllContentHistory(limit?: number, offset?: number): Promise<ContentHistory[]>;
   getContentHistoryByNiche(niche: string, limit?: number, offset?: number): Promise<ContentHistory[]>;
+  deleteContentHistory(id: number): Promise<void>;
   
   // Analytics operations
   getTemplateUsageStats(): Promise<Array<{templateType: string, count: number}>>;
@@ -840,6 +841,11 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(contentHistory.createdAt))
       .limit(limit)
       .offset(offset);
+  }
+
+  async deleteContentHistory(id: number): Promise<void> {
+    await db.delete(contentHistory)
+      .where(eq(contentHistory.id, id));
   }
 
   // User operations
