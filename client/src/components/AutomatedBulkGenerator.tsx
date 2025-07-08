@@ -104,6 +104,9 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           return dateB - dateA; // Newest first
         });
         productsByNiche[niche] = sortedProducts[0];
+        
+        // Debug logging to see what's being selected
+        console.log(`🔍 Preview selected for ${niche}:`, sortedProducts[0].title, 'Created:', sortedProducts[0].createdAt);
       }
     });
     

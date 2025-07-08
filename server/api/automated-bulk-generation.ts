@@ -137,6 +137,7 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
               reason: existingProduct.insight || "Trending from database"
             };
             totalSelectedProducts++;
+            console.log(`✅ Backend selected for ${niche}:`, existingProduct.title, 'Created:', existingProduct.createdAt);
           }
         }
       } catch (error) {
