@@ -31,6 +31,116 @@ interface PlatformSpecificContent {
   };
 }
 
+// Reusable function for generating platform-specific captions
+export async function generatePlatformCaptions(params: {
+  productName: string;
+  platforms: string[];
+  tone: string;
+  niche: string;
+  mainContent?: string;
+  viralInspiration?: any;
+  bestRatedStyle?: any;
+}): Promise<Record<string, string>> {
+  const { productName, platforms, tone, niche, viralInspiration } = params;
+  
+  console.log(`🎯 Generating platform captions for: ${platforms.join(", ")}`);
+  
+  // Build specialized prompt for platform caption generation
+  let prompt = `Generate UNIQUE, PLATFORM-NATIVE captions for ${productName} (${niche} niche) using ${tone} tone.
+
+CRITICAL REQUIREMENTS:
+- Each platform caption MUST be written INDEPENDENTLY from scratch
+- DO NOT reference, summarize, or adapt any other content
+- Each caption should be 70%+ different in structure, words, and approach
+- Focus on platform-native language, tone, and engagement strategies
+
+PLATFORM-SPECIFIC REQUIREMENTS:
+`;
+
+  const platformInstructions = {
+    tiktok: "VIRAL HOOKS with slang, emojis (4-6), trending phrases like 'POV:', 'No bc', 'Tell me why'. Short punchy sentences.",
+    instagram: "AESTHETIC language focused on lifestyle, clean CTAs, light emojis (2-3). Sounds like lifestyle influencer.",
+    youtube: "EDUCATIONAL voiceover style with emphasis markers (*asterisks*), informative tone, sounds like spoken script.",
+    twitter: "PUNCHY hot takes under 280 characters, clever statements, conversation starters like 'Plot twist:'",
+    other: "PROFESSIONAL business tone suitable for blogs, newsletters, email marketing"
+  };
+
+  platforms.forEach(platform => {
+    const instruction = platformInstructions[platform.toLowerCase()] || platformInstructions.other;
+    prompt += `\n${platform.toUpperCase()}: ${instruction}`;
+  });
+
+  if (viralInspiration) {
+    prompt += `\n\nVIRAL CONTEXT: ${viralInspiration.caption || ''}`;
+  }
+
+  prompt += `\n\nRespond with ONLY a JSON object in this format:
+{
+  ${platforms.map(p => `"${p.toLowerCase()}": "caption text here"`).join(',\n  ')}
+}`;
+
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o",
+      temperature: 0.85,
+      presence_penalty: 0.6,
+      frequency_penalty: 0.4,
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert social media strategist who creates platform-native content. Each platform caption must be completely original and independent."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 1000
+    });
+
+    const content = response.choices[0]?.message?.content;
+    if (!content) {
+      throw new Error('No content generated from OpenAI');
+    }
+
+    // Parse JSON response
+    const captions = JSON.parse(content);
+    
+    console.log(`✅ Generated ${Object.keys(captions).length} platform captions`);
+    return captions;
+
+  } catch (error) {
+    console.error('Error generating platform captions:', error);
+    return generateFallbackCaptions(productName, platforms, niche);
+  }
+}
+
+// Fallback captions generator
+function generateFallbackCaptions(productName: string, platforms: string[], niche: string): Record<string, string> {
+  const captions: Record<string, string> = {};
+  
+  platforms.forEach(platform => {
+    switch (platform.toLowerCase()) {
+      case 'tiktok':
+        captions[platform] = `✨ ${productName} is trending for a reason! This ${niche} find is about to blow up your feed 🔥 #fyp #viral`;
+        break;
+      case 'instagram':
+        captions[platform] = `Discovered this amazing ${productName} and had to share ✨ Perfect addition to my ${niche} routine #aesthetic #musthave`;
+        break;
+      case 'youtube':
+        captions[platform] = `In this video, I'm reviewing the *${productName}* - here's everything you need to know about this trending ${niche} product.`;
+        break;
+      case 'twitter':
+        captions[platform] = `Plot twist: ${productName} actually lives up to the hype. Best ${niche} purchase this year.`;
+        break;
+      default:
+        captions[platform] = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.`;
+    }
+  });
+  
+  return captions;
+}
+
 export async function generatePlatformSpecificContent(
   request: PlatformContentRequest
 ): Promise<PlatformSpecificContent> {

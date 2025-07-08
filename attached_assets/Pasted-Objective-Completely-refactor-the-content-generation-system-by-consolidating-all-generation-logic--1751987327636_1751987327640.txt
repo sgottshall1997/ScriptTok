@@ -1,0 +1,44 @@
+Objective:
+Completely refactor the content generation system by consolidating all generation logic into a unified "Bulk Content Generator" structure that can handle both single and multi-product requests.
+
+Files Provided:
+- contentGenerator.ts (core AI generation logic)
+- generateContent.ts (single product API)
+- bulk-content-generation.ts (manual multi-product generator)
+- automated-bulk-generation.ts (trend-driven generator)
+- platformContentGenerator.ts (platform-specific caption handling)
+
+Core Refactor Goals:
+1. Merge `generateContent.ts`, `bulk-content-generation.ts`, and `automated-bulk-generation.ts` into a **single API handler** called `/api/generateContentUnified.ts`.
+   - Accepts both single product and multi-product payloads.
+   - Distinguish between "manual" and "automated" generation via a `mode` field (e.g., `"manual"` or `"automated"`).
+   - Support looping over multiple products, tones, templates, and platforms.
+
+2. Refactor `contentGenerator.ts` to act as a **universal content engine**:
+   - Accepts a single generation config object.
+   - Can be called in a loop by the unified endpoint.
+   - Passes smart style parameters (if `useSmartStyle = true`).
+   - Calls `platformContentGenerator.ts` for generating captions per platform.
+
+3. Improve `platformContentGenerator.ts`:
+   - Ensure captions are fully unique and optimized for Instagram, TikTok, YouTube Shorts, and X (no overlap with main content).
+   - Extract this logic into a clearly reusable function like:  
+     `generatePlatformCaptions({ productName, platform, tone, bestRatedStyle })`
+
+4. Delete or deprecate:
+   - `generateContent.ts`
+   - `bulk-content-generation.ts`
+   - `automated-bulk-generation.ts`
+   These files should either be removed or replaced with imports that point to the unified version to preserve routes temporarily.
+
+5. Update the frontend to only call `/api/generateContentUnified.ts`.
+   - If a single product is selected, treat it as a single entry loop.
+   - If multiple products/tones/templates are selected, loop through each variation and call the unified backend once per config.
+
+6. Add error handling and logging throughout the new unified endpoint.
+   - Track mode, product name, niche, tone, template, smart style flag, and generation time.
+
+Outcome:
+You should have a single, clean, scalable content generation engine that handles all manual and automated flows. This reduces tech debt, simplifies maintenance, and makes future upgrades (e.g., new prompt logic, Make.com integrations) far easier.
+
+Make sure to test all paths (single, bulk, automated) after the merge.

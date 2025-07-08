@@ -44,6 +44,7 @@ import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
 import aiAnalyticsRouter from "./api/ai-analytics";
+import generateContentUnifiedRouter from "./api/generateContentUnified";
 import { bulkGeneratedContent } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
@@ -83,7 +84,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Perplexity trends
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   // Register API routes
+  // Legacy endpoint (deprecated - use /api/generate-unified instead)
   app.use('/api/generate-content', generateContentRouter);
+  
+  // New unified content generation endpoint
+  app.use('/api/generate-unified', generateContentUnifiedRouter);
   app.use('/api/trending', trendingRouter);
   app.use('/api/analytics', analyticsRouter);
   app.use('/api/template-test', templateTestRouter);
@@ -517,14 +522,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/scheduling/posts', getScheduledPosts);
   app.post('/api/scheduling/process', processScheduledPosts);
   
-  // Bulk Content Generation
-  app.post('/api/bulk/start-generation', startBulkGeneration);
+  // Legacy Bulk Content Generation (deprecated - use /api/generate-unified instead)
+  app.post('/api/bulk/start-generation', (req, res) => {
+    console.log('⚠️ Deprecated endpoint /api/bulk/start-generation called - use /api/generate-unified instead');
+    startBulkGeneration(req, res);
+  });
   app.get('/api/bulk/job/:jobId', getBulkJobStatus);
   app.get('/api/bulk/jobs', getBulkJobs);
   app.get('/api/bulk/content/:jobId', getBulkContentByJobId);
   
-  // Automated bulk generation with trending product auto-selection
-  app.post('/api/automated-bulk/start', startAutomatedBulkGeneration);
+  // Legacy Automated bulk generation (deprecated - use /api/generate-unified instead)
+  app.post('/api/automated-bulk/start', (req, res) => {
+    console.log('⚠️ Deprecated endpoint /api/automated-bulk/start called - use /api/generate-unified instead');
+    startAutomatedBulkGeneration(req, res);
+  });
   app.get('/api/automated-bulk/details/:jobId', getBulkJobDetails);
   
   // Performance Analytics & ROI Tracking
