@@ -119,94 +119,176 @@ export default function BulkContentViewer({ jobId, isOpen, onClose }: BulkConten
 
                     <CollapsibleContent>
                       <CardContent className="pt-0">
-                        {/* Generated Content */}
+                        {/* Generated Content - Matching Standard Generator Format */}
                         {content.generatedContent && (
                           <div className="space-y-4">
-                            {/* Product Description */}
-                            {content.generatedContent.productDescription && (
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-medium">Product Description:</h4>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() => copyToClipboard(content.generatedContent.productDescription, 'Product Description')}
-                                  >
-                                    <Copy className="h-3 w-3" />
-                                  </Button>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded text-sm">
-                                  {content.generatedContent.productDescription}
-                                </div>
+                            {/* Main Generated Content */}
+                            <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-green-500">
+                              <h4 className="font-semibold mb-3 text-lg">Generated Content:</h4>
+                              <div className="text-sm text-gray-600 mb-4 flex gap-4">
+                                <span className="bg-white px-2 py-1 rounded">Template: {content.template}</span>
+                                <span className="bg-white px-2 py-1 rounded">Tone: {content.tone}</span>
+                                <span className="bg-white px-2 py-1 rounded">Niche: {content.niche}</span>
                               </div>
-                            )}
+                              <div className="prose prose-sm max-w-none">
+                                <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">
+                                  {content.generatedContent.productDescription || content.generatedContent.videoScript || 'Generated content'}
+                                </p>
+                              </div>
+                              <div className="mt-4">
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => copyToClipboard(content.generatedContent.productDescription || content.generatedContent.videoScript || 'Generated content', 'Content')}
+                                >
+                                  <Copy className="h-4 w-4 mr-1" />
+                                  Copy Content
+                                </Button>
+                              </div>
+                            </div>
 
-                            {/* Viral Hooks */}
+                            {/* Viral Hook */}
                             {content.generatedContent.viralHooks && content.generatedContent.viralHooks.length > 0 && (
-                              <div className="space-y-2">
-                                <h4 className="font-medium">Viral Hooks:</h4>
-                                <div className="space-y-2">
-                                  {content.generatedContent.viralHooks.map((hook: string, index: number) => (
-                                    <div key={index} className="flex items-start justify-between bg-purple-50 p-3 rounded">
-                                      <span className="text-sm">{hook}</span>
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() => copyToClipboard(hook, `Hook ${index + 1}`)}
-                                      >
-                                        <Copy className="h-3 w-3" />
-                                      </Button>
-                                    </div>
-                                  ))}
-                                </div>
+                              <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                                <h4 className="font-semibold mb-2">Viral Hook:</h4>
+                                <p className="text-blue-900 font-medium">{content.generatedContent.viralHooks[0]}</p>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="mt-2"
+                                  onClick={() => copyToClipboard(content.generatedContent.viralHooks[0], 'Viral Hook')}
+                                >
+                                  <Copy className="h-4 w-4 mr-1" />
+                                  Copy Hook
+                                </Button>
                               </div>
                             )}
 
-                            {/* Platform Captions */}
+                            {/* Platform-Specific Captions - Exact Style Match */}
                             {content.generatedContent.platformCaptions && (
-                              <div className="space-y-2">
-                                <h4 className="font-medium">Platform Captions:</h4>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                  {Object.entries(content.generatedContent.platformCaptions).map(([platform, caption]: [string, any]) => (
-                                    <div key={platform} className="bg-blue-50 p-3 rounded">
-                                      <div className="flex items-center justify-between mb-2">
-                                        <Badge variant="secondary" className="text-xs capitalize">
-                                          {platform}
-                                        </Badge>
+                              <div className="space-y-4 border-t pt-6">
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-semibold text-lg flex items-center gap-2">
+                                    🎯 Platform-Specific Captions
+                                  </h4>
+                                </div>
+                                
+                                <div className="space-y-4">
+                                  {/* TikTok Caption */}
+                                  {content.generatedContent.platformCaptions.tiktok && (
+                                    <div className="bg-black text-white p-4 rounded-lg border">
+                                      <div className="flex items-center justify-between mb-3">
+                                        <h5 className="font-semibold flex items-center gap-2 text-white">
+                                          📱 TikTok Caption
+                                        </h5>
                                         <Button
-                                          variant="ghost"
                                           size="sm"
-                                          onClick={() => copyToClipboard(caption, `${platform} caption`)}
+                                          variant="outline"
+                                          onClick={() => copyToClipboard(content.generatedContent.platformCaptions.tiktok, 'TikTok caption')}
+                                          className="text-xs bg-white text-black hover:bg-gray-100"
                                         >
-                                          <Copy className="h-3 w-3" />
+                                          <Copy className="h-3 w-3 mr-1" />
+                                          Copy
                                         </Button>
                                       </div>
-                                      <p className="text-sm">{caption}</p>
+                                      <div className="bg-gray-900 p-4 rounded border border-gray-700 text-sm font-mono whitespace-pre-wrap text-gray-100 leading-relaxed max-h-40 overflow-y-auto">
+                                        {content.generatedContent.platformCaptions.tiktok}
+                                      </div>
                                     </div>
-                                  ))}
+                                  )}
+
+                                  {/* Instagram Caption */}
+                                  {content.generatedContent.platformCaptions.instagram && (
+                                    <div className="bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white p-4 rounded-lg border">
+                                      <div className="flex items-center justify-between mb-3">
+                                        <h5 className="font-semibold flex items-center gap-2 text-white">
+                                          📸 Instagram Caption
+                                        </h5>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => copyToClipboard(content.generatedContent.platformCaptions.instagram, 'Instagram caption')}
+                                          className="text-xs bg-white text-purple-600 hover:bg-gray-100"
+                                        >
+                                          <Copy className="h-3 w-3 mr-1" />
+                                          Copy
+                                        </Button>
+                                      </div>
+                                      <div className="bg-black bg-opacity-30 backdrop-blur-sm p-4 rounded border border-white/20 text-sm font-mono whitespace-pre-wrap text-white leading-relaxed max-h-40 overflow-y-auto">
+                                        {content.generatedContent.platformCaptions.instagram}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* YouTube Caption */}
+                                  {content.generatedContent.platformCaptions.youtube && (
+                                    <div className="bg-red-600 text-white p-4 rounded-lg border">
+                                      <div className="flex items-center justify-between mb-3">
+                                        <h5 className="font-semibold flex items-center gap-2 text-white">
+                                          ▶️ YouTube Caption
+                                        </h5>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => copyToClipboard(content.generatedContent.platformCaptions.youtube, 'YouTube caption')}
+                                          className="text-xs bg-white text-red-600 hover:bg-gray-100"
+                                        >
+                                          <Copy className="h-3 w-3 mr-1" />
+                                          Copy
+                                        </Button>
+                                      </div>
+                                      <div className="bg-red-800 p-4 rounded border border-red-700 text-sm font-mono whitespace-pre-wrap text-red-100 leading-relaxed max-h-40 overflow-y-auto">
+                                        {content.generatedContent.platformCaptions.youtube}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Twitter Caption */}
+                                  {content.generatedContent.platformCaptions.twitter && (
+                                    <div className="bg-blue-500 text-white p-4 rounded-lg border">
+                                      <div className="flex items-center justify-between mb-3">
+                                        <h5 className="font-semibold flex items-center gap-2 text-white">
+                                          🐦 Twitter Caption
+                                        </h5>
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          onClick={() => copyToClipboard(content.generatedContent.platformCaptions.twitter, 'Twitter caption')}
+                                          className="text-xs bg-white text-blue-600 hover:bg-gray-100"
+                                        >
+                                          <Copy className="h-3 w-3 mr-1" />
+                                          Copy
+                                        </Button>
+                                      </div>
+                                      <div className="bg-blue-700 p-4 rounded border border-blue-600 text-sm font-mono whitespace-pre-wrap text-blue-100 leading-relaxed max-h-40 overflow-y-auto">
+                                        {content.generatedContent.platformCaptions.twitter}
+                                      </div>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             )}
 
                             {/* Hashtags */}
                             {content.generatedContent.hashtags && content.generatedContent.hashtags.length > 0 && (
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-medium flex items-center gap-2">
+                              <div className="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-500">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h4 className="font-semibold flex items-center gap-2">
                                     <Hash className="h-4 w-4" />
-                                    Hashtags:
+                                    Hashtags
                                   </h4>
                                   <Button
-                                    variant="ghost"
                                     size="sm"
-                                    onClick={() => copyToClipboard(content.generatedContent.hashtags.join(' '), 'All hashtags')}
+                                    variant="outline"
+                                    onClick={() => copyToClipboard(content.generatedContent.hashtags.join(' '), 'Hashtags')}
                                   >
-                                    <Copy className="h-3 w-3" />
+                                    <Copy className="h-3 w-3 mr-1" />
+                                    Copy All
                                   </Button>
                                 </div>
-                                <div className="flex flex-wrap gap-1">
+                                <div className="flex flex-wrap gap-2">
                                   {content.generatedContent.hashtags.map((tag: string, index: number) => (
-                                    <Badge key={index} variant="outline" className="text-xs">
+                                    <Badge key={index} variant="secondary" className="text-xs bg-yellow-200 text-yellow-800">
                                       {tag}
                                     </Badge>
                                   ))}
@@ -216,40 +298,77 @@ export default function BulkContentViewer({ jobId, isOpen, onClose }: BulkConten
 
                             {/* Affiliate Link */}
                             {content.affiliateLink && (
-                              <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-medium">Affiliate Link:</h4>
+                              <div className="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h4 className="font-semibold flex items-center gap-2">
+                                    <ExternalLink className="h-4 w-4" />
+                                    Affiliate Link
+                                  </h4>
                                   <Button
-                                    variant="ghost"
                                     size="sm"
+                                    variant="outline"
                                     onClick={() => copyToClipboard(content.affiliateLink, 'Affiliate Link')}
                                   >
-                                    <Copy className="h-3 w-3" />
+                                    <Copy className="h-3 w-3 mr-1" />
+                                    Copy Link
                                   </Button>
                                 </div>
-                                <div className="bg-green-50 p-3 rounded text-sm break-all">
+                                <div className="bg-white p-3 rounded border text-sm break-all font-mono text-green-800">
                                   {content.affiliateLink}
+                                </div>
+                              </div>
+                            )}
+
+                            {/* Video Script */}
+                            {content.generatedContent.videoScript && (
+                              <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h4 className="font-semibold flex items-center gap-2">
+                                    📹 Video Script
+                                  </h4>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => copyToClipboard(content.generatedContent.videoScript, 'Video Script')}
+                                  >
+                                    <Copy className="h-3 w-3 mr-1" />
+                                    Copy Script
+                                  </Button>
+                                </div>
+                                <div className="bg-white p-3 rounded border text-sm whitespace-pre-wrap font-mono text-purple-800">
+                                  {content.generatedContent.videoScript}
                                 </div>
                               </div>
                             )}
 
                             {/* Viral Inspiration */}
                             {content.viralInspiration && (
-                              <div className="space-y-2">
-                                <h4 className="font-medium flex items-center gap-2">
-                                  <Zap className="h-4 w-4" />
-                                  Viral Inspiration:
-                                </h4>
-                                <div className="bg-purple-50 p-3 rounded space-y-2">
-                                  <p><strong>Hook:</strong> {content.viralInspiration.hook}</p>
-                                  <p><strong>Format:</strong> {content.viralInspiration.format}</p>
+                              <div className="bg-orange-50 p-4 rounded-lg border-l-4 border-orange-500">
+                                <div className="flex items-center justify-between mb-2">
+                                  <h4 className="font-semibold flex items-center gap-2">
+                                    <Zap className="h-4 w-4" />
+                                    Viral Inspiration
+                                  </h4>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => copyToClipboard(`Hook: ${content.viralInspiration.hook}\nFormat: ${content.viralInspiration.format}\nCaption: ${content.viralInspiration.caption || ''}`, 'Viral Inspiration')}
+                                  >
+                                    <Copy className="h-3 w-3 mr-1" />
+                                    Copy All
+                                  </Button>
+                                </div>
+                                <div className="bg-white p-3 rounded border space-y-2 text-sm">
+                                  <div><strong className="text-orange-800">Hook:</strong> <span className="text-orange-900">{content.viralInspiration.hook}</span></div>
+                                  <div><strong className="text-orange-800">Format:</strong> <span className="text-orange-900">{content.viralInspiration.format}</span></div>
                                   {content.viralInspiration.caption && (
-                                    <p><strong>Caption:</strong> {content.viralInspiration.caption}</p>
+                                    <div><strong className="text-orange-800">Caption:</strong> <span className="text-orange-900">{content.viralInspiration.caption}</span></div>
                                   )}
                                   {content.viralInspiration.hashtags && (
                                     <div className="flex flex-wrap gap-1 mt-2">
+                                      <strong className="text-orange-800 w-full">Hashtags:</strong>
                                       {content.viralInspiration.hashtags.map((tag: string, index: number) => (
-                                        <Badge key={index} variant="outline" className="text-xs">
+                                        <Badge key={index} variant="secondary" className="text-xs bg-orange-200 text-orange-800">
                                           {tag}
                                         </Badge>
                                       ))}
