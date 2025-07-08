@@ -64,6 +64,15 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
     return relevant;
   };
 
+  // Group templates by product usage (NEW)
+  const getTemplatesByUsage = () => {
+    const relevantTemplates = getRelevantTemplates();
+    const productFocused = relevantTemplates.filter(t => t.usesProduct);
+    const generic = relevantTemplates.filter(t => !t.usesProduct);
+    
+    return { productFocused, generic };
+  };
+
   const relevantTemplates = getRelevantTemplates();
   const selectedTemplate = TEMPLATE_METADATA[value as TemplateType];
 
@@ -105,16 +114,33 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               })}
             </div>
             
-            {/* Relevant Templates for Current Niche */}
+            {/* Product-Focused Templates */}
             <div className="px-2 py-1 border-t">
-              <div className="text-xs font-medium text-muted-foreground mb-1">
-                📝 {selectedNiche.charAt(0).toUpperCase() + selectedNiche.slice(1)} Templates
+              <div className="text-xs font-medium text-blue-600 mb-1">
+                🎯 Product-Focused Templates
               </div>
-              {relevantTemplates.slice(0, 8).map((template) => (
+              {getTemplatesByUsage().productFocused.slice(0, 6).map((template) => (
                 <SelectItem key={template.id} value={template.id}>
                   <div className="flex items-center gap-2">
                     <span>{template.icon}</span>
                     <span>{template.name}</span>
+                    <span className="text-xs text-blue-500">•</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </div>
+
+            {/* Generic Content Templates */}
+            <div className="px-2 py-1 border-t">
+              <div className="text-xs font-medium text-green-600 mb-1">
+                📝 General Content Templates
+              </div>
+              {getTemplatesByUsage().generic.slice(0, 4).map((template) => (
+                <SelectItem key={template.id} value={template.id}>
+                  <div className="flex items-center gap-2">
+                    <span>{template.icon}</span>
+                    <span>{template.name}</span>
+                    <span className="text-xs text-green-500">•</span>
                   </div>
                 </SelectItem>
               ))}
@@ -145,16 +171,52 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
               <DialogTitle>Template Explorer</DialogTitle>
             </DialogHeader>
             <ScrollArea className="h-[60vh]">
-              <Tabs defaultValue="Universal" className="w-full">
+              <Tabs defaultValue="Product-Focused" className="w-full">
                 <TabsList className="grid w-full grid-cols-4">
+                  <TabsTrigger value="Product-Focused">🎯 Product-Focused</TabsTrigger>
+                  <TabsTrigger value="Generic">📝 Generic Content</TabsTrigger>
                   <TabsTrigger value="Universal">Universal</TabsTrigger>
-                  <TabsTrigger value={selectedNiche.charAt(0).toUpperCase() + selectedNiche.slice(1)}>
-                    {selectedNiche.charAt(0).toUpperCase() + selectedNiche.slice(1)}
-                  </TabsTrigger>
                   <TabsTrigger value="All">All Categories</TabsTrigger>
-                  <TabsTrigger value="Legacy">Legacy</TabsTrigger>
                 </TabsList>
                 
+                <TabsContent value="Product-Focused" className="space-y-4">
+                  <div className="mb-3 text-sm text-gray-600 bg-blue-50 p-3 rounded">
+                    These templates center around your specific input product, creating content that directly features and promotes it.
+                  </div>
+                  <div className="grid gap-3">
+                    {getTemplatesByUsage().productFocused.map((template) => (
+                      <TemplateCard 
+                        key={template.id}
+                        template={template}
+                        isSelected={value === template.id}
+                        onSelect={() => {
+                          onChange(template.id);
+                          setShowTemplateExplorer(false);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </TabsContent>
+
+                <TabsContent value="Generic" className="space-y-4">
+                  <div className="mb-3 text-sm text-gray-600 bg-green-50 p-3 rounded">
+                    These templates create general content that doesn't focus on the specific product but may reference the niche or topic area.
+                  </div>
+                  <div className="grid gap-3">
+                    {getTemplatesByUsage().generic.map((template) => (
+                      <TemplateCard 
+                        key={template.id}
+                        template={template}
+                        isSelected={value === template.id}
+                        onSelect={() => {
+                          onChange(template.id);
+                          setShowTemplateExplorer(false);
+                        }}
+                      />
+                    ))}
+                  </div>
+                </TabsContent>
+
                 <TabsContent value="Universal" className="space-y-4">
                   <div className="grid gap-3">
                     {categories['Universal']?.map((template) => (
@@ -238,11 +300,26 @@ export const TemplateSelector: React.FC<TemplateSelectorProps> = ({
             <Badge variant="secondary" className="text-xs">
               {selectedTemplate.estimatedLength}
             </Badge>
+            <Badge 
+              variant={selectedTemplate.usesProduct ? "default" : "outline"} 
+              className={`text-xs ${selectedTemplate.usesProduct ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}
+            >
+              {selectedTemplate.usesProduct ? '🎯 Product-Focused' : '📝 Generic'}
+            </Badge>
           </div>
           <p>{selectedTemplate.description}</p>
           <div className="mt-1">
             <span className="font-medium">Use case:</span> {selectedTemplate.useCase}
           </div>
+          {selectedTemplate.usesProduct ? (
+            <div className="mt-1 text-blue-600">
+              ✓ This template will center around your input product
+            </div>
+          ) : (
+            <div className="mt-1 text-green-600">
+              ℹ️ This template creates general content (product input optional)
+            </div>
+          )}
         </div>
       )}
     </div>
