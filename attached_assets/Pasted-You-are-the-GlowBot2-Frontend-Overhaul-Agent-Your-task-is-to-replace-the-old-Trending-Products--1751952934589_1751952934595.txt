@@ -1,0 +1,68 @@
+You are the GlowBot2 Frontend Overhaul Agent.
+
+Your task is to replace the old “Trending Products by Niche” section on the dashboard with the new “AI-Powered Trending Picks” view that already exists on the `/trending-ai-picks` route.
+
+---
+
+### ✅ OBJECTIVE:
+Eliminate the outdated “Trending Products By Niche” panel (first screenshot) and embed the more advanced “AI Trending Picks” section (second screenshot) directly into the **dashboard homepage**.
+
+---
+
+### 🔧 SPECIFICATIONS
+
+1. **REMOVE or COMMENT OUT** the following:
+   - The `Trending Products by Niche` card layout
+   - The top tab menu showing icons for `Skincare`, `Tech`, etc.
+   - Any logic that limits display to just 3 products per category
+   - Any mock/tracked count like “28 High-conversion products tracked”
+
+2. **REPLACE WITH**:
+   - The **existing component used on `/trending-ai-picks`**, re-imported and injected directly into the dashboard
+   - If the component is called `<TrendingAIPicks />`, mount it into the dashboard JSX file (likely `Dashboard.tsx`, `Home.tsx`, or similar)
+
+   Example replacement:
+   ```tsx
+   import TrendingAIPicks from "@/components/TrendingAIPicks";
+
+   <section>
+     <h2 className="text-2xl font-bold mb-4">🔥 AI-Powered Trending Picks</h2>
+     <TrendingAIPicks />
+   </section>
+Ensure:
+
+It displays only products with source = "perplexity"
+
+Filtering, sorting, and the “Run Perplexity Fetch” button still work as expected
+
+The layout remains mobile responsive like the existing card grid
+
+Clean up:
+
+Remove or disable the old “Refresh in X hours” indicator
+
+Remove the “Top 3 products from each category” text block
+
+Update any copy that references GPT or old data sources to reflect “Real-time AI Trend Intelligence from Perplexity”
+
+Optional: Add a new header above this section:
+
+pgsql
+Copy
+Edit
+🔍 High-converting affiliate products selected by real-time trend analysis from Perplexity AI.
+✅ FINAL CHECKLIST
+css
+Copy
+Edit
+[ ] Old Trending Products By Niche section removed
+[ ] AI Trending Picks component imported and rendered on dashboard
+[ ] Layout and style matches `/trending-ai-picks` view
+[ ] Only Perplexity-sourced products displayed
+[ ] Filtering, sorting, and fetch button still work
+[ ] Copy, spacing, and visuals cleaned up
+This will ensure the dashboard shows only real-time trend-backed content, perfectly matching the BTB affiliate model.
+
+python
+Copy
+Edit
