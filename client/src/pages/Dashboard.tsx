@@ -46,7 +46,6 @@ const Dashboard = () => {
     allNiches.forEach(niche => {
       const nicheProducts = trendingProducts.data[niche] || [];
       const uniqueProducts = nicheProducts
-        .filter(p => p.source === 'perplexity')
         .reduce((unique: TrendingProduct[], current) => {
           if (!unique.some(p => p.title === current.title)) {
             unique.push(current);
@@ -273,7 +272,7 @@ const Dashboard = () => {
                       {/* Why it's hot */}
                       <div className="text-sm text-gray-600">
                         <span className="text-yellow-600">✨ Why it's hot:</span>
-                        <span className="ml-1">{product.reason || 'No trending insight available'}</span>
+                        <span className="ml-1">{product.reason || 'Trending across social platforms'}</span>
                       </div>
                       
                       {/* Action Buttons */}

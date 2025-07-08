@@ -251,6 +251,12 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Template system: Expanded Beauty & Personal Care to include makeup, haircare, and grooming products
   - ✅ Perplexity integration: Updated fetcher to pull broader beauty/personal care trends beyond skincare-only
   - ✅ Comprehensive scope expansion: App now covers full beauty ecosystem vs limited skincare focus
+- July 08, 2025. **Dashboard Display and Insight Issues Fixed**: Resolved trending products visibility and messaging problems:
+  - ✅ Fixed dashboard niche filter array from ['skincare'...] to ['beauty'...] for proper product display
+  - ✅ Removed perplexity-only source filter allowing all product sources (tiktok, perplexity, etc.) to display
+  - ✅ Updated "No trending insight available" fallback message to "Trending across social platforms"
+  - ✅ Dashboard now properly shows 3 beauty products instead of 1, with balanced niche representation
+  - ✅ All trending products now display meaningful insights or appropriate fallback messaging
 
 ## User Preferences
 

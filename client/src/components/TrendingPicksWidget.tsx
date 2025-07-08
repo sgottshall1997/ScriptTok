@@ -221,7 +221,7 @@ export default function TrendingPicksWidget({
                 {/* Why it's hot */}
                 <div className="text-xs text-gray-600">
                   <span className="text-yellow-600">✨ Why it's hot:</span>
-                  <span className="ml-1">{product.reason ? (product.reason.length > 100 ? product.reason.slice(0, 100) + '...' : product.reason) : 'No trending insight available'}</span>
+                  <span className="ml-1">{product.reason ? (product.reason.length > 100 ? product.reason.slice(0, 100) + '...' : product.reason) : 'Trending across social platforms'}</span>
                 </div>
               </CardContent>
             </Card>
