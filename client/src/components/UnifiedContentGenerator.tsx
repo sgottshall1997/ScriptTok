@@ -64,7 +64,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     },
     onSuccess: (data) => {
       if (data.success) {
-        const results = Array.isArray(data.data.results) ? data.data.results : [data.data];
+        const results = Array.isArray(data.data.results) ? data.data.results : [data.data.results];
         onContentGenerated(results);
         
         // Track analytics

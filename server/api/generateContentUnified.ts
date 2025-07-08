@@ -440,7 +440,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
         successfulGenerations: results.length,
         errors: errors.length,
         duration,
-        results: data.mode === 'manual' && results.length === 1 ? results[0] : results,
+        results: results,
         errorDetails: errors.length > 0 ? errors : undefined
       },
       error: null
