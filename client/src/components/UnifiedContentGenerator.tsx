@@ -1,139 +1,45 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Checkbox } from "@/components/ui/checkbox";
-import { 
-  Sparkles, 
-  Zap, 
-  Clock, 
-  Package,
-  TrendingUp,
-  PlayCircle,
-  Plus,
-  Minus,
-  AlertCircle
-} from 'lucide-react';
-import { useToast } from "@/hooks/use-toast";
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Zap, Layers, CheckCircle, Clock, XCircle, TrendingUp, Package, PlayCircle, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
+import { useToast } from '@/hooks/use-toast';
 import GeneratedContentCard from './GeneratedContentCard';
+import BulkGenerationForm from './BulkGenerationForm';
+import AutomatedBulkGenerator from './AutomatedBulkGenerator';
+import BulkJobsList from './BulkJobsList';
+import AutomatedBulkJobsList from './AutomatedBulkJobsList';
 
-const NICHES = [
-  'beauty', 'tech', 'fitness', 'fashion', 'food', 'travel', 'pets'
-];
-
-const TONES = [
-  'Enthusiastic', 'Professional', 'Friendly', 'Educational', 'Humorous',
-  'Inspiring', 'Urgent', 'Casual', 'Authoritative', 'Empathetic', 'Trendy'
-];
-
-const TEMPLATES = [
-  'Short-Form Video Script', 'Product Review Template', 'Unboxing Experience',
-  'Tutorial Guide', 'Comparison Template', 'Problem-Solution Template',
-  'Behind-the-Scenes', 'User Testimonial', 'Seasonal Content', 'Trend Analysis'
-];
-
-const PLATFORMS = [
-  { id: 'tiktok', name: 'TikTok', icon: '📱' },
-  { id: 'instagram', name: 'Instagram', icon: '📸' },
-  { id: 'youtube', name: 'YouTube', icon: '▶️' },
-  { id: 'twitter', name: 'X (Twitter)', icon: '🐦' },
-  { id: 'other', name: 'Other', icon: '📄' }
-];
-
-interface Product {
-  name: string;
-  niche: string;
-  affiliateUrl?: string;
-}
-
-const UnifiedContentGenerator: React.FC = () => {
+// Single Product Generator Component (like original Content Generator but simpler)
+const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) => void }> = ({ onContentGenerated }) => {
   const { toast } = useToast();
-  const queryClient = useQueryClient();
-  
-  // Generation mode
-  const [generationMode, setGenerationMode] = useState<'single' | 'bulk'>('single');
-  
-  // Single product fields
-  const [singleProduct, setSingleProduct] = useState<Product>({ name: '', niche: 'beauty' });
-  const [selectedTone, setSelectedTone] = useState('Enthusiastic');
-  const [selectedTemplate, setSelectedTemplate] = useState('Short-Form Video Script');
-  
-  // Bulk generation fields
-  const [bulkProducts, setBulkProducts] = useState<Product[]>([{ name: '', niche: 'beauty' }]);
-  const [selectedTones, setSelectedTones] = useState<string[]>(['Enthusiastic']);
-  const [selectedTemplates, setSelectedTemplates] = useState<string[]>(['Short-Form Video Script']);
-  
-  // Common fields
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram']);
-  const [useSmartStyle, setUseSmartStyle] = useState(false);
-  const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
-  const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
-  
-  // Results
-  const [generationResults, setGenerationResults] = useState<any[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
-
-  // Fetch trending products for suggestions
-  const { data: trendingProducts } = useQuery({
-    queryKey: ['/api/trending/products'],
-    staleTime: 300000, // 5 minutes
+  const [formData, setFormData] = useState({
+    productName: '',
+    niche: 'beauty',
+    tone: 'Enthusiastic',
+    template: 'Short-Form Video Script',
+    platforms: ['tiktok', 'instagram'],
+    useSmartStyle: false,
+    generateAffiliateLinks: false,
+    affiliateId: 'sgottshall107-20'
   });
 
-  // Add product to bulk list
-  const addBulkProduct = () => {
-    setBulkProducts([...bulkProducts, { name: '', niche: 'beauty' }]);
-  };
+  const NICHES = ['beauty', 'tech', 'fitness', 'fashion', 'food', 'travel', 'pets'];
+  const TONES = ['Enthusiastic', 'Professional', 'Friendly', 'Educational', 'Humorous', 'Inspiring', 'Urgent', 'Casual', 'Authoritative', 'Empathetic', 'Trendy'];
+  const TEMPLATES = ['Short-Form Video Script', 'Product Review Template', 'Unboxing Experience', 'Tutorial Guide', 'Comparison Template', 'Problem-Solution Template', 'Behind-the-Scenes', 'User Testimonial', 'Seasonal Content', 'Trend Analysis'];
+  const PLATFORMS = [
+    { id: 'tiktok', name: 'TikTok' },
+    { id: 'instagram', name: 'Instagram' },
+    { id: 'youtube', name: 'YouTube' },
+    { id: 'twitter', name: 'X (Twitter)' },
+    { id: 'other', name: 'Other' }
+  ];
 
-  // Remove product from bulk list
-  const removeBulkProduct = (index: number) => {
-    if (bulkProducts.length > 1) {
-      setBulkProducts(bulkProducts.filter((_, i) => i !== index));
-    }
-  };
-
-  // Update bulk product
-  const updateBulkProduct = (index: number, field: keyof Product, value: string) => {
-    const updated = [...bulkProducts];
-    updated[index] = { ...updated[index], [field]: value };
-    setBulkProducts(updated);
-  };
-
-  // Toggle tone selection
-  const toggleTone = (tone: string) => {
-    setSelectedTones(prev => 
-      prev.includes(tone) 
-        ? prev.filter(t => t !== tone)
-        : [...prev, tone]
-    );
-  };
-
-  // Toggle template selection
-  const toggleTemplate = (template: string) => {
-    setSelectedTemplates(prev => 
-      prev.includes(template) 
-        ? prev.filter(t => t !== template)
-        : [...prev, template]
-    );
-  };
-
-  // Toggle platform selection
-  const togglePlatform = (platformId: string) => {
-    setSelectedPlatforms(prev => 
-      prev.includes(platformId) 
-        ? prev.filter(p => p !== platformId)
-        : [...prev, platformId]
-    );
-  };
-
-  // Generation mutation
   const generateMutation = useMutation({
     mutationFn: async (data: any) => {
       const response = await apiRequest('POST', '/api/generate-unified', data);
@@ -141,13 +47,12 @@ const UnifiedContentGenerator: React.FC = () => {
     },
     onSuccess: (data) => {
       if (data.success) {
-        setGenerationResults(Array.isArray(data.data.results) ? data.data.results : [data.data]);
+        const results = Array.isArray(data.data.results) ? data.data.results : [data.data];
+        onContentGenerated(results);
         toast({
           title: "Content generated successfully",
-          description: `Generated ${data.data.successfulGenerations || 1} content piece${data.data.successfulGenerations > 1 ? 's' : ''}`,
+          description: "Single product content created",
         });
-      } else {
-        throw new Error(data.error || 'Generation failed');
       }
     },
     onError: (error: any) => {
@@ -157,99 +62,218 @@ const UnifiedContentGenerator: React.FC = () => {
         variant: "destructive",
       });
     },
-    onSettled: () => {
-      setIsGenerating(false);
-    }
+    onSettled: () => setIsGenerating(false)
   });
 
-  // Handle generation
-  const handleGenerate = async () => {
-    setIsGenerating(true);
-    setGenerationResults([]);
-
-    try {
-      if (generationMode === 'single') {
-        // Single product generation
-        if (!singleProduct.name.trim()) {
-          toast({
-            title: "Product name required",
-            description: "Please enter a product name",
-            variant: "destructive",
-          });
-          setIsGenerating(false);
-          return;
-        }
-
-        const requestData = {
-          mode: 'manual',
-          product: singleProduct.name,
-          niche: singleProduct.niche,
-          templateType: selectedTemplate,
-          tone: selectedTone,
-          platforms: selectedPlatforms,
-          contentType: 'video',
-          affiliateUrl: generateAffiliateLinks ? `https://amazon.com/dp/PRODUCT_ID?tag=${affiliateId}` : singleProduct.affiliateUrl,
-          useSmartStyle
-        };
-
-        await generateMutation.mutateAsync(requestData);
-      } else {
-        // Bulk generation
-        const validProducts = bulkProducts.filter(p => p.name.trim());
-        
-        if (validProducts.length === 0) {
-          toast({
-            title: "No valid products",
-            description: "Please add at least one product",
-            variant: "destructive",
-          });
-          setIsGenerating(false);
-          return;
-        }
-
-        if (selectedTones.length === 0 || selectedTemplates.length === 0) {
-          toast({
-            title: "Selection required",
-            description: "Please select at least one tone and template",
-            variant: "destructive",
-          });
-          setIsGenerating(false);
-          return;
-        }
-
-        const requestData = {
-          mode: 'manual',
-          products: validProducts.map(p => ({
-            name: p.name,
-            niche: p.niche,
-            affiliateUrl: generateAffiliateLinks ? `https://amazon.com/dp/PRODUCT_ID?tag=${affiliateId}` : p.affiliateUrl
-          })),
-          tones: selectedTones,
-          templates: selectedTemplates,
-          platforms: selectedPlatforms,
-          contentType: 'video',
-          useSmartStyle
-        };
-
-        await generateMutation.mutateAsync(requestData);
-      }
-    } catch (error) {
-      console.error('Generation error:', error);
-      setIsGenerating(false);
+  const handleGenerate = () => {
+    if (!formData.productName.trim()) {
+      toast({
+        title: "Product name required",
+        description: "Please enter a product name",
+        variant: "destructive",
+      });
+      return;
     }
+
+    setIsGenerating(true);
+    const requestData = {
+      mode: 'manual',
+      product: formData.productName,
+      niche: formData.niche,
+      templateType: formData.template,
+      tone: formData.tone,
+      platforms: formData.platforms,
+      contentType: 'video',
+      affiliateUrl: formData.generateAffiliateLinks ? `https://amazon.com/dp/PRODUCT_ID?tag=${formData.affiliateId}` : undefined,
+      useSmartStyle: formData.useSmartStyle
+    };
+
+    generateMutation.mutate(requestData);
   };
 
-  // Handle regeneration for a specific product
-  const handleRegenerate = (productName: string) => {
-    // Find the product and regenerate with same settings
-    const product = generationMode === 'single' ? singleProduct : 
-      bulkProducts.find(p => p.name === productName);
-    
-    if (product) {
-      setSingleProduct(product);
-      setGenerationMode('single');
-      handleGenerate();
-    }
+  const togglePlatform = (platformId: string) => {
+    setFormData(prev => ({
+      ...prev,
+      platforms: prev.platforms.includes(platformId) 
+        ? prev.platforms.filter(p => p !== platformId)
+        : [...prev.platforms, platformId]
+    }));
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Package className="h-5 w-5" />
+          Single Product Generator
+        </CardTitle>
+        <CardDescription>Generate content for one product with your selected tone and template</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        {/* Product Details */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">Product Name</label>
+            <input
+              type="text"
+              value={formData.productName}
+              onChange={(e) => setFormData(prev => ({...prev, productName: e.target.value}))}
+              className="w-full p-3 border rounded-lg"
+              placeholder="Enter product name..."
+            />
+          </div>
+          <div>
+            <label className="text-sm font-medium mb-2 block">Niche</label>
+            <select
+              value={formData.niche}
+              onChange={(e) => setFormData(prev => ({...prev, niche: e.target.value}))}
+              className="w-full p-3 border rounded-lg"
+            >
+              {NICHES.map(niche => (
+                <option key={niche} value={niche}>
+                  {niche.charAt(0).toUpperCase() + niche.slice(1)}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Content Configuration */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="text-sm font-medium mb-2 block">Tone</label>
+            <select
+              value={formData.tone}
+              onChange={(e) => setFormData(prev => ({...prev, tone: e.target.value}))}
+              className="w-full p-3 border rounded-lg"
+            >
+              {TONES.map(tone => (
+                <option key={tone} value={tone}>{tone}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label className="text-sm font-medium mb-2 block">Template</label>
+            <select
+              value={formData.template}
+              onChange={(e) => setFormData(prev => ({...prev, template: e.target.value}))}
+              className="w-full p-3 border rounded-lg"
+            >
+              {TEMPLATES.map(template => (
+                <option key={template} value={template}>{template}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Platform Selection */}
+        <div>
+          <label className="text-sm font-medium mb-3 block">Target Platforms</label>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {PLATFORMS.map(platform => (
+              <label key={platform.id} className="flex items-center space-x-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={formData.platforms.includes(platform.id)}
+                  onChange={() => togglePlatform(platform.id)}
+                  className="rounded"
+                />
+                <span className="text-sm">{platform.name}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Advanced Options */}
+        <div className="space-y-4 border-t pt-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Use Smart Style</p>
+              <p className="text-sm text-gray-600">Learn from your highest-rated content</p>
+            </div>
+            <input
+              type="checkbox"
+              checked={formData.useSmartStyle}
+              onChange={(e) => setFormData(prev => ({...prev, useSmartStyle: e.target.checked}))}
+              className="rounded"
+            />
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Generate Affiliate Links</p>
+              <p className="text-sm text-gray-600">Auto-generate Amazon affiliate links</p>
+            </div>
+            <input
+              type="checkbox"
+              checked={formData.generateAffiliateLinks}
+              onChange={(e) => setFormData(prev => ({...prev, generateAffiliateLinks: e.target.checked}))}
+              className="rounded"
+            />
+          </div>
+
+          {formData.generateAffiliateLinks && (
+            <div>
+              <label className="text-sm font-medium mb-2 block">Affiliate ID</label>
+              <input
+                type="text"
+                value={formData.affiliateId}
+                onChange={(e) => setFormData(prev => ({...prev, affiliateId: e.target.value}))}
+                className="w-full p-3 border rounded-lg"
+                placeholder="your-affiliate-id"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Generate Button */}
+        <Button
+          onClick={handleGenerate}
+          disabled={isGenerating || formData.platforms.length === 0}
+          className="w-full h-12 text-lg"
+        >
+          {isGenerating ? (
+            <>
+              <Clock className="h-5 w-5 mr-2 animate-spin" />
+              Generating Content...
+            </>
+          ) : (
+            <>
+              <PlayCircle className="h-5 w-5 mr-2" />
+              Generate Content
+            </>
+          )}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+};
+
+const UnifiedContentGenerator: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('single');
+  const [generationResults, setGenerationResults] = useState<any[]>([]);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  // Fetch bulk jobs for stats (same as original bulk generator)
+  const { data: bulkJobs, isLoading: jobsLoading } = useQuery({
+    queryKey: ['/api/bulk/jobs'],
+    staleTime: 30000,
+  });
+
+  // Calculate summary stats
+  const totalJobs = bulkJobs?.jobs?.length || 0;
+  const runningJobs = bulkJobs?.jobs?.filter((j: any) => j.status === 'processing').length || 0;
+  const completedJobs = bulkJobs?.jobs?.filter((j: any) => j.status === 'completed').length || 0;
+  const failedJobs = bulkJobs?.jobs?.filter((j: any) => j.status === 'failed').length || 0;
+
+  // Calculate total content generated
+  const totalContentGenerated = bulkJobs?.jobs?.reduce((sum: number, job: any) => {
+    return sum + (job.completedVariations || 0);
+  }, 0) || 0;
+
+  const handleContentGenerated = (results: any[]) => {
+    setGenerationResults(results);
   };
 
   return (
@@ -258,370 +282,163 @@ const UnifiedContentGenerator: React.FC = () => {
       <div className="mb-8">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 bg-purple-100 rounded-lg">
-            <Sparkles className="h-6 w-6 text-purple-600" />
+            <Zap className="h-6 w-6 text-purple-600" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Unified Content Generator</h1>
-            <p className="text-gray-600">Generate single or multiple content pieces with platform-specific optimization</p>
+            <h1 className="text-3xl font-bold text-gray-900">Unified Content Generation</h1>
+            <p className="text-gray-600">Generate single or multiple content variations automatically across tones and templates</p>
+          </div>
+        </div>
+
+        {/* Summary Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Jobs</p>
+                  <p className="text-2xl font-bold">{totalJobs}</p>
+                </div>
+                <Package className="h-8 w-8 text-purple-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Running</p>
+                  <p className="text-2xl font-bold text-blue-600">{runningJobs}</p>
+                </div>
+                <PlayCircle className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Completed</p>
+                  <p className="text-2xl font-bold text-green-600">{completedJobs}</p>
+                </div>
+                <CheckCircle className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Content Generated</p>
+                  <p className="text-2xl font-bold text-purple-600">{totalContentGenerated}</p>
+                </div>
+                <Layers className="h-8 w-8 text-purple-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-purple-900">Unified Generation Benefits</h3>
+              <p className="text-sm text-purple-700">Create single pieces or dozens of content variations in minutes</p>
+            </div>
+            <div className="flex gap-4 text-center">
+              <div>
+                <p className="text-lg font-bold text-purple-800">{runningJobs > 0 ? runningJobs : totalJobs}</p>
+                <p className="text-xs text-purple-600">Active Jobs</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-purple-800">{totalContentGenerated}</p>
+                <p className="text-xs text-purple-600">Total Variations</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Generation Form */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Mode Selection */}
+      {/* Main Content */}
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="single" className="flex items-center gap-2">
+            <Package className="h-4 w-4" />
+            Single
+          </TabsTrigger>
+          <TabsTrigger value="automated" className="flex items-center gap-2">
+            <TrendingUp className="h-4 w-4" />
+            🚀 Automated
+          </TabsTrigger>
+          <TabsTrigger value="manual" className="flex items-center gap-2">
+            <Zap className="h-4 w-4" />
+            Manual Bulk
+          </TabsTrigger>
+          <TabsTrigger value="jobs" className="flex items-center gap-2">
+            <Layers className="h-4 w-4" />
+            Jobs ({totalJobs})
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="single" className="space-y-6">
+          <SingleProductGenerator onContentGenerated={handleContentGenerated} />
+        </TabsContent>
+
+        <TabsContent value="automated" className="space-y-6">
+          <AutomatedBulkGenerator onJobCreated={(jobData) => {
+            setActiveTab('jobs');
+            queryClient.invalidateQueries({ queryKey: ['/api/bulk/jobs'] });
+          }} />
+        </TabsContent>
+
+        <TabsContent value="manual" className="space-y-6">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Zap className="h-5 w-5" />
-                Generation Mode
+                Manual Bulk Generation
               </CardTitle>
+              <CardDescription>Generate content for multiple products with custom tone and template combinations</CardDescription>
             </CardHeader>
             <CardContent>
-              <RadioGroup 
-                value={generationMode} 
-                onValueChange={(value: 'single' | 'bulk') => setGenerationMode(value)}
-                className="flex gap-6"
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="single" id="single" />
-                  <Label htmlFor="single" className="flex items-center gap-2">
-                    <Package className="h-4 w-4" />
-                    Single Product
-                  </Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="bulk" id="bulk" />
-                  <Label htmlFor="bulk" className="flex items-center gap-2">
-                    <TrendingUp className="h-4 w-4" />
-                    Bulk Generation
-                  </Label>
-                </div>
-              </RadioGroup>
+              <BulkGenerationForm />
             </CardContent>
           </Card>
+        </TabsContent>
 
-          {/* Product Configuration */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Product Configuration</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {generationMode === 'single' ? (
-                // Single product form
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="product-name">Product Name</Label>
-                    <Input
-                      id="product-name"
-                      value={singleProduct.name}
-                      onChange={(e) => setSingleProduct({...singleProduct, name: e.target.value})}
-                      placeholder="Enter product name..."
-                      className="mt-1"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="niche">Niche</Label>
-                    <Select 
-                      value={singleProduct.niche} 
-                      onValueChange={(value) => setSingleProduct({...singleProduct, niche: value})}
-                    >
-                      <SelectTrigger className="mt-1">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {NICHES.map(niche => (
-                          <SelectItem key={niche} value={niche}>
-                            {niche.charAt(0).toUpperCase() + niche.slice(1)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="affiliate-url">Affiliate URL (Optional)</Label>
-                    <Input
-                      id="affiliate-url"
-                      value={singleProduct.affiliateUrl || ''}
-                      onChange={(e) => setSingleProduct({...singleProduct, affiliateUrl: e.target.value})}
-                      placeholder="https://amazon.com/..."
-                      className="mt-1"
-                    />
-                  </div>
-                </div>
-              ) : (
-                // Bulk products form
-                <div className="space-y-4">
-                  {bulkProducts.map((product, index) => (
-                    <div key={index} className="p-4 border rounded-lg space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label className="font-medium">Product {index + 1}</Label>
-                        {bulkProducts.length > 1 && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => removeBulkProduct(index)}
-                          >
-                            <Minus className="h-4 w-4" />
-                          </Button>
-                        )}
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                        <div>
-                          <Label>Name</Label>
-                          <Input
-                            value={product.name}
-                            onChange={(e) => updateBulkProduct(index, 'name', e.target.value)}
-                            placeholder="Product name..."
-                            className="mt-1"
-                          />
-                        </div>
-                        <div>
-                          <Label>Niche</Label>
-                          <Select 
-                            value={product.niche} 
-                            onValueChange={(value) => updateBulkProduct(index, 'niche', value)}
-                          >
-                            <SelectTrigger className="mt-1">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {NICHES.map(niche => (
-                                <SelectItem key={niche} value={niche}>
-                                  {niche.charAt(0).toUpperCase() + niche.slice(1)}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  <Button
-                    variant="outline"
-                    onClick={addBulkProduct}
-                    className="w-full"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Product
-                  </Button>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+        <TabsContent value="jobs" className="space-y-6">
+          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <TrendingUp className="h-5 w-5" />
+                  Automated Jobs
+                </CardTitle>
+                <CardDescription>AI-powered bulk generation with trending product auto-selection</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <AutomatedBulkJobsList />
+              </CardContent>
+            </Card>
 
-          {/* Content Configuration */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Content Configuration</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Tone Selection */}
-              <div>
-                <Label className="text-base font-medium">
-                  {generationMode === 'single' ? 'Tone' : 'Tones (Select Multiple)'}
-                </Label>
-                {generationMode === 'single' ? (
-                  <Select value={selectedTone} onValueChange={setSelectedTone}>
-                    <SelectTrigger className="mt-2">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TONES.map(tone => (
-                        <SelectItem key={tone} value={tone}>{tone}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                    {TONES.map(tone => (
-                      <div key={tone} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`tone-${tone}`}
-                          checked={selectedTones.includes(tone)}
-                          onCheckedChange={() => toggleTone(tone)}
-                        />
-                        <Label htmlFor={`tone-${tone}`} className="text-sm">{tone}</Label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Template Selection */}
-              <div>
-                <Label className="text-base font-medium">
-                  {generationMode === 'single' ? 'Template' : 'Templates (Select Multiple)'}
-                </Label>
-                {generationMode === 'single' ? (
-                  <Select value={selectedTemplate} onValueChange={setSelectedTemplate}>
-                    <SelectTrigger className="mt-2">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {TEMPLATES.map(template => (
-                        <SelectItem key={template} value={template}>{template}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mt-2">
-                    {TEMPLATES.map(template => (
-                      <div key={template} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={`template-${template}`}
-                          checked={selectedTemplates.includes(template)}
-                          onCheckedChange={() => toggleTemplate(template)}
-                        />
-                        <Label htmlFor={`template-${template}`} className="text-sm">{template}</Label>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Platform Selection */}
-              <div>
-                <Label className="text-base font-medium">Target Platforms</Label>
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                  {PLATFORMS.map(platform => (
-                    <div key={platform.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={`platform-${platform.id}`}
-                        checked={selectedPlatforms.includes(platform.id)}
-                        onCheckedChange={() => togglePlatform(platform.id)}
-                      />
-                      <Label htmlFor={`platform-${platform.id}`} className="text-sm flex items-center gap-1">
-                        <span>{platform.icon}</span>
-                        {platform.name}
-                      </Label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Advanced Options */}
-              <div className="space-y-4 border-t pt-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="smart-style" className="text-base font-medium">Use Smart Style</Label>
-                    <p className="text-sm text-gray-600">Learn from your highest-rated content</p>
-                  </div>
-                  <Switch
-                    id="smart-style"
-                    checked={useSmartStyle}
-                    onCheckedChange={setUseSmartStyle}
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <div>
-                    <Label htmlFor="affiliate-links" className="text-base font-medium">Generate Affiliate Links</Label>
-                    <p className="text-sm text-gray-600">Auto-generate Amazon affiliate links</p>
-                  </div>
-                  <Switch
-                    id="affiliate-links"
-                    checked={generateAffiliateLinks}
-                    onCheckedChange={setGenerateAffiliateLinks}
-                  />
-                </div>
-
-                {generateAffiliateLinks && (
-                  <div>
-                    <Label htmlFor="affiliate-id">Affiliate ID</Label>
-                    <Input
-                      id="affiliate-id"
-                      value={affiliateId}
-                      onChange={(e) => setAffiliateId(e.target.value)}
-                      placeholder="your-affiliate-id"
-                      className="mt-1"
-                    />
-                  </div>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Generation Button */}
-          <Card>
-            <CardContent className="pt-6">
-              <Button
-                onClick={handleGenerate}
-                disabled={isGenerating || selectedPlatforms.length === 0}
-                className="w-full h-12 text-lg"
-                size="lg"
-              >
-                {isGenerating ? (
-                  <>
-                    <Clock className="h-5 w-5 mr-2 animate-spin" />
-                    Generating Content...
-                  </>
-                ) : (
-                  <>
-                    <PlayCircle className="h-5 w-5 mr-2" />
-                    Generate Content
-                  </>
-                )}
-              </Button>
-              
-              {selectedPlatforms.length === 0 && (
-                <div className="flex items-center gap-2 mt-2 text-sm text-amber-600">
-                  <AlertCircle className="h-4 w-4" />
-                  Please select at least one platform
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Results Section */}
-        <div className="lg:col-span-1">
-          <Card className="sticky top-4">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5" />
-                Generation Summary
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span>Mode:</span>
-                  <Badge variant="outline">
-                    {generationMode === 'single' ? 'Single' : 'Bulk'}
-                  </Badge>
-                </div>
-                <div className="flex justify-between">
-                  <span>Products:</span>
-                  <span>{generationMode === 'single' ? 1 : bulkProducts.filter(p => p.name.trim()).length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Tones:</span>
-                  <span>{generationMode === 'single' ? 1 : selectedTones.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Templates:</span>
-                  <span>{generationMode === 'single' ? 1 : selectedTemplates.length}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Platforms:</span>
-                  <span>{selectedPlatforms.length}</span>
-                </div>
-                <div className="flex justify-between border-t pt-2">
-                  <span className="font-medium">Total Variations:</span>
-                  <span className="font-medium">
-                    {generationMode === 'single' 
-                      ? 1 
-                      : bulkProducts.filter(p => p.name.trim()).length * selectedTones.length * selectedTemplates.length
-                    }
-                  </span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="h-5 w-5" />
+                  Manual Bulk Jobs
+                </CardTitle>
+                <CardDescription>Custom bulk generation jobs with user-defined products</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <BulkJobsList />
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+      </Tabs>
 
       {/* Results Display */}
       {generationResults.length > 0 && (
@@ -638,7 +455,6 @@ const UnifiedContentGenerator: React.FC = () => {
               <GeneratedContentCard
                 key={index}
                 result={result}
-                onRegenerate={handleRegenerate}
                 contentIndex={index}
                 showRating={true}
               />
