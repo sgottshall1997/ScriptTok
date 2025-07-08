@@ -192,6 +192,12 @@ export class WebhookService {
           timeout: 15000
         });
 
+        console.log(`✅ Make.com webhook response for ${platform}:`, {
+          status: response.status,
+          statusText: response.statusText,
+          data: response.data
+        });
+
         results.push({ platform, status: response.status });
         
         // Add delay between requests to avoid overwhelming Make.com
