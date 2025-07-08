@@ -23,7 +23,7 @@ import ContentCalendarPage from "@/pages/content-calendar";
 import CompetitiveAnalysisPage from "@/pages/competitive-analysis";
 import ExportImportPage from "@/pages/export-import";
 import PlatformPreviewPage from "@/pages/platform-preview";
-import PerformanceTrackerPage from "@/pages/performance-tracker";
+
 import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
@@ -73,7 +73,7 @@ function Router() {
       <Route path="/competitive-analysis" component={CompetitiveAnalysisPage} />
       <Route path="/export-import" component={ExportImportPage} />
       <Route path="/platform-preview" component={PlatformPreviewPage} />
-      <Route path="/performance-tracker" component={PerformanceTrackerPage} />
+
       <Route path="/ai-model-config" component={AiModelConfigPage} />
       <Route path="/emoji-hashtag-test" component={EmojiHashtagTestPage} />
       <Route path="/api-integration-hub" component={ApiIntegrationHubPage} />

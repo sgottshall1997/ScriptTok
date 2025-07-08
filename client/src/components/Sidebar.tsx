@@ -89,7 +89,7 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "Analytics & Tracking",
     items: [
-      { name: "Performance Tracker", href: "/performance-tracker", icon: Activity },
+
       { name: "Click Tracking", href: "/click-tracking", icon: MousePointer },
       { name: "Export/Import", href: "/export-import", icon: Download },
     ]
