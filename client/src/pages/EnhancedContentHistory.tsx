@@ -78,29 +78,35 @@ const EnhancedContentHistory = () => {
     
     // Add database history if available (these can be rated)
     if (dbHistory && Array.isArray(dbHistory)) {
-      const dbHistoryConverted = dbHistory.map((item: any) => ({
-        id: `db_${item.id}`,
-        databaseId: item.id, // Preserve the actual database ID for rating system
-        timestamp: new Date(item.createdAt).toISOString(),
-        productName: item.productName,
-        niche: item.niche,
-        tone: item.tone,
-        contentType: item.contentType,
-        templateUsed: item.templateUsed || item.contentType,
-        promptText: item.promptText,
-        outputText: item.outputText,
-        platformsSelected: item.platformsSelected || [],
-        generatedOutput: {
-          ...item.generatedOutput,
-          content: item.outputText,
-          hook: item.generatedOutput?.hook || 'Generated content',
-          hashtags: item.generatedOutput?.hashtags || [],
-          affiliateLink: item.affiliateLink,
-          viralInspo: item.viralInspiration,
-          ...item.generatedOutput
-        },
-        source: 'database'
-      }));
+      const dbHistoryConverted = dbHistory.map((item: any) => {
+        // Handle null/undefined values from database
+        const parsedGeneratedOutput = item.generatedOutput ? 
+          (typeof item.generatedOutput === 'string' ? JSON.parse(item.generatedOutput) : item.generatedOutput) : {};
+        
+        return {
+          id: `db_${item.id}`,
+          databaseId: item.id, // Preserve the actual database ID for rating system
+          timestamp: new Date(item.createdAt).toISOString(),
+          productName: item.productName || 'Unknown Product',
+          niche: item.niche || 'general',
+          tone: item.tone || 'neutral',
+          contentType: item.contentType || 'content',
+          templateUsed: item.templateUsed || item.contentType || 'default',
+          promptText: item.promptText || '',
+          outputText: item.outputText || '',
+          platformsSelected: item.platformsSelected ? 
+            (Array.isArray(item.platformsSelected) ? item.platformsSelected : JSON.parse(item.platformsSelected || '[]')) : [],
+          generatedOutput: {
+            content: item.outputText || '',
+            hook: parsedGeneratedOutput.hook || 'Generated content',
+            hashtags: parsedGeneratedOutput.hashtags || [],
+            affiliateLink: item.affiliateLink || '',
+            viralInspo: item.viralInspo || item.viralInspiration || '',
+            ...parsedGeneratedOutput
+          },
+          source: 'database'
+        };
+      });
       combinedHistory.push(...dbHistoryConverted);
     }
     
