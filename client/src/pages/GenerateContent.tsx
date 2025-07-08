@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -12,7 +11,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
-  TrendingUp, 
   Sparkles, 
   Clock, 
   Copy, 
@@ -20,12 +18,9 @@ import {
   Edit,
   ChevronDown,
   Zap,
-  ExternalLink,
-  Target
+  ExternalLink
 } from 'lucide-react';
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { TemplateSelector } from "@/components/TemplateSelector";
 
 interface GeneratedContent {
@@ -65,32 +60,7 @@ const GenerateContent = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
 
-  // Fetch trending products with fresh data
-  const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
-    queryKey: ['/api/trending'],
-    retry: false,
-    staleTime: 0, // Always consider data stale
-    cacheTime: 0, // Don't cache the data
-  });
 
-  // Get Perplexity products for current niche (limit 3)
-  const getPerplexityProductsForNiche = (niche: string) => {
-    if (!trendingProducts?.data?.[niche]) return [];
-    return trendingProducts.data[niche]
-      .filter(p => p.source === 'perplexity')
-      .slice(0, 3);
-  };
-
-  // Handle product selection
-  const handleUseProduct = (product: TrendingProduct) => {
-    setSelectedProduct(product.title);
-    setSelectedNiche(product.niche);
-    setProductUrl(product.url || '');
-    toast({
-      title: "Product Selected",
-      description: `Selected ${product.title} for content generation`,
-    });
-  };
 
   // Generate smart redirect URL
   const generateRedirectUrl = () => {
@@ -253,7 +223,7 @@ ${config.hashtags.join(' ')}`;
     { id: 'fitness', name: 'Fitness', color: 'bg-green-100 text-green-800' },
     { id: 'food', name: 'Food', color: 'bg-orange-100 text-orange-800' },
     { id: 'travel', name: 'Travel', color: 'bg-cyan-100 text-cyan-800' },
-    { id: 'pet', name: 'Pet', color: 'bg-yellow-100 text-yellow-800' },
+    { id: 'pets', name: 'Pets', color: 'bg-yellow-100 text-yellow-800' },
   ];
 
   const platforms = [
@@ -274,80 +244,9 @@ ${config.hashtags.join(' ')}`;
           </p>
         </div>
 
-        {/* 1️⃣ Browse Trending Products */}
-        <Card className="shadow-lg">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-orange-500" />
-              🔥 Browse Trending Products
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              Select a hot product to create viral content around
-            </p>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={selectedNiche} onValueChange={setSelectedNiche}>
-              <TabsList className="grid w-full grid-cols-7">
-                {niches.map((niche) => (
-                <TabsTrigger key={niche.id} value={niche.id} className="text-xs">
-                  {niche.name}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-            
-            {niches.map((niche) => (
-              <TabsContent key={niche.id} value={niche.id}>
-                <div className="grid gap-4 grid-cols-1 md:grid-cols-3">
-                  {trendingLoading ? (
-                    Array(3).fill(0).map((_, i) => (
-                      <Card key={i} className="p-4">
-                        <Skeleton className="h-4 w-3/4 mb-2" />
-                        <Skeleton className="h-3 w-1/2 mb-4" />
-                        <Skeleton className="h-8 w-full" />
-                      </Card>
-                    ))
-                  ) : (
-                    getPerplexityProductsForNiche(niche.id).map((product, index) => (
-                      <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
-                        <CardContent className="p-4">
-                          <div className="space-y-4">
-                            {/* Product Header */}
-                            <div className="flex items-start justify-between gap-3">
-                              <h3 className="font-semibold text-base leading-tight text-gray-900">
-                                {product.title}
-                              </h3>
-                              <Badge className={niche.color} variant="secondary">
-                                #{index + 1}
-                              </Badge>
-                            </div>
-                            
-                            {/* Mentions */}
-                            <div className="flex items-center gap-1 text-sm text-orange-600">
-                              🔥 {product.mentions?.toLocaleString() || '650,000'} mentions
-                            </div>
-                            
-                            {/* Use Product Button */}
-                            <Button 
-                              size="sm" 
-                              className="w-full bg-red-500 hover:bg-red-600 text-white"
-                              onClick={() => handleUseProduct(product)}
-                            >
-                              <Target className="h-3 w-3 mr-1" />
-                              Use Product
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
-                </div>
-              </TabsContent>
-                ))}
-              </Tabs>
-            </CardContent>
-          </Card>
 
-        {/* 2️⃣ Content Generation Module - Two Column Layout */}
+
+        {/* Content Generation Module - Two Column Layout */}
         <div className="grid lg:grid-cols-2 gap-6">
           {/* Left Column: Product & Affiliate Setup */}
           <Card className="shadow-lg">
