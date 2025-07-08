@@ -88,53 +88,38 @@ const TemplateExplorerPage: React.FC = () => {
     pet: 9
   };
 
-  // Fetch all niches for the dropdown
-  const { 
-    data: allNichesData, 
-    isLoading: loadingNiches, 
-    error: nichesError 
-  } = useQuery({
-    queryKey: ['/api/templates'],
-    queryFn: async () => {
-      const response = await fetch('/api/templates');
-      if (!response.ok) {
-        throw new Error('Failed to fetch niches');
-      }
-      return response.json() as Promise<AllTemplatesResponse>;
-    },
-    refetchOnWindowFocus: false,
-  });
+  // Simplified: Just use available niches and fetch templates directly
+  const availableNiches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];
 
-  // Fetch templates for selected niche
+  // Fetch templates for selected niche using the existing API
   const { 
-    data: nicheTemplatesData, 
+    data: templatesData, 
     isLoading: loadingTemplates, 
-    error: templatesError,
-    refetch: refetchTemplates
+    error: templatesError
   } = useQuery({
     queryKey: ['/api/templates', selectedNiche],
     queryFn: async () => {
       if (!selectedNiche) return null;
       
-      const response = await fetch(`/api/templates/${selectedNiche}`);
+      const response = await fetch(`/api/templates?niche=${selectedNiche}`);
       if (!response.ok) {
         throw new Error(`Failed to fetch templates for ${selectedNiche}`);
       }
-      return response.json() as Promise<NicheTemplateResponse>;
+      return response.json();
     },
-    enabled: !!selectedNiche, // Only run this query if a niche is selected
+    enabled: !!selectedNiche,
     refetchOnWindowFocus: false,
   });
 
-  // When niche changes, update template list
+  // When templates data changes, update template list
   useEffect(() => {
-    if (nicheTemplatesData?.templates && typeof nicheTemplatesData.templates === 'object' && nicheTemplatesData.templates !== null) {
+    if (templatesData?.templates && Array.isArray(templatesData.templates)) {
       try {
-        const templateKeys = Object.keys(nicheTemplatesData.templates);
-        setTemplateList(templateKeys);
+        const templateIds = templatesData.templates.map((template: any) => template.id);
+        setTemplateList(templateIds);
         // Auto-select the first template if available
-        if (templateKeys.length > 0 && !templateKeys.includes(selectedTemplate)) {
-          setSelectedTemplate(templateKeys[0]);
+        if (templateIds.length > 0 && !templateIds.includes(selectedTemplate)) {
+          setSelectedTemplate(templateIds[0]);
         }
       } catch (error) {
         console.error('Error processing templates:', error);
@@ -145,7 +130,7 @@ const TemplateExplorerPage: React.FC = () => {
       setTemplateList([]);
       setSelectedTemplate('');
     }
-  }, [nicheTemplatesData, selectedTemplate]);
+  }, [templatesData, selectedTemplate]);
 
   // Handle niche selection
   const handleNicheChange = (niche: string) => {
@@ -185,13 +170,11 @@ const TemplateExplorerPage: React.FC = () => {
     setLocation(`/niche/${selectedNiche}?template=${selectedTemplate}`);
   };
 
-  // Extract the list of available niches
-  const niches = allNichesData?.niches && typeof allNichesData.niches === 'object' && allNichesData.niches !== null
-    ? Object.keys(allNichesData.niches) 
-    : [];
+  // Use the predefined available niches
+  const niches = availableNiches;
 
-  // Show loading state
-  if (loadingNiches) {
+  // Show loading state for templates
+  if (loadingTemplates && selectedNiche) {
     return (
       <div className="container mx-auto p-4 md:p-6">
         <h1 className="text-3xl font-bold mb-6">Template Explorer</h1>
@@ -217,8 +200,8 @@ const TemplateExplorerPage: React.FC = () => {
     );
   }
 
-  // Show error state
-  if (nichesError) {
+  // Show error state for templates
+  if (templatesError && selectedNiche) {
     return (
       <div className="container mx-auto p-4 md:p-6">
         <h1 className="text-3xl font-bold mb-6">Template Explorer</h1>
@@ -265,7 +248,7 @@ const TemplateExplorerPage: React.FC = () => {
                   <SelectLabel>Available Niches</SelectLabel>
                   {niches.map(niche => (
                     <SelectItem key={niche} value={niche}>
-                      {allNichesData?.niches[niche]?.info?.name || niche}
+                      {nicheLabels[niche] || niche.charAt(0).toUpperCase() + niche.slice(1)}
                     </SelectItem>
                   ))}
                 </SelectGroup>
