@@ -347,6 +347,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Fixed database query issues and missing column errors for stable automated processing
   - ✅ Updated backend API to support affiliate link integration and existing product selection
   - ✅ System now efficiently uses database trending products while maintaining full automation capabilities
+- July 08, 2025. **Automated Bulk Generator Database Schema Fixes**: Resolved critical database compatibility issues:
+  - ✅ Fixed missing "status" and "error_message" columns in bulk_generated_content table
+  - ✅ Corrected bulk_job_id column type mismatch from integer to text for proper foreign key relationship
+  - ✅ Updated foreign key constraints to properly reference job_id from bulk_content_jobs table
+  - ✅ Enhanced content history integration to save each individual generated piece with full metadata
+  - ✅ Added manual affiliate link entry option with niche-specific input fields
+  - ✅ Moved product preview button to optimal location between niche selection and content tones
+  - ✅ System now successfully processes automated bulk jobs and saves to both bulk and content history tables
 
 ## User Preferences
 
