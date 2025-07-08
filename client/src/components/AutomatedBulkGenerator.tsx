@@ -67,6 +67,8 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [useExistingProducts, setUseExistingProducts] = useState(true);
   const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
   const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
+  const [useManualAffiliateLinks, setUseManualAffiliateLinks] = useState(false);
+  const [manualAffiliateLinks, setManualAffiliateLinks] = useState<Record<string, string>>({});
   const [scheduleAfterGeneration, setScheduleAfterGeneration] = useState(false);
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
@@ -173,7 +175,9 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       platforms: selectedPlatforms,
       useExistingProducts,
       generateAffiliateLinks,
-      affiliateId: generateAffiliateLinks ? affiliateId : undefined,
+      affiliateId: generateAffiliateLinks && !useManualAffiliateLinks ? affiliateId : undefined,
+      useManualAffiliateLinks,
+      manualAffiliateLinks: useManualAffiliateLinks ? manualAffiliateLinks : undefined,
       scheduleAfterGeneration,
       makeWebhookUrl: makeWebhookUrl || undefined,
     };
@@ -233,17 +237,62 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
             </div>
             
             {generateAffiliateLinks && (
-              <div className="mt-3">
-                <Label htmlFor="affiliateId" className="text-sm font-medium text-green-700">
-                  Amazon Affiliate ID
-                </Label>
-                <Input
-                  id="affiliateId"
-                  value={affiliateId}
-                  onChange={(e) => setAffiliateId(e.target.value)}
-                  placeholder="your-affiliate-id"
-                  className="mt-1 border-green-300 focus:border-green-500"
-                />
+              <div className="mt-3 space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-medium text-green-700">
+                    Affiliate Link Method
+                  </Label>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-green-600">Auto-generate</span>
+                    <Switch
+                      checked={useManualAffiliateLinks}
+                      onCheckedChange={setUseManualAffiliateLinks}
+                    />
+                    <span className="text-xs text-green-600">Manual entry</span>
+                  </div>
+                </div>
+                
+                {!useManualAffiliateLinks ? (
+                  <div>
+                    <Label htmlFor="affiliateId" className="text-sm font-medium text-green-700">
+                      Amazon Affiliate ID
+                    </Label>
+                    <Input
+                      id="affiliateId"
+                      value={affiliateId}
+                      onChange={(e) => setAffiliateId(e.target.value)}
+                      placeholder="your-affiliate-id"
+                      className="mt-1 border-green-300 focus:border-green-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-green-700">
+                      Manual Affiliate Links by Niche
+                    </Label>
+                    <div className="grid grid-cols-1 gap-2">
+                      {selectedNiches.map(niche => (
+                        <div key={niche} className="flex items-center gap-2">
+                          <Badge variant="outline" className="min-w-[80px] justify-center">
+                            {niche}
+                          </Badge>
+                          <Input
+                            placeholder="https://amazon.com/product-link?tag=your-id"
+                            value={manualAffiliateLinks[niche] || ''}
+                            onChange={(e) => setManualAffiliateLinks(prev => ({
+                              ...prev,
+                              [niche]: e.target.value
+                            }))}
+                            className="text-xs border-green-300 focus:border-green-500"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs text-green-600">
+                      Enter specific Amazon affiliate links for each selected niche
+                    </p>
+                  </div>
+                )}
               </div>
             )}
           </CardContent>

@@ -49,6 +49,8 @@ const automatedBulkSchema = z.object({
   useExistingProducts: z.boolean().default(true),
   generateAffiliateLinks: z.boolean().default(false),
   affiliateId: z.string().optional(),
+  useManualAffiliateLinks: z.boolean().default(false),
+  manualAffiliateLinks: z.record(z.string()).optional(),
   scheduleAfterGeneration: z.boolean().default(false),
   scheduledTime: z.string().datetime().optional(),
   makeWebhookUrl: z.string().url().optional(),
@@ -277,10 +279,15 @@ async function processAutomatedBulkJob(
               
               // Generate affiliate link if requested
               let affiliateLink = null;
-              if (jobData.generateAffiliateLinks && jobData.affiliateId) {
-                // Simple Amazon search link with affiliate ID
-                const searchQuery = encodeURIComponent(productName);
-                affiliateLink = `https://www.amazon.com/s?k=${searchQuery}&tag=${jobData.affiliateId}`;
+              if (jobData.generateAffiliateLinks) {
+                if (jobData.useManualAffiliateLinks && jobData.manualAffiliateLinks && jobData.manualAffiliateLinks[niche]) {
+                  // Use manually entered affiliate link for this niche
+                  affiliateLink = jobData.manualAffiliateLinks[niche];
+                } else if (jobData.affiliateId) {
+                  // Generate Amazon search link with affiliate ID
+                  const searchQuery = encodeURIComponent(productName);
+                  affiliateLink = `https://www.amazon.com/s?k=${searchQuery}&tag=${jobData.affiliateId}`;
+                }
               }
               
               // Step 5: Save generated content to database
