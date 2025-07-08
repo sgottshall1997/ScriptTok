@@ -35,14 +35,17 @@ const Dashboard = () => {
     cacheTime: 0, // Don't cache the data
   });
 
-  // Get Perplexity products (limit 3 per niche, deduplicated)
+  // Get Perplexity products (balanced representation from all niches)
   const getPerplexityProducts = () => {
     if (!trendingProducts?.data) return [];
     
+    const allNiches = ['skincare', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
     const perplexityProducts: TrendingProduct[] = [];
-    Object.entries(trendingProducts.data).forEach(([niche, products]) => {
-      // Get unique products by title within each niche
-      const uniqueProducts = products
+    
+    // Ensure all 7 niches get representation (2 products each, then 1 additional)
+    allNiches.forEach(niche => {
+      const nicheProducts = trendingProducts.data[niche] || [];
+      const uniqueProducts = nicheProducts
         .filter(p => p.source === 'perplexity')
         .reduce((unique: TrendingProduct[], current) => {
           if (!unique.some(p => p.title === current.title)) {
@@ -50,19 +53,36 @@ const Dashboard = () => {
           }
           return unique;
         }, [])
-        .slice(0, 3);
+        .slice(0, 2); // Take top 2 from each niche first
       perplexityProducts.push(...uniqueProducts);
     });
     
+    // Add one more product from each niche if available (up to 21 total: 3 per niche)
+    allNiches.forEach(niche => {
+      const nicheProducts = trendingProducts.data[niche] || [];
+      const alreadyIncluded = new Set(perplexityProducts.map(p => p.title));
+      const additionalProduct = nicheProducts
+        .filter(p => p.source === 'perplexity' && !alreadyIncluded.has(p.title))
+        .slice(0, 1);
+      perplexityProducts.push(...additionalProduct);
+    });
+    
     // Debug logging to see what products we're getting
-    console.log('🔍 Dashboard Debug - Unique Perplexity products:', perplexityProducts.length);
+    console.log('🔍 Dashboard Debug - Balanced Perplexity products:', perplexityProducts.length);
     perplexityProducts.forEach((p, i) => {
       console.log(`  ${i+1}. ${p.title} (${p.niche}) - Created: ${p.createdAt}`);
     });
     
-    console.log('🎯 Products that should be displayed on dashboard:', perplexityProducts.slice(0, 12).map(p => p.title));
+    // Show products by niche for clarity
+    const byNiche = perplexityProducts.reduce((acc, p) => {
+      if (!acc[p.niche]) acc[p.niche] = [];
+      acc[p.niche].push(p.title);
+      return acc;
+    }, {} as Record<string, string[]>);
     
-    return perplexityProducts.slice(0, 12); // Max 12 total
+    console.log('🎯 Products by niche on dashboard:', byNiche);
+    
+    return perplexityProducts; // Return all products (up to 21)
   };
 
   // Filter products based on selected niche
