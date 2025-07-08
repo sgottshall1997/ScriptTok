@@ -31,7 +31,6 @@ import WebhookSettings from "@/pages/WebhookSettings";
 import GenerateContent from "@/pages/GenerateContent";
 import ClickTracking from "@/pages/ClickTracking";
 import BTBStatus from "@/pages/BTBStatus";
-import TrendingAIPicks from "@/pages/TrendingAIPicks";
 
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
@@ -75,7 +74,6 @@ function Router() {
       <Route path="/webhook-settings" component={WebhookSettings} />
       <Route path="/click-tracking" component={ClickTracking} />
       <Route path="/btb-status" component={BTBStatus} />
-      <Route path="/trending-ai-picks" component={TrendingAIPicks} />
       {/* Fallback to 404 */}
       <Route component={NotFound} />
     </Switch>
