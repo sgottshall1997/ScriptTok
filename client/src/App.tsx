@@ -33,6 +33,7 @@ import ClickTracking from "@/pages/ClickTracking";
 import BTBStatus from "@/pages/BTBStatus";
 import TrendingAIPicks from "@/pages/TrendingAIPicks";
 
+import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
 import { useEffect } from "react";
 import { initGA } from "./lib/analytics";
@@ -102,12 +103,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <div className="flex flex-col min-h-screen">
-          <div className="flex-grow">
-            <Router />
-          </div>
-          <Footer />
-        </div>
+        <Layout>
+          <Router />
+        </Layout>
       </TooltipProvider>
     </QueryClientProvider>
   );

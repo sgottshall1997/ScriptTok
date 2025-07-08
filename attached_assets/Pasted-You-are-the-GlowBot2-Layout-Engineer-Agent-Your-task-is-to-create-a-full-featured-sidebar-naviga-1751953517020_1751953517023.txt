@@ -1,0 +1,81 @@
+You are the GlowBot2 Layout Engineer Agent.
+
+Your task is to create a full-featured sidebar navigation menu that gives users direct access to all major pages in the application.
+
+---
+
+### 🔧 REQUIREMENTS
+
+1. Create a reusable sidebar component (`Sidebar.tsx`)
+2. Display the sidebar on all core pages by wrapping the app in a layout file (`Layout.tsx`)
+3. Include routing links to all application routes listed below
+4. Group pages by functional categories with headers
+5. Highlight the active route with a visual indicator
+6. Make the sidebar mobile-responsive and collapsible
+7. Use icons (optional) to visually differentiate links
+
+---
+
+### 🧭 ROUTES TO INCLUDE
+
+**Core Application Pages**
+- [ ] `/` or `/dashboard` – Dashboard
+- [ ] `/home` – Home
+- [ ] `/generate` – Content Generator
+- [ ] `/niche/:niche` – Niche Generator (optional: “Templates by Niche”)
+
+**Content Management**
+- [ ] `/templates` – Template Explorer
+- [ ] `/history` – My Content History
+- [ ] `/analytics` – Analytics Dashboard
+
+**AI Features**
+- [ ] `/trending-ai-picks` – AI Trending Picks
+- [ ] `/ai-model-test` – AI Model Testing
+- [ ] `/claude-generator` – Claude Generator
+- [ ] `/ai-model-config` – Model Configuration
+
+**Advanced Content Tools**
+- [ ] `/content-calendar` – Content Calendar
+- [ ] `/platform-preview` – Platform Preview
+- [ ] `/emoji-hashtag-test` – Emoji & Hashtag Testing
+- [ ] `/competitive-analysis` – Competitive Analysis
+
+**Analytics & Tracking**
+- [ ] `/performance-tracker` – Performance Tracker
+- [ ] `/click-tracking` – Click Tracking
+- [ ] `/export-import` – Export/Import Tools
+
+**Integration & Automation**
+- [ ] `/webhook-settings` – Webhook Settings
+- [ ] `/api-integration-hub` – API Integration Hub
+- [ ] `/btb-status` – BTB Automation Status
+
+**Info & Support**
+- [ ] `/about` – About
+- [ ] `/how-it-works` – How It Works
+- [ ] `/faq` – FAQ
+- [ ] `/privacy` – Privacy Policy
+- [ ] `/terms` – Terms
+- [ ] `/contact` – Contact
+
+---
+
+### 🖥️ DESIGN INSTRUCTIONS
+
+- Display category headers (`Core`, `Content`, `AI Tools`, etc.) as muted labels
+- Use Tailwind or Chakra for styling (whichever the app uses)
+- Highlight the active page using bold text or a sidebar accent
+- Collapse to hamburger menu on small screens
+- Consider icons from Lucide, Heroicons, or similar (optional but recommended)
+
+---
+
+### ✅ FINAL CHECKLIST
+
+[ ] Sidebar.tsx component created
+[ ] Sidebar links configured using router
+[ ] Layout wrapper added for all main pages
+[ ] Mobile responsiveness + collapse enabled
+[ ] Active page highlighting functional
+[ ] Categories clearly grouped
