@@ -193,6 +193,7 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Unified visual design between dashboard and content generator for consistent user experience
   - ✅ Improved trending products browser with updated styling and better product visibility
   - ✅ Fixed Template Explorer dropdown population with proper niche display and error handling
+  - ✅ Added dashboard trending products dropdown filter with "All Niches" and individual niche options
 
 ## User Preferences
 

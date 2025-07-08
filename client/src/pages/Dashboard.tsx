@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
 import { 
   ArrowRight, 
@@ -24,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 const Dashboard = () => {
   const { toast } = useToast();
   const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
+  const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
 
   // Fetch trending products for all niches
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
@@ -61,6 +63,22 @@ const Dashboard = () => {
     console.log('🎯 Products that should be displayed on dashboard:', perplexityProducts.slice(0, 12).map(p => p.title));
     
     return perplexityProducts.slice(0, 12); // Max 12 total
+  };
+
+  // Filter products based on selected niche
+  const getFilteredPerplexityProducts = () => {
+    const allProducts = getPerplexityProducts();
+    if (selectedNicheFilter === 'all') {
+      return allProducts;
+    }
+    return allProducts.filter(product => product.niche === selectedNicheFilter);
+  };
+
+  // Get available niches for dropdown
+  const getAvailableNiches = () => {
+    const allProducts = getPerplexityProducts();
+    const niches = [...new Set(allProducts.map(product => product.niche))];
+    return niches.sort();
   };
 
   // Run Perplexity fetch
@@ -133,19 +151,34 @@ const Dashboard = () => {
             <CardTitle className="text-xl">🔥 AI-Powered Trending Picks</CardTitle>
             <p className="text-sm text-muted-foreground">Hottest products discovered by Perplexity AI</p>
           </div>
-          <Button 
-            onClick={handlePerplexityFetch}
-            disabled={isPerplexityLoading}
-            variant="outline"
-            size="sm"
-          >
-            {isPerplexityLoading ? (
-              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-            ) : (
-              <RefreshCw className="h-4 w-4 mr-2" />
-            )}
-            Run Perplexity Fetch
-          </Button>
+          <div className="flex items-center gap-3">
+            <Select value={selectedNicheFilter} onValueChange={setSelectedNicheFilter}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filter by niche" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Niches</SelectItem>
+                {getAvailableNiches().map((niche) => (
+                  <SelectItem key={niche} value={niche}>
+                    {niche.charAt(0).toUpperCase() + niche.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button 
+              onClick={handlePerplexityFetch}
+              disabled={isPerplexityLoading}
+              variant="outline"
+              size="sm"
+            >
+              {isPerplexityLoading ? (
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+              ) : (
+                <RefreshCw className="h-4 w-4 mr-2" />
+              )}
+              Run Perplexity Fetch
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {trendingLoading ? (
@@ -160,9 +193,9 @@ const Dashboard = () => {
                 </Card>
               ))}
             </div>
-          ) : perplexityProducts.length > 0 ? (
+          ) : getFilteredPerplexityProducts().length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {perplexityProducts.map((product) => (
+              {getFilteredPerplexityProducts().map((product) => (
                 <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
                     <div className="space-y-4">
