@@ -15,29 +15,79 @@ interface PerplexityProduct {
 const PERPLEXITY_API_URL = 'https://api.perplexity.ai/chat/completions';
 const NICHES = ["skincare", "fitness", "tech", "fashion", "food", "travel", "pets"];
 
-export async function pullPerplexityTrends(): Promise<{ success: boolean; message: string; productsAdded: number }> {
-  console.log('🔄 Starting Perplexity trend fetch...');
+/**
+ * Product quality filters to ensure authentic, specific products
+ */
+const BANNED_TERMS = [
+  'product', 'item', 'thing', 'accessory', 'affordable', 'trending', 'popular',
+  'these', 'those', 'this', 'that', 'various', 'different', 'several',
+  'many', 'some', 'other', 'certain', 'generic', 'basic', 'simple'
+];
+
+const REQUIRED_BRAND_INDICATORS = [
+  'brand', 'company', 'manufacturer', 'maker', 'corp', 'inc', 'llc', 'co',
+  // Common brand patterns
+  'nike', 'adidas', 'apple', 'samsung', 'sony', 'amazon', 'stanley', 'yeti',
+  'cetaphil', 'cerave', 'ordinary', 'fenty', 'rare', 'glossier', 'drunk',
+  'tatcha', 'glow', 'recipe', 'neutrogena', 'olay', 'clinique', 'estee'
+];
+
+function validateProductQuality(productName: string): { isValid: boolean; reason?: string } {
+  const lowercaseName = productName.toLowerCase();
+  
+  // Check minimum word count
+  const wordCount = productName.trim().split(/\s+/).length;
+  if (wordCount < 3) {
+    return { isValid: false, reason: 'Too few words' };
+  }
+  
+  // Check for banned terms
+  for (const term of BANNED_TERMS) {
+    if (lowercaseName.includes(term.toLowerCase())) {
+      return { isValid: false, reason: `Contains banned term: ${term}` };
+    }
+  }
+  
+  // Check for brand indicators (more lenient now)
+  const hasBrandIndicator = REQUIRED_BRAND_INDICATORS.some(brand => 
+    lowercaseName.includes(brand.toLowerCase())
+  ) || /^[A-Z][a-z]+ [A-Z]/.test(productName); // Capitalized brand pattern
+  
+  if (!hasBrandIndicator) {
+    return { isValid: false, reason: 'Missing clear brand identifier' };
+  }
+  
+  return { isValid: true };
+}
+
+export async function pullPerplexityTrends(): Promise<{ success: boolean; message: string; productsAdded: number; filtered?: number }> {
+  console.log('🔄 Starting Perplexity trend fetch with enhanced filtering...');
   
   if (!process.env.PERPLEXITY_API_KEY) {
     throw new Error('PERPLEXITY_API_KEY not found in environment variables');
   }
 
   let totalProductsAdded = 0;
+  let totalFiltered = 0;
   const errors: string[] = [];
 
   for (const niche of NICHES) {
     try {
       console.log(`📊 Fetching trends for ${niche}...`);
       
-      const prompt = `What are 3 top trending Amazon affiliate products in the ${niche} niche that are currently going viral on TikTok or Instagram? For each product, include:
+      const currentMonth = new Date().toLocaleDateString('en-US', { month: 'long' });
+      const currentYear = new Date().getFullYear();
+      
+      const prompt = `Top trending Amazon ${niche} products ${currentMonth} ${currentYear} with specific brand names that are popular on TikTok or Instagram.
 
-Product name
-One-line benefit
-Social virality metric (e.g. TikTok mentions)
-Price range (under $100)
-Reason it's a great affiliate product
+Requirements:
+- List exactly 3 specific products with full brand names
+- Include exact product names (e.g., "Stanley Quencher Tumbler 40oz" not just "Tumbler")
+- Provide estimated social media mentions
+- No vague terms like "trending product" or "popular item"
+- Must be real, purchasable products
 
-Format your response as a numbered list with clear sections for each product.`;
+Format: Product Name | Brand | Social Mentions | Why Trending`;
 
       const response = await fetch(PERPLEXITY_API_URL, {
         method: 'POST',
@@ -46,11 +96,11 @@ Format your response as a numbered list with clear sections for each product.`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'sonar-pro',
+          model: 'llama-3.1-sonar-small-128k-online',
           messages: [
             {
               role: 'system',
-              content: 'You are a trend analysis expert. Provide specific, actionable product recommendations with real data.'
+              content: 'You are a product research specialist. Only provide specific, real product names with clear brand identifiers. Reject any vague or generic terms.'
             },
             {
               role: 'user',
@@ -58,8 +108,9 @@ Format your response as a numbered list with clear sections for each product.`;
             }
           ],
           max_tokens: 1000,
-          temperature: 0.3,
-          top_p: 0.9,
+          temperature: 0.1, // Lower temperature for more focused results
+          top_p: 0.8,
+          search_domain_filter: ["amazon.com", "tiktok.com", "instagram.com"],
           return_images: false,
           return_related_questions: false,
           search_recency_filter: 'week',
@@ -84,10 +135,21 @@ Format your response as a numbered list with clear sections for each product.`;
       }
 
       console.log(`📝 Parsing response for ${niche}...`);
-      const products = parsePerplexityResponse(content, niche);
+      const rawProducts = parsePerplexityResponse(content, niche);
       
-      // Store products in database
-      for (const product of products) {
+      // Apply quality filtering
+      const validProducts = rawProducts.filter(product => {
+        const validation = validateProductQuality(product.productName);
+        if (!validation.isValid) {
+          console.log(`🚫 Filtered out "${product.productName}": ${validation.reason}`);
+          totalFiltered++;
+          return false;
+        }
+        return true;
+      });
+      
+      // Store valid products in database
+      for (const product of validProducts) {
         try {
           await db.insert(trendingProducts).values({
             title: product.productName,
@@ -118,12 +180,13 @@ Format your response as a numbered list with clear sections for each product.`;
     ? `Completed with ${errors.length} errors: ${errors.join('; ')}`
     : 'All niches processed successfully';
 
-  console.log(`🎯 Perplexity fetch complete. Added ${totalProductsAdded} products.`);
+  console.log(`🎯 Perplexity fetch complete. Added ${totalProductsAdded} products, filtered ${totalFiltered} for quality.`);
   
   return {
     success: errors.length < NICHES.length, // Success if at least some niches worked
     message,
-    productsAdded: totalProductsAdded
+    productsAdded: totalProductsAdded,
+    filtered: totalFiltered
   };
 }
 

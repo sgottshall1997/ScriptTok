@@ -54,19 +54,24 @@ const Dashboard = () => {
         method: 'POST',
       });
       
+      const result = await response.json();
+      
       if (response.ok) {
+        const filteredMessage = result.filtered > 0 ? 
+          ` (${result.filtered} products filtered for quality)` : '';
+        
         toast({
           title: "Success!",
-          description: "Fresh trending data fetched from Perplexity",
+          description: `Fresh trending data fetched from Perplexity${filteredMessage}`,
         });
         refetchTrending();
       } else {
-        throw new Error('Failed to fetch');
+        throw new Error(result.error || 'Failed to fetch');
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to fetch Perplexity trends",
+        description: error instanceof Error ? error.message : "Failed to fetch Perplexity trends",
         variant: "destructive",
       });
     } finally {

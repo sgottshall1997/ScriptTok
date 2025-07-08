@@ -136,6 +136,24 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Collapsible viral hook generator section (optional, defaults closed)
   - ✅ Enhanced content output with copy, edit, and regenerate functionality
   - ✅ One-click product selection with auto-population of all relevant fields
+- July 08, 2025. **Platform-Specific Captions Enhancement**: Complete social media optimization:
+  - ✅ TikTok, Instagram, and YouTube caption generators with platform-branded design
+  - ✅ Individual copy buttons for each platform with toast notifications
+  - ✅ Toggle switch to show/hide captions section with descriptive helper text
+  - ✅ Smart content truncation based on platform character limits and best practices
+  - ✅ Platform-optimized hashtags and call-to-actions (tap link, link in bio, check description)
+  - ✅ Auto-generated captions include product hooks, affiliate links, and viral elements
+  - ✅ Mobile-friendly stacked layout with scrollable content areas and monospace formatting
+- July 08, 2025. **Perplexity Quality Filtering System**: Enhanced trend detection with authentic products:
+  - ✅ Implemented strict product validation to filter out vague terms like "trending product"
+  - ✅ Added banned terms list to reject generic phrases (product, item, thing, affordable, etc.)
+  - ✅ Brand identifier validation requiring clear brand names or capitalized brand patterns
+  - ✅ Minimum 3-word requirement for product specificity
+  - ✅ Date-specific queries with current month/year for relevance ("Top trending Amazon skincare July 2025")
+  - ✅ Enhanced Perplexity prompts with stricter requirements and format specifications
+  - ✅ Retry mechanism with alternative queries if initial results fail quality checks
+  - ✅ Frontend feedback showing filtered product counts in success notifications
+  - ✅ Comprehensive logging of filtered products with rejection reasons for debugging
 
 ## User Preferences
 
