@@ -81,6 +81,7 @@ const EnhancedContentHistory = () => {
     if (dbHistory && Array.isArray(dbHistory)) {
       const dbHistoryConverted = dbHistory.map((item: any) => ({
         id: `db_${item.id}`,
+        databaseId: item.id, // Preserve the actual database ID for rating system
         timestamp: new Date(item.createdAt).toISOString(),
         productName: item.productName,
         niche: item.niche,
@@ -625,12 +626,18 @@ const EnhancedContentHistory = () => {
 
                   {/* Content Rating System */}
                   <div className="border-t pt-4 mt-4">
-                    <ContentRating
-                      contentHistoryId={entry.databaseId || Math.floor(Math.random() * 2147483647)}
-                      userId={1}
-                      isExpanded={expandedRatings[entry.id]}
-                      onToggle={() => toggleRatingExpanded(entry.id)}
-                    />
+                    {entry.databaseId ? (
+                      <ContentRating
+                        contentHistoryId={entry.databaseId}
+                        userId={1}
+                        isExpanded={expandedRatings[entry.id]}
+                        onToggle={() => toggleRatingExpanded(entry.id)}
+                      />
+                    ) : (
+                      <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50">
+                        <span className="text-sm text-gray-500">Rating available for database-saved content only</span>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </CollapsibleContent>
