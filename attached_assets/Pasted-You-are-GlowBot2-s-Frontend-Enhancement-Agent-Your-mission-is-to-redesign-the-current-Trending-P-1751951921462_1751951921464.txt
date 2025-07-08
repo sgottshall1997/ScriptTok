@@ -1,0 +1,89 @@
+You are GlowBot2’s Frontend Enhancement Agent.
+
+Your mission is to redesign the current Trending Products interface to perfectly follow the BowTiedBull (BTB) framework outlined in "Automated Business Ideas in Under 10 Minutes."
+
+---
+
+🔁 Replace the existing layout with a new page or tab called `/trending-ai-picks`. Do not delete the original trending section, but this should become the new default.
+
+### 🎯 Purpose:
+Display high-potential affiliate products sourced via Perplexity and GPT in a clean, powerful, user-friendly grid. Each card should be optimized for scanning and quick action.
+
+---
+
+### ✅ New Page Requirements
+
+1. Create a new route: `/trending-ai-picks`
+2. Pull trending product data from the existing database, including:
+   - productName
+   - benefit
+   - viralMetric
+   - niche
+   - source (GPT or Perplexity)
+   - priceRange
+   - affiliateReason
+   - created_at
+
+3. Group the page structure as follows:
+
+#### 🔲 TOP CONTROLS:
+- Dropdown: `[Select Niche]` — pulls unique values from the `niche` column
+- Toggle buttons: `[All | GPT | Perplexity]` — filters by `source`
+- Sort menu: `[Most Viral | Newest | Price Low to High]`
+
+#### 📦 PRODUCT CARD DESIGN (Use Responsive Grid)
+Each product card should contain:
+
+┌────────────────────────────────────────────┐
+│ 🔥 [productName] [GPT/Perplexity badge]
+│ 💡 “[benefit]”
+│ 📈 Viral Metric: [viralMetric]
+│ 💰 Price: [priceRange] · 🏷️ [Amazon or source]
+│ ✨ Why it's hot: [affiliateReason]
+│
+│ [ Generate Content ] [ View Product (optional) ]
+└────────────────────────────────────────────┘
+
+4. Add logic to:
+   - Display only products matching the filters
+   - Sort properly by selected value (e.g., viralMetric as number if possible)
+   - Render all cards responsively (3–4 per row desktop, 1–2 on mobile)
+
+---
+
+### ✨ UX Enhancements:
+
+- Use Tailwind or Chakra (depending on stack) to apply visual polish:
+  - `🔥`, `💡`, `📈`, `💰`, `✨` for iconographic clarity
+  - Rounded cards, shadow, padding
+  - Highlight top 1–2 cards per niche with a subtle gold border or "Top Pick" badge
+- GPT vs Perplexity should be visible on each card
+- Make the "Generate Content" button send the product directly into the content generator pipeline
+- (Optional) Add a “Star” or “Favorite” button to mark top ideas
+
+---
+
+### 🔒 Tech Constraints
+
+- Use existing backend structure. Do not rewrite DB.
+- Use `source` field (`gpt`, `perplexity`) to enable filtering
+- Add fallback text if no products match the filter
+- Allow this tab to refresh daily using 5 AM cron if tied to the Perplexity product puller
+
+---
+
+### ✅ Deliverables Checklist
+
+[ ] New page route: /trending-ai-picks
+[ ] Filter by niche (dropdown)
+[ ] Filter by source (toggle: All, GPT, Perplexity)
+[ ] Sort options (viral, newest, price)
+[ ] Responsive product card grid
+[ ] “Generate Content” button triggers backend script generator
+[ ] Clean card design with emojis, spacing, and visual hierarchy
+[ ] Top card highlighting (optional)
+[ ] No disruption to existing trending workflow
+
+---
+
+Goal: replicate the exact affiliate product inspiration flywheel described in the BTB guide using real-time data. The new interface should feel like a creator dashboard — clean, actionable, and optimized for speed.

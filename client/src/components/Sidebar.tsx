@@ -60,6 +60,12 @@ const Sidebar: FC<SidebarProps> = ({ isOpen, onClose }) => {
                 </svg>
                 <span>Trend Analysis</span>
             </Link>
+            <Link href="/trending-ai-picks" className={`flex items-center px-3 py-2 text-base font-medium rounded-md ${isActive('/trending-ai-picks') ? 'bg-sidebar-accent text-sidebar-primary' : 'text-sidebar-foreground hover:bg-sidebar-accent/50'}`}>
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+                <span>AI Trending Picks</span>
+            </Link>
           </div>
           
           <div className="mt-8 space-y-2">
