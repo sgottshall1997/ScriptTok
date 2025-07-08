@@ -59,6 +59,14 @@ const GenerateContent = () => {
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
+  
+  // Viral inspiration data (will be populated when product is selected)
+  const [viralInspo, setViralInspo] = useState<{
+    hook: string;
+    format: string;
+    caption: string;
+    hashtags: string[];
+  } | null>(null);
 
 
 
@@ -71,6 +79,51 @@ const GenerateContent = () => {
     const url = `${baseUrl}/r/${redirectId}`;
     setSmartRedirectUrl(url);
   };
+
+  // Simulate fetching viral inspiration when product changes
+  // TODO: Replace with actual API call to fetch trending insights for the product
+  const fetchViralInspirationForProduct = (productName: string) => {
+    if (!productName.trim()) {
+      setViralInspo(null);
+      return;
+    }
+
+    // Simulate viral inspiration based on product
+    const sampleInspirations = [
+      {
+        hook: "POV: You found the secret to glowing skin",
+        format: "Tutorial + Before/After",
+        caption: "This skincare routine changed everything for me! No more dull skin days 🌟",
+        hashtags: ["#skincare", "#glowup", "#skincareroutine", "#selfcare"]
+      },
+      {
+        hook: "Everyone's talking about this trending gadget",
+        format: "Unboxing + Demo",
+        caption: "I can't believe how much this tech upgrade improved my daily routine! 🚀",
+        hashtags: ["#tech", "#gadget", "#productivity", "#innovation"]
+      },
+      {
+        hook: "This outfit hack will save your wardrobe",
+        format: "Style Transformation",
+        caption: "From basic to stunning in 60 seconds! This styling trick works every time ✨",
+        hashtags: ["#fashion", "#style", "#ootd", "#styling"]
+      }
+    ];
+
+    // Simple logic to pick inspiration based on niche
+    let inspiration;
+    if (selectedNiche === 'skincare') inspiration = sampleInspirations[0];
+    else if (selectedNiche === 'tech') inspiration = sampleInspirations[1];
+    else if (selectedNiche === 'fashion') inspiration = sampleInspirations[2];
+    else inspiration = sampleInspirations[Math.floor(Math.random() * sampleInspirations.length)];
+
+    setViralInspo(inspiration);
+  };
+
+  // Watch for product name changes to fetch viral inspiration
+  useEffect(() => {
+    fetchViralInspirationForProduct(selectedProduct);
+  }, [selectedProduct, selectedNiche]);
 
   // Copy to clipboard helper
   const copyToClipboard = (text: string, label: string) => {
@@ -246,9 +299,9 @@ ${config.hashtags.join(' ')}`;
 
 
 
-        {/* Content Generation Module - Two Column Layout */}
-        <div className="grid lg:grid-cols-2 gap-6">
-          {/* Left Column: Product & Affiliate Setup */}
+        {/* Content Generation Module - Vertical Stack Layout */}
+        <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
+          {/* Product & Affiliate Setup */}
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -347,7 +400,18 @@ ${config.hashtags.join(' ')}`;
           </CardContent>
         </Card>
 
-        {/* Right Column: Content Setup */}
+        {/* Viral Inspiration Preview */}
+        {viralInspo && (
+          <div className="mt-4 p-3 bg-[#fff9f0] border border-orange-300 rounded-lg shadow-sm">
+            <h3 className="font-semibold text-orange-700 mb-2">🎯 Viral Inspiration Found</h3>
+            <p><strong>Hook:</strong> {viralInspo.hook}</p>
+            <p><strong>Format:</strong> {viralInspo.format}</p>
+            <p><strong>Caption:</strong> {viralInspo.caption}</p>
+            <p><strong>Hashtags:</strong> {viralInspo.hashtags?.join(" ")}</p>
+          </div>
+        )}
+
+        {/* Content Setup */}
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
