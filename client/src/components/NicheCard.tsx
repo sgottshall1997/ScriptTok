@@ -103,6 +103,17 @@ const NicheCard: React.FC<NicheCardProps> = ({
       trackEvent('select_niche', 'engagement', niche);
     }
   };
+
+  // Handle view templates button click
+  const handleViewTemplates = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card selection
+    if (onSelect) {
+      // If onSelect is provided, this means we're in template explorer mode
+      onSelect(niche);
+      trackEvent('view_templates', 'engagement', niche);
+    }
+    // If no onSelect, the Link will handle navigation as normal
+  };
   
   return (
     <Card 
@@ -142,17 +153,29 @@ const NicheCard: React.FC<NicheCardProps> = ({
       </CardContent>
       
       <CardFooter className="pt-0 flex justify-between">
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          className={`${textClassToUse} hover:bg-gray-100`}
-          asChild
-        >
-          <Link href={`/templates?niche=${niche}`}>
+        {onSelect ? (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`${textClassToUse} hover:bg-gray-100`}
+            onClick={handleViewTemplates}
+          >
             <BookOpen className="h-4 w-4 mr-1" /> 
             View Templates
-          </Link>
-        </Button>
+          </Button>
+        ) : (
+          <Button 
+            variant="ghost" 
+            size="sm" 
+            className={`${textClassToUse} hover:bg-gray-100`}
+            asChild
+          >
+            <Link href={`/templates?niche=${niche}`}>
+              <BookOpen className="h-4 w-4 mr-1" /> 
+              View Templates
+            </Link>
+          </Button>
+        )}
         
         <Button 
           variant="outline" 
