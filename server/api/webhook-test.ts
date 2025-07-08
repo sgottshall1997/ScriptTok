@@ -19,9 +19,9 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // Create CSV-compatible test payload matching exact CSV headers
+    // Create CSV-compatible test payload with exact field order and alternative field names
     const testPayload = {
-      // CSV Headers: Timestamp,Product,Niche,Platform,Tone,Template,useSmartStyle,Full Output,TikTok Caption,IG Caption,YT Caption,X Caption,TikTok Rating,IG Rating,YT Rating,X Rating,Full Output Rating,TopRatedStyleUsed,postType,hashtags,source,Affiliate Link
+      // CSV Headers in exact order: Timestamp,Product,Niche,Platform,Tone,Template,useSmartStyle,Full Output,TikTok Caption,IG Caption,YT Caption,X Caption,TikTok Rating,IG Rating,YT Rating,X Rating,Full Output Rating,TopRatedStyleUsed,postType,hashtags,source,Affiliate Link
       
       Timestamp: new Date().toISOString(),
       Product: "Hero My First Serum 1.69 fl oz",
@@ -44,7 +44,10 @@ router.post('/', async (req, res) => {
       postType: 'content',
       hashtags: '#skincare #glowup #beauty #viral',
       source: 'GlowBot',
-      'Affiliate Link': 'https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20'
+      'Affiliate Link': 'https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20',
+      // Alternative field names in case Make.com has field mapping issues
+      AffiliateLink: 'https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20',
+      affiliate_link: 'https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20'
     };
     
     console.log('📤 Sending CSV-formatted test webhook to Make.com:', JSON.stringify(testPayload, null, 2));

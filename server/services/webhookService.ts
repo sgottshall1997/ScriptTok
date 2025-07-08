@@ -170,6 +170,9 @@ export class WebhookService {
           hashtags: Array.isArray(platformData.hashtags) ? platformData.hashtags.join(' ') : '',
           source: 'GlowBot',
           'Affiliate Link': data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
+          // Alternative field names for Make.com compatibility
+          AffiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
+          affiliate_link: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
           
           // Legacy fields for backward compatibility
           caption: platformData.caption || '',
