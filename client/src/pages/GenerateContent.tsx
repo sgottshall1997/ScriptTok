@@ -1,5 +1,5 @@
 import { FC, useState, useEffect } from 'react';
-import { useLocation } from 'wouter';
+import { useLocation, useParams } from 'wouter';
 import ContentGenerator from '@/components/ContentGenerator';
 import MultiPlatformContentOutput from '@/components/MultiPlatformContentOutput';
 import { GenerationResponse, DashboardTrendingResponse, TrendingProduct } from '@/lib/types';
@@ -27,6 +27,7 @@ const niches = [
 
 const GenerateContent: FC = () => {
   const [location] = useLocation();
+  const params = useParams<{ niche?: string }>();
   const [generatedContent, setGeneratedContent] = useState<any>(null);
   const [isMultiPlatform, setIsMultiPlatform] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<string>('');
@@ -35,18 +36,27 @@ const GenerateContent: FC = () => {
   const [scheduleTime, setScheduleTime] = useState('now');
   const [selectedHook, setSelectedHook] = useState<string>('');
   const [generatedAffiliateLink, setGeneratedAffiliateLink] = useState<any>(null);
+  const [selectedTemplate, setSelectedTemplate] = useState<string>('');
 
-  // Check for URL parameters to auto-populate form
+  // Check for URL parameters and route parameters to auto-populate form
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     const productParam = searchParams.get('product');
     const nicheParam = searchParams.get('niche');
+    const templateParam = searchParams.get('template');
+    
+    // Use route parameter for niche if available, otherwise URL param
+    const routeNiche = params.niche;
+    const finalNiche = routeNiche || nicheParam;
     
     if (productParam) {
       setSelectedProduct(productParam);
     }
-    if (nicheParam) {
-      setSelectedProductNiche(nicheParam);
+    if (finalNiche) {
+      setSelectedProductNiche(finalNiche);
+    }
+    if (templateParam) {
+      setSelectedTemplate(templateParam);
     }
   }, [location]);
 
@@ -221,6 +231,8 @@ const GenerateContent: FC = () => {
               scrollToTopOnGenerate={false}
               selectedProduct={selectedProduct}
               selectedProductNiche={selectedProductNiche}
+              initialNiche={selectedProductNiche}
+              initialTemplate={selectedTemplate}
             />
           </div>
         </div>

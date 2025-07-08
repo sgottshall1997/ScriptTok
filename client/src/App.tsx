@@ -49,6 +49,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/home" component={Home} />
       <Route path="/generate" component={GenerateContent} />
+      <Route path="/niche/:niche" component={GenerateContent} />
 
       <Route path="/dashboard" component={Dashboard} />
 
