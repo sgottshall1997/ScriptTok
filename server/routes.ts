@@ -47,6 +47,16 @@ import aiAnalyticsRouter from "./api/ai-analytics";
 import { bulkGeneratedContent } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
+import { 
+  saveRating, 
+  getRating, 
+  generatePatterns,
+  getPreferences,
+  updatePreferences,
+  getSuggestions,
+  trackApplication,
+  getRatingStats
+} from "./api/rating";
 
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
 
@@ -176,6 +186,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Setup feedback logging routes
   setupFeedbackRoutes(app);
+  
+  // Import rating API functions
+  const { 
+    saveRating, 
+    getRating, 
+    generatePatterns, 
+    getPreferences, 
+    updatePreferences, 
+    getSuggestions, 
+    trackApplication, 
+    getRatingStats 
+  } = await import('./api/rating');
+
+  // Rating system endpoints
+  app.post('/api/rating/save', saveRating);
+  app.get('/api/rating/:contentHistoryId', getRating);
+  app.post('/api/rating/patterns/generate', generatePatterns);
+  app.get('/api/rating/preferences/:userId', getPreferences);
+  app.put('/api/rating/preferences/:userId', updatePreferences);
+  app.get('/api/rating/suggestions', getSuggestions);
+  app.post('/api/rating/track-application', trackApplication);
+  app.get('/api/rating/stats', getRatingStats);
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {

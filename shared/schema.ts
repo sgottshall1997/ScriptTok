@@ -204,6 +204,117 @@ export const advancedContentOptimizations = pgTable("advanced_content_optimizati
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// User feedback ratings for content pieces
+export const contentRatings = pgTable("content_ratings", {
+  id: serial("id").primaryKey(),
+  contentHistoryId: integer("content_history_id").notNull().references(() => contentHistory.id, { onDelete: 'cascade' }),
+  userId: integer("user_id").references(() => users.id, { onDelete: 'set null' }),
+  
+  // Overall and platform-specific ratings (1-100)
+  overallRating: integer("overall_rating"), // General content quality
+  instagramRating: integer("instagram_rating"), // Instagram caption quality
+  tiktokRating: integer("tiktok_rating"), // TikTok caption quality
+  youtubeRating: integer("youtube_rating"), // YouTube Shorts caption quality
+  twitterRating: integer("twitter_rating"), // X (Twitter) caption quality
+  
+  // Additional metadata
+  notes: text("notes"), // Optional user notes about the rating
+  ratedAt: timestamp("rated_at").defaultNow().notNull(),
+  
+  // Ensure one rating per content piece per user
+}, (table) => {
+  return {
+    unq: unique().on(table.contentHistoryId, table.userId),
+  };
+});
+
+// Smart learning patterns extracted from high-rated content
+export const contentPatterns = pgTable("content_patterns", {
+  id: serial("id").primaryKey(),
+  
+  // Pattern identification
+  patternName: text("pattern_name").notNull(), // e.g., "high_engagement_beauty_hooks"
+  description: text("description"), // Human-readable description
+  
+  // Content attributes that define this pattern
+  niche: text("niche"),
+  templateType: text("template_type"),
+  tone: text("tone"),
+  platform: text("platform"), // instagram, tiktok, youtube, twitter, or "all"
+  
+  // Pattern characteristics
+  averageRating: decimal("average_rating").notNull(), // Average rating of content matching this pattern
+  sampleCount: integer("sample_count").notNull(), // Number of samples used to derive pattern
+  confidence: decimal("confidence").notNull(), // Confidence score (0-1)
+  
+  // Structural patterns
+  averageWordCount: integer("average_word_count"),
+  commonPhrases: text("common_phrases").array(), // Frequently used phrases
+  sentenceStructures: text("sentence_structures").array(), // Common sentence patterns
+  
+  // Content style attributes
+  emotionalTone: text("emotional_tone"), // excited, calm, urgent, etc.
+  callToActionStyle: text("call_to_action_style"), // direct, subtle, question, etc.
+  hookType: text("hook_type"), // question, statement, stat, story, etc.
+  
+  // Performance insights
+  bestPerformingElements: jsonb("best_performing_elements"), // Structured data about what works
+  avoidancePatterns: jsonb("avoidance_patterns"), // What to avoid based on low ratings
+  
+  // Pattern lifecycle
+  isActive: boolean("is_active").notNull().default(true),
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  
+  // Pattern validation
+  minimumSamples: integer("minimum_samples").notNull().default(5), // Min samples needed to trust pattern
+});
+
+// Content generation preferences and learning settings
+export const userContentPreferences = pgTable("user_content_preferences", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  
+  // Learning system preferences
+  useSmartLearning: boolean("use_smart_learning").notNull().default(true), // "Use my best-rated style"
+  learningIntensity: text("learning_intensity").notNull().default("moderate"), // conservative, moderate, aggressive
+  
+  // Minimum rating thresholds for pattern extraction
+  minOverallRating: integer("min_overall_rating").notNull().default(70),
+  minPlatformRating: integer("min_platform_rating").notNull().default(65),
+  
+  // User-specific pattern weights
+  personalizedWeights: jsonb("personalized_weights"), // Custom weights for different attributes
+  
+  // Feedback behavior tracking
+  totalRatingsGiven: integer("total_ratings_given").notNull().default(0),
+  averageRatingGiven: decimal("average_rating_given"),
+  ratingConsistency: decimal("rating_consistency"), // How consistent user ratings are
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    unqUser: unique().on(table.userId),
+  };
+});
+
+// Pattern application tracking (for A/B testing the learning system)
+export const patternApplications = pgTable("pattern_applications", {
+  id: serial("id").primaryKey(),
+  contentHistoryId: integer("content_history_id").notNull().references(() => contentHistory.id, { onDelete: 'cascade' }),
+  patternId: integer("pattern_id").references(() => contentPatterns.id, { onDelete: 'set null' }),
+  
+  // Application metadata
+  appliedAt: timestamp("applied_at").defaultNow().notNull(),
+  applicationStrength: decimal("application_strength"), // How strongly the pattern was applied (0-1)
+  modifiedAttributes: text("modified_attributes").array(), // Which attributes were influenced
+  
+  // Results tracking
+  resultingRating: integer("resulting_rating"), // Rating received after applying pattern
+  patternEffectiveness: decimal("pattern_effectiveness"), // Calculated effectiveness score
+});
+
 // Content performance data for analytics
 export const contentPerformance = pgTable("content_performance", {
   id: serial("id").primaryKey(),
@@ -867,6 +978,70 @@ export type InsertBulkContentJob = z.infer<typeof insertBulkContentJobSchema>;
 
 export type BulkGeneratedContent = typeof bulkGeneratedContent.$inferSelect;
 export type InsertBulkGeneratedContent = z.infer<typeof insertBulkGeneratedContentSchema>;
+
+// Insert schemas for rating system
+export const insertContentRatingSchema = createInsertSchema(contentRatings).pick({
+  contentHistoryId: true,
+  userId: true,
+  overallRating: true,
+  instagramRating: true,
+  tiktokRating: true,
+  youtubeRating: true,
+  twitterRating: true,
+  notes: true,
+});
+
+export const insertContentPatternSchema = createInsertSchema(contentPatterns).pick({
+  patternName: true,
+  description: true,
+  niche: true,
+  templateType: true,
+  tone: true,
+  platform: true,
+  averageRating: true,
+  sampleCount: true,
+  confidence: true,
+  averageWordCount: true,
+  commonPhrases: true,
+  sentenceStructures: true,
+  emotionalTone: true,
+  callToActionStyle: true,
+  hookType: true,
+  bestPerformingElements: true,
+  avoidancePatterns: true,
+  minimumSamples: true,
+});
+
+export const insertUserContentPreferencesSchema = createInsertSchema(userContentPreferences).pick({
+  userId: true,
+  useSmartLearning: true,
+  learningIntensity: true,
+  minOverallRating: true,
+  minPlatformRating: true,
+  personalizedWeights: true,
+});
+
+export const insertPatternApplicationSchema = createInsertSchema(patternApplications).pick({
+  contentHistoryId: true,
+  patternId: true,
+  applicationStrength: true,
+  modifiedAttributes: true,
+  resultingRating: true,
+  patternEffectiveness: true,
+});
+
+// Type exports for rating system
+export type ContentRating = typeof contentRatings.$inferSelect;
+export type InsertContentRating = z.infer<typeof insertContentRatingSchema>;
+
+export type ContentPattern = typeof contentPatterns.$inferSelect;
+export type InsertContentPattern = z.infer<typeof insertContentPatternSchema>;
+
+export type UserContentPreferences = typeof userContentPreferences.$inferSelect;
+export type InsertUserContentPreferences = z.infer<typeof insertUserContentPreferencesSchema>;
+
+export type PatternApplication = typeof patternApplications.$inferSelect;
+export type InsertPatternApplication = z.infer<typeof insertPatternApplicationSchema>;
 
 // Insert schemas for new tracking tables
 export const insertClickLogSchema = createInsertSchema(clickLogs).pick({

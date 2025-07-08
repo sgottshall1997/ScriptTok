@@ -21,12 +21,15 @@ import {
   Trash2, 
   Calendar,
   Hash,
-  Zap
+  Zap,
+  Star,
+  TrendingUp
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
 import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
+import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -34,6 +37,7 @@ const EnhancedContentHistory = () => {
   const [filteredHistory, setFilteredHistory] = useState<ContentGenerationEntry[]>([]);
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
   const [copiedItems, setCopiedItems] = useState<Record<string, boolean>>({});
+  const [expandedRatings, setExpandedRatings] = useState<Record<string, boolean>>({});
   const [filters, setFilters] = useState({
     niche: 'all',
     platform: 'all',
@@ -130,6 +134,13 @@ const EnhancedContentHistory = () => {
     setExpandedCards(prev => ({
       ...prev,
       [id]: !prev[id]
+    }));
+  };
+
+  const toggleRatingExpanded = (entryId: string) => {
+    setExpandedRatings(prev => ({
+      ...prev,
+      [entryId]: !prev[entryId]
     }));
   };
 
@@ -292,6 +303,11 @@ const EnhancedContentHistory = () => {
             <Trash2 className="h-4 w-4 mr-2" />
             Clear All
           </Button>
+        </div>
+
+        {/* Smart Learning Toggle */}
+        <div className="mb-6">
+          <SmartLearningToggle userId={1} />
         </div>
 
         {/* Filters */}
@@ -606,6 +622,16 @@ const EnhancedContentHistory = () => {
                       </div>
                     </div>
                   )}
+
+                  {/* Content Rating System */}
+                  <div className="border-t pt-4 mt-4">
+                    <ContentRating
+                      contentHistoryId={parseInt(entry.id.toString().replace('db_', ''))}
+                      userId={1}
+                      isExpanded={expandedRatings[entry.id]}
+                      onToggle={() => toggleRatingExpanded(entry.id)}
+                    />
+                  </div>
                 </CardContent>
               </CollapsibleContent>
             </Collapsible>
