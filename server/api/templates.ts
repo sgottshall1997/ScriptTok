@@ -19,13 +19,13 @@ export const getTemplates = async (req: Request, res: Response) => {
     // Filter by niche relevance if specified
     if (niche && typeof niche === 'string') {
       const nicheMap: Record<string, string[]> = {
-        'beauty': ['Universal', 'Beauty & Personal Care', 'Skincare'],
-        'tech': ['Universal', 'Tech'], 
-        'fashion': ['Universal', 'Fashion'],
-        'fitness': ['Universal', 'Fitness'],
-        'food': ['Universal', 'Food', 'Home'],
-        'travel': ['Universal', 'Travel'],
-        'pets': ['Universal', 'Pet']
+        'beauty': ['Universal', 'Beauty & Personal Care'],
+        'tech': ['Universal', 'Tech & Gadgets'], 
+        'fashion': ['Universal', 'Fashion & Accessories'],
+        'fitness': ['Universal', 'Supplements & Fitness'],
+        'food': ['Universal', 'Home & Kitchen'],
+        'travel': ['Universal', 'Outdoor & Sports Gear'],
+        'pets': ['Universal', 'Pet Products']
       };
       
       const relevantCategories = nicheMap[niche.toLowerCase()] || ['Universal'];
