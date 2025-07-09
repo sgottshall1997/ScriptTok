@@ -61,7 +61,7 @@ interface AutomatedBulkGeneratorProps {
 export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGeneratorProps) {
   const [selectedNiches, setSelectedNiches] = useState<string[]>(['beauty', 'fitness', 'tech']);
   const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
-  const [selectedTemplates, setSelectedTemplates] = useState<string[]>(['product_review', 'viral_hook', 'short_video']);
+  const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
   const [useExistingProducts, setUseExistingProducts] = useState(true);
   const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
