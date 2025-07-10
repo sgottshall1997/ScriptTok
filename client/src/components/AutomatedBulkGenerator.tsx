@@ -133,11 +133,14 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
         
         // Debug logging to see what's being selected
         console.log(`🔍 Preview selected for ${niche}:`, sortedProducts[0].title, 'Created:', sortedProducts[0].createdAt);
+        console.log(`🔍 Preview product object for ${niche}:`, JSON.stringify(sortedProducts[0], null, 2));
       }
     });
     
     setPreviewProducts(productsByNiche);
     setShowPreview(true);
+    
+    console.log('🔍 Final preview products state:', JSON.stringify(productsByNiche, null, 2));
   };
 
   const startAutomatedBulkMutation = useMutation({
@@ -246,12 +249,16 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
       useSmartStyle,
       userId: 1, // Demo user ID for rating system
-      previewedProducts: showPreview && Object.keys(previewProducts).length > 0 ? previewProducts : undefined,
+      previewedProducts: Object.keys(previewProducts).length > 0 ? previewProducts : undefined,
     };
 
     console.log('🔍 DEBUG: Frontend sending bulkData with previewedProducts:', bulkData.previewedProducts ? 'YES' : 'NO');
+    console.log('🔍 DEBUG: showPreview state:', showPreview);
+    console.log('🔍 DEBUG: previewProducts keys count:', Object.keys(previewProducts).length);
     if (bulkData.previewedProducts) {
       console.log('🔍 DEBUG: Frontend previewedProducts content:', JSON.stringify(bulkData.previewedProducts, null, 2));
+    } else {
+      console.log('🔍 DEBUG: No previewedProducts sent - will use backend auto-selection');
     }
 
     startAutomatedBulkMutation.mutate(bulkData);
