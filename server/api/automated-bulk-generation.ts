@@ -84,7 +84,18 @@ const AFFILIATE_ID = "sgottshall107-20";
 // Start automated bulk generation with trending product auto-selection
 export async function startAutomatedBulkGeneration(req: Request, res: Response) {
   try {
+    console.log('🔍 DEBUG: Received request body keys:', Object.keys(req.body));
+    console.log('🔍 DEBUG: previewedProducts in request:', req.body.previewedProducts ? 'YES' : 'NO');
+    if (req.body.previewedProducts) {
+      console.log('🔍 DEBUG: previewedProducts content:', JSON.stringify(req.body.previewedProducts, null, 2));
+    }
+    
     const validatedData = automatedBulkSchema.parse(req.body);
+    
+    console.log('🔍 DEBUG: After validation - previewedProducts:', validatedData.previewedProducts ? 'YES' : 'NO');
+    if (validatedData.previewedProducts) {
+      console.log('🔍 DEBUG: Validated previewedProducts:', JSON.stringify(validatedData.previewedProducts, null, 2));
+    }
     
     // Generate unique job ID
     const jobId = `auto_bulk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -95,7 +106,7 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
     
     // If previewed products are provided, use them exactly as shown
     if (validatedData.previewedProducts && Object.keys(validatedData.previewedProducts).length > 0) {
-      console.log(`🎯 Using previewed products from frontend...`);
+      console.log(`🎯 Using previewed products from frontend with ${Object.keys(validatedData.previewedProducts).length} products...`);
       
       for (const niche of validatedData.selectedNiches) {
         const previewedProduct = validatedData.previewedProducts[niche];

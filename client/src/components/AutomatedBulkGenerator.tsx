@@ -249,6 +249,11 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       previewedProducts: showPreview && Object.keys(previewProducts).length > 0 ? previewProducts : undefined,
     };
 
+    console.log('🔍 DEBUG: Frontend sending bulkData with previewedProducts:', bulkData.previewedProducts ? 'YES' : 'NO');
+    if (bulkData.previewedProducts) {
+      console.log('🔍 DEBUG: Frontend previewedProducts content:', JSON.stringify(bulkData.previewedProducts, null, 2));
+    }
+
     startAutomatedBulkMutation.mutate(bulkData);
   };
 
