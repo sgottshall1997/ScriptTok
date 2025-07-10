@@ -41,6 +41,7 @@ import affiliateNetworksRouter from "./api/affiliate-networks";
 import perplexityTrendsRouter from "./api/perplexity-trends";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
+import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/spartan-content";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
@@ -546,6 +547,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
     startAutomatedBulkGeneration(req, res);
   });
   app.get('/api/automated-bulk/details/:jobId', getBulkJobDetails);
+  
+  // Spartan content generation endpoints
+  app.post('/api/spartan/generate', generateSpartanFormatContent);
+  app.get('/api/spartan/availability', checkSpartanAvailability);
   
   // Performance Analytics & ROI Tracking
 

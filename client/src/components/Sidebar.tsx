@@ -72,6 +72,7 @@ const sidebarData: SidebarCategory[] = [
     name: "AI Tools",
     items: [
       { name: "AI Trending Picks", href: "/trending-ai-picks", icon: TrendingUp },
+      { name: "Spartan Generator", href: "/spartan-generator", icon: Zap },
       { name: "AI Model Testing", href: "/ai-model-test", icon: TestTube },
       { name: "Claude Generator", href: "/claude-generator", icon: Bot },
       { name: "Model Configuration", href: "/ai-model-config", icon: Settings },

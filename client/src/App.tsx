@@ -40,6 +40,7 @@ import CrossPlatformScheduling from "@/pages/CrossPlatformScheduling";
 import BulkContentGeneration from "@/pages/BulkContentGeneration";
 import PerformanceAnalytics from "@/pages/PerformanceAnalytics";
 import CompliancePage from "@/pages/CompliancePage";
+import SpartanContentPage from "@/pages/SpartanContentPage";
 
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
@@ -90,6 +91,7 @@ function Router() {
       <Route path="/bulk-content-generation" component={BulkContentGeneration} />
       <Route path="/performance-analytics" component={PerformanceAnalytics} />
       <Route path="/compliance" component={CompliancePage} />
+      <Route path="/spartan-generator" component={SpartanContentPage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
