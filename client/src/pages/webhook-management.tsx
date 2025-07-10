@@ -198,7 +198,14 @@ export default function WebhookManagement() {
       });
       return;
     }
-    updateWebhookMutation.mutate({ niche, config });
+    
+    // Auto-enable webhook when saving with URL
+    const configToSave = {
+      ...config,
+      enabled: config.webhookUrl.trim() ? true : config.enabled
+    };
+    
+    updateWebhookMutation.mutate({ niche, config: configToSave });
   };
 
   const getStatsForNiche = (niche: string): WebhookStats | undefined => {
