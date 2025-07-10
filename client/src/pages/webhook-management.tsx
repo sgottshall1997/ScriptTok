@@ -63,25 +63,18 @@ export default function WebhookManagement() {
       const response = await fetch('/api/niche-webhooks');
       if (!response.ok) throw new Error('Failed to fetch webhooks');
       return response.json();
+    },
+    onSuccess: (data) => {
+      const configs = { ...webhookConfigs };
+      Object.keys(data).forEach(niche => {
+        configs[niche] = {
+          ...configs[niche],
+          ...data[niche]
+        };
+      });
+      setWebhookConfigs(configs);
     }
   });
-
-  // Update local state when webhook data changes
-  useEffect(() => {
-    if (existingWebhooks) {
-      setWebhookConfigs(prev => {
-        const configs = { ...prev };
-        Object.keys(existingWebhooks).forEach(niche => {
-          configs[niche] = {
-            niche,
-            webhookUrl: existingWebhooks[niche].url || '',
-            enabled: existingWebhooks[niche].enabled || false
-          };
-        });
-        return configs;
-      });
-    }
-  }, [existingWebhooks]);
 
   // Fetch webhook statistics
   const { data: webhookStats } = useQuery({
@@ -205,14 +198,7 @@ export default function WebhookManagement() {
       });
       return;
     }
-    
-    // Auto-enable webhook when saving with URL
-    const configToSave = {
-      ...config,
-      enabled: config.webhookUrl.trim() ? true : config.enabled
-    };
-    
-    updateWebhookMutation.mutate({ niche, config: configToSave });
+    updateWebhookMutation.mutate({ niche, config });
   };
 
   const getStatsForNiche = (niche: string): WebhookStats | undefined => {

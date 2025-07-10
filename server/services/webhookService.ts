@@ -144,30 +144,17 @@ export const sendNicheWebhook = async (
   payload: any
 ): Promise<{ success: boolean; message: string }> => {
   try {
-    console.log(`🚀 Attempting to send niche webhook for: ${niche}`);
-    
     const nicheWebhookConfigs = await getNicheWebhooks();
     const webhookConfig = nicheWebhookConfigs[niche.toLowerCase()];
     
-    console.log(`📋 Retrieved webhook config for ${niche}:`, {
-      hasConfig: !!webhookConfig,
-      hasUrl: !!(webhookConfig?.url),
-      enabled: webhookConfig?.enabled,
-      url: webhookConfig?.url ? `${webhookConfig.url.substring(0, 50)}...` : 'N/A'
-    });
-    
     if (!webhookConfig || !webhookConfig.enabled || !webhookConfig.url) {
-      console.log(`⚠️ Niche webhook not configured for ${niche}, falling back to legacy webhook`);
+      // Fallback to legacy webhook for backwards compatibility
       return sendLegacyWebhook(payload);
     }
 
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-      'User-Agent': 'GlowBot/1.0'
+      'Content-Type': 'application/json'
     };
-
-    console.log(`📤 Sending to niche webhook URL: ${webhookConfig.url}`);
-    console.log(`📋 Payload being sent:`, JSON.stringify(payload, null, 2));
 
     const response = await axios.post(webhookConfig.url, payload, { 
       headers,
@@ -178,11 +165,10 @@ export const sendNicheWebhook = async (
     await updateWebhookStats(niche, true);
     
     console.log(`✅ Niche webhook sent successfully for ${niche} to ${webhookConfig.url}`);
-    console.log(`📊 Response status: ${response.status}, data:`, response.data);
     
     return {
       success: true,
-      message: `Niche webhook delivered successfully for ${niche}. Status: ${response.status}. Response: ${JSON.stringify(response.data)}`
+      message: `Niche webhook delivered successfully for ${niche}. Status: ${response.status}`
     };
   } catch (error) {
     console.error(`❌ Error sending niche webhook for ${niche}:`, error);
@@ -190,18 +176,9 @@ export const sendNicheWebhook = async (
     // Update failure count
     await updateWebhookStats(niche, false);
     
-    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-    const axiosError = error as any;
-    
-    let detailedMessage = `Niche webhook failed for ${niche}: ${errorMessage}`;
-    
-    if (axiosError?.response) {
-      detailedMessage += ` (HTTP ${axiosError.response.status}: ${axiosError.response.statusText})`;
-    }
-    
     return {
       success: false,
-      message: detailedMessage
+      message: `Niche webhook failed for ${niche}: ${error instanceof Error ? error.message : 'Unknown error'}`
     };
   }
 };
@@ -448,59 +425,18 @@ const updateWebhookStats = async (niche: string, success: boolean): Promise<void
  * Test webhook connection for a specific niche
  */
 export const testNicheWebhook = async (niche: string): Promise<{ success: boolean; message: string }> => {
-  try {
-    console.log(`🧪 Testing webhook for niche: ${niche}`);
-    
-    // Get current webhook configuration
-    const nicheWebhookConfigs = await getNicheWebhooks();
-    const webhookConfig = nicheWebhookConfigs[niche.toLowerCase()];
-    
-    console.log(`📋 Webhook config for ${niche}:`, webhookConfig);
-    
-    if (!webhookConfig || !webhookConfig.url) {
-      return {
-        success: false,
-        message: `No webhook URL configured for ${niche} niche. Please add a webhook URL first.`
-      };
+  const testPayload = {
+    event_type: 'webhook_test',
+    timestamp: new Date().toISOString(),
+    niche: niche,
+    message: `Test webhook for ${niche} niche`,
+    test_data: {
+      product: 'Test Product',
+      content: 'This is a test webhook payload'
     }
-    
-    if (!webhookConfig.enabled) {
-      // Auto-enable webhook for testing
-      console.log(`🔧 Auto-enabling webhook for ${niche} during test`);
-      await updateNicheWebhook(niche.toLowerCase(), webhookConfig.url, true);
-    }
-    
-    const testPayload = {
-      event_type: 'webhook_test',
-      timestamp: new Date().toISOString(),
-      niche: niche,
-      message: `Test webhook for ${niche} niche from GlowBot`,
-      test_data: {
-        product: `Test ${niche} Product`,
-        content: 'This is a test webhook payload to verify connectivity',
-        platform: 'Test Platform',
-        url: webhookConfig.url
-      }
-    };
-    
-    console.log(`📤 Sending test payload to ${niche} webhook:`, JSON.stringify(testPayload, null, 2));
-    
-    const result = await sendNicheWebhook(niche, testPayload);
-    
-    if (result.success) {
-      console.log(`✅ Test successful for ${niche} niche webhook`);
-    } else {
-      console.log(`❌ Test failed for ${niche} niche webhook:`, result.message);
-    }
-    
-    return result;
-  } catch (error) {
-    console.error(`🚨 Error testing webhook for ${niche}:`, error);
-    return {
-      success: false,
-      message: `Test failed with error: ${error instanceof Error ? error.message : 'Unknown error'}`
-    };
-  }
+  };
+  
+  return sendNicheWebhook(niche, testPayload);
 };
 
 /**
@@ -511,30 +447,23 @@ export const sendMultiPlatformWebhook = async (data: {
   productName: string;
   platforms: string[];
   content: any;
-  platformCaptions?: any;
   affiliateLink?: string;
   metadata?: any;
-  imageUrl?: string;
 }): Promise<{ success: boolean; message: string }> => {
-  // Create the new payload structure as specified
   const payload = {
     event_type: 'content_generated',
+    timestamp: new Date().toISOString(),
     niche: data.niche,
-    script: data.content?.mainContent || data.content?.script || data.content?.fullOutput || 'Generated content will appear here...',
-    instagramCaption: data.platformCaptions?.Instagram || data.platformCaptions?.instagram || '✨ Must-have item! #amazonfinds',
-    tiktokCaption: data.platformCaptions?.TikTok || data.platformCaptions?.tiktok || 'This product changed everything 😍 #trending',
-    xCaption: data.platformCaptions?.X || data.platformCaptions?.Twitter || data.platformCaptions?.twitter || 'Top trending pick 🔥 #ad',
-    facebookCaption: data.platformCaptions?.Facebook || data.platformCaptions?.facebook || 'See why everyone\'s buying this 🔗',
-    affiliateLink: data.affiliateLink || 'https://amzn.to/example123',
-    product: data.productName || 'Product Name',
-    imageUrl: data.imageUrl || 'https://example.com/image.jpg',
-    tone: data.metadata?.tone || 'professional',
-    template: data.metadata?.template || data.metadata?.templateType || 'standard',
-    postType: data.metadata?.postType || 'reel',
-    timestamp: new Date().toISOString()
+    product_name: data.productName,
+    platforms: data.platforms,
+    content: data.content,
+    affiliate_link: data.affiliateLink,
+    metadata: {
+      ...data.metadata,
+      generation_timestamp: new Date().toISOString(),
+      webhook_version: '2.0'
+    }
   };
-  
-  console.log(`📤 Sending new webhook payload format for ${data.niche}:`, JSON.stringify(payload, null, 2));
   
   return sendNicheWebhook(data.niche, payload);
 };
