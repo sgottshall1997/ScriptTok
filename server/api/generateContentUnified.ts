@@ -201,36 +201,31 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       try {
         console.log(`📤 Sending content to ${config.niche} niche webhook for platforms: ${config.platforms.join(', ')}`);
         
-        // Import niche webhook function
-        const { sendNicheWebhook } = require('../services/webhookService');
+        // Import new webhook function
+        const { sendMultiPlatformWebhook } = require('../services/webhookService');
         
-        // Create comprehensive payload for niche-specific webhook
-        const nichePayload = {
-          event_type: 'content_generated',
-          timestamp: new Date().toISOString(),
+        // Send to niche-specific webhook with new payload format
+        const nicheResult = await sendMultiPlatformWebhook({
           niche: config.niche,
-          product_name: config.productName,
+          productName: config.productName,
           platforms: config.platforms,
           content: {
-            main_content: mainContent.content,
-            hook: config.customHook || viralInspiration?.hook || `Amazing ${config.productName}!`,
-            platform_captions: platformCaptions,
-            hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending']
+            mainContent: mainContent.content,
+            script: mainContent.content,
+            fullOutput: mainContent.content
           },
-          affiliate_link: config.affiliateUrl,
+          platformCaptions: platformCaptions,
+          affiliateLink: config.affiliateUrl,
           metadata: {
             tone: config.tone,
             template: config.templateType,
-            use_smart_style: config.useSmartStyle || false,
-            generation_mode: config.mode || 'manual',
-            session_id: config.jobId || `single_${Date.now()}`,
-            generation_timestamp: new Date().toISOString(),
-            webhook_version: '2.0'
-          }
-        };
-
-        // Send to niche-specific webhook first
-        const nicheResult = await sendNicheWebhook(config.niche, nichePayload);
+            templateType: config.templateType,
+            postType: 'reel',
+            useSmartStyle: config.useSmartStyle || false,
+            generationMode: config.mode || 'manual'
+          },
+          imageUrl: config.imageUrl || 'https://example.com/image.jpg'
+        });
         
         if (nicheResult.success) {
           console.log(`✅ Niche webhook sent successfully for ${config.niche}`);

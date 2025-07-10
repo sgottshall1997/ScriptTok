@@ -511,23 +511,30 @@ export const sendMultiPlatformWebhook = async (data: {
   productName: string;
   platforms: string[];
   content: any;
+  platformCaptions?: any;
   affiliateLink?: string;
   metadata?: any;
+  imageUrl?: string;
 }): Promise<{ success: boolean; message: string }> => {
+  // Create the new payload structure as specified
   const payload = {
     event_type: 'content_generated',
-    timestamp: new Date().toISOString(),
     niche: data.niche,
-    product_name: data.productName,
-    platforms: data.platforms,
-    content: data.content,
-    affiliate_link: data.affiliateLink,
-    metadata: {
-      ...data.metadata,
-      generation_timestamp: new Date().toISOString(),
-      webhook_version: '2.0'
-    }
+    script: data.content?.mainContent || data.content?.script || data.content?.fullOutput || 'Generated content will appear here...',
+    instagramCaption: data.platformCaptions?.Instagram || data.platformCaptions?.instagram || '✨ Must-have item! #amazonfinds',
+    tiktokCaption: data.platformCaptions?.TikTok || data.platformCaptions?.tiktok || 'This product changed everything 😍 #trending',
+    xCaption: data.platformCaptions?.X || data.platformCaptions?.Twitter || data.platformCaptions?.twitter || 'Top trending pick 🔥 #ad',
+    facebookCaption: data.platformCaptions?.Facebook || data.platformCaptions?.facebook || 'See why everyone\'s buying this 🔗',
+    affiliateLink: data.affiliateLink || 'https://amzn.to/example123',
+    product: data.productName || 'Product Name',
+    imageUrl: data.imageUrl || 'https://example.com/image.jpg',
+    tone: data.metadata?.tone || 'professional',
+    template: data.metadata?.template || data.metadata?.templateType || 'standard',
+    postType: data.metadata?.postType || 'reel',
+    timestamp: new Date().toISOString()
   };
+  
+  console.log(`📤 Sending new webhook payload format for ${data.niche}:`, JSON.stringify(payload, null, 2));
   
   return sendNicheWebhook(data.niche, payload);
 };
