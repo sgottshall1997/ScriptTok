@@ -16,6 +16,7 @@ import BulkJobsList from './BulkJobsList';
 import AutomatedBulkJobsList from './AutomatedBulkJobsList';
 import { ComplianceWrapper } from './ComplianceWrapper';
 import { FTCCompliantContentGenerator } from './FTCCompliantContentGenerator';
+import WebhookDebugPanel from './WebhookDebugPanel';
 
 // Single Product Generator Component (like original Content Generator but simpler)
 const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) => void }> = ({ onContentGenerated }) => {
@@ -545,6 +546,11 @@ const UnifiedContentGenerator: React.FC = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Webhook Debug Panel */}
+      <div className="mt-8">
+        <WebhookDebugPanel />
+      </div>
 
       {/* Results Display */}
       {generationResults.length > 0 && (

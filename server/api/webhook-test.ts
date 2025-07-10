@@ -37,7 +37,19 @@ router.post('/', async (req, res) => {
       timestamp: new Date().toISOString()
     };
     
-    console.log('📤 Sending new format test webhook to Make.com:', JSON.stringify(testPayload, null, 2));
+    // Enhanced logging with timestamp and highlighted fields
+    const timestamp = new Date().toLocaleString();
+    console.log(`\n🚀 [${timestamp}] WEBHOOK TEST PAYLOAD TO MAKE.COM`);
+    console.log('━'.repeat(80));
+    console.log(`📤 Event Type: ${testPayload.event_type}`);
+    console.log(`🎯 Niche: ${testPayload.niche}`);
+    console.log(`📝 Script Preview: ${testPayload.script.substring(0, 100)}...`);
+    console.log(`🔗 Product: ${testPayload.product}`);
+    console.log(`💰 Affiliate Link: ${testPayload.affiliateLink ? 'Yes' : 'No'}`);
+    console.log('━'.repeat(80));
+    console.log('📋 COMPLETE TEST PAYLOAD:');
+    console.log(JSON.stringify(testPayload, null, 2));
+    console.log('━'.repeat(80));
     
     // Send directly to webhook URL
     const response = await axios.post(config.url, testPayload, {

@@ -161,14 +161,19 @@ export class WebhookService {
           timestamp: new Date().toISOString()
         };
 
-        console.log(`📤 Sending ${platform} content to Make.com:`, {
-          platform,
-          postType: newPayload.postType,
-          event_type: newPayload.event_type,
-          product: newPayload.product
-        });
-        
-        console.log('📋 Full payload being sent to Make.com:', JSON.stringify(newPayload, null, 2));
+        // Enhanced logging with timestamp and highlighted fields
+        const timestamp = new Date().toLocaleString();
+        console.log(`\n🚀 [${timestamp}] WEBHOOK PAYLOAD TO MAKE.COM`);
+        console.log('━'.repeat(80));
+        console.log(`📤 Platform: ${platform}`);
+        console.log(`🎯 Niche: ${newPayload.niche}`);
+        console.log(`📝 Script Preview: ${newPayload.script.substring(0, 100)}...`);
+        console.log(`🔗 Product: ${newPayload.product}`);
+        console.log(`💰 Affiliate Link: ${newPayload.affiliateLink ? 'Yes' : 'No'}`);
+        console.log('━'.repeat(80));
+        console.log('📋 COMPLETE PAYLOAD:');
+        console.log(JSON.stringify(newPayload, null, 2));
+        console.log('━'.repeat(80));
 
         const response = await axios.post(webhookUrl, newPayload, {
           headers: {
