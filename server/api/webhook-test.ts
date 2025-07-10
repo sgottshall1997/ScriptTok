@@ -19,38 +19,25 @@ router.post('/', async (req, res) => {
       });
     }
     
-    // Create CSV-compatible test payload with exact field order and alternative field names
+    // Create test payload using your new simplified JSON format
     const testPayload = {
-      // CSV Headers in exact order: Timestamp,Product,Niche,Platform,Tone,Template,useSmartStyle,Full Output,TikTok Caption,IG Caption,YT Caption,X Caption,TikTok Rating,IG Rating,YT Rating,X Rating,Full Output Rating,TopRatedStyleUsed,postType,hashtags,source,Affiliate Link
-      
-      Timestamp: new Date().toISOString(),
-      Product: "Hero My First Serum 1.69 fl oz",
-      Niche: "beauty",
-      Platform: "tiktok",
-      Tone: "Enthusiastic",
-      Template: "Short-Form Video Script",
-      useSmartStyle: false,
-      'Full Output': "POV: You discover the ultimate glow-up serum! 🌟 This Hero My First Serum is absolutely life-changing for beginner skincare routines. The lightweight formula absorbs instantly and leaves your skin feeling incredible...",
-      'TikTok Caption': "POV: you found the holy grail skincare for beginners ✨ Hero My First Serum is giving me LIFE 🙌 #skincare #glowup #beauty",
-      'IG Caption': "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",
-      'YT Caption': "*Here's why Hero My First Serum is perfect for skincare beginners* - lightweight formula that won't overwhelm sensitive skin #skincare #beauty #tutorial",
-      'X Caption': "Plot twist: the best beginner serum was from Hero all along 💫 This changed my entire skincare game #skincare",
-      'TikTok Rating': '',
-      'IG Rating': '',
-      'YT Rating': '',
-      'X Rating': '',
-      'Full Output Rating': '',
-      TopRatedStyleUsed: '',
-      postType: 'content',
-      hashtags: '#skincare #glowup #beauty #viral',
-      source: 'GlowBot',
-      'Affiliate Link': 'https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20',
-      // Alternative field names in case Make.com has field mapping issues
-      AffiliateLink: 'https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20',
-      affiliate_link: 'https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20'
+      event_type: "content_generated",
+      niche: "beauty",
+      script: "POV: You discover the ultimate glow-up serum! 🌟 This Hero My First Serum is absolutely life-changing for beginner skincare routines. The lightweight formula absorbs instantly and leaves your skin feeling incredible. Perfect for anyone just starting their skincare journey!",
+      instagramCaption: "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",
+      tiktokCaption: "POV: you found the holy grail skincare for beginners ✨ Hero My First Serum is giving me LIFE 🙌 #skincare #glowup #beauty",
+      xCaption: "Plot twist: the best beginner serum was from Hero all along 💫 This changed my entire skincare game #skincare",
+      facebookCaption: "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",
+      affiliateLink: "https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20",
+      product: "Hero My First Serum 1.69 fl oz",
+      imageUrl: "https://example.com/hero-serum-image.jpg",
+      tone: "enthusiastic",
+      template: "short_video_script",
+      postType: "reel",
+      timestamp: new Date().toISOString()
     };
     
-    console.log('📤 Sending CSV-formatted test webhook to Make.com:', JSON.stringify(testPayload, null, 2));
+    console.log('📤 Sending new format test webhook to Make.com:', JSON.stringify(testPayload, null, 2));
     
     // Send directly to webhook URL
     const response = await axios.post(config.url, testPayload, {
@@ -66,7 +53,7 @@ router.post('/', async (req, res) => {
     
     res.json({
       success: true,
-      message: 'CSV-formatted test webhook sent successfully',
+      message: 'New JSON format test webhook sent successfully',
       data: testPayload
     });
     

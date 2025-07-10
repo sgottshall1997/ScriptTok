@@ -588,6 +588,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Tech niche successfully shows 14 total templates including "Unboxing Experience", "Setup Guide", "Hidden Features"
   - ✅ Enhanced automated bulk generator template filtering works flawlessly across all content generation workflows
   - ✅ Template system now operates with 100% accuracy: each niche displays exactly 14 templates with proper categorization
+- July 10, 2025. **Webhook Payload Format Restructure**: Complete migration from complex CSV structure to clean JSON format:
+  - ✅ Replaced complex CSV-compatible payload with simplified JSON structure for Make.com integration
+  - ✅ New webhook payload structure: event_type, niche, script, instagramCaption, tiktokCaption, xCaption, facebookCaption
+  - ✅ Added product, imageUrl, tone, template, postType, timestamp fields for complete automation support
+  - ✅ Updated WebhookService.sendMultiPlatformContent() to use new payload format with proper field mapping
+  - ✅ Enhanced webhook test endpoint to use new JSON structure instead of legacy CSV format
+  - ✅ Dynamic image URL generation with placeholder fallback for products without images
+  - ✅ All content generation workflows now send clean, structured JSON to Make.com automation
 
 ## User Preferences
 

@@ -139,63 +139,38 @@ export class WebhookService {
       const ytCaption = data.platformContent?.youtube?.caption || '';
       const xCaption = data.platformContent?.twitter?.caption || data.platformContent?.x?.caption || '';
 
+      // Send one payload per platform with your new simplified format
       for (const platform of platforms) {
         const platformData = data.platformContent[platform];
-        const scheduledTime = data.platformSchedules[platform] || '';
-
-        // Create comprehensive CSV-compatible payload for Make.com
-        // Field order must match CSV: Timestamp,Product,Niche,Platform,Tone,Template,useSmartStyle,Full Output,TikTok Caption,IG Caption,YT Caption,X Caption,TikTok Rating,IG Rating,YT Rating,X Rating,Full Output Rating,TopRatedStyleUsed,postType,hashtags,source,Affiliate Link
-        const flatPayload = {
-          // Core CSV Fields (exact order and case as CSV header)
-          Timestamp: new Date().toISOString(),
-          Product: data.metadata?.product || data.metadata?.productName || '',
-          Niche: data.metadata?.niche || '',
-          Platform: platform,
-          Tone: data.metadata?.tone || '',
-          Template: data.metadata?.template || data.metadata?.templateType || '',
-          useSmartStyle: data.metadata?.useSmartStyle || false,
-          
-          // Content Fields
-          'Full Output': data.contentData?.fullOutput || platformData.script || '',
-          'TikTok Caption': tiktokCaption,
-          'IG Caption': igCaption,
-          'YT Caption': ytCaption,
-          'X Caption': xCaption,
-          
-          // Rating Fields (placeholders for user input)
-          'TikTok Rating': '',
-          'IG Rating': '',
-          'YT Rating': '',
-          'X Rating': '',
-          'Full Output Rating': '',
-          TopRatedStyleUsed: data.metadata?.topRatedStyleUsed || '',
-          
-          // Additional required fields
-          postType: platformData.type || 'content',
-          hashtags: Array.isArray(platformData.hashtags) ? platformData.hashtags.join(' ') : '',
-          source: 'GlowBot',
-          'Affiliate Link': data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
-          // Alternative field names for Make.com compatibility
-          AffiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
-          affiliate_link: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
-          
-          // Legacy fields for backward compatibility
-          caption: platformData.caption || '',
-          script: platformData.script || '',
-          postInstructions: platformData.postInstructions || '',
-          scheduledTime: scheduledTime
+        
+        // Create your new simplified JSON payload format
+        const newPayload = {
+          event_type: "content_generated",
+          niche: data.metadata?.niche || '',
+          script: data.contentData?.fullOutput || platformData.script || '',
+          instagramCaption: igCaption,
+          tiktokCaption: tiktokCaption,
+          xCaption: xCaption,
+          facebookCaption: data.platformContent?.facebook?.caption || igCaption, // Use IG caption as fallback for Facebook
+          affiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
+          product: data.metadata?.product || data.metadata?.productName || '',
+          imageUrl: data.metadata?.imageUrl || `https://via.placeholder.com/400x400?text=${encodeURIComponent(data.metadata?.product || 'Product')}`,
+          tone: data.metadata?.tone || '',
+          template: data.metadata?.template || data.metadata?.templateType || '',
+          postType: platformData.type || 'reel',
+          timestamp: new Date().toISOString()
         };
 
         console.log(`📤 Sending ${platform} content to Make.com:`, {
           platform,
-          postType: flatPayload.postType,
-          captionLength: flatPayload.caption.length,
-          hasScheduledTime: !!scheduledTime
+          postType: newPayload.postType,
+          event_type: newPayload.event_type,
+          product: newPayload.product
         });
         
-        console.log('📋 Full payload being sent to Make.com:', JSON.stringify(flatPayload, null, 2));
+        console.log('📋 Full payload being sent to Make.com:', JSON.stringify(newPayload, null, 2));
 
-        const response = await axios.post(webhookUrl, flatPayload, {
+        const response = await axios.post(webhookUrl, newPayload, {
           headers: {
             'Content-Type': 'application/json; charset=utf-8',
             'Accept': 'application/json',
