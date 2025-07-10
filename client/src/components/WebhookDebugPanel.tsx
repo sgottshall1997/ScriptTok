@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 
 interface WebhookPayload {
   event_type: string;
+  platform: string;
   niche: string;
   script: string;
   instagramCaption: string;
@@ -164,7 +165,11 @@ const WebhookDebugPanel: React.FC<WebhookDebugPanelProps> = ({ lastPayload }) =>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+              <div>
+                <span className="font-medium text-gray-700">Platform:</span>
+                <p className="text-purple-700 capitalize">{mostRecentPayload.platform}</p>
+              </div>
               <div>
                 <span className="font-medium text-gray-700">Niche:</span>
                 <p className="text-blue-700">{mostRecentPayload.niche}</p>
@@ -217,6 +222,9 @@ const WebhookDebugPanel: React.FC<WebhookDebugPanelProps> = ({ lastPayload }) =>
                 <div key={payload.timestamp} className="bg-white border border-gray-200 rounded-lg p-3">
                   <div className="flex items-center justify-between">
                     <div className="flex gap-4 text-sm">
+                      <Badge variant="outline" className="text-purple-700 border-purple-300 capitalize">
+                        {payload.platform}
+                      </Badge>
                       <span className="font-medium">{payload.niche}</span>
                       <span className="text-gray-600">{getPayloadPreview(payload).product}</span>
                     </div>

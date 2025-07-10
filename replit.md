@@ -596,6 +596,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Enhanced webhook test endpoint to use new JSON structure instead of legacy CSV format
   - ✅ Dynamic image URL generation with placeholder fallback for products without images
   - ✅ All content generation workflows now send clean, structured JSON to Make.com automation
+- July 10, 2025. **Enhanced Webhook Debugging System**: Complete logging and frontend debugging capabilities:
+  - ✅ Added comprehensive server-side webhook logging with detailed payload breakdown and timestamp highlighting
+  - ✅ Created WebhookDebugPanel component for frontend debugging with payload history storage (last 5 payloads)
+  - ✅ Enhanced webhook test endpoint with detailed console logging showing niche, product, script preview, and affiliate status
+  - ✅ Integrated debug panel into Unified Content Generator for real-time webhook monitoring
+  - ✅ Added "platform" field to webhook payload structure for CSV compatibility (tiktok, instagram, youtube, twitter, other)
+  - ✅ Updated debug panel to display platform information prominently with color-coded badges
+  - ✅ Complete webhook debugging workflow: server console logs + frontend debug panel + payload history + copy functionality
 
 ## User Preferences
 

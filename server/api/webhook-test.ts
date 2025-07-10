@@ -22,6 +22,7 @@ router.post('/', async (req, res) => {
     // Create test payload using your new simplified JSON format
     const testPayload = {
       event_type: "content_generated",
+      platform: "tiktok", // Added platform field
       niche: "beauty",
       script: "POV: You discover the ultimate glow-up serum! 🌟 This Hero My First Serum is absolutely life-changing for beginner skincare routines. The lightweight formula absorbs instantly and leaves your skin feeling incredible. Perfect for anyone just starting their skincare journey!",
       instagramCaption: "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",

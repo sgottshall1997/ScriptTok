@@ -146,6 +146,7 @@ export class WebhookService {
         // Create your new simplified JSON payload format
         const newPayload = {
           event_type: "content_generated",
+          platform: platform, // Added platform field
           niche: data.metadata?.niche || '',
           script: data.contentData?.fullOutput || platformData.script || '',
           instagramCaption: igCaption,
