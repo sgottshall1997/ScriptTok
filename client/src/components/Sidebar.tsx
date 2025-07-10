@@ -97,7 +97,6 @@ const sidebarData: SidebarCategory[] = [
     name: "Integration",
     items: [
       { name: "Webhook Settings", href: "/webhook-settings", icon: Webhook },
-      { name: "Niche Webhooks", href: "/webhook-management", icon: Webhook },
       { name: "API Integration Hub", href: "/api-integration-hub", icon: Zap },
       { name: "Automation Checklist", href: "/btb-status", icon: Activity },
     ]

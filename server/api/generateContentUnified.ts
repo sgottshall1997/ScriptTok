@@ -196,86 +196,47 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
     
-    // Send to niche-specific webhook if platforms are selected
+    // Send to Make.com webhook if platforms are selected
     if (config.platforms && config.platforms.length > 0 && platformCaptions) {
       try {
-        console.log(`📤 Sending content to ${config.niche} niche webhook for platforms: ${config.platforms.join(', ')}`);
+        console.log(`📤 Sending content to Make.com for platforms: ${config.platforms.join(', ')}`);
+        const webhookService = new WebhookService();
         
-        // Import niche webhook function
-        const { sendNicheWebhook } = require('../services/webhookService');
-        
-        // Create comprehensive payload for niche-specific webhook
-        const nichePayload = {
-          event_type: 'content_generated',
-          timestamp: new Date().toISOString(),
-          niche: config.niche,
-          product_name: config.productName,
-          platforms: config.platforms,
-          content: {
-            main_content: mainContent.content,
-            hook: config.customHook || viralInspiration?.hook || `Amazing ${config.productName}!`,
-            platform_captions: platformCaptions,
+        // Create platform content object
+        const platformContent: any = {};
+        config.platforms.forEach(platform => {
+          platformContent[platform] = {
+            caption: platformCaptions[platform] || '',
+            script: mainContent.content,
+            type: 'content',
+            postInstructions: `Post this ${platform} content for ${config.productName}`,
             hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending']
-          },
-          affiliate_link: config.affiliateUrl,
+          };
+        });
+        
+        await webhookService.sendMultiPlatformContent({
+          platformContent,
+          platformSchedules: {},
           metadata: {
+            product: config.productName,
+            productName: config.productName,
+            niche: config.niche,
             tone: config.tone,
             template: config.templateType,
-            use_smart_style: config.useSmartStyle || false,
-            generation_mode: config.mode || 'manual',
-            session_id: config.jobId || `single_${Date.now()}`,
-            generation_timestamp: new Date().toISOString(),
-            webhook_version: '2.0'
+            templateType: config.templateType,
+            useSmartStyle: config.useSmartStyle || false,
+            affiliateUrl: config.affiliateUrl,
+            topRatedStyleUsed: mainContent.topRatedStyleUsed || ''
+          },
+          contentData: {
+            fullOutput: mainContent.content,
+            platformCaptions: platformCaptions,
+            viralInspiration: viralInspiration
           }
-        };
-
-        // Send to niche-specific webhook first
-        const nicheResult = await sendNicheWebhook(config.niche, nichePayload);
-        
-        if (nicheResult.success) {
-          console.log(`✅ Niche webhook sent successfully for ${config.niche}`);
-        } else {
-          console.log(`⚠️ Niche webhook failed for ${config.niche}, falling back to legacy webhook`);
-          
-          // Fallback to existing webhook service if niche-specific fails
-          const webhookService = new WebhookService();
-          
-          // Create platform content object for legacy webhook
-          const platformContent: any = {};
-          config.platforms.forEach(platform => {
-            platformContent[platform] = {
-              caption: platformCaptions[platform] || '',
-              script: mainContent.content,
-              type: 'content',
-              postInstructions: `Post this ${platform} content for ${config.productName}`,
-              hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending']
-            };
-          });
-          
-          await webhookService.sendMultiPlatformContent({
-            platformContent,
-            platformSchedules: {},
-            metadata: {
-              product: config.productName,
-              productName: config.productName,
-              niche: config.niche,
-              tone: config.tone,
-              template: config.templateType,
-              templateType: config.templateType,
-              useSmartStyle: config.useSmartStyle || false,
-              affiliateUrl: config.affiliateUrl,
-              topRatedStyleUsed: mainContent.topRatedStyleUsed || ''
-            },
-            contentData: {
-              fullOutput: mainContent.content,
-              platformCaptions: platformCaptions,
-              viralInspiration: viralInspiration
-            }
-          });
-          console.log(`✅ Legacy webhook sent successfully as fallback`);
-        }
+        });
+        console.log(`✅ Content sent to Make.com successfully`);
       } catch (webhookError) {
-        console.error(`❌ All webhook methods failed (continuing without webhook):`, webhookError);
+        console.error(`⚠️ Webhook failed but content generation succeeded:`, webhookError);
         // Don't fail the whole request if webhook fails
       }
     }

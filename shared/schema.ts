@@ -439,19 +439,6 @@ export const trendingEmojisHashtags = pgTable("trending_emojis_hashtags", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-// Niche-specific webhook configurations
-export const nicheWebhooks = pgTable("niche_webhooks", {
-  id: serial("id").primaryKey(),
-  niche: text("niche").notNull().unique(), // beauty, tech, fitness, fashion, food, travel, pets
-  webhookUrl: text("webhook_url").notNull(),
-  enabled: boolean("enabled").notNull().default(true),
-  lastUsed: timestamp("last_used"),
-  successCount: integer("success_count").notNull().default(0),
-  failureCount: integer("failure_count").notNull().default(0),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
-
 // Enhanced Content generation history for tracking and analytics
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),
@@ -723,12 +710,6 @@ export const insertApiUsageSchema = createInsertSchema(apiUsage).pick({
   userId: true,
 });
 
-export const insertNicheWebhookSchema = createInsertSchema(nicheWebhooks).pick({
-  niche: true,
-  webhookUrl: true,
-  enabled: true,
-});
-
 export const insertContentOptimizationSchema = createInsertSchema(contentOptimizations).pick({
   contentId: true,
   readabilityScore: true,
@@ -948,9 +929,6 @@ export type InsertMarketingAutomation = z.infer<typeof insertMarketingAutomation
 
 export type TrendingEmojisHashtags = typeof trendingEmojisHashtags.$inferSelect;
 export type InsertTrendingEmojisHashtags = z.infer<typeof insertTrendingEmojisHashtagsSchema>;
-
-export type NicheWebhook = typeof nicheWebhooks.$inferSelect;
-export type InsertNicheWebhook = z.infer<typeof insertNicheWebhookSchema>;
 
 export const insertContentHistorySchema = createInsertSchema(contentHistory).pick({
   userId: true,
