@@ -62,6 +62,7 @@ import {
 
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
 import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
+import { registerNicheWebhookRoutes } from "./api/niche-webhooks";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -554,6 +555,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/create-redirect', createRedirect);
   app.get('/r/:id', handleRedirect);
   app.get('/api/redirect-stats', getRedirectStats);
+
+  // Niche-specific webhook management
+  registerNicheWebhookRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;

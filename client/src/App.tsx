@@ -31,6 +31,7 @@ import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
 import ApiIntegrationHubPage from "@/pages/api-integration-hub";
 import WebhookSettings from "@/pages/WebhookSettings";
+import WebhookManagement from "@/pages/webhook-management";
 import GenerateContent from "@/pages/GenerateContent";
 import UnifiedContentGeneration from "@/pages/UnifiedContentGeneration";
 import ClickTracking from "@/pages/ClickTracking";
@@ -81,6 +82,7 @@ function Router() {
       <Route path="/emoji-hashtag-test" component={EmojiHashtagTestPage} />
       <Route path="/api-integration-hub" component={ApiIntegrationHubPage} />
       <Route path="/webhook-settings" component={WebhookSettings} />
+      <Route path="/webhook-management" component={WebhookManagement} />
       <Route path="/click-tracking" component={ClickTracking} />
       <Route path="/btb-status" component={BTBStatus} />
       <Route path="/trending-ai-picks" component={TrendingAIPicks} />
