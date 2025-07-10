@@ -42,6 +42,19 @@ export const TEMPLATE_METADATA: Record<TemplateType, TemplateMetadata> = {
     usesProduct: true,
     contentType: 'product-focused'
   },
+  'spartan_video_script': {
+    id: 'spartan_video_script',
+    name: 'Spartan Video Script',
+    description: 'Direct, no-fluff video script (120 words max)',
+    category: 'Universal',
+    icon: '⚡',
+    platforms: ['TikTok', 'Instagram', 'YouTube'],
+    estimatedLength: '120 words max',
+    useCase: 'Professional, concise content without filler',
+    example: 'Strong hook + factual content + direct CTA',
+    usesProduct: true,
+    contentType: 'product-focused'
+  },
   'influencer_caption': {
     id: 'influencer_caption',
     name: 'Influencer Caption',

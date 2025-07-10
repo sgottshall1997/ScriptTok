@@ -4,6 +4,7 @@
 export const UNIVERSAL_TEMPLATE_TYPES = [
   "seo_blog",           // SEO Blog Post (1000+ words, keyword-optimized)
   "short_video",        // Short-Form Video Script (TikTok, Reels, YT Shorts)
+  "spartan_video_script", // Spartan Video Script (Direct, no-fluff, 120 words max)
   "influencer_caption", // Influencer Caption (with hashtags, emojis, CTAs)
   "product_comparison", // Product Comparison (X vs Y, Pros/Cons breakdown)
   "bullet_points",      // Bullet-Point Summary (for newsletters or carousel posts)

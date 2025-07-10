@@ -45,6 +45,7 @@ const unifiedGenerationSchema = z.object({
   affiliateUrl: z.string().optional(),
   customHook: z.string().optional(),
   useSmartStyle: z.boolean().default(false),
+  useSpartanFormat: z.boolean().default(false),
   
   // Bulk/automated fields
   products: z.array(z.object({
@@ -77,6 +78,7 @@ interface GenerationConfig {
   affiliateUrl?: string;
   customHook?: string;
   useSmartStyle: boolean;
+  useSpartanFormat: boolean;
   mode: 'manual' | 'automated';
   jobId?: string;
 }
@@ -114,17 +116,52 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       console.log('Viral inspiration fetch failed, continuing without it');
     }
 
-    // Generate main content
-    const mainContent = await generateContent(
-      config.productName,
-      config.templateType as any,
-      config.tone as any,
-      trendingProductsData,
-      config.niche as any,
-      "gpt-4o",
-      viralInspiration,
-      config.useSmartStyle ? { useSmartStyle: true } : undefined
-    );
+    // Check if Spartan format should be used
+    const shouldUseSpartan = config.useSpartanFormat;
+    
+    // Generate main content with Spartan format if enabled
+    let mainContent;
+    if (shouldUseSpartan) {
+      // Use Spartan content generation for main content
+      const { generateSpartanContent } = await import('../services/spartanContentGenerator');
+      const spartanContentType = config.templateType === 'spartan_video_script' ? 'spartanVideoScript' : 'shortCaptionSpartan';
+      
+      const spartanResult = await generateSpartanContent({
+        productName: config.productName,
+        niche: config.niche,
+        contentType: spartanContentType,
+        useSpartanFormat: true,
+        additionalContext: `Template: ${config.templateType}`
+      });
+      
+      if (spartanResult.success) {
+        mainContent = spartanResult.content;
+      } else {
+        // Fallback to regular generation if Spartan fails
+        mainContent = await generateContent(
+          config.productName,
+          config.templateType as any,
+          config.tone as any,
+          trendingProductsData,
+          config.niche as any,
+          "gpt-4o",
+          config.useSmartStyle,
+          viralInspiration
+        );
+      }
+    } else {
+      // Standard content generation
+      mainContent = await generateContent(
+        config.productName,
+        config.templateType as any,
+        config.tone as any,
+        trendingProductsData,
+        config.niche as any,
+        "gpt-4o",
+        viralInspiration,
+        config.useSmartStyle ? { useSmartStyle: true } : undefined
+      );
+    }
 
     // Generate platform-specific captions if platforms are specified
     let platformCaptions: Record<string, string> = {};
@@ -139,19 +176,20 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         platforms: config.platforms,
         tone: config.tone,
         niche: config.niche,
-        mainContent: mainContent.content,
+        mainContent: typeof mainContent === 'string' ? mainContent : mainContent.content,
         viralInspiration,
-        affiliateId
+        affiliateId,
+        useSpartanFormat: shouldUseSpartan
       });
     }
 
     // Estimate video duration
     const videoDuration = config.contentType === "video" ? 
-      estimateVideoDuration(mainContent.content, config.videoDuration) : undefined;
+      estimateVideoDuration(typeof mainContent === 'string' ? mainContent : mainContent.content, config.videoDuration) : undefined;
 
     // Create response structure
     const result = {
-      content: mainContent.content,
+      content: typeof mainContent === 'string' ? mainContent : mainContent.content,
       productName: config.productName,
       niche: config.niche,
       templateType: config.templateType,
@@ -162,9 +200,9 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       viralInspiration,
       affiliateUrl: config.affiliateUrl,
       customHook: config.customHook,
-      model: mainContent.model || "gpt-4o",
-      tokens: mainContent.tokens || 0,
-      fallbackLevel: mainContent.fallbackLevel || 'exact',
+      model: (typeof mainContent === 'string') ? "gpt-4o" : (mainContent.model || "gpt-4o"),
+      tokens: (typeof mainContent === 'string') ? 0 : (mainContent.tokens || 0),
+      fallbackLevel: (typeof mainContent === 'string') ? 'exact' : (mainContent.fallbackLevel || 'exact'),
       generatedAt: new Date().toISOString()
     };
 
@@ -177,12 +215,12 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       tone: config.tone,
       productName: config.productName,
       promptText: `Generated ${config.templateType} content for ${config.productName} in ${config.niche} niche using ${config.tone} tone`,
-      outputText: mainContent.content,
+      outputText: typeof mainContent === 'string' ? mainContent : mainContent.content,
       platformsSelected: config.platforms,
       generatedOutput: {
         hook: config.customHook || viralInspiration?.hook || `Amazing ${config.productName}!`,
         niche: config.niche,
-        content: mainContent.content,
+        content: typeof mainContent === 'string' ? mainContent : mainContent.content,
         platformCaptions,
         hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending'],
         callToAction: `Get your ${config.productName} now!`,
@@ -190,8 +228,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       },
       affiliateLink: config.affiliateUrl,
       viralInspo: viralInspiration,
-      modelUsed: mainContent.model || "gpt-4o",
-      tokenCount: mainContent.tokens || 0
+      modelUsed: (typeof mainContent === 'string') ? "gpt-4o" : (mainContent.model || "gpt-4o"),
+      tokenCount: (typeof mainContent === 'string') ? 0 : (mainContent.tokens || 0)
     });
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
@@ -207,7 +245,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         config.platforms.forEach(platform => {
           platformContent[platform] = {
             caption: platformCaptions[platform] || '',
-            script: mainContent.content,
+            script: typeof mainContent === 'string' ? mainContent : mainContent.content,
             type: 'content',
             postInstructions: `Post this ${platform} content for ${config.productName}`,
             hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending']
@@ -226,10 +264,10 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
             templateType: config.templateType,
             useSmartStyle: config.useSmartStyle || false,
             affiliateUrl: config.affiliateUrl,
-            topRatedStyleUsed: mainContent.topRatedStyleUsed || ''
+            topRatedStyleUsed: (typeof mainContent === 'string') ? '' : (mainContent.topRatedStyleUsed || '')
           },
           contentData: {
-            fullOutput: mainContent.content,
+            fullOutput: typeof mainContent === 'string' ? mainContent : mainContent.content,
             platformCaptions: platformCaptions,
             viralInspiration: viralInspiration
           }
@@ -307,6 +345,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
           affiliateUrl: data.affiliateUrl,
           customHook: data.customHook,
           useSmartStyle: data.useSmartStyle,
+          useSpartanFormat: data.useSpartanFormat,
           mode: 'manual',
           jobId
         });
@@ -326,6 +365,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
                 contentType: data.contentType || 'video',
                 affiliateUrl: product.affiliateUrl || data.affiliateUrl,
                 useSmartStyle: data.useSmartStyle,
+                useSpartanFormat: data.useSpartanFormat,
                 mode: 'manual',
                 jobId
               });
@@ -374,6 +414,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
               contentType: 'video',
               affiliateUrl: product.affiliateUrl,
               useSmartStyle: data.useSmartStyle,
+              useSpartanFormat: data.useSpartanFormat,
               mode: 'automated',
               jobId
             });

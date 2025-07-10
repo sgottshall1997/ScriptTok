@@ -62,15 +62,26 @@ export async function generatePlatformCaptions(params: {
   bestRatedStyle?: any;
   enforceCaptionUniqueness?: boolean;
   affiliateId?: string;
+  useSpartanFormat?: boolean;
 }): Promise<Record<string, string>> {
-  const { productName, platforms, tone, niche, mainContent, viralInspiration, enforceCaptionUniqueness = true, affiliateId = "sgottshall107-20" } = params;
+  const { productName, platforms, tone, niche, mainContent, viralInspiration, enforceCaptionUniqueness = true, affiliateId = "sgottshall107-20", useSpartanFormat = false } = params;
   
   console.log(`🎯 Generating platform captions for: ${platforms.join(", ")}`);
   
   // Build specialized prompt for platform caption generation
-  let prompt = `Generate UNIQUE, PLATFORM-NATIVE captions for ${productName} (${niche} niche) using ${tone} tone.
+  let prompt = `Generate UNIQUE, PLATFORM-NATIVE captions for ${productName} (${niche} niche)${useSpartanFormat ? ' using SPARTAN FORMAT' : ` using ${tone} tone`}.
 
-CRITICAL REQUIREMENTS:
+${useSpartanFormat ? `SPARTAN FORMAT REQUIREMENTS:
+- Use direct, factual language only
+- No emojis, metaphors, or filler words
+- Each platform caption = 4 paragraphs max 50 words:
+  1. Product summary (2-3 sentences)
+  2. Friendly CTA (e.g., "Want results? Try it.")
+  3. Link encouragement ("Check our bio for purchase info")
+  4. 5 relevant hashtags
+- Tone overridden by Spartan format requirements
+
+CRITICAL REQUIREMENTS:` : 'CRITICAL REQUIREMENTS:'}
 - Each platform caption MUST be written INDEPENDENTLY from scratch
 - DO NOT reference, summarize, or adapt the main product description
 - Each caption should be 70%+ different in structure, words, and approach
@@ -150,25 +161,60 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       for (const [platform, caption] of Object.entries(captions)) {
         let enhancedCaption = caption as string;
         
+        // Apply Spartan format filtering to remove emojis and fluff language
+        if (useSpartanFormat) {
+          enhancedCaption = enhancedCaption
+            // Remove sparkles and other common symbols
+            .replace(/[✨🌿🔥💫⭐️🌟💎✊🏻🔗🛒🛍️📝💰🎯🚀📱]/g, '')
+            // Remove common fluff words and phrases
+            .replace(/\b(amazing|incredible|stunning|absolutely|literally|super|totally|completely|perfect|ultimate|revolutionary|game-changing|life-changing|mind-blowing|effortlessly|unlock|discover|power|thirst|quenches)\b/gi, '')
+            // Clean up extra spaces
+            .replace(/\s+/g, ' ')
+            .trim();
+        }
+        
         // Add platform-specific affiliate link formatting with required Amazon Associates disclosure
-        switch (platform.toLowerCase()) {
-          case 'tiktok':
-            enhancedCaption += `\n\n🛒 Shop here: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
-            break;
-          case 'instagram':
-            enhancedCaption += `\n\n🛍️ Shop the link: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
-            break;
-          case 'youtube':
-            enhancedCaption += `\n\n🔗 Amazon link: ${amazonLink}\n\n📝 Disclosure: As an Amazon Associate I earn from qualifying purchases.`;
-            break;
-          case 'twitter':
-            enhancedCaption += `\n\n🛒 ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
-            break;
-          case 'other':
-            enhancedCaption += `\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
-            break;
-          default:
-            enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+        // Apply Spartan formatting if enabled (remove emojis and make text direct)
+        if (useSpartanFormat) {
+          switch (platform.toLowerCase()) {
+            case 'tiktok':
+              enhancedCaption += `\n\nShop here: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+              break;
+            case 'instagram':
+              enhancedCaption += `\n\nShop the link: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+              break;
+            case 'youtube':
+              enhancedCaption += `\n\nAmazon link: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+              break;
+            case 'twitter':
+              enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+              break;
+            case 'other':
+              enhancedCaption += `\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+              break;
+            default:
+              enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+          }
+        } else {
+          switch (platform.toLowerCase()) {
+            case 'tiktok':
+              enhancedCaption += `\n\n🛒 Shop here: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
+              break;
+            case 'instagram':
+              enhancedCaption += `\n\n🛍️ Shop the link: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
+              break;
+            case 'youtube':
+              enhancedCaption += `\n\n🔗 Amazon link: ${amazonLink}\n\n📝 Disclosure: As an Amazon Associate I earn from qualifying purchases.`;
+              break;
+            case 'twitter':
+              enhancedCaption += `\n\n🛒 ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+              break;
+            case 'other':
+              enhancedCaption += `\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+              break;
+            default:
+              enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+          }
         }
         
         enhancedCaptions[platform] = enhancedCaption;

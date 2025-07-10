@@ -29,6 +29,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     template: 'Short-Form Video Script',
     platforms: ['tiktok', 'instagram'],
     useSmartStyle: false,
+    useSpartanFormat: false,
     generateAffiliateLinks: false,
     affiliateId: 'sgottshall107-20',
     useManualAffiliateLink: false,
@@ -71,6 +72,17 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
   ];
 
   // Fetch templates for selected niche
+  // Check Spartan availability for selected niche
+  const { data: spartanAvailability } = useQuery({
+    queryKey: ['spartan-availability', formData.niche, formData.useSpartanFormat],
+    queryFn: async () => {
+      const response = await fetch(`/api/spartan/availability?niche=${formData.niche}&manualMode=${formData.useSpartanFormat}`);
+      if (!response.ok) return null;
+      return response.json();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
+
   const { data: templatesData, isLoading: templatesLoading } = useQuery({
     queryKey: ['/api/templates', formData.niche],
     queryFn: async () => {
@@ -147,6 +159,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
         ? `https://www.amazon.com/s?k=${encodeURIComponent(formData.productName)}&tag=${formData.affiliateId}` 
         : formData.useManualAffiliateLink ? formData.manualAffiliateLink : undefined,
       useSmartStyle: formData.useSmartStyle,
+      useSpartanFormat: formData.useSpartanFormat,
       makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw'
     };
 
@@ -208,11 +221,15 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
               value={formData.tone}
               onChange={(e) => setFormData(prev => ({...prev, tone: e.target.value}))}
               className="w-full p-3 border rounded-lg"
+              disabled={formData.useSpartanFormat && spartanAvailability?.spartanAvailable}
             >
               {TONES.map(tone => (
                 <option key={tone} value={tone}>{tone}</option>
               ))}
             </select>
+            {formData.useSpartanFormat && spartanAvailability?.spartanAvailable && (
+              <p className="text-xs text-amber-600 mt-1">Tone overridden by Spartan format</p>
+            )}
           </div>
           <div>
             <label className="text-sm font-medium mb-2 block">Template</label>
@@ -265,8 +282,43 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
               checked={formData.useSmartStyle}
               onChange={(e) => setFormData(prev => ({...prev, useSmartStyle: e.target.checked}))}
               className="rounded"
+              disabled={formData.useSpartanFormat && spartanAvailability?.spartanAvailable}
             />
           </div>
+
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-medium">Use Spartan Format</p>
+              <p className="text-sm text-gray-600">Direct, no-fluff content (overrides tone)</p>
+            </div>
+            <input
+              type="checkbox"
+              checked={formData.useSpartanFormat}
+              onChange={(e) => setFormData(prev => ({...prev, useSpartanFormat: e.target.checked}))}
+              className="rounded"
+            />
+          </div>
+
+          {/* Spartan Availability Status */}
+          {spartanAvailability && (
+            <div className={`p-3 rounded-lg text-sm ${
+              spartanAvailability.spartanAvailable 
+                ? 'bg-green-50 border border-green-200 text-green-800' 
+                : 'bg-amber-50 border border-amber-200 text-amber-800'
+            }`}>
+              <div className="flex items-center gap-2">
+                <Badge variant={spartanAvailability.spartanAvailable ? "default" : "secondary"}>
+                  {spartanAvailability.spartanAvailable ? "Spartan Available" : "Standard Mode"}
+                </Badge>
+                <span>{spartanAvailability.reason}</span>
+              </div>
+              {spartanAvailability.autoSpartanNiches.length > 0 && (
+                <div className="mt-2 text-xs">
+                  Auto-enabled for: {spartanAvailability.autoSpartanNiches.join(', ')}
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex items-center justify-between">
             <div>
