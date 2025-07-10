@@ -136,7 +136,7 @@ export class WebhookService {
       // Extract platform-specific captions
       const tiktokCaption = data.platformContent?.tiktok?.caption || '';
       const igCaption = data.platformContent?.instagram?.caption || '';
-      const ytCaption = data.platformContent?.youtube?.caption || '';
+      const ytCaption = data.platformContent?.youtube?.caption || data.platformContent?.youtube?.script || '';
       const xCaption = data.platformContent?.twitter?.caption || data.platformContent?.x?.caption || '';
 
       // Send one payload per platform with your new simplified format
@@ -151,6 +151,7 @@ export class WebhookService {
           script: data.contentData?.fullOutput || platformData.script || '',
           instagramCaption: igCaption,
           tiktokCaption: tiktokCaption,
+          youtubeCaption: ytCaption, // Added YouTube caption field
           xCaption: xCaption,
           facebookCaption: data.platformContent?.facebook?.caption || igCaption, // Use IG caption as fallback for Facebook
           affiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',

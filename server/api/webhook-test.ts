@@ -27,6 +27,7 @@ router.post('/', async (req, res) => {
       script: "POV: You discover the ultimate glow-up serum! 🌟 This Hero My First Serum is absolutely life-changing for beginner skincare routines. The lightweight formula absorbs instantly and leaves your skin feeling incredible. Perfect for anyone just starting their skincare journey!",
       instagramCaption: "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",
       tiktokCaption: "POV: you found the holy grail skincare for beginners ✨ Hero My First Serum is giving me LIFE 🙌 #skincare #glowup #beauty",
+      youtubeCaption: "In today's video, I'm sharing my honest review of the *Hero My First Serum* - and why it's perfect for skincare beginners. This lightweight serum has completely transformed my routine! #skincare #beautyreview #youtubeshorts",
       xCaption: "Plot twist: the best beginner serum was from Hero all along 💫 This changed my entire skincare game #skincare",
       facebookCaption: "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",
       affiliateLink: "https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20",

@@ -12,6 +12,7 @@ interface WebhookPayload {
   script: string;
   instagramCaption: string;
   tiktokCaption: string;
+  youtubeCaption: string;
   xCaption: string;
   facebookCaption: string;
   affiliateLink: string;
