@@ -246,6 +246,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
       useSmartStyle,
       userId: 1, // Demo user ID for rating system
+      previewedProducts: showPreview && Object.keys(previewProducts).length > 0 ? previewProducts : undefined,
     };
 
     startAutomatedBulkMutation.mutate(bulkData);

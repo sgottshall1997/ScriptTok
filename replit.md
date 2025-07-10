@@ -621,6 +621,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Enhanced webhook logging to show individual webhook summary instead of bulk notifications
   - ✅ All content generation workflows now consistently send individual webhooks per content piece to Make.com
   - ✅ Stable webhook integration eliminating configuration dependency and ensuring reliable automation pipeline
+- July 10, 2025. **Automated Bulk Generator Preview-to-Generation Consistency Fix**: Resolved critical product selection discrepancy:
+  - ✅ Fixed automated bulk generator to use exact previewed products instead of backend auto-selection
+  - ✅ Enhanced frontend to send `previewedProducts` parameter with exact product data shown in preview
+  - ✅ Updated backend schema to accept and prioritize `previewedProducts` over auto-selection logic
+  - ✅ Added priority logic: use previewed products first, fallback to auto-selection if no preview data
+  - ✅ Fixed syntax errors and missing braces causing transform failures in automated bulk generation API
+  - ✅ Eliminated inconsistency where preview showed different products than actual generation
+  - ✅ Enhanced logging to clearly show when using "Previewed Selection" vs "Database Selection"
+  - ✅ Complete workflow now guarantees: Preview Products → Same Products in Generation → Consistent Content
 
 ## User Preferences
 

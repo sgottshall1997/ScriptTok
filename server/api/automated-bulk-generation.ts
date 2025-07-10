@@ -61,6 +61,12 @@ const automatedBulkSchema = z.object({
   makeWebhookUrl: z.string().url().optional(),
   useSmartStyle: z.boolean().default(false),
   userId: z.number().optional(),
+  previewedProducts: z.record(z.object({
+    title: z.string(),
+    niche: z.string(),
+    mentions: z.number().optional(),
+    createdAt: z.string().optional()
+  })).optional(),
 });
 
 const NICHE_FETCHERS = {
@@ -87,23 +93,62 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
     const autoSelectedProducts: Record<string, any> = {};
     let totalSelectedProducts = 0;
     
-    for (const niche of validatedData.selectedNiches) {
-      try {
-        console.log(`🎯 Selecting trending products for ${niche} niche...`);
-        
-        if (!validatedData.useExistingProducts && NICHE_FETCHERS[niche as keyof typeof NICHE_FETCHERS]) {
-          // Fetch fresh trending products from Perplexity
-          const fetcherFunction = NICHE_FETCHERS[niche as keyof typeof NICHE_FETCHERS];
-          const freshProducts = await fetcherFunction();
+    // If previewed products are provided, use them exactly as shown
+    if (validatedData.previewedProducts && Object.keys(validatedData.previewedProducts).length > 0) {
+      console.log(`🎯 Using previewed products from frontend...`);
+      
+      for (const niche of validatedData.selectedNiches) {
+        const previewedProduct = validatedData.previewedProducts[niche];
+        if (previewedProduct) {
+          autoSelectedProducts[niche] = {
+            product: previewedProduct.title,
+            brand: "Previewed Selection",
+            mentions: previewedProduct.mentions || 0,
+            reason: "Exact match from frontend preview"
+          };
+          totalSelectedProducts++;
+          console.log(`✅ Using previewed product for ${niche}:`, previewedProduct.title);
+        }
+      }
+    } else {
+      // Fallback to original auto-selection logic
+      for (const niche of validatedData.selectedNiches) {
+        try {
+          console.log(`🎯 Selecting trending products for ${niche} niche...`);
           
-          if (freshProducts && freshProducts.length > 0) {
-            // Select the top trending product for this niche
-            autoSelectedProducts[niche] = freshProducts[0];
-            totalSelectedProducts++;
-            console.log(`✅ Auto-selected ${freshProducts[0].product} for ${niche}`);
+          if (!validatedData.useExistingProducts && NICHE_FETCHERS[niche as keyof typeof NICHE_FETCHERS]) {
+            // Fetch fresh trending products from Perplexity
+            const fetcherFunction = NICHE_FETCHERS[niche as keyof typeof NICHE_FETCHERS];
+            const freshProducts = await fetcherFunction();
+            
+            if (freshProducts && freshProducts.length > 0) {
+              // Select the top trending product for this niche
+              autoSelectedProducts[niche] = freshProducts[0];
+              totalSelectedProducts++;
+              console.log(`✅ Auto-selected ${freshProducts[0].product} for ${niche}`);
+            } else {
+              // Fallback to existing trending products in database
+              // Prioritize freshest data (newest first) to get latest Perplexity updates
+              const [existingProduct] = await db.select()
+                .from(trendingProducts)
+                .where(eq(trendingProducts.niche, niche))
+                .orderBy(desc(trendingProducts.createdAt))
+                .limit(1);
+              
+              if (existingProduct) {
+                autoSelectedProducts[niche] = {
+                  product: existingProduct.title,
+                  brand: "Auto-Selected",
+                  mentions: existingProduct.mentions,
+                  reason: existingProduct.insight || "Trending product from database"
+                };
+                totalSelectedProducts++;
+                console.log(`🔄 Fallback selected ${existingProduct.title} for ${niche}`);
+              }
+            }
           } else {
-            // Fallback to existing trending products in database
-            // Prioritize freshest data (newest first) to get latest Perplexity updates
+            // Use existing trending products from database
+            // Prioritize Perplexity sources and sort by creation date (newest first) to get freshest data
             const [existingProduct] = await db.select()
               .from(trendingProducts)
               .where(eq(trendingProducts.niche, niche))
@@ -113,45 +158,26 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
             if (existingProduct) {
               autoSelectedProducts[niche] = {
                 product: existingProduct.title,
-                brand: "Auto-Selected",
+                brand: "Database Selection",
                 mentions: existingProduct.mentions,
-                reason: existingProduct.insight || "Trending product from database"
+                reason: existingProduct.insight || "Trending from database"
               };
               totalSelectedProducts++;
-              console.log(`🔄 Fallback selected ${existingProduct.title} for ${niche}`);
+              console.log(`✅ Backend selected for ${niche}:`, existingProduct.title, 'Created:', existingProduct.createdAt);
             }
           }
-        } else {
-          // Use existing trending products from database
-          // Prioritize Perplexity sources and sort by creation date (newest first) to get freshest data
-          const [existingProduct] = await db.select()
-            .from(trendingProducts)
-            .where(eq(trendingProducts.niche, niche))
-            .orderBy(desc(trendingProducts.createdAt))
-            .limit(1);
+        } catch (error) {
+          console.error(`❌ Failed to auto-select product for ${niche}:`, error);
           
-          if (existingProduct) {
-            autoSelectedProducts[niche] = {
-              product: existingProduct.title,
-              brand: "Database Selection",
-              mentions: existingProduct.mentions,
-              reason: existingProduct.insight || "Trending from database"
-            };
-            totalSelectedProducts++;
-            console.log(`✅ Backend selected for ${niche}:`, existingProduct.title, 'Created:', existingProduct.createdAt);
-          }
+          // Critical fallback - use a default product to ensure generation continues
+          autoSelectedProducts[niche] = {
+            product: `Trending ${niche.charAt(0).toUpperCase() + niche.slice(1)} Product`,
+            brand: "Fallback",
+            mentions: 100000,
+            reason: "Fallback selection due to auto-selection failure"
+          };
+          totalSelectedProducts++;
         }
-      } catch (error) {
-        console.error(`❌ Failed to auto-select product for ${niche}:`, error);
-        
-        // Critical fallback - use a default product to ensure generation continues
-        autoSelectedProducts[niche] = {
-          product: `Trending ${niche.charAt(0).toUpperCase() + niche.slice(1)} Product`,
-          brand: "Fallback",
-          mentions: 100000,
-          reason: "Fallback selection due to auto-selection failure"
-        };
-        totalSelectedProducts++;
       }
     }
     
