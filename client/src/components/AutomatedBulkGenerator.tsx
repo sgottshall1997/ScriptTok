@@ -74,6 +74,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [useSmartStyle, setUseSmartStyle] = useState(false);
+  const [useSpartanFormat, setUseSpartanFormat] = useState(false);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -248,6 +249,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       scheduleAfterGeneration,
       makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
       useSmartStyle,
+      useSpartanFormat,
       userId: 1, // Demo user ID for rating system
       previewedProducts: Object.keys(previewProducts).length > 0 ? previewProducts : undefined,
     };
@@ -596,6 +598,18 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
                   <Label htmlFor="use-smart-style" className="text-sm">
                     <span className="font-medium">Use My Best-Rated Style</span>
                     <p className="text-xs text-gray-500 mt-1">Apply patterns from your highest-rated content (80+ rating)</p>
+                  </Label>
+                </div>
+                
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="spartan-format"
+                    checked={useSpartanFormat}
+                    onCheckedChange={setUseSpartanFormat}
+                  />
+                  <Label htmlFor="spartan-format" className="text-sm">
+                    <span className="font-medium">Spartan Format</span>
+                    <p className="text-xs text-gray-500 mt-1">Professional, no-fluff content (no emojis, banned words, direct language)</p>
                   </Label>
                 </div>
               </div>
