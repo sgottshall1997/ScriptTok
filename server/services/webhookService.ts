@@ -8,9 +8,9 @@ export interface WebhookConfig {
   secret?: string;  // For webhook signature verification if needed
 }
 
-// Store webhook configuration - Force correct URL
+// Store webhook configuration - Default to new URL
 let webhookConfig: WebhookConfig = {
-  url: 'https://hook.us2.make.com/rrdlmayg3mvi68p2jxhdxbg2ohy41pn4',
+  url: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
   enabled: true
 };
 
