@@ -178,7 +178,7 @@ export default function BulkGenerationForm() {
       scheduledTime: formData.scheduleAfterGeneration && formData.scheduledDateTime 
         ? new Date(formData.scheduledDateTime).toISOString()
         : undefined,
-      makeWebhookUrl: formData.makeWebhookUrl || undefined,
+      makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
     };
 
     startBulkMutation.mutate(bulkData);

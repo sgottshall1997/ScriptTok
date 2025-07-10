@@ -612,6 +612,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ Verified webhook payload now includes all platform captions: TikTok, Instagram, YouTube, Twitter/X, Facebook
   - ✅ YouTube captions use educational voiceover style with asterisk emphasis markers for engagement
   - ✅ Complete platform-specific caption support across all content generation workflows
+- July 10, 2025. **Permanent Make.com Webhook URL Configuration**: Complete hardcoded webhook integration for stable automation:
+  - ✅ Permanently configured Make.com webhook URL (https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw) across all content generators
+  - ✅ Updated SingleProductGenerator in UnifiedContentGenerator to hardcode webhook URL instead of using form field
+  - ✅ Updated AutomatedBulkGenerator to permanently use Make.com webhook URL for all automated bulk operations
+  - ✅ Updated BulkGenerationForm to hardcode webhook URL for manual bulk generation workflows
+  - ✅ Removed bulk webhook notifications from unified API, ensuring only individual content piece webhooks are sent
+  - ✅ Enhanced webhook logging to show individual webhook summary instead of bulk notifications
+  - ✅ All content generation workflows now consistently send individual webhooks per content piece to Make.com
+  - ✅ Stable webhook integration eliminating configuration dependency and ensuring reliable automation pipeline
 
 ## User Preferences
 

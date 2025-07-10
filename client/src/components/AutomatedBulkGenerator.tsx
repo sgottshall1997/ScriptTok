@@ -243,7 +243,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       useManualAffiliateLinks,
       manualAffiliateLinks: useManualAffiliateLinks ? manualAffiliateLinks : undefined,
       scheduleAfterGeneration,
-      makeWebhookUrl: makeWebhookUrl || undefined,
+      makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
       useSmartStyle,
       userId: 1, // Demo user ID for rating system
     };

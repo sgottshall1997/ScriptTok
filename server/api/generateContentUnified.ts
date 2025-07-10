@@ -414,20 +414,11 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     const endTime = Date.now();
     const duration = endTime - startTime;
 
-    // Send webhook notification if configured
-    if (data.makeWebhookUrl && results.length > 0) {
-      try {
-        await sendWebhookNotification(data.makeWebhookUrl, {
-          type: 'bulk_content_generated',
-          jobId,
-          totalGenerated: results.length,
-          totalErrors: errors.length,
-          duration,
-          results: results.slice(0, 3) // Send first 3 results as sample
-        });
-      } catch (webhookError) {
-        console.error('Webhook notification failed:', webhookError);
-      }
+    // Webhooks are already sent individually per content piece in generateSingleContent
+    // No bulk webhook needed since we send one webhook per generated content piece
+    console.log(`📊 Webhook Summary: ${results.length} individual webhooks sent to Make.com (one per content piece)`);
+    if (errors.length > 0) {
+      console.log(`⚠️ ${errors.length} content pieces failed generation and did not send webhooks`);
     }
 
     // Return unified response

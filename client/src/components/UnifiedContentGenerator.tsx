@@ -146,7 +146,8 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
       affiliateUrl: formData.generateAffiliateLinks && !formData.useManualAffiliateLink 
         ? `https://www.amazon.com/s?k=${encodeURIComponent(formData.productName)}&tag=${formData.affiliateId}` 
         : formData.useManualAffiliateLink ? formData.manualAffiliateLink : undefined,
-      useSmartStyle: formData.useSmartStyle
+      useSmartStyle: formData.useSmartStyle,
+      makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw'
     };
 
     generateMutation.mutate(requestData);
