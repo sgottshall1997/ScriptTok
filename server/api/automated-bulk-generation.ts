@@ -321,6 +321,7 @@ async function processAutomatedBulkJob(
                 viralInspiration,
                 productData,
                 useSmartStyle: jobData.useSmartStyle,
+                useSpartanFormat: jobData.useSpartanFormat,
                 userId: jobData.userId
               });
               
@@ -381,7 +382,8 @@ async function processAutomatedBulkJob(
                         mainContent,
                         viralInspiration,
                         enforceCaptionUniqueness: true,
-                        affiliateId: jobData.affiliateId || "sgottshall107-20"
+                        affiliateId: jobData.affiliateId || "sgottshall107-20",
+                        useSpartanFormat: jobData.useSpartanFormat
                       });
                       
                       // Map to expected field names for content history
@@ -593,9 +595,10 @@ async function generateComprehensiveContent(params: {
   viralInspiration: any;
   productData: any;
   useSmartStyle?: boolean;
+  useSpartanFormat?: boolean;
   userId?: number;
 }) {
-  const { productName, niche, tone, template, platforms, viralInspiration, productData, useSmartStyle, userId } = params;
+  const { productName, niche, tone, template, platforms, viralInspiration, productData, useSmartStyle, useSpartanFormat, userId } = params;
   
   // Build comprehensive prompt incorporating viral inspiration
   const prompt = `
@@ -730,7 +733,8 @@ Return as JSON with this exact structure:
       contentType: "video",
       templateType: template,
       tone,
-      trendingData: viralInspiration
+      trendingData: viralInspiration,
+      useSpartanFormat: useSpartanFormat || false
     });
 
     // Extract platform captions from the generated platform content

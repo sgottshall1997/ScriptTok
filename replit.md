@@ -653,6 +653,16 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Platform Caption Filtering**: Enhanced platform caption generation with emoji and fluff word removal for Spartan format
   - ✅ **Clean Affiliate Integration**: Spartan-formatted affiliate links without emoji icons for professional presentation
   - ✅ **Webhook Integration**: Make.com webhook successfully tested with Spartan-formatted content for automation workflows
+- July 11, 2025. **Critical Bulk Generator Spartan Format Fix**: Resolved automated bulk generator ignoring Spartan format settings:
+  - ✅ Fixed missing `useSpartanFormat` parameter in `generateComprehensiveContent()` function interface
+  - ✅ Updated `generatePlatformSpecificContent()` call to pass through `useSpartanFormat` parameter
+  - ✅ Enhanced `PlatformContentRequest` interface to include `useSpartanFormat` optional parameter
+  - ✅ Fixed secondary `generatePlatformCaptions()` call in bulk generator missing Spartan format parameter
+  - ✅ Resolved syntax error in `platformContentGenerator.ts` with missing try-catch block structure
+  - ✅ **Verified Fix**: Webhook logs now show `🏛️ Spartan format enabled: true` for bulk generation
+  - ✅ **Clean Output**: Bulk generator now produces emoji-free, professional content with factual language
+  - ✅ **Complete Integration**: Both single and bulk generators now support Spartan format across all platforms
+  - ✅ **Production Ready**: Automated bulk generator with Spartan format delivering clean, professional content to Make.com
 
 ## User Preferences
 
