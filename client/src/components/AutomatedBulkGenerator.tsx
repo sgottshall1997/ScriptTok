@@ -74,8 +74,8 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
-  const [selectedAiModels, setSelectedAiModels] = useState<string[]>(['chatgpt']);
-  const [selectedContentFormats, setSelectedContentFormats] = useState<string[]>(['regular']);
+  const [selectedAiModels, setSelectedAiModels] = useState<string[]>(['claude']);
+  const [selectedContentFormats, setSelectedContentFormats] = useState<string[]>(['spartan']);
   const [useExistingProducts, setUseExistingProducts] = useState(true);
   const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
   const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
@@ -87,7 +87,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
   const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [useSmartStyle, setUseSmartStyle] = useState(false);
-  const [useSpartanFormat, setUseSpartanFormat] = useState(false);
+  const [useSpartanFormat, setUseSpartanFormat] = useState(true);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();

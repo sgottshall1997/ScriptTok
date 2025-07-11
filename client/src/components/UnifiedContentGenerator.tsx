@@ -31,13 +31,13 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     template: 'Short-Form Video Script',
     platforms: ['tiktok', 'instagram'],
     useSmartStyle: false,
-    useSpartanFormat: false,
+    useSpartanFormat: true,
     generateAffiliateLinks: false,
     affiliateId: 'sgottshall107-20',
     useManualAffiliateLink: false,
     manualAffiliateLink: '',
     sendToMakeWebhook: true,
-    aiModel: 'chatgpt' as 'chatgpt' | 'claude'
+    aiModel: 'claude' as 'chatgpt' | 'claude'
   });
 
   // Handle URL parameters for auto-population
