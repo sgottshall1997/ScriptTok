@@ -1,0 +1,66 @@
+Despite the recent safeguard system updates, content is still being generated automatically even when I haven’t triggered it. This must be fully fixed.
+
+🚫 I want to **completely block any content generation** unless it comes from:
+- ✅ A manual generation trigger through the UI
+- ✅ A legitimate scheduled generation run (that I explicitly initiate or configure)
+
+⚠️ At the same time, please ensure the **Perplexity trend fetcher remains active at 5:00 AM**, but only fetches trend data — it should not create any content.
+
+🔍 ACTION PLAN:
+
+1. 🔎 **Trace and Kill All Unauthorized Generation Triggers**
+   - Review the entire codebase for any remaining:
+     - Cron jobs
+     - Background workers
+     - Queue consumers
+     - Retry logic
+     - Make/Zapier webhooks
+     - Trend-based triggers
+     - Legacy scheduled tasks
+   - Identify and permanently disable any logic that initiates `generateContent()` or similar calls without:
+     - Manual trigger from the dashboard
+     - Approved, scheduled execution window
+
+2. 🛡️ **Reinforce Generation Safeguards**
+   - Strengthen `generation-safeguards.ts` and apply it at the top of **every generation entry point**
+   - Block all generation unless it explicitly matches one of these conditions:
+     ```ts
+     if (!isManualUITrigger && !isApprovedScheduler) {
+       log("❌ Blocked unauthorized generation");
+       return null;
+     }
+     ```
+
+3. ⚙️ **Implement a Global Gatekeeper Flag**
+   - Add:
+     ```ts
+     const GENERATION_ALLOWED = isManualUITrigger || isApprovedScheduler;
+     ```
+   - Log the origin of each request so we can trace:
+     - Source: manual, scheduler, webhook, unknown
+     - Model, niche, product, timestamp
+
+4. 📈 **KEEP Perplexity Trend Fetcher ON**
+   - The 5:00 AM trend-fetch job should continue running
+   - Confirm:
+     - It **only fetches and stores** trending product data
+     - It never calls `generateContent()` or triggers any webhook
+   - Isolate it with a flag like `ALLOW_TREND_FETCH = true`
+
+5. 🧪 **Run 2-Hour Watchdog Test**
+   - Enable full logging of all generation attempts and their sources
+   - During the window, simulate:
+     - Manual generation (✅ should succeed)
+     - Scheduled generation (✅ should succeed)
+     - Any other automatic trigger (❌ should be blocked + logged)
+
+6. ✅ **Final Output**
+   - Identify exactly what was still triggering content creation
+   - Show which code/config was removed or modified
+   - Confirm:
+     - ✅ Only manual UI and scheduler-triggered generation is allowed
+     - ✅ All rogue processes are terminated
+     - ✅ Trend fetcher is fully isolated from generation
+     - ✅ Logs confirm no unauthorized content generation occurred during the test window
+
+This is critical for full stability and control of the content generation system. Please prioritize and confirm once locked down.

@@ -20,6 +20,22 @@ const bulkGenerationSchema = z.object({
 // Start a bulk content generation job
 export async function startBulkGeneration(req: Request, res: Response) {
   try {
+    // 🚫 CRITICAL SAFEGUARD: Apply generation safeguards
+    const { validateGenerationRequest } = await import('../config/generation-safeguards');
+    const validation = validateGenerationRequest(req);
+    
+    if (!validation.allowed) {
+      console.log(`🚫 BULK GENERATION BLOCKED: ${validation.reason}`);
+      return res.status(403).json({
+        success: false,
+        error: "Bulk generation blocked by security safeguards",
+        reason: validation.reason,
+        source: validation.source
+      });
+    }
+    
+    console.log(`🟢 SAFEGUARD: Bulk generation validated - proceeding`);
+    
     const validatedData = bulkGenerationSchema.parse(req.body);
     
     // Generate unique job ID

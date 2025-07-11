@@ -1,6 +1,7 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
 import { validateGenerationRequest, detectGenerationContext, logGenerationAttempt } from '../config/generation-safeguards';
+import { validateContentGenerationRequest } from '../config/global-generation-gatekeeper';
 import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
@@ -550,6 +551,18 @@ async function getExistingTrendingProducts(niches: string[], limit: number = 1):
 // Main unified content generation endpoint
 router.post("/", contentGenerationLimiter, async (req: Request, res: Response) => {
   try {
+    // 🚫 CRITICAL GLOBAL GATEKEEPER: Validate generation request
+    const gatekeeperValidation = validateContentGenerationRequest(req, '/api/generate-unified');
+    if (!gatekeeperValidation.allowed) {
+      console.log(`🚫 GLOBAL GATEKEEPER: Generation blocked - ${gatekeeperValidation.reason}`);
+      return res.status(403).json({
+        success: false,
+        error: 'Content generation blocked by security safeguards',
+        reason: gatekeeperValidation.reason,
+        source: gatekeeperValidation.source
+      });
+    }
+    
     // 🛑 GENERATION SAFEGUARD CHECK
     const context = detectGenerationContext(req);
     const validation = validateGenerationRequest(context);

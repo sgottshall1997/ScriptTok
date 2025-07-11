@@ -37,6 +37,22 @@ const usedProducts = new Set<string>();
 export async function generateDailyBatch(req: Request, res: Response) {
   try {
     console.log('🎯 Starting intelligent daily batch content generation...');
+    
+    // 🚫 CRITICAL SAFEGUARD: Apply generation safeguards
+    const { validateGenerationRequest } = await import('../config/generation-safeguards');
+    const validation = validateGenerationRequest(req);
+    
+    if (!validation.allowed) {
+      console.log(`🚫 DAILY BATCH GENERATION BLOCKED: ${validation.reason}`);
+      return res.status(403).json({
+        success: false,
+        error: "Daily batch generation blocked by security safeguards",
+        reason: validation.reason,
+        source: validation.source
+      });
+    }
+    
+    console.log(`🟢 SAFEGUARD: Daily batch generation validated - proceeding`);
     console.log('🎪 Focusing on high-conversion products and proven templates');
     
     const results = [];

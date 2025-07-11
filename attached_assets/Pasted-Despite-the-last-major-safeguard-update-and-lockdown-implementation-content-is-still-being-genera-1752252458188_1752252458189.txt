@@ -1,0 +1,50 @@
+Despite the last major safeguard update and lockdown implementation, **content is still being generated automatically** — even though I am not triggering it manually.
+
+Please fully investigate and eliminate whatever is still triggering these generation events.
+
+🔍 What to do:
+
+1. ✅ **Trace Every Entry Point**
+   - Audit **every route, cron job, background worker, retry handler, webhook, and timer** that could possibly trigger `generateContent()` or any function that calls OpenAI/Claude
+   - Include:
+     - Past cron jobs that may still be registered
+     - Retry logic (especially if stuck from a previous failure)
+     - Webhooks that may be firing from external services (e.g. Make, Zapier)
+     - Trend fetchers or internal “watchers” that queue generation unintentionally
+
+2. 🔒 **Reinforce Safeguard Check**
+   - Ensure `generation-safeguards.ts` is enforced at the **start** of every generation-related function
+   - Log and block **any non-manual trigger**, including:
+     - Background job names
+     - API route
+     - Trigger source (manual, cron, webhook, etc.)
+
+3. 🧠 **Implement a Global “Generation Allowed” Flag**
+   - Create a config variable like:
+     ```ts
+     const GENERATION_ALLOWED = process.env.GENERATION_ALLOWED || false;
+     ```
+   - Wrap all generation logic with:
+     ```ts
+     if (!GENERATION_ALLOWED) {
+       log("Blocked: generation not allowed");
+       return null;
+     }
+     ```
+
+4. 🧪 **Run 2-Hour Monitoring Window**
+   - Enable verbose logging of all generation attempts
+   - Log:
+     - Exact time
+     - Niche/product
+     - Model used
+     - Trigger origin
+   - Confirm **no content is generated** unless manually triggered from the UI
+
+5. ✅ **Final Output**
+   - Identify exactly *what was still running*
+   - Show code/config that was changed or removed
+   - Provide log proof of blocked/unblocked generation attempts
+   - Confirm that the **system is now fully locked down**, and only UI-triggered generation is permitted
+
+This is critical — please treat it as a top priority fix.

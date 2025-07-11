@@ -73,6 +73,8 @@ import { testScheduledGeneration } from "./tests/scheduled-generation-test";
 import testUnifiedGeneratorRouter from "./api/test-unified-generator";
 import testSimpleUnifiedRouter from "./api/test-simple-unified";
 import testProductionReadyRouter from "./api/test-production-ready";
+import { globalGatekeeperRouter } from "./api/global-gatekeeper-monitoring";
+import { testSafeguardsRouter } from "./api/test-safeguards";
 import safeguardMonitorRouter from "./api/safeguard-monitor";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -597,6 +599,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 🛑 SAFEGUARD MONITORING ENDPOINTS
   app.use('/api/safeguards', safeguardMonitorRouter);
+  
+  // 🚫 GLOBAL GATEKEEPER MONITORING ENDPOINTS
+  app.use('/api/gatekeeper', globalGatekeeperRouter);
+  
+  // 🧪 SAFEGUARD TESTING ENDPOINTS
+  app.use('/api/test-safeguards', testSafeguardsRouter);
 
   // Register content evaluation routes
   registerContentEvaluationRoutes(app);

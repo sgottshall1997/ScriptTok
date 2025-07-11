@@ -221,6 +221,23 @@ function calculateNextRunTime(scheduleTime: string, timezone: string): Date {
 async function startCronJob(job: any) {
   if (!job.isActive) return;
 
+  // 🚫 CRITICAL SAFEGUARD: Check if scheduled generation is allowed
+  const { validateGenerationRequest } = await import('../config/generation-safeguards');
+  const mockRequest = {
+    headers: {
+      'user-agent': 'scheduled-job-runner',
+      'x-generation-source': 'scheduled_job'
+    }
+  };
+  
+  const validation = validateGenerationRequest(mockRequest);
+  
+  if (!validation.allowed) {
+    console.log(`🚫 SCHEDULED JOB STARTUP BLOCKED: ${validation.reason}`);
+    console.log(`   Job "${job.name}" will not be started due to safeguard restrictions`);
+    return;
+  }
+
   // Convert schedule time to cron format (minute hour * * *)
   const [hours, minutes] = job.scheduleTime.split(':').map(Number);
   const cronExpression = `${minutes} ${hours} * * *`;
@@ -245,7 +262,36 @@ async function startCronJob(job: any) {
 // Helper function to execute a scheduled job
 async function executeScheduledJob(job: any) {
   try {
-    console.log(`🚀 Executing scheduled bulk generation: ${job.name}`);
+    console.log(`🚀 Attempting scheduled bulk generation: ${job.name}`);
+    
+    // 🚫 CRITICAL SAFEGUARD: Apply generation safeguards to scheduled jobs
+    const { validateGenerationRequest } = await import('../config/generation-safeguards');
+    const mockRequest = {
+      headers: {
+        'user-agent': 'scheduled-job-runner',
+        'x-generation-source': 'scheduled_job'
+      }
+    };
+    
+    const validation = validateGenerationRequest(mockRequest);
+    
+    if (!validation.allowed) {
+      console.log(`🚫 SCHEDULED JOB BLOCKED: ${validation.reason}`);
+      
+      // Update job with blocked status
+      await db
+        .update(scheduledBulkJobs)
+        .set({
+          lastRunAt: new Date(),
+          lastError: `Blocked by safeguards: ${validation.reason}`,
+          consecutiveFailures: job.consecutiveFailures + 1
+        })
+        .where(eq(scheduledBulkJobs.id, job.id));
+      
+      throw new Error(`Scheduled job blocked by safeguards: ${validation.reason}`);
+    }
+    
+    console.log(`🟢 SAFEGUARD: Scheduled job "${job.name}" validated - proceeding with generation`);
     
     // Update last run time and increment total runs
     await db
@@ -287,7 +333,8 @@ async function executeScheduledJob(job: any) {
     const response = await fetch('http://localhost:5000/api/generate-unified', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-generation-source': 'scheduled_job'
       },
       body: JSON.stringify(payload)
     });
@@ -321,6 +368,23 @@ async function executeScheduledJob(job: any) {
 export async function initializeScheduledJobs() {
   try {
     console.log('📅 Initializing scheduled bulk generation jobs...');
+    
+    // 🚫 CRITICAL SAFEGUARD: Check if scheduled generation is allowed
+    const { validateGenerationRequest } = await import('../config/generation-safeguards');
+    const mockRequest = {
+      headers: {
+        'user-agent': 'scheduled-job-init',
+        'x-generation-source': 'scheduled_job'
+      }
+    };
+    
+    const validation = validateGenerationRequest(mockRequest);
+    
+    if (!validation.allowed) {
+      console.log(`🚫 SCHEDULED JOB INITIALIZATION BLOCKED: ${validation.reason}`);
+      console.log('   No scheduled jobs will be started due to safeguard restrictions');
+      return;
+    }
     
     const activeJobs = await db
       .select()
