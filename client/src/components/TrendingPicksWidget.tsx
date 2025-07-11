@@ -151,7 +151,7 @@ export default function TrendingPicksWidget({
       )}
 
       {/* Perplexity Last Run Status */}
-      {showFetchButton && perplexityStatus && (
+      {showFetchButton && (
         <Card className="mb-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -159,14 +159,26 @@ export default function TrendingPicksWidget({
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <span className="font-medium text-blue-900">Last Perplexity Run</span>
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                    {perplexityStatus.timeSince}
-                  </Badge>
+                  {perplexityStatus ? (
+                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                      {perplexityStatus.timeSince}
+                    </Badge>
+                  ) : (
+                    <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                      Loading...
+                    </Badge>
+                  )}
                 </div>
                 <div className="text-sm text-blue-700 mt-1">
-                  <div><strong>Time:</strong> {perplexityStatus.lastRun}</div>
-                  <div><strong>Next:</strong> {perplexityStatus.nextScheduled}</div>
-                  <div><strong>Products:</strong> {perplexityStatus.totalProducts} total in database</div>
+                  {perplexityStatus ? (
+                    <>
+                      <div><strong>Time:</strong> {perplexityStatus.lastRun}</div>
+                      <div><strong>Next:</strong> {perplexityStatus.nextScheduled}</div>
+                      <div><strong>Products:</strong> {perplexityStatus.totalProducts} total in database</div>
+                    </>
+                  ) : (
+                    <div>Loading status...</div>
+                  )}
                 </div>
               </div>
             </div>
