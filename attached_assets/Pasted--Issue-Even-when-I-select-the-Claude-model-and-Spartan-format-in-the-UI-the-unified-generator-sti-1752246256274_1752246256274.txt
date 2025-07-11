@@ -1,0 +1,46 @@
+❗ Issue:
+Even when I select the Claude model and Spartan format in the UI, the unified generator still appears to use GPT and the old default script format. This breaks expected behavior and creates misaligned outputs.
+
+🎯 Objective:
+Ensure the selected model (`claude` or `gpt`) and selected format (`spartan` or `default`) are actually used during content generation in **both the single generator and the automated bulk generator**.
+
+🛠️ Required Fixes:
+
+1. 🔍 **Respect Model Selection**
+   - Inspect the unified generator logic and ensure the `model` field from user selection (e.g. `claude`) is correctly passed into the generation function.
+   - Confirm Claude is being used when selected, and GPT only when it's explicitly chosen.
+
+2. 🧱 **Respect Format Selection**
+   - Validate that `spartan` format triggers the correct Spartan-style script structure.
+   - If `format = "spartan"` is selected, ensure the promptFactory (or whichever system you use) modifies the generation prompt accordingly — e.g. leaner, minimalist, punchier tone.
+
+3. 🔁 **Apply Fix Across Generators**
+   - Ensure these fixes apply to:
+     - ✅ Single (manual) generation
+     - ✅ Automated scheduled bulk generation (7 niches at 5 AM)
+   - There should be **no hardcoded fallback** to GPT or the default format unless explicitly selected.
+
+4. 🧪 **Run Automated Tests**
+   a. **Test A – Manual Claude + Spartan**
+      - Generate a single content item using `model = claude` and `format = spartan`
+      - Validate:
+        - Claude was used
+        - Output matches Spartan formatting rules (shorter, more direct)
+   
+   b. **Test B – Manual GPT + Default**
+      - Confirm that fallback still works when default selections are used
+
+   c. **Test C – Bulk Generation with Mixed Formats**
+      - Simulate a bulk run with niche configurations using different models and formats (e.g., `beauty` = claude + spartan, `fitness` = gpt + default)
+      - Confirm each item used the correct model and format
+      - Check output metadata and stored content
+
+5. ✅ **Log and Output**
+   - Log the model + format used during each generation (for both debug and traceability)
+   - Return a summary:
+     - What was broken
+     - What was fixed
+     - Screenshot or JSON samples of validated output
+     - Confirmation that logic now honors both `model` and `format` selections 100%
+
+This fix should ensure that all user-selected generation settings are respected and working across all modes.

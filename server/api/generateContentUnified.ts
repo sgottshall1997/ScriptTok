@@ -35,8 +35,8 @@ const unifiedGenerationSchema = z.object({
   mode: z.enum(['manual', 'automated']).default('manual'),
   
   // Single product fields
-  product: z.string().optional(),
-  templateType: z.string().optional(),
+  productName: z.string().optional(),
+  template: z.string().optional(),
   tone: z.string().optional(),
   niche: z.string().optional(),
   platforms: z.array(z.string()).optional(),
@@ -146,7 +146,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           config.tone as any,
           trendingProductsData,
           config.niche as any,
-          "gpt-4o",
+          config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
           viralInspiration,
           config.useSmartStyle ? { useSmartStyle: true } : undefined,
           config.aiModel
@@ -160,7 +160,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         config.tone as any,
         trendingProductsData,
         config.niche as any,
-        "gpt-4o",
+        config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
         viralInspiration,
         config.useSmartStyle ? { useSmartStyle: true } : undefined,
         config.aiModel
@@ -205,7 +205,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       viralInspiration,
       affiliateUrl: config.affiliateUrl,
       customHook: config.customHook,
-      model: (typeof mainContent === 'string') ? "gpt-4o" : (mainContent.model || "gpt-4o"),
+      model: config.aiModel === 'claude' ? 'Claude' : 'ChatGPT',
       tokens: (typeof mainContent === 'string') ? 0 : (
         typeof mainContent.tokens === 'object' && mainContent.tokens?.total 
           ? mainContent.tokens.total 
@@ -446,12 +446,14 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     let jobId = `unified_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     if (data.mode === 'manual') {
+      console.log(`🔍 DEBUG Manual mode: productName="${data.productName}", products=${data.products?.length || 0}`);
+      
       // Single product manual generation
-      if (data.product) {
+      if (data.productName) {
         configs.push({
-          productName: data.product,
+          productName: data.productName,
           niche: data.niche || 'beauty',
-          templateType: data.templateType || 'Short-Form Video Script',
+          templateType: data.template || 'Short-Form Video Script',
           tone: data.tone || 'Enthusiastic',
           platforms: data.platforms || [],
           contentType: data.contentType || 'video',

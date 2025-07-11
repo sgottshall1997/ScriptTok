@@ -67,6 +67,10 @@ export function ContentEvaluationPanel({
         const response = await fetchResponse.json() as StoredEvaluationsResponse;
         
         console.log('📋 API Response:', response);
+        console.log('📋 API Response Type:', typeof response);
+        console.log('📋 API Response Success:', response.success);
+        console.log('📋 API Response Evaluations:', response.evaluations);
+        console.log('📋 API Response Evaluations Length:', response.evaluations?.length);
         
         if (response.success && response.evaluations && response.evaluations.length > 0) {
           // Transform stored evaluations into the expected format
