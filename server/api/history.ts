@@ -1,7 +1,8 @@
 import express from 'express';
 import { storage } from '../storage';
-import { insertContentHistorySchema } from '@shared/schema';
+import { insertContentHistorySchema, contentHistory } from '@shared/schema';
 import { z } from 'zod';
+import { db } from '../db';
 
 const router = express.Router();
 
@@ -28,6 +29,27 @@ router.get('/', async (req, res) => {
       success: false, 
       error: 'Failed to fetch content history',
       message: error.message
+    });
+  }
+});
+
+// Clear all content history
+router.post("/clear-all", async (req, res) => {
+  try {
+    // Delete all content history entries from database
+    await db.delete(contentHistory);
+    
+    console.log('✅ All content history cleared from database');
+    
+    res.json({
+      success: true,
+      message: "All content history has been cleared"
+    });
+  } catch (error) {
+    console.error('❌ Error clearing content history:', error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to clear content history"
     });
   }
 });

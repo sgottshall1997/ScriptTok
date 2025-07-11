@@ -296,17 +296,6 @@ const EnhancedContentHistory = () => {
     }
   };
 
-  const deleteAllEntries = () => {
-    if (window.confirm('Are you sure you want to delete all content history? This action cannot be undone.')) {
-      ContentHistoryManager.clearHistory();
-      loadHistory();
-      toast({
-        title: "All history cleared",
-        description: "All content generation entries have been removed",
-      });
-    }
-  };
-
   const toggleItemSelection = (id: string) => {
     const newSelection = new Set(selectedItems);
     if (newSelection.has(id)) {
@@ -393,13 +382,42 @@ const EnhancedContentHistory = () => {
     }
   };
 
-  const clearAllHistory = () => {
-    ContentHistoryManager.clearHistory();
-    loadHistory();
-    toast({
-      title: "History cleared",
-      description: "All content generation history has been cleared",
-    });
+  const clearAllHistory = async () => {
+    try {
+      setIsDeleting(true);
+      
+      // Clear database history via API
+      const response = await fetch('/api/history/clear-all', {
+        method: 'POST',
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Also clear local storage for completeness
+        ContentHistoryManager.clearHistory();
+        
+        // Refresh the history display
+        await refetchDbHistory();
+        loadHistory();
+        
+        toast({
+          title: "History cleared",
+          description: "All content generation history has been cleared",
+        });
+      } else {
+        throw new Error(data.error || 'Failed to clear history');
+      }
+    } catch (error) {
+      console.error('❌ Error clearing history:', error);
+      toast({
+        title: "Error",
+        description: "Failed to clear history. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const formatDate = (dateInput: string | Date) => {
@@ -521,11 +539,16 @@ const EnhancedContentHistory = () => {
             )}
             <Button 
               variant="outline" 
-              onClick={deleteAllEntries}
+              onClick={() => {
+                if (window.confirm('Are you sure you want to delete all content history? This action cannot be undone.')) {
+                  clearAllHistory();
+                }
+              }}
+              disabled={isDeleting}
               className="text-red-600 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4 mr-2" />
-              Clear All
+              {isDeleting ? 'Clearing...' : 'Clear All'}
             </Button>
           </div>
         </div>
