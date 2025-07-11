@@ -42,6 +42,16 @@ const SAFEGUARD_CONFIG: SafeguardConfig = {
     : true   // Allow in dev, require explicit flag in production
 };
 
+console.log('🔧 SAFEGUARD CONFIG LOADED:');
+console.log('   - Production Mode:', SAFEGUARD_CONFIG.PRODUCTION_MODE);
+console.log('   - Allow Automated Generation:', SAFEGUARD_CONFIG.ALLOW_AUTOMATED_GENERATION);
+console.log('   - Allow Manual UI Generation: ALWAYS ALLOWED');
+console.log('   - Allow Scheduled Generation:', SAFEGUARD_CONFIG.ALLOW_SCHEDULED_GENERATION);
+console.log('   - Environment Variables:');
+console.log('     * NODE_ENV:', process.env.NODE_ENV);
+console.log('     * ALLOW_PROD_GENERATION:', process.env.ALLOW_PROD_GENERATION);
+console.log('     * ALLOW_PROD_SCHEDULED:', process.env.ALLOW_PROD_SCHEDULED);
+
 /**
  * 🛡️ CORE SAFEGUARD: Validates if content generation is allowed
  */
@@ -135,9 +145,11 @@ export function detectGenerationContext(req: any): GenerationContext {
   const userAgent = req?.headers?.['user-agent'] || '';
   const referer = req?.headers?.referer || '';
   const source = req?.headers?.['x-generation-source'] || '';
+  const requestBody = req?.body || {};
 
-  // Detect manual UI requests
-  if (referer.includes('/unified-generator') || referer.includes('/dashboard')) {
+  // 🎯 PRIMARY: Check for explicit mode in request body (most reliable)
+  if (requestBody.mode === 'manual') {
+    console.log('🟢 CONTEXT: Manual mode detected in request body - MANUAL_UI');
     return {
       source: 'manual_ui',
       userAgent,
@@ -146,8 +158,52 @@ export function detectGenerationContext(req: any): GenerationContext {
     };
   }
 
+  // 🎯 SECONDARY: Check x-generation-source header
+  if (source === 'manual_ui' || source === 'manual') {
+    console.log('🟢 CONTEXT: Manual source detected in header - MANUAL_UI');
+    return {
+      source: 'manual_ui',
+      userAgent,
+      referer,
+      requestId: req?.headers?.['x-request-id']
+    };
+  }
+
+  // 🎯 TERTIARY: Check referer for UI pages (browser requests)
+  if (referer && (referer.includes('/unified-generator') || referer.includes('/dashboard') || referer.includes('localhost:5000') || referer.includes('.replit.app'))) {
+    console.log('🟢 CONTEXT: UI referer detected - MANUAL_UI');
+    return {
+      source: 'manual_ui',
+      userAgent,
+      referer,
+      requestId: req?.headers?.['x-request-id']
+    };
+  }
+
+  // 🎯 QUATERNARY: Check user agent for browser patterns (not curl/automated)
+  if (userAgent && (userAgent.includes('Mozilla') || userAgent.includes('Chrome') || userAgent.includes('Safari') || userAgent.includes('Firefox'))) {
+    console.log('🟢 CONTEXT: Browser user-agent detected - MANUAL_UI');
+    return {
+      source: 'manual_ui',
+      userAgent,
+      referer,
+      requestId: req?.headers?.['x-request-id']
+    };
+  }
+
+  // Detect automated bulk requests
+  if (requestBody.mode === 'automated' || source === 'automated_bulk') {
+    console.log('🔴 CONTEXT: Automated mode detected - AUTOMATED_BULK');
+    return {
+      source: 'automated_bulk',
+      userAgent,
+      referer
+    };
+  }
+
   // Detect scheduled job requests
   if (source === 'scheduled_job' || userAgent.includes('cron') || userAgent.includes('scheduled')) {
+    console.log('🔴 CONTEXT: Scheduled job detected - SCHEDULED_JOB');
     return {
       source: 'scheduled_job',
       userAgent,
@@ -157,6 +213,7 @@ export function detectGenerationContext(req: any): GenerationContext {
 
   // Detect webhook triggers
   if (source === 'webhook' || referer.includes('webhook') || userAgent.includes('webhook')) {
+    console.log('🔴 CONTEXT: Webhook trigger detected - WEBHOOK_TRIGGER');
     return {
       source: 'webhook_trigger',
       userAgent,
@@ -166,6 +223,7 @@ export function detectGenerationContext(req: any): GenerationContext {
 
   // Detect cron jobs
   if (source === 'cron' || userAgent.includes('node-cron')) {
+    console.log('🔴 CONTEXT: Cron job detected - CRON_JOB');
     return {
       source: 'cron_job',
       userAgent,
@@ -175,6 +233,7 @@ export function detectGenerationContext(req: any): GenerationContext {
 
   // Detect test requests
   if (referer.includes('test') || userAgent.includes('test') || source === 'test') {
+    console.log('🟡 CONTEXT: Test request detected - TEST');
     return {
       source: 'test',
       userAgent,
@@ -183,6 +242,11 @@ export function detectGenerationContext(req: any): GenerationContext {
   }
 
   // Default to unknown
+  console.log('🔴 CONTEXT: Unknown source detected - UNKNOWN');
+  console.log(`   - User Agent: ${userAgent}`);
+  console.log(`   - Referer: ${referer}`);
+  console.log(`   - Source Header: ${source}`);
+  console.log(`   - Request Mode: ${requestBody.mode || 'not specified'}`);
   return {
     source: 'unknown',
     userAgent,

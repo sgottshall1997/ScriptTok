@@ -783,6 +783,14 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Server Boot Stability**: Server now boots cleanly without running any tests in production while maintaining proper generation controls
   - ✅ **Flexible Safeguard Configuration**: Production deployment can override safeguards with ALLOW_PROD_GENERATION=true environment variable
   - ✅ **Complete Production Readiness**: Application now deploys successfully on Cloud Run with proper startup sequence and production safeguards
+- July 11, 2025. **CRITICAL SAFEGUARD SOURCE DETECTION FIX**: Resolved 403 errors blocking legitimate manual UI content generation in production:
+  - ✅ **Enhanced Source Detection**: Completely rewrote `detectGenerationContext()` function with 4-tier detection system (request body mode, header source, referer patterns, user-agent analysis)
+  - ✅ **Manual UI Priority**: Manual UI requests now detected via multiple methods: `mode: "manual"` in request body, browser user-agents, UI referer patterns, and localhost/replit.app domains
+  - ✅ **Browser Pattern Recognition**: Added detection for Mozilla, Chrome, Safari, Firefox user-agents to identify genuine browser requests
+  - ✅ **Production UI Support**: Manual content generation now works correctly in production while maintaining strict blocks on automated generation
+  - ✅ **Comprehensive Logging**: Enhanced safeguard logging shows exact detection reasoning with context details for debugging
+  - ✅ **Automated Block Verification**: Confirmed automated requests (curl without referer) are still properly blocked with 403 status
+  - ✅ **Source Detection Hierarchy**: Four-tier fallback system ensures manual UI requests are reliably identified across development and production environments
 - July 11, 2025. **COMPLETE GLOBAL GENERATION GATEKEEPER IMPLEMENTATION**: Ultimate security system preventing all unauthorized content generation:
   - ✅ **Global Generation Gatekeeper**: Built comprehensive `global-generation-gatekeeper.ts` with request validation, attempt tracking, and source identification
   - ✅ **Universal Endpoint Protection**: Applied gatekeeper to all content generation endpoints (generateContentUnified, bulk-content-generation, daily-batch, daily-batch-backup, scheduled-bulk-generation)
