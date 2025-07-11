@@ -76,30 +76,8 @@ app.use((req, res, next) => {
     // const { initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
     // await initializeScheduledJobs();
     
-    // PART 4: Daily Cron Job - Run Perplexity trends at 5:00 AM ET
-    cron.schedule("0 5 * * *", async () => {
-      console.log('🕐 Running daily Perplexity trends fetch at 5:00 AM ET');
-      try {
-        // Import and validate trend fetching is allowed
-        const { validateTrendFetchRequest } = await import("./config/generation-safeguards");
-        const validation = validateTrendFetchRequest();
-        
-        if (!validation.allowed) {
-          console.log(`🚫 TREND FETCH BLOCKED: ${validation.reason}`);
-          return;
-        }
-        
-        console.log('🟢 SAFEGUARD: Trend fetching validated - proceeding with Perplexity fetch (READ-ONLY)');
-        const result = await pullPerplexityTrends();
-        console.log(`✅ Daily trend fetch complete: ${result.message}, added ${result.productsAdded} products`);
-        console.log('📊 IMPORTANT: This was a READ-ONLY data fetch - no content generation occurred');
-      } catch (error) {
-        console.error('❌ Daily Perplexity fetch failed:', error);
-      }
-    }, {
-      timezone: "America/New_York"
-    });
-    
-    console.log('📅 Daily Perplexity trend fetcher ENABLED at 5:00 AM ET (READ-ONLY DATA FETCH)');
+    // 🚫 ALL CRON JOBS DISABLED FOR PRODUCTION SECURITY
+    // NO SCHEDULED JOBS ALLOWED - MANUAL GENERATION ONLY
+    console.log('🔒 ALL AUTOMATED PROCESSES DISABLED - MANUAL GENERATION ONLY');
   });
 })();
