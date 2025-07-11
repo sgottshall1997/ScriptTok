@@ -72,9 +72,9 @@ app.use((req, res, next) => {
   }, async () => {
     log(`serving on port ${port}`);
     
-    // Initialize scheduled bulk generation jobs
-    const { initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
-    await initializeScheduledJobs();
+    // Initialize scheduled bulk generation jobs - DISABLED FOR PRODUCTION DEPLOYMENT
+    // const { initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
+    // await initializeScheduledJobs();
     
     // PART 4: Daily Cron Job - Run Perplexity trends at 5:00 AM ET
     cron.schedule("0 5 * * *", async () => {
