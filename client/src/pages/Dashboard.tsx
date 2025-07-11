@@ -38,6 +38,18 @@ const Dashboard = () => {
     cacheTime: 0, // Don't cache the data
   });
 
+  // Fetch Perplexity status for last run display
+  const { data: perplexityStatus } = useQuery<{
+    success: boolean;
+    lastRun: string;
+    timeSince: string;
+    nextScheduled: string;
+    totalProducts: number;
+  }>({
+    queryKey: ['/api/perplexity-status/last-run'],
+    refetchInterval: 60000, // Refresh every minute
+  });
+
   // Individual product refresh mutation
   const refreshIndividualMutation = useMutation({
     mutationFn: async ({ productId, niche }: { productId: number; niche: string }) => {
@@ -276,6 +288,43 @@ const Dashboard = () => {
             </div>
           </div>
         </CardHeader>
+        
+        {/* Perplexity Last Run Status */}
+        <CardContent className="pt-0 pb-4">
+          <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <Clock className="h-5 w-5 text-blue-600" />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium text-blue-900">Last Perplexity Run</span>
+                    {perplexityStatus ? (
+                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                        {perplexityStatus.timeSince}
+                      </Badge>
+                    ) : (
+                      <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                        Loading...
+                      </Badge>
+                    )}
+                  </div>
+                  <div className="text-sm text-blue-700 mt-1">
+                    {perplexityStatus ? (
+                      <>
+                        <div><strong>Time:</strong> {perplexityStatus.lastRun}</div>
+                        <div><strong>Next:</strong> {perplexityStatus.nextScheduled}</div>
+                        <div><strong>Products:</strong> {perplexityStatus.totalProducts} total in database</div>
+                      </>
+                    ) : (
+                      <div>Loading status...</div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </CardContent>
+        
         <CardContent>
           {trendingLoading ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
