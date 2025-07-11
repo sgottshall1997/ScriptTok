@@ -175,6 +175,19 @@ const EnhancedContentHistory = () => {
       });
     }
 
+    if (filters.amazonAffiliate !== 'all') {
+      filtered = filtered.filter(item => {
+        const affiliateLink = item.generatedOutput?.affiliateLink || '';
+        const isAmazonLink = affiliateLink.includes('amazon.com') || 
+                            affiliateLink.includes('amzn.to') ||
+                            affiliateLink.includes('amazon.') ||
+                            affiliateLink.includes('/dp/') ||
+                            affiliateLink.includes('tag=');
+        return filters.amazonAffiliate === 'amazon' ? isAmazonLink : 
+               (affiliateLink.trim() !== '' && affiliateLink !== 'N/A' && !isAmazonLink);
+      });
+    }
+
     if (filters.aiModel !== 'all') {
       filtered = filtered.filter(item => {
         const aiModel = item.aiModel || item.model;
@@ -577,12 +590,25 @@ const EnhancedContentHistory = () => {
           <div>
             <Select value={filters.affiliateLink} onValueChange={(value) => setFilters(prev => ({ ...prev, affiliateLink: value }))}>
               <SelectTrigger>
-                <SelectValue placeholder="Affiliate Links" />
+                <SelectValue placeholder="Has / Does not have Affiliate Link" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Content</SelectItem>
                 <SelectItem value="has">Has Affiliate Link</SelectItem>
                 <SelectItem value="none">No Affiliate Link</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Select value={filters.amazonAffiliate} onValueChange={(value) => setFilters(prev => ({ ...prev, amazonAffiliate: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Amazon Affiliate Links" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Content</SelectItem>
+                <SelectItem value="amazon">Amazon Affiliate Links</SelectItem>
+                <SelectItem value="nonamazon">Non-Amazon Links</SelectItem>
               </SelectContent>
             </Select>
           </div>
