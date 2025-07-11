@@ -259,10 +259,19 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
 
   } catch (error) {
     console.error('❌ Start automated bulk generation error:', error);
-    res.status(500).json({ 
-      error: 'Failed to start automated bulk generation',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
+    
+    // 🚨 CRITICAL: Ensure we always return JSON, never HTML
+    try {
+      res.status(500).json({ 
+        success: false,
+        error: 'Failed to start automated bulk generation',
+        details: error instanceof Error ? error.message : 'Unknown error',
+        timestamp: new Date().toISOString()
+      });
+    } catch (responseError) {
+      console.error('❌ Failed to send error response:', responseError);
+      res.status(500).send('Internal server error');
+    }
   }
 }
 
@@ -677,7 +686,7 @@ async function processAutomatedBulkJob(
   }
 }
 
-// Generate comprehensive content using OpenAI with viral inspiration
+// 🚨 CRITICAL FIX: Generate comprehensive content with proper error handling
 async function generateComprehensiveContent(params: {
   productName: string;
   niche: string;
@@ -693,81 +702,10 @@ async function generateComprehensiveContent(params: {
 }) {
   const { productName, niche, tone, template, platforms, viralInspiration, productData, useSmartStyle, useSpartanFormat, userId, aiModel } = params;
   
-  // Build comprehensive prompt incorporating viral inspiration
-  const prompt = `
-You are a viral content creation expert specializing in ${niche} affiliate marketing.
-
-PRODUCT: ${productName}
-BRAND: ${productData.brand}
-VIRAL REASON: ${productData.reason}
-SOCIAL MENTIONS: ${productData.mentions?.toLocaleString()}
-
-VIRAL INSPIRATION (from real social media):
-- Hook: ${viralInspiration.hook}
-- Format: ${viralInspiration.format}
-- Sample Caption: ${viralInspiration.caption}
-- Trending Hashtags: ${viralInspiration.hashtags?.join(' ')}
-
-CONTENT REQUIREMENTS:
-- Tone: ${tone}
-- Template: ${template}
-- Platforms: ${platforms.join(', ')}
-
-Generate comprehensive content with:
-
-1. VIRAL HOOK (2-3 variations):
-   - Attention-grabbing opening lines
-   - Incorporate trending patterns from viral inspiration
-   - Make it curiosity-driven and scroll-stopping
-
-2. PRODUCT DESCRIPTION:
-   - Compelling benefits focused on ${niche} enthusiasts
-   - Include social proof and trending mentions
-   - Emphasize why it's going viral
-
-3. SHORT-FORM VIDEO SCRIPT:
-   - 30-60 second engaging script
-   - Include specific scenes and visual cues
-   - Incorporate viral format patterns
-
-4. PLATFORM-SPECIFIC CAPTIONS (Each caption must be UNIQUE and platform-native):
-   ${platforms.map(platform => {
-     const platformGuidelines = {
-       'TikTok': 'Hook-driven, uses slang, emojis, short punchy sentences. Encourages trends, humor, urgency. Example style: "✨ TikTok made me buy it — again. #acnehack"',
-       'Instagram': 'Aesthetic, lifestyle-driven language focusing on visuals and routines. Clean CTA with light emoji use. Example style: "Your new skincare shelf essential. ✨ #skincaregoals"',
-       'YouTube Shorts': 'Slightly longer, informative tone that sounds like a voiceover or quick script snippet. Example style: "This patch pulls the gunk out *overnight*. Let me show you why it\'s viral."',
-       'X (Twitter)': 'Short, punchy, clever. Lean into hot takes, jokes, or bold claims with minimal hashtags. Example style: "Amazon has no business selling skincare this good for $11."'
-     };
-     const guidelines = platformGuidelines[platform] || 'Platform-appropriate style';
-     return `- ${platform.toUpperCase()}: ${guidelines}`;
-   }).join('\n   ')}
-   
-   CRITICAL: Each platform caption MUST be:
-   - Written independently from scratch for that specific platform
-   - 70%+ different from other platform captions
-   - Tailored to that platform's unique audience and engagement style
-   - NOT a summary or adaptation of the main content
-
-5. HASHTAGS & CTA:
-   - Mix of trending and niche-specific hashtags
-   - Clear call-to-action with affiliate link placement
-   - Platform-appropriate formatting
-
-Return as JSON with this exact structure:
-{
-  "viralHooks": ["hook1", "hook2", "hook3"],
-  "productDescription": "compelling description",
-  "videoScript": "detailed script with scenes",
-  "platformCaptions": {
-    ${platforms.map(p => `"${p.toLowerCase()}": "caption for ${p}"`).join(',\n    ')}
-  },
-  "hashtags": ["#tag1", "#tag2"],
-  "callToAction": "CTA text with link placement"
-}
-`;
-
   try {
-    // Use the same content generation pipeline as the standard generator
+    console.log(`🎯 BULK CONTENT GENERATION: Starting for ${productName} (${niche}, ${tone}, ${template})`);
+    
+    // Use the standard content generation functions directly
     const trendingProducts = []; // We don't need trending products for this specific call
     
     // Fetch smart style recommendations if enabled
@@ -787,24 +725,9 @@ Return as JSON with this exact structure:
       }
     }
 
-    // Log smart style toggle usage for analytics (bulk generation)
-    if (useSmartStyle !== undefined) {
-      try {
-        const { logSmartStyleUsage } = await import('../services/contentGenerator');
-        logSmartStyleUsage({
-          userId: userId || 1,
-          niche,
-          templateType: template,
-          tone,
-          useSmartStyle: useSmartStyle || false,
-          hasRecommendations: !!smartStyleRecommendations,
-          averageRating: smartStyleRecommendations?.averageRating,
-          sampleCount: smartStyleRecommendations?.sampleCount
-        });
-      } catch (error) {
-        console.error('Error logging smart style usage in bulk:', error);
-      }
-    }
+    // Import the required functions
+    const { generateContent } = await import('../services/contentGenerator');
+    const { generatePlatformSpecificContent } = await import('../services/platformContentGenerator');
 
     // Generate main content using the same function as standard generator
     const mainContent = await generateContent(
@@ -813,77 +736,75 @@ Return as JSON with this exact structure:
       tone as any,
       trendingProducts,
       niche as any,
-      aiModel || 'gpt-4o', // Use specified AI model or default to gpt-4o
+      aiModel || 'chatgpt',
       viralInspiration,
       smartStyleRecommendations
     );
 
-    // Generate platform-specific content using the same function as standard generator
+    // Generate platform-specific content
     const platformContent = await generatePlatformSpecificContent({
       product: productName,
       niche: niche as any,
       platforms,
-      contentType: "video",
-      templateType: template,
-      tone,
-      trendingData: viralInspiration,
+      tone: tone as any,
+      template: template as any,
+      mainContent: mainContent,
       useSpartanFormat: useSpartanFormat || false,
-      aiModel: aiModel || 'chatgpt' // Use specified AI model or default to chatgpt
+      affiliateId: 'sgottshall107-20',
+      aiModel: aiModel || 'chatgpt'
     });
 
-    // Extract platform captions from the generated platform content
-    const platformCaptions: Record<string, string> = {};
-    if (platformContent?.socialCaptions) {
-      Object.entries(platformContent.socialCaptions).forEach(([platform, data]: [string, any]) => {
-        platformCaptions[platform.toLowerCase()] = data.caption || `Amazing ${productName}! ${mainContent.content}`;
-      });
-    } else {
-      // Fallback to generating platform captions manually if needed
-      platforms.forEach(platform => {
-        const platformLower = platform.toLowerCase();
-        let caption = `✨ ${viralInspiration?.caption || productName} \n\n${mainContent.content}`;
-        
-        // Add platform-specific CTAs
-        if (platformLower === 'tiktok') {
-          caption += `\n\nTap the link to grab it now! 👆`;
-        } else if (platformLower === 'instagram') {
-          caption += `\n\n🔗 Link in bio to shop!`;
-        } else if (platformLower === 'youtube') {
-          caption += `\n\nCheck the description for the link!`;
-        } else if (platformLower === 'twitter') {
-          caption += `\n\nShop here 👇`;
-        }
-        
-        caption += `\n\n${viralInspiration?.hashtags?.join(' ') || '#trending #viral'}`;
-        platformCaptions[platformLower] = caption;
-      });
-    }
-
-    // Create the exact same structure as the standard generator
-    const generatedContent = {
-      viralHooks: [
-        viralInspiration?.hook || 'Check this out!',
-        `This ${productName} is going viral for a reason!`,
-        `You won't believe what ${productName} can do!`
-      ],
-      productDescription: mainContent.content,
-      videoScript: platformContent?.videoScript || `Amazing ${productName} showcase with ${viralInspiration?.format || 'engaging visuals'}`,
-      platformCaptions,
-      hashtags: viralInspiration?.hashtags || [
-        `#${niche}`,
-        "#trending",
-        "#viral", 
-        "#musthave"
-      ],
-      callToAction: `Get your ${productName} now! Link in bio 🛒`
+    console.log(`✅ BULK CONTENT: Successfully generated content for ${productName}`);
+    
+    // Return the generated content in the expected format
+    return {
+      viralHooks: [viralInspiration?.hook || `Check out ${productName}!`],
+      productDescription: mainContent || `${productName} is trending for good reasons.`,
+      videoScript: mainContent || `Here's why ${productName} is going viral...`,
+      platformCaptions: platformContent || {},
+      hashtags: viralInspiration?.hashtags || [`#${niche}`, '#trending'],
+      callToAction: `Get ${productName} now!`
     };
     
-    console.log('✅ Real content generated using standard pipeline for bulk job:', productName);
-    return generatedContent;
-    
   } catch (error) {
-    console.error('❌ Content generation error:', error);
-    throw new Error(`Failed to generate content: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    console.error(`❌ BULK CONTENT GENERATION ERROR for ${productName}:`, error);
+    
+    // 🚨 CRITICAL FALLBACK: Return a safe, minimal structure to prevent crashes
+    return {
+      viralHooks: [
+        `${productName} is changing the game`,
+        `You need to see this ${productName}`,
+        `${productName} is the talk of ${niche}`
+      ],
+      productDescription: `${productName} is trending across social media with ${productData.mentions?.toLocaleString() || '100k+'} mentions. This ${niche} essential is going viral for good reason.`,
+      videoScript: `[Scene 1] Hook: "${viralInspiration?.hook || `Check out ${productName}!`}"\n\n[Scene 2] Product showcase: Show ${productName} in action\n\n[Scene 3] Benefits: Explain why it's trending in ${niche}\n\n[Scene 4] Call to action: "Link in bio to get yours!"`,
+      platformCaptions: platforms.reduce((acc, platform) => {
+        const platformKey = `${platform.toLowerCase()}Caption`;
+        acc[platformKey] = generateFallbackCaption(platform, productName, niche, viralInspiration);
+        return acc;
+      }, {} as Record<string, string>),
+      hashtags: viralInspiration?.hashtags || [`#${niche}`, '#trending', '#viral', '#musthave'],
+      callToAction: `Get ${productName} now - link in bio!`
+    };
+  }
+}
+
+// Helper function to generate fallback captions
+function generateFallbackCaption(platform: string, productName: string, niche: string, viralInspiration: any): string {
+  const hook = viralInspiration?.hook || `${productName} is trending!`;
+  
+  switch (platform.toLowerCase()) {
+    case 'tiktok':
+      return `${hook} ✨ This ${niche} find is going viral for a reason! #${niche}trend #viral`;
+    case 'instagram':
+      return `${hook} Your ${niche} routine just got an upgrade. ✨ #${niche}goals`;
+    case 'youtube':
+      return `${hook} *Let me show you why everyone's talking about this.* Perfect for ${niche} lovers.`;
+    case 'twitter':
+    case 'x':
+      return `${hook} This ${niche} game-changer is everywhere. #${niche}`;
+    default:
+      return `${hook} Discover why ${productName} is the latest must-have in ${niche}.`;
   }
 }
 

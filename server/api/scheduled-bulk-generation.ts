@@ -70,7 +70,32 @@ export async function createScheduledJob(req: Request, res: Response) {
   }
 }
 
-// Emergency stop all cron jobs
+// 🚨 CRITICAL: Emergency stop all cron jobs with proper cleanup
+export async function stopAllCronJobs() {
+  console.log('🚨 EMERGENCY: Stopping all active cron jobs...');
+  
+  let stoppedCount = 0;
+  for (const [jobId, task] of activeCronJobs.entries()) {
+    try {
+      if (task) {
+        task.stop();
+        task.destroy();
+        console.log(`⏹️ Stopped and destroyed cron job ${jobId}`);
+        stoppedCount++;
+      }
+    } catch (error) {
+      console.error(`⚠️ Error stopping cron job ${jobId}:`, error);
+    }
+  }
+  
+  // Clear all active cron jobs
+  activeCronJobs.clear();
+  console.log(`✅ Emergency stop completed: ${stoppedCount} cron jobs stopped`);
+  
+  return stoppedCount;
+}
+
+// Emergency stop all cron jobs API endpoint
 export async function emergencyStopAllCronJobs(req: Request, res: Response) {
   try {
     console.log(`🚨 EMERGENCY STOP: Stopping all ${activeCronJobs.size} active cron jobs`);

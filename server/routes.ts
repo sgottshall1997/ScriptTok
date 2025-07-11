@@ -46,6 +46,7 @@ import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
 import { getScheduledJobs, createScheduledJob, updateScheduledJob, deleteScheduledJob, triggerScheduledJob, initializeScheduledJobs, emergencyStopAllCronJobs, getActiveCronJobsStatus } from "./api/scheduled-bulk-generation";
+import { emergencyStopAll, getSystemStatus } from "./api/emergency-stop";
 import { cronStatusRouter } from "./api/cron-status";
 import perplexityStatusRouter from "./api/perplexity-status";
 import aiAnalyticsRouter from "./api/ai-analytics";
@@ -580,6 +581,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.put('/api/scheduled-bulk/jobs/:id', updateScheduledJob);
   app.delete('/api/scheduled-bulk/jobs/:id', deleteScheduledJob);
   app.post('/api/scheduled-bulk/jobs/:id/trigger', triggerScheduledJob);
+  app.post('/api/scheduled-bulk/emergency-stop', emergencyStopAllCronJobs);
+  app.get('/api/scheduled-bulk/status', getActiveCronJobsStatus);
+  
+  // 🚨 EMERGENCY STOP endpoints
+  app.post('/api/emergency-stop-all', emergencyStopAll);
+  app.get('/api/system-status', getSystemStatus);
 
   // 🚨 CRITICAL FIX: Emergency stop all cron jobs
   app.post('/api/scheduled-bulk/emergency-stop', async (req, res) => {
