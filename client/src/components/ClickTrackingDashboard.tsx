@@ -49,7 +49,7 @@ export function ClickTrackingDashboard() {
   });
 
   const refreshMutation = useMutation({
-    mutationFn: () => apiRequest('/api/redirect'),
+    mutationFn: () => apiRequest('GET', '/api/redirect'),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/redirect'] });
     }
