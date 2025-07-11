@@ -119,7 +119,7 @@ router.post('/', async (req, res) => {
     });
 
     // Send sync payload to Make.com webhook
-    const webhookUrl = 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw';
+    const webhookUrl = 'https://hook.us2.make.com/j404wlveh2s5mii7az1rl6279xjaddnf';
     
     const syncPayload = {
       event_type: 'sync_ratings_to_sheet',
