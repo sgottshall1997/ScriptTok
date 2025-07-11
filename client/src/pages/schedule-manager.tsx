@@ -16,16 +16,16 @@ const ScheduleManager: React.FC = () => {
   // Fetch scheduled jobs
   const { data: scheduledJobs, isLoading, error } = useQuery({
     queryKey: ['/api/scheduled-bulk/jobs'],
-    queryFn: () => apiRequest('/api/scheduled-bulk/jobs')
+    queryFn: async () => {
+      const response = await apiRequest('GET', '/api/scheduled-bulk/jobs');
+      return response.json();
+    }
   });
 
   // Toggle job active state
   const toggleJobMutation = useMutation({
     mutationFn: async ({ jobId, isActive }: { jobId: number; isActive: boolean }) => {
-      return apiRequest(`/api/scheduled-bulk/jobs/${jobId}`, {
-        method: 'PUT',
-        body: JSON.stringify({ isActive })
-      });
+      return apiRequest('PUT', `/api/scheduled-bulk/jobs/${jobId}`, { isActive });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/scheduled-bulk/jobs'] });
@@ -46,9 +46,7 @@ const ScheduleManager: React.FC = () => {
   // Delete job
   const deleteJobMutation = useMutation({
     mutationFn: async (jobId: number) => {
-      return apiRequest(`/api/scheduled-bulk/jobs/${jobId}`, {
-        method: 'DELETE'
-      });
+      return apiRequest('DELETE', `/api/scheduled-bulk/jobs/${jobId}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/scheduled-bulk/jobs'] });
@@ -69,9 +67,7 @@ const ScheduleManager: React.FC = () => {
   // Trigger job manually
   const triggerJobMutation = useMutation({
     mutationFn: async (jobId: number) => {
-      return apiRequest(`/api/scheduled-bulk/jobs/${jobId}/trigger`, {
-        method: 'POST'
-      });
+      return apiRequest('POST', `/api/scheduled-bulk/jobs/${jobId}/trigger`);
     },
     onSuccess: () => {
       toast({
