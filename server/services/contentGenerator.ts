@@ -40,14 +40,22 @@ export function logSmartStyleUsage(params: {
 }
 
 // Function to clean video scripts for Pictory - removes markdown formatting and hashtags
-function cleanVideoScript(content: string): string {
-  // Ensure content is a string
-  if (typeof content !== 'string') {
-    console.error('cleanVideoScript received non-string content:', typeof content, content);
-    return String(content || '');
+function cleanVideoScript(content: string | any): string {
+  // Handle different response structures from different AI models
+  let actualContent = content;
+  
+  if (typeof content === 'object' && content.content) {
+    // Claude response structure: { content: "actual content", model: "claude-3-5-sonnet-20241022", ... }
+    actualContent = content.content;
   }
   
-  return content
+  // Ensure content is a string
+  if (typeof actualContent !== 'string') {
+    console.error('cleanVideoScript received non-string content after extraction:', typeof actualContent, actualContent);
+    return String(actualContent || '');
+  }
+  
+  return actualContent
     // Remove hashtags completely from the content
     .replace(/#\w+/g, '')
     // Remove markdown headers (### Title:, #### Section:, etc.)

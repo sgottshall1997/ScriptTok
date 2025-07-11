@@ -698,6 +698,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'chatgpt');
       
       console.log(`🎭 GENERATION CONFIG: ${tones.length} tone(s), ${templates.length} template(s), AI Model: ${selectedAiModel}`);
+      console.log(`🤖 AI MODEL DEBUG: data.aiModel="${data.aiModel}", data.aiModels=${JSON.stringify(data.aiModels)}, selectedAiModel="${selectedAiModel}"`);
       
       // For scheduled generation, use exactly 1 tone and 1 template to ensure 1 content per niche
       const selectedTone = tones[0]; // Use first tone for consistency
