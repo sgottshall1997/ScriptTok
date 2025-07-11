@@ -141,7 +141,7 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         throw new Error(`AI generation failed: ${aiResponse.error}`);
       }
 
-      const content = aiResponse.data.content;
+      const content = aiResponse.content;
       if (!content) {
         throw new Error('No content generated from AI');
       }

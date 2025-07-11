@@ -323,8 +323,10 @@ Apply these successful patterns from your previous high-rated content:
       throw new Error(`AI generation failed: ${aiResponse.error}`);
     }
 
+    const content = aiResponse.content;
+
     // Clean up the content for video scripts (remove markdown, asterisks, hashtag headers)
-    const rawContent = aiResponse.data.content || "Could not generate content. Please try again.";
+    const rawContent = content || "Could not generate content. Please try again.";
     const cleanedContent = cleanVideoScript(rawContent);
 
     // Estimate video duration for the cleaned content
@@ -335,8 +337,8 @@ Apply these successful patterns from your previous high-rated content:
       content: cleanedContent,
       fallbackLevel,
       prompt,
-      model: aiResponse.data.model || aiModel,
-      tokens: aiResponse.data.tokens || 0,
+      model: aiResponse.model || aiModel,
+      tokens: aiResponse.tokens || 0,
       videoDuration
     };
       
