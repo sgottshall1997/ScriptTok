@@ -299,26 +299,51 @@ const WebhookSettings = () => {
           <CardFooter className="flex flex-col items-start border-t px-6 py-4">
             <h3 className="text-lg font-medium mb-2">Webhook Data</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              Each content generation will send the following data to your webhook URL:
+              Each content generation will send the following complete data structure to your webhook URL:
             </p>
+            <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-4 text-sm">
+              <p className="font-medium text-blue-800 mb-2">Webhook Payload Fields:</p>
+              <ul className="text-blue-700 space-y-1 text-xs">
+                <li><strong>event_type:</strong> Always "content_generated"</li>
+                <li><strong>platform:</strong> Target platform (tiktok, instagram, youtube, twitter, other)</li>
+                <li><strong>niche:</strong> Content niche (beauty, tech, fashion, fitness, food, travel, pets)</li>
+                <li><strong>script:</strong> Main content/video script</li>
+                <li><strong>instagramCaption:</strong> Instagram-optimized caption with hashtags</li>
+                <li><strong>tiktokCaption:</strong> TikTok-optimized caption with viral language</li>
+                <li><strong>youtubeCaption:</strong> YouTube Shorts voiceover-style caption</li>
+                <li><strong>xCaption:</strong> Twitter/X optimized short caption</li>
+                <li><strong>facebookCaption:</strong> Facebook-optimized caption</li>
+                <li><strong>affiliateLink:</strong> Amazon affiliate link with tracking</li>
+                <li><strong>product:</strong> Product name</li>
+                <li><strong>imageUrl:</strong> Product image URL or placeholder</li>
+                <li><strong>tone:</strong> Content tone (enthusiastic, professional, etc.)</li>
+                <li><strong>template:</strong> Content template used</li>
+                <li><strong>model:</strong> AI model used (ChatGPT or Claude)</li>
+                <li><strong>contentFormat:</strong> Format type (Regular Format or Spartan Format)</li>
+                <li><strong>postType:</strong> Content type (reel, post, etc.)</li>
+                <li><strong>timestamp:</strong> Generation timestamp</li>
+              </ul>
+            </div>
             <div className="bg-muted p-4 rounded-md text-xs font-mono w-full overflow-auto">
               {JSON.stringify({
                 event_type: "content_generated",
-                timestamp: new Date().toISOString(),
-                content_metadata: {
-                  id: 123,
-                  niche: "beauty",
-                  contentType: "instagram_post",
-                  tone: "professional",
-                  productName: "Example Product",
-                  modelUsed: "gpt-4o",
-                  tokenCount: 450,
-                  createdAt: new Date().toISOString()
-                },
-                content: {
-                  prompt: "Generate content for Example Product...",
-                  output: "Generated content will appear here..."
-                }
+                platform: "tiktok",
+                niche: "beauty",
+                script: "Transform your skincare routine with this Hero serum! This beginner-friendly formula delivers visible results in just 7 days. Perfect for anyone starting their glow-up journey ✨",
+                instagramCaption: "This Hero serum has been my skincare game-changer ✨ Perfect for beginners who want real results without the guesswork #skincare #beauty #glowup",
+                tiktokCaption: "POV: You found the perfect beginner serum 🌟 Hero My First Serum is literally changing my skin game! Who else is obsessed? #skincare #hero #glowup",
+                youtubeCaption: "*This serum has completely transformed my skincare routine* If you're a beginner looking for real results, Hero My First Serum is the perfect starting point #skincare",
+                xCaption: "Plot twist: the best beginner serum was from Hero all along 💫 This changed my entire skincare game #skincare",
+                facebookCaption: "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",
+                affiliateLink: "https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20",
+                product: "Hero My First Serum 1.69 fl oz",
+                imageUrl: "https://via.placeholder.com/400x400?text=Hero%20My%20First%20Serum%201.69%20fl%20oz",
+                tone: "enthusiastic",
+                template: "short_video_script",
+                model: "Claude",
+                contentFormat: "Regular Format",
+                postType: "reel",
+                timestamp: new Date().toISOString()
               }, null, 2)}
             </div>
           </CardFooter>
