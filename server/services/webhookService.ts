@@ -143,7 +143,7 @@ export class WebhookService {
       for (const platform of platforms) {
         const platformData = data.platformContent[platform];
         
-        // Create your new simplified JSON payload format with AI model and content format
+        // Create comprehensive JSON payload with viral inspiration and AI evaluation data
         const newPayload = {
           event_type: "content_generated",
           platform: platform, // Added platform field
@@ -163,10 +163,35 @@ export class WebhookService {
           contentFormat: data.metadata?.contentFormat || 'Regular Format', // Either 'Regular Format' or 'Spartan Format'
           postType: platformData.type || 'reel',
           topRatedStyleUsed: data.metadata?.useSmartStyle || false, // Include smart style tracking
+          
+          // VIRAL INSPIRATION DATA from Perplexity
+          viralHook: data.contentData?.viralInspiration?.hook || '',
+          viralFormat: data.contentData?.viralInspiration?.format || '',
+          viralCaption: data.contentData?.viralInspiration?.caption || '',
+          viralHashtags: data.contentData?.viralInspiration?.hashtags ? data.contentData.viralInspiration.hashtags.join(', ') : '',
+          viralInspirationFound: !!data.contentData?.viralInspiration,
+          
+          // AI EVALUATION SCORES (will be populated by evaluation system)
+          chatgptViralityScore: data.contentData?.aiEvaluation?.chatgpt?.viralityScore || null,
+          chatgptClarityScore: data.contentData?.aiEvaluation?.chatgpt?.clarityScore || null,
+          chatgptPersuasivenessScore: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessScore || null,
+          chatgptCreativityScore: data.contentData?.aiEvaluation?.chatgpt?.creativityScore || null,
+          chatgptOverallScore: data.contentData?.aiEvaluation?.chatgpt?.overallScore || null,
+          
+          claudeViralityScore: data.contentData?.aiEvaluation?.claude?.viralityScore || null,
+          claudeClarityScore: data.contentData?.aiEvaluation?.claude?.clarityScore || null,
+          claudePersuasivenessScore: data.contentData?.aiEvaluation?.claude?.persuasivenessScore || null,
+          claudeCreativityScore: data.contentData?.aiEvaluation?.claude?.creativityScore || null,
+          claudeOverallScore: data.contentData?.aiEvaluation?.claude?.overallScore || null,
+          
+          // EVALUATION SUMMARY
+          averageOverallScore: data.contentData?.aiEvaluation?.averageScore || null,
+          evaluationCompleted: !!data.contentData?.aiEvaluation,
+          
           timestamp: new Date().toISOString()
         };
 
-        // Enhanced logging with timestamp and highlighted fields
+        // Enhanced logging with timestamp and highlighted fields including viral inspiration and AI evaluation
         const timestamp = new Date().toLocaleString();
         console.log(`\n🚀 [${timestamp}] WEBHOOK PAYLOAD TO MAKE.COM`);
         console.log('━'.repeat(80));
@@ -177,6 +202,18 @@ export class WebhookService {
         console.log(`🤖 AI Model: ${newPayload.model}`);
         console.log(`📄 Content Format: ${newPayload.contentFormat}`);
         console.log(`💰 Affiliate Link: ${newPayload.affiliateLink ? 'Yes' : 'No'}`);
+        console.log(`✨ Viral Inspiration: ${newPayload.viralInspirationFound ? 'Yes' : 'No'}`);
+        if (newPayload.viralInspirationFound) {
+          console.log(`   🎣 Hook: ${newPayload.viralHook}`);
+          console.log(`   📐 Format: ${newPayload.viralFormat}`);
+          console.log(`   🏷️ Hashtags: ${newPayload.viralHashtags}`);
+        }
+        console.log(`🎯 AI Evaluation: ${newPayload.evaluationCompleted ? 'Completed' : 'Pending'}`);
+        if (newPayload.evaluationCompleted) {
+          console.log(`   🤖 ChatGPT Overall: ${newPayload.chatgptOverallScore}/10`);
+          console.log(`   🎭 Claude Overall: ${newPayload.claudeOverallScore}/10`);
+          console.log(`   📊 Average Score: ${newPayload.averageOverallScore}/10`);
+        }
         console.log('━'.repeat(80));
         console.log('📋 COMPLETE PAYLOAD:');
         console.log(JSON.stringify(newPayload, null, 2));

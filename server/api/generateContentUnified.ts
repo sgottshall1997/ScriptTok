@@ -305,6 +305,59 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           };
         });
         
+        // Fetch AI evaluation results if they exist
+        let aiEvaluationData = null;
+        if (config.mode === 'manual') {
+          try {
+            const { contentHistory, contentEvaluations } = await import('@shared/schema');
+            const sessionId = config.jobId || `single_${Date.now()}`;
+            
+            const recentContent = await db.select()
+              .from(contentHistory)
+              .where(eq(contentHistory.sessionId, sessionId))
+              .orderBy(desc(contentHistory.createdAt))
+              .limit(1);
+            
+            if (recentContent.length > 0) {
+              const contentHistoryId = recentContent[0].id;
+              
+              // Get AI evaluation results
+              const evaluations = await db.select()
+                .from(contentEvaluations)
+                .where(eq(contentEvaluations.contentHistoryId, contentHistoryId));
+              
+              if (evaluations.length > 0) {
+                const chatgptEval = evaluations.find(e => e.model === 'chatgpt');
+                const claudeEval = evaluations.find(e => e.model === 'claude');
+                
+                if (chatgptEval && claudeEval) {
+                  const averageScore = ((chatgptEval.overallScore || 0) + (claudeEval.overallScore || 0)) / 2;
+                  
+                  aiEvaluationData = {
+                    chatgpt: {
+                      viralityScore: chatgptEval.viralityScore,
+                      clarityScore: chatgptEval.clarityScore,
+                      persuasivenessScore: chatgptEval.persuasivenessScore,
+                      creativityScore: chatgptEval.creativityScore,
+                      overallScore: chatgptEval.overallScore
+                    },
+                    claude: {
+                      viralityScore: claudeEval.viralityScore,
+                      clarityScore: claudeEval.clarityScore,
+                      persuasivenessScore: claudeEval.persuasivenessScore,
+                      creativityScore: claudeEval.creativityScore,
+                      overallScore: claudeEval.overallScore
+                    },
+                    averageScore: parseFloat(averageScore.toFixed(1))
+                  };
+                }
+              }
+            }
+          } catch (evalFetchError) {
+            console.log('⚠️ Could not fetch AI evaluation results for webhook');
+          }
+        }
+
         await webhookService.sendMultiPlatformContent({
           platformContent,
           platformSchedules: {},
@@ -324,7 +377,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           contentData: {
             fullOutput: typeof mainContent === 'string' ? mainContent : mainContent.content,
             platformCaptions: platformCaptions,
-            viralInspiration: viralInspiration
+            viralInspiration: viralInspiration,
+            aiEvaluation: aiEvaluationData
           }
         });
         console.log(`✅ Content sent to Make.com successfully`);

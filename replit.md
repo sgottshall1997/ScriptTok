@@ -696,6 +696,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Documentation Update**: WebhookSettings page includes topRatedStyleUsed field description and example payload with all 19 webhook fields
   - ✅ **External Analytics Support**: Make.com and Google Sheets can now track smart style learning usage across all content generation workflows
   - ✅ **Complete Tracking Dimensions**: Full webhook payload now supports niche × tone × template × platform × AI model × content format × smart style combinations
+- July 11, 2025. **Enhanced Webhook Payload with Viral Inspiration and AI Evaluation Data**: Complete webhook integration with comprehensive content analytics:
+  - ✅ **Enhanced Webhook Payload Structure**: Added viral inspiration fields (viralHook, viralFormat, viralCaption, viralHashtags, viralInspirationFound) to all webhook payloads
+  - ✅ **Dual AI Evaluation Integration**: Added ChatGPT and Claude evaluation scores (virality, clarity, persuasiveness, creativity, overall) to webhook payloads
+  - ✅ **Single Content Generator Enhancement**: AI evaluation results automatically fetched and included in webhook after dual AI evaluation completes
+  - ✅ **Automated Bulk Generator**: Already includes viral inspiration data in webhooks, ready for AI evaluation integration
+  - ✅ **Test Webhook Enhancement**: Updated test payload with comprehensive viral inspiration and AI evaluation sample data
+  - ✅ **Enhanced Console Logging**: Webhook logs now display viral inspiration status, hooks, hashtags, and AI evaluation scores
+  - ✅ **Make.com Integration**: All 33 webhook fields now include viral inspiration and AI evaluation data for complete content analytics
+  - ✅ **External Analytics Support**: Google Sheets and automation systems can now track viral inspiration effectiveness and AI quality scores
 - July 11, 2025. **Enhanced Sync Ratings to Google Sheet System**: Complete retroactive ratings sync with advanced unmatched item management:
   - ✅ **Backend API**: Created `/api/sync-ratings` endpoint with comprehensive ratings data extraction and webhook integration
   - ✅ **Content ID Generation**: Implemented MD5 hash-based content matching using product + timestamp + tone + template combination
