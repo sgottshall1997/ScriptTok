@@ -606,7 +606,7 @@ const EnhancedContentHistory = () => {
                 <SelectValue placeholder="Amazon Affiliate Links" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Content</SelectItem>
+                <SelectItem value="all">Amazon Affiliate Links</SelectItem>
                 <SelectItem value="amazon">Amazon Affiliate Links</SelectItem>
                 <SelectItem value="nonamazon">Non-Amazon Links</SelectItem>
               </SelectContent>
