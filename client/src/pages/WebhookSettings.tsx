@@ -302,51 +302,142 @@ const WebhookSettings = () => {
               Each content generation will send the following complete data structure to your webhook URL:
             </p>
             <div className="bg-blue-50 border-l-4 border-blue-400 p-3 mb-4 text-sm">
-              <p className="font-medium text-blue-800 mb-2">Webhook Payload Fields:</p>
-              <ul className="text-blue-700 space-y-1 text-xs">
-                <li><strong>event_type:</strong> Always "content_generated"</li>
-                <li><strong>platform:</strong> Target platform (tiktok, instagram, youtube, twitter, other)</li>
-                <li><strong>niche:</strong> Content niche (beauty, tech, fashion, fitness, food, travel, pets)</li>
-                <li><strong>script:</strong> Main content/video script</li>
-                <li><strong>instagramCaption:</strong> Instagram-optimized caption with hashtags</li>
-                <li><strong>tiktokCaption:</strong> TikTok-optimized caption with viral language</li>
-                <li><strong>youtubeCaption:</strong> YouTube Shorts voiceover-style caption</li>
-                <li><strong>xCaption:</strong> Twitter/X optimized short caption</li>
-                <li><strong>facebookCaption:</strong> Facebook-optimized caption</li>
-                <li><strong>affiliateLink:</strong> Amazon affiliate link with tracking</li>
-                <li><strong>product:</strong> Product name</li>
-                <li><strong>imageUrl:</strong> Product image URL or placeholder</li>
-                <li><strong>tone:</strong> Content tone (enthusiastic, professional, etc.)</li>
-                <li><strong>template:</strong> Content template used</li>
-                <li><strong>model:</strong> AI model used (ChatGPT or Claude)</li>
-                <li><strong>contentFormat:</strong> Format type (Regular Format or Spartan Format)</li>
-                <li><strong>postType:</strong> Content type (reel, post, etc.)</li>
-                <li><strong>topRatedStyleUsed:</strong> Whether smart style learning was enabled</li>
-                <li><strong>timestamp:</strong> Generation timestamp</li>
-              </ul>
+              <p className="font-medium text-blue-800 mb-2">Webhook Payload Fields (36 Total):</p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-blue-700 text-xs">
+                <div>
+                  <p className="font-semibold text-blue-800 mb-1">Basic Content Fields:</p>
+                  <ul className="space-y-1">
+                    <li><strong>event_type:</strong> Always "content_generated"</li>
+                    <li><strong>platform:</strong> Target platform (tiktok, instagram, youtube, twitter, other)</li>
+                    <li><strong>niche:</strong> Content niche (beauty, tech, fashion, fitness, food, travel, pets)</li>
+                    <li><strong>script:</strong> Main content/video script</li>
+                    <li><strong>product:</strong> Product name</li>
+                    <li><strong>imageUrl:</strong> Product image URL or placeholder</li>
+                    <li><strong>tone:</strong> Content tone (enthusiastic, professional, etc.)</li>
+                    <li><strong>template:</strong> Content template used</li>
+                    <li><strong>postType:</strong> Content type (reel, post, etc.)</li>
+                    <li><strong>timestamp:</strong> Generation timestamp</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <p className="font-semibold text-blue-800 mb-1">Platform-Specific Captions:</p>
+                  <ul className="space-y-1">
+                    <li><strong>instagramCaption:</strong> Instagram-optimized caption with hashtags</li>
+                    <li><strong>tiktokCaption:</strong> TikTok-optimized caption with viral language</li>
+                    <li><strong>youtubeCaption:</strong> YouTube Shorts voiceover-style caption</li>
+                    <li><strong>xCaption:</strong> Twitter/X optimized short caption</li>
+                    <li><strong>facebookCaption:</strong> Facebook-optimized caption</li>
+                  </ul>
+                  
+                  <p className="font-semibold text-blue-800 mb-1 mt-3">AI & Monetization:</p>
+                  <ul className="space-y-1">
+                    <li><strong>model:</strong> AI model used (ChatGPT or Claude)</li>
+                    <li><strong>contentFormat:</strong> Format type (Regular Format or Spartan Format)</li>
+                    <li><strong>topRatedStyleUsed:</strong> Whether smart style learning was enabled</li>
+                    <li><strong>affiliateLink:</strong> Amazon affiliate link with tracking</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-3 border-t border-blue-200">
+                <p className="font-semibold text-blue-800 mb-2">Viral Inspiration Data (from Perplexity API):</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <ul className="space-y-1 text-xs">
+                    <li><strong>viralHook:</strong> Trending hook from real social media analysis</li>
+                    <li><strong>viralFormat:</strong> Video format recommendations</li>
+                    <li><strong>viralCaption:</strong> Trending caption styles</li>
+                  </ul>
+                  <ul className="space-y-1 text-xs">
+                    <li><strong>viralHashtags:</strong> Actual trending hashtags (comma-separated)</li>
+                    <li><strong>viralInspirationFound:</strong> Boolean indicating if data was fetched</li>
+                  </ul>
+                </div>
+              </div>
+              
+              <div className="mt-4 pt-3 border-t border-blue-200">
+                <p className="font-semibold text-blue-800 mb-2">Dual AI Evaluation Scores (1-10 Scale):</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="font-medium text-blue-700 mb-1">ChatGPT Analysis:</p>
+                    <ul className="space-y-1 text-xs">
+                      <li><strong>chatgptViralityScore:</strong> Viral potential rating</li>
+                      <li><strong>chatgptClarityScore:</strong> Message clarity rating</li>
+                      <li><strong>chatgptPersuasivenessScore:</strong> Persuasion effectiveness</li>
+                      <li><strong>chatgptCreativityScore:</strong> Creative content rating</li>
+                      <li><strong>chatgptOverallScore:</strong> Overall quality score</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="font-medium text-blue-700 mb-1">Claude Analysis:</p>
+                    <ul className="space-y-1 text-xs">
+                      <li><strong>claudeViralityScore:</strong> Viral potential rating</li>
+                      <li><strong>claudeClarityScore:</strong> Message clarity rating</li>
+                      <li><strong>claudePersuasivenessScore:</strong> Persuasion effectiveness</li>
+                      <li><strong>claudeCreativityScore:</strong> Creative content rating</li>
+                      <li><strong>claudeOverallScore:</strong> Overall quality score</li>
+                    </ul>
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <p className="font-medium text-blue-700 mb-1">Evaluation Summary:</p>
+                  <ul className="space-y-1 text-xs">
+                    <li><strong>averageOverallScore:</strong> Combined average of both AI evaluations</li>
+                    <li><strong>evaluationCompleted:</strong> Boolean indicating if dual AI evaluation finished</li>
+                  </ul>
+                </div>
+              </div>
             </div>
             <div className="bg-muted p-4 rounded-md text-xs font-mono w-full overflow-auto">
-              {JSON.stringify({
-                event_type: "content_generated",
-                platform: "tiktok",
-                niche: "beauty",
-                script: "Transform your skincare routine with this Hero serum! This beginner-friendly formula delivers visible results in just 7 days. Perfect for anyone starting their glow-up journey ✨",
-                instagramCaption: "This Hero serum has been my skincare game-changer ✨ Perfect for beginners who want real results without the guesswork #skincare #beauty #glowup",
-                tiktokCaption: "POV: You found the perfect beginner serum 🌟 Hero My First Serum is literally changing my skin game! Who else is obsessed? #skincare #hero #glowup",
-                youtubeCaption: "*This serum has completely transformed my skincare routine* If you're a beginner looking for real results, Hero My First Serum is the perfect starting point #skincare",
-                xCaption: "Plot twist: the best beginner serum was from Hero all along 💫 This changed my entire skincare game #skincare",
-                facebookCaption: "Discovering this Hero serum has been such a game-changer for my skincare journey ✨ Perfect for anyone starting their glow-up routine #skincare #beauty #selfcare",
-                affiliateLink: "https://www.amazon.com/s?k=Hero+My+First+Serum+1.69+fl+oz&tag=sgottshall107-20",
-                product: "Hero My First Serum 1.69 fl oz",
-                imageUrl: "https://via.placeholder.com/400x400?text=Hero%20My%20First%20Serum%201.69%20fl%20oz",
-                tone: "enthusiastic",
-                template: "short_video_script",
-                model: "Claude",
-                contentFormat: "Regular Format",
-                postType: "reel",
-                topRatedStyleUsed: true,
-                timestamp: new Date().toISOString()
-              }, null, 2)}
+              <pre className="whitespace-pre-wrap">
+{`{
+  "event_type": "content_generated",
+  "platform": "tiktok",
+  "niche": "beauty",
+  "script": "Transform your skincare routine with this Hero serum! Perfect for beginners.",
+  "instagramCaption": "This Hero serum has been my skincare game-changer ✨ #skincare #beauty",
+  "tiktokCaption": "POV: You found the perfect beginner serum 🌟 #skincare #hero #glowup",
+  "youtubeCaption": "*This serum has completely transformed my skincare routine* #skincare",
+  "xCaption": "Plot twist: the best beginner serum was from Hero all along 💫 #skincare",
+  "facebookCaption": "Discovering this Hero serum has been such a game-changer ✨ #skincare",
+  "affiliateLink": "https://www.amazon.com/s?k=Hero+Serum&tag=youraffiliateId-20",
+  "product": "Hero My First Serum 1.69 fl oz",
+  "imageUrl": "https://via.placeholder.com/400x400?text=Hero+Serum",
+  "tone": "enthusiastic",
+  "template": "Beauty Routine",
+  "model": "ChatGPT",
+  "contentFormat": "Regular Format",
+  "postType": "reel",
+  "topRatedStyleUsed": true,
+  
+  // VIRAL INSPIRATION DATA
+  "viralHook": "POV: You finally found the holy grail moisturizer",
+  "viralFormat": "Before/After transformation with trending audio",
+  "viralCaption": "This moisturizer literally changed my skin game in 30 days",
+  "viralHashtags": "#skincare, #cerave, #moisturizer, #skincareroutine, #glowup",
+  "viralInspirationFound": true,
+  
+  // CHATGPT AI EVALUATION
+  "chatgptViralityScore": 8.5,
+  "chatgptClarityScore": 9.0,
+  "chatgptPersuasivenessScore": 7.5,
+  "chatgptCreativityScore": 8.0,
+  "chatgptOverallScore": 8.2,
+  
+  // CLAUDE AI EVALUATION
+  "claudeViralityScore": 7.8,
+  "claudeClarityScore": 8.5,
+  "claudePersuasivenessScore": 8.2,
+  "claudeCreativityScore": 7.0,
+  "claudeOverallScore": 7.9,
+  
+  // EVALUATION SUMMARY
+  "averageOverallScore": 8.1,
+  "evaluationCompleted": true,
+  
+  "timestamp": "2025-07-11T06:15:49.355Z"
+}`}
+              </pre>
             </div>
           </CardFooter>
         </Card>
