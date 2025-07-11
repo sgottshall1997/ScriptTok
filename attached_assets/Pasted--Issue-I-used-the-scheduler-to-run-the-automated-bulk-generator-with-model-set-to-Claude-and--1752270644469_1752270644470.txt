@@ -1,0 +1,53 @@
+🚨 Issue: I used the scheduler to run the automated bulk generator with model set to **Claude** and format set to **Spartan**, but the generated output still used **GPT** and did not follow the Spartan formatting.
+
+Please fully debug and fix this — and confirm that all selected models and formats are correctly applied during scheduled bulk runs.
+
+---
+
+✅ Required Fixes:
+
+1. ✅ **Respect Selected Model (Claude vs GPT)**
+   - Ensure the scheduled generation flow **passes the selected model** (`claude` or `gpt`) into the generator
+   - Validate that `promptFactory()` and the generation handler call the correct model based on user input
+   - Add a safeguard: If no model is passed, use a default — but **log a warning** in dev
+
+2. ✅ **Apply Spartan Format When Selected**
+   - Confirm that `format: "spartan"` is passed through the full pipeline
+   - Ensure `promptFactory()` properly applies Spartan formatting:
+     - Short, punchy, minimalist script structure
+     - Fewer emojis, less fluff
+   - Add a fallback check so that every generation call has an explicit format value
+
+---
+
+🧪 Testing Checklist:
+
+Run the following 3 test cases:
+
+**Test A: Scheduled Bulk Run with Claude + Spartan**
+- 7 niche items generated
+- All use Claude
+- All use Spartan formatting style
+
+**Test B: Manual Single Generation with GPT + Default**
+- Ensure older logic still works as expected
+
+**Test C: Scheduled Run with Mixed Configs**
+- Confirm niche-specific config (if supported) or global setting carries through
+
+Also validate:
+- `contentHistory` correctly logs `model` and `format`
+- Webhook payloads include the same
+- AI Evaluation system uses the correct model for generation attribution
+
+---
+
+📩 Final Output:
+- What was broken
+- What was changed
+- Confirmation that scheduled generation now respects:
+  - ✅ Model selection (Claude/GPT)
+  - ✅ Format selection (Spartan/Default)
+- Example of a fixed scheduled run (show product, model, and format used)
+
+Please ensure this logic is consistent across all generation modes: manual, bulk, and scheduler-triggered.

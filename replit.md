@@ -773,6 +773,16 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Unified Generator Field Fix**: Resolved "No valid generation configurations found" error by fixing field mapping between frontend (product) and backend (productName)
   - ✅ **Template Field Correction**: Fixed template field name from templateType to template for proper API compatibility
   - ✅ **Improved User Flow**: Users are now taken to the top of pages when navigating from dashboard or switching between tabs for better UX
+- July 11, 2025. **CRITICAL SCHEDULED JOB AI MODEL AND FORMAT FIXES**: Complete resolution of Claude AI model and Spartan format configuration issues in scheduled bulk generation:
+  - ✅ **Root Cause Identified**: AI model selection in automated mode was incorrectly prioritizing aiModels array over direct aiModel field from scheduled job configuration
+  - ✅ **AI Model Selection Fix**: Updated generateContentUnified.ts line 701 to prioritize data.aiModel (from scheduled jobs) over data.aiModels array fallback
+  - ✅ **Spartan Content Generator Enhancement**: Added proper AI model parameter support in spartanContentGenerator.ts with Claude integration via contentGenerator service
+  - ✅ **Spartan Format Processing**: Enhanced Spartan generator to use Claude for content generation then process through GPT for strict format compliance
+  - ✅ **Comprehensive Testing Validated**: Test suite confirmed Claude AI model and Spartan format are now properly respected in scheduled bulk generation
+  - ✅ **Platform Caption Generation**: Fixed Claude model integration in platform-specific caption generation with proper JSON response parsing
+  - ✅ **End-to-End Verification**: Complete pipeline tested - scheduled job → Claude generation → Spartan formatting → AI evaluation → Make.com webhook delivery
+  - ✅ **Production Ready**: Scheduled job #8 with Claude + Spartan configuration now generates authentic short-form, professional content without emojis or fluff language
+  - ✅ **Database Configuration Confirmed**: Scheduled job table correctly stores ai_model='claude' and use_spartan_format=true with proper field mapping to unified generator
 - July 11, 2025. **CRITICAL PRODUCTION DEPLOYMENT FIXES**: Complete resolution of startup crashes and deployment failures for Cloud Run production deployment:
   - ✅ **Modified Generation Safeguards**: Updated generation-safeguards.ts to use environment variables (ALLOW_PROD_GENERATION, NODE_ENV) instead of hard-coded production locks
   - ✅ **Test Endpoint Protection**: Updated all test endpoints in routes.ts to only run in development mode (process.env.NODE_ENV !== 'production')

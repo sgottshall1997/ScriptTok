@@ -80,7 +80,8 @@ export async function generateSpartanContent(options: SpartanContentOptions): Pr
       niche,
       contentType,
       useSpartanFormat = false,
-      additionalContext = ''
+      additionalContext = '',
+      aiModel = 'chatgpt'
     } = options;
 
     // Check if Spartan format should be used
@@ -109,17 +110,48 @@ Niche: ${niche}
 Context: ${additionalContext}
 </sources>`;
 
-    console.log(`🏛️ Generating Spartan ${contentType} for ${productName} in ${niche} niche`);
+    console.log(`🏛️ Generating Spartan ${contentType} for ${productName} in ${niche} niche using ${aiModel.toUpperCase()} model`);
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4',
-      messages: [
-        { role: 'system', content: SPARTAN_SYSTEM_PROMPT },
-        { role: 'user', content: prompt }
-      ],
-      temperature: 0.3, // Lower temperature for more consistent, factual output
-      max_tokens: contentType === 'shortCaptionSpartan' ? 100 : 200,
-    });
+    let response;
+    if (aiModel === 'claude') {
+      // Use Claude via our contentGenerator service
+      const { generateContent } = await import('./contentGenerator');
+      const claudeContent = await generateContent(
+        productName,
+        'Short-Form Video Script',
+        'Professional',
+        [],
+        niche,
+        'gpt-4o', // Legacy parameter
+        null,
+        undefined,
+        'claude'
+      );
+      
+      // Process Claude response into Spartan format
+      const spartanProcessed = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: `${SPARTAN_SYSTEM_PROMPT}\n\nConvert the following content into strict Spartan format:` },
+          { role: 'user', content: `${formatInstruction}\n\nOriginal content to convert:\n${claudeContent}\n\nProduct: ${productName}\nNiche: ${niche}` }
+        ],
+        temperature: 0.2,
+        max_tokens: contentType === 'shortCaptionSpartan' ? 100 : 200,
+      });
+      
+      response = spartanProcessed;
+    } else {
+      // Use GPT directly
+      response = await openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: [
+          { role: 'system', content: SPARTAN_SYSTEM_PROMPT },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.3,
+        max_tokens: contentType === 'shortCaptionSpartan' ? 100 : 200,
+      });
+    }
 
     const content = response.choices[0]?.message?.content?.trim();
 
