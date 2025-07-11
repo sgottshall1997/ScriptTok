@@ -849,96 +849,109 @@ const EnhancedContentHistory = () => {
                   )}
 
                   {/* Platform-Specific Captions */}
-                  {(entry.generatedOutput.tiktokCaption || entry.generatedOutput.instagramCaption || entry.generatedOutput.youtubeCaption || entry.generatedOutput.twitterCaption) && (
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Platform-Specific Captions:</h4>
-                      <div className="space-y-3">
-                        {entry.generatedOutput.tiktokCaption && (
-                          <div className="bg-white p-3 rounded border">
-                            <div className="flex justify-between items-center mb-2">
-                              <h5 className="font-medium text-pink-600 flex items-center gap-2">
-                                📱 TikTok Caption
-                              </h5>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => copyToClipboard(entry.generatedOutput.tiktokCaption!, 'TikTok Caption', `tiktok-${entry.id}`)}
-                              >
-                                <Copy className="h-4 w-4 mr-2" />
-                                {copiedItems[`tiktok-${entry.id}`] ? 'Copied!' : 'Copy'}
-                              </Button>
+                  {(() => {
+                    // Check for platform captions in both new nested structure and old flat structure
+                    const platformCaptions = entry.generatedOutput.platformCaptions || {};
+                    const tiktokCaption = platformCaptions.tiktok || entry.generatedOutput.tiktokCaption;
+                    const instagramCaption = platformCaptions.instagram || entry.generatedOutput.instagramCaption;
+                    const youtubeCaption = platformCaptions.youtube || entry.generatedOutput.youtubeCaption;
+                    const twitterCaption = platformCaptions.twitter || platformCaptions.x || entry.generatedOutput.twitterCaption;
+                    
+                    const hasPlatformCaptions = tiktokCaption || instagramCaption || youtubeCaption || twitterCaption;
+                    
+                    if (!hasPlatformCaptions) return null;
+                    
+                    return (
+                      <div className="space-y-2">
+                        <h4 className="font-medium">Platform-Specific Captions:</h4>
+                        <div className="space-y-3">
+                          {tiktokCaption && (
+                            <div className="bg-white p-3 rounded border">
+                              <div className="flex justify-between items-center mb-2">
+                                <h5 className="font-medium text-pink-600 flex items-center gap-2">
+                                  📱 TikTok Caption
+                                </h5>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => copyToClipboard(tiktokCaption, 'TikTok Caption', `tiktok-${entry.id}`)}
+                                >
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  {copiedItems[`tiktok-${entry.id}`] ? 'Copied!' : 'Copy'}
+                                </Button>
+                              </div>
+                              <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
+                                {tiktokCaption}
+                              </div>
                             </div>
-                            <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                              {entry.generatedOutput.tiktokCaption}
+                          )}
+                          
+                          {instagramCaption && (
+                            <div className="bg-white p-3 rounded border">
+                              <div className="flex justify-between items-center mb-2">
+                                <h5 className="font-medium text-purple-600 flex items-center gap-2">
+                                  📸 Instagram Caption
+                                </h5>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => copyToClipboard(instagramCaption, 'Instagram Caption', `instagram-${entry.id}`)}
+                                >
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  {copiedItems[`instagram-${entry.id}`] ? 'Copied!' : 'Copy'}
+                                </Button>
+                              </div>
+                              <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
+                                {instagramCaption}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        
-                        {entry.generatedOutput.instagramCaption && (
-                          <div className="bg-white p-3 rounded border">
-                            <div className="flex justify-between items-center mb-2">
-                              <h5 className="font-medium text-purple-600 flex items-center gap-2">
-                                📸 Instagram Caption
-                              </h5>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => copyToClipboard(entry.generatedOutput.instagramCaption!, 'Instagram Caption', `instagram-${entry.id}`)}
-                              >
-                                <Copy className="h-4 w-4 mr-2" />
-                                {copiedItems[`instagram-${entry.id}`] ? 'Copied!' : 'Copy'}
-                              </Button>
+                          )}
+                          
+                          {youtubeCaption && (
+                            <div className="bg-white p-3 rounded border">
+                              <div className="flex justify-between items-center mb-2">
+                                <h5 className="font-medium text-red-600 flex items-center gap-2">
+                                  📺 YouTube Description
+                                </h5>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => copyToClipboard(youtubeCaption, 'YouTube Description', `youtube-${entry.id}`)}
+                                >
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  {copiedItems[`youtube-${entry.id}`] ? 'Copied!' : 'Copy'}
+                                </Button>
+                              </div>
+                              <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
+                                {youtubeCaption}
+                              </div>
                             </div>
-                            <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                              {entry.generatedOutput.instagramCaption}
+                          )}
+                          
+                          {twitterCaption && (
+                            <div className="bg-white p-3 rounded border">
+                              <div className="flex justify-between items-center mb-2">
+                                <h5 className="font-medium text-blue-600 flex items-center gap-2">
+                                  🐦 Twitter/X Post
+                                </h5>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => copyToClipboard(twitterCaption, 'Twitter Post', `twitter-${entry.id}`)}
+                                >
+                                  <Copy className="h-4 w-4 mr-2" />
+                                  {copiedItems[`twitter-${entry.id}`] ? 'Copied!' : 'Copy'}
+                                </Button>
+                              </div>
+                              <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
+                                {twitterCaption}
+                              </div>
                             </div>
-                          </div>
-                        )}
-                        
-                        {entry.generatedOutput.youtubeCaption && (
-                          <div className="bg-white p-3 rounded border">
-                            <div className="flex justify-between items-center mb-2">
-                              <h5 className="font-medium text-red-600 flex items-center gap-2">
-                                📺 YouTube Description
-                              </h5>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => copyToClipboard(entry.generatedOutput.youtubeCaption!, 'YouTube Description', `youtube-${entry.id}`)}
-                              >
-                                <Copy className="h-4 w-4 mr-2" />
-                                {copiedItems[`youtube-${entry.id}`] ? 'Copied!' : 'Copy'}
-                              </Button>
-                            </div>
-                            <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                              {entry.generatedOutput.youtubeCaption}
-                            </div>
-                          </div>
-                        )}
-                        
-                        {entry.generatedOutput.twitterCaption && (
-                          <div className="bg-white p-3 rounded border">
-                            <div className="flex justify-between items-center mb-2">
-                              <h5 className="font-medium text-blue-600 flex items-center gap-2">
-                                🐦 Twitter/X Post
-                              </h5>
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => copyToClipboard(entry.generatedOutput.twitterCaption!, 'Twitter Post', `twitter-${entry.id}`)}
-                              >
-                                <Copy className="h-4 w-4 mr-2" />
-                                {copiedItems[`twitter-${entry.id}`] ? 'Copied!' : 'Copy'}
-                              </Button>
-                            </div>
-                            <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                              {entry.generatedOutput.twitterCaption}
-                            </div>
-                          </div>
-                        )}
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* Viral Inspiration */}
                   {entry.generatedOutput.viralInspo && (
