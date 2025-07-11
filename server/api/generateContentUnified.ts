@@ -46,6 +46,7 @@ const unifiedGenerationSchema = z.object({
   customHook: z.string().optional(),
   useSmartStyle: z.boolean().default(false),
   useSpartanFormat: z.boolean().default(false),
+  aiModel: z.enum(['chatgpt', 'claude']).default('chatgpt'),
   
   // Bulk/automated fields
   products: z.array(z.object({
@@ -79,6 +80,7 @@ interface GenerationConfig {
   customHook?: string;
   useSmartStyle: boolean;
   useSpartanFormat: boolean;
+  aiModel: 'chatgpt' | 'claude';
   mode: 'manual' | 'automated';
   jobId?: string;
 }
@@ -145,8 +147,9 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           trendingProductsData,
           config.niche as any,
           "gpt-4o",
-          config.useSmartStyle,
-          viralInspiration
+          viralInspiration,
+          config.useSmartStyle ? { useSmartStyle: true } : undefined,
+          config.aiModel
         );
       }
     } else {
@@ -159,7 +162,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         config.niche as any,
         "gpt-4o",
         viralInspiration,
-        config.useSmartStyle ? { useSmartStyle: true } : undefined
+        config.useSmartStyle ? { useSmartStyle: true } : undefined,
+        config.aiModel
       );
     }
 
@@ -179,7 +183,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         mainContent: typeof mainContent === 'string' ? mainContent : mainContent.content,
         viralInspiration,
         affiliateId,
-        useSpartanFormat: shouldUseSpartan
+        useSpartanFormat: shouldUseSpartan,
+        aiModel: config.aiModel
       });
     }
 
@@ -346,6 +351,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
           customHook: data.customHook,
           useSmartStyle: data.useSmartStyle,
           useSpartanFormat: data.useSpartanFormat,
+          aiModel: data.aiModel,
           mode: 'manual',
           jobId
         });
@@ -366,6 +372,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
                 affiliateUrl: product.affiliateUrl || data.affiliateUrl,
                 useSmartStyle: data.useSmartStyle,
                 useSpartanFormat: data.useSpartanFormat,
+                aiModel: data.aiModel,
                 mode: 'manual',
                 jobId
               });
@@ -415,6 +422,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
               affiliateUrl: product.affiliateUrl,
               useSmartStyle: data.useSmartStyle,
               useSpartanFormat: data.useSpartanFormat,
+              aiModel: data.aiModel,
               mode: 'automated',
               jobId
             });

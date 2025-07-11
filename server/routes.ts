@@ -212,6 +212,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Setup feedback logging routes
   setupFeedbackRoutes(app);
   
+  // AI Models API routes
+  const { registerAIModelsRoutes } = await import('./api/ai-models');
+  registerAIModelsRoutes(app);
+  
   // Import rating API functions
   const { 
     saveRating, 

@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { generateWithAI, AIModel } from './aiModelRouter';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -14,6 +15,7 @@ interface PlatformContentRequest {
   videoDuration?: string;
   trendingData?: any;
   useSpartanFormat?: boolean;
+  aiModel?: AIModel;
 }
 
 interface PlatformSpecificContent {
@@ -57,8 +59,9 @@ export async function generatePlatformCaptions(params: {
   enforceCaptionUniqueness?: boolean;
   affiliateId?: string;
   useSpartanFormat?: boolean;
+  aiModel?: AIModel;
 }): Promise<Record<string, string>> {
-  const { productName, platforms, tone, niche, mainContent, viralInspiration, enforceCaptionUniqueness = true, affiliateId = "sgottshall107-20", useSpartanFormat = false } = params;
+  const { productName, platforms, tone, niche, mainContent, viralInspiration, enforceCaptionUniqueness = true, affiliateId = "sgottshall107-20", useSpartanFormat = false, aiModel = "chatgpt" } = params;
   
   console.log(`🎯 Generating platform captions for: ${platforms.join(", ")}`);
   console.log(`🏛️ Spartan format enabled: ${useSpartanFormat}`);
@@ -121,27 +124,26 @@ PLATFORM-SPECIFIC REQUIREMENTS:
   
   while (attempts < maxAttempts) {
     try {
-      const response = await openai.chat.completions.create({
-        model: "gpt-4o",
+      const aiResponse = await generateWithAI(prompt, {
+        model: aiModel,
         temperature: 0.9,
-        presence_penalty: 0.8,
-        frequency_penalty: 0.5,
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert social media strategist who creates platform-native content. Each platform caption must be completely original, independent, and never repeat existing content."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        max_tokens: 1000
+        systemPrompt: "You are an expert social media strategist who creates platform-native content. Each platform caption must be completely original, independent, and never repeat existing content.",
+        maxTokens: 1000,
+        useJson: true,
+        metadata: {
+          platforms: platforms.join(', '),
+          niche,
+          productName
+        }
       });
 
-      const content = response.choices[0]?.message?.content;
+      if (!aiResponse.success) {
+        throw new Error(`AI generation failed: ${aiResponse.error}`);
+      }
+
+      const content = aiResponse.data.content;
       if (!content) {
-        throw new Error('No content generated from OpenAI');
+        throw new Error('No content generated from AI');
       }
 
       // Parse JSON response - handle markdown code blocks
@@ -293,7 +295,7 @@ function generateFallbackCaptions(productName: string, platforms: string[], nich
 export async function generatePlatformSpecificContent(
   request: PlatformContentRequest
 ): Promise<PlatformSpecificContent> {
-  const { product, niche, platforms, contentType, templateType, tone, videoDuration, trendingData, useSpartanFormat } = request;
+  const { product, niche, platforms, contentType, templateType, tone, videoDuration, trendingData, useSpartanFormat, aiModel = "chatgpt" } = request;
   
   console.log(`🎯 Generating platform-specific content for: ${product}`);
   
@@ -305,7 +307,8 @@ export async function generatePlatformSpecificContent(
       tone,
       niche,
       viralInspiration: trendingData,
-      useSpartanFormat: useSpartanFormat || false
+      useSpartanFormat: useSpartanFormat || false,
+      aiModel: aiModel
     });
     
     // Structure response

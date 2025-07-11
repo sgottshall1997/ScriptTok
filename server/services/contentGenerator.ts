@@ -1,4 +1,5 @@
 import { openai } from './openai';
+import { generateWithAI, AIModel } from './aiModelRouter';
 import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption, Niche } from '@shared/constants';
 import * as GptTemplates from './gpt-templates';
@@ -154,7 +155,8 @@ export async function generateContent(
   niche: Niche = "skincare",
   model: string = "gpt-4o",
   viralInspiration?: ViralInspiration,
-  smartStyleRecommendations?: any
+  smartStyleRecommendations?: any,
+  aiModel: AIModel = "chatgpt"
 ): Promise<{ 
   content: string; 
   fallbackLevel?: 'exact' | 'default' | 'generic';
@@ -300,27 +302,29 @@ Apply these successful patterns from your previous high-rated content:
 - Based on ${smartStyleRecommendations.sampleCount} high-performing posts`;
     }
 
-    // Call OpenAI with the enhanced prompt and optimized parameters
-    const completion = await openai.chat.completions.create({
-      model: model, // Use the model parameter passed to the function (supports fallback to gpt-3.5-turbo)
-      messages: [
-        {
-          role: "system",
-          content: systemPrompt
-        },
-        {
-          role: "user",
-          content: userPrompt
-        }
-      ],
+    // Call AI model router with the enhanced prompt and optimized parameters
+    console.log(`🤖 Generating content with ${aiModel.toUpperCase()} model`);
+    
+    const aiResponse = await generateWithAI(userPrompt, {
+      model: aiModel,
+      maxTokens: maxTokens,
       temperature: modelConfig.temperature,
-      max_tokens: maxTokens,
-      frequency_penalty: modelConfig.frequencyPenalty,
-      presence_penalty: modelConfig.presencePenalty
+      systemPrompt: systemPrompt,
+      metadata: {
+        niche,
+        templateType,
+        tone,
+        product,
+        fallbackLevel
+      }
     });
 
+    if (!aiResponse.success) {
+      throw new Error(`AI generation failed: ${aiResponse.error}`);
+    }
+
     // Clean up the content for video scripts (remove markdown, asterisks, hashtag headers)
-    const rawContent = completion.choices[0].message.content || "Could not generate content. Please try again.";
+    const rawContent = aiResponse.data.content || "Could not generate content. Please try again.";
     const cleanedContent = cleanVideoScript(rawContent);
 
     // Estimate video duration for the cleaned content
@@ -331,8 +335,8 @@ Apply these successful patterns from your previous high-rated content:
       content: cleanedContent,
       fallbackLevel,
       prompt,
-      model: model,
-      tokens: completion.usage?.total_tokens || 0,
+      model: aiResponse.data.model || aiModel,
+      tokens: aiResponse.data.tokens || 0,
       videoDuration
     };
       

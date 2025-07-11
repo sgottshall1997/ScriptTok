@@ -34,7 +34,8 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     affiliateId: 'sgottshall107-20',
     useManualAffiliateLink: false,
     manualAffiliateLink: '',
-    sendToMakeWebhook: true
+    sendToMakeWebhook: true,
+    aiModel: 'chatgpt' as 'chatgpt' | 'claude'
   });
 
   // Handle URL parameters for auto-population
@@ -70,6 +71,17 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     { id: 'twitter', name: 'X (Twitter)' },
     { id: 'other', name: 'Other' }
   ];
+
+  // Fetch available AI models
+  const { data: availableModels } = useQuery({
+    queryKey: ['available-models'],
+    queryFn: async () => {
+      const response = await fetch('/api/ai-models/available');
+      if (!response.ok) return [];
+      return response.json();
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+  });
 
   // Fetch templates for selected niche
   // Check Spartan availability for selected niche
@@ -160,6 +172,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
         : formData.useManualAffiliateLink ? formData.manualAffiliateLink : undefined,
       useSmartStyle: formData.useSmartStyle,
       useSpartanFormat: formData.useSpartanFormat,
+      aiModel: formData.aiModel,
       makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw'
     };
 
@@ -214,7 +227,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
         </div>
 
         {/* Content Configuration */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="text-sm font-medium mb-2 block">Tone</label>
             <select
@@ -249,6 +262,29 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
                 <option>No templates available</option>
               )}
             </select>
+          </div>
+          <div>
+            <label className="text-sm font-medium mb-2 block">AI Model</label>
+            <select
+              value={formData.aiModel}
+              onChange={(e) => setFormData(prev => ({...prev, aiModel: e.target.value as 'chatgpt' | 'claude'}))}
+              className="w-full p-3 border rounded-lg"
+            >
+              {availableModels && availableModels.length > 0 ? (
+                availableModels.map((model: any) => (
+                  <option key={model.id} value={model.id} disabled={!model.available}>
+                    {model.name} {!model.available && '(Unavailable)'}
+                  </option>
+                ))
+              ) : (
+                <option value="chatgpt">ChatGPT (OpenAI)</option>
+              )}
+            </select>
+            {availableModels && availableModels.find((m: any) => m.id === formData.aiModel) && (
+              <p className="text-xs text-gray-600 mt-1">
+                {availableModels.find((m: any) => m.id === formData.aiModel)?.config?.tooltip}
+              </p>
+            )}
           </div>
         </div>
 
