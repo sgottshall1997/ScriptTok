@@ -1,0 +1,63 @@
+Task: Fix and test the dual-model content evaluation and webhook flow across all generation modes.
+
+🔧 Context:
+Our content generator supports two flows:
+- Single (manual) generation
+- Automated scheduled bulk generation (7 niches at 5 AM)
+
+Each piece of content must be evaluated **before** it is dispatched to webhook(s), using **both GPT and Claude**. The evaluations must be stored in the `contentEvaluations` table and linked properly in the `contentHistory` entries.
+
+🧪 Please fully debug, verify, and fix the following:
+
+1. ✅ **Dual Ratings Before Webhook Trigger**
+   - Make sure **both GPT and Claude evaluations** (across metrics: virality, clarity, persuasiveness, creativity) are completed before any webhook payload is sent.
+   - Ratings and justifications should be attached to the content record and accessible via `contentHistory`.
+
+2. ✅ **Evaluation Integration Across All Generators**
+   - Confirm this logic is active in **both** the single content generation flow and the automated scheduled generator.
+   - No payload should be dispatched unless both evaluations are complete and stored.
+
+3. ✅ **Webhook Payload Consistency**
+   - The webhook payloads should include a `ratings` field containing both GPT and Claude scores + justifications for transparency/logging.
+   - Example format:
+     ```json
+     "ratings": {
+       "gpt": {
+         "virality": 4,
+         "clarity": 5,
+         ...
+       },
+       "claude": {
+         "virality": 3,
+         "clarity": 4,
+         ...
+       }
+     }
+     ```
+
+4. ✅ **Content History Logging**
+   - All generated content should store the evaluations in the `contentEvaluations` table and link them to the correct `contentHistory` record via a foreign key or embedded field.
+   - Ensure timestamped and accurate linkage per content ID.
+
+5. ✅ **Testing Requirements**
+   - Run a full simulation of:
+     - Manual generation → rating → webhook dispatch
+     - Scheduled bulk generation (7 niches) → full rating per item → webhook dispatch
+   - Confirm:
+     - All 7 niche items are created.
+     - Ratings from **both models** are attached before webhook calls fire.
+     - Content history and evaluation DB entries are complete and accurate.
+     - Payloads sent to webhooks contain rating data.
+
+6. ✅ **Fail-Safes**
+   - Add logic to prevent webhook dispatch if ratings are missing or incomplete.
+   - Log errors if evaluation fails (e.g., API timeout, auth issue), and retry or gracefully skip with an alert.
+
+7. ✅ **Final Output**
+   - Return a summary of:
+     - What was broken
+     - What was fixed
+     - Before/after behavior
+     - Confirmation that test content was successfully rated, stored, and dispatched correctly in both flows
+
+This should ensure the full pipeline — generation → rating → webhook → logging — is reliable and extensible. Please test thoroughly and confirm the fix is stable.

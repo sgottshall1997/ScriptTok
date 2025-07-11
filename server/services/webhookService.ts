@@ -171,7 +171,7 @@ export class WebhookService {
           viralHashtags: data.contentData?.viralInspiration?.hashtags ? data.contentData.viralInspiration.hashtags.join(', ') : '',
           viralInspirationFound: !!data.contentData?.viralInspiration,
           
-          // AI EVALUATION SCORES (will be populated by evaluation system)
+          // AI EVALUATION SCORES (now populated by dual-model evaluation system)
           chatgptViralityScore: data.contentData?.aiEvaluation?.chatgpt?.viralityScore || null,
           chatgptClarityScore: data.contentData?.aiEvaluation?.chatgpt?.clarityScore || null,
           chatgptPersuasivenessScore: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessScore || null,
@@ -186,7 +186,33 @@ export class WebhookService {
           
           // EVALUATION SUMMARY
           averageOverallScore: data.contentData?.aiEvaluation?.averageScore || null,
-          evaluationCompleted: !!data.contentData?.aiEvaluation,
+          evaluationCompleted: data.contentData?.aiEvaluation?.evaluationCompleted || false,
+          
+          // ENHANCED AI EVALUATION DATA with justifications
+          ratings: {
+            gpt: {
+              virality: data.contentData?.aiEvaluation?.chatgpt?.viralityScore || null,
+              clarity: data.contentData?.aiEvaluation?.chatgpt?.clarityScore || null,
+              persuasiveness: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessScore || null,
+              creativity: data.contentData?.aiEvaluation?.chatgpt?.creativityScore || null,
+              overall: data.contentData?.aiEvaluation?.chatgpt?.overallScore || null,
+              viralityJustification: data.contentData?.aiEvaluation?.chatgpt?.viralityJustification || '',
+              clarityJustification: data.contentData?.aiEvaluation?.chatgpt?.clarityJustification || '',
+              persuasivenessJustification: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessJustification || '',
+              creativityJustification: data.contentData?.aiEvaluation?.chatgpt?.creativityJustification || ''
+            },
+            claude: {
+              virality: data.contentData?.aiEvaluation?.claude?.viralityScore || null,
+              clarity: data.contentData?.aiEvaluation?.claude?.clarityScore || null,
+              persuasiveness: data.contentData?.aiEvaluation?.claude?.persuasivenessScore || null,
+              creativity: data.contentData?.aiEvaluation?.claude?.creativityScore || null,
+              overall: data.contentData?.aiEvaluation?.claude?.overallScore || null,
+              viralityJustification: data.contentData?.aiEvaluation?.claude?.viralityJustification || '',
+              clarityJustification: data.contentData?.aiEvaluation?.claude?.clarityJustification || '',
+              persuasivenessJustification: data.contentData?.aiEvaluation?.claude?.persuasivenessJustification || '',
+              creativityJustification: data.contentData?.aiEvaluation?.claude?.creativityJustification || ''
+            }
+          },
           
           timestamp: new Date().toISOString()
         };
@@ -213,6 +239,7 @@ export class WebhookService {
           console.log(`   🤖 ChatGPT Overall: ${newPayload.chatgptOverallScore}/10`);
           console.log(`   🎭 Claude Overall: ${newPayload.claudeOverallScore}/10`);
           console.log(`   📊 Average Score: ${newPayload.averageOverallScore}/10`);
+          console.log(`   📈 Detailed Scores: V:${newPayload.chatgptViralityScore}/${newPayload.claudeViralityScore} C:${newPayload.chatgptClarityScore}/${newPayload.claudeClarityScore} P:${newPayload.chatgptPersuasivenessScore}/${newPayload.claudePersuasivenessScore} Cr:${newPayload.chatgptCreativityScore}/${newPayload.claudeCreativityScore}`);
         }
         console.log('━'.repeat(80));
         console.log('📋 COMPLETE PAYLOAD:');

@@ -247,79 +247,95 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
     
-    // Perform AI evaluation BEFORE sending webhooks
+    // Perform AI evaluation BEFORE sending webhooks for ALL modes
     let aiEvaluationData = null;
-    if (config.mode === 'manual') {
-      try {
-        // Get the content history ID from the database
-        const { contentHistory } = await import('@shared/schema');
-        const sessionId = config.jobId || `single_${Date.now()}`;
+    try {
+      // Get the content history ID from the database
+      const { contentHistory } = await import('@shared/schema');
+      const sessionId = config.jobId || `single_${Date.now()}`;
+      
+      const recentContent = await db.select()
+        .from(contentHistory)
+        .where(eq(contentHistory.sessionId, sessionId))
+        .orderBy(desc(contentHistory.createdAt))
+        .limit(1);
+      
+      if (recentContent.length > 0) {
+        const contentHistoryId = recentContent[0].id;
+        console.log(`🤖 Starting dual-model AI evaluation BEFORE webhook for content ID: ${contentHistoryId} (${config.mode} mode)`);
         
-        const recentContent = await db.select()
-          .from(contentHistory)
-          .where(eq(contentHistory.sessionId, sessionId))
-          .orderBy(desc(contentHistory.createdAt))
-          .limit(1);
+        // Import and call the evaluation service
+        const { evaluateContentWithBothModels, createContentEvaluationData } = await import('../services/aiEvaluationService');
+        const { contentEvaluations } = await import('@shared/schema');
         
-        if (recentContent.length > 0) {
-          const contentHistoryId = recentContent[0].id;
-          console.log(`🤖 Starting AI evaluation BEFORE webhook for content ID: ${contentHistoryId}`);
-          
-          // Import and call the evaluation service
-          const { evaluateContentWithBothModels, createContentEvaluationData } = await import('../services/aiEvaluationService');
-          const { contentEvaluations } = await import('@shared/schema');
-          
-          const fullContent = `${typeof mainContent === 'string' ? mainContent : mainContent.content}\n\nPlatform Captions:\n${JSON.stringify(platformCaptions, null, 2)}`;
-          
-          const evaluationResults = await evaluateContentWithBothModels(fullContent);
-          
-          // Save ChatGPT evaluation
-          const chatgptEvalData = createContentEvaluationData(contentHistoryId, 'chatgpt', evaluationResults.chatgptEvaluation);
-          await db.insert(contentEvaluations).values(chatgptEvalData);
-          
-          // Save Claude evaluation
-          const claudeEvalData = createContentEvaluationData(contentHistoryId, 'claude', evaluationResults.claudeEvaluation);
-          await db.insert(contentEvaluations).values(claudeEvalData);
-          
-          console.log(`✅ AI evaluation completed BEFORE webhook for content ID: ${contentHistoryId}`);
-          
-          // Prepare AI evaluation data for webhook
-          const averageScore = ((evaluationResults.chatgptEvaluation.overallScore || 0) + (evaluationResults.claudeEvaluation.overallScore || 0)) / 2;
-          
-          aiEvaluationData = {
-            chatgpt: {
-              viralityScore: evaluationResults.chatgptEvaluation.viralityScore,
-              clarityScore: evaluationResults.chatgptEvaluation.clarityScore,
-              persuasivenessScore: evaluationResults.chatgptEvaluation.persuasivenessScore,
-              creativityScore: evaluationResults.chatgptEvaluation.creativityScore,
-              overallScore: evaluationResults.chatgptEvaluation.overallScore
-            },
-            claude: {
-              viralityScore: evaluationResults.claudeEvaluation.viralityScore,
-              clarityScore: evaluationResults.claudeEvaluation.clarityScore,
-              persuasivenessScore: evaluationResults.claudeEvaluation.persuasivenessScore,
-              creativityScore: evaluationResults.claudeEvaluation.creativityScore,
-              overallScore: evaluationResults.claudeEvaluation.overallScore
-            },
-            averageScore: parseFloat(averageScore.toFixed(1)),
-            evaluationCompleted: true
-          };
-        }
-      } catch (evaluationError) {
-        console.error('⚠️ AI evaluation failed (content generation still successful):', evaluationError);
+        const fullContent = `${typeof mainContent === 'string' ? mainContent : mainContent.content}\n\nPlatform Captions:\n${JSON.stringify(platformCaptions, null, 2)}`;
+        
+        const evaluationResults = await evaluateContentWithBothModels(fullContent);
+        
+        // Save ChatGPT evaluation
+        const chatgptEvalData = createContentEvaluationData(contentHistoryId, 'chatgpt', evaluationResults.chatgptEvaluation);
+        await db.insert(contentEvaluations).values(chatgptEvalData);
+        
+        // Save Claude evaluation
+        const claudeEvalData = createContentEvaluationData(contentHistoryId, 'claude', evaluationResults.claudeEvaluation);
+        await db.insert(contentEvaluations).values(claudeEvalData);
+        
+        console.log(`✅ Dual-model AI evaluation completed BEFORE webhook for content ID: ${contentHistoryId}`);
+        console.log(`   🤖 ChatGPT Overall Score: ${evaluationResults.chatgptEvaluation.overallScore}/10`);
+        console.log(`   🎭 Claude Overall Score: ${evaluationResults.claudeEvaluation.overallScore}/10`);
+        
+        // Prepare AI evaluation data for webhook
+        const averageScore = ((evaluationResults.chatgptEvaluation.overallScore || 0) + (evaluationResults.claudeEvaluation.overallScore || 0)) / 2;
+        
         aiEvaluationData = {
-          chatgpt: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
-          claude: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
-          averageScore: null,
-          evaluationCompleted: false
+          chatgpt: {
+            viralityScore: evaluationResults.chatgptEvaluation.viralityScore,
+            clarityScore: evaluationResults.chatgptEvaluation.clarityScore,
+            persuasivenessScore: evaluationResults.chatgptEvaluation.persuasivenessScore,
+            creativityScore: evaluationResults.chatgptEvaluation.creativityScore,
+            overallScore: evaluationResults.chatgptEvaluation.overallScore,
+            viralityJustification: evaluationResults.chatgptEvaluation.viralityJustification,
+            clarityJustification: evaluationResults.chatgptEvaluation.clarityJustification,
+            persuasivenessJustification: evaluationResults.chatgptEvaluation.persuasivenessJustification,
+            creativityJustification: evaluationResults.chatgptEvaluation.creativityJustification
+          },
+          claude: {
+            viralityScore: evaluationResults.claudeEvaluation.viralityScore,
+            clarityScore: evaluationResults.claudeEvaluation.clarityScore,
+            persuasivenessScore: evaluationResults.claudeEvaluation.persuasivenessScore,
+            creativityScore: evaluationResults.claudeEvaluation.creativityScore,
+            overallScore: evaluationResults.claudeEvaluation.overallScore,
+            viralityJustification: evaluationResults.claudeEvaluation.viralityJustification,
+            clarityJustification: evaluationResults.claudeEvaluation.clarityJustification,
+            persuasivenessJustification: evaluationResults.claudeEvaluation.persuasivenessJustification,
+            creativityJustification: evaluationResults.claudeEvaluation.creativityJustification
+          },
+          averageScore: parseFloat(averageScore.toFixed(1)),
+          evaluationCompleted: true
         };
       }
+    } catch (evaluationError) {
+      console.error('⚠️ AI evaluation failed (content generation still successful):', evaluationError);
+      aiEvaluationData = {
+        chatgpt: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
+        claude: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
+        averageScore: null,
+        evaluationCompleted: false
+      };
     }
     
-    // Send to Make.com webhook if platforms are selected
+    // FAIL-SAFE: Only send webhook if AI evaluation is complete
     if (config.platforms && config.platforms.length > 0 && platformCaptions) {
+      // Check if AI evaluation is complete before sending webhook
+      if (!aiEvaluationData || !aiEvaluationData.evaluationCompleted) {
+        console.error('🚨 FAIL-SAFE TRIGGERED: AI evaluation incomplete - blocking webhook delivery');
+        console.error('   This prevents sending content without proper dual-model evaluation');
+        throw new Error('AI evaluation must be completed before webhook delivery');
+      }
+      
       try {
         console.log(`📤 Sending content to Make.com for platforms: ${config.platforms.join(', ')}`);
+        console.log(`🛡️ FAIL-SAFE PASSED: AI evaluation complete - allowing webhook delivery`);
         const webhookService = new WebhookService();
         
         // Create platform content object
