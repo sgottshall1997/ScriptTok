@@ -513,6 +513,10 @@ export const contentHistory = pgTable("content_history", {
   modelUsed: text("model_used").notNull(),
   tokenCount: integer("token_count").notNull(),
   fallbackLevel: text("fallback_level"), // For tracking AI fallbacks
+  // New fields for enhanced filtering
+  aiModel: text("ai_model"), // AI model used (ChatGPT, Claude, etc.)
+  contentFormat: text("content_format"), // Regular Format, Spartan Format, etc.
+  topRatedStyleUsed: boolean("top_rated_style_used").default(false), // Whether smart style was used
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

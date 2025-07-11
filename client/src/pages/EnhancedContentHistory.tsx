@@ -114,10 +114,10 @@ const EnhancedContentHistory = () => {
           platformsSelected: item.platformsSelected ? 
             (Array.isArray(item.platformsSelected) ? item.platformsSelected : JSON.parse(item.platformsSelected || '[]')) : [],
           // Add new filter fields
-          aiModel: item.aiModel || item.model || '',
-          contentFormat: item.contentFormat || '',
-          topRatedStyleUsed: item.topRatedStyleUsed || false,
-          useSmartStyle: item.useSmartStyle || false,
+          aiModel: item.ai_model || item.aiModel || item.model_used || item.modelUsed || '',
+          contentFormat: item.content_format || item.contentFormat || '',
+          topRatedStyleUsed: item.top_rated_style_used || item.topRatedStyleUsed || false,
+          useSmartStyle: item.use_smart_style || item.useSmartStyle || false,
           generatedOutput: {
             content: item.outputText || '',
             hook: parsedGeneratedOutput.hook || 'Generated content',
