@@ -522,6 +522,19 @@ async function getExistingTrendingProducts(niches: string[], limit: number = 1):
   
   console.log(`🎯 NICHE DISTRIBUTION: Fetching exactly ${limit} product(s) per niche from: [${niches.join(', ')}]`);
   
+  // First, check what products actually exist in database for debugging
+  const allProducts = await db
+    .select({ niche: trendingProducts.niche, title: trendingProducts.title })
+    .from(trendingProducts)
+    .orderBy(desc(trendingProducts.createdAt));
+  
+  const productsByNiche = allProducts.reduce((acc, p) => {
+    acc[p.niche] = (acc[p.niche] || 0) + 1;
+    return acc;
+  }, {});
+  
+  console.log(`📊 DATABASE INVENTORY: ${Object.entries(productsByNiche).map(([n, c]) => `${n}:${c}`).join(', ')}`);
+  
   for (const niche of niches) {
     const nicheProducts = await db
       .select()
@@ -532,6 +545,7 @@ async function getExistingTrendingProducts(niches: string[], limit: number = 1):
     
     if (nicheProducts.length === 0) {
       console.error(`❌ CRITICAL: No products found for niche "${niche}" - this will cause missing content!`);
+      console.error(`❌ Available niches in database: ${Object.keys(productsByNiche).join(', ')}`);
       throw new Error(`No trending products available for niche: ${niche}. Please refresh trending data first.`);
     }
     

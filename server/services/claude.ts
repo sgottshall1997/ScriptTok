@@ -203,11 +203,37 @@ export async function generateJSONWithClaude(
     });
     
     if (!response.success) {
+      console.error("Claude response not successful:", response);
       return response;
     }
     
     // Try to parse JSON and clean if needed
     let content = response.data?.content;
+    
+    // Enhanced debugging for response structure
+    if (!response.data) {
+      console.error("Claude response missing data field entirely:", response);
+      return createErrorResponse(
+        ERROR_CODES.INVALID_RESPONSE,
+        "Claude response missing data field",
+        { fullResponse: response }
+      );
+    }
+    
+    // Validate content exists before processing
+    if (!content || typeof content !== 'string') {
+      console.error("Claude response missing content field:", {
+        hasData: !!response.data,
+        dataKeys: Object.keys(response.data || {}),
+        contentType: typeof content,
+        contentValue: content
+      });
+      return createErrorResponse(
+        ERROR_CODES.INVALID_RESPONSE,
+        "Claude response missing content field",
+        { responseData: response.data }
+      );
+    }
     
     // Remove potential markdown formatting
     content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');
