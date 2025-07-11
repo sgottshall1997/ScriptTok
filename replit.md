@@ -696,15 +696,19 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Documentation Update**: WebhookSettings page includes topRatedStyleUsed field description and example payload with all 19 webhook fields
   - ✅ **External Analytics Support**: Make.com and Google Sheets can now track smart style learning usage across all content generation workflows
   - ✅ **Complete Tracking Dimensions**: Full webhook payload now supports niche × tone × template × platform × AI model × content format × smart style combinations
-- July 11, 2025. **Sync Ratings to Google Sheet Feature**: Complete retroactive ratings sync system for external data integration:
+- July 11, 2025. **Enhanced Sync Ratings to Google Sheet System**: Complete retroactive ratings sync with advanced unmatched item management:
   - ✅ **Backend API**: Created `/api/sync-ratings` endpoint with comprehensive ratings data extraction and webhook integration
   - ✅ **Content ID Generation**: Implemented MD5 hash-based content matching using product + timestamp + tone + template combination
   - ✅ **Ratings Collection**: Automatic extraction of all platform-specific ratings (TikTok, Instagram, YouTube, Twitter, Overall) from content_ratings table
   - ✅ **Make.com Integration**: Webhook payload delivery to existing automation with `sync_ratings_to_sheet` event type for batch rating updates
-  - ✅ **Frontend Component**: Built comprehensive SyncRatingsButton component with loading states, success/error feedback, and detailed result reporting
+  - ✅ **Enhanced Frontend Component**: Built comprehensive SyncRatingsButton component with loading states, success/error feedback, and detailed result reporting
   - ✅ **Content History Integration**: Added sync button prominently to Enhanced Content History page for easy access
-  - ✅ **Unmatched Item Tracking**: Complete logging system for items that cannot be matched in Google Sheet with detailed failure reasons
+  - ✅ **Advanced Unmatched Item System**: Complete tracking, viewing, and CSV export functionality for items that cannot be matched in Google Sheet
+  - ✅ **Export Functionality**: CSV export feature for unmatched items with complete rating data and failure reasons
+  - ✅ **UPDATE-ONLY Mode**: Explicit sync behavior that only updates existing rows, preventing duplicate creation in Google Sheet
+  - ✅ **Enhanced UI**: View/hide details toggle, export buttons, and comprehensive display of unmatched item reasons and ratings
   - ✅ **Production Testing**: Verified end-to-end workflow with real data showing successful webhook delivery (200 response) and proper payload structure
+  - ✅ **Comprehensive Documentation**: Clear behavior documentation showing UPDATE-ONLY mode and unmatched item handling
   - ✅ **Error Handling**: Robust error management with user-friendly feedback, console logging, and graceful failure handling
   - ✅ **Data Integrity**: Sync-only functionality that updates existing rows without adding duplicates or overwriting non-rating data
 

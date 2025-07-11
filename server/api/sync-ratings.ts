@@ -127,7 +127,14 @@ router.post('/', async (req, res) => {
       ratedItems: ratedContentItems,
       totalCount: ratedContentItems.length,
       timestamp: new Date().toISOString(),
-      source: 'content_history_sync'
+      source: 'content_history_sync',
+      mode: 'update_only', // Only update existing rows, do not add new ones
+      instructions: {
+        matchingMethod: 'contentId_or_script_fallback',
+        updateColumns: ['TikTok Rating', 'IG Rating', 'YT Rating', 'X Rating', 'Full Output Rating'],
+        skipUnmatched: true,
+        preventDuplicates: true
+      }
     };
 
     console.log('📤 Sending ratings sync payload to Make.com...');
