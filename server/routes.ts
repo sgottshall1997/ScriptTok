@@ -50,6 +50,7 @@ import { cronStatusRouter } from "./api/cron-status";
 import perplexityStatusRouter from "./api/perplexity-status";
 import aiAnalyticsRouter from "./api/ai-analytics";
 import generateContentUnifiedRouter from "./api/generateContentUnified";
+import favoritesRouter from "./api/favorites";
 import { bulkGeneratedContent } from "@shared/schema";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
@@ -575,6 +576,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/create-redirect', createRedirect);
   app.get('/r/:id', handleRedirect);
   app.get('/api/redirect-stats', getRedirectStats);
+  
+  // Favorites API
+  app.use('/api/favorites', favoritesRouter);
 
   const httpServer = createServer(app);
   return httpServer;

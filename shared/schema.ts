@@ -129,7 +129,24 @@ export const trendingProducts = pgTable("trending_products", {
   niche: text("niche").notNull().default("skincare"),
   dataSource: text("data_source").default("gpt"), // 'gpt', 'perplexity', 'scraper'
   reason: text("reason"), // Why this product is trending - from Perplexity or other sources
+  fetchedAt: timestamp("fetched_at").defaultNow().notNull(), // When this product was fetched from external source
+  engagement: integer("engagement"), // Engagement score if available
+  description: text("description"), // Full product description
+  viralKeywords: text("viral_keywords").array(), // Viral keyword highlights
+  perplexityNotes: text("perplexity_notes"), // Additional notes from Perplexity
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// User favorites for trending products
+export const favoriteProducts = pgTable("favorite_products", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  productId: integer("product_id").notNull().references(() => trendingProducts.id, { onDelete: 'cascade' }),
+  pinnedAt: timestamp("pinned_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    unq: unique().on(table.userId, table.productId),
+  };
 });
 
 // Scraper health schema
@@ -1219,3 +1236,12 @@ export type InsertBulkContentJob = z.infer<typeof insertBulkContentJobSchema>;
 
 export type PerformanceAnalytics = typeof performanceAnalytics.$inferSelect;
 export type InsertPerformanceAnalytics = z.infer<typeof insertPerformanceAnalyticsSchema>;
+
+// Favorite products insert schema and types
+export const insertFavoriteProductSchema = createInsertSchema(favoriteProducts).pick({
+  userId: true,
+  productId: true,
+});
+
+export type FavoriteProduct = typeof favoriteProducts.$inferSelect;
+export type InsertFavoriteProduct = z.infer<typeof insertFavoriteProductSchema>;
