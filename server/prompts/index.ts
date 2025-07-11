@@ -134,8 +134,9 @@ export async function generatePrompt(params: PromptParams): Promise<string> {
     fallbackLevel = 'generic';
     console.warn(`[PromptFactory] Fallback used → niche=${niche}, type=${templateType}, fallbackLevel=${fallbackLevel}`);
     // Instead of silently using a generic fallback, provide a more detailed prompt
+    const templateTypeFormatted = templateType ? templateType.replace(/_/g, ' ') : 'content piece';
     promptTemplate = `Write about ${productName} for the ${niche} niche in a ${tone} style. 
-This should be in the format of a ${templateType.replace(/_/g, ' ')}. 
+This should be in the format of a ${templateTypeFormatted}. 
 Note: A specific template for this combination wasn't found, so this is using a generic fallback.`;
   }
   

@@ -192,36 +192,51 @@ class UnifiedGeneratorTester {
       // Step 1: Test content generation
       let generatedContent: any;
       
-      if (config.useSpartanFormat) {
-        // Test Spartan content generation
-        generatedContent = await generateSpartanContent({
+      // Use the unified generator API for consistent testing
+      const testUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/api/generate-unified`;
+      const testPayload = {
+        mode: 'manual',
+        data: {
           productName: config.productName,
           niche: config.niche,
           templateType: config.template,
           tone: config.tone,
+          platforms: config.platforms,
+          contentType: 'video',
           aiModel: config.aiModel,
-          contentType: 'spartanVideoScript'
-        });
-      } else {
-        // Test default content generation
-        generatedContent = await generateContent({
-          productName: config.productName,
-          niche: config.niche,
-          templateType: config.template,
-          tone: config.tone,
+          useSpartanFormat: config.useSpartanFormat,
           useSmartStyle: false,
           customHook: '',
-          aiModel: config.aiModel
-        });
+          affiliateId: 'test123-20'
+        }
+      };
+      
+      const response = await fetch(testUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(testPayload)
+      });
+      
+      if (!response.ok) {
+        throw new Error(`API call failed with status: ${response.status}`);
       }
+      
+      const result = await response.json();
+      
+      if (!result.success) {
+        throw new Error(`Generation failed: ${result.error}`);
+      }
+      
+      // Extract the generated content from the API response
+      generatedContent = result.data.results[0] || null;
 
       // Step 2: Validate script content
-      if (!generatedContent || !generatedContent.script) {
+      if (!generatedContent || (!generatedContent.script && !generatedContent.content)) {
         errors.push('Generated content is missing or has no script field');
         throw new Error('No script generated');
       }
 
-      const script = generatedContent.script.trim();
+      const script = (generatedContent.script || generatedContent.content || '').trim();
       if (script.length === 0) {
         errors.push('Generated script is empty');
         throw new Error('Empty script generated');
@@ -236,22 +251,21 @@ class UnifiedGeneratorTester {
         this.validateSpartanFormat(script, errors, warnings);
       }
 
-      // Step 4: Test platform caption generation
-      try {
-        const platformCaptions = await generatePlatformCaptions({
-          script: script,
-          productName: config.productName,
-          affiliateLink: `https://amazon.com/dp/test123?tag=testaffiliate-20`,
-          platforms: config.platforms,
-          useSpartanFormat: config.useSpartanFormat,
-          aiModel: config.aiModel
-        });
-
+      // Step 4: Validate platform captions from unified generator response
+      if (generatedContent.platformCaptions) {
+        const platformCaptions = generatedContent.platformCaptions;
         if (!platformCaptions || Object.keys(platformCaptions).length === 0) {
-          warnings.push('Platform captions generation returned empty results');
+          warnings.push('No platform captions were generated');
+        } else {
+          // Validate that each requested platform has a caption
+          for (const platform of config.platforms) {
+            if (!platformCaptions[platform]) {
+              warnings.push(`Missing caption for platform: ${platform}`);
+            }
+          }
         }
-      } catch (platformError) {
-        errors.push(`Platform caption generation failed: ${platformError.message}`);
+      } else {
+        warnings.push('Platform captions not included in response');
       }
 
       // Step 5: Validate product association
