@@ -63,6 +63,7 @@ const unifiedGenerationSchema = z.object({
   useExistingProducts: z.boolean().default(false),
   generateAffiliateLinks: z.boolean().default(false),
   affiliateId: z.string().optional(),
+  aiModels: z.array(z.enum(['chatgpt', 'claude'])).optional(),
   
   // Webhook and scheduling
   makeWebhookUrl: z.string().url().optional(),
@@ -624,6 +625,9 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       
       // Multi-product manual generation (bulk)
       if (data.products && data.tones && data.templates) {
+        // Handle AI model selection for bulk generation
+        const selectedAiModel = data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : data.aiModel || 'chatgpt';
+        
         for (const product of data.products) {
           for (const tone of data.tones) {
             for (const template of data.templates) {
@@ -637,7 +641,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
                 affiliateUrl: product.affiliateUrl || data.affiliateUrl,
                 useSmartStyle: data.useSmartStyle,
                 useSpartanFormat: data.useSpartanFormat,
-                aiModel: data.aiModel,
+                aiModel: selectedAiModel,
                 mode: 'manual',
                 jobId
               });
@@ -674,7 +678,10 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      console.log(`🎭 GENERATION CONFIG: ${tones.length} tone(s), ${templates.length} template(s), AI Model: ${data.aiModel || 'chatgpt'}`);
+      // Handle AI model selection - convert array to single value for automated bulk
+      const selectedAiModel = data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : data.aiModel || 'chatgpt';
+      
+      console.log(`🎭 GENERATION CONFIG: ${tones.length} tone(s), ${templates.length} template(s), AI Model: ${selectedAiModel}`);
       
       // For scheduled generation, use exactly 1 tone and 1 template to ensure 1 content per niche
       const selectedTone = tones[0]; // Use first tone for consistency
@@ -693,12 +700,12 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
           affiliateUrl: product.affiliateUrl,
           useSmartStyle: data.useSmartStyle,
           useSpartanFormat: data.useSpartanFormat,
-          aiModel: data.aiModel || 'chatgpt', // Ensure model is passed through
+          aiModel: selectedAiModel, // Use properly selected AI model
           mode: 'automated',
           jobId
         });
         
-        console.log(`📋 CONFIG CREATED: ${product.niche} - "${product.name}" - ${selectedTone}/${selectedTemplate} - Model: ${data.aiModel || 'chatgpt'}`);
+        console.log(`📋 CONFIG CREATED: ${product.niche} - "${product.name}" - ${selectedTone}/${selectedTemplate} - Model: ${selectedAiModel}`);
       }
       
       // CRITICAL VALIDATION: Ensure exactly 1 config per niche

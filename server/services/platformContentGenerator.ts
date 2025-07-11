@@ -138,7 +138,11 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       });
 
       if (!aiResponse.success) {
-        throw new Error(`AI generation failed: ${aiResponse.error}`);
+        console.error('AI Response Error Details:', aiResponse.error);
+        const errorMessage = typeof aiResponse.error === 'string' ? aiResponse.error : 
+                            typeof aiResponse.error === 'object' ? JSON.stringify(aiResponse.error) : 
+                            'Unknown error';
+        throw new Error(`AI generation failed: ${errorMessage}`);
       }
 
       const content = aiResponse.content;
