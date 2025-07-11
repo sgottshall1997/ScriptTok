@@ -49,7 +49,11 @@ const EnhancedContentHistory = () => {
   const [filters, setFilters] = useState({
     niche: 'all',
     platform: 'all',
-    template: 'all'
+    template: 'all',
+    affiliateLink: 'all',
+    aiModel: 'all',
+    contentFormat: 'all',
+    smartStyle: 'all'
   });
 
   // Load history from database API
@@ -109,6 +113,11 @@ const EnhancedContentHistory = () => {
           outputText: item.outputText || '',
           platformsSelected: item.platformsSelected ? 
             (Array.isArray(item.platformsSelected) ? item.platformsSelected : JSON.parse(item.platformsSelected || '[]')) : [],
+          // Add new filter fields
+          aiModel: item.aiModel || item.model || '',
+          contentFormat: item.contentFormat || '',
+          topRatedStyleUsed: item.topRatedStyleUsed || false,
+          useSmartStyle: item.useSmartStyle || false,
           generatedOutput: {
             content: item.outputText || '',
             hook: parsedGeneratedOutput.hook || 'Generated content',
@@ -154,6 +163,52 @@ const EnhancedContentHistory = () => {
     
     if (filters.template !== 'all') {
       filtered = filtered.filter(item => item.contentType === filters.template);
+    }
+
+    if (filters.affiliateLink !== 'all') {
+      filtered = filtered.filter(item => {
+        const hasAffiliateLink = item.generatedOutput?.affiliateLink && 
+          item.generatedOutput.affiliateLink.trim() !== '' &&
+          item.generatedOutput.affiliateLink !== 'N/A';
+        return filters.affiliateLink === 'has' ? hasAffiliateLink : !hasAffiliateLink;
+      });
+    }
+
+    if (filters.aiModel !== 'all') {
+      filtered = filtered.filter(item => {
+        const aiModel = item.aiModel || item.model;
+        if (!aiModel) return filters.aiModel === 'unknown';
+        
+        const modelLower = aiModel.toLowerCase();
+        if (filters.aiModel === 'chatgpt') {
+          return modelLower.includes('gpt') || modelLower.includes('chatgpt');
+        } else if (filters.aiModel === 'claude') {
+          return modelLower.includes('claude');
+        }
+        return false;
+      });
+    }
+
+    if (filters.contentFormat !== 'all') {
+      filtered = filtered.filter(item => {
+        const format = item.contentFormat;
+        if (!format) return filters.contentFormat === 'unknown';
+        
+        const formatLower = format.toLowerCase();
+        if (filters.contentFormat === 'spartan') {
+          return formatLower.includes('spartan');
+        } else if (filters.contentFormat === 'regular') {
+          return formatLower.includes('regular') || !formatLower.includes('spartan');
+        }
+        return false;
+      });
+    }
+
+    if (filters.smartStyle !== 'all') {
+      filtered = filtered.filter(item => {
+        const smartStyleUsed = item.topRatedStyleUsed || item.useSmartStyle;
+        return filters.smartStyle === 'used' ? smartStyleUsed : !smartStyleUsed;
+      });
     }
     
     setFilteredHistory(filtered);
@@ -469,8 +524,8 @@ const EnhancedContentHistory = () => {
         <SyncRatingsButton className="mb-6" />
 
         {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="w-full md:w-1/4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
+          <div>
             <Select value={filters.niche} onValueChange={(value) => setFilters(prev => ({ ...prev, niche: value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by niche" />
@@ -486,7 +541,7 @@ const EnhancedContentHistory = () => {
             </Select>
           </div>
           
-          <div className="w-full md:w-1/4">
+          <div>
             <Select value={filters.platform} onValueChange={(value) => setFilters(prev => ({ ...prev, platform: value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by platform" />
@@ -502,7 +557,7 @@ const EnhancedContentHistory = () => {
             </Select>
           </div>
           
-          <div className="w-full md:w-1/4">
+          <div>
             <Select value={filters.template} onValueChange={(value) => setFilters(prev => ({ ...prev, template: value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="Filter by template" />
@@ -517,12 +572,66 @@ const EnhancedContentHistory = () => {
               </SelectContent>
             </Select>
           </div>
-          
-          <div className="flex-grow text-right">
-            <p className="text-sm text-gray-500 mt-2">
-              Showing {filteredHistory.length} of {history.length} entries
-            </p>
+
+          <div>
+            <Select value={filters.affiliateLink} onValueChange={(value) => setFilters(prev => ({ ...prev, affiliateLink: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Affiliate Links" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Content</SelectItem>
+                <SelectItem value="has">Has Affiliate Link</SelectItem>
+                <SelectItem value="none">No Affiliate Link</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
+
+          <div>
+            <Select value={filters.aiModel} onValueChange={(value) => setFilters(prev => ({ ...prev, aiModel: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="AI Model" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Models</SelectItem>
+                <SelectItem value="chatgpt">ChatGPT</SelectItem>
+                <SelectItem value="claude">Claude</SelectItem>
+                <SelectItem value="unknown">Unknown</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Select value={filters.contentFormat} onValueChange={(value) => setFilters(prev => ({ ...prev, contentFormat: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Content Format" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Formats</SelectItem>
+                <SelectItem value="regular">Regular Format</SelectItem>
+                <SelectItem value="spartan">Spartan Format</SelectItem>
+                <SelectItem value="unknown">Unknown</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Select value={filters.smartStyle} onValueChange={(value) => setFilters(prev => ({ ...prev, smartStyle: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Smart Style" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Content</SelectItem>
+                <SelectItem value="used">Smart Style Used</SelectItem>
+                <SelectItem value="none">Standard Style</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+        
+        <div className="text-right mb-4">
+          <p className="text-sm text-gray-500">
+            Showing {filteredHistory.length} of {history.length} entries
+          </p>
         </div>
       </div>
 
@@ -551,6 +660,38 @@ const EnhancedContentHistory = () => {
                           {platform}
                         </Badge>
                       ))}
+                      
+                      {/* AI Model Badge */}
+                      {(entry.aiModel || entry.model) && (
+                        <Badge className="bg-purple-100 text-purple-800">
+                          {(entry.aiModel || entry.model).includes('gpt') || (entry.aiModel || entry.model).includes('chatgpt') ? 'ChatGPT' : 
+                           (entry.aiModel || entry.model).includes('claude') ? 'Claude' : 
+                           (entry.aiModel || entry.model)}
+                        </Badge>
+                      )}
+                      
+                      {/* Content Format Badge */}
+                      {entry.contentFormat && (
+                        <Badge className={entry.contentFormat.toLowerCase().includes('spartan') ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'}>
+                          {entry.contentFormat.includes('spartan') ? '🏛️ Spartan' : '📝 Regular'}
+                        </Badge>
+                      )}
+                      
+                      {/* Smart Style Badge */}
+                      {(entry.topRatedStyleUsed || entry.useSmartStyle) && (
+                        <Badge className="bg-green-100 text-green-800">
+                          ⭐ Smart Style
+                        </Badge>
+                      )}
+                      
+                      {/* Affiliate Link Badge */}
+                      {entry.generatedOutput?.affiliateLink && 
+                       entry.generatedOutput.affiliateLink.trim() !== '' && 
+                       entry.generatedOutput.affiliateLink !== 'N/A' && (
+                        <Badge className="bg-yellow-100 text-yellow-800">
+                          🔗 Affiliate Link
+                        </Badge>
+                      )}
                     </div>
                     <p className="text-sm text-gray-600">
                       Template: {entry.templateUsed ? entry.templateUsed.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : (entry.contentType || 'Unknown')} | 
