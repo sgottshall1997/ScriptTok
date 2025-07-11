@@ -799,6 +799,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Request Source Tracking**: Enhanced logging system tracking user agents, referrers, IP addresses, and request timestamps
   - ✅ **Security Validation**: Verified all automated generation blocked (403 status) while maintaining manual UI generation access
   - ✅ **Production Ready**: Complete monitoring endpoints at `/api/gatekeeper/status`, `/api/gatekeeper/blocked`, `/api/gatekeeper/stats` for security oversight
+- July 11, 2025. **CRITICAL AI MODEL SELECTION BUG RESOLUTION**: Complete fix for AI model selection issue affecting both single and automated bulk generators:
+  - ✅ **Root Cause Identified**: AutomatedBulkGenerator was sending `aiModels` array format while backend expected single `aiModel` value
+  - ✅ **Unified Generator Enhancement**: Enhanced generateContentUnified.ts to handle both single aiModel and aiModels array formats with proper conversion logic
+  - ✅ **Parameter Mapping Fix**: Added selectedAiModel logic to convert aiModels[0] to single aiModel value for all bulk generation configurations  
+  - ✅ **Content Generator Fix**: Corrected generateContent function calls to properly pass aiModel parameter instead of conflicting with legacy model parameter
+  - ✅ **Claude JSON Generation Fix**: Enhanced Claude service error handling to prevent undefined content access errors in platform caption generation
+  - ✅ **Comprehensive Testing**: Verified both single content generator and automated bulk generator now correctly use selected AI models (Claude/ChatGPT)
+  - ✅ **Webhook Integration**: Confirmed webhook payloads correctly display selected AI model in Make.com automation workflows
+  - ✅ **Production Validation**: Console logs and webhook responses confirm Claude is properly used when selected by users across all generation modes
 - July 11, 2025. **FINAL THREE-MODE SAFEGUARD SYSTEM COMPLETION**: Production-ready granular security controls with comprehensive testing validation:
   - ✅ **Fixed Global Gatekeeper Context Detection**: Resolved function parameter mismatch by properly calling `detectGenerationContext()` before validation
   - ✅ **Enhanced Source Header Authentication**: Fixed global gatekeeper to properly parse `x-generation-source` headers from frontend components

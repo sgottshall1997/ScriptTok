@@ -207,7 +207,7 @@ export async function generateJSONWithClaude(
     }
     
     // Try to parse JSON and clean if needed
-    let content = response.data.content;
+    let content = response.data?.content;
     
     // Remove potential markdown formatting
     content = content.replace(/```json\n?/g, '').replace(/```\n?/g, '');

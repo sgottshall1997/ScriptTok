@@ -226,10 +226,10 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
                 config.tone as any,
                 trendingProductsData,
                 config.niche as any,
-                config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
+                "gpt-4o", // Legacy parameter not used for model selection
                 viralInspiration,
                 config.useSmartStyle ? { useSmartStyle: true } : undefined,
-                config.aiModel
+                config.aiModel // Actual AI model parameter
               );
             } else {
               continue; // Retry Spartan generation
@@ -244,10 +244,10 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
             config.tone as any,
             trendingProductsData,
             config.niche as any,
-            config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
+            "gpt-4o", // This parameter is legacy and not used for model selection
             viralInspiration,
             config.useSmartStyle ? { useSmartStyle: true } : undefined,
-            config.aiModel
+            config.aiModel // This is the actual parameter used for AI model selection
           );
         }
         
@@ -605,6 +605,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       
       // Single product manual generation
       if (productName) {
+        console.log(`🤖 DEBUG Single Generation: AI Model selected = "${data.aiModel}"`);
         configs.push({
           productName: productName,
           niche: data.niche || 'beauty',
@@ -621,6 +622,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
           mode: 'manual',
           jobId
         });
+        console.log(`🤖 DEBUG Config Created: AI Model = "${data.aiModel}"`);
       }
       
       // Multi-product manual generation (bulk)
