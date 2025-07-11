@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Brain, TrendingUp, Eye, Lightbulb, CheckCircle, XCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Brain, TrendingUp, Eye, Lightbulb, CheckCircle, XCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
 
@@ -32,6 +32,12 @@ interface EvaluationResponse {
   };
 }
 
+interface StoredEvaluationsResponse {
+  success: boolean;
+  contentHistoryId: number;
+  evaluations: ContentEvaluation[];
+}
+
 interface ContentEvaluationPanelProps {
   contentHistoryId: number;
   productName: string;
@@ -44,9 +50,61 @@ export function ContentEvaluationPanel({
   onEvaluationComplete 
 }: ContentEvaluationPanelProps) {
   const [isEvaluating, setIsEvaluating] = useState(false);
+  const [isLoadingExisting, setIsLoadingExisting] = useState(true);
   const [evaluations, setEvaluations] = useState<EvaluationResponse['evaluations'] | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const { toast } = useToast();
+
+  // Fetch existing evaluations when component mounts
+  useEffect(() => {
+    const fetchExistingEvaluations = async () => {
+      try {
+        setIsLoadingExisting(true);
+        console.log(`🔍 Fetching existing evaluations for content ID ${contentHistoryId}...`);
+        
+        const response = await apiRequest('GET', `/api/content-evaluation/${contentHistoryId}`) as StoredEvaluationsResponse;
+        
+        console.log('📋 API Response:', response);
+        
+        if (response.success && response.evaluations && response.evaluations.length > 0) {
+          // Transform stored evaluations into the expected format
+          const chatgptEval = response.evaluations.find(e => e.evaluatorModel === 'chatgpt');
+          const claudeEval = response.evaluations.find(e => e.evaluatorModel === 'claude');
+          
+          console.log('🔍 Found ChatGPT eval:', chatgptEval);
+          console.log('🔍 Found Claude eval:', claudeEval);
+          
+          if (chatgptEval && claudeEval) {
+            const transformedEvaluations = {
+              chatgpt: { ...chatgptEval, evaluationId: chatgptEval.id },
+              claude: { ...claudeEval, evaluationId: claudeEval.id }
+            };
+            
+            setEvaluations(transformedEvaluations);
+            console.log('✅ Found existing evaluations:', transformedEvaluations);
+          } else {
+            console.log('⚠️ Incomplete evaluations found - missing model data');
+            console.log(`   ChatGPT found: ${!!chatgptEval}`);
+            console.log(`   Claude found: ${!!claudeEval}`);
+          }
+        } else {
+          console.log('ℹ️ No existing evaluations found for this content');
+          console.log(`   Success: ${response.success}`);
+          console.log(`   Evaluations array: ${response.evaluations}`);
+          console.log(`   Evaluations length: ${response.evaluations?.length}`);
+        }
+      } catch (error: any) {
+        console.error('Error fetching existing evaluations:', error);
+        // Don't show error toast for missing evaluations - this is expected for new content
+      } finally {
+        setIsLoadingExisting(false);
+      }
+    };
+
+    if (contentHistoryId) {
+      fetchExistingEvaluations();
+    }
+  }, [contentHistoryId]);
 
   const startEvaluation = async () => {
     if (isEvaluating) return;
@@ -112,7 +170,12 @@ export function ContentEvaluationPanel({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {!evaluations ? (
+        {isLoadingExisting ? (
+          <div className="text-center py-6">
+            <Loader2 className="w-4 h-4 mx-auto mb-2 animate-spin" />
+            <p className="text-sm text-gray-600">Loading evaluations...</p>
+          </div>
+        ) : !evaluations ? (
           <div className="text-center py-6">
             <p className="text-sm text-gray-600 mb-4">
               Get professional AI feedback on your content quality from both ChatGPT and Claude
