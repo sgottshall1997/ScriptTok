@@ -70,6 +70,7 @@ import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatf
 import syncRatingsRouter from "./api/sync-ratings";
 import { registerContentEvaluationRoutes } from "./api/content-evaluation";
 import { testScheduledGeneration } from "./tests/scheduled-generation-test";
+import testUnifiedGeneratorRouter from "./api/test-unified-generator";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -587,6 +588,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Favorites API
   app.use('/api/favorites', favoritesRouter);
+  app.use('/api/test', testUnifiedGeneratorRouter);
 
   // Register content evaluation routes
   registerContentEvaluationRoutes(app);

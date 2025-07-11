@@ -86,10 +86,72 @@ interface GenerationConfig {
   jobId?: string;
 }
 
+// Enhanced validation function for generated content
+function validateGeneratedContent(content: any, config: GenerationConfig): { isValid: boolean; errors: string[]; warnings: string[] } {
+  const errors: string[] = [];
+  const warnings: string[] = [];
+
+  // Check if content exists
+  if (!content) {
+    errors.push('Generated content is null or undefined');
+    return { isValid: false, errors, warnings };
+  }
+
+  // Extract script from content
+  const script = typeof content === 'string' ? content : (content.script || content.content);
+  
+  if (!script) {
+    errors.push('Generated content is missing script/content field');
+    return { isValid: false, errors, warnings };
+  }
+
+  // Check for empty or whitespace-only script
+  const trimmedScript = script.trim();
+  if (trimmedScript.length === 0) {
+    errors.push('Generated script is empty or contains only whitespace');
+    return { isValid: false, errors, warnings };
+  }
+
+  // Check minimum length
+  if (trimmedScript.length < 10) {
+    warnings.push(`Generated script is very short (${trimmedScript.length} characters)`);
+  }
+
+  // Check if script contains product reference
+  const productWords = config.productName.toLowerCase().split(' ').filter(word => word.length > 2);
+  const scriptLower = trimmedScript.toLowerCase();
+  const hasProductReference = productWords.some(word => scriptLower.includes(word));
+  
+  if (!hasProductReference) {
+    warnings.push('Generated script may not reference the specified product');
+  }
+
+  // Spartan format validation
+  if (config.useSpartanFormat) {
+    const bannedWords = ['can', 'may', 'just', 'that', 'very', 'really', 'literally', 'actually'];
+    const foundBannedWords = bannedWords.filter(word => scriptLower.includes(word));
+    
+    if (foundBannedWords.length > 0) {
+      warnings.push(`Spartan format violation: Contains banned words: ${foundBannedWords.join(', ')}`);
+    }
+
+    // Check for emojis in Spartan format (simplified emoji detection)
+    const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu;
+    if (emojiPattern.test(trimmedScript)) {
+      warnings.push('Spartan format violation: Script contains emojis');
+    }
+  }
+
+  return { isValid: errors.length === 0, errors, warnings };
+}
+
 // Generate content for a single configuration
 async function generateSingleContent(config: GenerationConfig): Promise<any> {
+  const startTime = Date.now();
+  
   try {
     console.log(`🔄 Generating content: ${config.productName} (${config.niche}) - ${config.templateType}/${config.tone}`);
+    console.log(`🤖 Using AI Model: ${config.aiModel} | Spartan Format: ${config.useSpartanFormat}`);
     
     // Get trending products for context
     const trendingProductsData = await db
@@ -121,51 +183,95 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     // Check if Spartan format should be used
     const shouldUseSpartan = config.useSpartanFormat;
+    console.log(`📝 Content generation mode: ${shouldUseSpartan ? 'Spartan' : 'Standard'}`);
     
-    // Generate main content with Spartan format if enabled
+    // Generate main content with enhanced error handling
     let mainContent;
-    if (shouldUseSpartan) {
-      // Use Spartan content generation for main content
-      const { generateSpartanContent } = await import('../services/spartanContentGenerator');
-      const spartanContentType = config.templateType === 'spartan_video_script' ? 'spartanVideoScript' : 'shortCaptionSpartan';
+    let generationAttempts = 0;
+    const maxAttempts = 2;
+    
+    while (generationAttempts < maxAttempts) {
+      generationAttempts++;
+      console.log(`🔄 Generation attempt ${generationAttempts}/${maxAttempts}`);
       
-      const spartanResult = await generateSpartanContent({
-        productName: config.productName,
-        niche: config.niche,
-        contentType: spartanContentType,
-        useSpartanFormat: true,
-        additionalContext: `Template: ${config.templateType}`
-      });
-      
-      if (spartanResult.success) {
-        mainContent = spartanResult.content;
-      } else {
-        // Fallback to regular generation if Spartan fails
-        mainContent = await generateContent(
-          config.productName,
-          config.templateType as any,
-          config.tone as any,
-          trendingProductsData,
-          config.niche as any,
-          config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
-          viralInspiration,
-          config.useSmartStyle ? { useSmartStyle: true } : undefined,
-          config.aiModel
-        );
+      try {
+        if (shouldUseSpartan) {
+          // Use Spartan content generation for main content
+          const { generateSpartanContent } = await import('../services/spartanContentGenerator');
+          const spartanContentType = config.templateType === 'spartan_video_script' ? 'spartanVideoScript' : 'shortCaptionSpartan';
+          
+          const spartanResult = await generateSpartanContent({
+            productName: config.productName,
+            niche: config.niche,
+            contentType: spartanContentType,
+            useSpartanFormat: true,
+            additionalContext: `Template: ${config.templateType}`,
+            aiModel: config.aiModel
+          });
+          
+          if (spartanResult.success && spartanResult.content) {
+            mainContent = spartanResult.content;
+            console.log(`✅ Spartan content generated successfully (${spartanResult.content.length} chars)`);
+          } else {
+            console.log(`⚠️ Spartan generation failed: ${spartanResult.error || 'Unknown error'}`);
+            if (generationAttempts === maxAttempts) {
+              // Final fallback to regular generation
+              console.log('🔄 Falling back to standard content generation');
+              mainContent = await generateContent(
+                config.productName,
+                config.templateType as any,
+                config.tone as any,
+                trendingProductsData,
+                config.niche as any,
+                config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
+                viralInspiration,
+                config.useSmartStyle ? { useSmartStyle: true } : undefined,
+                config.aiModel
+              );
+            } else {
+              continue; // Retry Spartan generation
+            }
+          }
+        } else {
+          // Standard content generation
+          console.log(`🤖 Generating with ${config.aiModel} model`);
+          mainContent = await generateContent(
+            config.productName,
+            config.templateType as any,
+            config.tone as any,
+            trendingProductsData,
+            config.niche as any,
+            config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
+            viralInspiration,
+            config.useSmartStyle ? { useSmartStyle: true } : undefined,
+            config.aiModel
+          );
+        }
+        
+        // Validate generated content
+        const validation = validateGeneratedContent(mainContent, config);
+        
+        if (validation.isValid) {
+          console.log(`✅ Content validation passed`);
+          if (validation.warnings.length > 0) {
+            console.log(`⚠️ Warnings: ${validation.warnings.join(', ')}`);
+          }
+          break; // Success, exit retry loop
+        } else {
+          console.log(`❌ Content validation failed: ${validation.errors.join(', ')}`);
+          if (generationAttempts === maxAttempts) {
+            throw new Error(`Content generation failed validation: ${validation.errors.join(', ')}`);
+          }
+          // Retry with different approach
+          continue;
+        }
+        
+      } catch (error) {
+        console.log(`❌ Generation attempt ${generationAttempts} failed:`, error.message);
+        if (generationAttempts === maxAttempts) {
+          throw error; // Re-throw on final attempt
+        }
       }
-    } else {
-      // Standard content generation
-      mainContent = await generateContent(
-        config.productName,
-        config.templateType as any,
-        config.tone as any,
-        trendingProductsData,
-        config.niche as any,
-        config.aiModel === 'claude' ? 'claude-sonnet-4-20250514' : "gpt-4o",
-        viralInspiration,
-        config.useSmartStyle ? { useSmartStyle: true } : undefined,
-        config.aiModel
-      );
     }
 
     // Generate platform-specific captions if platforms are specified
@@ -193,9 +299,21 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     const videoDuration = config.contentType === "video" ? 
       estimateVideoDuration(typeof mainContent === 'string' ? mainContent : mainContent.content, config.videoDuration) : undefined;
 
+    // Final validation of complete result
+    const script = typeof mainContent === 'string' ? mainContent : mainContent.content;
+    const finalValidation = validateGeneratedContent(mainContent, config);
+    
+    if (!finalValidation.isValid) {
+      throw new Error(`Final validation failed: ${finalValidation.errors.join(', ')}`);
+    }
+
+    const executionTime = Date.now() - startTime;
+    console.log(`⏱️ Content generation completed in ${executionTime}ms`);
+
     // Create response structure
     const result = {
-      content: typeof mainContent === 'string' ? mainContent : mainContent.content,
+      script,
+      content: script, // Backward compatibility
       productName: config.productName,
       niche: config.niche,
       templateType: config.templateType,
@@ -207,13 +325,17 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       affiliateUrl: config.affiliateUrl,
       customHook: config.customHook,
       model: config.aiModel === 'claude' ? 'Claude' : 'ChatGPT',
+      aiModel: config.aiModel,
+      useSpartanFormat: config.useSpartanFormat,
       tokens: (typeof mainContent === 'string') ? 0 : (
         typeof mainContent.tokens === 'object' && mainContent.tokens?.total 
           ? mainContent.tokens.total 
           : (typeof mainContent.tokens === 'number' ? mainContent.tokens : 0)
       ),
       fallbackLevel: (typeof mainContent === 'string') ? 'exact' : (mainContent.fallbackLevel || 'exact'),
-      generatedAt: new Date().toISOString()
+      generatedAt: new Date().toISOString(),
+      executionTime,
+      validation: finalValidation
     };
 
     // Save to content history

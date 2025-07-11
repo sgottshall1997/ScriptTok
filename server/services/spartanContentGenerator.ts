@@ -66,6 +66,7 @@ export interface SpartanContentOptions {
   contentType: 'shortCaptionSpartan' | 'spartanVideoScript';
   useSpartanFormat?: boolean;
   additionalContext?: string;
+  aiModel?: 'chatgpt' | 'claude';
 }
 
 export async function generateSpartanContent(options: SpartanContentOptions): Promise<{
