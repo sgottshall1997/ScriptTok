@@ -939,6 +939,31 @@ export const insertTrendingEmojisHashtagsSchema = createInsertSchema(trendingEmo
   emojis: true,
 });
 
+// Content evaluation schema for AI self-assessment
+export const contentEvaluations = pgTable("content_evaluations", {
+  id: serial("id").primaryKey(),
+  contentHistoryId: integer("content_history_id").notNull().references(() => contentHistory.id, { onDelete: 'cascade' }),
+  evaluatorModel: text("evaluator_model").notNull(), // 'chatgpt' or 'claude'
+  viralityScore: integer("virality_score").notNull(),
+  clarityScore: integer("clarity_score").notNull(),
+  persuasivenessScore: integer("persuasiveness_score").notNull(),
+  creativityScore: integer("creativity_score").notNull(),
+  viralityJustification: text("virality_justification").notNull(),
+  clarityJustification: text("clarity_justification").notNull(),
+  persuasivenessJustification: text("persuasiveness_justification").notNull(),
+  creativityJustification: text("creativity_justification").notNull(),
+  needsRevision: boolean("needs_revision").notNull().default(false),
+  improvementSuggestions: text("improvement_suggestions"),
+  overallScore: decimal("overall_score", { precision: 3, scale: 1 }), // Calculated average
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Insert schema for content evaluations
+export const insertContentEvaluationSchema = createInsertSchema(contentEvaluations).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Export types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -1187,6 +1212,9 @@ export type InsertClickLog = z.infer<typeof insertClickLogSchema>;
 
 export type ClickEvent = typeof clickEvents.$inferSelect;
 export type InsertClickEvent = z.infer<typeof insertClickEventSchema>;
+
+export type ContentEvaluation = typeof contentEvaluations.$inferSelect;
+export type InsertContentEvaluation = z.infer<typeof insertContentEvaluationSchema>;
 
 export type PostMetric = typeof postMetrics.$inferSelect;
 export type InsertPostMetric = z.infer<typeof insertPostMetricSchema>;

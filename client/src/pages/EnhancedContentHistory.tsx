@@ -35,6 +35,7 @@ import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
 import SyncRatingsButton from '@/components/SyncRatingsButton';
+import { ContentEvaluationPanel } from '@/components/ContentEvaluationPanel';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -983,6 +984,23 @@ const EnhancedContentHistory = () => {
                       </div>
                     )}
                   </div>
+
+                  {/* AI Content Evaluation System */}
+                  {entry.databaseId && (
+                    <div className="border-t pt-4 mt-4">
+                      <ContentEvaluationPanel
+                        contentHistoryId={entry.databaseId}
+                        productName={entry.productName || 'Unknown Product'}
+                        onEvaluationComplete={(evaluations) => {
+                          console.log('✅ Evaluation completed for content ID:', entry.databaseId, evaluations);
+                          toast({
+                            title: "Evaluation Saved",
+                            description: "Content evaluations have been stored for future reference and learning",
+                          });
+                        }}
+                      />
+                    </div>
+                  )}
                 </CardContent>
               </CollapsibleContent>
             </Collapsible>

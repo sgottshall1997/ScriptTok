@@ -247,6 +247,46 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
     
+    // Trigger automatic AI evaluation for single content generation
+    if (config.mode === 'manual') {
+      try {
+        // Get the content history ID from the database
+        const { contentHistory } = await import('@shared/schema');
+        const sessionId = config.jobId || `single_${Date.now()}`;
+        
+        const recentContent = await db.select()
+          .from(contentHistory)
+          .where(eq(contentHistory.sessionId, sessionId))
+          .orderBy(desc(contentHistory.createdAt))
+          .limit(1);
+        
+        if (recentContent.length > 0) {
+          const contentHistoryId = recentContent[0].id;
+          console.log(`🤖 Starting automatic AI evaluation for content ID: ${contentHistoryId}`);
+          
+          // Import and call the evaluation service
+          const { evaluateContentWithBothModels, createContentEvaluationData } = await import('../services/aiEvaluationService');
+          const { contentEvaluations } = await import('@shared/schema');
+          
+          const fullContent = `${typeof mainContent === 'string' ? mainContent : mainContent.content}\n\nPlatform Captions:\n${JSON.stringify(platformCaptions, null, 2)}`;
+          
+          const evaluationResults = await evaluateContentWithBothModels(fullContent);
+          
+          // Save ChatGPT evaluation
+          const chatgptEvalData = createContentEvaluationData(contentHistoryId, 'chatgpt', evaluationResults.chatgptEvaluation);
+          await db.insert(contentEvaluations).values(chatgptEvalData);
+          
+          // Save Claude evaluation
+          const claudeEvalData = createContentEvaluationData(contentHistoryId, 'claude', evaluationResults.claudeEvaluation);
+          await db.insert(contentEvaluations).values(claudeEvalData);
+          
+          console.log(`✅ Automatic AI evaluation completed for content ID: ${contentHistoryId}`);
+        }
+      } catch (evaluationError) {
+        console.error('⚠️ Automatic evaluation failed (content generation still successful):', evaluationError);
+      }
+    }
+    
     // Send to Make.com webhook if platforms are selected
     if (config.platforms && config.platforms.length > 0 && platformCaptions) {
       try {

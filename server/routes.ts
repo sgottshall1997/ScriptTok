@@ -68,6 +68,7 @@ import {
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
 import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
 import syncRatingsRouter from "./api/sync-ratings";
+import { registerContentEvaluationRoutes } from "./api/content-evaluation";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -585,6 +586,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Favorites API
   app.use('/api/favorites', favoritesRouter);
+
+  // Register content evaluation routes
+  registerContentEvaluationRoutes(app);
 
   const httpServer = createServer(app);
   return httpServer;
