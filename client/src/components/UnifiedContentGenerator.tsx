@@ -22,6 +22,8 @@ import WebhookDebugPanel from './WebhookDebugPanel';
 const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) => void }> = ({ onContentGenerated }) => {
   const { toast } = useToast();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [viralInspo, setViralInspo] = useState<any>(null);
+  const [viralInspoLoading, setViralInspoLoading] = useState(false);
   const [formData, setFormData] = useState({
     productName: '',
     niche: 'beauty',
@@ -61,6 +63,50 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
       }));
     }
   }, []);
+
+  // Fetch viral inspiration for the product
+  const fetchViralInspiration = async (productName: string, niche: string) => {
+    if (!productName.trim()) {
+      setViralInspo(null);
+      setViralInspoLoading(false);
+      return;
+    }
+
+    setViralInspoLoading(true);
+    
+    try {
+      const response = await fetch('/api/perplexity-trends/viral-inspiration', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ product: productName, niche: niche })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.inspiration) {
+          setViralInspo(data.inspiration);
+        } else {
+          setViralInspo(null);
+        }
+      } else {
+        setViralInspo(null);
+      }
+    } catch (error) {
+      console.error('Error fetching viral inspiration:', error);
+      setViralInspo(null);
+    } finally {
+      setViralInspoLoading(false);
+    }
+  };
+
+  // Watch for product name and niche changes to fetch viral inspiration
+  useEffect(() => {
+    if (formData.productName && formData.niche) {
+      fetchViralInspiration(formData.productName, formData.niche);
+    } else {
+      setViralInspo(null);
+    }
+  }, [formData.productName, formData.niche]);
 
   const NICHES = ['beauty', 'tech', 'fitness', 'fashion', 'food', 'travel', 'pets'];
   const TONES = ['Enthusiastic', 'Professional', 'Friendly', 'Educational', 'Humorous', 'Inspiring', 'Urgent', 'Casual', 'Authoritative', 'Empathetic', 'Trendy'];
@@ -417,6 +463,42 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
             </div>
           )}
         </div>
+
+        {/* Viral Inspiration Preview */}
+        {formData.productName && (viralInspoLoading || viralInspo) && (
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
+            <div className="flex items-center gap-2 mb-3">
+              {viralInspoLoading ? (
+                <>
+                  <Clock className="h-4 w-4 animate-spin text-orange-600" />
+                  <h4 className="font-medium text-orange-700">Analyzing Viral Trends...</h4>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4 text-orange-600" />
+                  <h4 className="font-medium text-orange-700">Viral Inspiration Found</h4>
+                </>
+              )}
+            </div>
+            
+            {viralInspoLoading ? (
+              <p className="text-sm text-orange-600">Searching TikTok and Instagram for viral content patterns...</p>
+            ) : viralInspo ? (
+              <div className="space-y-2 text-sm">
+                <div><strong className="text-orange-800">Hook:</strong> <span className="text-orange-900">{viralInspo.hook}</span></div>
+                <div><strong className="text-orange-800">Format:</strong> <span className="text-orange-900">{viralInspo.format}</span></div>
+                <div><strong className="text-orange-800">Caption:</strong> <span className="text-orange-900">{viralInspo.caption}</span></div>
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {viralInspo.hashtags?.map((tag: string, index: number) => (
+                    <Badge key={index} variant="outline" className="text-xs bg-orange-100 text-orange-800 border-orange-300">
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+        )}
 
         {/* Generate Button */}
         <Button
