@@ -645,6 +645,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // 🧪 TREND FETCH SIMULATION TEST ENDPOINT
+  app.get('/api/test/trend-fetch', async (req, res) => {
+    const { testTrendFetch } = await import('./api/test-trend-fetch');
+    await testTrendFetch(req, res);
+  });
 
   const httpServer = createServer(app);
   return httpServer;

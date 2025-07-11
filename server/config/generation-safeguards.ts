@@ -18,6 +18,7 @@ export interface SafeguardConfig {
   ALLOW_WEBHOOK_TRIGGERS: boolean;
   ALLOW_CRON_GENERATION: boolean;
   PRODUCTION_MODE: boolean;
+  ALLOW_TREND_FETCHING: boolean;  // Allow Perplexity trend data fetching (read-only)
 }
 
 // 🚫 PRODUCTION SAFEGUARD CONFIGURATION
@@ -26,7 +27,8 @@ const SAFEGUARD_CONFIG: SafeguardConfig = {
   ALLOW_SCHEDULED_GENERATION: false,  // 🛑 BLOCKS SCHEDULED JOBS
   ALLOW_WEBHOOK_TRIGGERS: false,      // 🛑 BLOCKS WEBHOOK TRIGGERS
   ALLOW_CRON_GENERATION: false,       // 🛑 BLOCKS CRON JOBS
-  PRODUCTION_MODE: true               // 🔒 PRODUCTION LOCKDOWN MODE
+  PRODUCTION_MODE: true,              // 🔒 PRODUCTION LOCKDOWN MODE
+  ALLOW_TREND_FETCHING: true          // ✅ ALLOW PERPLEXITY TREND DATA FETCHING (READ-ONLY)
 };
 
 /**
@@ -101,6 +103,23 @@ export function validateGenerationRequest(context: GenerationContext): {
 /**
  * 🔍 CONTEXT DETECTOR: Determines generation source from request
  */
+/**
+ * 🌐 TREND FETCHING VALIDATOR: Checks if trend fetching is allowed
+ */
+export function validateTrendFetchRequest(): {
+  allowed: boolean;
+  reason?: string;
+} {
+  if (SAFEGUARD_CONFIG.ALLOW_TREND_FETCHING) {
+    console.log('🟢 SAFEGUARD: Trend fetching request - ALLOWED (read-only data operation)');
+    return { allowed: true };
+  } else {
+    const reason = 'Trend fetching is disabled in current safeguard configuration';
+    console.log(`🔴 SAFEGUARD: BLOCKED - ${reason}`);
+    return { allowed: false, reason };
+  }
+}
+
 export function detectGenerationContext(req: any): GenerationContext {
   const userAgent = req?.headers?.['user-agent'] || '';
   const referer = req?.headers?.referer || '';
