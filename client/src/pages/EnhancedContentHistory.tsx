@@ -9,6 +9,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { 
   Collapsible,
   CollapsibleContent,
@@ -23,7 +24,10 @@ import {
   Hash,
   Zap,
   Star,
-  TrendingUp
+  TrendingUp,
+  CheckSquare,
+  Square,
+  Trash
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
@@ -39,6 +43,9 @@ const EnhancedContentHistory = () => {
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
   const [copiedItems, setCopiedItems] = useState<Record<string, boolean>>({});
   const [expandedRatings, setExpandedRatings] = useState<Record<string, boolean>>({});
+  const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [bulkDeleteMode, setBulkDeleteMode] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [filters, setFilters] = useState({
     niche: 'all',
     platform: 'all',
@@ -230,6 +237,92 @@ const EnhancedContentHistory = () => {
     }
   };
 
+  const toggleItemSelection = (id: string) => {
+    const newSelection = new Set(selectedItems);
+    if (newSelection.has(id)) {
+      newSelection.delete(id);
+    } else {
+      newSelection.add(id);
+    }
+    setSelectedItems(newSelection);
+  };
+
+  const selectAllVisible = () => {
+    const visibleIds = filteredHistory.map(item => item.id);
+    setSelectedItems(new Set(visibleIds));
+  };
+
+  const clearSelection = () => {
+    setSelectedItems(new Set());
+    setBulkDeleteMode(false);
+  };
+
+  const bulkDeleteSelected = async () => {
+    if (selectedItems.size === 0) {
+      toast({
+        title: "No Items Selected",
+        description: "Please select items to delete",
+        variant: "default"
+      });
+      return;
+    }
+
+    const confirmMessage = `Are you sure you want to delete ${selectedItems.size} selected items? This action cannot be undone.`;
+    if (!window.confirm(confirmMessage)) {
+      return;
+    }
+
+    setIsDeleting(true);
+    let successCount = 0;
+    let errorCount = 0;
+
+    try {
+      for (const id of selectedItems) {
+        try {
+          if (id.startsWith('db_')) {
+            const databaseId = id.replace('db_', '');
+            const response = await fetch(`/api/history/${databaseId}`, {
+              method: 'DELETE',
+            });
+            
+            if (response.ok) {
+              successCount++;
+            } else {
+              errorCount++;
+            }
+          } else {
+            ContentHistoryManager.removeEntry(id);
+            successCount++;
+          }
+        } catch (error) {
+          console.error('Error deleting item:', id, error);
+          errorCount++;
+        }
+      }
+
+      // Refresh data and clear selection
+      await refetchDbHistory();
+      loadHistory();
+      setSelectedItems(new Set());
+      setBulkDeleteMode(false);
+
+      toast({
+        title: "Bulk Delete Complete",
+        description: `Successfully deleted ${successCount} items${errorCount > 0 ? `, ${errorCount} failed` : ''}`,
+        variant: errorCount > 0 ? "destructive" : "default"
+      });
+
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to complete bulk delete operation",
+        variant: "destructive"
+      });
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const clearAllHistory = () => {
     ContentHistoryManager.clearHistory();
     loadHistory();
@@ -317,14 +410,54 @@ const EnhancedContentHistory = () => {
               View and manage your generated content history
             </p>
           </div>
-          <Button 
-            variant="outline" 
-            onClick={deleteAllEntries}
-            className="text-red-600 hover:text-red-700"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Clear All
-          </Button>
+          <div className="flex gap-2">
+            {!bulkDeleteMode ? (
+              <Button 
+                variant="outline" 
+                onClick={() => setBulkDeleteMode(true)}
+                className="text-blue-600 hover:text-blue-700"
+              >
+                <CheckSquare className="h-4 w-4 mr-2" />
+                Select Multiple
+              </Button>
+            ) : (
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={selectAllVisible}
+                  disabled={filteredHistory.length === 0}
+                  className="text-green-600 hover:text-green-700"
+                >
+                  <CheckSquare className="h-4 w-4 mr-2" />
+                  Select All ({filteredHistory.length})
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={bulkDeleteSelected}
+                  disabled={selectedItems.size === 0 || isDeleting}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash className="h-4 w-4 mr-2" />
+                  {isDeleting ? 'Deleting...' : `Delete Selected (${selectedItems.size})`}
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={clearSelection}
+                  className="text-gray-600 hover:text-gray-700"
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
+            <Button 
+              variant="outline" 
+              onClick={deleteAllEntries}
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Clear All
+            </Button>
+          </div>
         </div>
 
         {/* Smart Learning Toggle */}
@@ -399,24 +532,33 @@ const EnhancedContentHistory = () => {
           <Card key={entry.id} className="overflow-hidden">
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <CardTitle className="text-xl mb-2">📦 {entry.productName}</CardTitle>
-                  <div className="flex flex-wrap gap-2 mb-2">
-                    <Badge className={getNicheColor(entry.niche)}>
-                      {entry.niche.charAt(0).toUpperCase() + entry.niche.slice(1)}
-                    </Badge>
-                    {(entry.platformsSelected || []).map(platform => (
-                      <Badge key={platform} className={getPlatformColor(platform)}>
-                        {platform}
+                <div className="flex items-start gap-3 flex-1">
+                  {bulkDeleteMode && (
+                    <Checkbox
+                      checked={selectedItems.has(entry.id)}
+                      onCheckedChange={() => toggleItemSelection(entry.id)}
+                      className="mt-1"
+                    />
+                  )}
+                  <div className="flex-1">
+                    <CardTitle className="text-xl mb-2">📦 {entry.productName}</CardTitle>
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      <Badge className={getNicheColor(entry.niche)}>
+                        {entry.niche.charAt(0).toUpperCase() + entry.niche.slice(1)}
                       </Badge>
-                    ))}
+                      {(entry.platformsSelected || []).map(platform => (
+                        <Badge key={platform} className={getPlatformColor(platform)}>
+                          {platform}
+                        </Badge>
+                      ))}
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Template: {entry.templateUsed ? entry.templateUsed.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : (entry.contentType || 'Unknown')} | 
+                      Tone: {entry.tone || 'Unknown'} | 
+                      <Calendar className="inline h-4 w-4 ml-2 mr-1" />
+                      {formatDate(entry.timestamp)}
+                    </p>
                   </div>
-                  <p className="text-sm text-gray-600">
-                    Template: {entry.templateUsed ? entry.templateUsed.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) : (entry.contentType || 'Unknown')} | 
-                    Tone: {entry.tone || 'Unknown'} | 
-                    <Calendar className="inline h-4 w-4 ml-2 mr-1" />
-                    {formatDate(entry.timestamp)}
-                  </p>
                 </div>
                 <Button
                   variant="ghost"
