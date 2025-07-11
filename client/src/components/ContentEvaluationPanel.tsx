@@ -62,7 +62,9 @@ export function ContentEvaluationPanel({
         setIsLoadingExisting(true);
         console.log(`🔍 Fetching existing evaluations for content ID ${contentHistoryId}...`);
         
-        const response = await apiRequest('GET', `/api/content-evaluation/${contentHistoryId}`) as StoredEvaluationsResponse;
+        // Try fetch directly instead of apiRequest to debug the issue
+        const fetchResponse = await fetch(`/api/content-evaluation/${contentHistoryId}`);
+        const response = await fetchResponse.json() as StoredEvaluationsResponse;
         
         console.log('📋 API Response:', response);
         
