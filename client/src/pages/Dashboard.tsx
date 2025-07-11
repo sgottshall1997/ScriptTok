@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link } from "wouter";
 
@@ -49,6 +50,53 @@ const Dashboard = () => {
   }>({
     queryKey: ['/api/perplexity-status/last-run'],
     refetchInterval: 60000, // Refresh every minute
+  });
+
+  // Fetch Perplexity automation status
+  const { data: automationStatus } = useQuery<{
+    success: boolean;
+    enabled: boolean;
+    schedule: string;
+    description: string;
+    status: string;
+  }>({
+    queryKey: ['/api/perplexity-automation/status'],
+    refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // Toggle Perplexity automation mutation
+  const toggleAutomationMutation = useMutation({
+    mutationFn: async (enabled: boolean) => {
+      const response = await fetch('/api/perplexity-automation/toggle', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ enabled }),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to toggle automation');
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: data.enabled ? "Automation Enabled" : "Automation Disabled",
+        description: data.message,
+        variant: data.enabled ? "default" : "destructive",
+      });
+      // Refetch automation status
+      queryClient.invalidateQueries({ queryKey: ['/api/perplexity-automation/status'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Toggle Failed",
+        description: error instanceof Error ? error.message : "Unknown error",
+        variant: "destructive",
+      });
+    },
   });
 
   // Individual product refresh mutation
@@ -319,6 +367,29 @@ const Dashboard = () => {
                     ) : (
                       <div>Loading status...</div>
                     )}
+                  </div>
+                  
+                  {/* Automation Toggle Switch */}
+                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-blue-200">
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-blue-900">Daily 5:00 AM Automation</span>
+                      <span className="text-xs text-blue-600">
+                        {automationStatus?.enabled ? "Automatic trend fetching enabled" : "Manual fetching only"}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-blue-600">
+                        {automationStatus?.enabled ? "ON" : "OFF"}
+                      </span>
+                      <Switch
+                        checked={automationStatus?.enabled || false}
+                        onCheckedChange={(enabled) => {
+                          toggleAutomationMutation.mutate(enabled);
+                        }}
+                        disabled={toggleAutomationMutation.isPending}
+                        className="data-[state=checked]:bg-blue-600"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>

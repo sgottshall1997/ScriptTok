@@ -223,6 +223,16 @@ export function disableAutomatedGeneration() {
   console.log('🔒 SAFEGUARD: Automated generation DISABLED');
 }
 
+export function enableTrendFetching() {
+  SAFEGUARD_CONFIG.ALLOW_TREND_FETCHING = true;
+  console.log('🟢 SAFEGUARD: Trend fetching ENABLED');
+}
+
+export function disableTrendFetching() {
+  SAFEGUARD_CONFIG.ALLOW_TREND_FETCHING = false;
+  console.log('🔴 SAFEGUARD: Trend fetching DISABLED');
+}
+
 export function getSafeguardStatus(): SafeguardConfig {
   return { ...SAFEGUARD_CONFIG };
 }

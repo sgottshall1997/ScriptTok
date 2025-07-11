@@ -76,6 +76,7 @@ import testProductionReadyRouter from "./api/test-production-ready";
 import { globalGatekeeperRouter } from "./api/global-gatekeeper-monitoring";
 import { testSafeguardsRouter } from "./api/test-safeguards";
 import { emergencyShutdownRouter } from "./api/emergency-shutdown";
+import { perplexityAutomationRouter } from "./api/perplexity-automation";
 import safeguardMonitorRouter from "./api/safeguard-monitor";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -609,6 +610,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // 🚨 EMERGENCY SHUTDOWN ENDPOINTS
   app.use('/api/emergency-shutdown', emergencyShutdownRouter);
+  
+  // 🔄 PERPLEXITY AUTOMATION CONTROL
+  app.use('/api/perplexity-automation', perplexityAutomationRouter);
 
   // Register content evaluation routes
   registerContentEvaluationRoutes(app);
