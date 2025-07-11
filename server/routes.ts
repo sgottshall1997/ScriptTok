@@ -46,6 +46,7 @@ import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
 import { getScheduledJobs, createScheduledJob, updateScheduledJob, deleteScheduledJob, triggerScheduledJob, initializeScheduledJobs } from "./api/scheduled-bulk-generation";
+import { cronStatusRouter } from "./api/cron-status";
 import aiAnalyticsRouter from "./api/ai-analytics";
 import generateContentUnifiedRouter from "./api/generateContentUnified";
 import { bulkGeneratedContent } from "@shared/schema";
@@ -88,6 +89,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Perplexity trends
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
+  
+  // Cron job status monitoring
+  app.use('/api', cronStatusRouter);
   
   // Compliance API routes
   app.post('/api/compliance/enhance', enhanceCompliance);
