@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, TrendingUp, Activity, Calendar, Database } from 'lucide-react';
+import { Loader2, TrendingUp, Activity, Calendar, Database, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 type TrendingProduct = {
@@ -40,6 +40,18 @@ export default function TrendingPicksWidget({
 
   const { data: products = [], isLoading } = useQuery<TrendingProduct[]>({
     queryKey: ['/api/trending/products'],
+  });
+
+  // Fetch Perplexity status for last run display
+  const { data: perplexityStatus } = useQuery<{
+    success: boolean;
+    lastRun: string;
+    timeSince: string;
+    nextScheduled: string;
+    totalProducts: number;
+  }>({
+    queryKey: ['/api/perplexity-status/last-run'],
+    refetchInterval: 60000, // Refresh every minute
   });
 
   const perplexityMutation = useMutation({
@@ -136,6 +148,30 @@ export default function TrendingPicksWidget({
             (PLEASE DO NOT PRESS)
           </p>
         </div>
+      )}
+
+      {/* Perplexity Last Run Status */}
+      {showFetchButton && perplexityStatus && (
+        <Card className="mb-4 bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <Clock className="h-5 w-5 text-blue-600" />
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <span className="font-medium text-blue-900">Last Perplexity Run</span>
+                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                    {perplexityStatus.timeSince}
+                  </Badge>
+                </div>
+                <div className="text-sm text-blue-700 mt-1">
+                  <div><strong>Time:</strong> {perplexityStatus.lastRun}</div>
+                  <div><strong>Next:</strong> {perplexityStatus.nextScheduled}</div>
+                  <div><strong>Products:</strong> {perplexityStatus.totalProducts} total in database</div>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       <div className="mb-4 text-sm text-muted-foreground">
