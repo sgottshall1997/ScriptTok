@@ -618,7 +618,10 @@ export default function TrendingAIPicks() {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            <Tabs value={selectedTab} onValueChange={(value) => setSelectedTab(value as 'all' | 'favorites')}>
+            <Tabs value={selectedTab} onValueChange={(value) => {
+              setSelectedTab(value as 'all' | 'favorites');
+              window.scrollTo(0, 0);
+            }}>
               <div className="flex items-center justify-between mb-6">
                 <TabsList>
                   <TabsTrigger value="all" className="flex items-center gap-2">

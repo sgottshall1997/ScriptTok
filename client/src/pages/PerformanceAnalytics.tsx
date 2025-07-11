@@ -382,7 +382,10 @@ export default function PerformanceAnalytics() {
       )}
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={(value) => {
+        setActiveTab(value);
+        window.scrollTo(0, 0);
+      }}>
         <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="dashboard">ROI Dashboard</TabsTrigger>
           <TabsTrigger value="trends">Performance Trends</TabsTrigger>

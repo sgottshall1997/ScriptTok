@@ -641,7 +641,11 @@ const UnifiedContentGenerator: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
+      <Tabs value={activeTab} onValueChange={(value) => {
+        setActiveTab(value);
+        // Scroll to top when changing tabs
+        window.scrollTo(0, 0);
+      }}>
         <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="single" className="flex items-center gap-2">
             <Package className="h-4 w-4" />

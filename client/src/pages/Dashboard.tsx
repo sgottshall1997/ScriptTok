@@ -370,7 +370,11 @@ const Dashboard = () => {
                       <div className="flex gap-2 pt-2">
                         <Link 
                           href={`/unified-generator?product=${encodeURIComponent(product.title)}&niche=${product.niche}`}
-                          onClick={() => trackEvent('trending_product_click', 'research', `${product.niche}_${product.title}`, 1)}
+                          onClick={() => {
+                            trackEvent('trending_product_click', 'research', `${product.niche}_${product.title}`, 1);
+                            // Scroll to top after navigation
+                            setTimeout(() => window.scrollTo(0, 0), 100);
+                          }}
                         >
                           <Button size="sm" className="flex-1 bg-red-500 hover:bg-red-600 text-white">
                             <Zap className="h-3 w-3 mr-1" />
@@ -408,7 +412,7 @@ const Dashboard = () => {
 
       {/* 3️⃣ Fast-Action Buttons Panel */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Link href="/unified-generator">
+        <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="p-6 text-center">
               <Wand2 className="h-8 w-8 mx-auto mb-3 text-blue-600" />
