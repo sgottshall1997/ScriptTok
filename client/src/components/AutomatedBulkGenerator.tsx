@@ -55,6 +55,11 @@ const PLATFORMS = [
   { id: 'other', name: 'Other', color: 'bg-gray-600 text-white' },
 ];
 
+const AI_MODELS = [
+  { id: 'chatgpt', name: 'ChatGPT', color: 'bg-emerald-600 text-white' },
+  { id: 'claude', name: 'Claude', color: 'bg-orange-600 text-white' },
+];
+
 interface AutomatedBulkGeneratorProps {
   onJobCreated?: (jobData: any) => void;
 }
@@ -64,6 +69,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
+  const [selectedAiModels, setSelectedAiModels] = useState<string[]>(['chatgpt']);
   const [useExistingProducts, setUseExistingProducts] = useState(true);
   const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
   const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
@@ -214,8 +220,16 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
     );
   };
 
+  const handleAiModelToggle = (modelId: string) => {
+    setSelectedAiModels(prev => 
+      prev.includes(modelId) 
+        ? prev.filter(id => id !== modelId)
+        : [...prev, modelId]
+    );
+  };
+
   const calculateTotalVariations = () => {
-    return selectedNiches.length * selectedTones.length * selectedTemplates.length;
+    return selectedNiches.length * selectedTones.length * selectedTemplates.length * selectedAiModels.length;
   };
 
   const startAutomatedGeneration = () => {
@@ -228,10 +242,10 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       return;
     }
 
-    if (selectedTones.length === 0 || selectedTemplates.length === 0 || selectedPlatforms.length === 0) {
+    if (selectedTones.length === 0 || selectedTemplates.length === 0 || selectedPlatforms.length === 0 || selectedAiModels.length === 0) {
       toast({
         title: "❌ Incomplete Selection",
-        description: "Please select at least one tone, template, and platform",
+        description: "Please select at least one tone, template, platform, and AI model",
         variant: "destructive",
       });
       return;
@@ -242,6 +256,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       tones: selectedTones,
       templates: selectedTemplates,
       platforms: selectedPlatforms,
+      aiModels: selectedAiModels,
       useExistingProducts,
       generateAffiliateLinks,
       affiliateId: generateAffiliateLinks && !useManualAffiliateLinks ? affiliateId : undefined,
@@ -543,6 +558,34 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </div>
         </div>
 
+        <Separator />
+
+        {/* AI Model Selection */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-emerald-600" />
+            <h3 className="font-semibold">AI Models ({selectedAiModels.length})</h3>
+            <span className="text-sm text-gray-500">Select multiple models to generate content with each</span>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {AI_MODELS.map((model) => (
+              <div key={model.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={model.id}
+                  checked={selectedAiModels.includes(model.id)}
+                  onCheckedChange={() => handleAiModelToggle(model.id)}
+                />
+                <Label htmlFor={model.id} className="cursor-pointer">
+                  <Badge className={model.color}>
+                    {model.name}
+                  </Badge>
+                </Label>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Generation Summary */}
         <Card className="bg-gray-50 border-gray-200">
           <CardContent className="p-4">
@@ -561,7 +604,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
                 <p className="text-sm text-gray-600">Auto-Selected Products</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-600">{selectedTones.length * selectedTemplates.length}</p>
+                <p className="text-2xl font-bold text-green-600">{selectedTones.length * selectedTemplates.length * selectedAiModels.length}</p>
                 <p className="text-sm text-gray-600">Variations per Product</p>
               </div>
               <div>

@@ -51,6 +51,7 @@ const automatedBulkSchema = z.object({
   tones: z.array(z.string()).min(1, "At least one tone must be selected"),
   templates: z.array(z.string()).min(1, "At least one template must be selected"),
   platforms: z.array(z.string()).min(1, "At least one platform must be selected"),
+  aiModels: z.array(z.string()).min(1, "At least one AI model must be selected").default(["chatgpt"]),
   useExistingProducts: z.boolean().default(true),
   generateAffiliateLinks: z.boolean().default(false),
   affiliateId: z.string().optional(),
@@ -199,8 +200,8 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
       });
     }
     
-    // Calculate total variations per product
-    const variationsPerProduct = validatedData.tones.length * validatedData.templates.length;
+    // Calculate total variations per product including AI models
+    const variationsPerProduct = validatedData.tones.length * validatedData.templates.length * validatedData.aiModels.length;
     const totalVariations = totalSelectedProducts * variationsPerProduct;
     
     // Create bulk job record
@@ -305,25 +306,28 @@ async function processAutomatedBulkJob(
           };
         }
 
-        // Step 3: Generate content for each tone/template combination
+        // Step 3: Generate content for each tone/template/AI model combination
         for (const tone of jobData.tones) {
           for (const template of jobData.templates) {
-            try {
-              const startTime = Date.now();
-              
-              // Step 4: Generate comprehensive content using viral inspiration
-              const generatedContent = await generateComprehensiveContent({
-                productName,
-                niche,
-                tone,
-                template,
-                platforms: jobData.platforms,
-                viralInspiration,
-                productData,
-                useSmartStyle: jobData.useSmartStyle,
-                useSpartanFormat: jobData.useSpartanFormat,
-                userId: jobData.userId
-              });
+            // Generate content for each selected AI model
+            for (const aiModel of jobData.aiModels) {
+              try {
+                const startTime = Date.now();
+                
+                // Step 4: Generate comprehensive content using viral inspiration with specific AI model
+                const generatedContent = await generateComprehensiveContent({
+                  productName,
+                  niche,
+                  tone,
+                  template,
+                  platforms: jobData.platforms,
+                  viralInspiration,
+                  productData,
+                  useSmartStyle: jobData.useSmartStyle,
+                  useSpartanFormat: jobData.useSpartanFormat,
+                  userId: jobData.userId,
+                  aiModel: aiModel
+                });
               
               const generationTime = Date.now() - startTime;
               
@@ -351,7 +355,7 @@ async function processAutomatedBulkJob(
                 generatedContent,
                 viralInspiration,
                 affiliateLink,
-                modelUsed: 'gpt-4',
+                modelUsed: aiModel,
                 tokenCount: Math.floor(Math.random() * 500) + 200, // Estimated token count
                 generationTime,
                 status: 'completed'
@@ -456,7 +460,7 @@ async function processAutomatedBulkJob(
                     },
                     affiliateLink,
                     viralInspo: viralInspiration,
-                    modelUsed: 'gpt-4',
+                    modelUsed: aiModel,
                     tokenCount: Math.floor(Math.random() * 500) + 200
                   });
 
@@ -528,11 +532,11 @@ async function processAutomatedBulkJob(
                   })
                   .where(eq(bulkContentJobs.id, bulkJobId));
                 
-                console.log(`✅ Generated content for ${productName} - ${tone}/${template} (${completedCount} total)`);
+                console.log(`✅ Generated content for ${productName} - ${tone}/${template}/${aiModel} (${completedCount} total)`);
               }
 
             } catch (contentError) {
-              console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}:`, contentError);
+              console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}:`, contentError);
               
               // Log error but continue with other variations
               await db.update(bulkContentJobs)
@@ -547,8 +551,9 @@ async function processAutomatedBulkJob(
                 })
                 .where(eq(bulkContentJobs.id, bulkJobId));
             }
-          }
-        }
+            } // End AI model loop
+          } // End template loop
+        } // End tone loop
       } catch (productError) {
         console.error(`❌ Failed to process product ${productName}:`, productError);
       }
@@ -597,8 +602,9 @@ async function generateComprehensiveContent(params: {
   useSmartStyle?: boolean;
   useSpartanFormat?: boolean;
   userId?: number;
+  aiModel?: string;
 }) {
-  const { productName, niche, tone, template, platforms, viralInspiration, productData, useSmartStyle, useSpartanFormat, userId } = params;
+  const { productName, niche, tone, template, platforms, viralInspiration, productData, useSmartStyle, useSpartanFormat, userId, aiModel } = params;
   
   // Build comprehensive prompt incorporating viral inspiration
   const prompt = `
@@ -720,7 +726,7 @@ Return as JSON with this exact structure:
       tone as any,
       trendingProducts,
       niche as any,
-      'gpt-4o',
+      aiModel || 'gpt-4o', // Use specified AI model or default to gpt-4o
       viralInspiration,
       smartStyleRecommendations
     );
@@ -734,7 +740,8 @@ Return as JSON with this exact structure:
       templateType: template,
       tone,
       trendingData: viralInspiration,
-      useSpartanFormat: useSpartanFormat || false
+      useSpartanFormat: useSpartanFormat || false,
+      aiModel: aiModel || 'chatgpt' // Use specified AI model or default to chatgpt
     });
 
     // Extract platform captions from the generated platform content
