@@ -35,6 +35,7 @@ const unifiedGenerationSchema = z.object({
   mode: z.enum(['manual', 'automated']).default('manual'),
   
   // Single product fields
+  product: z.string().optional(),
   productName: z.string().optional(),
   template: z.string().optional(),
   tone: z.string().optional(),
@@ -446,12 +447,13 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     let jobId = `unified_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     if (data.mode === 'manual') {
-      console.log(`🔍 DEBUG Manual mode: productName="${data.productName}", products=${data.products?.length || 0}`);
+      const productName = data.productName || data.product;
+      console.log(`🔍 DEBUG Manual mode: productName="${productName}", products=${data.products?.length || 0}`);
       
       // Single product manual generation
-      if (data.productName) {
+      if (productName) {
         configs.push({
-          productName: data.productName,
+          productName: productName,
           niche: data.niche || 'beauty',
           templateType: data.template || 'Short-Form Video Script',
           tone: data.tone || 'Enthusiastic',

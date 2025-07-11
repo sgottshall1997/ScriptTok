@@ -207,9 +207,9 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     setIsGenerating(true);
     const requestData = {
       mode: 'manual',
-      product: formData.productName,
+      productName: formData.productName,
       niche: formData.niche,
-      templateType: formData.template,
+      template: formData.template,
       tone: formData.tone,
       platforms: formData.platforms,
       contentType: 'video',
