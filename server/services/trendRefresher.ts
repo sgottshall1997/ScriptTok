@@ -77,16 +77,16 @@ function categorizeProductWithFallback(title: string): { niche: string; confiden
 export function initTrendingProductsRefresh() {
   console.log("Initializing trending products refresh schedule...");
   
-  // Schedule refresh for midnight every day (server time)
-  cron.schedule("0 0 * * *", async () => {
-    console.log("Running scheduled trending product refresh at midnight");
-    try {
-      await refreshTrendingProducts();
-      console.log("Scheduled trending products refresh completed successfully");
-    } catch (error) {
-      console.error("Error in scheduled trending products refresh:", error);
-    }
-  });
+  // Schedule refresh for midnight every day (server time) - DISABLED FOR PRODUCTION
+  // cron.schedule("0 0 * * *", async () => {
+  //   console.log("Running scheduled trending product refresh at midnight");
+  //   try {
+  //     await refreshTrendingProducts();
+  //     console.log("Scheduled trending products refresh completed successfully");
+  //   } catch (error) {
+  //     console.error("Error in scheduled trending products refresh:", error);
+  //   }
+  // });
   
   // Initial refresh at startup if needed
   refreshTrendingProductsIfOld();

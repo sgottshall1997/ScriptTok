@@ -74,46 +74,46 @@ router.patch('/:id/status', async (req: Request, res: Response) => {
   }
 });
 
-// Cron job for 5 AM daily trigger
-cron.schedule('0 5 * * *', async () => {
-  console.log('🕐 5 AM Daily trigger - Processing scheduled content...');
-  
-  try {
-    // Get content scheduled for today
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(tomorrow.getDate() + 1);
+// Cron job for 5 AM daily trigger - DISABLED FOR PRODUCTION
+// cron.schedule('0 5 * * *', async () => {
+//   console.log('🕐 5 AM Daily trigger - Processing scheduled content...');
+//   
+//   try {
+//     // Get content scheduled for today
+//     const today = new Date();
+//     today.setHours(0, 0, 0, 0);
+//     const tomorrow = new Date(today);
+//     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const scheduledToday = await db
-      .select()
-      .from(platformContent)
-      .where(eq(platformContent.status, 'scheduled'));
+//     const scheduledToday = await db
+//       .select()
+//       .from(platformContent)
+//       .where(eq(platformContent.status, 'scheduled'));
 
-    console.log(`📋 Found ${scheduledToday.length} pieces of content to process`);
+//     console.log(`📋 Found ${scheduledToday.length} pieces of content to process`);
 
-    // Process each scheduled content
-    for (const content of scheduledToday) {
-      try {
-        // Send to Make.com webhook
-        await sendToMakeWebhook(content);
-        
-        // Update status
-        await db
-          .update(platformContent)
-          .set({ status: 'sent_to_webhook', publishedAt: new Date() })
-          .where(eq(platformContent.id, content.id));
+//     // Process each scheduled content
+//     for (const content of scheduledToday) {
+//       try {
+//         // Send to Make.com webhook
+//         await sendToMakeWebhook(content);
+//         
+//         // Update status
+//         await db
+//           .update(platformContent)
+//           .set({ status: 'sent_to_webhook', publishedAt: new Date() })
+//           .where(eq(platformContent.id, content.id));
 
-        console.log(`✅ Processed content ${content.id} for ${content.platform}`);
-      } catch (error) {
-        console.error(`❌ Failed to process content ${content.id}:`, error);
-      }
-    }
+//         console.log(`✅ Processed content ${content.id} for ${content.platform}`);
+//       } catch (error) {
+//         console.error(`❌ Failed to process content ${content.id}:`, error);
+//       }
+//     }
 
-  } catch (error) {
-    console.error('❌ Daily cron job failed:', error);
-  }
-});
+//   } catch (error) {
+//     console.error('❌ Daily cron job failed:', error);
+//   }
+// });
 
 async function sendToMakeWebhook(content: any) {
   const webhookUrl = process.env.MAKE_WEBHOOK_URL;

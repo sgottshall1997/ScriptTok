@@ -1,0 +1,39 @@
+It looks like content is still being generated in the background, even after I’ve requested it to stop. You mentioned that all scheduled jobs were removed and the system was clean — but I’m still seeing entries in Content History that I didn’t manually trigger.
+
+Please do the following:
+
+1. 🔍 **Double-Check for Hidden or Orphaned Schedulers**
+   - Scan the entire codebase, including:
+     - Cron jobs
+     - Hidden interval loops
+     - Queued jobs (e.g. in workers, background threads, or webhooks)
+     - Any retry logic or webhook retry tasks that might be spawning new generation runs
+   - Remove or permanently disable any automatic generation that is still active
+
+2. 🧼 **Hard Stop Failsafe**
+   - Implement a system-wide safeguard that **blocks all generation triggers unless initiated by the manual UI**
+   - Add a check at the top of the generation pipeline like:
+     ```ts
+     if (!isManualTrigger) return null
+     ```
+   - Add a flag or config option like `ALLOW_AUTOMATED_GENERATION = false` and verify it is respected everywhere
+
+3. 🛑 **Confirm Trend Fetching at 5:00 AM Only Fetches Data**
+   - Ensure that the 5:00 AM Perplexity trend fetcher is only storing data and **does not trigger script or content generation**
+   - If it connects to any downstream automation, disconnect or log-only mode it
+
+4. 🧪 **Run Final Watchdog Test**
+   - Set a 2-hour monitoring window
+   - During that time:
+     - No content should be generated unless I manually trigger it from the UI
+     - Log every generation attempt and source (manual, webhook, scheduler, etc.)
+   - Send a report confirming zero unauthorized content creation
+
+5. ✅ **Output**
+   - Return a markdown summary of:
+     - What was still running or possibly re-triggering generation
+     - What code/config was changed
+     - Proof that the system is now only responding to manual UI triggers
+     - Screenshots or logs showing a clean state during the test window
+
+This will give me full confidence that GlowBot is now stable, manual-only, and safe for production usage.

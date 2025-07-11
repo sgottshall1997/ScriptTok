@@ -10,6 +10,7 @@ import {
 } from '@shared/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { z } from 'zod';
+import { validateGenerationRequest, detectGenerationContext, logGenerationAttempt } from '../config/generation-safeguards';
 import { generateContent } from '../services/contentGenerator';
 import { generatePlatformSpecificContent, generatePlatformCaptions } from '../services/platformContentGenerator';
 import { WebhookService } from '../services/webhookService';
@@ -86,6 +87,22 @@ const AFFILIATE_ID = "sgottshall107-20";
 // Start automated bulk generation with trending product auto-selection
 export async function startAutomatedBulkGeneration(req: Request, res: Response) {
   try {
+    // 🛑 GENERATION SAFEGUARD CHECK
+    const context = detectGenerationContext(req);
+    const validation = validateGenerationRequest(context);
+    
+    logGenerationAttempt(context, '/api/automated-bulk/start', validation.allowed, validation.reason);
+    
+    if (!validation.allowed) {
+      console.log(`🚫 AUTOMATED BULK GENERATION BLOCKED: ${validation.reason}`);
+      return res.status(403).json({
+        success: false,
+        error: 'Automated bulk generation blocked by security safeguards',
+        reason: validation.reason,
+        source: context.source
+      });
+    }
+    
     console.log('🔍 DEBUG: Received request body keys:', Object.keys(req.body));
     console.log('🔍 DEBUG: previewedProducts in request:', req.body.previewedProducts ? 'YES' : 'NO');
     if (req.body.previewedProducts) {

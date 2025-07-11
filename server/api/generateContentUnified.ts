@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { z } from "zod";
+import { validateGenerationRequest, detectGenerationContext, logGenerationAttempt } from '../config/generation-safeguards';
 import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
@@ -549,6 +550,22 @@ async function getExistingTrendingProducts(niches: string[], limit: number = 1):
 // Main unified content generation endpoint
 router.post("/", contentGenerationLimiter, async (req: Request, res: Response) => {
   try {
+    // 🛑 GENERATION SAFEGUARD CHECK
+    const context = detectGenerationContext(req);
+    const validation = validateGenerationRequest(context);
+    
+    logGenerationAttempt(context, '/api/generate-unified', validation.allowed, validation.reason);
+    
+    if (!validation.allowed) {
+      console.log(`🚫 GENERATION BLOCKED: ${validation.reason}`);
+      return res.status(403).json({
+        success: false,
+        error: 'Content generation blocked by security safeguards',
+        reason: validation.reason,
+        source: context.source
+      });
+    }
+    
     const result = unifiedGenerationSchema.safeParse(req.body);
     
     if (!result.success) {

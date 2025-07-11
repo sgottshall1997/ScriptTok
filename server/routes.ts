@@ -73,6 +73,7 @@ import { testScheduledGeneration } from "./tests/scheduled-generation-test";
 import testUnifiedGeneratorRouter from "./api/test-unified-generator";
 import testSimpleUnifiedRouter from "./api/test-simple-unified";
 import testProductionReadyRouter from "./api/test-production-ready";
+import safeguardMonitorRouter from "./api/safeguard-monitor";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -593,6 +594,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/test', testUnifiedGeneratorRouter);
   app.use('/api/test', testSimpleUnifiedRouter);
   app.use('/api/test', testProductionReadyRouter);
+  
+  // 🛑 SAFEGUARD MONITORING ENDPOINTS
+  app.use('/api/safeguards', safeguardMonitorRouter);
 
   // Register content evaluation routes
   registerContentEvaluationRoutes(app);
@@ -614,6 +618,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         success: false,
         testPassed: false,
+        error: error.message || 'Test execution failed',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+  
+  // 🧪 COMPREHENSIVE SAFEGUARD TEST ENDPOINT
+  app.get('/api/test/comprehensive-safeguards', async (req, res) => {
+    try {
+      console.log('🧪 Starting comprehensive safeguard test suite...');
+      const { runComprehensiveSafeguardTest } = await import('./tests/comprehensive-safeguard-test');
+      const testResults = await runComprehensiveSafeguardTest();
+      
+      res.json({
+        success: true,
+        testResults,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Comprehensive safeguard test error:', error);
+      res.status(500).json({
+        success: false,
         error: error.message || 'Test execution failed',
         timestamp: new Date().toISOString()
       });
