@@ -1,0 +1,85 @@
+You are upgrading the Unified Generator to include scheduled automated bulk generation. This should be a seamless, fully integrated feature for users who want content generated on a regular, automated schedule.
+
+# 🧠 PRIMARY OBJECTIVE
+Implement a scheduling system that allows users to configure, manage, and execute fully automated bulk content generation jobs at a specific time each day.
+
+---
+
+# ✅ FEATURE 1: "Schedule Daily Bulk Generation" Toggle
+
+- Add a new toggle under the **Advanced Options** section in the Unified Generator labeled:
+  `Schedule Daily Bulk Generation`
+  > "Run this bulk generation automatically each day at the selected time"
+
+- When toggled ON, a new **dropdown panel should expand** (just like the existing 'Spartan Format' logic) with the following settings:
+
+---
+
+## ⏰ Dropdown Scheduler Settings:
+
+- **Time Selector**: Allow the user to select hour + minute (e.g., 5:00 AM)
+- **Timezone Detection**: Auto-detect the user's timezone (or allow manual override if needed)
+- **Confirmation Message**: Display a summary like:
+  > "This bulk generation will auto-run every day at 5:00 AM ET"
+
+- **Pre-Selected Options to Apply at Run Time**:
+  - All selected niches
+  - All selected tones
+  - Selected content templates
+  - Selected target platforms
+  - Spartan Format toggle state
+  - Webhook URL (if present)
+
+---
+
+# ✅ FEATURE 2: Sidebar "Schedule Manager" Section
+
+- Add a new item in the left sidebar:  
+  📆 `Schedule Manager`
+
+- Clicking this should open a new view showing:
+  - A list of all active scheduled bulk generation jobs
+  - For each scheduled job:
+    - Time of execution
+    - Niches included
+    - Content templates used
+    - Target platforms selected
+    - Spartan mode status
+    - Webhook URL (if configured)
+    - An ON/OFF toggle or pause button
+    - A "Run Now" button to manually trigger early
+    - A delete (trash) icon to remove the job
+
+---
+
+# ⚙️ FUNCTIONAL REQUIREMENTS
+
+- Scheduled jobs must run in the background at the assigned time daily
+- Generated content should behave exactly as if the user had pressed "Start Bulk Generation"
+- Generated content must be saved into content history and integrated with any existing webhook flows
+- All automation must respect Spartan Format rules if enabled
+
+---
+
+# 🚨 VALIDATION & TESTING REQUIRED
+
+Please test:
+- Creating new scheduled jobs with various configurations
+- Ensuring the correct options persist and are applied on schedule
+- Confirm timezones and selected times trigger content creation accurately
+- Run Now and Delete functions work
+- Sidebar reflects current job status and logs recent executions
+
+---
+
+# USER EXPERIENCE DETAILS
+
+- Everything should feel native to the existing Bulk Generator layout
+- The new schedule panel should **only appear** if the toggle is on
+- No impact to non-scheduled manual generations
+- Add a success toast after saving a schedule:  
+  > "✅ Scheduled! Your daily bulk generation will run at 5:00 AM."
+
+---
+
+Make sure the entire system feels seamless and empowers the user to automate their content generation workflow across all selected niches and platforms without manual intervention.

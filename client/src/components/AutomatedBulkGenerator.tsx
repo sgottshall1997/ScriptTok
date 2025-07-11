@@ -28,6 +28,7 @@ import {
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
+import ScheduleDailyBulkToggle from './ScheduleDailyBulkToggle';
 
 const AVAILABLE_NICHES = [
   { id: 'beauty', name: 'Beauty & Personal Care', color: 'bg-pink-100 text-pink-800' },
@@ -651,6 +652,23 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
             )}
           </Button>
         </div>
+
+        {/* Schedule Daily Generation */}
+        <Separator />
+        <ScheduleDailyBulkToggle 
+          formData={{
+            selectedNiches,
+            tones: selectedTones,
+            templates: selectedTemplates,
+            platforms: selectedPlatforms,
+            useExistingProducts,
+            generateAffiliateLinks,
+            useSpartanFormat,
+            useSmartStyle,
+            affiliateId: affiliateId || 'sgottshall107-20'
+          }}
+          isVisible={!startAutomatedBulkMutation.isPending}
+        />
 
         {/* How It Works */}
         <Card className="bg-blue-50 border-blue-200">

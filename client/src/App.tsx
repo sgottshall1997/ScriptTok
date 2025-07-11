@@ -41,6 +41,7 @@ import BulkContentGeneration from "@/pages/BulkContentGeneration";
 import PerformanceAnalytics from "@/pages/PerformanceAnalytics";
 import CompliancePage from "@/pages/CompliancePage";
 import SpartanContentPage from "@/pages/SpartanContentPage";
+import ScheduleManager from "@/pages/schedule-manager";
 
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
@@ -87,6 +88,7 @@ function Router() {
       <Route path="/trending-ai-picks" component={TrendingAIPicks} />
       
       {/* BTB Framework Pages */}
+      <Route path="/schedule-manager" component={ScheduleManager} />
       <Route path="/cross-platform-scheduling" component={CrossPlatformScheduling} />
       <Route path="/bulk-content-generation" component={BulkContentGeneration} />
       <Route path="/performance-analytics" component={PerformanceAnalytics} />

@@ -64,6 +64,7 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "Framework",
     items: [
+      { name: "Schedule Manager", href: "/schedule-manager", icon: Clock },
       { name: "Cross-Platform Scheduling", href: "/cross-platform-scheduling", icon: Calendar },
       { name: "Performance Analytics", href: "/performance-analytics", icon: DollarSign },
     ]

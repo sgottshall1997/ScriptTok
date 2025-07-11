@@ -414,6 +414,45 @@ export const integrationWebhooks = pgTable("integration_webhooks", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Scheduled bulk generation jobs
+export const scheduledBulkJobs = pgTable("scheduled_bulk_jobs", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(), // User-friendly name for the scheduled job
+  
+  // Schedule configuration
+  scheduleTime: text("schedule_time").notNull(), // Format: "HH:mm" (e.g., "05:00")
+  timezone: text("timezone").notNull().default("America/New_York"), // User's timezone
+  isActive: boolean("is_active").notNull().default(true), // Whether the job should run
+  
+  // Generation settings (stored as JSON to preserve all configuration)
+  selectedNiches: text("selected_niches").array().notNull(), // Array of niche strings
+  tones: text("tones").array().notNull(), // Array of tone strings
+  templates: text("templates").array().notNull(), // Array of template strings
+  platforms: text("platforms").array().notNull(), // Array of platform strings
+  
+  // Advanced options
+  useExistingProducts: boolean("use_existing_products").notNull().default(true),
+  generateAffiliateLinks: boolean("generate_affiliate_links").notNull().default(false),
+  useSpartanFormat: boolean("use_spartan_format").notNull().default(false),
+  useSmartStyle: boolean("use_smart_style").notNull().default(false),
+  affiliateId: text("affiliate_id").default("sgottshall107-20"),
+  
+  // Webhook configuration
+  webhookUrl: text("webhook_url"),
+  sendToMakeWebhook: boolean("send_to_make_webhook").notNull().default(true),
+  
+  // Execution tracking
+  lastRunAt: timestamp("last_run_at"),
+  nextRunAt: timestamp("next_run_at"),
+  totalRuns: integer("total_runs").notNull().default(0),
+  consecutiveFailures: integer("consecutive_failures").notNull().default(0),
+  lastError: text("last_error"),
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // Marketing automation actions
 export const marketingAutomations = pgTable("marketing_automations", {
   id: serial("id").primaryKey(),
@@ -844,6 +883,25 @@ export const insertIntegrationWebhookSchema = createInsertSchema(integrationWebh
   isActive: true,
 });
 
+export const insertScheduledBulkJobSchema = createInsertSchema(scheduledBulkJobs).pick({
+  userId: true,
+  name: true,
+  scheduleTime: true,
+  timezone: true,
+  isActive: true,
+  selectedNiches: true,
+  tones: true,
+  templates: true,
+  platforms: true,
+  useExistingProducts: true,
+  generateAffiliateLinks: true,
+  useSpartanFormat: true,
+  useSmartStyle: true,
+  affiliateId: true,
+  webhookUrl: true,
+  sendToMakeWebhook: true,
+});
+
 export const insertMarketingAutomationSchema = createInsertSchema(marketingAutomations).pick({
   userId: true,
   name: true,
@@ -923,6 +981,9 @@ export type InsertApiRateLimit = z.infer<typeof insertApiRateLimitSchema>;
 
 export type IntegrationWebhook = typeof integrationWebhooks.$inferSelect;
 export type InsertIntegrationWebhook = z.infer<typeof insertIntegrationWebhookSchema>;
+
+export type ScheduledBulkJob = typeof scheduledBulkJobs.$inferSelect;
+export type InsertScheduledBulkJob = z.infer<typeof insertScheduledBulkJobSchema>;
 
 export type MarketingAutomation = typeof marketingAutomations.$inferSelect;
 export type InsertMarketingAutomation = z.infer<typeof insertMarketingAutomationSchema>;

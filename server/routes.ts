@@ -45,6 +45,7 @@ import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/sp
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
+import { getScheduledJobs, createScheduledJob, updateScheduledJob, deleteScheduledJob, triggerScheduledJob, initializeScheduledJobs } from "./api/scheduled-bulk-generation";
 import aiAnalyticsRouter from "./api/ai-analytics";
 import generateContentUnifiedRouter from "./api/generateContentUnified";
 import { bulkGeneratedContent } from "@shared/schema";
@@ -547,6 +548,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     startAutomatedBulkGeneration(req, res);
   });
   app.get('/api/automated-bulk/details/:jobId', getBulkJobDetails);
+  
+  // Scheduled bulk generation
+  app.get('/api/scheduled-bulk/jobs', getScheduledJobs);
+  app.post('/api/scheduled-bulk/jobs', createScheduledJob);
+  app.put('/api/scheduled-bulk/jobs/:id', updateScheduledJob);
+  app.delete('/api/scheduled-bulk/jobs/:id', deleteScheduledJob);
+  app.post('/api/scheduled-bulk/jobs/:id/trigger', triggerScheduledJob);
   
   // Spartan content generation endpoints
   app.post('/api/spartan/generate', generateSpartanFormatContent);
