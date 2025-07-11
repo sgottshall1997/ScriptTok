@@ -51,6 +51,7 @@ const EnhancedContentHistory = () => {
     platform: 'all',
     template: 'all',
     affiliateLink: 'all',
+    amazonAffiliate: 'all',
     aiModel: 'all',
     contentFormat: 'all',
     smartStyle: 'all'
