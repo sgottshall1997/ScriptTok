@@ -7,7 +7,7 @@
  */
 
 import { Request } from 'express';
-import { validateGenerationRequest } from './generation-safeguards';
+import { validateGenerationRequest, detectGenerationContext } from './generation-safeguards';
 
 export interface GenerationAttempt {
   timestamp: string;
@@ -34,7 +34,12 @@ export function validateContentGenerationRequest(req: Request, endpoint: string)
   console.log(`\n🚫 GLOBAL GATEKEEPER: Validating generation request for ${endpoint}`);
   console.log('=' .repeat(80));
   
-  const validation = validateGenerationRequest(req);
+  // First detect the generation context from the request
+  const context = detectGenerationContext(req);
+  
+  // Then validate the detected context
+  const validation = validateGenerationRequest(context);
+  
   const userAgent = req?.headers?.['user-agent'] || 'unknown';
   const referer = req?.headers?.referer || 'unknown';
   const ipAddress = req?.ip || 'unknown';
@@ -42,7 +47,7 @@ export function validateContentGenerationRequest(req: Request, endpoint: string)
   // Log the attempt
   const attempt: GenerationAttempt = {
     timestamp: new Date().toISOString(),
-    source: validation.source,
+    source: context.source,
     endpoint,
     allowed: validation.allowed,
     reason: validation.reason,
@@ -61,14 +66,14 @@ export function validateContentGenerationRequest(req: Request, endpoint: string)
   // Log the decision
   if (validation.allowed) {
     console.log(`✅ GATEKEEPER: GENERATION ALLOWED`);
-    console.log(`   Source: ${validation.source}`);
+    console.log(`   Source: ${context.source}`);
     console.log(`   Endpoint: ${endpoint}`);
     console.log(`   User Agent: ${userAgent}`);
     console.log(`   Referer: ${referer}`);
   } else {
     console.log(`🚫 GATEKEEPER: GENERATION BLOCKED`);
     console.log(`   Reason: ${validation.reason}`);
-    console.log(`   Source: ${validation.source}`);
+    console.log(`   Source: ${context.source}`);
     console.log(`   Endpoint: ${endpoint}`);
     console.log(`   User Agent: ${userAgent}`);
     console.log(`   Referer: ${referer}`);
@@ -76,7 +81,11 @@ export function validateContentGenerationRequest(req: Request, endpoint: string)
   
   console.log('=' .repeat(80));
   
-  return validation;
+  return {
+    allowed: validation.allowed,
+    reason: validation.reason,
+    source: context.source
+  };
 }
 
 /**

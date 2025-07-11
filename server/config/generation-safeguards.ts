@@ -4,13 +4,25 @@
  */
 
 export interface GenerationContext {
-  source: 'manual_ui' | 'scheduled_job' | 'webhook_trigger' | 'cron_job' | 'automated_bulk' | 'test' | 'unknown';
+  source: 'manual_ui' | 'scheduled_job' | 'webhook_trigger' | 'cron_job' | 'automated_bulk' | 'bulk_scheduler' | 'automated_generator' | 'make_com_webhook' | 'test' | 'unknown';
   userId?: string;
   sessionId?: string;
   requestId?: string;
   userAgent?: string;
   referer?: string;
 }
+
+// 🎯 APPROVED GENERATION SOURCES - Trusted automation systems
+const APPROVED_SOURCES = [
+  'manual_ui',           // UI-triggered generation (always allowed)
+  'automated_bulk',      // Bulk generator system
+  'bulk_scheduler',      // Scheduled bulk generation
+  'automated_generator', // Internal automation workflows
+  'scheduled_job',       // Scheduled generation jobs
+  'make_com_webhook'     // Make.com webhook automation
+] as const;
+
+type ApprovedSource = typeof APPROVED_SOURCES[number];
 
 export interface SafeguardConfig {
   ALLOW_AUTOMATED_GENERATION: boolean;
@@ -62,9 +74,9 @@ export function validateGenerationRequest(context: GenerationContext): {
 } {
   const { source } = context;
 
-  // ✅ ALWAYS ALLOW MANUAL UI TRIGGERS
-  if (source === 'manual_ui') {
-    console.log('🟢 SAFEGUARD: Manual UI generation request - ALLOWED');
+  // 🎯 APPROVED SOURCES: Check if source is in approved list
+  if (APPROVED_SOURCES.includes(source as ApprovedSource)) {
+    console.log(`🟢 SAFEGUARD: Approved source "${source}" - ALLOWED`);
     return { allowed: true, action: 'allow' };
   }
 
@@ -74,37 +86,16 @@ export function validateGenerationRequest(context: GenerationContext): {
     return { allowed: true, action: 'allow' };
   }
 
-  // 🛑 BLOCK ALL AUTOMATED GENERATION
-  if (!SAFEGUARD_CONFIG.ALLOW_AUTOMATED_GENERATION) {
-    const reason = `Automated generation is disabled in production mode. Source: ${source}`;
+  // 🛑 BLOCK WEBHOOK TRIGGERS (unless specifically approved)
+  if (source === 'webhook_trigger') {
+    const reason = 'Webhook-triggered generation requires approved source designation';
     console.log(`🔴 SAFEGUARD: BLOCKED - ${reason}`);
     return { allowed: false, reason, action: 'block' };
   }
 
-  // 🛑 BLOCK SCHEDULED GENERATION
-  if (source === 'scheduled_job' && !SAFEGUARD_CONFIG.ALLOW_SCHEDULED_GENERATION) {
-    const reason = 'Scheduled generation is disabled';
-    console.log(`🔴 SAFEGUARD: BLOCKED - ${reason}`);
-    return { allowed: false, reason, action: 'block' };
-  }
-
-  // 🛑 BLOCK WEBHOOK TRIGGERS
-  if (source === 'webhook_trigger' && !SAFEGUARD_CONFIG.ALLOW_WEBHOOK_TRIGGERS) {
-    const reason = 'Webhook-triggered generation is disabled';
-    console.log(`🔴 SAFEGUARD: BLOCKED - ${reason}`);
-    return { allowed: false, reason, action: 'block' };
-  }
-
-  // 🛑 BLOCK CRON JOBS
-  if (source === 'cron_job' && !SAFEGUARD_CONFIG.ALLOW_CRON_GENERATION) {
-    const reason = 'Cron-triggered generation is disabled';
-    console.log(`🔴 SAFEGUARD: BLOCKED - ${reason}`);
-    return { allowed: false, reason, action: 'block' };
-  }
-
-  // 🛑 BLOCK AUTOMATED BULK
-  if (source === 'automated_bulk' && !SAFEGUARD_CONFIG.ALLOW_AUTOMATED_GENERATION) {
-    const reason = 'Automated bulk generation is disabled';
+  // 🛑 BLOCK CRON JOBS (unless specifically approved)
+  if (source === 'cron_job') {
+    const reason = 'Cron-triggered generation requires approved source designation';
     console.log(`🔴 SAFEGUARD: BLOCKED - ${reason}`);
     return { allowed: false, reason, action: 'block' };
   }
@@ -116,9 +107,10 @@ export function validateGenerationRequest(context: GenerationContext): {
     return { allowed: false, reason, action: 'block' };
   }
 
-  // Default fallback
-  console.log(`🟡 SAFEGUARD: Unknown case for source ${source} - allowing with warning`);
-  return { allowed: true, action: 'allow' };
+  // 🛑 BLOCK ALL OTHER SOURCES
+  const reason = `Source "${source}" is not in approved sources list: ${APPROVED_SOURCES.join(', ')}`;
+  console.log(`🔴 SAFEGUARD: BLOCKED - ${reason}`);
+  return { allowed: false, reason, action: 'block' };
 }
 
 /**
@@ -147,7 +139,23 @@ export function detectGenerationContext(req: any): GenerationContext {
   const source = req?.headers?.['x-generation-source'] || '';
   const requestBody = req?.body || {};
 
-  // 🎯 PRIMARY: Check for explicit mode in request body (most reliable)
+  // 🔍 DEBUG: Log header information
+  console.log(`🔍 DETECTION DEBUG: source="${source}", userAgent="${userAgent}", referer="${referer}"`);
+  console.log(`🔍 APPROVED SOURCES: ${APPROVED_SOURCES.join(', ')}`);
+  console.log(`🔍 SOURCE CHECK: source in approved? ${APPROVED_SOURCES.includes(source as ApprovedSource)}`);
+
+  // 🎯 PRIMARY: Check x-generation-source header for approved sources
+  if (source && APPROVED_SOURCES.includes(source as ApprovedSource)) {
+    console.log(`🟢 CONTEXT: Approved source "${source}" detected in header`);
+    return {
+      source: source as GenerationContext['source'],
+      userAgent,
+      referer,
+      requestId: req?.headers?.['x-request-id']
+    };
+  }
+
+  // 🎯 SECONDARY: Check for explicit mode in request body
   if (requestBody.mode === 'manual') {
     console.log('🟢 CONTEXT: Manual mode detected in request body - MANUAL_UI');
     return {
@@ -158,11 +166,10 @@ export function detectGenerationContext(req: any): GenerationContext {
     };
   }
 
-  // 🎯 SECONDARY: Check x-generation-source header
-  if (source === 'manual_ui' || source === 'manual') {
-    console.log('🟢 CONTEXT: Manual source detected in header - MANUAL_UI');
+  if (requestBody.mode === 'automated') {
+    console.log('🟢 CONTEXT: Automated mode detected in request body - AUTOMATED_BULK');
     return {
-      source: 'manual_ui',
+      source: 'automated_bulk',
       userAgent,
       referer,
       requestId: req?.headers?.['x-request-id']
@@ -191,11 +198,40 @@ export function detectGenerationContext(req: any): GenerationContext {
     };
   }
 
-  // Detect automated bulk requests
-  if (requestBody.mode === 'automated' || source === 'automated_bulk') {
-    console.log('🔴 CONTEXT: Automated mode detected - AUTOMATED_BULK');
+  // Legacy source mappings for backward compatibility
+  if (source === 'manual_ui' || source === 'manual') {
+    console.log('🟢 CONTEXT: Legacy manual source detected - MANUAL_UI');
     return {
-      source: 'automated_bulk',
+      source: 'manual_ui',
+      userAgent,
+      referer,
+      requestId: req?.headers?.['x-request-id']
+    };
+  }
+
+  if (source === 'bulk-scheduler' || source === 'bulk_scheduler') {
+    console.log('🟢 CONTEXT: Bulk scheduler detected - BULK_SCHEDULER');
+    return {
+      source: 'bulk_scheduler',
+      userAgent,
+      referer
+    };
+  }
+
+  if (source === 'automated-generator' || source === 'automated_generator') {
+    console.log('🟢 CONTEXT: Automated generator detected - AUTOMATED_GENERATOR');
+    return {
+      source: 'automated_generator',
+      userAgent,
+      referer
+    };
+  }
+
+  // Detect Make.com webhook requests
+  if (source === 'make_com_webhook' || source === 'make-com-webhook' || userAgent.includes('Make-webhook') || userAgent.includes('make.com')) {
+    console.log('🟢 CONTEXT: Make.com webhook detected - MAKE_COM_WEBHOOK');
+    return {
+      source: 'make_com_webhook',
       userAgent,
       referer
     };
@@ -203,7 +239,7 @@ export function detectGenerationContext(req: any): GenerationContext {
 
   // Detect scheduled job requests
   if (source === 'scheduled_job' || userAgent.includes('cron') || userAgent.includes('scheduled')) {
-    console.log('🔴 CONTEXT: Scheduled job detected - SCHEDULED_JOB');
+    console.log('🟢 CONTEXT: Scheduled job detected - SCHEDULED_JOB');
     return {
       source: 'scheduled_job',
       userAgent,

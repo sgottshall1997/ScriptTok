@@ -1,0 +1,67 @@
+✅ The manual UI safeguard fix looks great — thank you.
+
+Now I’d like to take the next step:
+
+🎯 GOAL:
+Please re-enable support for:
+1. ✅ **Scheduled content generation**
+2. ✅ **Automated bulk generator**
+3. ✅ **Programmatic/automated generation workflows** (e.g. from Make.com or internal scheduler)
+
+This includes allowing non-manual triggers when they are:
+- ✅ From the bulk generator
+- ✅ From approved scheduling modules
+- ✅ From trusted internal automation systems
+
+---
+
+🔧 WHAT TO DO:
+
+1. 🔓 **Update `detectGenerationContext()` Safeguards**
+   - Add a new **approvedSources list** that includes:
+     ```ts
+     ["manual", "bulk-scheduler", "automated-generator"]
+     ```
+   - Modify the safeguard logic to:
+     - Allow if `mode` or `x-generation-source` is one of these
+     - Continue blocking unknown/unauthorized sources
+
+2. ✅ **Allow Bulk + Scheduled Generation**
+   - Re-enable the bulk generator and scheduler modules
+   - Make sure their requests are sent with `x-generation-source: bulk-scheduler` or `automated-generator`
+   - Ensure these sources are whitelisted in the safeguard check
+
+3. 🔁 **Ensure the system supports all 3 generation modes:**
+   - ✅ **Manual UI generation** → Source: `"manual"` → Allowed ✅
+   - ✅ **Bulk automated generator** → Source: `"automated-generator"` → Allowed ✅
+   - ✅ **Scheduled generation (5AM or user-set)** → Source: `"bulk-scheduler"` → Allowed ✅
+
+---
+
+🧪 TESTING INSTRUCTIONS:
+
+Please run and validate the following:
+
+- 🔹 **Test A: Manual Generator**
+  - Trigger content from the UI
+  - ✅ Should pass
+
+- 🔹 **Test B: Bulk Automated Generator**
+  - Run the multi-niche generator via internal trigger
+  - ✅ Should generate 1 per niche without 403 errors
+
+- 🔹 **Test C: Scheduler**
+  - Simulate a scheduled 5:00 AM generation run
+  - ✅ Confirm content is generated and safeguard passes
+
+Log each test's result, source, and pass/fail status.
+
+---
+
+✅ FINAL DELIVERABLE:
+- Confirm the new trusted sources are added
+- Confirm all 3 generator types are working
+- Ensure production remains locked to trusted inputs only
+- Return example logs showing each allowed source and generation result
+
+I want to go live with fully controlled automation. Please ensure all logic is secure but flexible.

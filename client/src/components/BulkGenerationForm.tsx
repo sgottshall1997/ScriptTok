@@ -73,7 +73,10 @@ export default function BulkGenerationForm() {
     mutationFn: (data: any) => apiRequest('/api/bulk/start-generation', { 
       method: 'POST', 
       body: JSON.stringify(data),
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-generation-source': 'bulk_scheduler'
+      }
     }),
     onSuccess: (data) => {
       toast({

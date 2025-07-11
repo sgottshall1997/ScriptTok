@@ -161,7 +161,10 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
     mutationFn: async (data: any) => {
       const response = await fetch('/api/automated-bulk/start', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-generation-source': 'automated_generator'
+        },
         body: JSON.stringify(data),
       });
       
