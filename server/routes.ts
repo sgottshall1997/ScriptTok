@@ -617,8 +617,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register content evaluation routes
   registerContentEvaluationRoutes(app);
 
-  // Test endpoint for scheduled generation validation
+  // Test endpoint for scheduled generation validation - DEVELOPMENT ONLY
   app.get('/api/test/scheduled-generation', async (req, res) => {
+    // 🚫 PRODUCTION BLOCK: No tests in production
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({
+        success: false,
+        error: 'Test endpoints are disabled in production',
+        message: 'This endpoint is only available in development mode',
+        timestamp: new Date().toISOString()
+      });
+    }
+
     try {
       console.log('🧪 Starting scheduled generation test via API...');
       const testPassed = await testScheduledGeneration();
@@ -640,8 +650,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 🧪 COMPREHENSIVE SAFEGUARD TEST ENDPOINT
+  // 🧪 COMPREHENSIVE SAFEGUARD TEST ENDPOINT - DEVELOPMENT ONLY
   app.get('/api/test/comprehensive-safeguards', async (req, res) => {
+    // 🚫 PRODUCTION BLOCK: No tests in production
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({
+        success: false,
+        error: 'Test endpoints are disabled in production',
+        message: 'This endpoint is only available in development mode',
+        timestamp: new Date().toISOString()
+      });
+    }
+
     try {
       console.log('🧪 Starting comprehensive safeguard test suite...');
       const { runComprehensiveSafeguardTest } = await import('./tests/comprehensive-safeguard-test');
@@ -662,8 +682,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 🧪 TREND FETCH SIMULATION TEST ENDPOINT
+  // 🧪 TREND FETCH SIMULATION TEST ENDPOINT - DEVELOPMENT ONLY
   app.get('/api/test/trend-fetch', async (req, res) => {
+    // 🚫 PRODUCTION BLOCK: No tests in production
+    if (process.env.NODE_ENV === 'production') {
+      return res.status(403).json({
+        success: false,
+        error: 'Test endpoints are disabled in production',
+        message: 'This endpoint is only available in development mode',
+        timestamp: new Date().toISOString()
+      });
+    }
+
     const { testTrendFetch } = await import('./api/test-trend-fetch');
     await testTrendFetch(req, res);
   });

@@ -21,14 +21,25 @@ export interface SafeguardConfig {
   ALLOW_TREND_FETCHING: boolean;  // Allow Perplexity trend data fetching (read-only)
 }
 
-// 🚫 PRODUCTION SAFEGUARD CONFIGURATION
+// 🚫 PRODUCTION SAFEGUARD CONFIGURATION WITH ENVIRONMENT VARIABLE OVERRIDES
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const SAFEGUARD_CONFIG: SafeguardConfig = {
-  ALLOW_AUTOMATED_GENERATION: false,  // 🛑 BLOCKS ALL AUTOMATED GENERATION
-  ALLOW_SCHEDULED_GENERATION: false,  // 🛑 BLOCKS SCHEDULED JOBS
-  ALLOW_WEBHOOK_TRIGGERS: false,      // 🛑 BLOCKS WEBHOOK TRIGGERS
-  ALLOW_CRON_GENERATION: false,       // 🛑 BLOCKS CRON JOBS
-  PRODUCTION_MODE: true,              // 🔒 PRODUCTION LOCKDOWN MODE
-  ALLOW_TREND_FETCHING: false         // 🚫 ALL AUTOMATED PROCESSES DISABLED
+  ALLOW_AUTOMATED_GENERATION: IS_PRODUCTION 
+    ? process.env.ALLOW_PROD_GENERATION === 'true' 
+    : true,  // Allow in dev, require explicit flag in production
+  ALLOW_SCHEDULED_GENERATION: IS_PRODUCTION 
+    ? process.env.ALLOW_PROD_SCHEDULED === 'true' 
+    : true,  // Allow in dev, require explicit flag in production
+  ALLOW_WEBHOOK_TRIGGERS: IS_PRODUCTION 
+    ? process.env.ALLOW_PROD_WEBHOOKS === 'true' 
+    : true,  // Allow in dev, require explicit flag in production
+  ALLOW_CRON_GENERATION: IS_PRODUCTION 
+    ? process.env.ALLOW_PROD_CRON === 'true' 
+    : true,  // Allow in dev, require explicit flag in production
+  PRODUCTION_MODE: IS_PRODUCTION,     // Auto-detect production mode
+  ALLOW_TREND_FETCHING: IS_PRODUCTION 
+    ? process.env.ALLOW_PROD_TRENDS === 'true' 
+    : true   // Allow in dev, require explicit flag in production
 };
 
 /**

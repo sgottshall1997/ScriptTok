@@ -5,8 +5,11 @@ import fetch from 'node-fetch';
  * Tests both manual and automated generation modes
  */
 
-console.log('🧪 DUAL-MODEL EVALUATION TEST SUITE');
-console.log('=' .repeat(80));
+// Only log in development mode
+if (process.env.NODE_ENV !== 'production') {
+  console.log('🧪 DUAL-MODEL EVALUATION TEST SUITE');
+  console.log('=' .repeat(80));
+}
 
 // Test configuration
 const testConfig = {
@@ -233,5 +236,7 @@ async function runFullTestSuite() {
   }
 }
 
-// Run the test suite
-runFullTestSuite().catch(console.error);
+// Run the test suite - DISABLED IN PRODUCTION
+if (process.env.NODE_ENV !== 'production' && import.meta.url === `file://${process.argv[1]}`) {
+  runFullTestSuite().catch(console.error);
+}

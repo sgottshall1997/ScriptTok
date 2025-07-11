@@ -166,8 +166,8 @@ async function testScheduledGeneration() {
 // Export the test function
 export { testScheduledGeneration };
 
-// If run directly, execute the test
-if (import.meta.url === `file://${process.argv[1]}`) {
+// If run directly, execute the test - DISABLED IN PRODUCTION
+if (process.env.NODE_ENV !== 'production' && import.meta.url === `file://${process.argv[1]}`) {
   testScheduledGeneration()
     .then(passed => {
       process.exit(passed ? 0 : 1);

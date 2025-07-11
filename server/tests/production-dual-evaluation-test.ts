@@ -488,14 +488,15 @@ class ProductionEvaluationTester {
 // Export for command line execution
 export { ProductionEvaluationTester };
 
-// Auto-run the test suite
-const tester = new ProductionEvaluationTester();
-tester.runCompleteTestSuite()
-  .then(report => {
-    console.log('\n' + report);
-    process.exit(0);
-  })
-  .catch(error => {
+// Auto-run the test suite - DISABLED IN PRODUCTION
+if (process.env.NODE_ENV !== 'production' && import.meta.url === `file://${process.argv[1]}`) {
+  const tester = new ProductionEvaluationTester();
+  tester.runCompleteTestSuite()
+    .then(report => {
+      console.log('\n' + report);
+      process.exit(0);
+    })
+    .catch(error => {
     console.error('Test suite failed:', error);
     process.exit(1);
   });
