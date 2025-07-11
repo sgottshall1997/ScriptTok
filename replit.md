@@ -676,6 +676,17 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Error Handling**: Robust error tracking with consecutive failure monitoring and detailed error logging
   - ✅ **Manual Triggering**: Jobs can be triggered manually for testing with immediate execution capabilities
   - ✅ **Production Ready**: Complete automation system supporting daily content generation at scheduled times across all niches and platforms
+- July 11, 2025. **AI Model and Content Format Webhook Integration**: Complete webhook payload enhancement with multi-AI and format tracking:
+  - ✅ **Enhanced Webhook Payload**: Added `model` and `contentFormat` fields to all webhook payloads sent to Make.com
+  - ✅ **AI Model Field**: Transforms backend AI model values (chatgpt/claude) to display names (ChatGPT/Claude) in webhooks
+  - ✅ **Content Format Field**: Includes format type (Regular Format/Spartan Format) for external automation tracking
+  - ✅ **Unified Generator Integration**: Single product generator now passes AI model and Spartan format selection to webhook service
+  - ✅ **Automated Bulk Integration**: Automated bulk generator includes model and format in webhook metadata for all generated content
+  - ✅ **Webhook Test Enhancement**: Test webhook endpoint updated with model and content format fields for debugging
+  - ✅ **Debug Panel Update**: WebhookDebugPanel component enhanced to display AI model and content format with color-coded badges
+  - ✅ **Enhanced Logging**: Server-side webhook logging now includes AI model and content format for comprehensive tracking
+  - ✅ **Complete CSV Compatibility**: All webhook fields properly structured for Google Sheets/Make.com automation workflows
+  - ✅ **Multi-dimensional Tracking**: External systems can now track content by niche × tone × template × platform × AI model × content format
 
 ## User Preferences
 

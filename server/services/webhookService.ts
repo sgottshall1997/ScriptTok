@@ -143,7 +143,7 @@ export class WebhookService {
       for (const platform of platforms) {
         const platformData = data.platformContent[platform];
         
-        // Create your new simplified JSON payload format
+        // Create your new simplified JSON payload format with AI model and content format
         const newPayload = {
           event_type: "content_generated",
           platform: platform, // Added platform field
@@ -159,6 +159,8 @@ export class WebhookService {
           imageUrl: data.metadata?.imageUrl || `https://via.placeholder.com/400x400?text=${encodeURIComponent(data.metadata?.product || 'Product')}`,
           tone: data.metadata?.tone || '',
           template: data.metadata?.template || data.metadata?.templateType || '',
+          model: data.metadata?.aiModel === 'chatgpt' ? 'ChatGPT' : data.metadata?.aiModel === 'claude' ? 'Claude' : 'ChatGPT', // Transform to display names
+          contentFormat: data.metadata?.contentFormat || 'Regular Format', // Either 'Regular Format' or 'Spartan Format'
           postType: platformData.type || 'reel',
           timestamp: new Date().toISOString()
         };
@@ -171,6 +173,8 @@ export class WebhookService {
         console.log(`🎯 Niche: ${newPayload.niche}`);
         console.log(`📝 Script Preview: ${newPayload.script.substring(0, 100)}...`);
         console.log(`🔗 Product: ${newPayload.product}`);
+        console.log(`🤖 AI Model: ${newPayload.model}`);
+        console.log(`📄 Content Format: ${newPayload.contentFormat}`);
         console.log(`💰 Affiliate Link: ${newPayload.affiliateLink ? 'Yes' : 'No'}`);
         console.log('━'.repeat(80));
         console.log('📋 COMPLETE PAYLOAD:');

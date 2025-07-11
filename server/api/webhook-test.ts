@@ -35,6 +35,8 @@ router.post('/', async (req, res) => {
       imageUrl: "https://example.com/hero-serum-image.jpg",
       tone: "enthusiastic",
       template: "short_video_script",
+      model: "Claude", // Test with Claude model
+      contentFormat: "Spartan Format", // Test with Spartan format
       postType: "reel",
       timestamp: new Date().toISOString()
     };
@@ -47,6 +49,8 @@ router.post('/', async (req, res) => {
     console.log(`🎯 Niche: ${testPayload.niche}`);
     console.log(`📝 Script Preview: ${testPayload.script.substring(0, 100)}...`);
     console.log(`🔗 Product: ${testPayload.product}`);
+    console.log(`🤖 AI Model: ${testPayload.model}`);
+    console.log(`📄 Content Format: ${testPayload.contentFormat}`);
     console.log(`💰 Affiliate Link: ${testPayload.affiliateLink ? 'Yes' : 'No'}`);
     console.log('━'.repeat(80));
     console.log('📋 COMPLETE TEST PAYLOAD:');

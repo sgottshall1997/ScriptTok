@@ -20,6 +20,8 @@ interface WebhookPayload {
   imageUrl: string;
   tone: string;
   template: string;
+  model: string; // AI model (ChatGPT or Claude)
+  contentFormat: string; // Content format (Regular Format or Spartan Format)
   postType: string;
   timestamp: string;
 }
@@ -166,7 +168,7 @@ const WebhookDebugPanel: React.FC<WebhookDebugPanelProps> = ({ lastPayload }) =>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-sm">
               <div>
                 <span className="font-medium text-gray-700">Platform:</span>
                 <p className="text-purple-700 capitalize">{mostRecentPayload.platform}</p>
@@ -178,6 +180,18 @@ const WebhookDebugPanel: React.FC<WebhookDebugPanelProps> = ({ lastPayload }) =>
               <div>
                 <span className="font-medium text-gray-700">Product:</span>
                 <p className="text-gray-900 truncate">{getPayloadPreview(mostRecentPayload).product}</p>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">AI Model:</span>
+                <Badge className={mostRecentPayload.model === 'Claude' ? 'bg-orange-100 text-orange-800' : 'bg-emerald-100 text-emerald-800'}>
+                  {mostRecentPayload.model || 'ChatGPT'}
+                </Badge>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Format:</span>
+                <Badge className={mostRecentPayload.contentFormat === 'Spartan Format' ? 'bg-gray-100 text-gray-800' : 'bg-blue-100 text-blue-800'}>
+                  {mostRecentPayload.contentFormat === 'Spartan Format' ? 'Spartan' : 'Regular'}
+                </Badge>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Script:</span>

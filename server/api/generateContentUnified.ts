@@ -273,6 +273,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
             productName: config.productName,
             niche: config.niche,
             tone: config.tone,
+            aiModel: config.aiModel,
+            contentFormat: config.useSpartanFormat ? 'Spartan Format' : 'Regular Format',
             template: config.templateType,
             templateType: config.templateType,
             useSmartStyle: config.useSmartStyle || false,
