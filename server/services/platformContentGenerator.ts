@@ -145,7 +145,13 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         throw new Error(`AI generation failed: ${errorMessage}`);
       }
 
-      const content = aiResponse.content;
+      // Handle different response structures from different AI models
+      let content = aiResponse.content;
+      if (typeof content === 'object' && content.content) {
+        // Claude response structure: { content: { content: "actual content" } }
+        content = content.content;
+      }
+      
       if (!content) {
         throw new Error('No content generated from AI');
       }
