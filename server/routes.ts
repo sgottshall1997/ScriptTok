@@ -667,6 +667,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { testTrendFetch } = await import('./api/test-trend-fetch');
     await testTrendFetch(req, res);
   });
+  
+  // 🏥 HEALTH CHECK ENDPOINT FOR DEPLOYMENT DIAGNOSTICS
+  app.get('/api/health', async (req, res) => {
+    try {
+      const healthStatus = {
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        version: process.version,
+        database: {
+          connected: false,
+          error: null
+        },
+        dependencies: {
+          openai: !!process.env.OPENAI_API_KEY,
+          anthropic: !!process.env.ANTHROPIC_API_KEY,
+          database: !!process.env.DATABASE_URL,
+          webhook: !!process.env.MAKE_WEBHOOK_URL
+        }
+      };
+      
+      // Test database connection
+      try {
+        await db.execute('SELECT 1');
+        healthStatus.database.connected = true;
+      } catch (dbError) {
+        healthStatus.database.connected = false;
+        healthStatus.database.error = dbError.message;
+        healthStatus.status = 'degraded';
+      }
+      
+      // Check if any critical dependencies are missing
+      const criticalDeps = ['openai', 'anthropic', 'database'];
+      const missingDeps = criticalDeps.filter(dep => !healthStatus.dependencies[dep]);
+      
+      if (missingDeps.length > 0) {
+        healthStatus.status = 'degraded';
+        healthStatus.missingDependencies = missingDeps;
+      }
+      
+      const statusCode = healthStatus.status === 'healthy' ? 200 : 503;
+      res.status(statusCode).json(healthStatus);
+      
+    } catch (error) {
+      res.status(500).json({
+        status: 'unhealthy',
+        timestamp: new Date().toISOString(),
+        error: error.message || 'Health check failed'
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
