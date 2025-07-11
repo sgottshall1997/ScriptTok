@@ -374,9 +374,11 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
   }
 }
 
-// Get existing trending products for automated mode
-async function getExistingTrendingProducts(niches: string[], limit: number = 3): Promise<any[]> {
+// Get existing trending products for automated mode - EXACTLY 1 per niche
+async function getExistingTrendingProducts(niches: string[], limit: number = 1): Promise<any[]> {
   const products = [];
+  
+  console.log(`🎯 NICHE DISTRIBUTION: Fetching exactly ${limit} product(s) per niche from: [${niches.join(', ')}]`);
   
   for (const niche of niches) {
     const nicheProducts = await db
@@ -386,13 +388,22 @@ async function getExistingTrendingProducts(niches: string[], limit: number = 3):
       .orderBy(desc(trendingProducts.createdAt))
       .limit(limit);
     
-    products.push(...nicheProducts.map(p => ({
-      name: p.title,
-      niche: p.niche,
+    if (nicheProducts.length === 0) {
+      console.error(`❌ CRITICAL: No products found for niche "${niche}" - this will cause missing content!`);
+      throw new Error(`No trending products available for niche: ${niche}. Please refresh trending data first.`);
+    }
+    
+    const nicheProduct = {
+      name: nicheProducts[0].title,
+      niche: nicheProducts[0].niche,
       affiliateUrl: undefined
-    })));
+    };
+    
+    products.push(nicheProduct);
+    console.log(`✅ NICHE "${niche}": Selected product "${nicheProduct.name}"`);
   }
   
+  console.log(`📊 FINAL DISTRIBUTION: ${products.length} products total - ${products.map(p => `${p.niche}:${p.name.substring(0,20)}...`).join(', ')}`);
   return products;
 }
 
@@ -487,30 +498,50 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
         }));
       }
 
-      // Create configurations for automated generation
+      // Create configurations for automated generation - EXACTLY 1 per niche
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      for (const product of products.slice(0, 5)) { // Limit to 5 products for performance
-        for (const tone of tones) {
-          for (const template of templates) {
-            configs.push({
-              productName: product.name,
-              niche: product.niche,
-              templateType: template,
-              tone,
-              platforms: data.platforms || ['tiktok', 'instagram'],
-              contentType: 'video',
-              affiliateUrl: product.affiliateUrl,
-              useSmartStyle: data.useSmartStyle,
-              useSpartanFormat: data.useSpartanFormat,
-              aiModel: data.aiModel,
-              mode: 'automated',
-              jobId
-            });
-          }
-        }
+      console.log(`🎭 GENERATION CONFIG: ${tones.length} tone(s), ${templates.length} template(s), AI Model: ${data.aiModel || 'chatgpt'}`);
+      
+      // For scheduled generation, use exactly 1 tone and 1 template to ensure 1 content per niche
+      const selectedTone = tones[0]; // Use first tone for consistency
+      const selectedTemplate = templates[0]; // Use first template for consistency
+      
+      console.log(`🎯 SCHEDULED MODE: Using single tone "${selectedTone}" and template "${selectedTemplate}" for 1 content per niche`);
+      
+      for (const product of products) { // Use ALL products (exactly 1 per niche)
+        configs.push({
+          productName: product.name,
+          niche: product.niche,
+          templateType: selectedTemplate,
+          tone: selectedTone,
+          platforms: data.platforms || ['tiktok', 'instagram'],
+          contentType: 'video',
+          affiliateUrl: product.affiliateUrl,
+          useSmartStyle: data.useSmartStyle,
+          useSpartanFormat: data.useSpartanFormat,
+          aiModel: data.aiModel || 'chatgpt', // Ensure model is passed through
+          mode: 'automated',
+          jobId
+        });
+        
+        console.log(`📋 CONFIG CREATED: ${product.niche} - "${product.name}" - ${selectedTone}/${selectedTemplate} - Model: ${data.aiModel || 'chatgpt'}`);
       }
+      
+      // CRITICAL VALIDATION: Ensure exactly 1 config per niche
+      const configsByNiche = configs.reduce((acc, config) => {
+        acc[config.niche] = (acc[config.niche] || 0) + 1;
+        return acc;
+      }, {});
+      
+      const duplicateNiches = Object.entries(configsByNiche).filter(([niche, count]) => count > 1);
+      if (duplicateNiches.length > 0) {
+        console.error(`❌ CRITICAL ERROR: Duplicate configurations detected!`, configsByNiche);
+        throw new Error(`Niche distribution error: ${duplicateNiches.map(([n, c]) => `${n}:${c}`).join(', ')}`);
+      }
+      
+      console.log(`✅ VALIDATION PASSED: Exactly 1 config per niche:`, configsByNiche);
     }
 
     if (configs.length === 0) {

@@ -453,6 +453,7 @@ export const scheduledBulkJobs = pgTable("scheduled_bulk_jobs", {
   generateAffiliateLinks: boolean("generate_affiliate_links").notNull().default(false),
   useSpartanFormat: boolean("use_spartan_format").notNull().default(false),
   useSmartStyle: boolean("use_smart_style").notNull().default(false),
+  aiModel: text("ai_model").notNull().default("claude"), // AI model to use for generation
   affiliateId: text("affiliate_id").default("sgottshall107-20"),
   
   // Webhook configuration
@@ -918,6 +919,7 @@ export const insertScheduledBulkJobSchema = createInsertSchema(scheduledBulkJobs
   generateAffiliateLinks: true,
   useSpartanFormat: true,
   useSmartStyle: true,
+  aiModel: true,
   affiliateId: true,
   webhookUrl: true,
   sendToMakeWebhook: true,

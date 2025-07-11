@@ -726,6 +726,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Make.com Integration**: Webhook payload delivery to existing automation with `sync_ratings_to_sheet` event type for batch rating updates
   - ✅ **Enhanced Frontend Component**: Built comprehensive SyncRatingsButton component with loading states, success/error feedback, and detailed result reporting
   - ✅ **Content History Integration**: Added sync button prominently to Enhanced Content History page for easy access
+- July 11, 2025. **CRITICAL Scheduled Generation Bug Fixes - FINAL RESOLUTION**: Permanently resolved all scheduled automated bulk generation issues:
+  - ✅ **Exact 1-per-Niche Distribution**: Fixed `getExistingTrendingProducts()` function to generate exactly 1 content piece per niche instead of duplicates
+  - ✅ **AI Model Selection Fix**: Added `ai_model` field to `scheduled_bulk_jobs` database schema with proper parameter passing through unified generator
+  - ✅ **Content Generation Error Fix**: Added string validation checks in `cleanVideoScript()` to prevent `content.replace is not a function` errors
+  - ✅ **Comprehensive Test Suite**: Created `scheduled-generation-test.ts` that successfully verified all 7 niches generate exactly 1 content each
+  - ✅ **Database Schema Enhancement**: Enhanced scheduled jobs table with AI model field and proper foreign key relationships
+  - ✅ **Fail-Safe Logging**: Implemented comprehensive logging showing exact niche distribution validation and webhook delivery confirmation
+  - ✅ **Production Verification**: Confirmed existing scheduled job "Daily 7 niches (Enthusiastic)" now operates with Claude AI model and exact niche distribution
+  - ✅ **Complete Automation Pipeline**: Content Generation → AI Evaluation → Database Storage → Enhanced Webhook → Make.com delivery all verified working
   - ✅ **Advanced Unmatched Item System**: Complete tracking, viewing, and CSV export functionality for items that cannot be matched in Google Sheet
   - ✅ **Export Functionality**: CSV export feature for unmatched items with complete rating data and failure reasons
   - ✅ **UPDATE-ONLY Mode**: Explicit sync behavior that only updates existing rows, preventing duplicate creation in Google Sheet

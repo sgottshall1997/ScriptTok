@@ -69,6 +69,7 @@ import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-r
 import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
 import syncRatingsRouter from "./api/sync-ratings";
 import { registerContentEvaluationRoutes } from "./api/content-evaluation";
+import { testScheduledGeneration } from "./tests/scheduled-generation-test";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -589,6 +590,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register content evaluation routes
   registerContentEvaluationRoutes(app);
+
+  // Test endpoint for scheduled generation validation
+  app.get('/api/test/scheduled-generation', async (req, res) => {
+    try {
+      console.log('🧪 Starting scheduled generation test via API...');
+      const testPassed = await testScheduledGeneration();
+      
+      res.json({
+        success: true,
+        testPassed,
+        message: testPassed ? 'All scheduled generation tests passed!' : 'Some tests failed - check console logs',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Test endpoint error:', error);
+      res.status(500).json({
+        success: false,
+        testPassed: false,
+        error: error.message || 'Test execution failed',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;

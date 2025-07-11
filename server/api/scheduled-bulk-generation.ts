@@ -270,6 +270,7 @@ async function executeScheduledJob(job: any) {
       generateAffiliateLinks: job.generateAffiliateLinks,
       useSpartanFormat: job.useSpartanFormat,
       useSmartStyle: job.useSmartStyle,
+      aiModel: job.aiModel || 'claude', // CRITICAL FIX: Pass AI model from scheduled job
       affiliateId: job.affiliateId,
       webhookUrl: job.webhookUrl,
       sendToMakeWebhook: job.sendToMakeWebhook,
@@ -277,6 +278,10 @@ async function executeScheduledJob(job: any) {
       scheduledJobId: job.id, // Track that this was from a scheduled job
       scheduledJobName: job.name
     };
+
+    console.log(`🤖 SCHEDULED JOB AI MODEL: "${payload.aiModel}" (from job.aiModel: "${job.aiModel}")`);
+    console.log(`🎯 NICHE LIST: [${payload.selectedNiches.join(', ')}] - Expecting exactly ${payload.selectedNiches.length} outputs`);
+    console.log(`🎭 GENERATION PARAMS: Tones: [${payload.tones.join(', ')}], Templates: [${payload.templates.join(', ')}]`);
 
     // Call the unified content generator
     const response = await fetch('http://localhost:5000/api/generate-unified', {
