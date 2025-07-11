@@ -47,10 +47,7 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
 
   const createScheduledJobMutation = useMutation({
     mutationFn: async (jobData: any) => {
-      return apiRequest('/api/scheduled-bulk/jobs', {
-        method: 'POST',
-        body: JSON.stringify(jobData)
-      });
+      return apiRequest('POST', '/api/scheduled-bulk/jobs', jobData);
     },
     onSuccess: () => {
       toast({

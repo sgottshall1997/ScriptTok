@@ -711,6 +711,13 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Comprehensive Documentation**: Clear behavior documentation showing UPDATE-ONLY mode and unmatched item handling
   - ✅ **Error Handling**: Robust error management with user-friendly feedback, console logging, and graceful failure handling
   - ✅ **Data Integrity**: Sync-only functionality that updates existing rows without adding duplicates or overwriting non-rating data
+- July 11, 2025. **Critical API Request Format Fixes**: Resolved fetch errors across Schedule Manager and scheduling components:
+  - ✅ **Schedule Manager Fix**: Corrected apiRequest function calls to use proper HTTP method parameters instead of URL-only format
+  - ✅ **ScheduleDailyBulkToggle Fix**: Fixed mutation calls to use correct apiRequest('POST', url, data) format
+  - ✅ **Error Resolution**: Eliminated "Failed to execute 'fetch' on 'Window'" errors preventing Schedule Manager page loading
+  - ✅ **API Format Standardization**: Ensured all scheduled job CRUD operations (GET, POST, PUT, DELETE) use correct apiRequest parameters
+  - ✅ **Enhanced Content History Amazon Filter**: Updated affiliate filter dropdown to show "Amazon Affiliate Links" instead of "All Content"
+  - ✅ **Production Ready**: Schedule Manager and automated bulk generation scheduling now fully operational
 
 ## User Preferences
 
