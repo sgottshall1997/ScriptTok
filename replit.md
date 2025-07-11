@@ -663,6 +663,17 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Clean Output**: Bulk generator now produces emoji-free, professional content with factual language
   - ✅ **Complete Integration**: Both single and bulk generators now support Spartan format across all platforms
   - ✅ **Production Ready**: Automated bulk generator with Spartan format delivering clean, professional content to Make.com
+- July 11, 2025. **Critical AI Evaluation Workflow Integration**: Complete dual AI evaluation system operating BEFORE webhook delivery to Make.com:
+  - ✅ **Unified Content Generator Enhancement**: Modified generateContentUnified.ts to perform dual AI evaluation before webhook sending
+  - ✅ **Automated Bulk Generator Integration**: Enhanced automated-bulk-generation.ts with AI evaluation workflow before Make.com delivery
+  - ✅ **Pre-Webhook Evaluation**: Both ChatGPT and Claude now evaluate content quality and provide scores before external automation
+  - ✅ **Enhanced Webhook Payload**: All 36 webhook fields now include real AI evaluation scores instead of placeholder values
+  - ✅ **Database Integration**: AI evaluation results automatically saved to content_evaluations table during generation process
+  - ✅ **Comprehensive Scoring**: Webhook includes virality, clarity, persuasiveness, creativity, and overall scores from both AI models
+  - ✅ **Error Handling**: Robust fallback system ensures webhook delivery continues even if AI evaluation fails
+  - ✅ **Make.com Ready**: External automation now receives authentic AI evaluation data for quality tracking and analytics
+  - ✅ **Field Consistency**: Standardized aiEvaluation field name across unified and automated bulk generators
+  - ✅ **Production Workflow**: Complete integration - Content Generation → AI Evaluation → Enhanced Webhook → Make.com Automation
 - July 11, 2025. **Complete Scheduled Automated Bulk Generation System**: Full automation framework with daily scheduling capabilities:
   - ✅ **Database Schema**: Created comprehensive `scheduled_bulk_jobs` table with timezone support, cron integration, and error tracking
   - ✅ **Backend API**: Built complete CRUD operations (`getScheduledJobs`, `createScheduledJob`, `updateScheduledJob`, `deleteScheduledJob`, `triggerScheduledJob`)

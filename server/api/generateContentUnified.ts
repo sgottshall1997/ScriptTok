@@ -247,7 +247,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
     
-    // Trigger automatic AI evaluation for single content generation
+    // Perform AI evaluation BEFORE sending webhooks
+    let aiEvaluationData = null;
     if (config.mode === 'manual') {
       try {
         // Get the content history ID from the database
@@ -262,7 +263,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         
         if (recentContent.length > 0) {
           const contentHistoryId = recentContent[0].id;
-          console.log(`🤖 Starting automatic AI evaluation for content ID: ${contentHistoryId}`);
+          console.log(`🤖 Starting AI evaluation BEFORE webhook for content ID: ${contentHistoryId}`);
           
           // Import and call the evaluation service
           const { evaluateContentWithBothModels, createContentEvaluationData } = await import('../services/aiEvaluationService');
@@ -280,10 +281,38 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           const claudeEvalData = createContentEvaluationData(contentHistoryId, 'claude', evaluationResults.claudeEvaluation);
           await db.insert(contentEvaluations).values(claudeEvalData);
           
-          console.log(`✅ Automatic AI evaluation completed for content ID: ${contentHistoryId}`);
+          console.log(`✅ AI evaluation completed BEFORE webhook for content ID: ${contentHistoryId}`);
+          
+          // Prepare AI evaluation data for webhook
+          const averageScore = ((evaluationResults.chatgptEvaluation.overallScore || 0) + (evaluationResults.claudeEvaluation.overallScore || 0)) / 2;
+          
+          aiEvaluationData = {
+            chatgpt: {
+              viralityScore: evaluationResults.chatgptEvaluation.viralityScore,
+              clarityScore: evaluationResults.chatgptEvaluation.clarityScore,
+              persuasivenessScore: evaluationResults.chatgptEvaluation.persuasivenessScore,
+              creativityScore: evaluationResults.chatgptEvaluation.creativityScore,
+              overallScore: evaluationResults.chatgptEvaluation.overallScore
+            },
+            claude: {
+              viralityScore: evaluationResults.claudeEvaluation.viralityScore,
+              clarityScore: evaluationResults.claudeEvaluation.clarityScore,
+              persuasivenessScore: evaluationResults.claudeEvaluation.persuasivenessScore,
+              creativityScore: evaluationResults.claudeEvaluation.creativityScore,
+              overallScore: evaluationResults.claudeEvaluation.overallScore
+            },
+            averageScore: parseFloat(averageScore.toFixed(1)),
+            evaluationCompleted: true
+          };
         }
       } catch (evaluationError) {
-        console.error('⚠️ Automatic evaluation failed (content generation still successful):', evaluationError);
+        console.error('⚠️ AI evaluation failed (content generation still successful):', evaluationError);
+        aiEvaluationData = {
+          chatgpt: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
+          claude: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
+          averageScore: null,
+          evaluationCompleted: false
+        };
       }
     }
     
@@ -305,58 +334,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           };
         });
         
-        // Fetch AI evaluation results if they exist
-        let aiEvaluationData = null;
-        if (config.mode === 'manual') {
-          try {
-            const { contentHistory, contentEvaluations } = await import('@shared/schema');
-            const sessionId = config.jobId || `single_${Date.now()}`;
-            
-            const recentContent = await db.select()
-              .from(contentHistory)
-              .where(eq(contentHistory.sessionId, sessionId))
-              .orderBy(desc(contentHistory.createdAt))
-              .limit(1);
-            
-            if (recentContent.length > 0) {
-              const contentHistoryId = recentContent[0].id;
-              
-              // Get AI evaluation results
-              const evaluations = await db.select()
-                .from(contentEvaluations)
-                .where(eq(contentEvaluations.contentHistoryId, contentHistoryId));
-              
-              if (evaluations.length > 0) {
-                const chatgptEval = evaluations.find(e => e.model === 'chatgpt');
-                const claudeEval = evaluations.find(e => e.model === 'claude');
-                
-                if (chatgptEval && claudeEval) {
-                  const averageScore = ((chatgptEval.overallScore || 0) + (claudeEval.overallScore || 0)) / 2;
-                  
-                  aiEvaluationData = {
-                    chatgpt: {
-                      viralityScore: chatgptEval.viralityScore,
-                      clarityScore: chatgptEval.clarityScore,
-                      persuasivenessScore: chatgptEval.persuasivenessScore,
-                      creativityScore: chatgptEval.creativityScore,
-                      overallScore: chatgptEval.overallScore
-                    },
-                    claude: {
-                      viralityScore: claudeEval.viralityScore,
-                      clarityScore: claudeEval.clarityScore,
-                      persuasivenessScore: claudeEval.persuasivenessScore,
-                      creativityScore: claudeEval.creativityScore,
-                      overallScore: claudeEval.overallScore
-                    },
-                    averageScore: parseFloat(averageScore.toFixed(1))
-                  };
-                }
-              }
-            }
-          } catch (evalFetchError) {
-            console.log('⚠️ Could not fetch AI evaluation results for webhook');
-          }
-        }
+        // AI evaluation data is already available from the evaluation step above
 
         await webhookService.sendMultiPlatformContent({
           platformContent,

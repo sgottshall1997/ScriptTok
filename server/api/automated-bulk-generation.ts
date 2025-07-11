@@ -470,10 +470,74 @@ async function processAutomatedBulkJob(
 
                   console.log(`✅ Saved content to history for ${productName} (${niche})`);
                   
+                  // Perform AI evaluation BEFORE sending webhook
+                  let aiEvaluationData = null;
+                  try {
+                    // Get the most recent content history entry for this session
+                    const recentContent = await db.select()
+                      .from(contentHistory)
+                      .where(eq(contentHistory.sessionId, sessionId))
+                      .orderBy(desc(contentHistory.createdAt))
+                      .limit(1);
+                    
+                    if (recentContent.length > 0) {
+                      const contentHistoryId = recentContent[0].id;
+                      console.log(`🤖 Starting AI evaluation for bulk content ID: ${contentHistoryId} (${productName})`);
+                      
+                      // Import and call the evaluation service
+                      const { evaluateContentWithBothModels, createContentEvaluationData } = await import('../services/aiEvaluationService');
+                      const { contentEvaluations } = await import('@shared/schema');
+                      
+                      const fullContent = `${outputText}\n\nPlatform Captions:\n${JSON.stringify(platformCaptions, null, 2)}`;
+                      
+                      const evaluationResults = await evaluateContentWithBothModels(fullContent);
+                      
+                      // Save ChatGPT evaluation
+                      const chatgptEvalData = createContentEvaluationData(contentHistoryId, 'chatgpt', evaluationResults.chatgptEvaluation);
+                      await db.insert(contentEvaluations).values(chatgptEvalData);
+                      
+                      // Save Claude evaluation
+                      const claudeEvalData = createContentEvaluationData(contentHistoryId, 'claude', evaluationResults.claudeEvaluation);
+                      await db.insert(contentEvaluations).values(claudeEvalData);
+                      
+                      console.log(`✅ AI evaluation completed for bulk content: ${productName} (ChatGPT: ${evaluationResults.chatgptEvaluation.overallScore}, Claude: ${evaluationResults.claudeEvaluation.overallScore})`);
+                      
+                      // Prepare AI evaluation data for webhook
+                      const averageScore = ((evaluationResults.chatgptEvaluation.overallScore || 0) + (evaluationResults.claudeEvaluation.overallScore || 0)) / 2;
+                      
+                      aiEvaluationData = {
+                        chatgpt: {
+                          viralityScore: evaluationResults.chatgptEvaluation.viralityScore,
+                          clarityScore: evaluationResults.chatgptEvaluation.clarityScore,
+                          persuasivenessScore: evaluationResults.chatgptEvaluation.persuasivenessScore,
+                          creativityScore: evaluationResults.chatgptEvaluation.creativityScore,
+                          overallScore: evaluationResults.chatgptEvaluation.overallScore
+                        },
+                        claude: {
+                          viralityScore: evaluationResults.claudeEvaluation.viralityScore,
+                          clarityScore: evaluationResults.claudeEvaluation.clarityScore,
+                          persuasivenessScore: evaluationResults.claudeEvaluation.persuasivenessScore,
+                          creativityScore: evaluationResults.claudeEvaluation.creativityScore,
+                          overallScore: evaluationResults.claudeEvaluation.overallScore
+                        },
+                        averageScore: parseFloat(averageScore.toFixed(1)),
+                        evaluationCompleted: true
+                      };
+                    }
+                  } catch (evaluationError) {
+                    console.error(`⚠️ AI evaluation failed for ${productName}:`, evaluationError);
+                    aiEvaluationData = {
+                      chatgpt: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
+                      claude: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
+                      averageScore: null,
+                      evaluationCompleted: false
+                    };
+                  }
+                  
                   // Send to Make.com webhook if platforms are configured
                   if (platforms && platforms.length > 0 && platformCaptions) {
                     try {
-                      console.log(`📤 Sending bulk content to Make.com for ${productName} on platforms: ${platforms.join(', ')}`);
+                      console.log(`📤 Sending bulk content with AI evaluation to Make.com for ${productName} on platforms: ${platforms.join(', ')}`);
                       const webhookService = new WebhookService();
                       
                       // Create platform content object
@@ -511,7 +575,8 @@ async function processAutomatedBulkJob(
                         contentData: {
                           fullOutput: outputText,
                           platformCaptions: platformCaptions,
-                          viralInspiration: viralInspiration
+                          viralInspiration: viralInspiration,
+                          aiEvaluation: aiEvaluationData
                         }
                       });
                       console.log(`✅ Bulk content sent to Make.com for ${productName}`);
