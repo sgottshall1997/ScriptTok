@@ -1,0 +1,66 @@
+🛑 Problem:
+I ran the automated bulk content generator using the scheduler for all 7 niches — but the output included duplicate and unrelated products. Specifically, I got multiple versions of:
+
+- "Niacinamide 10% + Zinc 1% Serum 1oz"
+- A single Echo Dot
+- A single yoga pants product
+
+Only 3 unique products appeared — and 5+ rows were duplicates of the same skincare item. No niche diversity.
+
+🎯 Goal:
+Fix the automated bulk generator so that it:
+- ✅ Generates **exactly 1 unique product per niche**
+- ✅ Matches each product to the correct niche (beauty, fitness, tech, pets, fashion, travel, food/kitchen)
+- ✅ Avoids product duplication within the same run
+- ✅ Stores the correct product data to the content history, Make webhook, and evaluation system
+
+---
+
+🔧 Required Fixes:
+
+1. ✅ **Ensure Niche-Based Looping**
+   - The bulk generator should iterate through the official 7-niche list:
+     ```ts
+     ["beauty", "fitness", "technology", "pets", "fashion", "travel", "food"]
+     ```
+   - For each, it should trigger generation independently and clearly pass the `niche` to the backend
+
+2. ✅ **Fix Product Selection Logic**
+   - Validate that each content generation call is retrieving a trending or relevant product *for that specific niche*
+   - If using a trend-fetching API or DB, ensure it queries using the `niche` filter and doesn’t default to beauty/skincare
+   - Add a fallback strategy for niche-product mapping if trending data is unavailable
+
+3. 🔁 **Add Deduplication Logic**
+   - Within a single run, do not allow duplicate products across multiple niche generations
+   - If a product is reused by multiple niches, pick a new one or randomize alternatives
+
+4. ✅ **Run Automated Tests**
+   - Simulate a scheduled bulk generation run
+   - Confirm 7 rows are created with:
+     - Unique products
+     - Distinct `niche` tags
+     - Model and format recorded
+     - Script generated and passed through evaluation
+
+   - Check:
+     - Output in Google Sheet or DB
+     - Make webhook payloads
+     - `contentHistory` records
+
+---
+
+🧪 Final Validation Checklist:
+- [ ] 7 total content items generated
+- [ ] No duplicate products
+- [ ] Each item clearly assigned to one of the 7 niches
+- [ ] Script + rating + product match stored
+- [ ] No 403s or errors during generation
+
+---
+
+📩 Return a markdown summary of the fix:
+- What caused the wrong product duplication
+- How you fixed niche mapping and product selection
+- A sample of the new test run (product + niche + caption)
+
+The goal is to have a **reliable, automated bulk generator that always produces 7 distinct, niche-aligned items**. Please ensure it works before confirming it's ready.
