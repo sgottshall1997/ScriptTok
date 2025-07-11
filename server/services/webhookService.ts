@@ -242,6 +242,24 @@ export class WebhookService {
           console.log(`   📈 Detailed Scores: V:${newPayload.chatgptViralityScore}/${newPayload.claudeViralityScore} C:${newPayload.chatgptClarityScore}/${newPayload.claudeClarityScore} P:${newPayload.chatgptPersuasivenessScore}/${newPayload.claudePersuasivenessScore} Cr:${newPayload.chatgptCreativityScore}/${newPayload.claudeCreativityScore}`);
         }
         console.log('━'.repeat(80));
+        
+        // CRITICAL VALIDATION: Ensure AI evaluation data is present
+        const hasGptRatings = newPayload.ratings?.gpt?.overall !== null && newPayload.ratings?.gpt?.overall !== undefined;
+        const hasClaudeRatings = newPayload.ratings?.claude?.overall !== null && newPayload.ratings?.claude?.overall !== undefined;
+        const evaluationValid = hasGptRatings && hasClaudeRatings && newPayload.evaluationCompleted;
+        
+        console.log(`🛡️ AI EVALUATION VALIDATION:`);
+        console.log(`   ✅ ChatGPT Rating: ${hasGptRatings ? '✓' : '❌'} (${newPayload.ratings?.gpt?.overall || 'MISSING'})`);
+        console.log(`   ✅ Claude Rating: ${hasClaudeRatings ? '✓' : '❌'} (${newPayload.ratings?.claude?.overall || 'MISSING'})`);
+        console.log(`   ✅ Evaluation Complete: ${newPayload.evaluationCompleted ? '✓' : '❌'}`);
+        console.log(`   🎯 VALIDATION STATUS: ${evaluationValid ? '✅ PASSED' : '❌ FAILED'}`);
+        
+        if (!evaluationValid) {
+          console.error('🚨 CRITICAL ERROR: Incomplete AI evaluation data in webhook payload!');
+          console.error('   This should not happen due to fail-safe protection.');
+          console.error('   Payload will still be sent but with incomplete ratings.');
+        }
+        
         console.log('📋 COMPLETE PAYLOAD:');
         console.log(JSON.stringify(newPayload, null, 2));
         console.log('━'.repeat(80));
