@@ -70,15 +70,82 @@ export async function createScheduledJob(req: Request, res: Response) {
   }
 }
 
+// Emergency stop all cron jobs
+export async function emergencyStopAllCronJobs(req: Request, res: Response) {
+  try {
+    console.log(`🚨 EMERGENCY STOP: Stopping all ${activeCronJobs.size} active cron jobs`);
+    
+    let stoppedCount = 0;
+    for (const [jobId, task] of activeCronJobs) {
+      try {
+        task.stop();
+        task.destroy();
+        stoppedCount++;
+        console.log(`🛑 EMERGENCY STOPPED: Cron job ${jobId}`);
+      } catch (error) {
+        console.error(`❌ EMERGENCY STOP FAILED: Job ${jobId}:`, error);
+      }
+    }
+    
+    activeCronJobs.clear();
+    
+    console.log(`✅ EMERGENCY STOP COMPLETE: Stopped ${stoppedCount} cron jobs, cleared all active jobs`);
+    
+    res.json({
+      success: true,
+      message: `Emergency stop completed: ${stoppedCount} cron jobs stopped`,
+      stoppedCount
+    });
+  } catch (error) {
+    console.error('❌ EMERGENCY STOP ERROR:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to emergency stop cron jobs'
+    });
+  }
+}
+
+// Get active cron jobs status
+export async function getActiveCronJobsStatus(req: Request, res: Response) {
+  try {
+    const activeJobs = [];
+    for (const [jobId, task] of activeCronJobs) {
+      activeJobs.push({
+        jobId,
+        running: task.running,
+        destroyed: task.destroyed
+      });
+    }
+    
+    res.json({
+      success: true,
+      totalActiveCronJobs: activeCronJobs.size,
+      activeJobs
+    });
+  } catch (error) {
+    console.error('Error getting cron jobs status:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get cron jobs status'
+    });
+  }
+}
+
 // Update a scheduled job
 export async function updateScheduledJob(req: Request, res: Response) {
   try {
     const jobId = parseInt(req.params.id);
     const userId = 1; // For now, hardcode user ID
 
-    // Stop existing cron job if it exists
+    // 🛑 CRITICAL FIX: Properly stop old cron job before creating new one
+    console.log(`🔄 UPDATING CRON: Job ${jobId} - stopping existing cron job`);
     if (activeCronJobs.has(jobId)) {
-      activeCronJobs.get(jobId)?.stop();
+      const existingTask = activeCronJobs.get(jobId);
+      if (existingTask) {
+        existingTask.stop();
+        existingTask.destroy();
+        console.log(`✅ OLD CRON DESTROYED: Stopped and destroyed existing cron for job ${jobId}`);
+      }
       activeCronJobs.delete(jobId);
     }
 
@@ -103,9 +170,12 @@ export async function updateScheduledJob(req: Request, res: Response) {
       });
     }
 
-    // Restart cron job if it's active
+    // Start the new cron job if the job is active
     if (updatedJob.isActive) {
+      console.log(`🆕 CREATING NEW CRON: Starting new cron job for updated job ${jobId}`);
       await startCronJob(updatedJob);
+    } else {
+      console.log(`⚠️ JOB INACTIVE: Job ${jobId} is not active, skipping cron creation`);
     }
 
     res.json({
@@ -127,9 +197,15 @@ export async function deleteScheduledJob(req: Request, res: Response) {
     const jobId = parseInt(req.params.id);
     const userId = 1; // For now, hardcode user ID
 
-    // Stop the cron job if it exists
+    // 🛑 CRITICAL FIX: Properly stop and destroy cron job
+    console.log(`🗑️ DELETING CRON: Job ${jobId} - stopping and destroying cron job`);
     if (activeCronJobs.has(jobId)) {
-      activeCronJobs.get(jobId)?.stop();
+      const existingTask = activeCronJobs.get(jobId);
+      if (existingTask) {
+        existingTask.stop();
+        existingTask.destroy();
+        console.log(`✅ CRON DESTROYED: Stopped and destroyed cron for deleted job ${jobId}`);
+      }
       activeCronJobs.delete(jobId);
     }
 
@@ -219,7 +295,22 @@ function calculateNextRunTime(scheduleTime: string, timezone: string): Date {
 
 // Helper function to start a cron job
 async function startCronJob(job: any) {
-  if (!job.isActive) return;
+  if (!job.isActive) {
+    console.log(`⚠️ CRON START SKIPPED: Job "${job.name}" (ID: ${job.id}) is not active`);
+    return;
+  }
+
+  // 🛑 CRITICAL FIX: Always stop existing cron job before creating new one
+  if (activeCronJobs.has(job.id)) {
+    console.log(`🛑 STOPPING EXISTING CRON: Found existing cron job for ID ${job.id}, stopping it first`);
+    const existingTask = activeCronJobs.get(job.id);
+    if (existingTask) {
+      existingTask.stop();
+      existingTask.destroy();
+      console.log(`✅ EXISTING CRON DESTROYED: Successfully stopped and destroyed cron job for ID ${job.id}`);
+    }
+    activeCronJobs.delete(job.id);
+  }
 
   // 🚫 CRITICAL SAFEGUARD: Check if scheduled generation is allowed
   const { validateGenerationRequest, detectGenerationContext } = await import('../config/generation-safeguards');
@@ -243,14 +334,15 @@ async function startCronJob(job: any) {
   const [hours, minutes] = job.scheduleTime.split(':').map(Number);
   const cronExpression = `${minutes} ${hours} * * *`;
 
-  console.log(`📅 Starting scheduled job "${job.name}" with cron: ${cronExpression}`);
+  console.log(`📅 CREATING NEW CRON: Job "${job.name}" (ID: ${job.id}) with cron: ${cronExpression}`);
 
   const task = cron.schedule(cronExpression, async () => {
-    console.log(`🔄 Executing scheduled job: ${job.name}`);
+    console.log(`🔄 CRON EXECUTION: Starting scheduled job "${job.name}" (ID: ${job.id})`);
     try {
       await executeScheduledJob(job);
+      console.log(`✅ CRON COMPLETED: Successfully executed job "${job.name}" (ID: ${job.id})`);
     } catch (error) {
-      console.error(`❌ Error executing scheduled job ${job.name}:`, error);
+      console.error(`❌ CRON ERROR: Failed executing job "${job.name}" (ID: ${job.id}):`, error);
     }
   }, {
     scheduled: true,
@@ -258,6 +350,7 @@ async function startCronJob(job: any) {
   });
 
   activeCronJobs.set(job.id, task);
+  console.log(`✅ CRON STARTED: New cron job created and stored for ID ${job.id}. Total active cron jobs: ${activeCronJobs.size}`);
 }
 
 // Helper function to execute a scheduled job
@@ -389,6 +482,22 @@ export async function initializeScheduledJobs() {
       return;
     }
     
+    // 🛑 CRITICAL FIX: Clear any existing cron jobs to prevent duplicates
+    if (activeCronJobs.size > 0) {
+      console.log(`🧹 STARTUP CLEANUP: Found ${activeCronJobs.size} existing cron jobs, clearing them first`);
+      for (const [jobId, task] of activeCronJobs) {
+        try {
+          task.stop();
+          task.destroy();
+          console.log(`🗑️ STARTUP CLEANUP: Stopped existing cron job ${jobId}`);
+        } catch (error) {
+          console.error(`❌ STARTUP CLEANUP ERROR: Job ${jobId}:`, error);
+        }
+      }
+      activeCronJobs.clear();
+      console.log('✅ STARTUP CLEANUP: All existing cron jobs cleared');
+    }
+    
     const activeJobs = await db
       .select()
       .from(scheduledBulkJobs)
@@ -398,7 +507,7 @@ export async function initializeScheduledJobs() {
       await startCronJob(job);
     }
 
-    console.log(`📅 Initialized ${activeJobs.length} scheduled jobs`);
+    console.log(`📅 INITIALIZED: ${activeJobs.length} scheduled jobs, total active cron jobs: ${activeCronJobs.size}`);
   } catch (error) {
     console.error('Error initializing scheduled jobs:', error);
   }

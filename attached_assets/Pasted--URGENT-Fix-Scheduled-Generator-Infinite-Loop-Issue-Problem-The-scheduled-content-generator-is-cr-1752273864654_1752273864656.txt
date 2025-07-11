@@ -1,0 +1,50 @@
+
+URGENT: Fix Scheduled Generator Infinite Loop Issue
+
+Problem: The scheduled content generator is creating multiple duplicate cron jobs that run simultaneously, causing repeated content generation. Each time a scheduled job is updated or restarted, a new cron task is created without properly cleaning up the old one.
+
+Root Causes:
+
+activeCronJobs.set(job.id, task) overwrites the Map entry but doesn't stop the previous cron task
+Multiple cron jobs can exist for the same scheduled job ID
+Server restart initializes all active jobs without checking if they're already running
+No proper cleanup mechanism for stopping all cron jobs
+Required Fixes:
+
+Fix startCronJob function in server/api/scheduled-bulk-generation.ts:
+
+ALWAYS stop existing cron job before creating new one
+Properly destroy the old cron task
+Add logging to track cron job lifecycle
+Fix updateScheduledJob function:
+
+Ensure old cron job is completely stopped before creating new one
+Add validation to prevent duplicate cron jobs
+Add emergency stop mechanism:
+
+Create function to stop ALL active cron jobs immediately
+Add API endpoint to emergency stop all scheduled generation
+Add startup cleanup to prevent duplicate jobs
+Enhance cron job management:
+
+Add unique identifiers for each cron task
+Implement proper lifecycle management
+Add monitoring for active cron jobs count
+Add safeguards:
+
+Prevent starting new cron job if one already exists for that job ID
+Add maximum concurrent cron jobs limit
+Add automatic cleanup on server shutdown
+Expected Outcome:
+
+Only ONE cron job should exist per scheduled job entry
+Stopping/updating a scheduled job should completely remove the old cron task
+Server restart should not create duplicate cron jobs
+Emergency stop functionality to immediately halt all scheduled generation
+Test Requirements:
+
+Verify only one cron job exists per scheduled job after restart
+Test that updating a scheduled job stops the old cron completely
+Confirm emergency stop works to halt all generation immediately
+Validate no zombie cron processes remain after stopping jobs
+Please implement these fixes with proper error handling and comprehensive logging to track the cron job lifecycle.
