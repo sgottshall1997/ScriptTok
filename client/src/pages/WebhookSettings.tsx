@@ -321,6 +321,7 @@ const WebhookSettings = () => {
                 <li><strong>model:</strong> AI model used (ChatGPT or Claude)</li>
                 <li><strong>contentFormat:</strong> Format type (Regular Format or Spartan Format)</li>
                 <li><strong>postType:</strong> Content type (reel, post, etc.)</li>
+                <li><strong>topRatedStyleUsed:</strong> Whether smart style learning was enabled</li>
                 <li><strong>timestamp:</strong> Generation timestamp</li>
               </ul>
             </div>
@@ -343,6 +344,7 @@ const WebhookSettings = () => {
                 model: "Claude",
                 contentFormat: "Regular Format",
                 postType: "reel",
+                topRatedStyleUsed: true,
                 timestamp: new Date().toISOString()
               }, null, 2)}
             </div>

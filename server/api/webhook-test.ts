@@ -38,6 +38,7 @@ router.post('/', async (req, res) => {
       model: "Claude", // Test with Claude model
       contentFormat: "Spartan Format", // Test with Spartan format
       postType: "reel",
+      topRatedStyleUsed: true, // Test with smart style enabled
       timestamp: new Date().toISOString()
     };
     

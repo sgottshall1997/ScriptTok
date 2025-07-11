@@ -687,6 +687,15 @@ GlowBot is a comprehensive AI-powered content generation platform designed for a
   - ✅ **Enhanced Logging**: Server-side webhook logging now includes AI model and content format for comprehensive tracking
   - ✅ **Complete CSV Compatibility**: All webhook fields properly structured for Google Sheets/Make.com automation workflows
   - ✅ **Multi-dimensional Tracking**: External systems can now track content by niche × tone × template × platform × AI model × content format
+- July 11, 2025. **TopRatedStyleUsed Webhook Field Integration**: Complete smart style tracking in webhook payloads for external analytics:
+  - ✅ **Smart Style Tracking**: Added `topRatedStyleUsed` boolean field to all webhook payloads across testing, unified, and automated generators
+  - ✅ **Webhook Test Enhancement**: Test webhook endpoint includes topRatedStyleUsed field set to true for comprehensive testing
+  - ✅ **Unified Generator Integration**: Single content generator webhook includes useSmartStyle parameter in topRatedStyleUsed field
+  - ✅ **Automated Bulk Integration**: Automated bulk generator properly passes smart style usage from job configuration to webhook metadata
+  - ✅ **Debug Panel Enhancement**: WebhookDebugPanel displays Smart Style status with green/gray color-coded badges for easy identification
+  - ✅ **Documentation Update**: WebhookSettings page includes topRatedStyleUsed field description and example payload with all 19 webhook fields
+  - ✅ **External Analytics Support**: Make.com and Google Sheets can now track smart style learning usage across all content generation workflows
+  - ✅ **Complete Tracking Dimensions**: Full webhook payload now supports niche × tone × template × platform × AI model × content format × smart style combinations
 
 ## User Preferences
 

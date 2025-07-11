@@ -503,7 +503,7 @@ async function processAutomatedBulkJob(
                           jobId: savedContent?.bulkJobId || sessionId,
                           affiliateUrl: affiliateLink,
                           affiliateLink: affiliateLink,
-                          topRatedStyleUsed: '',
+                          topRatedStyleUsed: jobData.useSmartStyle || false,
                           aiModel: aiModel,
                           contentFormat: contentFormat,
                           useSpartanFormat: useSpartanFormat

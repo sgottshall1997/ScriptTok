@@ -23,6 +23,7 @@ interface WebhookPayload {
   model: string; // AI model (ChatGPT or Claude)
   contentFormat: string; // Content format (Regular Format or Spartan Format)
   postType: string;
+  topRatedStyleUsed: boolean; // Whether smart style was used
   timestamp: string;
 }
 
@@ -168,7 +169,7 @@ const WebhookDebugPanel: React.FC<WebhookDebugPanelProps> = ({ lastPayload }) =>
               </div>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 text-sm">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 text-sm">
               <div>
                 <span className="font-medium text-gray-700">Platform:</span>
                 <p className="text-purple-700 capitalize">{mostRecentPayload.platform}</p>
@@ -196,6 +197,12 @@ const WebhookDebugPanel: React.FC<WebhookDebugPanelProps> = ({ lastPayload }) =>
               <div>
                 <span className="font-medium text-gray-700">Script:</span>
                 <p className="text-gray-600 truncate">{getPayloadPreview(mostRecentPayload).script}</p>
+              </div>
+              <div>
+                <span className="font-medium text-gray-700">Smart Style:</span>
+                <Badge className={mostRecentPayload.topRatedStyleUsed ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-600'}>
+                  {mostRecentPayload.topRatedStyleUsed ? 'Yes' : 'No'}
+                </Badge>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Affiliate:</span>

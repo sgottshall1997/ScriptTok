@@ -162,6 +162,7 @@ export class WebhookService {
           model: data.metadata?.aiModel === 'chatgpt' ? 'ChatGPT' : data.metadata?.aiModel === 'claude' ? 'Claude' : 'ChatGPT', // Transform to display names
           contentFormat: data.metadata?.contentFormat || 'Regular Format', // Either 'Regular Format' or 'Spartan Format'
           postType: platformData.type || 'reel',
+          topRatedStyleUsed: data.metadata?.useSmartStyle || false, // Include smart style tracking
           timestamp: new Date().toISOString()
         };
 
