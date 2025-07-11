@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import { trackEvent } from "@/lib/analytics";
 
 const Dashboard = () => {
   const { toast } = useToast();
