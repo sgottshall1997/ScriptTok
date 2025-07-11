@@ -60,6 +60,11 @@ const AI_MODELS = [
   { id: 'claude', name: 'Claude', color: 'bg-orange-600 text-white' },
 ];
 
+const CONTENT_FORMATS = [
+  { id: 'regular', name: 'Regular Format', color: 'bg-blue-600 text-white' },
+  { id: 'spartan', name: 'Spartan Format', color: 'bg-gray-700 text-white' },
+];
+
 interface AutomatedBulkGeneratorProps {
   onJobCreated?: (jobData: any) => void;
 }
@@ -70,6 +75,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
   const [selectedAiModels, setSelectedAiModels] = useState<string[]>(['chatgpt']);
+  const [selectedContentFormats, setSelectedContentFormats] = useState<string[]>(['regular']);
   const [useExistingProducts, setUseExistingProducts] = useState(true);
   const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
   const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
@@ -228,8 +234,16 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
     );
   };
 
+  const handleContentFormatToggle = (formatId: string) => {
+    setSelectedContentFormats(prev => 
+      prev.includes(formatId) 
+        ? prev.filter(id => id !== formatId)
+        : [...prev, formatId]
+    );
+  };
+
   const calculateTotalVariations = () => {
-    return selectedNiches.length * selectedTones.length * selectedTemplates.length * selectedAiModels.length;
+    return selectedNiches.length * selectedTones.length * selectedTemplates.length * selectedAiModels.length * selectedContentFormats.length;
   };
 
   const startAutomatedGeneration = () => {
@@ -242,10 +256,10 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       return;
     }
 
-    if (selectedTones.length === 0 || selectedTemplates.length === 0 || selectedPlatforms.length === 0 || selectedAiModels.length === 0) {
+    if (selectedTones.length === 0 || selectedTemplates.length === 0 || selectedPlatforms.length === 0 || selectedAiModels.length === 0 || selectedContentFormats.length === 0) {
       toast({
         title: "❌ Incomplete Selection",
-        description: "Please select at least one tone, template, platform, and AI model",
+        description: "Please select at least one tone, template, platform, AI model, and content format",
         variant: "destructive",
       });
       return;
@@ -257,6 +271,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
       templates: selectedTemplates,
       platforms: selectedPlatforms,
       aiModels: selectedAiModels,
+      contentFormats: selectedContentFormats,
       useExistingProducts,
       generateAffiliateLinks,
       affiliateId: generateAffiliateLinks && !useManualAffiliateLinks ? affiliateId : undefined,
@@ -586,6 +601,42 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </div>
         </div>
 
+        <Separator />
+
+        {/* Content Format Selection */}
+        <div className="space-y-3">
+          <div className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-purple-600" />
+            <h3 className="font-semibold">Content Formats ({selectedContentFormats.length})</h3>
+            <span className="text-sm text-gray-500">Select formats to generate different content styles</span>
+          </div>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {CONTENT_FORMATS.map((format) => (
+              <div key={format.id} className="flex items-center space-x-2">
+                <Checkbox
+                  id={format.id}
+                  checked={selectedContentFormats.includes(format.id)}
+                  onCheckedChange={() => handleContentFormatToggle(format.id)}
+                />
+                <Label htmlFor={format.id} className="cursor-pointer">
+                  <Badge className={format.color}>
+                    {format.name}
+                  </Badge>
+                </Label>
+              </div>
+            ))}
+          </div>
+          
+          <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
+            <div className="font-medium mb-1">Format Descriptions:</div>
+            <div className="space-y-1">
+              <div><span className="font-medium">Regular Format:</span> Full-featured content with emojis, engaging language, and creative elements</div>
+              <div><span className="font-medium">Spartan Format:</span> Clean, professional content with direct language and no fluff words</div>
+            </div>
+          </div>
+        </div>
+
         {/* Generation Summary */}
         <Card className="bg-gray-50 border-gray-200">
           <CardContent className="p-4">
@@ -604,7 +655,7 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
                 <p className="text-sm text-gray-600">Auto-Selected Products</p>
               </div>
               <div>
-                <p className="text-2xl font-bold text-green-600">{selectedTones.length * selectedTemplates.length * selectedAiModels.length}</p>
+                <p className="text-2xl font-bold text-green-600">{selectedTones.length * selectedTemplates.length * selectedAiModels.length * selectedContentFormats.length}</p>
                 <p className="text-sm text-gray-600">Variations per Product</p>
               </div>
               <div>

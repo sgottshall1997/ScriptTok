@@ -52,6 +52,7 @@ const automatedBulkSchema = z.object({
   templates: z.array(z.string()).min(1, "At least one template must be selected"),
   platforms: z.array(z.string()).min(1, "At least one platform must be selected"),
   aiModels: z.array(z.string()).min(1, "At least one AI model must be selected").default(["chatgpt"]),
+  contentFormats: z.array(z.string()).min(1, "At least one content format must be selected").default(["regular"]),
   useExistingProducts: z.boolean().default(true),
   generateAffiliateLinks: z.boolean().default(false),
   affiliateId: z.string().optional(),
@@ -200,8 +201,8 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
       });
     }
     
-    // Calculate total variations per product including AI models
-    const variationsPerProduct = validatedData.tones.length * validatedData.templates.length * validatedData.aiModels.length;
+    // Calculate total variations per product including AI models and content formats
+    const variationsPerProduct = validatedData.tones.length * validatedData.templates.length * validatedData.aiModels.length * validatedData.contentFormats.length;
     const totalVariations = totalSelectedProducts * variationsPerProduct;
     
     // Create bulk job record
@@ -306,28 +307,31 @@ async function processAutomatedBulkJob(
           };
         }
 
-        // Step 3: Generate content for each tone/template/AI model combination
+        // Step 3: Generate content for each tone/template/AI model/content format combination
         for (const tone of jobData.tones) {
           for (const template of jobData.templates) {
             // Generate content for each selected AI model
             for (const aiModel of jobData.aiModels) {
-              try {
-                const startTime = Date.now();
-                
-                // Step 4: Generate comprehensive content using viral inspiration with specific AI model
-                const generatedContent = await generateComprehensiveContent({
-                  productName,
-                  niche,
-                  tone,
-                  template,
-                  platforms: jobData.platforms,
-                  viralInspiration,
-                  productData,
-                  useSmartStyle: jobData.useSmartStyle,
-                  useSpartanFormat: jobData.useSpartanFormat,
-                  userId: jobData.userId,
-                  aiModel: aiModel
-                });
+              // Generate content for each selected content format
+              for (const contentFormat of jobData.contentFormats) {
+                try {
+                  const startTime = Date.now();
+                  const useSpartanFormat = contentFormat === 'spartan';
+                  
+                  // Step 4: Generate comprehensive content using viral inspiration with specific AI model and format
+                  const generatedContent = await generateComprehensiveContent({
+                    productName,
+                    niche,
+                    tone,
+                    template,
+                    platforms: jobData.platforms,
+                    viralInspiration,
+                    productData,
+                    useSmartStyle: jobData.useSmartStyle,
+                    useSpartanFormat: useSpartanFormat,
+                    userId: jobData.userId,
+                    aiModel: aiModel
+                  });
               
               const generationTime = Date.now() - startTime;
               
@@ -446,7 +450,7 @@ async function processAutomatedBulkJob(
                     contentType: template,
                     tone,
                     productName,
-                    promptText: `Bulk generated content for ${productName} in ${niche} niche using ${tone} tone and ${template} template`,
+                    promptText: `Bulk generated content for ${productName} in ${niche} niche using ${tone} tone and ${template} template with ${aiModel} model in ${contentFormat} format`,
                     outputText,
                     platformsSelected: platforms,
                     generatedOutput: {
@@ -499,7 +503,10 @@ async function processAutomatedBulkJob(
                           jobId: savedContent?.bulkJobId || sessionId,
                           affiliateUrl: affiliateLink,
                           affiliateLink: affiliateLink,
-                          topRatedStyleUsed: ''
+                          topRatedStyleUsed: '',
+                          aiModel: aiModel,
+                          contentFormat: contentFormat,
+                          useSpartanFormat: useSpartanFormat
                         },
                         contentData: {
                           fullOutput: outputText,
@@ -532,11 +539,11 @@ async function processAutomatedBulkJob(
                   })
                   .where(eq(bulkContentJobs.id, bulkJobId));
                 
-                console.log(`✅ Generated content for ${productName} - ${tone}/${template}/${aiModel} (${completedCount} total)`);
+                console.log(`✅ Generated content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat} (${completedCount} total)`);
               }
 
             } catch (contentError) {
-              console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}:`, contentError);
+              console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat}:`, contentError);
               
               // Log error but continue with other variations
               await db.update(bulkContentJobs)
@@ -551,6 +558,7 @@ async function processAutomatedBulkJob(
                 })
                 .where(eq(bulkContentJobs.id, bulkJobId));
             }
+            } // End content format loop
             } // End AI model loop
           } // End template loop
         } // End tone loop
