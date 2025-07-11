@@ -222,7 +222,7 @@ async function startCronJob(job: any) {
   if (!job.isActive) return;
 
   // 🚫 CRITICAL SAFEGUARD: Check if scheduled generation is allowed
-  const { validateGenerationRequest } = await import('../config/generation-safeguards');
+  const { validateGenerationRequest, detectGenerationContext } = await import('../config/generation-safeguards');
   const mockRequest = {
     headers: {
       'user-agent': 'scheduled-job-runner',
@@ -230,7 +230,8 @@ async function startCronJob(job: any) {
     }
   };
   
-  const validation = validateGenerationRequest(mockRequest);
+  const context = detectGenerationContext(mockRequest);
+  const validation = validateGenerationRequest(context);
   
   if (!validation.allowed) {
     console.log(`🚫 SCHEDULED JOB STARTUP BLOCKED: ${validation.reason}`);
@@ -265,7 +266,7 @@ async function executeScheduledJob(job: any) {
     console.log(`🚀 Attempting scheduled bulk generation: ${job.name}`);
     
     // 🚫 CRITICAL SAFEGUARD: Apply generation safeguards to scheduled jobs
-    const { validateGenerationRequest } = await import('../config/generation-safeguards');
+    const { validateGenerationRequest, detectGenerationContext } = await import('../config/generation-safeguards');
     const mockRequest = {
       headers: {
         'user-agent': 'scheduled-job-runner',
@@ -273,7 +274,8 @@ async function executeScheduledJob(job: any) {
       }
     };
     
-    const validation = validateGenerationRequest(mockRequest);
+    const context = detectGenerationContext(mockRequest);
+    const validation = validateGenerationRequest(context);
     
     if (!validation.allowed) {
       console.log(`🚫 SCHEDULED JOB BLOCKED: ${validation.reason}`);
@@ -370,7 +372,7 @@ export async function initializeScheduledJobs() {
     console.log('📅 Initializing scheduled bulk generation jobs...');
     
     // 🚫 CRITICAL SAFEGUARD: Check if scheduled generation is allowed
-    const { validateGenerationRequest } = await import('../config/generation-safeguards');
+    const { validateGenerationRequest, detectGenerationContext } = await import('../config/generation-safeguards');
     const mockRequest = {
       headers: {
         'user-agent': 'scheduled-job-init',
@@ -378,7 +380,8 @@ export async function initializeScheduledJobs() {
       }
     };
     
-    const validation = validateGenerationRequest(mockRequest);
+    const context = detectGenerationContext(mockRequest);
+    const validation = validateGenerationRequest(context);
     
     if (!validation.allowed) {
       console.log(`🚫 SCHEDULED JOB INITIALIZATION BLOCKED: ${validation.reason}`);

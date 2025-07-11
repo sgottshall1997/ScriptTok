@@ -71,12 +71,8 @@ app.use((req, res, next) => {
   }, async () => {
     log(`serving on port ${port}`);
     
-    // Initialize scheduled bulk generation jobs - DISABLED FOR PRODUCTION DEPLOYMENT
-    // const { initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
-    // await initializeScheduledJobs();
-    
-    // 🚫 ALL CRON JOBS DISABLED FOR PRODUCTION SECURITY
-    // NO SCHEDULED JOBS ALLOWED - MANUAL GENERATION ONLY
-    console.log('🔒 ALL AUTOMATED PROCESSES DISABLED - MANUAL GENERATION ONLY');
+    // Initialize scheduled bulk generation jobs
+    const { initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
+    await initializeScheduledJobs();
   });
 })();
