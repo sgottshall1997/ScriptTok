@@ -67,6 +67,7 @@ import {
 
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
 import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
+import syncRatingsRouter from "./api/sync-ratings";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Redirect system for affiliate tracking
@@ -149,6 +150,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/ai-analytics', aiAnalyticsRouter);
   app.use('/api/webhooks', webhooksRouter);
   app.use('/api/webhooks/test', webhookTestRouter);
+  app.use('/api/sync-ratings', syncRatingsRouter);
   app.use('/api/post/send-to-make', sendToMakeRouter);
   app.use('/api/post/send-batch', sendBatchRouter);
   app.use('/api/force-refresh', forceRefreshRouter);

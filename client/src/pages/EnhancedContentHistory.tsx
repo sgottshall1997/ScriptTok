@@ -30,6 +30,7 @@ import { useQuery } from '@tanstack/react-query';
 import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
+import SyncRatingsButton from '@/components/SyncRatingsButton';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -330,6 +331,9 @@ const EnhancedContentHistory = () => {
         <div className="mb-6">
           <SmartLearningToggle userId={1} />
         </div>
+
+        {/* Sync Ratings to Google Sheet Button */}
+        <SyncRatingsButton className="mb-6" />
 
         {/* Filters */}
         <div className="flex flex-col md:flex-row gap-4 mb-6">

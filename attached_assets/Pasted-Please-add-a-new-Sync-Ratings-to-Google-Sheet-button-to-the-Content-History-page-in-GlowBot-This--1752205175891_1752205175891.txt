@@ -1,0 +1,66 @@
+Please add a new "Sync Ratings to Google Sheet" button to the Content History page in GlowBot. This feature should retroactively send TikTok, IG, YT, X, and Full Output Ratings from rated content items into the existing Google Sheet using the following logic:
+
+---
+
+🔁 FUNCTIONALITY:
+
+1. ✅ Add a new button: “Sync Ratings to Google Sheet”
+   - Place it at the top of the Content History page
+   - Use a spinner and success/fail feedback on press
+
+2. ✅ Identify Records by Unique ID
+   - Each content item must have a `contentId` field
+   - This can be based on:
+     ```ts
+     const contentId = hash(`${product}-${timestamp}-${tone}-${template}`);
+     ```
+   - This field must also exist in the Google Sheet (or be matched via `script` text fallback if no `contentId` exists)
+
+3. ✅ Loop Through History
+   - For each item in Content History:
+     - If the item has been rated (i.e., any of the following are defined):
+       - `tiktokRating`, `igRating`, `ytRating`, `xRating`, `fullOutputRating`
+     - Attempt to match that item in the Google Sheet via:
+       - `contentId` OR `script` exact match (fallback)
+
+4. ✅ Update Existing Sheet Rows
+   - If a match is found:
+     - Use Google Sheets API or Make.com `Update Row` module to update only:
+       - `TikTok Rating`
+       - `IG Rating`
+       - `YT Rating`
+       - `X Rating`
+       - `Full Output Rating`
+     - DO NOT overwrite other values
+
+5. ✅ Skip + Log Unmatched
+   - If no match is found:
+     - Add to a log called `UnmatchedRatingsLog`
+     - Include: `product`, `timestamp`, `tone`, `template`, `ratings`, and `script`
+
+6. ✅ Prevent Duplicates
+   - Do not call “Add Row” — this sync is strictly for updating existing rows only
+   - Protect against double writes using an `isSynced` flag in local state or metadata
+
+---
+
+⚙️ TECH IMPLEMENTATION NOTES:
+
+- The backend should expose an endpoint like `POST /api/sync-ratings-to-sheet`
+- The frontend button should call this with the full list of rated history items
+- If using Make.com, pass batch payloads through webhook and use iterator + Google Sheets “Search Rows” + “Update Row” module chain
+
+---
+
+🧪 QA BEFORE SHIPPING:
+- Test sync on 5+ rated entries
+- Validate that only ratings columns are updated
+- Confirm unmatched items do not alter the sheet
+- Ensure success/fail toast on completion
+- Add console logging temporarily for dev insight
+
+---
+
+This system should be scoped to rating fields only and not affect content, captions, or metadata.
+
+Confirm completion and success once implemented and tested.
