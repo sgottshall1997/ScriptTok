@@ -206,7 +206,11 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       affiliateUrl: config.affiliateUrl,
       customHook: config.customHook,
       model: (typeof mainContent === 'string') ? "gpt-4o" : (mainContent.model || "gpt-4o"),
-      tokens: (typeof mainContent === 'string') ? 0 : (mainContent.tokens || 0),
+      tokens: (typeof mainContent === 'string') ? 0 : (
+        typeof mainContent.tokens === 'object' && mainContent.tokens?.total 
+          ? mainContent.tokens.total 
+          : (typeof mainContent.tokens === 'number' ? mainContent.tokens : 0)
+      ),
       fallbackLevel: (typeof mainContent === 'string') ? 'exact' : (mainContent.fallbackLevel || 'exact'),
       generatedAt: new Date().toISOString()
     };
@@ -234,7 +238,11 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       affiliateLink: config.affiliateUrl,
       viralInspo: viralInspiration,
       modelUsed: (typeof mainContent === 'string') ? "gpt-4o" : (mainContent.model || "gpt-4o"),
-      tokenCount: (typeof mainContent === 'string') ? 0 : (mainContent.tokens || 0)
+      tokenCount: (typeof mainContent === 'string') ? 0 : (
+        typeof mainContent.tokens === 'object' && mainContent.tokens?.total 
+          ? mainContent.tokens.total 
+          : (typeof mainContent.tokens === 'number' ? mainContent.tokens : 0)
+      )
     });
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
