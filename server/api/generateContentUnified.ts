@@ -341,7 +341,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       validation: finalValidation
     };
 
-    // Save to content history
+    // Save to content history with properly structured content
     await storage.saveContentHistory({
       userId: 1, // Default user ID
       sessionId: config.jobId || `single_${Date.now()}`,
@@ -350,16 +350,17 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       tone: config.tone,
       productName: config.productName,
       promptText: `Generated ${config.templateType} content for ${config.productName} in ${config.niche} niche using ${config.tone} tone`,
-      outputText: typeof mainContent === 'string' ? mainContent : mainContent.content,
+      outputText: script, // Use the already extracted script content
       platformsSelected: config.platforms,
       generatedOutput: {
+        content: script, // Store the extracted script content
         hook: config.customHook || viralInspiration?.hook || `Amazing ${config.productName}!`,
+        platform: config.platforms?.join(', ') || 'general',
         niche: config.niche,
-        content: script, // Use the already extracted script content
-        platformCaptions,
+        ...platformCaptions, // Include platform-specific captions
         hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending'],
-        callToAction: `Get your ${config.productName} now!`,
-        affiliateUrl: config.affiliateUrl
+        affiliateLink: config.affiliateUrl,
+        callToAction: `Get your ${config.productName} now!`
       },
       affiliateLink: config.affiliateUrl,
       viralInspo: viralInspiration,
