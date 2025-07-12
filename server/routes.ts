@@ -157,10 +157,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/integrations', apiIntegrationRouter);
   app.use('/api/options', optionsRouter);
   app.use('/api/history', historyRouter);
+  
+  // Content history alias endpoint
+  app.get('/api/content-history', async (req, res) => {
+    const { getAllContentHistory } = await import('./storage');
+    try {
+      const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
+      const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+      
+      const history = await storage.getAllContentHistory(limit, offset);
+      
+      res.json({
+        success: true,
+        history,
+        pagination: {
+          limit,
+          offset,
+          total: history.length
+        }
+      });
+    } catch (error: any) {
+      console.error('Error fetching content history:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to fetch content history',
+        message: error.message
+      });
+    }
+  });
   app.use('/api/usage-summary', usageSummaryRouter);
   app.use('/api/ai-analytics', aiAnalyticsRouter);
   app.use('/api/webhooks', webhooksRouter);
   app.use('/api/webhooks/test', webhookTestRouter);
+  
+  // Webhook test endpoint
+  app.use('/api/webhook', webhookTestRouter);
   app.use('/api/sync-ratings', syncRatingsRouter);
   app.use('/api/post/send-to-make', sendToMakeRouter);
   app.use('/api/post/send-batch', sendBatchRouter);
