@@ -355,7 +355,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       generatedOutput: {
         hook: config.customHook || viralInspiration?.hook || `Amazing ${config.productName}!`,
         niche: config.niche,
-        content: typeof mainContent === 'string' ? mainContent : mainContent.content,
+        content: script, // Use the already extracted script content
         platformCaptions,
         hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending'],
         callToAction: `Get your ${config.productName} now!`,
