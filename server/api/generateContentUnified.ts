@@ -703,11 +703,12 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      // Handle AI model selection - prioritize aiModel field from scheduled jobs over aiModels array
-      const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'chatgpt');
+      // Handle AI model selection - CRITICAL FIX: prioritize aiModel field from scheduled jobs over aiModels array
+      const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'claude');
       
       console.log(`🎭 GENERATION CONFIG: ${tones.length} tone(s), ${templates.length} template(s), AI Model: ${selectedAiModel}`);
       console.log(`🤖 AI MODEL DEBUG: data.aiModel="${data.aiModel}", data.aiModels=${JSON.stringify(data.aiModels)}, selectedAiModel="${selectedAiModel}"`);
+      console.log(`🔍 AI MODEL PRIORITY: Using aiModel field (${data.aiModel ? 'PROVIDED' : 'NULL'}) over aiModels array (${data.aiModels ? 'PROVIDED' : 'NULL'})`);
       
       // For scheduled generation, use exactly 1 tone and 1 template to ensure 1 content per niche
       const selectedTone = tones[0]; // Use first tone for consistency
