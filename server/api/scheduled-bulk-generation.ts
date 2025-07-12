@@ -4,8 +4,35 @@ import { scheduledBulkJobs, insertScheduledBulkJobSchema } from '../../shared/sc
 import { eq, and } from 'drizzle-orm';
 import cron from 'node-cron';
 
-// Store for active cron jobs
+// Store for active cron jobs with enhanced lifecycle management
 const activeCronJobs = new Map<number, cron.ScheduledTask>();
+
+// Map to prevent overlapping executions
+const executionLocks = new Map<number, boolean>();
+
+// Enhanced cron job lifecycle management
+async function stopAndDestroyCronJob(jobId: number): Promise<void> {
+  if (activeCronJobs.has(jobId)) {
+    console.log(`🛑 STOPPING EXISTING CRON: Found existing cron job for ID ${jobId}, stopping it first`);
+    const existingTask = activeCronJobs.get(jobId);
+    if (existingTask) {
+      try {
+        existingTask.stop();
+        existingTask.destroy();
+        console.log(`✅ EXISTING CRON DESTROYED: Successfully stopped and destroyed cron job for ID ${jobId}`);
+      } catch (error) {
+        console.error(`⚠️ CRON CLEANUP ERROR: Failed to stop cron job ${jobId}:`, error);
+      }
+    }
+    activeCronJobs.delete(jobId);
+  }
+  
+  // Clear any execution locks
+  if (executionLocks.has(jobId)) {
+    executionLocks.delete(jobId);
+    console.log(`🔓 CLEANUP: Cleared execution lock for job ${jobId}`);
+  }
+}
 
 // Get all scheduled jobs for a user
 export async function getScheduledJobs(req: Request, res: Response) {
@@ -162,17 +189,9 @@ export async function updateScheduledJob(req: Request, res: Response) {
     const jobId = parseInt(req.params.id);
     const userId = 1; // For now, hardcode user ID
 
-    // 🛑 CRITICAL FIX: Properly stop old cron job before creating new one
+    // 🛑 CRITICAL FIX: Use enhanced lifecycle management
     console.log(`🔄 UPDATING CRON: Job ${jobId} - stopping existing cron job`);
-    if (activeCronJobs.has(jobId)) {
-      const existingTask = activeCronJobs.get(jobId);
-      if (existingTask) {
-        existingTask.stop();
-        existingTask.destroy();
-        console.log(`✅ OLD CRON DESTROYED: Stopped and destroyed existing cron for job ${jobId}`);
-      }
-      activeCronJobs.delete(jobId);
-    }
+    await stopAndDestroyCronJob(jobId);
 
     // Update the job
     const [updatedJob] = await db
@@ -222,17 +241,9 @@ export async function deleteScheduledJob(req: Request, res: Response) {
     const jobId = parseInt(req.params.id);
     const userId = 1; // For now, hardcode user ID
 
-    // 🛑 CRITICAL FIX: Properly stop and destroy cron job
+    // 🛑 CRITICAL FIX: Use enhanced lifecycle management
     console.log(`🗑️ DELETING CRON: Job ${jobId} - stopping and destroying cron job`);
-    if (activeCronJobs.has(jobId)) {
-      const existingTask = activeCronJobs.get(jobId);
-      if (existingTask) {
-        existingTask.stop();
-        existingTask.destroy();
-        console.log(`✅ CRON DESTROYED: Stopped and destroyed cron for deleted job ${jobId}`);
-      }
-      activeCronJobs.delete(jobId);
-    }
+    await stopAndDestroyCronJob(jobId);
 
     // Delete the job
     const deletedJob = await db
@@ -318,23 +329,26 @@ function calculateNextRunTime(scheduleTime: string, timezone: string): Date {
   return nextRun;
 }
 
-// Helper function to start a cron job
+// Helper function to start a cron job with comprehensive lifecycle management
 async function startCronJob(job: any) {
   if (!job.isActive) {
     console.log(`⚠️ CRON START SKIPPED: Job "${job.name}" (ID: ${job.id}) is not active`);
     return;
   }
 
-  // 🛑 CRITICAL FIX: Always stop existing cron job before creating new one
+  // 🛑 CRITICAL FIX: Always stop and destroy existing cron job before creating new one
+  await stopAndDestroyCronJob(job.id);
+  
+  // 🕒 RACE CONDITION PREVENTION: Add small delay to ensure cleanup is complete
+  await new Promise(resolve => setTimeout(resolve, 100));
+  
+  // 🔒 ADDITIONAL SAFEGUARD: Verify no existing cron job before proceeding
   if (activeCronJobs.has(job.id)) {
-    console.log(`🛑 STOPPING EXISTING CRON: Found existing cron job for ID ${job.id}, stopping it first`);
-    const existingTask = activeCronJobs.get(job.id);
-    if (existingTask) {
-      existingTask.stop();
-      existingTask.destroy();
-      console.log(`✅ EXISTING CRON DESTROYED: Successfully stopped and destroyed cron job for ID ${job.id}`);
-    }
+    console.log(`⚠️ RACE CONDITION DETECTED: Job ${job.id} still exists after cleanup, forcing removal`);
     activeCronJobs.delete(job.id);
+    if (executionLocks.has(job.id)) {
+      executionLocks.delete(job.id);
+    }
   }
 
   // 🚫 CRITICAL SAFEGUARD: Check if scheduled generation is allowed
@@ -363,11 +377,24 @@ async function startCronJob(job: any) {
 
   const task = cron.schedule(cronExpression, async () => {
     console.log(`🔄 CRON EXECUTION: Starting scheduled job "${job.name}" (ID: ${job.id})`);
+    console.log(`🔒 EXECUTION LOCK: Checking for overlapping executions for job ${job.id}`);
+    
+    // Prevent overlapping executions
+    if (executionLocks.has(job.id)) {
+      console.log(`⚠️ EXECUTION BLOCKED: Job ${job.id} is already running, skipping this execution`);
+      return;
+    }
+    
+    executionLocks.set(job.id, true);
+    
     try {
       await executeScheduledJob(job);
       console.log(`✅ CRON COMPLETED: Successfully executed job "${job.name}" (ID: ${job.id})`);
     } catch (error) {
       console.error(`❌ CRON ERROR: Failed executing job "${job.name}" (ID: ${job.id}):`, error);
+    } finally {
+      executionLocks.delete(job.id);
+      console.log(`🔓 EXECUTION UNLOCKED: Released lock for job ${job.id}`);
     }
   }, {
     scheduled: true,
@@ -376,6 +403,11 @@ async function startCronJob(job: any) {
 
   activeCronJobs.set(job.id, task);
   console.log(`✅ CRON STARTED: New cron job created and stored for ID ${job.id}. Total active cron jobs: ${activeCronJobs.size}`);
+  console.log(`📊 CRON LIFECYCLE: Job ${job.id} task registered with proper stop/destroy tracking`);
+  
+  // Add comprehensive logging for cron job lifecycle
+  console.log(`🔍 CRON VERIFICATION: Job ${job.id} scheduled for ${cronExpression} (${job.scheduleTime} in ${job.timezone})`);
+  console.log(`🎯 CRON DETAILS: Running=${task.running}, Destroyed=${task.destroyed}`);
 }
 
 // Helper function to execute a scheduled job

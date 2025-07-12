@@ -71,8 +71,15 @@ app.use((req, res, next) => {
   }, async () => {
     log(`serving on port ${port}`);
     
+    // 🛑 CRITICAL STARTUP CLEANUP: Clear any existing cron jobs before initializing new ones
+    console.log('🧹 SERVER STARTUP: Clearing any existing cron jobs before initialization...');
+    const { stopAllCronJobs, initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
+    await stopAllCronJobs();
+    
+    // Add startup cleanup logging
+    console.log('✅ SERVER STARTUP: Cron job cleanup completed, initializing fresh scheduled jobs...');
+    
     // Initialize scheduled bulk generation jobs
-    const { initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
     await initializeScheduledJobs();
   });
 })();
