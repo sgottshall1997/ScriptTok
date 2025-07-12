@@ -704,12 +704,18 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const templates = data.templates || ['Short-Form Video Script'];
       
       // 🔥 ABSOLUTE CLAUDE ENFORCEMENT - GUARANTEED Claude selection
-      const selectedAiModel = data.aiModel === 'claude' ? 'claude' : (data.aiModel || 'claude');
+      let selectedAiModel = data.aiModel === 'claude' ? 'claude' : (data.aiModel || 'claude');
       
       // Triple verification that Claude is selected when requested
       if (data.aiModel === 'claude' && selectedAiModel !== 'claude') {
         console.error(`🚨 CRITICAL ERROR: Claude requested but not selected! Forcing Claude...`);
         selectedAiModel = 'claude';
+      }
+      
+      // FINAL CLAUDE VERIFICATION - Last chance to ensure Claude is used
+      if (data.aiModel === 'claude') {
+        selectedAiModel = 'claude'; // ABSOLUTE guarantee
+        console.log(`🔥🔥🔥 FINAL CLAUDE LOCK: selectedAiModel FORCED to "claude" - NO EXCEPTIONS`);
       }
       
       console.log(`🚨 CRITICAL UNIFIED GENERATOR AI MODEL DEBUG:`);
