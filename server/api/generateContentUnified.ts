@@ -331,6 +331,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     
     console.log(`🔍 CONTENT EXTRACTION DEBUG: mainContent type: ${typeof mainContent}, extracted script: "${script?.substring(0, 100)}..."`);
     console.log(`🔍 MAIN CONTENT STRUCTURE:`, typeof mainContent === 'object' ? Object.keys(mainContent) : 'primitive');
+    console.log(`🔍 SCRIPT CONTENT TO BE STORED: "${script?.substring(0, 150)}..."`);
+    console.log(`🔍 SCRIPT TYPE:`, typeof script, script ? `Length: ${script.length}` : 'UNDEFINED/NULL');
     const finalValidation = validateGeneratedContent(mainContent, config);
     
     if (!finalValidation.isValid) {
@@ -368,8 +370,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       validation: finalValidation
     };
 
-    // Save to content history with properly structured content
-    await storage.saveContentHistory({
+    // Debug the data being saved to database
+    const saveData = {
       userId: 1, // Default user ID
       sessionId: config.jobId || `single_${Date.now()}`,
       niche: config.niche,
@@ -397,7 +399,15 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           ? mainContent.tokens.total 
           : (typeof mainContent.tokens === 'number' ? mainContent.tokens : 0)
       )
-    });
+    };
+    
+    console.log(`💾 DATABASE SAVE DEBUG - generatedOutput.content type:`, typeof saveData.generatedOutput.content);
+    console.log(`💾 DATABASE SAVE DEBUG - generatedOutput.content preview:`, saveData.generatedOutput.content?.substring(0, 150));
+    console.log(`💾 DATABASE SAVE DEBUG - outputText type:`, typeof saveData.outputText);
+    console.log(`💾 DATABASE SAVE DEBUG - outputText preview:`, saveData.outputText?.substring(0, 150));
+    
+    // Save to content history with properly structured content
+    await storage.saveContentHistory(saveData);
 
     console.log(`✅ Content generated successfully for ${config.productName}`);
     
