@@ -110,8 +110,19 @@ export async function generateWithClaude(
   } catch (error) {
     console.error(`❌ Claude primary model failed:`, error);
     
-    // Try fallback model if enabled
-    if (tryFallbackOnError) {
+    // Check if it's a credit/billing issue
+    const errorMessage = error.message || '';
+    const isCreditsIssue = errorMessage.includes('credit balance') || 
+                          errorMessage.includes('billing') || 
+                          errorMessage.includes('subscription');
+    
+    if (isCreditsIssue) {
+      console.log(`💳 CLAUDE CREDITS ISSUE DETECTED: API credits need restoration`);
+      console.log(`🎯 CLAUDE ROUTING CONFIRMED: System correctly identifies Claude but needs credits`);
+    }
+    
+    // Try fallback model if enabled and not a credits issue
+    if (tryFallbackOnError && !isCreditsIssue) {
       try {
         console.log(`🔄 Attempting Claude fallback model...`);
         const startTime = Date.now();
