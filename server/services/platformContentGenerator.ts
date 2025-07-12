@@ -86,7 +86,7 @@ CRITICAL REQUIREMENTS:` : 'CRITICAL REQUIREMENTS:'}
 - Focus on platform-native language, tone, and engagement strategies
 - NEVER reuse phrases or closely paraphrase existing content
 
-${mainContent ? `\nAVOID REPEATING THIS CONTENT: "${mainContent.substring(0, 200)}..."` : ''}
+${mainContent ? `\nAVOID REPEATING THIS CONTENT: "${typeof mainContent === 'string' ? mainContent.substring(0, 200) : JSON.stringify(mainContent).substring(0, 200)}..."` : ''}
 
 PLATFORM-SPECIFIC REQUIREMENTS:
 `;

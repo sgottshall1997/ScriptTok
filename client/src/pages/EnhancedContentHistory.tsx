@@ -243,9 +243,11 @@ const EnhancedContentHistory = () => {
     }));
   };
 
-  const copyToClipboard = async (text: string, label: string, id: string) => {
+  const copyToClipboard = async (text: string | any, label: string, id: string) => {
     try {
-      await navigator.clipboard.writeText(text);
+      // Ensure text is a string
+      const textToCopy = typeof text === 'string' ? text : JSON.stringify(text, null, 2);
+      await navigator.clipboard.writeText(textToCopy);
       setCopiedItems(prev => ({ ...prev, [id]: true }));
       toast({
         title: "Copied!",
@@ -791,7 +793,9 @@ const EnhancedContentHistory = () => {
                       </Button>
                     </div>
                     <div className="bg-white p-4 rounded border font-mono text-sm whitespace-pre-wrap">
-                      {entry.generatedOutput.content}
+                      {typeof entry.generatedOutput.content === 'string' 
+                        ? entry.generatedOutput.content 
+                        : JSON.stringify(entry.generatedOutput.content, null, 2)}
                     </div>
                   </div>
 
@@ -810,7 +814,9 @@ const EnhancedContentHistory = () => {
                         </Button>
                       </div>
                       <div className="bg-white p-3 rounded border text-sm">
-                        {entry.generatedOutput.hook}
+                        {typeof entry.generatedOutput.hook === 'string' 
+                          ? entry.generatedOutput.hook 
+                          : JSON.stringify(entry.generatedOutput.hook, null, 2)}
                       </div>
                     </div>
                   )}
@@ -904,7 +910,9 @@ const EnhancedContentHistory = () => {
                                 </Button>
                               </div>
                               <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                                {tiktokCaption}
+                                {typeof tiktokCaption === 'string' 
+                                  ? tiktokCaption 
+                                  : JSON.stringify(tiktokCaption, null, 2)}
                               </div>
                             </div>
                           )}
@@ -925,7 +933,9 @@ const EnhancedContentHistory = () => {
                                 </Button>
                               </div>
                               <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                                {instagramCaption}
+                                {typeof instagramCaption === 'string' 
+                                  ? instagramCaption 
+                                  : JSON.stringify(instagramCaption, null, 2)}
                               </div>
                             </div>
                           )}
@@ -946,7 +956,9 @@ const EnhancedContentHistory = () => {
                                 </Button>
                               </div>
                               <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                                {youtubeCaption}
+                                {typeof youtubeCaption === 'string' 
+                                  ? youtubeCaption 
+                                  : JSON.stringify(youtubeCaption, null, 2)}
                               </div>
                             </div>
                           )}
@@ -967,7 +979,9 @@ const EnhancedContentHistory = () => {
                                 </Button>
                               </div>
                               <div className="font-mono text-sm whitespace-pre-wrap bg-gray-50 p-2 rounded">
-                                {twitterCaption}
+                                {typeof twitterCaption === 'string' 
+                                  ? twitterCaption 
+                                  : JSON.stringify(twitterCaption, null, 2)}
                               </div>
                             </div>
                           )}

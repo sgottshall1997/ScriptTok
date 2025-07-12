@@ -223,7 +223,7 @@ export class WebhookService {
         console.log('━'.repeat(80));
         console.log(`📤 Platform: ${platform}`);
         console.log(`🎯 Niche: ${newPayload.niche}`);
-        console.log(`📝 Script Preview: ${newPayload.script.substring(0, 100)}...`);
+        console.log(`📝 Script Preview: ${typeof newPayload.script === 'string' ? newPayload.script.substring(0, 100) : JSON.stringify(newPayload.script).substring(0, 100)}...`);
         console.log(`🔗 Product: ${newPayload.product}`);
         console.log(`🤖 AI Model: ${newPayload.model}`);
         console.log(`📄 Content Format: ${newPayload.contentFormat}`);
