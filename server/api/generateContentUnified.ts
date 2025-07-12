@@ -703,7 +703,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      // Handle AI model selection - CRITICAL FIX: prioritize aiModel field from scheduled jobs over aiModels array
+      // FIXED LOGIC - prioritize direct aiModel field from scheduled jobs
       const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'claude');
       
       console.log(`🎭 GENERATION CONFIG: ${tones.length} tone(s), ${templates.length} template(s), AI Model: ${selectedAiModel}`);
