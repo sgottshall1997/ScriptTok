@@ -457,6 +457,27 @@ async function executeScheduledJob(job: any) {
       })
       .where(eq(scheduledBulkJobs.id, job.id));
 
+    // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT FOR SCHEDULED JOBS 🔥🔥🔥
+    let finalAiModel = job.aiModel || 'claude';
+    
+    // TRIPLE VERIFICATION: Ensure Claude is properly preserved
+    if (job.aiModel === 'claude' && finalAiModel !== 'claude') {
+      console.error(`🚨 CRITICAL CLAUDE ERROR: job.aiModel="${job.aiModel}" but finalAiModel="${finalAiModel}"`);
+      finalAiModel = 'claude'; // FORCE Claude
+    }
+    
+    // FINAL CLAUDE LOCK: Absolute guarantee for scheduled jobs
+    if (job.aiModel === 'claude') {
+      finalAiModel = 'claude';
+      console.log(`🔥🔥🔥 SCHEDULED JOB CLAUDE LOCK: AI model FORCED to "claude" for job "${job.name}"`);
+    }
+    
+    console.log(`🚨🚨🚨 CRITICAL SCHEDULED JOB AI MODEL DEBUG:`);
+    console.log(`   📥 DATABASE job.aiModel: "${job.aiModel}"`);
+    console.log(`   🎯 FINAL AI MODEL FOR PAYLOAD: "${finalAiModel}"`);
+    console.log(`   🔥 THIS MODEL WILL BE USED FOR SCHEDULED GENERATION: ${finalAiModel.toUpperCase()}`);
+    console.log(`   ✅ CLAUDE ENFORCEMENT: ${finalAiModel === 'claude' ? 'ACTIVE' : 'NOT ACTIVE'}`);
+
     // Prepare the request payload for the unified generator
     const payload = {
       mode: 'automated',
@@ -468,7 +489,7 @@ async function executeScheduledJob(job: any) {
       generateAffiliateLinks: job.generateAffiliateLinks,
       useSpartanFormat: job.useSpartanFormat,
       useSmartStyle: job.useSmartStyle,
-      aiModel: job.aiModel || 'claude', // CRITICAL FIX: Pass AI model from scheduled job
+      aiModel: finalAiModel, // GUARANTEED CORRECT AI MODEL
       affiliateId: job.affiliateId,
       webhookUrl: job.webhookUrl,
       sendToMakeWebhook: job.sendToMakeWebhook,

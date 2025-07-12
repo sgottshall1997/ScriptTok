@@ -703,19 +703,32 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      // 🔥 ABSOLUTE CLAUDE ENFORCEMENT - GUARANTEED Claude selection
-      let selectedAiModel = data.aiModel === 'claude' ? 'claude' : (data.aiModel || 'claude');
+      // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT - GUARANTEED Claude selection
+      let selectedAiModel = data.aiModel || 'claude';
       
-      // Triple verification that Claude is selected when requested
-      if (data.aiModel === 'claude' && selectedAiModel !== 'claude') {
-        console.error(`🚨 CRITICAL ERROR: Claude requested but not selected! Forcing Claude...`);
+      // STRICT CLAUDE ENFORCEMENT: Multiple verification layers
+      if (data.aiModel === 'claude' || data.aiModel === 'Claude') {
         selectedAiModel = 'claude';
+        console.log(`🔥 CLAUDE ENFORCEMENT LAYER 1: data.aiModel="${data.aiModel}" → selectedAiModel="${selectedAiModel}"`);
       }
       
-      // FINAL CLAUDE VERIFICATION - Last chance to ensure Claude is used
+      // SECONDARY VERIFICATION: Catch any model conversion issues
+      if (data.aiModel === 'claude' && selectedAiModel !== 'claude') {
+        console.error(`🚨 CRITICAL CLAUDE MISMATCH: data.aiModel="${data.aiModel}" but selectedAiModel="${selectedAiModel}"`);
+        selectedAiModel = 'claude'; // FORCE Claude
+        console.log(`🔧 CLAUDE FORCE-CORRECTED: selectedAiModel now "${selectedAiModel}"`);
+      }
+      
+      // FINAL CLAUDE LOCK: Absolute guarantee for Claude requests
       if (data.aiModel === 'claude') {
         selectedAiModel = 'claude'; // ABSOLUTE guarantee
-        console.log(`🔥🔥🔥 FINAL CLAUDE LOCK: selectedAiModel FORCED to "claude" - NO EXCEPTIONS`);
+        console.log(`🔥🔥🔥 FINAL CLAUDE LOCK: selectedAiModel FORCED to "claude" - NO EXCEPTIONS EVER`);
+      }
+      
+      // SCHEDULED JOB SPECIFIC ENFORCEMENT
+      if (data.scheduledJobId && data.aiModel === 'claude') {
+        selectedAiModel = 'claude';
+        console.log(`🕒 SCHEDULED JOB CLAUDE ENFORCEMENT: Job ${data.scheduledJobId} - Claude GUARANTEED`);
       }
       
       console.log(`🚨 CRITICAL UNIFIED GENERATOR AI MODEL DEBUG:`);
