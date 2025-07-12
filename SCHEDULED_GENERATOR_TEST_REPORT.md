@@ -1,109 +1,151 @@
-# Scheduled Content Generator - Comprehensive Test Report
-
+# SCHEDULED GENERATOR RELIABILITY TEST REPORT
 **Date:** July 12, 2025  
-**Status:** ✅ ALL TESTS PASSED - PRODUCTION READY
+**Test Type:** 5-Run Reliability Test  
+**Status:** 🔄 IN PROGRESS  
 
-## Test Suite Overview
+## Test Configuration
 
-I have successfully completed comprehensive testing of the scheduled content generation system. All critical functionality is working perfectly, with only the content generation itself limited by Claude API credits (which is expected and not a system issue).
+### 🎯 Test Objectives
+- **Duration:** 25 minutes (5 runs × 5-minute intervals)
+- **Frequency:** Every 5 minutes
+- **Expected Runs:** 5 consecutive executions
+- **Configuration:** Claude AI + Spartan Format + All 7 Niches
 
-## Test Results Summary
+### 🧪 Test Parameters
+- **AI Model:** Claude (production configuration)
+- **Content Format:** Spartan (professional, no-fluff)
+- **Niches:** All 7 (beauty, tech, fashion, fitness, food, travel, pets)
+- **Platforms:** TikTok, Instagram
+- **Products:** Use existing database products
+- **Affiliate Links:** Enabled
+- **Smart Style:** Disabled
+- **Webhook:** Make.com integration
 
-### ✅ Core Functionality Tests
+### ✅ Success Criteria
+For each of the 5 runs, validate:
+- [ ] Exactly 7 content pieces generated (1 per niche)
+- [ ] Unique products selected per run (no duplicates)
+- [ ] Claude AI model used correctly
+- [ ] Spartan format applied (professional content)
+- [ ] Dual AI evaluation completed
+- [ ] Webhook delivered successfully (200 OK)
+- [ ] No server errors or timeouts
+- [ ] Consistent timing (every 5 minutes)
 
-1. **Job Creation & Schema Validation** - PASSED
-   - ✅ Successfully created jobs with all 7 niches
-   - ✅ Correct API endpoint usage (`/api/scheduled-bulk/jobs`)
-   - ✅ Proper field names validated (`selectedNiches`, `tones`, `templates`, `platforms`)
-   - ✅ Database persistence confirmed
+## Test Execution Log
 
-2. **Cron Job Management** - PASSED
-   - ✅ Automatic cron job creation when jobs are scheduled
-   - ✅ Proper lifecycle management (no infinite loops)
-   - ✅ Execution lock system preventing race conditions
-   - ✅ Emergency stop and cleanup functionality
+### 🚀 Test Setup
+- **Start Time:** 00:24 UTC
+- **Initial Job ID:** 87 (original)
+- **Server Status:** Restarted during test (00:26 UTC)
+- **Recovery Action:** Created new test job after restart
 
-3. **API Integration** - PASSED
-   - ✅ All CRUD operations working (Create, Read, Update, Delete)
-   - ✅ Status endpoints returning correct information
-   - ✅ Manual trigger functionality operational
-   - ✅ Error handling and validation working
+### 🔄 System Events
+1. **00:24 UTC** - Initial test job created (ID: 87)
+2. **00:26 UTC** - Server restart detected, jobs reinitialized
+3. **00:27 UTC** - New reliability test job created
+4. **Ongoing** - Monitoring for scheduled executions
 
-4. **Data Integrity** - PASSED
-   - ✅ Jobs persist correctly in database
-   - ✅ Configuration fields stored and retrieved accurately
-   - ✅ Foreign key relationships maintained
-   - ✅ Cleanup operations complete successfully
+### 📊 Run Results
 
-5. **Niche Distribution Logic** - CONFIRMED
-   - ✅ All 7 niches have 4+ products available
-   - ✅ Product selection logic configured for 1-per-niche distribution
-   - ✅ Manual trigger initiation successful
-   - ✅ System architecture supports exact niche distribution
+#### Run 1 (Expected: 00:29 UTC)
+- **Status:** ⏳ Pending
+- **Content Generated:** TBD
+- **Niches Covered:** TBD
+- **AI Model Used:** TBD
+- **Spartan Format:** TBD
+- **Webhook Status:** TBD
+- **Validation:** TBD
 
-## Critical Fix Applied
+#### Run 2 (Expected: 00:34 UTC)
+- **Status:** ⏳ Scheduled
+- **Content Generated:** TBD
+- **Niches Covered:** TBD
+- **AI Model Used:** TBD
+- **Spartan Format:** TBD
+- **Webhook Status:** TBD
+- **Validation:** TBD
 
-**Issue Resolved:** API endpoint mismatch  
-- Fixed test endpoints from `/api/scheduled-jobs/` to `/api/scheduled-bulk/jobs/`
-- Corrected field names from `niches` to `selectedNiches`
-- Added missing required fields (`generateAffiliateLinks`, `affiliateId`)
+#### Run 3 (Expected: 00:39 UTC)
+- **Status:** ⏳ Scheduled
+- **Content Generated:** TBD
+- **Niches Covered:** TBD
+- **AI Model Used:** TBD
+- **Spartan Format:** TBD
+- **Webhook Status:** TBD
+- **Validation:** TBD
 
-## System Architecture Validation
+#### Run 4 (Expected: 00:44 UTC)
+- **Status:** ⏳ Scheduled
+- **Content Generated:** TBD
+- **Niches Covered:** TBD
+- **AI Model Used:** TBD
+- **Spartan Format:** TBD
+- **Webhook Status:** TBD
+- **Validation:** TBD
 
-### Database Schema ✅
-- `scheduled_bulk_jobs` table properly configured
-- All required fields present and validated
-- Proper data types for arrays (`selectedNiches`, `tones`, `templates`, `platforms`)
+#### Run 5 (Expected: 00:49 UTC)
+- **Status:** ⏳ Scheduled
+- **Content Generated:** TBD
+- **Niches Covered:** TBD
+- **AI Model Used:** TBD
+- **Spartan Format:** TBD
+- **Webhook Status:** TBD
+- **Validation:** TBD
 
-### Cron Job System ✅  
-- Node-cron integration operational
-- No duplicate job creation (infinite loop issue resolved)
-- Proper job lifecycle management with execution locks
+## Expected Behavior Analysis
 
-### API Layer ✅
-- Express routes properly registered
-- Zod validation working correctly
-- Error handling comprehensive
+### 🎯 Per-Run Expectations
+When Claude API credits are available, each run should:
 
-## Production Readiness Checklist
+1. **Trigger at exact 5-minute intervals**
+2. **Select exactly 1 unique product per niche (7 total)**
+3. **Generate professional Spartan-format content:**
+   - 50-word captions (no emojis, no fluff)
+   - 120-word video scripts (direct, factual)
+   - Platform-specific adaptations
+4. **Perform dual AI evaluation (Claude + GPT)**
+5. **Send comprehensive webhook to Make.com**
+6. **Complete execution within 2-3 minutes**
 
-- ✅ **Job Creation:** Working perfectly
-- ✅ **Cron Management:** No infinite loops, proper cleanup
-- ✅ **Database Operations:** All CRUD operations functional
-- ✅ **API Validation:** Schema validation working
-- ✅ **Error Handling:** Comprehensive error management
-- ✅ **Manual Triggers:** Immediate execution capability
-- ✅ **System Monitoring:** Status endpoints operational
-- ✅ **Cleanup Operations:** Proper resource management
+### 🔍 Validation Checks
+- **Content Quality:** Professional, factual, Spartan-formatted
+- **Product Distribution:** No duplicate products across runs
+- **Timing Consistency:** Executions every 5 minutes ±10 seconds
+- **System Stability:** No memory leaks or performance degradation
+- **Error Handling:** Graceful handling of API limits/failures
 
-## Expected Behavior When Claude Credits Available
+## Current Status
 
-When Claude API credits are restored, the system will:
+### ✅ System Health
+- **Server Status:** Running (restarted at 00:26 UTC)
+- **Cron Jobs:** Active
+- **Database:** Connected
+- **APIs:** Configured (Claude credits may be limited)
 
-1. **Generate exactly 1 content piece per niche** (beauty, tech, fashion, fitness, food, travel, pets)
-2. **Use configured AI model and format** (Claude + Spartan format as requested)
-3. **Apply proper platform-specific formatting** for TikTok and Instagram
-4. **Include affiliate links and compliance disclosures**
-5. **Send webhook to Make.com** with comprehensive payload
-6. **Store content in database** for tracking and analytics
+### 🔄 Test Progress
+- **Setup:** Complete
+- **Monitoring:** Active
+- **Runs Completed:** 0/5
+- **Next Run:** Scheduled for 00:29 UTC
 
-## Test Files Created
+### ⚠️ Known Limitations
+- **Claude API Credits:** Limited availability may affect content generation
+- **Server Restart:** Caused job recreation, slight timing adjustment
+- **Monitoring:** Automated tracking in progress
 
-1. `comprehensive-scheduled-test.js` - Full end-to-end testing
-2. `final-scheduled-validation.js` - Production readiness validation  
-3. `niche-distribution-test.js` - Specific niche distribution verification
+## Expected Final Results
 
-## Current System Status
+Upon completion, this test will demonstrate:
 
-- **Active Cron Jobs:** 2 (system operational)
-- **Database Jobs:** 3 (includes test and production jobs)
-- **System Health:** Fully operational
-- **API Endpoints:** All responding correctly
+1. **Reliability:** Consistent execution across 25-minute window
+2. **Stability:** No system degradation under scheduled load
+3. **Quality:** Professional Spartan-formatted content generation
+4. **Distribution:** Perfect 1-per-niche product selection
+5. **Integration:** Seamless webhook delivery to external systems
 
-## Conclusion
+**UPDATE STATUS:** This report will be updated in real-time as runs complete.
 
-🚀 **The scheduled content generator is PRODUCTION READY and working perfectly.** 
-
-The only limitation is Claude API credits, which is an external factor not related to our system architecture. Once credits are available, the system will generate exactly 1 unique content piece per niche across all 7 categories as requested.
-
-**Recommendation:** The system is ready for immediate production use. Users can schedule daily content generation with confidence that it will produce the correct output distribution.
+---
+*Test initiated: July 12, 2025 at 00:24 UTC*  
+*Expected completion: July 12, 2025 at 00:49 UTC*
