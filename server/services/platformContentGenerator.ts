@@ -149,7 +149,14 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       if (!aiResponse.data && aiResponse.content && typeof aiResponse.content === 'object') {
         // Claude responses come wrapped: we need to extract the actual content
         console.log('🔧 Detected Claude response structure, converting to expected format');
+        console.log('🔍 Claude response structure:', JSON.stringify(aiResponse.content, null, 2));
         aiResponse.data = aiResponse.content.content || aiResponse.content;
+      }
+      
+      // Additional fallback for nested Claude responses
+      if (!aiResponse.data && aiResponse.content && aiResponse.content.content) {
+        console.log('🔧 Extracting nested Claude content');
+        aiResponse.data = aiResponse.content.content;
       }
 
       // Handle different response structures from different AI models
@@ -181,11 +188,19 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         console.log('✅ Extracted content from root data field');
       }
       
+      // Special handling for Claude's specific nested structure we're seeing in logs
+      if (!content && aiResponse.content && aiResponse.content.content) {
+        content = aiResponse.content.content;
+        console.log('✅ Extracted content from Claude nested content.content structure');
+      }
+      
       if (!content) {
         console.error('❌ No content found in AI response:', {
           aiResponseKeys: Object.keys(aiResponse),
           contentValue: aiResponse.content,
-          dataValue: aiResponse.data
+          dataValue: aiResponse.data,
+          contentType: typeof aiResponse.content,
+          hasNestedContent: !!(aiResponse.content && aiResponse.content.content)
         });
         throw new Error('No content generated from AI');
       }
