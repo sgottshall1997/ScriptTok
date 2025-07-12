@@ -144,62 +144,34 @@ PLATFORM-SPECIFIC REQUIREMENTS:
                             'Unknown error';
         throw new Error(`AI generation failed: ${errorMessage}`);
       }
-      
-      // Special handling for Claude responses which have a different structure
-      if (!aiResponse.data && aiResponse.content && typeof aiResponse.content === 'object') {
-        // Claude responses come wrapped: we need to extract the actual content
-        console.log('🔧 Detected Claude response structure, converting to expected format');
-        console.log('🔍 Claude response structure:', JSON.stringify(aiResponse.content, null, 2));
-        
-        // Extract content from Claude's nested structure
-        if (aiResponse.content.content) {
-          aiResponse.data = aiResponse.content.content;
-          console.log('✅ Extracted content from content.content field');
-        } else {
-          aiResponse.data = aiResponse.content;
-          console.log('✅ Used content field directly');
-        }
-      }
-      
-      // Additional fallback for nested Claude responses
-      if (!aiResponse.data && aiResponse.content && aiResponse.content.content) {
-        console.log('🔧 Extracting nested Claude content');
-        aiResponse.data = aiResponse.content.content;
-      }
 
-      // Handle different response structures from different AI models
-      let content = aiResponse.data || aiResponse.content;
+      // Extract content from AI response - handle different response structures
+      let content = null;
       
-      // Debug log the full response structure
-      console.log('Platform Generator AI Response Debug:', {
+      // Debug the response structure first
+      console.log('🔍 AI Response Structure Debug:', {
         success: aiResponse.success,
-        hasContent: !!aiResponse.content,
         hasData: !!aiResponse.data,
-        contentType: typeof aiResponse.content,
+        hasContent: !!aiResponse.content,
         dataType: typeof aiResponse.data,
-        contentKeys: aiResponse.content ? Object.keys(aiResponse.content) : null,
-        dataKeys: aiResponse.data ? (typeof aiResponse.data === 'object' ? Object.keys(aiResponse.data) : 'string') : null
+        contentType: typeof aiResponse.content,
+        contentStructure: aiResponse.content ? (typeof aiResponse.content === 'object' ? Object.keys(aiResponse.content) : 'string') : null
       });
       
-      if (typeof content === 'object' && content.content) {
-        // Claude response structure: { content: { content: "actual content" } }
-        content = content.content;
-        console.log('✅ Extracted content from nested Claude structure');
-      } else if (typeof content === 'object' && content.data) {
-        // Alternative Claude structure: { content: { data: "actual content" } }
-        content = content.data;
-        console.log('✅ Extracted content from Claude data field');
-      } else if (typeof content === 'string') {
-        // Direct string content (ChatGPT style)
-        console.log('✅ Using direct string content');
-      }
-      
-      // Final check for any remaining nested content
-      if (!content || (typeof content === 'object' && !content.trim)) {
-        if (aiResponse.content && aiResponse.content.content) {
-          content = aiResponse.content.content;
-          console.log('✅ Final extraction from Claude nested content.content structure');
-        }
+      // Try different extraction methods in order of priority
+      if (aiResponse.data && typeof aiResponse.data === 'string') {
+        content = aiResponse.data;
+        console.log('✅ Extracted content from aiResponse.data (string)');
+      } else if (aiResponse.content && typeof aiResponse.content === 'string') {
+        content = aiResponse.content;
+        console.log('✅ Extracted content from aiResponse.content (string)');
+      } else if (aiResponse.content && typeof aiResponse.content === 'object' && aiResponse.content.content) {
+        content = aiResponse.content.content;
+        console.log('✅ Extracted content from aiResponse.content.content (Claude structure)');
+      } else if (aiResponse.content && typeof aiResponse.content === 'object') {
+        // For object responses, try to convert to string
+        content = JSON.stringify(aiResponse.content);
+        console.log('✅ Stringified object content as fallback');
       }
       
       if (!content) {
