@@ -33,11 +33,41 @@ export async function generateWithAI(
     tryFallbackOnError = true
   } = options;
 
+  // 🔥 CRITICAL FIX: Force Claude model if parameter is 'claude'
+  if (model === 'claude') {
+    console.log(`🚨 FORCED CLAUDE ROUTE: AI model parameter is 'claude' - FORCING Claude generation`);
+    console.log(`🔥 CLAUDE MODEL CONFIRMED: Using Claude AI for content generation`);
+    
+    try {
+      if (useJson) {
+        return await generateJSONWithClaude(prompt, {
+          maxTokens,
+          temperature,
+          systemPrompt,
+          metadata: { ...metadata, model: 'claude' }
+        });
+      } else {
+        return await generateWithClaude(prompt, {
+          maxTokens,
+          temperature,
+          systemPrompt,
+          metadata: { ...metadata, model: 'claude' },
+          tryFallbackOnError
+        });
+      }
+    } catch (error) {
+      console.error(`❌ Claude generation failed:`, error);
+      throw error;
+    }
+  }
+
+  console.log(`🚨 AI MODEL ROUTER DEBUG: Received model="${model}", options:`, { model, maxTokens, temperature, useJson });
   console.log(`🤖 Using AI model: ${model.toUpperCase()} ${useJson ? '(JSON mode)' : ''}`);
 
   try {
     switch (model) {
       case 'claude':
+        console.log(`🔥 ROUTING TO CLAUDE: Using Claude AI model for generation`);
         if (useJson) {
           return await generateJSONWithClaude(prompt, {
             maxTokens,
@@ -57,6 +87,7 @@ export async function generateWithAI(
 
       case 'chatgpt':
       default:
+        console.log(`🔥 ROUTING TO CHATGPT: Using ChatGPT/OpenAI model for generation`);
         return await generateWithFallback(prompt, {
           maxTokens,
           temperature,

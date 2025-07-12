@@ -703,12 +703,18 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      // FIXED LOGIC - prioritize direct aiModel field from scheduled jobs
-      const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'claude');
+      // 🔥 FINAL FIX - ABSOLUTE PRIORITY FOR data.aiModel
+      const selectedAiModel = data.aiModel || 'claude'; // Remove fallback to aiModels array
       
-      console.log(`🎭 GENERATION CONFIG: ${tones.length} tone(s), ${templates.length} template(s), AI Model: ${selectedAiModel}`);
-      console.log(`🤖 AI MODEL DEBUG: data.aiModel="${data.aiModel}", data.aiModels=${JSON.stringify(data.aiModels)}, selectedAiModel="${selectedAiModel}"`);
-      console.log(`🔍 AI MODEL PRIORITY: Using aiModel field (${data.aiModel ? 'PROVIDED' : 'NULL'}) over aiModels array (${data.aiModels ? 'PROVIDED' : 'NULL'})`);
+      console.log(`🚨 CRITICAL UNIFIED GENERATOR AI MODEL DEBUG:`);
+      console.log(`   📥 RECEIVED data.aiModel: "${data.aiModel}"`);
+      console.log(`   📥 RECEIVED data.aiModels: ${JSON.stringify(data.aiModels)}`);
+      console.log(`   🎯 FINAL selectedAiModel: "${selectedAiModel}"`);
+      console.log(`   🔥 THIS AI MODEL WILL BE USED FOR ALL CONTENT GENERATION: ${selectedAiModel.toUpperCase()}`);
+      
+      if (data.aiModel !== selectedAiModel) {
+        console.error(`❌ CRITICAL ERROR: AI Model mismatch! data.aiModel="${data.aiModel}" vs selectedAiModel="${selectedAiModel}"`);
+      }
       
       // For scheduled generation, use exactly 1 tone and 1 template to ensure 1 content per niche
       const selectedTone = tones[0]; // Use first tone for consistency

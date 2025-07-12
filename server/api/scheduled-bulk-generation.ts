@@ -477,7 +477,8 @@ async function executeScheduledJob(job: any) {
       scheduledJobName: job.name
     };
 
-    console.log(`🤖 SCHEDULED JOB AI MODEL: "${payload.aiModel}" (from job.aiModel: "${job.aiModel}")`);
+    console.log(`🚨 CRITICAL AI MODEL DEBUG: job.aiModel="${job.aiModel}", payload.aiModel="${payload.aiModel}"`);
+    console.log(`🔥 FINAL PAYLOAD AI MODEL: "${payload.aiModel}" - THIS MUST BE USED IN GENERATION`);
     console.log(`🎯 NICHE LIST: [${payload.selectedNiches.join(', ')}] - Expecting exactly ${payload.selectedNiches.length} outputs`);
     console.log(`🎭 GENERATION PARAMS: Tones: [${payload.tones.join(', ')}], Templates: [${payload.templates.join(', ')}]`);
 

@@ -247,7 +247,12 @@ export async function generateContent(
     const maxTokens = getTokenLimit(templateType);
     
     // Log the content generation request for analytics
-    console.log(`Generating ${templateType} content for ${product} in ${niche} niche using ${tone} tone.`);
+    console.log(`🚨 CONTENT GENERATOR AI MODEL DEBUG: aiModel parameter = "${aiModel}"`);
+    console.log(`🔥 Generating ${templateType} content for ${product} in ${niche} niche using ${tone} tone with AI model: ${aiModel.toUpperCase()}`);
+    
+    if (aiModel !== 'claude' && aiModel !== 'chatgpt') {
+      console.error(`❌ INVALID AI MODEL: "${aiModel}" - Must be 'claude' or 'chatgpt'`);
+    }
     
     // Enhanced system prompt with viral inspiration integration
     let systemPrompt = "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause.";
