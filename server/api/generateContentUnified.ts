@@ -213,14 +213,14 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           });
           
           if (spartanResult.success && spartanResult.content) {
-            mainContent = spartanResult.content;
+            mainContent = spartanResult.content; // This is already a string
             console.log(`✅ Spartan content generated successfully (${spartanResult.content.length} chars)`);
           } else {
             console.log(`⚠️ Spartan generation failed: ${spartanResult.error || 'Unknown error'}`);
             if (generationAttempts === maxAttempts) {
               // Final fallback to regular generation
               console.log('🔄 Falling back to standard content generation');
-              mainContent = await generateContent(
+              const fallbackResponse = await generateContent(
                 config.productName,
                 config.templateType as any,
                 config.tone as any,
@@ -231,6 +231,17 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
                 config.useSmartStyle ? { useSmartStyle: true } : undefined,
                 config.aiModel // Actual AI model parameter
               );
+              
+              // Extract content from fallback response too
+              if (typeof fallbackResponse === 'string') {
+                mainContent = fallbackResponse;
+              } else if (fallbackResponse && typeof fallbackResponse === 'object' && fallbackResponse.content) {
+                mainContent = fallbackResponse.content;
+                console.log(`🔍 EXTRACTED CONTENT from fallback generateContent: "${fallbackResponse.content.substring(0, 100)}..."`);
+              } else {
+                console.error(`❌ UNEXPECTED fallback response type:`, typeof fallbackResponse, fallbackResponse);
+                mainContent = String(fallbackResponse);
+              }
             } else {
               continue; // Retry Spartan generation
             }
@@ -238,7 +249,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         } else {
           // Standard content generation
           console.log(`🤖 Generating with ${config.aiModel} model`);
-          mainContent = await generateContent(
+          const generatedResponse = await generateContent(
             config.productName,
             config.templateType as any,
             config.tone as any,
@@ -249,6 +260,17 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
             config.useSmartStyle ? { useSmartStyle: true } : undefined,
             config.aiModel // This is the actual parameter used for AI model selection
           );
+          
+          // Extract just the content string from the response object
+          if (typeof generatedResponse === 'string') {
+            mainContent = generatedResponse;
+          } else if (generatedResponse && typeof generatedResponse === 'object' && generatedResponse.content) {
+            mainContent = generatedResponse.content;
+            console.log(`🔍 EXTRACTED CONTENT from generateContent response: "${generatedResponse.content.substring(0, 100)}..."`);
+          } else {
+            console.error(`❌ UNEXPECTED generateContent response type:`, typeof generatedResponse, generatedResponse);
+            mainContent = String(generatedResponse);
+          }
         }
         
         // Validate generated content
@@ -302,8 +324,13 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     const videoDuration = config.contentType === "video" ? 
       estimateVideoDuration(typeof mainContent === 'string' ? mainContent : mainContent.content, config.videoDuration) : undefined;
 
-    // Final validation of complete result
-    const script = typeof mainContent === 'string' ? mainContent : mainContent.content;
+    // Final validation of complete result - properly extract content
+    const script = typeof mainContent === 'string' ? mainContent : 
+                  (typeof mainContent === 'object' && mainContent?.content ? mainContent.content : 
+                   String(mainContent));
+    
+    console.log(`🔍 CONTENT EXTRACTION DEBUG: mainContent type: ${typeof mainContent}, extracted script: "${script?.substring(0, 100)}..."`);
+    console.log(`🔍 MAIN CONTENT STRUCTURE:`, typeof mainContent === 'object' ? Object.keys(mainContent) : 'primitive');
     const finalValidation = validateGeneratedContent(mainContent, config);
     
     if (!finalValidation.isValid) {
