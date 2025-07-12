@@ -33,31 +33,37 @@ export async function generateWithAI(
     tryFallbackOnError = true
   } = options;
 
-  // 🔥 CRITICAL FIX: Force Claude model if parameter is 'claude'
-  if (model === 'claude') {
-    console.log(`🚨 FORCED CLAUDE ROUTE: AI model parameter is 'claude' - FORCING Claude generation`);
-    console.log(`🔥 CLAUDE MODEL CONFIRMED: Using Claude AI for content generation`);
+  // 🔥 ABSOLUTE CLAUDE ENFORCEMENT - NO FALLBACK ALLOWED
+  if (model === 'claude' || model === 'Claude' || model?.toLowerCase?.() === 'claude') {
+    console.log(`🚨🚨🚨 ABSOLUTE CLAUDE ENFORCEMENT: Model parameter detected as Claude`);
+    console.log(`🔥 CLAUDE ROUTE LOCKED: Bypassing all other logic - CLAUDE ONLY`);
+    console.log(`🎯 DIRECT CLAUDE CALL: No switch statement, no fallback, CLAUDE GUARANTEED`);
     
     try {
       if (useJson) {
-        return await generateJSONWithClaude(prompt, {
+        const result = await generateJSONWithClaude(prompt, {
           maxTokens,
           temperature,
           systemPrompt,
-          metadata: { ...metadata, model: 'claude' }
+          metadata: { ...metadata, model: 'claude', forcedClaude: true }
         });
+        console.log(`✅ CLAUDE JSON GENERATION COMPLETED SUCCESSFULLY`);
+        return result;
       } else {
-        return await generateWithClaude(prompt, {
+        const result = await generateWithClaude(prompt, {
           maxTokens,
           temperature,
           systemPrompt,
-          metadata: { ...metadata, model: 'claude' },
-          tryFallbackOnError
+          metadata: { ...metadata, model: 'claude', forcedClaude: true },
+          tryFallbackOnError: false // NO FALLBACK EVER
         });
+        console.log(`✅ CLAUDE TEXT GENERATION COMPLETED SUCCESSFULLY`);
+        return result;
       }
     } catch (error) {
-      console.error(`❌ Claude generation failed:`, error);
-      throw error;
+      console.error(`❌ CLAUDE GENERATION ERROR (NO FALLBACK):`, error);
+      // DO NOT FALLBACK - THROW ERROR TO MAINTAIN CLAUDE REQUIREMENT
+      throw new Error(`Claude generation required but failed: ${error.message}`);
     }
   }
 

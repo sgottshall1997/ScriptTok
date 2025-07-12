@@ -63,10 +63,15 @@ export async function generateWithClaude(
     tryFallbackOnError = true
   } = options;
   
+  console.log(`🚨🚨🚨 CLAUDE SERVICE CALLED: generateWithClaude() function executing`);
+  console.log(`🔥 CLAUDE GENERATION START: Using model ${CLAUDE_MODELS.PRIMARY}`);
+  console.log(`🎯 CLAUDE PROMPT PREVIEW: ${prompt.substring(0, 100)}...`);
+  
   // First try with the primary model
   try {
     const startTime = Date.now();
     
+    console.log(`📡 CLAUDE API CALL: Sending request to Anthropic API...`);
     const response = await anthropic.messages.create({
       model: CLAUDE_MODELS.PRIMARY,
       max_tokens: maxTokens,

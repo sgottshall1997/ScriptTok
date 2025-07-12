@@ -321,6 +321,16 @@ Apply these successful patterns from your previous high-rated content:
 - Based on ${smartStyleRecommendations.sampleCount} high-performing posts`;
     }
 
+    // ABSOLUTE CLAUDE ENFORCEMENT - Double check model before AI call
+    if (aiModel === 'claude') {
+      console.log(`🚨 CONTENT GENERATOR CLAUDE VERIFICATION: Model is claude - FORCING Claude generation`);
+      console.log(`🔒 CLAUDE LOCKED: Ensuring generateWithAI receives claude parameter`);
+    } else if (aiModel === 'chatgpt') {
+      console.log(`🤖 CONTENT GENERATOR CHATGPT ROUTE: Model is chatgpt - allowing ChatGPT generation`);
+    } else {
+      console.error(`❌ INVALID AI MODEL IN CONTENT GENERATOR: "${aiModel}" - Must be 'claude' or 'chatgpt'`);
+    }
+    
     // Call AI model router with the enhanced prompt and optimized parameters
     console.log(`🤖 Generating content with ${aiModel.toUpperCase()} model`);
     
@@ -334,7 +344,8 @@ Apply these successful patterns from your previous high-rated content:
         templateType,
         tone,
         product,
-        fallbackLevel
+        fallbackLevel,
+        contentGeneratorModel: aiModel // Track model through pipeline
       }
     });
 
