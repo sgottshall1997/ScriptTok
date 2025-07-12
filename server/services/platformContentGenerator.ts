@@ -150,7 +150,15 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         // Claude responses come wrapped: we need to extract the actual content
         console.log('🔧 Detected Claude response structure, converting to expected format');
         console.log('🔍 Claude response structure:', JSON.stringify(aiResponse.content, null, 2));
-        aiResponse.data = aiResponse.content.content || aiResponse.content;
+        
+        // Extract content from Claude's nested structure
+        if (aiResponse.content.content) {
+          aiResponse.data = aiResponse.content.content;
+          console.log('✅ Extracted content from content.content field');
+        } else {
+          aiResponse.data = aiResponse.content;
+          console.log('✅ Used content field directly');
+        }
       }
       
       // Additional fallback for nested Claude responses
@@ -160,15 +168,17 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       }
 
       // Handle different response structures from different AI models
-      let content = aiResponse.content;
+      let content = aiResponse.data || aiResponse.content;
       
       // Debug log the full response structure
       console.log('Platform Generator AI Response Debug:', {
         success: aiResponse.success,
         hasContent: !!aiResponse.content,
+        hasData: !!aiResponse.data,
         contentType: typeof aiResponse.content,
+        dataType: typeof aiResponse.data,
         contentKeys: aiResponse.content ? Object.keys(aiResponse.content) : null,
-        fullResponse: aiResponse
+        dataKeys: aiResponse.data ? (typeof aiResponse.data === 'object' ? Object.keys(aiResponse.data) : 'string') : null
       });
       
       if (typeof content === 'object' && content.content) {
@@ -182,16 +192,14 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       } else if (typeof content === 'string') {
         // Direct string content (ChatGPT style)
         console.log('✅ Using direct string content');
-      } else if (aiResponse.data) {
-        // Check if content is in data field at root level
-        content = aiResponse.data;
-        console.log('✅ Extracted content from root data field');
       }
       
-      // Special handling for Claude's specific nested structure we're seeing in logs
-      if (!content && aiResponse.content && aiResponse.content.content) {
-        content = aiResponse.content.content;
-        console.log('✅ Extracted content from Claude nested content.content structure');
+      // Final check for any remaining nested content
+      if (!content || (typeof content === 'object' && !content.trim)) {
+        if (aiResponse.content && aiResponse.content.content) {
+          content = aiResponse.content.content;
+          console.log('✅ Final extraction from Claude nested content.content structure');
+        }
       }
       
       if (!content) {
