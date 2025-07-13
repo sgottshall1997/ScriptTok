@@ -206,7 +206,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     const unifiedResult = await generateUnifiedContent(unifiedConfig);
     
     // Extract main content from unified result
-    mainContent = unifiedResult.script;
+    const mainContent = unifiedResult.script;
     
     console.log(`✅ Unified content generated successfully (${mainContent.length} chars)`);
     console.log(`📋 Generated platform captions: ${Object.keys({
