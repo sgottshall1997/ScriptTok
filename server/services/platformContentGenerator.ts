@@ -157,13 +157,14 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         extractedContent = aiResponse.data;
         console.log('✅ CHATGPT RESPONSE: Extracted content from aiResponse.data');
       } else {
-        console.error('❌ CRITICAL: No valid content found in response structure', {
+        console.log('⚠️ WARNING: Using fallback - no valid content structure found', {
           hasContent: !!aiResponse.content,
           hasContentContent: !!(aiResponse.content && aiResponse.content.content),
           hasData: !!aiResponse.data,
           responseKeys: Object.keys(aiResponse)
         });
-        throw new Error('No valid content found in AI response');
+        // Use fallback instead of throwing error
+        return generateFallbackCaptions(productName, platforms, niche, affiliateId);
       }
 
       // Parse JSON response - handle markdown code blocks
