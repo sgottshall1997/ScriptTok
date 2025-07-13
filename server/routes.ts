@@ -727,21 +727,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // 🧪 TREND FETCH SIMULATION TEST ENDPOINT - DEVELOPMENT ONLY
-  app.get('/api/test/trend-fetch', async (req, res) => {
-    // 🚫 PRODUCTION BLOCK: No tests in production
-    if (process.env.NODE_ENV === 'production') {
-      return res.status(403).json({
-        success: false,
-        error: 'Test endpoints are disabled in production',
-        message: 'This endpoint is only available in development mode',
-        timestamp: new Date().toISOString()
-      });
-    }
-
-    const { testTrendFetch } = await import('./api/test-trend-fetch');
-    await testTrendFetch(req, res);
-  });
+  // Test endpoint removed to fix deployment - was causing missing import error
   
   // 🏥 HEALTH CHECK ENDPOINT FOR DEPLOYMENT DIAGNOSTICS
   app.get('/api/health', async (req, res) => {
