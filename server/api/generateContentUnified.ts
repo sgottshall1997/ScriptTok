@@ -230,21 +230,32 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       console.log(`⚠️ Warnings: ${validation.warnings.join(', ')}`);
     }
 
-    // Use platform captions from unified generator
+    // Use platform captions from unified generator and sanitize them
     const platformCaptions: Record<string, string> = {
-      tiktok: unifiedResult.tiktokCaption,
-      instagram: unifiedResult.instagramCaption,
-      youtube: unifiedResult.youtubeCaption,
-      twitter: unifiedResult.xCaption,
-      facebook: unifiedResult.facebookCaption
+      tiktok: sanitizeUnicode(unifiedResult.tiktokCaption),
+      instagram: sanitizeUnicode(unifiedResult.instagramCaption),
+      youtube: sanitizeUnicode(unifiedResult.youtubeCaption),
+      twitter: sanitizeUnicode(unifiedResult.xCaption),
+      facebook: sanitizeUnicode(unifiedResult.facebookCaption)
     };
 
     // Estimate video duration
     const videoDuration = config.contentType === "video" ? 
       estimateVideoDuration(mainContent, config.videoDuration) : undefined;
 
-    // Use mainContent directly as it's already validated
-    const script = mainContent;
+    // Sanitize Unicode characters to prevent JSON encoding errors
+    function sanitizeUnicode(text: string): string {
+      if (!text) return '';
+      // Remove invalid Unicode surrogates and other problematic characters
+      return text
+        .replace(/[\uD800-\uDFFF]/g, '') // Remove lone surrogates
+        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+        .replace(/\uFEFF/g, '') // Remove BOM
+        .trim();
+    }
+
+    // Use mainContent directly as it's already validated and sanitize it
+    const script = sanitizeUnicode(mainContent);
     
     console.log(`🔍 UNIFIED GENERATOR OUTPUT: Script length: ${script.length} chars`);
     console.log(`🔍 SCRIPT PREVIEW: "${script.substring(0, 150)}..."`);
@@ -264,15 +275,15 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       platforms: config.platforms,
       platformCaptions,
       videoDuration,
-      // Include unified generator fields
-      productDescription: unifiedResult.productDescription,
-      demoScript: unifiedResult.demoScript,
-      instagramCaption: unifiedResult.instagramCaption,
-      tiktokCaption: unifiedResult.tiktokCaption,
-      youtubeCaption: unifiedResult.youtubeCaption,
-      xCaption: unifiedResult.xCaption,
-      facebookCaption: unifiedResult.facebookCaption,
-      affiliateLink: unifiedResult.affiliateLink,
+      // Include unified generator fields (sanitized)
+      productDescription: sanitizeUnicode(unifiedResult.productDescription),
+      demoScript: sanitizeUnicode(unifiedResult.demoScript),
+      instagramCaption: sanitizeUnicode(unifiedResult.instagramCaption),
+      tiktokCaption: sanitizeUnicode(unifiedResult.tiktokCaption),
+      youtubeCaption: sanitizeUnicode(unifiedResult.youtubeCaption),
+      xCaption: sanitizeUnicode(unifiedResult.xCaption),
+      facebookCaption: sanitizeUnicode(unifiedResult.facebookCaption),
+      affiliateLink: sanitizeUnicode(unifiedResult.affiliateLink),
       viralInspiration,
       affiliateUrl: config.affiliateUrl,
       customHook: config.customHook,
