@@ -406,6 +406,12 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     console.log(`💾 DATABASE SAVE DEBUG - outputText type:`, typeof saveData.outputText);
     console.log(`💾 DATABASE SAVE DEBUG - outputText preview:`, saveData.outputText?.substring(0, 150));
     
+    // Verify content extraction is working correctly
+    if (typeof saveData.generatedOutput.content !== 'string') {
+      console.error(`❌ CRITICAL: generatedOutput.content should be string but is ${typeof saveData.generatedOutput.content}`);
+      console.error(`❌ CRITICAL: Content value:`, saveData.generatedOutput.content);
+    }
+    
     // Save to content history with properly structured content
     await storage.saveContentHistory(saveData);
 

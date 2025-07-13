@@ -243,10 +243,34 @@ const EnhancedContentHistory = () => {
     }));
   };
 
+  // Enhanced content extraction function
+  const extractCleanContent = (content: any): string => {
+    if (!content) return 'No content available';
+    
+    // If it's already a string, return it
+    if (typeof content === 'string') {
+      try {
+        // Try to parse as JSON in case it's a stringified object
+        const parsed = JSON.parse(content);
+        return parsed.content || parsed.script || content;
+      } catch {
+        // If parsing fails, it's a plain string
+        return content;
+      }
+    }
+    
+    // If it's an object, extract the content field
+    if (typeof content === 'object') {
+      return content.content || content.script || JSON.stringify(content, null, 2);
+    }
+    
+    return String(content);
+  };
+
   const copyToClipboard = async (text: string | any, label: string, id: string) => {
     try {
-      // Ensure text is a string
-      const textToCopy = typeof text === 'string' ? text : JSON.stringify(text, null, 2);
+      // Extract clean content for copying
+      const textToCopy = extractCleanContent(text);
       await navigator.clipboard.writeText(textToCopy);
       setCopiedItems(prev => ({ ...prev, [id]: true }));
       toast({
@@ -793,9 +817,7 @@ const EnhancedContentHistory = () => {
                       </Button>
                     </div>
                     <div className="bg-white p-4 rounded border font-mono text-sm whitespace-pre-wrap">
-                      {typeof entry.generatedOutput.content === 'string' 
-                        ? entry.generatedOutput.content 
-                        : JSON.stringify(entry.generatedOutput.content, null, 2)}
+                      {extractCleanContent(entry.generatedOutput.content)}
                     </div>
                   </div>
 
