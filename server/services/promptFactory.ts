@@ -34,17 +34,27 @@ export interface GeneratedPrompt {
 export const TEMPLATE_PROMPTS = {
   'Short-Form Video Script': (config: PromptConfig): GeneratedPrompt => ({
     systemPrompt: `You are an expert short-form video content creator specializing in ${config.niche} content. Create engaging, platform-native scripts that drive conversions.`,
-    userPrompt: `Create a compelling ${config.contentFormat === 'spartan' ? 'concise, no-fluff' : 'engaging'} video script for "${config.productName}" in the ${config.niche} niche.
+    userPrompt: `Create a ${config.contentFormat === 'spartan' ? 'concise, professional' : 'engaging'} video script for "${config.productName}" in the ${config.niche} niche.
 
 Tone: ${config.tone}
-Format: ${config.contentFormat === 'spartan' ? 'Professional, direct, no emojis or filler words' : 'Engaging with personality'}
+${config.contentFormat === 'spartan' ? `
+SPARTAN FORMAT REQUIREMENTS - MANDATORY COMPLIANCE:
+- FORBIDDEN WORDS: DO NOT USE "just", "literally", "really", "very", "actually", "that", "can", "may", "amazing", "incredible"
+- REPLACE "just" with "only" or remove entirely
+- REPLACE "literally" with specific facts
+- REPLACE "that" with "this" or rephrase
+- NO emojis, exclamation marks, or casual language
+- Professional business language exclusively
+- Maximum 120 words total
+- Direct, factual statements only
+- Focus on concrete benefits and technical specifications
+` : `Format: Engaging with personality and emojis`}
 
-Requirements:
+Core Requirements:
 - Hook viewers in first 3 seconds
-- Highlight key product benefits
+- Highlight key product benefits  
 - Include clear call-to-action
-- ${config.contentFormat === 'spartan' ? 'Keep under 120 words' : 'Aim for 150-250 words'}
-- Natural, conversational flow
+- ${config.contentFormat === 'spartan' ? 'Keep under 120 words, professional tone' : 'Aim for 150-250 words, engaging style'}
 
 ${config.trendingProducts ? `Context: This product is trending alongside: ${config.trendingProducts.slice(0, 3).map(p => p.title).join(', ')}` : ''}
 

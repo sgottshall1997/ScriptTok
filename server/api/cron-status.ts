@@ -6,7 +6,7 @@ import { desc, gte, eq } from 'drizzle-orm';
 const router = Router();
 
 // Get cron job status and last run information
-router.get('/cron-status', async (req, res) => {
+router.get('/', async (req, res) => {
   try {
     // Get last Perplexity products added
     const lastPerplexityProducts = await db

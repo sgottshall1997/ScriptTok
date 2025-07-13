@@ -100,10 +100,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
   
   // Cron job status monitoring
-  app.use('/api', cronStatusRouter);
+  app.use('/api/cron-status', cronStatusRouter);
   
   // Perplexity status monitoring
   app.use('/api/perplexity-status', perplexityStatusRouter);
+  
+  // New unified content generation endpoint (moved earlier to prevent conflicts)
+  app.use('/api/generate-unified', generateContentUnifiedRouter);
   
   // Compliance API routes
   app.post('/api/compliance/enhance', enhanceCompliance);
@@ -113,9 +116,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Register API routes
   // Legacy endpoint (deprecated - use /api/generate-unified instead)
   app.use('/api/generate-content', generateContentRouter);
-  
-  // New unified content generation endpoint
-  app.use('/api/generate-unified', generateContentUnifiedRouter);
   app.use('/api/trending', trendingRouter);
   app.use('/api/analytics', analyticsRouter);
   app.use('/api/template-test', templateTestRouter);
