@@ -695,6 +695,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       // Multi-product manual generation (bulk)
       if (data.products && data.tones && data.templates) {
         // 🔥 CRITICAL FIX: ALWAYS prioritize data.aiModel (from scheduled jobs) over data.aiModels array
+        // 🚀 DEFAULT TO CLAUDE: Scheduler defaults to Claude over ChatGPT
         const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'claude');
         
         for (const product of data.products) {

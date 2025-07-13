@@ -89,6 +89,7 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
       useSpartanFormat: formData.useSpartanFormat || false,
       useSmartStyle: formData.useSmartStyle || false,
       affiliateId: formData.affiliateId || 'sgottshall107-20',
+      aiModel: formData.selectedAiModels?.[0] || 'claude', // 🚀 DEFAULT TO CLAUDE
       webhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
       sendToMakeWebhook: true
     };

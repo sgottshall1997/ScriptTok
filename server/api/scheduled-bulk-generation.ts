@@ -458,6 +458,7 @@ async function executeScheduledJob(job: any) {
       .where(eq(scheduledBulkJobs.id, job.id));
 
     // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT FOR SCHEDULED JOBS 🔥🔥🔥
+    // 🚀 SCHEDULER DEFAULTS TO CLAUDE: Always default to Claude for scheduled jobs
     let finalAiModel = job.aiModel || 'claude';
     
     // TRIPLE VERIFICATION: Ensure Claude is properly preserved
