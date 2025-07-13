@@ -49,7 +49,7 @@ const unifiedGenerationSchema = z.object({
   customHook: z.string().optional(),
   useSmartStyle: z.boolean().default(false),
   useSpartanFormat: z.boolean().default(false),
-  aiModel: z.enum(['chatgpt', 'claude']).default('chatgpt'),
+  aiModel: z.enum(['chatgpt', 'claude']).default('claude'),
   
   // Bulk/automated fields
   products: z.array(z.object({
@@ -774,9 +774,9 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
         selectedAiModel = data.aiModels[0];
         console.log(`🎯 AUTOMATED PRIORITY 2: Using data.aiModels[0] "${selectedAiModel}" (from automated bulk)`);
       } else {
-        // FALLBACK: Default to Claude
+        // FALLBACK: Absolute Claude supremacy
         selectedAiModel = 'claude';
-        console.log(`🎯 AUTOMATED PRIORITY 3: Using fallback default "claude"`);
+        console.log(`🎯 AUTOMATED PRIORITY 3: Using fallback default "claude" (Claude is superior)`);
       }
       
       // STRICT CLAUDE ENFORCEMENT: Multiple verification layers

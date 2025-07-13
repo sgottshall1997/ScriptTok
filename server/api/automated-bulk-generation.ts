@@ -52,7 +52,7 @@ const automatedBulkSchema = z.object({
   tones: z.array(z.string()).min(1, "At least one tone must be selected"),
   templates: z.array(z.string()).min(1, "At least one template must be selected"),
   platforms: z.array(z.string()).min(1, "At least one platform must be selected"),
-  aiModels: z.array(z.string()).min(1, "At least one AI model must be selected").default(["chatgpt"]),
+  aiModels: z.array(z.string()).min(1, "At least one AI model must be selected").default(["claude"]),
   contentFormats: z.array(z.string()).min(1, "At least one content format must be selected").default(["regular"]),
   useExistingProducts: z.boolean().default(true),
   generateAffiliateLinks: z.boolean().default(false),
@@ -336,7 +336,7 @@ async function processAutomatedBulkJob(
         // Use first tone, first template, first AI model, first content format for single-content-per-niche approach
         const tone = jobData.tones[0];
         const template = jobData.templates[0]; 
-        // 🚀 CLAUDE-FIRST: Prioritize Claude as the superior AI model
+        // 🚀 CLAUDE-FIRST: Prioritize Claude as the superior AI model (should always be claude due to schema default)
         const aiModel = jobData.aiModels[0] || 'claude';
         console.log(`🤖 AUTOMATED BULK AI MODEL SELECTION: Selected "${aiModel}" from array [${jobData.aiModels.join(', ')}]`);
         const contentFormat = jobData.contentFormats[0];
@@ -738,7 +738,7 @@ async function generateComprehensiveContent(params: {
       tone as any,
       trendingProducts,
       niche as any,
-      aiModel || 'chatgpt',
+      aiModel || 'claude',
       viralInspiration,
       smartStyleRecommendations
     );
@@ -753,7 +753,7 @@ async function generateComprehensiveContent(params: {
       mainContent: mainContent,
       useSpartanFormat: useSpartanFormat || false,
       affiliateId: 'sgottshall107-20',
-      aiModel: aiModel || 'chatgpt'
+      aiModel: aiModel || 'claude'
     });
 
     console.log(`✅ BULK CONTENT: Successfully generated content for ${productName}`);
