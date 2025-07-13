@@ -15,7 +15,7 @@ export interface ContentGenerationConfig {
   tone: string;
   platforms: string[];
   contentFormat: 'regular' | 'spartan';
-  aiModel: 'chatgpt' | 'claude';
+  aiModel: 'claude';
   affiliateId?: string;
   trendingProducts?: TrendingProduct[];
   viralInspiration?: any;
@@ -130,14 +130,14 @@ async function generateMainScript(config: ContentGenerationConfig): Promise<stri
     throw new Error(`Main content generation failed: ${aiResponse.error}`);
   }
 
-  // Extract content based on AI model response structure
+  // Extract content from Claude AI response structure
   let content = '';
   if (aiResponse.content?.content) {
     content = aiResponse.content.content; // Claude structure
   } else if (aiResponse.data) {
-    content = aiResponse.data; // ChatGPT structure
+    content = aiResponse.data; // Alternative Claude response structure
   } else {
-    throw new Error('Invalid AI response structure');
+    throw new Error('Invalid Claude AI response structure');
   }
 
   return content.trim();
@@ -186,9 +186,9 @@ Create platform-native content that complements but doesn't repeat the main cont
       if (aiResponse.success) {
         let caption = '';
         if (aiResponse.content?.content) {
-          caption = aiResponse.content.content; // Claude
+          caption = aiResponse.content.content; // Claude structure
         } else if (aiResponse.data) {
-          caption = aiResponse.data; // ChatGPT
+          caption = aiResponse.data; // Alternative Claude structure
         }
 
         // Add affiliate link and compliance disclosure

@@ -37,7 +37,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     useManualAffiliateLink: false,
     manualAffiliateLink: '',
     sendToMakeWebhook: true,
-    aiModel: 'claude' as 'chatgpt' | 'claude' // 🚀 CLAUDE DEFAULT: Prioritize Claude for quality
+    aiModel: 'claude' as 'claude' // 🔥 CLAUDE ONLY: Claude-only content generation system
   });
 
   // Handle URL parameters for auto-population
@@ -313,7 +313,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
             <label className="text-sm font-medium mb-2 block">AI Model</label>
             <select
               value={formData.aiModel}
-              onChange={(e) => setFormData(prev => ({...prev, aiModel: e.target.value as 'chatgpt' | 'claude'}))}
+              onChange={(e) => setFormData(prev => ({...prev, aiModel: e.target.value as 'claude'}))}
               className="w-full p-3 border rounded-lg"
             >
               {availableModels && availableModels.length > 0 ? (
@@ -323,7 +323,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
                   </option>
                 ))
               ) : (
-                <option value="chatgpt">ChatGPT (OpenAI)</option>
+                <option value="claude">Claude (Anthropic)</option>
               )}
             </select>
             {availableModels && availableModels.find((m: any) => m.id === formData.aiModel) && (

@@ -7,10 +7,9 @@ export function registerAIModelsRoutes(app: Express) {
     try {
       const models = await getAvailableModels();
       
-      // Return in the expected format for the frontend
+      // Return in the expected format for the frontend - Claude only
       const modelArray = [
-        { id: 'claude', name: 'Claude', available: models.claude },
-        { id: 'chatgpt', name: 'ChatGPT', available: models.chatgpt }
+        { id: 'claude', name: 'Claude', available: models.claude }
       ];
       
       res.json(modelArray);
@@ -23,35 +22,22 @@ export function registerAIModelsRoutes(app: Express) {
     }
   });
 
-  // Test AI model availability
+  // Test Claude AI model availability
   app.post('/api/ai-models/test', async (req, res) => {
     try {
-      const { model = 'chatgpt' } = req.body;
+      // Only test Claude - it's the only supported model
+      const { checkClaudeApiKey } = await import('../services/claude');
+      const isAvailable = await checkClaudeApiKey();
       
-      // Import the appropriate service
-      if (model === 'claude') {
-        const { checkClaudeApiKey } = await import('../services/claude');
-        const isAvailable = await checkClaudeApiKey();
-        
-        res.json({
-          model: 'claude',
-          available: isAvailable,
-          message: isAvailable ? 'Claude API key is valid' : 'Claude API key is invalid or not set'
-        });
-      } else {
-        // Default to ChatGPT
-        const isAvailable = !!process.env.OPENAI_API_KEY;
-        
-        res.json({
-          model: 'chatgpt',
-          available: isAvailable,
-          message: isAvailable ? 'OpenAI API key is valid' : 'OpenAI API key is not set'
-        });
-      }
+      res.json({
+        model: 'claude',
+        available: isAvailable,
+        message: isAvailable ? 'Claude API key is valid' : 'Claude API key is invalid or not set'
+      });
     } catch (error) {
-      console.error('Error testing AI model:', error);
+      console.error('Error testing Claude AI model:', error);
       res.status(500).json({ 
-        error: 'Failed to test AI model',
+        error: 'Failed to test Claude AI model',
         details: error instanceof Error ? error.message : 'Unknown error'
       });
     }
