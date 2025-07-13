@@ -5,8 +5,15 @@ export function registerAIModelsRoutes(app: Express) {
   // Get available AI models
   app.get('/api/ai-models/available', async (req, res) => {
     try {
-      const models = getAvailableModels();
-      res.json(models);
+      const models = await getAvailableModels();
+      
+      // Return in the expected format for the frontend
+      const modelArray = [
+        { id: 'claude', name: 'Claude', available: models.claude },
+        { id: 'chatgpt', name: 'ChatGPT', available: models.chatgpt }
+      ];
+      
+      res.json(modelArray);
     } catch (error) {
       console.error('Error fetching available AI models:', error);
       res.status(500).json({ 

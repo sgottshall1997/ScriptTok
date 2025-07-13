@@ -3,7 +3,7 @@
  * Unified interface for all AI model interactions with Claude supremacy
  */
 
-import { generateWithClaude } from './claude';
+import { generateWithClaude as claudeGenerate } from './claude';
 import { generateWithFallback as generateWithOpenAI } from './openai';
 
 export interface AIGenerationRequest {
@@ -49,10 +49,10 @@ export async function generateWithAI(prompt: string, config: AIGenerationRequest
     
     if (selectedModel === 'claude') {
       // Use Claude AI
-      response = await generateWithClaude(prompt, config);
+      response = await generateWithClaudeRouter(prompt, config);
     } else {
       // Use ChatGPT as fallback only
-      response = await generateWithChatGPT(prompt, config);
+      response = await generateWithChatGPTRouter(prompt, config);
     }
     
     const processingTime = Date.now() - startTime;
@@ -68,7 +68,7 @@ export async function generateWithAI(prompt: string, config: AIGenerationRequest
     if (selectedModel === 'claude' && config.model === 'claude') {
       console.log('🔄 Falling back to ChatGPT due to Claude failure');
       try {
-        const fallbackResponse = await generateWithChatGPT(prompt, config);
+        const fallbackResponse = await generateWithChatGPTRouter(prompt, config);
         fallbackResponse.processingTime = Date.now() - startTime;
         return fallbackResponse;
       } catch (fallbackError) {
@@ -88,7 +88,7 @@ export async function generateWithAI(prompt: string, config: AIGenerationRequest
 /**
  * CLAUDE AI GENERATION
  */
-async function generateWithClaude(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
+async function generateWithClaudeRouter(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
   try {
     console.log('🔵 Routing to Claude AI service...');
     
@@ -99,7 +99,7 @@ async function generateWithClaude(prompt: string, config: AIGenerationRequest): 
       useJson: config.useJson || false
     };
     
-    const claudeResponse = await generateWithClaude(prompt, claudeConfig);
+    const claudeResponse = await claudeGenerate(prompt, claudeConfig);
     
     if (claudeResponse.success) {
       return {
@@ -120,7 +120,7 @@ async function generateWithClaude(prompt: string, config: AIGenerationRequest): 
 /**
  * CHATGPT AI GENERATION
  */
-async function generateWithChatGPT(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
+async function generateWithChatGPTRouter(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
   try {
     console.log('🟠 Routing to ChatGPT AI service...');
     
