@@ -1,0 +1,69 @@
+Please refactor and optimize the entire GlowBot codebase. Make the codebase modular, efficient, and clean for both the single content generator and the automated bulk generator. Here’s exactly what I want:
+
+⸻
+
+🔁 Deduplication & Cleanup
+	•	Identify and remove any duplicated logic, especially:
+	•	Prompt generation code
+	•	Caption formatting logic
+	•	Payload formatting or webhook sending
+	•	Consolidate all shared logic (e.g., prompt formatting, platform-specific fields) into a clean utility module.
+
+⸻
+
+🧱 Modular Architecture
+	•	Unify all generators (single, bulk, and scheduled bulk) into a modular contentGenerator system that:
+	•	Accepts config (niche, template type, tone, etc.)
+	•	Returns fully formatted content payload including: script, productDescription, demoScript, instagramCaption, tiktokCaption, youtubeCaption, xCaption
+	•	Use a single shared method for:
+	•	Tone handling
+	•	Content template logic
+	•	PromptFactory generation
+
+⸻
+
+🗂 Project Structure Enhancements
+	•	Move prompt logic into a clean promptFactory.ts file with each template type in its own exported function.
+	•	Create a new scheduler.ts module that handles:
+	•	Creating and managing scheduled jobs (every 5 min, daily at 5am, etc.)
+	•	Viewing and editing scheduled jobs from the UI
+	•	Create a webhookDispatcher.ts that routes outgoing payloads to the correct Make.com webhook by niche.
+
+⸻
+
+⚙ Unified Generator UX Update
+	•	Add a dropdown toggle inside the automated bulk generator:
+	•	Allows scheduling a bulk job at a chosen time
+	•	Opens a nested modal with:
+	•	Template type
+	•	Tone
+	•	Platform selection
+	•	Product list preview
+	•	Scheduling time (cron format or daily/weekly option)
+	•	Add a sidebar section 🗓 Scheduled Jobs that:
+	•	Lists all scheduled automated bulk jobs
+	•	Allows toggling, deleting, or rescheduling
+
+⸻
+
+🧹 Additional Cleanup & Efficiency Boosts
+	•	Remove any unused variables, console logs, or temp files
+	•	Ensure all data is typed with interfaces or types (TypeScript)
+	•	Standardize naming conventions across the app (camelCase for vars, PascalCase for components)
+	•	Ensure ContentHistory page includes:
+	•	New Spartan format outputs
+	•	Any scheduled bulk output
+	•	Proper tags or labels for how/when content was generated
+
+⸻
+
+🧪 Final QA Instructions
+	•	After refactor, run the following end-to-end test:
+	•	Generate content using both single and bulk generator
+	•	Schedule a bulk generator run for 5 mins later and verify it fires
+	•	Confirm generated content shows up correctly in Content History
+	•	Trigger sync to Google Sheets and verify webhook was sent
+
+⸻
+
+Let me know when this is complete, and show me the diffs for key files: contentGenerator.ts, scheduler.ts, promptFactory.ts, and contentHistory.tsx.
