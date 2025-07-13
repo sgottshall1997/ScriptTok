@@ -14,7 +14,7 @@ export interface ContentGenerationConfig {
   templateType: string;
   tone: string;
   platforms: string[];
-  contentFormat: 'regular' | 'spartan';
+  contentFormat: 'standard' | 'spartan';
   aiModel: 'claude';
   affiliateId?: string;
   trendingProducts?: TrendingProduct[];

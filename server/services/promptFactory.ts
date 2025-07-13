@@ -11,7 +11,7 @@ export interface PromptConfig {
   tone: string;
   productName: string;
   platforms?: string[];
-  contentFormat?: 'regular' | 'spartan';
+  contentFormat?: 'standard' | 'spartan';
   trendingProducts?: TrendingProduct[];
   viralInspiration?: any;
   smartStyleRecommendations?: any;

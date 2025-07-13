@@ -6,6 +6,7 @@ import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { generatePlatformCaptions } from "../services/platformContentGenerator";
+import { generateUnifiedContent, ContentGenerationConfig } from "../services/unifiedContentGenerator";
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema, trendingProducts } from "@shared/schema";
 import { sendWebhookNotification, WebhookService } from "../services/webhookService";
@@ -184,165 +185,75 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       console.log('Viral inspiration fetch failed, continuing without it');
     }
 
-    // Check if Spartan format should be used
-    const shouldUseSpartan = config.useSpartanFormat;
-    console.log(`📝 Content generation mode: ${shouldUseSpartan ? 'Spartan' : 'Standard'}`);
+    // Use NEW unified content generator with proper format mapping
+    const contentFormat = config.useSpartanFormat ? 'spartan' : 'standard';
+    console.log(`📝 Content generation mode: ${contentFormat.toUpperCase()}`);
     
-    // Generate main content with enhanced error handling
-    let mainContent;
-    let generationAttempts = 0;
-    const maxAttempts = 2;
+    // Prepare unified content generation config
+    const unifiedConfig: ContentGenerationConfig = {
+      productName: config.productName,
+      niche: config.niche,
+      templateType: config.templateType,
+      tone: config.tone,
+      platforms: config.platforms || ['tiktok', 'instagram'],
+      contentFormat: contentFormat,
+      aiModel: config.aiModel,
+      trendingProducts: trendingProductsData,
+      viralInspiration: viralInspiration
+    };
+
+    // Generate content using unified generator
+    const unifiedResult = await generateUnifiedContent(unifiedConfig);
     
-    while (generationAttempts < maxAttempts) {
-      generationAttempts++;
-      console.log(`🔄 Generation attempt ${generationAttempts}/${maxAttempts}`);
-      
-      try {
-        if (shouldUseSpartan) {
-          // Use Spartan content generation for main content
-          const { generateSpartanContent } = await import('../services/spartanContentGenerator');
-          const spartanContentType = config.templateType === 'spartan_video_script' ? 'spartanVideoScript' : 'shortCaptionSpartan';
-          
-          const spartanResult = await generateSpartanContent({
-            productName: config.productName,
-            niche: config.niche,
-            contentType: spartanContentType,
-            useSpartanFormat: true,
-            additionalContext: `Template: ${config.templateType}`,
-            aiModel: config.aiModel
-          });
-          
-          if (spartanResult.success && spartanResult.content) {
-            mainContent = spartanResult.content; // This is already a string
-            console.log(`✅ Spartan content generated successfully (${spartanResult.content.length} chars)`);
-          } else {
-            console.log(`⚠️ Spartan generation failed: ${spartanResult.error || 'Unknown error'}`);
-            if (generationAttempts === maxAttempts) {
-              // Final fallback to regular generation
-              console.log('🔄 Falling back to standard content generation');
-              const fallbackResponse = await generateContent(
-                config.productName,
-                config.templateType as any,
-                config.tone as any,
-                trendingProductsData,
-                config.niche as any,
-                "gpt-4o", // Legacy parameter not used for model selection
-                viralInspiration,
-                config.useSmartStyle ? { useSmartStyle: true } : undefined,
-                config.aiModel // Actual AI model parameter
-              );
-              
-              // Extract content from fallback response too
-              if (typeof fallbackResponse === 'string') {
-                mainContent = fallbackResponse;
-              } else if (fallbackResponse && typeof fallbackResponse === 'object' && fallbackResponse.content) {
-                mainContent = fallbackResponse.content;
-                console.log(`🔍 EXTRACTED CONTENT from fallback generateContent: "${fallbackResponse.content.substring(0, 100)}..."`);
-              } else {
-                console.error(`❌ UNEXPECTED fallback response type:`, typeof fallbackResponse, fallbackResponse);
-                mainContent = String(fallbackResponse);
-              }
-            } else {
-              continue; // Retry Spartan generation
-            }
-          }
-        } else {
-          // Standard content generation
-          console.log(`🤖 GENERATING WITH ${config.aiModel?.toUpperCase() || 'CLAUDE'} MODEL`);
-          const generatedResponse = await generateContent(
-            config.productName,
-            config.templateType as any,
-            config.tone as any,
-            trendingProductsData,
-            config.niche as any,
-            "gpt-4o", // This parameter is legacy and not used for model selection
-            viralInspiration,
-            config.useSmartStyle ? { useSmartStyle: true } : undefined,
-            config.aiModel // This is the actual parameter used for AI model selection
-          );
-          
-          // Extract just the content string from the response object
-          if (typeof generatedResponse === 'string') {
-            mainContent = generatedResponse;
-          } else if (generatedResponse && typeof generatedResponse === 'object' && generatedResponse.content) {
-            mainContent = generatedResponse.content;
-            console.log(`🔍 EXTRACTED CONTENT from generateContent response: "${generatedResponse.content.substring(0, 100)}..."`);
-          } else {
-            console.error(`❌ UNEXPECTED generateContent response type:`, typeof generatedResponse, generatedResponse);
-            mainContent = String(generatedResponse);
-          }
-        }
-        
-        // Validate generated content
-        const validation = validateGeneratedContent(mainContent, config);
-        
-        if (validation.isValid) {
-          console.log(`✅ Content validation passed`);
-          if (validation.warnings.length > 0) {
-            console.log(`⚠️ Warnings: ${validation.warnings.join(', ')}`);
-          }
-          break; // Success, exit retry loop
-        } else {
-          console.log(`❌ Content validation failed: ${validation.errors.join(', ')}`);
-          if (generationAttempts === maxAttempts) {
-            throw new Error(`Content generation failed validation: ${validation.errors.join(', ')}`);
-          }
-          // Retry with different approach
-          continue;
-        }
-        
-      } catch (error) {
-        console.log(`❌ Generation attempt ${generationAttempts} failed:`, error.message);
-        if (generationAttempts === maxAttempts) {
-          throw error; // Re-throw on final attempt
-        }
-      }
+    // Extract main content from unified result
+    mainContent = unifiedResult.script;
+    
+    console.log(`✅ Unified content generated successfully (${mainContent.length} chars)`);
+    console.log(`📋 Generated platform captions: ${Object.keys({
+      tiktok: unifiedResult.tiktokCaption,
+      instagram: unifiedResult.instagramCaption,
+      youtube: unifiedResult.youtubeCaption,
+      x: unifiedResult.xCaption,
+      facebook: unifiedResult.facebookCaption
+    }).join(', ')}`);
+    
+    // Validate generated content from unified generator
+    const validation = validateGeneratedContent(mainContent, config);
+    
+    if (!validation.isValid) {
+      console.log(`❌ Content validation failed: ${validation.errors.join(', ')}`);
+      throw new Error(`Content generation failed validation: ${validation.errors.join(', ')}`);
+    }
+    
+    console.log(`✅ Content validation passed`);
+    if (validation.warnings.length > 0) {
+      console.log(`⚠️ Warnings: ${validation.warnings.join(', ')}`);
     }
 
-    // Generate platform-specific captions if platforms are specified
-    let platformCaptions: Record<string, string> = {};
-    if (config.platforms && config.platforms.length > 0) {
-      // Extract affiliate ID from config.affiliateUrl or use default
-      const affiliateId = config.affiliateUrl ? 
-        config.affiliateUrl.match(/tag=([^&]+)/)?.[1] || "sgottshall107-20" : 
-        "sgottshall107-20";
-      
-      platformCaptions = await generatePlatformCaptions({
-        productName: config.productName,
-        platforms: config.platforms,
-        tone: config.tone,
-        niche: config.niche,
-        mainContent: typeof mainContent === 'string' ? mainContent : mainContent.content,
-        viralInspiration,
-        affiliateId,
-        useSpartanFormat: shouldUseSpartan,
-        aiModel: config.aiModel
-      });
-    }
+    // Use platform captions from unified generator
+    const platformCaptions: Record<string, string> = {
+      tiktok: unifiedResult.tiktokCaption,
+      instagram: unifiedResult.instagramCaption,
+      youtube: unifiedResult.youtubeCaption,
+      twitter: unifiedResult.xCaption,
+      facebook: unifiedResult.facebookCaption
+    };
 
     // Estimate video duration
     const videoDuration = config.contentType === "video" ? 
-      estimateVideoDuration(typeof mainContent === 'string' ? mainContent : mainContent.content, config.videoDuration) : undefined;
+      estimateVideoDuration(mainContent, config.videoDuration) : undefined;
 
-    // Final validation of complete result - properly extract content
-    const script = typeof mainContent === 'string' ? mainContent : 
-                  (typeof mainContent === 'object' && mainContent?.content ? mainContent.content : 
-                   String(mainContent));
+    // Use mainContent directly as it's already validated
+    const script = mainContent;
     
-    console.log(`🔍 CONTENT EXTRACTION DEBUG: mainContent type: ${typeof mainContent}, extracted script: "${script?.substring(0, 100)}..."`);
-    console.log(`🔍 MAIN CONTENT STRUCTURE:`, typeof mainContent === 'object' ? Object.keys(mainContent) : 'primitive');
-    console.log(`🔍 SCRIPT CONTENT TO BE STORED: "${script?.substring(0, 150)}..."`);
-    console.log(`🔍 SCRIPT TYPE:`, typeof script, script ? `Length: ${script.length}` : 'UNDEFINED/NULL');
-    const finalValidation = validateGeneratedContent(mainContent, config);
-    
-    if (!finalValidation.isValid) {
-      throw new Error(`Final validation failed: ${finalValidation.errors.join(', ')}`);
-    }
+    console.log(`🔍 UNIFIED GENERATOR OUTPUT: Script length: ${script.length} chars`);
+    console.log(`🔍 SCRIPT PREVIEW: "${script.substring(0, 150)}..."`);
+    console.log(`✅ Using unified content generator - validation already completed`);
 
     const executionTime = Date.now() - startTime;
     console.log(`⏱️ Content generation completed in ${executionTime}ms`);
 
-    // Create response structure
+    // Create response structure using unified generator outputs
     const result = {
       script,
       content: script, // Backward compatibility
@@ -353,21 +264,26 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       platforms: config.platforms,
       platformCaptions,
       videoDuration,
+      // Include unified generator fields
+      productDescription: unifiedResult.productDescription,
+      demoScript: unifiedResult.demoScript,
+      instagramCaption: unifiedResult.instagramCaption,
+      tiktokCaption: unifiedResult.tiktokCaption,
+      youtubeCaption: unifiedResult.youtubeCaption,
+      xCaption: unifiedResult.xCaption,
+      facebookCaption: unifiedResult.facebookCaption,
+      affiliateLink: unifiedResult.affiliateLink,
       viralInspiration,
       affiliateUrl: config.affiliateUrl,
       customHook: config.customHook,
-      model: config.aiModel === 'claude' ? 'Claude' : 'ChatGPT',
+      model: 'Claude', // Always Claude since we're Claude-only
       aiModel: config.aiModel,
       useSpartanFormat: config.useSpartanFormat,
-      tokens: (typeof mainContent === 'string') ? 0 : (
-        typeof mainContent.tokens === 'object' && mainContent.tokens?.total 
-          ? mainContent.tokens.total 
-          : (typeof mainContent.tokens === 'number' ? mainContent.tokens : 0)
-      ),
-      fallbackLevel: (typeof mainContent === 'string') ? 'exact' : (mainContent.fallbackLevel || 'exact'),
+      tokens: Math.floor(mainContent.length / 4), // Rough token estimate
+      fallbackLevel: 'exact',
       generatedAt: new Date().toISOString(),
       executionTime,
-      validation: finalValidation
+      validation: validation
     };
 
     // Debug the data being saved to database
@@ -394,11 +310,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       affiliateLink: config.affiliateUrl,
       viralInspo: viralInspiration,
       modelUsed: config.aiModel || "claude", // Store the actual AI model used
-      tokenCount: (typeof mainContent === 'string') ? 0 : (
-        typeof mainContent.tokens === 'object' && mainContent.tokens?.total 
-          ? mainContent.tokens.total 
-          : (typeof mainContent.tokens === 'number' ? mainContent.tokens : 0)
-      )
+      tokenCount: Math.floor(mainContent.length / 4) // Rough token estimate
     };
     
     console.log(`💾 DATABASE SAVE DEBUG - generatedOutput.content type:`, typeof saveData.generatedOutput.content);
