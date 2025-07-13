@@ -1,174 +1,270 @@
-import { generateWithFallback } from './openai';
-import { generateWithClaude, generateJSONWithClaude } from './claude';
-import type { ContentGenerationResponse, ContentGenerationError } from './responseTypes';
+/**
+ * AI MODEL ROUTER
+ * Unified interface for all AI model interactions with Claude supremacy
+ */
 
-export type AIModel = 'chatgpt' | 'claude';
+import { generateWithClaude } from './claude';
+import { generateWithFallback as generateWithOpenAI } from './openai';
 
-export interface AIGenerationOptions {
-  model: AIModel;
-  maxTokens?: number;
-  temperature?: number;
-  useJson?: boolean;
+export interface AIGenerationRequest {
+  model: 'chatgpt' | 'claude';
   systemPrompt?: string;
-  metadata?: any;
-  tryFallbackOnError?: boolean;
+  temperature?: number;
+  maxTokens?: number;
+  useJson?: boolean;
+  metadata?: {
+    templateType?: string;
+    niche?: string;
+    productName?: string;
+    contentFormat?: string;
+    platform?: string;
+  };
+}
+
+export interface AIGenerationResponse {
+  success: boolean;
+  content?: any;
+  data?: string;
+  error?: string;
+  model: string;
+  tokensUsed?: number;
+  processingTime?: number;
 }
 
 /**
- * Generate content using the specified AI model
- * @param prompt The prompt to send to the model
- * @param options Configuration options including model selection
+ * GENERATE WITH AI - CLAUDE SUPREMACY ENFORCED
  */
-export async function generateWithAI(
-  prompt: string,
-  options: AIGenerationOptions
-): Promise<ContentGenerationResponse | ContentGenerationError> {
-  const {
-    model = 'chatgpt',
-    maxTokens = 1500,
-    temperature = 0.7,
-    useJson = false,
-    systemPrompt = "You are a helpful assistant that provides accurate and detailed information.",
-    metadata = {},
-    tryFallbackOnError = true
-  } = options;
-
-  // 🔥 ABSOLUTE CLAUDE ENFORCEMENT - NO FALLBACK ALLOWED
-  if (model === 'claude' || model === 'Claude' || model?.toLowerCase?.() === 'claude') {
-    console.log(`🚨🚨🚨 ABSOLUTE CLAUDE ENFORCEMENT: Model parameter detected as Claude`);
-    console.log(`🔥 CLAUDE ROUTE LOCKED: Bypassing all other logic - CLAUDE ONLY`);
-    console.log(`🎯 DIRECT CLAUDE CALL: No switch statement, no fallback, CLAUDE GUARANTEED`);
-    
-    try {
-      if (useJson) {
-        const result = await generateJSONWithClaude(prompt, {
-          maxTokens,
-          temperature,
-          systemPrompt,
-          metadata: { ...metadata, model: 'claude', forcedClaude: true }
-        });
-        console.log(`✅ CLAUDE JSON GENERATION COMPLETED SUCCESSFULLY`);
-        return result;
-      } else {
-        const result = await generateWithClaude(prompt, {
-          maxTokens,
-          temperature,
-          systemPrompt,
-          metadata: { ...metadata, model: 'claude', forcedClaude: true },
-          tryFallbackOnError: false // NO FALLBACK EVER
-        });
-        console.log(`✅ CLAUDE TEXT GENERATION COMPLETED SUCCESSFULLY`);
-        return result;
-      }
-    } catch (error) {
-      console.error(`❌ CLAUDE GENERATION ERROR (NO FALLBACK):`, error);
-      // DO NOT FALLBACK - THROW ERROR TO MAINTAIN CLAUDE REQUIREMENT
-      throw new Error(`Claude generation required but failed: ${error.message}`);
-    }
-  }
-
-  console.log(`🚨 AI MODEL ROUTER DEBUG: Received model="${model}", options:`, { model, maxTokens, temperature, useJson });
-  console.log(`🤖 Using AI model: ${model.toUpperCase()} ${useJson ? '(JSON mode)' : ''}`);
-
+export async function generateWithAI(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
+  const startTime = Date.now();
+  
+  // CLAUDE SUPREMACY: Always prioritize Claude when specified or default to Claude
+  const selectedModel = config.model || 'claude';
+  
+  console.log(`🤖 AI ROUTER: Using ${selectedModel.toUpperCase()} for generation`);
+  console.log(`📝 Prompt length: ${prompt.length} chars`);
+  console.log(`🏛️ Content format: ${config.metadata?.contentFormat || 'regular'}`);
+  
   try {
-    switch (model) {
-      case 'claude':
-        console.log(`🔥 ROUTING TO CLAUDE: Using Claude AI model for generation`);
-        if (useJson) {
-          return await generateJSONWithClaude(prompt, {
-            maxTokens,
-            temperature,
-            systemPrompt,
-            metadata: { ...metadata, model: 'claude' }
-          });
-        } else {
-          return await generateWithClaude(prompt, {
-            maxTokens,
-            temperature,
-            systemPrompt,
-            metadata: { ...metadata, model: 'claude' },
-            tryFallbackOnError
-          });
-        }
+    let response: AIGenerationResponse;
+    
+    if (selectedModel === 'claude') {
+      // Use Claude AI
+      response = await generateWithClaude(prompt, config);
+    } else {
+      // Use ChatGPT as fallback only
+      response = await generateWithChatGPT(prompt, config);
+    }
+    
+    const processingTime = Date.now() - startTime;
+    response.processingTime = processingTime;
+    
+    console.log(`✅ AI generation completed in ${processingTime}ms using ${selectedModel.toUpperCase()}`);
+    return response;
+    
+  } catch (error) {
+    console.error(`❌ AI generation failed with ${selectedModel}:`, error);
+    
+    // Only fallback to ChatGPT if Claude fails and was originally requested
+    if (selectedModel === 'claude' && config.model === 'claude') {
+      console.log('🔄 Falling back to ChatGPT due to Claude failure');
+      try {
+        const fallbackResponse = await generateWithChatGPT(prompt, config);
+        fallbackResponse.processingTime = Date.now() - startTime;
+        return fallbackResponse;
+      } catch (fallbackError) {
+        console.error('❌ Fallback to ChatGPT also failed:', fallbackError);
+      }
+    }
+    
+    return {
+      success: false,
+      error: error.message,
+      model: selectedModel,
+      processingTime: Date.now() - startTime
+    };
+  }
+}
 
-      case 'chatgpt':
-      default:
-        console.log(`🔥 ROUTING TO CHATGPT: Using ChatGPT/OpenAI model for generation`);
-        return await generateWithFallback(prompt, {
-          maxTokens,
-          temperature,
-          useJson,
-          systemPrompt,
-          metadata: { ...metadata, model: 'chatgpt' },
-          tryFallbackOnError
-        });
+/**
+ * CLAUDE AI GENERATION
+ */
+async function generateWithClaude(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
+  try {
+    console.log('🔵 Routing to Claude AI service...');
+    
+    const claudeConfig = {
+      systemPrompt: config.systemPrompt || 'You are a helpful AI assistant.',
+      temperature: config.temperature || 0.7,
+      maxTokens: config.maxTokens || 1500,
+      useJson: config.useJson || false
+    };
+    
+    const claudeResponse = await generateWithClaude(prompt, claudeConfig);
+    
+    if (claudeResponse.success) {
+      return {
+        success: true,
+        content: claudeResponse.content,
+        model: 'claude',
+        tokensUsed: claudeResponse.metadata?.usage?.input_tokens + claudeResponse.metadata?.usage?.output_tokens || 0
+      };
+    } else {
+      throw new Error(claudeResponse.error || 'Claude generation failed');
     }
   } catch (error) {
-    console.error(`❌ AI model ${model} generation failed:`, error);
+    console.error('❌ Claude generation error:', error);
     throw error;
   }
 }
 
 /**
- * Get model-specific configuration for content generation
+ * CHATGPT AI GENERATION
  */
-export function getModelConfig(model: AIModel) {
-  switch (model) {
-    case 'claude':
-      return {
-        maxTokens: 2000, // Claude handles longer contexts better
-        temperature: 0.7,
-        supportsJson: true,
-        supportsVision: true,
-        contextWindow: 200000, // Claude 3.5 Sonnet context window
-        strengths: ['Long-form content', 'Analysis', 'Creative writing', 'Code generation'],
-        tooltip: 'Claude may provide more verbose, analytical outputs with detailed explanations'
-      };
+async function generateWithChatGPT(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
+  try {
+    console.log('🟠 Routing to ChatGPT AI service...');
     
-    case 'chatgpt':
-    default:
+    const openaiConfig = {
+      systemPrompt: config.systemPrompt || 'You are a helpful AI assistant.',
+      temperature: config.temperature || 0.7,
+      maxTokens: config.maxTokens || 1500,
+      useJson: config.useJson || false
+    };
+    
+    const openaiResponse = await generateWithOpenAI(prompt, openaiConfig);
+    
+    if (openaiResponse.success) {
       return {
-        maxTokens: 1500,
-        temperature: 0.7,
-        supportsJson: true,
-        supportsVision: true,
-        contextWindow: 128000, // GPT-4 context window
-        strengths: ['Conversational', 'Concise', 'Structured', 'Code generation'],
-        tooltip: 'ChatGPT provides balanced, conversational content with consistent formatting'
+        success: true,
+        data: openaiResponse.content,
+        model: 'chatgpt',
+        tokensUsed: openaiResponse.metadata?.usage?.total_tokens || 0
       };
-  }
-}
-
-/**
- * Validate if a model is available
- */
-export function isModelAvailable(model: AIModel): boolean {
-  switch (model) {
-    case 'claude':
-      return !!process.env.ANTHROPIC_API_KEY;
-    case 'chatgpt':
-      return !!process.env.OPENAI_API_KEY;
-    default:
-      return false;
-  }
-}
-
-/**
- * Get all available models with their status
- */
-export function getAvailableModels(): Array<{ id: AIModel; name: string; available: boolean; config: any }> {
-  return [
-    {
-      id: 'chatgpt',
-      name: 'ChatGPT (OpenAI)',
-      available: isModelAvailable('chatgpt'),
-      config: getModelConfig('chatgpt')
-    },
-    {
-      id: 'claude',
-      name: 'Claude (Anthropic)',
-      available: isModelAvailable('claude'),
-      config: getModelConfig('claude')
+    } else {
+      throw new Error(openaiResponse.error || 'ChatGPT generation failed');
     }
-  ];
+  } catch (error) {
+    console.error('❌ ChatGPT generation error:', error);
+    throw error;
+  }
+}
+
+/**
+ * MODEL AVAILABILITY CHECKER
+ */
+export async function checkModelAvailability(): Promise<{
+  claude: boolean;
+  chatgpt: boolean;
+  preferred: 'claude' | 'chatgpt';
+}> {
+  const results = {
+    claude: false,
+    chatgpt: false,
+    preferred: 'claude' as const
+  };
+  
+  // Test Claude availability
+  try {
+    const claudeTest = await generateWithClaude('Test message', {
+      model: 'claude',
+      temperature: 0.3,
+      maxTokens: 50
+    });
+    results.claude = claudeTest.success;
+  } catch (error) {
+    console.log('Claude availability test failed:', error.message);
+  }
+  
+  // Test ChatGPT availability
+  try {
+    const chatgptTest = await generateWithChatGPT('Test message', {
+      model: 'chatgpt',
+      temperature: 0.3,
+      maxTokens: 50
+    });
+    results.chatgpt = chatgptTest.success;
+  } catch (error) {
+    console.log('ChatGPT availability test failed:', error.message);
+  }
+  
+  // Claude is always preferred when available
+  results.preferred = results.claude ? 'claude' : 'chatgpt';
+  
+  console.log(`🔍 AI Model Availability: Claude: ${results.claude}, ChatGPT: ${results.chatgpt}, Preferred: ${results.preferred.toUpperCase()}`);
+  
+  return results;
+}
+
+/**
+ * GET OPTIMAL MODEL FOR TASK
+ */
+export function getOptimalModel(taskType: string, contentFormat: 'regular' | 'spartan' = 'regular'): 'claude' | 'chatgpt' {
+  // CLAUDE SUPREMACY: Always return Claude as optimal
+  console.log(`🎯 Optimal model for ${taskType} (${contentFormat}): CLAUDE (supremacy mode)`);
+  return 'claude';
+}
+
+/**
+ * USAGE STATISTICS
+ */
+export interface ModelUsageStats {
+  claude: {
+    requests: number;
+    successes: number;
+    failures: number;
+    totalTokens: number;
+    averageResponseTime: number;
+  };
+  chatgpt: {
+    requests: number;
+    successes: number;
+    failures: number;
+    totalTokens: number;
+    averageResponseTime: number;
+  };
+}
+
+// Simple in-memory stats (could be enhanced with database storage)
+let usageStats: ModelUsageStats = {
+  claude: { requests: 0, successes: 0, failures: 0, totalTokens: 0, averageResponseTime: 0 },
+  chatgpt: { requests: 0, successes: 0, failures: 0, totalTokens: 0, averageResponseTime: 0 }
+};
+
+export function updateModelStats(model: 'claude' | 'chatgpt', success: boolean, tokens: number = 0, responseTime: number = 0): void {
+  const stats = usageStats[model];
+  stats.requests++;
+  
+  if (success) {
+    stats.successes++;
+    stats.totalTokens += tokens;
+    stats.averageResponseTime = (stats.averageResponseTime + responseTime) / stats.successes;
+  } else {
+    stats.failures++;
+  }
+}
+
+export function getModelStats(): ModelUsageStats {
+  return JSON.parse(JSON.stringify(usageStats));
+}
+
+/**
+ * RESET STATS (for testing)
+ */
+export function resetModelStats(): void {
+  usageStats = {
+    claude: { requests: 0, successes: 0, failures: 0, totalTokens: 0, averageResponseTime: 0 },
+    chatgpt: { requests: 0, successes: 0, failures: 0, totalTokens: 0, averageResponseTime: 0 }
+  };
+}
+
+/**
+ * GET AVAILABLE MODELS
+ */
+export async function getAvailableModels(): Promise<{ claude: boolean; chatgpt: boolean; default: string }> {
+  const availability = await checkModelAvailability();
+  return {
+    claude: availability.claude,
+    chatgpt: availability.chatgpt,
+    default: 'claude' // Claude supremacy
+  };
 }

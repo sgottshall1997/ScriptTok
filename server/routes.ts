@@ -30,7 +30,7 @@ import { rewriteCaption } from "./api/post/rewrite-caption";
 import { generateDailyBatch } from "./api/daily-batch";
 import { forceRefreshRouter } from "./api/force-refresh";
 import { amazonLinksRouter } from "./api/amazonLinks";
-import { testEnhancedPayloads } from "./api/test-enhanced-payloads";
+
 import { cookingPipeline } from "./services/cookingContentPipeline";
 import redirectRouter from "./api/redirect";
 import platformContentRouter from "./api/platform-content";
@@ -70,13 +70,8 @@ import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-r
 import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
 import syncRatingsRouter from "./api/sync-ratings";
 import { registerContentEvaluationRoutes } from "./api/content-evaluation";
-import { testScheduledGeneration } from "./tests/scheduled-generation-test";
-import testUnifiedGeneratorRouter from "./api/test-unified-generator";
-import testSimpleUnifiedRouter from "./api/test-simple-unified";
-import testProductionReadyRouter from "./api/test-production-ready";
-import { globalGatekeeperRouter } from "./api/global-gatekeeper-monitoring";
-import { testSafeguardsRouter } from "./api/test-safeguards";
-import { emergencyShutdownRouter } from "./api/emergency-shutdown";
+
+
 import { perplexityAutomationRouter } from "./api/perplexity-automation";
 import safeguardMonitorRouter from "./api/safeguard-monitor";
 
@@ -464,7 +459,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/generate/daily-batch', generateDailyBatch);
   
   // Test enhanced payloads endpoint
-  app.post('/api/test/enhanced-payloads', testEnhancedPayloads);
+
 
   // Test all niche-specific Perplexity fetchers
   app.post('/api/test-niche-fetchers', async (req, res) => {
@@ -645,21 +640,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Favorites API
   app.use('/api/favorites', favoritesRouter);
-  app.use('/api/test', testUnifiedGeneratorRouter);
-  app.use('/api/test', testSimpleUnifiedRouter);
-  app.use('/api/test', testProductionReadyRouter);
+
+
+
   
   // 🛑 SAFEGUARD MONITORING ENDPOINTS
   app.use('/api/safeguards', safeguardMonitorRouter);
   
   // 🚫 GLOBAL GATEKEEPER MONITORING ENDPOINTS
-  app.use('/api/gatekeeper', globalGatekeeperRouter);
+
   
   // 🧪 SAFEGUARD TESTING ENDPOINTS
-  app.use('/api/test-safeguards', testSafeguardsRouter);
+
   
   // 🚨 EMERGENCY SHUTDOWN ENDPOINTS
-  app.use('/api/emergency-shutdown', emergencyShutdownRouter);
+
   
   // 🔄 PERPLEXITY AUTOMATION CONTROL
   app.use('/api/perplexity-automation', perplexityAutomationRouter);

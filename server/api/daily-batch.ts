@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { getAmazonAffiliateLink } from "../services/amazonAffiliate";
+import { generateAmazonAffiliateLink } from "../services/amazonAffiliate";
 
 // Generate dynamic captions based on niche and product
 function generateDynamicCaption(niche: string, product: string, template: string): string {
@@ -272,7 +272,7 @@ Keep these visual elements naturally integrated without breaking your profession
           if (type === 'product') {
             // Product-focused content with affiliate monetization
             console.log(`💰 Fetching affiliate link for: ${topProduct}`);
-            affiliateLink = await getAmazonAffiliateLink(topProduct);
+            affiliateLink = generateAmazonAffiliateLink(topProduct);
             baseCaption = generateDynamicCaption(niche, topProduct, template);
             hashtags = ['#GlowWithMe', `#${niche}Goals`, '#TrendingNow', '#ProductReview'].join(' ');
           } else {
