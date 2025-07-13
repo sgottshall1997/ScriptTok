@@ -50,7 +50,7 @@ import { emergencyStopAll, getSystemStatus } from "./api/emergency-stop";
 import { cronStatusRouter } from "./api/cron-status";
 import perplexityStatusRouter from "./api/perplexity-status";
 import aiAnalyticsRouter from "./api/ai-analytics";
-import generateContentUnifiedRouter from "./api/generateContentUnified";
+import generateContentUnifiedRouter from "./api/generateContentUnified_fixed";
 import favoritesRouter from "./api/favorites";
 import { bulkGeneratedContent } from "@shared/schema";
 import { eq } from "drizzle-orm";

@@ -261,11 +261,11 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     // Use platform captions from unified generator and sanitize them
     const platformCaptions: Record<string, string> = {
-      tiktok: sanitizeUnicode(unifiedResult.tiktokCaption),
-      instagram: sanitizeUnicode(unifiedResult.instagramCaption),
-      youtube: sanitizeUnicode(unifiedResult.youtubeCaption),
-      twitter: sanitizeUnicode(unifiedResult.xCaption),
-      facebook: sanitizeUnicode(unifiedResult.facebookCaption)
+      tiktok: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.tiktokCaption)) : sanitizeUnicode(unifiedResult.tiktokCaption),
+      instagram: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.instagramCaption)) : sanitizeUnicode(unifiedResult.instagramCaption),
+      youtube: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.youtubeCaption)) : sanitizeUnicode(unifiedResult.youtubeCaption),
+      twitter: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.xCaption)) : sanitizeUnicode(unifiedResult.xCaption),
+      facebook: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.facebookCaption)) : sanitizeUnicode(unifiedResult.facebookCaption)
     };
 
     // Estimate video duration
@@ -288,6 +288,12 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     // Use mainContent directly as it's already validated and sanitize it
     let script = sanitizeUnicode(mainContent);
     
+    // Apply Spartan format enforcement if needed
+    if (config.useSpartanFormat) {
+      script = enforceSpartanFormat(script);
+      console.log(`🏛️ SPARTAN ENFORCEMENT: Applied automatic content cleaning to main script`);
+    }
+    
     console.log(`🔍 UNIFIED GENERATOR OUTPUT: Script length: ${script.length} chars`);
     console.log(`🔍 SCRIPT PREVIEW: "${script.substring(0, 150)}..."`);
     console.log(`✅ Using unified content generator - validation already completed`);
@@ -306,14 +312,14 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       platforms: config.platforms,
       platformCaptions,
       videoDuration,
-      // Include unified generator fields (sanitized)
-      productDescription: sanitizeUnicode(unifiedResult.productDescription),
-      demoScript: sanitizeUnicode(unifiedResult.demoScript),
-      instagramCaption: sanitizeUnicode(unifiedResult.instagramCaption),
-      tiktokCaption: sanitizeUnicode(unifiedResult.tiktokCaption),
-      youtubeCaption: sanitizeUnicode(unifiedResult.youtubeCaption),
-      xCaption: sanitizeUnicode(unifiedResult.xCaption),
-      facebookCaption: sanitizeUnicode(unifiedResult.facebookCaption),
+      // Include unified generator fields (sanitized and Spartan-enforced if needed)
+      productDescription: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.productDescription)) : sanitizeUnicode(unifiedResult.productDescription),
+      demoScript: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.demoScript)) : sanitizeUnicode(unifiedResult.demoScript),
+      instagramCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.instagramCaption)) : sanitizeUnicode(unifiedResult.instagramCaption),
+      tiktokCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.tiktokCaption)) : sanitizeUnicode(unifiedResult.tiktokCaption),
+      youtubeCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.youtubeCaption)) : sanitizeUnicode(unifiedResult.youtubeCaption),
+      xCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.xCaption)) : sanitizeUnicode(unifiedResult.xCaption),
+      facebookCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.facebookCaption)) : sanitizeUnicode(unifiedResult.facebookCaption),
       affiliateLink: sanitizeUnicode(unifiedResult.affiliateLink),
       viralInspiration,
       affiliateUrl: config.affiliateUrl,
@@ -577,13 +583,59 @@ router.get("/", async (req: Request, res: Response) => {
   res.json({ message: 'GET root endpoint working' });
 });
 
+// Enhanced Spartan format enforcer - automatically fix non-compliant content
+function enforceSpartanFormat(text: string): string {
+  if (!text) return '';
+  
+  let cleanedText = text;
+  
+  // Define word replacements for Spartan format
+  const spartanReplacements = {
+    'just ': 'only ',
+    ' just ': ' only ',
+    'literally': '',
+    ' literally': '',
+    'literally ': '',
+    'really ': '',
+    ' really ': ' ',
+    'very ': '',
+    ' very ': ' ',
+    'actually ': '',
+    ' actually ': ' ',
+    'that ': 'this ',
+    ' that ': ' this ',
+    'can ': 'will ',
+    ' can ': ' will ',
+    'may ': 'will ',
+    ' may ': ' will ',
+    'amazing ': 'excellent ',
+    ' amazing': ' excellent',
+    'incredible ': 'exceptional ',
+    ' incredible': ' exceptional',
+    'awesome ': 'excellent ',
+    ' awesome': ' excellent'
+  };
+  
+  // Apply replacements
+  Object.entries(spartanReplacements).forEach(([banned, replacement]) => {
+    const regex = new RegExp(banned, 'gi');
+    cleanedText = cleanedText.replace(regex, replacement);
+  });
+  
+  // Remove multiple spaces
+  cleanedText = cleanedText.replace(/\s+/g, ' ').trim();
+  
+  // Remove emojis
+  const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]/gu;
+  cleanedText = cleanedText.replace(emojiPattern, '');
+  
+  return cleanedText.trim();
+}
+
 // Main unified content generation endpoint
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", contentGenerationLimiter, async (req: Request, res: Response) => {
   console.log('🔵 UNIFIED GENERATION ENDPOINT HIT:', req.body);
   try {
-    res.json({ success: true, message: 'Endpoint reached successfully', body: req.body });
-    return;
-    
     // 🚫 CRITICAL GLOBAL GATEKEEPER: Validate generation request  
     const gatekeeperValidation = validateContentGenerationRequest(req, '/api/generate-unified');
     if (!gatekeeperValidation.allowed) {
@@ -817,7 +869,7 @@ router.post("/", async (req: Request, res: Response) => {
       }
       
       console.log(`✅ VALIDATION PASSED: Exactly 1 config per niche:`, configsByNiche);
-    }
+    } // End automated mode block
 
     if (configs.length === 0) {
       return res.status(400).json({
@@ -889,7 +941,6 @@ router.post("/", async (req: Request, res: Response) => {
       data: null
     });
   }
-}); // Close router.post
-} // Missing bracket
+});
 
 export default router;
