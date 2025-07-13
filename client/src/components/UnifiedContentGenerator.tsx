@@ -166,8 +166,13 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
       return response.json();
     },
     onSuccess: (data) => {
+      console.log('🔥 GENERATION SUCCESS - Full response:', data);
       if (data.success) {
-        const results = Array.isArray(data.data.results) ? data.data.results : [data.data.results];
+        const results = Array.isArray(data.data?.results) ? data.data.results : 
+                       data.data?.results ? [data.data.results] : 
+                       data.results ? (Array.isArray(data.results) ? data.results : [data.results]) : [];
+        
+        console.log('🎯 Parsed results for UI:', results);
         onContentGenerated(results);
         
         // Track analytics
@@ -180,7 +185,14 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
         
         toast({
           title: "Content generated successfully",
-          description: "Single product content created",
+          description: `Single product content created${data.data?.spartanFormatApplied ? ' with Spartan format' : ''}`,
+        });
+      } else {
+        console.error('❌ Generation failed:', data);
+        toast({
+          title: "Generation failed",
+          description: data.error || "Failed to generate content",
+          variant: "destructive",
         });
       }
     },
