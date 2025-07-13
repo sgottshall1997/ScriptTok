@@ -74,8 +74,8 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
   const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
-  const [selectedAiModels, setSelectedAiModels] = useState<string[]>(['claude']);
-  const [selectedContentFormats, setSelectedContentFormats] = useState<string[]>(['spartan']);
+  const [selectedAiModels, setSelectedAiModels] = useState<string[]>(['claude']); // 🚀 CLAUDE-FIRST: Superior AI quality for automated bulk generation
+  const [selectedContentFormats, setSelectedContentFormats] = useState<string[]>(['spartan']); // 🏛️ SPARTAN DEFAULT: Clean, professional format
   const [useExistingProducts, setUseExistingProducts] = useState(true);
   const [generateAffiliateLinks, setGenerateAffiliateLinks] = useState(false);
   const [affiliateId, setAffiliateId] = useState('sgottshall107-20');

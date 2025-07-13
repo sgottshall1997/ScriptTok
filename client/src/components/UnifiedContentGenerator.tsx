@@ -37,7 +37,7 @@ const SingleProductGenerator: React.FC<{ onContentGenerated: (results: any[]) =>
     useManualAffiliateLink: false,
     manualAffiliateLink: '',
     sendToMakeWebhook: true,
-    aiModel: 'claude' as 'chatgpt' | 'claude'
+    aiModel: 'claude' as 'chatgpt' | 'claude' // 🚀 CLAUDE DEFAULT: Prioritize Claude for quality
   });
 
   // Handle URL parameters for auto-population

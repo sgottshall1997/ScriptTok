@@ -153,8 +153,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
   const startTime = Date.now();
   
   try {
-    console.log(`🔄 Generating content: ${config.productName} (${config.niche}) - ${config.templateType}/${config.tone}`);
-    console.log(`🤖 Using AI Model: ${config.aiModel} | Spartan Format: ${config.useSpartanFormat}`);
+    console.log(`🔄 GENERATING CONTENT: ${config.productName} (${config.niche}) - ${config.templateType}/${config.tone}`);
+    console.log(`🤖 USING AI MODEL: ${config.aiModel?.toUpperCase() || 'CLAUDE'} | 🏛️ SPARTAN FORMAT: ${config.useSpartanFormat}`);
     
     // Get trending products for context
     const trendingProductsData = await db
@@ -248,7 +248,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
           }
         } else {
           // Standard content generation
-          console.log(`🤖 Generating with ${config.aiModel} model`);
+          console.log(`🤖 GENERATING WITH ${config.aiModel?.toUpperCase() || 'CLAUDE'} MODEL`);
           const generatedResponse = await generateContent(
             config.productName,
             config.templateType as any,
@@ -694,9 +694,10 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       
       // Multi-product manual generation (bulk)
       if (data.products && data.tones && data.templates) {
-        // 🔥 CRITICAL FIX: ALWAYS prioritize data.aiModel (from scheduled jobs) over data.aiModels array
-        // 🚀 DEFAULT TO CLAUDE: Scheduler defaults to Claude over ChatGPT
+        // 🔥 ABSOLUTE CLAUDE ENFORCEMENT: ALWAYS prioritize data.aiModel (from scheduled jobs) over data.aiModels array
+        // 🚀 CLAUDE-FIRST PRIORITY: Scheduler defaults to Claude over ChatGPT for optimal quality
         const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'claude');
+        console.log(`🚨🚨🚨 MANUAL BULK AI MODEL SELECTION DEBUG: data.aiModel="${data.aiModel}", data.aiModels=${JSON.stringify(data.aiModels)}, FINAL="${selectedAiModel}"`);
         
         for (const product of data.products) {
           for (const tone of data.tones) {

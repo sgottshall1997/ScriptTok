@@ -248,7 +248,7 @@ export async function generateContent(
     
     // Log the content generation request for analytics
     console.log(`🚨 CONTENT GENERATOR AI MODEL DEBUG: aiModel parameter = "${aiModel}"`);
-    console.log(`🔥 Generating ${templateType} content for ${product} in ${niche} niche using ${tone} tone with AI model: ${aiModel.toUpperCase()}`);
+    console.log(`🔥 GENERATING ${templateType} content for ${product} in ${niche} niche using ${tone} tone with AI model: ${aiModel?.toUpperCase() || 'CLAUDE'}`);
     
     if (aiModel !== 'claude' && aiModel !== 'chatgpt') {
       console.error(`❌ INVALID AI MODEL: "${aiModel}" - Must be 'claude' or 'chatgpt'`);
@@ -332,7 +332,7 @@ Apply these successful patterns from your previous high-rated content:
     }
     
     // Call AI model router with the enhanced prompt and optimized parameters
-    console.log(`🤖 Generating content with ${aiModel.toUpperCase()} model`);
+    console.log(`🤖 GENERATING CONTENT WITH ${aiModel?.toUpperCase() || 'CLAUDE'} MODEL`);
     
     const aiResponse = await generateWithAI(userPrompt, {
       model: aiModel,
