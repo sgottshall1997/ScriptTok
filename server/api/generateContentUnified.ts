@@ -694,9 +694,23 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       
       // Multi-product manual generation (bulk)
       if (data.products && data.tones && data.templates) {
-        // 🔥 ABSOLUTE CLAUDE ENFORCEMENT: ALWAYS prioritize data.aiModel (from scheduled jobs) over data.aiModels array
+        // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT: ALWAYS prioritize data.aiModel (from scheduled jobs) over data.aiModels array
         // 🚀 CLAUDE-FIRST PRIORITY: Scheduler defaults to Claude over ChatGPT for optimal quality
-        const selectedAiModel = data.aiModel || (data.aiModels && data.aiModels.length > 0 ? data.aiModels[0] : 'claude');
+        // ⚡ CRITICAL FIX: Proper priority logic - scheduled jobs (data.aiModel) MUST take precedence
+        let selectedAiModel;
+        if (data.aiModel) {
+          // HIGHEST PRIORITY: Direct aiModel from scheduled jobs
+          selectedAiModel = data.aiModel;
+          console.log(`🎯 PRIORITY 1: Using data.aiModel "${selectedAiModel}" (from scheduled job)`);
+        } else if (data.aiModels && data.aiModels.length > 0) {
+          // SECONDARY PRIORITY: aiModels array from automated bulk
+          selectedAiModel = data.aiModels[0];
+          console.log(`🎯 PRIORITY 2: Using data.aiModels[0] "${selectedAiModel}" (from automated bulk)`);
+        } else {
+          // FALLBACK: Default to Claude
+          selectedAiModel = 'claude';
+          console.log(`🎯 PRIORITY 3: Using fallback default "claude"`);
+        }
         console.log(`🚨🚨🚨 MANUAL BULK AI MODEL SELECTION DEBUG: data.aiModel="${data.aiModel}", data.aiModels=${JSON.stringify(data.aiModels)}, FINAL="${selectedAiModel}"`);
         
         for (const product of data.products) {
@@ -749,8 +763,21 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT - GUARANTEED Claude selection
-      let selectedAiModel = data.aiModel || 'claude';
+      // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT - GUARANTEED Claude selection with proper priority logic
+      let selectedAiModel;
+      if (data.aiModel) {
+        // HIGHEST PRIORITY: Direct aiModel from scheduled jobs
+        selectedAiModel = data.aiModel;
+        console.log(`🎯 AUTOMATED PRIORITY 1: Using data.aiModel "${selectedAiModel}" (from scheduled job)`);
+      } else if (data.aiModels && data.aiModels.length > 0) {
+        // SECONDARY PRIORITY: aiModels array from automated bulk
+        selectedAiModel = data.aiModels[0];
+        console.log(`🎯 AUTOMATED PRIORITY 2: Using data.aiModels[0] "${selectedAiModel}" (from automated bulk)`);
+      } else {
+        // FALLBACK: Default to Claude
+        selectedAiModel = 'claude';
+        console.log(`🎯 AUTOMATED PRIORITY 3: Using fallback default "claude"`);
+      }
       
       // STRICT CLAUDE ENFORCEMENT: Multiple verification layers
       if (data.aiModel === 'claude' || data.aiModel === 'Claude') {

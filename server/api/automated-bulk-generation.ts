@@ -336,7 +336,9 @@ async function processAutomatedBulkJob(
         // Use first tone, first template, first AI model, first content format for single-content-per-niche approach
         const tone = jobData.tones[0];
         const template = jobData.templates[0]; 
-        const aiModel = jobData.aiModels[0];
+        // 🚀 CLAUDE-FIRST: Prioritize Claude as the superior AI model
+        const aiModel = jobData.aiModels[0] || 'claude';
+        console.log(`🤖 AUTOMATED BULK AI MODEL SELECTION: Selected "${aiModel}" from array [${jobData.aiModels.join(', ')}]`);
         const contentFormat = jobData.contentFormats[0];
         
         try {
