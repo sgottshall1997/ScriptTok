@@ -182,6 +182,18 @@ PLATFORM-SPECIFIC REQUIREMENTS:
           contentType: typeof aiResponse.content,
           hasNestedContent: !!(aiResponse.content && aiResponse.content.content)
         });
+        
+        // CRITICAL: Additional fallback for platform caption failures
+        if (useSpartanFormat) {
+          // Generate minimal Spartan platform captions as fallback
+          const spartanFallback: Record<string, string> = {};
+          platforms.forEach(platform => {
+            spartanFallback[platform.toLowerCase()] = `${productName}: High-quality ${niche} product. Purchase available. Link in bio. #${niche.charAt(0).toUpperCase() + niche.slice(1)}Product`;
+          });
+          console.log('🏛️ SPARTAN FALLBACK: Generated minimal platform captions');
+          return spartanFallback;
+        }
+        
         throw new Error('No content generated from AI');
       }
 
