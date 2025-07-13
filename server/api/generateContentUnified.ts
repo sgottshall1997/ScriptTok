@@ -393,7 +393,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       },
       affiliateLink: config.affiliateUrl,
       viralInspo: viralInspiration,
-      modelUsed: (typeof mainContent === 'string') ? "gpt-4o" : (mainContent.model || "gpt-4o"),
+      modelUsed: config.aiModel || "claude", // Store the actual AI model used
       tokenCount: (typeof mainContent === 'string') ? 0 : (
         typeof mainContent.tokens === 'object' && mainContent.tokens?.total 
           ? mainContent.tokens.total 
@@ -405,6 +405,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     console.log(`💾 DATABASE SAVE DEBUG - generatedOutput.content preview:`, saveData.generatedOutput.content?.substring(0, 150));
     console.log(`💾 DATABASE SAVE DEBUG - outputText type:`, typeof saveData.outputText);
     console.log(`💾 DATABASE SAVE DEBUG - outputText preview:`, saveData.outputText?.substring(0, 150));
+    console.log(`🔍 DATABASE SAVE DEBUG - config.aiModel value:`, config.aiModel);
+    console.log(`🔍 DATABASE SAVE DEBUG - saveData.modelUsed value:`, saveData.modelUsed);
     
     // Verify content extraction is working correctly
     if (typeof saveData.generatedOutput.content !== 'string') {

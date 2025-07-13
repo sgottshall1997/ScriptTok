@@ -145,103 +145,70 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         throw new Error(`AI generation failed: ${errorMessage}`);
       }
       
-      // CRITICAL FIX: Handle Claude response structure which uses aiResponse.content.content
-      let extractedContent = null;
-      
+      // For successful Claude responses, check if we have content but are missing the expected data field
       if (aiResponse.success && aiResponse.content && aiResponse.content.content) {
-        // Claude response structure: aiResponse.content.content
-        extractedContent = aiResponse.content.content;
-        console.log('✅ CLAUDE RESPONSE: Extracted content from aiResponse.content.content');
-      } else if (aiResponse.data) {
-        // ChatGPT response structure: aiResponse.data
-        extractedContent = aiResponse.data;
-        console.log('✅ CHATGPT RESPONSE: Extracted content from aiResponse.data');
-      } else {
-        console.error('❌ CRITICAL: No valid content found in response structure', {
-          hasContent: !!aiResponse.content,
-          hasContentContent: !!(aiResponse.content && aiResponse.content.content),
-          hasData: !!aiResponse.data,
-          responseKeys: Object.keys(aiResponse)
-        });
-        throw new Error('No valid content found in AI response');
-      }
-
-      // Parse JSON response - handle markdown code blocks
-      let cleanContent = extractedContent.trim();
-      if (cleanContent.startsWith('```json')) {
-        cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-      } else if (cleanContent.startsWith('```')) {
-        cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
-      }
-      
-      const captions = JSON.parse(cleanContent);
-      
-      // Generate Amazon affiliate link
-      const amazonLink = generateAmazonAffiliateLink(productName, affiliateId);
-      
-      // Process captions and add affiliate links
-      const enhancedCaptions: Record<string, string> = {};
-      for (const [platform, caption] of Object.entries(captions)) {
-        let enhancedCaption = caption as string;
+        console.log('🔧 CLAUDE RESPONSE FIX: Extracting content from nested structure');
+        // Process the content directly from Claude's nested structure
+        const content = aiResponse.content.content;
         
-        // Apply Spartan format filtering to remove emojis and fluff language
-        if (useSpartanFormat) {
-          enhancedCaption = enhancedCaption
-            .replace(/[✨🌿🔥💫⭐️🌟💎✊🏻🔗🛒🛍️📝💰🎯🚀📱📷⚡️💯🎉👏🙌✅❤️💕🥰😍🤩🔑🎊💪🏆🌈]/g, '')
-            .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')
-            .replace(/\b(amazing|incredible|stunning|absolutely|literally|super|totally|completely|perfect|ultimate|revolutionary|game-changing|life-changing|mind-blowing|effortlessly|unlock|discover|power|thirst|quenches|transform|haven|peace|seamlessly|intuitive|blend|moments|sanctuary|cutting-edge|sleek|upgrade)\b/gi, '')
-            .replace(/\s+/g, ' ')
-            .trim();
+        // Parse JSON response - handle markdown code blocks
+        let cleanContent = content.trim();
+        if (cleanContent.startsWith('```json')) {
+          cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+        } else if (cleanContent.startsWith('```')) {
+          cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
         }
         
-        // Add platform-specific affiliate link formatting with required Amazon Associates disclosure
-        if (useSpartanFormat) {
-          switch (platform.toLowerCase()) {
-            case 'tiktok':
-              enhancedCaption += `\n\nShop here: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
-              break;
-            case 'instagram':
-              enhancedCaption += `\n\nShop the link: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
-              break;
-            case 'youtube':
-              enhancedCaption += `\n\nAmazon link: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
-              break;
-            case 'twitter':
-              enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
-              break;
-            case 'other':
-              enhancedCaption += `\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
-              break;
-            default:
-              enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+        const captions = JSON.parse(cleanContent);
+        
+        // Generate Amazon affiliate link
+        const amazonLink = generateAmazonAffiliateLink(productName, affiliateId);
+        
+        // Directly process captions and return the result
+        const enhancedCaptions: Record<string, string> = {};
+        for (const [platform, caption] of Object.entries(captions)) {
+          let enhancedCaption = caption as string;
+          
+          // Apply Spartan format filtering to remove emojis and fluff language
+          if (useSpartanFormat) {
+            enhancedCaption = enhancedCaption
+              .replace(/[✨🌿🔥💫⭐️🌟💎✊🏻🔗🛒🛍️📝💰🎯🚀📱📷⚡️💯🎉👏🙌✅❤️💕🥰😍🤩🔑🎊💪🏆🌈]/g, '')
+              .replace(/[\u{1F300}-\\u{1F9FF}]|[\\u{1F600}-\\u{1F64F}]|[\\u{1F680}-\u{1F6FF}]|[\\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu, '')
+              .replace(/\b(amazing|incredible|stunning|absolutely|literally|super|totally|completely|perfect|ultimate|revolutionary|game-changing|life-changing|mind-blowing|effortlessly|unlock|discover|power|thirst|quenches|transform|haven|peace|seamlessly|intuitive|blend|moments|sanctuary|cutting-edge|sleek|upgrade)\b/gi, '')
+              .replace(/\s+/g, ' ')
+              .trim();
           }
-        } else {
-          switch (platform.toLowerCase()) {
-            case 'tiktok':
-              enhancedCaption += `\n\n🛒 Shop here: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
-              break;
-            case 'instagram':
-              enhancedCaption += `\n\n🛍️ Shop the link: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
-              break;
-            case 'youtube':
-              enhancedCaption += `\n\n🔗 Amazon link: ${amazonLink}\n\n📝 Disclosure: As an Amazon Associate I earn from qualifying purchases.`;
-              break;
-            case 'twitter':
-              enhancedCaption += `\n\n🛒 ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
-              break;
-            case 'other':
-              enhancedCaption += `\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
-              break;
-            default:
-              enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+          
+          // Add platform-specific affiliate link formatting
+          if (useSpartanFormat) {
+            switch (platform.toLowerCase()) {
+              case 'tiktok':
+                enhancedCaption += `\n\nShop here: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+                break;
+              case 'instagram':
+                enhancedCaption += `\n\nShop the link: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+                break;
+              default:
+                enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+            }
+          } else {
+            switch (platform.toLowerCase()) {
+              case 'tiktok':
+                enhancedCaption += `\n\n🛒 Shop here: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
+                break;
+              case 'instagram':
+                enhancedCaption += `\n\n🛍️ Shop the link: ${amazonLink}\n\n📝 As an Amazon Associate I earn from qualifying purchases. #ad`;
+                break;
+              default:
+                enhancedCaption += `\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+            }
           }
+          
+          enhancedCaptions[platform] = enhancedCaption;
         }
         
-        enhancedCaptions[platform] = enhancedCaption;
-      }
-      
-      console.log(`✅ Platform captions generated successfully with ${aiModel.toUpperCase()} model for ${Object.keys(enhancedCaptions).length} platforms`);
-      return enhancedCaptions;
+        console.log(`✅ Claude platform captions generated successfully for ${Object.keys(enhancedCaptions).length} platforms`);
+        return enhancedCaptions;
       
       // Check for similarity if enforcing uniqueness (using original captions before enhancement)
       if (enforceCaptionUniqueness && mainContent) {
