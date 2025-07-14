@@ -337,35 +337,72 @@ export async function getSmartStyleRecommendations(
   platform?: string
 ) {
   try {
-    // Build query conditions
-    const conditions = [
-      eq(contentRatings.userId, userId),
-      gte(contentRatings.overallRating, 80), // High-rated content (80+)
-    ];
-
-    // Add content history filters if provided
-    const contentHistoryConditions = [];
-    if (niche) {
-      contentHistoryConditions.push(eq(contentHistory.niche, niche));
-    }
-
-    // Get high-rated content for this user
-    let query = db
+    // Get high-rated content from user ratings (80+ on 1-100 scale)
+    const userRatedContent = await db
       .select({
         contentHistory: contentHistory,
         rating: contentRatings,
+        source: sql<string>`'user'`.as('source'),
+        normalizedRating: sql<number>`${contentRatings.overallRating}`.as('normalizedRating')
       })
       .from(contentRatings)
       .innerJoin(contentHistory, eq(contentRatings.contentHistoryId, contentHistory.id))
-      .where(and(...conditions));
-
-    if (contentHistoryConditions.length > 0) {
-      query = query.where(and(...contentHistoryConditions));
-    }
-
-    const highRatedContent = await query
+      .where(and(
+        eq(contentRatings.userId, userId),
+        gte(contentRatings.overallRating, 80),
+        niche ? eq(contentHistory.niche, niche) : sql`true`
+      ))
       .orderBy(desc(contentRatings.overallRating))
       .limit(10);
+
+    // Get high-rated content from AI evaluations (8+ on 1-10 scale = 80+ equivalent)
+    const { contentEvaluations } = await import('@shared/schema');
+    const aiEvaluatedContent = await db
+      .select({
+        contentHistory: contentHistory,
+        evaluation: contentEvaluations,
+        source: sql<string>`'ai'`.as('source'),
+        normalizedRating: sql<number>`(${contentEvaluations.overallScore}::numeric * 10)`.as('normalizedRating')
+      })
+      .from(contentEvaluations)
+      .innerJoin(contentHistory, eq(contentEvaluations.contentHistoryId, contentHistory.id))
+      .where(and(
+        sql`${contentEvaluations.overallScore}::numeric >= 8`, // 8+ on 1-10 scale
+        niche ? eq(contentHistory.niche, niche) : sql`true`
+      ))
+      .orderBy(desc(contentEvaluations.overallScore))
+      .limit(10);
+
+    // Combine both sources
+    const allHighRatedContent = [
+      ...userRatedContent.map(item => ({
+        contentHistory: item.contentHistory,
+        rating: item.rating || null,
+        evaluation: null,
+        source: item.source,
+        normalizedRating: item.normalizedRating
+      })),
+      ...aiEvaluatedContent.map(item => ({
+        contentHistory: item.contentHistory,
+        rating: null,
+        evaluation: item.evaluation,
+        source: item.source,
+        normalizedRating: item.normalizedRating
+      }))
+    ];
+
+    // Sort by normalized rating and remove duplicates
+    const uniqueContent = new Map();
+    allHighRatedContent.forEach(item => {
+      const key = item.contentHistory.id;
+      if (!uniqueContent.has(key) || uniqueContent.get(key).normalizedRating < item.normalizedRating) {
+        uniqueContent.set(key, item);
+      }
+    });
+
+    const highRatedContent = Array.from(uniqueContent.values())
+      .sort((a, b) => b.normalizedRating - a.normalizedRating)
+      .slice(0, 10);
 
     if (highRatedContent.length === 0) {
       return null;
@@ -378,7 +415,8 @@ export async function getSmartStyleRecommendations(
       averageRating: 0,
       topPerformingStructures: [] as string[],
       platformSpecificInsights: {} as Record<string, any>,
-      bestContent: [] as string[]
+      bestContent: [] as string[],
+      ratingSource: 'combined' as string
     };
 
     // Analyze tone patterns
@@ -389,9 +427,9 @@ export async function getSmartStyleRecommendations(
     const templates = highRatedContent.map(item => item.contentHistory.contentType).filter(Boolean);
     patterns.successfulTemplates = [...new Set(templates)];
 
-    // Calculate average rating
+    // Calculate average rating (using normalized ratings)
     patterns.averageRating = Math.round(
-      highRatedContent.reduce((sum, item) => sum + (item.rating.overallRating || 0), 0) / 
+      highRatedContent.reduce((sum, item) => sum + item.normalizedRating, 0) / 
       highRatedContent.length
     );
 
@@ -403,15 +441,31 @@ export async function getSmartStyleRecommendations(
 
     // Analyze platform-specific performance
     if (platform) {
+      const userRatedItems = highRatedContent.filter(item => item.rating);
       const platformKey = `${platform.toLowerCase()}Rating` as keyof typeof contentRatings.$inferSelect;
-      const platformRatings = highRatedContent
-        .map(item => item.rating[platformKey])
-        .filter(Boolean) as number[];
       
-      if (platformRatings.length > 0) {
-        patterns.platformSpecificInsights[platform] = {
-          averageRating: Math.round(platformRatings.reduce((sum, rating) => sum + rating, 0) / platformRatings.length),
-          sampleCount: platformRatings.length
+      if (userRatedItems.length > 0) {
+        const platformRatings = userRatedItems
+          .map(item => item.rating?.[platformKey])
+          .filter(Boolean) as number[];
+        
+        if (platformRatings.length > 0) {
+          patterns.platformSpecificInsights[platform] = {
+            averageRating: Math.round(platformRatings.reduce((sum, rating) => sum + rating, 0) / platformRatings.length),
+            sampleCount: platformRatings.length,
+            source: 'user_ratings'
+          };
+        }
+      }
+      
+      // Also check AI evaluations for platform insights
+      const aiEvaluatedItems = highRatedContent.filter(item => item.evaluation);
+      if (aiEvaluatedItems.length > 0) {
+        const aiRatings = aiEvaluatedItems.map(item => item.normalizedRating);
+        patterns.platformSpecificInsights[`${platform}_ai`] = {
+          averageRating: Math.round(aiRatings.reduce((sum, rating) => sum + rating, 0) / aiRatings.length),
+          sampleCount: aiRatings.length,
+          source: 'ai_evaluations'
         };
       }
     }
@@ -428,11 +482,16 @@ export async function getSmartStyleRecommendations(
     );
     patterns.topPerformingStructures = [...new Set(structures)].slice(0, 3);
 
+    const userRatedCount = highRatedContent.filter(item => item.source === 'user').length;
+    const aiEvaluatedCount = highRatedContent.filter(item => item.source === 'ai').length;
+
     return {
       patterns,
       sampleCount: highRatedContent.length,
       averageRating: patterns.averageRating,
-      recommendation: generateStyleRecommendation(patterns, niche, templateType, tone, platform)
+      userRatedCount,
+      aiEvaluatedCount,
+      recommendation: generateStyleRecommendation(patterns, niche, templateType, tone, platform, userRatedCount, aiEvaluatedCount)
     };
 
   } catch (error) {
@@ -447,12 +506,24 @@ function generateStyleRecommendation(
   niche: string,
   templateType?: string,
   tone?: string,
-  platform?: string
+  platform?: string,
+  userRatedCount?: number,
+  aiEvaluatedCount?: number
 ): string {
   const recommendations = [];
 
+  // Add source information
+  const sourceInfo = [];
+  if (userRatedCount && userRatedCount > 0) {
+    sourceInfo.push(`${userRatedCount} user-rated`);
+  }
+  if (aiEvaluatedCount && aiEvaluatedCount > 0) {
+    sourceInfo.push(`${aiEvaluatedCount} AI-evaluated`);
+  }
+  const sourceText = sourceInfo.length > 0 ? ` (from ${sourceInfo.join(', ')} samples)` : '';
+
   if (patterns.commonTones.length > 0) {
-    recommendations.push(`Your highest-rated content uses ${patterns.commonTones.join(' and ')} tones`);
+    recommendations.push(`Your highest-rated content uses ${patterns.commonTones.join(' and ')} tones${sourceText}`);
   }
 
   if (patterns.successfulTemplates.length > 0) {
@@ -465,7 +536,8 @@ function generateStyleRecommendation(
 
   if (platform && patterns.platformSpecificInsights[platform]) {
     const insight = patterns.platformSpecificInsights[platform];
-    recommendations.push(`Your ${platform} content averages ${insight.averageRating}/100`);
+    const source = insight.source ? ` (${insight.source})` : '';
+    recommendations.push(`Your ${platform} content averages ${insight.averageRating}/100${source}`);
   }
 
   return recommendations.length > 0 
@@ -487,11 +559,12 @@ export async function getTopRatedContentForStyle(
   highRatedCaptionExample?: string;
 } | null> {
   try {
-    // Fetch highly rated content (90+) for the user in this niche and platform
-    const query = db
+    // Fetch highly rated content from user ratings (90+) for the user in this niche
+    const userRatedContent = await db
       .select({
         rating: contentRatings,
-        contentHistory: contentHistory
+        contentHistory: contentHistory,
+        normalizedRating: sql<number>`${contentRatings.overallRating}`.as('normalizedRating')
       })
       .from(contentRatings)
       .innerJoin(contentHistory, eq(contentRatings.contentHistoryId, contentHistory.id))
@@ -505,7 +578,53 @@ export async function getTopRatedContentForStyle(
       .orderBy(desc(contentRatings.overallRating))
       .limit(10);
 
-    const highRatedContent = await query;
+    // Fetch highly rated content from AI evaluations (9+ on 1-10 scale = 90+ equivalent)
+    const { contentEvaluations } = await import('@shared/schema');
+    const aiEvaluatedContent = await db
+      .select({
+        evaluation: contentEvaluations,
+        contentHistory: contentHistory,
+        normalizedRating: sql<number>`(${contentEvaluations.overallScore}::numeric * 10)`.as('normalizedRating')
+      })
+      .from(contentEvaluations)
+      .innerJoin(contentHistory, eq(contentEvaluations.contentHistoryId, contentHistory.id))
+      .where(
+        and(
+          sql`${contentEvaluations.overallScore}::numeric >= 9`, // 9+ on 1-10 scale
+          eq(contentHistory.niche, niche)
+        )
+      )
+      .orderBy(desc(contentEvaluations.overallScore))
+      .limit(10);
+
+    // Combine both sources
+    const allHighRatedContent = [
+      ...userRatedContent.map(item => ({
+        contentHistory: item.contentHistory,
+        rating: item.rating || null,
+        evaluation: null,
+        normalizedRating: item.normalizedRating
+      })),
+      ...aiEvaluatedContent.map(item => ({
+        contentHistory: item.contentHistory,
+        rating: null,
+        evaluation: item.evaluation,
+        normalizedRating: item.normalizedRating
+      }))
+    ];
+
+    // Remove duplicates and sort by rating
+    const uniqueContent = new Map();
+    allHighRatedContent.forEach(item => {
+      const key = item.contentHistory.id;
+      if (!uniqueContent.has(key) || uniqueContent.get(key).normalizedRating < item.normalizedRating) {
+        uniqueContent.set(key, item);
+      }
+    });
+
+    const highRatedContent = Array.from(uniqueContent.values())
+      .sort((a, b) => b.normalizedRating - a.normalizedRating)
+      .slice(0, 10);
 
     if (highRatedContent.length === 0) {
       return null;
@@ -517,7 +636,7 @@ export async function getTopRatedContentForStyle(
       return {
         content,
         analysis: analyzeContent(content),
-        rating: item.rating.overallRating || 0
+        rating: item.normalizedRating || 0
       };
     });
 
