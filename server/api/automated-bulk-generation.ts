@@ -15,6 +15,58 @@ import { generateContent } from '../services/contentGenerator';
 import { generatePlatformSpecificContent, generatePlatformCaptions } from '../services/platformContentGenerator';
 import { WebhookService } from '../services/webhookService';
 
+// Enhanced Spartan format enforcer - automatically fix non-compliant content
+function enforceSpartanFormat(text: string): string {
+  if (!text) return '';
+  
+  let cleanedText = text;
+  
+  // Define word replacements for Spartan format
+  const spartanReplacements = {
+    'just ': 'only ',
+    ' just ': ' only ',
+    'literally': '',
+    ' literally': '',
+    'literally ': '',
+    'really ': '',
+    ' really ': ' ',
+    'very ': '',
+    ' very ': ' ',
+    'actually ': '',
+    ' actually ': ' ',
+    'that ': 'this ',
+    ' that ': ' this ',
+    'can ': 'will ',
+    ' can ': ' will ',
+    'may ': 'will ',
+    ' may ': ' will ',
+    'amazing ': 'excellent ',
+    ' amazing': ' excellent',
+    'incredible ': 'exceptional ',
+    ' incredible': ' exceptional',
+    'awesome ': 'excellent ',
+    ' awesome': ' excellent'
+  };
+  
+  // Apply replacements
+  Object.entries(spartanReplacements).forEach(([banned, replacement]) => {
+    const regex = new RegExp(banned, 'gi');
+    cleanedText = cleanedText.replace(regex, replacement);
+  });
+  
+  // Remove multiple spaces
+  cleanedText = cleanedText.replace(/\s+/g, ' ').trim();
+  
+  // Remove common emojis (simplified approach)
+  cleanedText = cleanedText.replace(/[\u{1F600}-\u{1F64F}]/gu, '') // emoticons
+                         .replace(/[\u{1F300}-\u{1F5FF}]/gu, '') // misc symbols
+                         .replace(/[\u{1F680}-\u{1F6FF}]/gu, '') // transport
+                         .replace(/[\u{2600}-\u{26FF}]/gu, '') // misc symbols
+                         .replace(/[✨🔥💯⚡]/g, ''); // common marketing emojis
+  
+  return cleanedText.trim();
+}
+
 // Import viral inspiration function from viral-inspiration API
 async function fetchViralVideoInspiration(productName: string, niche: string) {
   try {
@@ -218,8 +270,8 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
       });
     }
     
-    // Generate exactly ONE content piece per niche (no variations)
-    const totalVariations = totalSelectedProducts; // One content piece per selected product/niche
+    // Calculate total variations based on all selected options
+    const totalVariations = totalSelectedProducts * validatedData.templates.length * validatedData.tones.length * validatedData.aiModels.length * validatedData.contentFormats.length;
     
     // Create bulk job record
     const [bulkJob] = await db.insert(bulkContentJobs).values({
@@ -332,35 +384,32 @@ async function processAutomatedBulkJob(
           };
         }
 
-        // Step 3: Generate exactly ONE content piece per niche to avoid duplication
-        // Use first tone, first template, first AI model, first content format for single-content-per-niche approach
-        const tone = jobData.tones[0];
-        const template = jobData.templates[0]; 
-        // 🚀 CLAUDE-FIRST: Prioritize Claude as the superior AI model (should always be claude due to schema default)
-        const aiModel = jobData.aiModels[0] || 'claude';
-        console.log(`🤖 AUTOMATED BULK AI MODEL SELECTION: Selected "${aiModel}" from array [${jobData.aiModels.join(', ')}]`);
-        const contentFormat = jobData.contentFormats[0];
-        
-        try {
-          const startTime = Date.now();
-          const useSpartanFormat = contentFormat === 'spartan';
-          
-          console.log(`🎯 Generating single content for ${niche}: ${productName} (${tone} tone, ${template} template, ${aiModel} AI, ${contentFormat} format)`);
-          
-          // Step 4: Generate comprehensive content using viral inspiration with specific AI model and format
-          const generatedContent = await generateComprehensiveContent({
-            productName,
-            niche,
-            tone,
-            template,
-            platforms: jobData.platforms,
-            viralInspiration,
-            productData,
-            useSmartStyle: jobData.useSmartStyle,
-            useSpartanFormat: useSpartanFormat,
-            userId: jobData.userId,
-            aiModel: aiModel
-          });
+        // Step 3: Generate content for ALL template combinations
+        // Iterate through all selected templates, tones, AI models, and content formats
+        for (const template of jobData.templates) {
+          for (const tone of jobData.tones) {
+            for (const aiModel of jobData.aiModels) {
+              for (const contentFormat of jobData.contentFormats) {
+                try {
+                  const startTime = Date.now();
+                  const useSpartanFormat = contentFormat === 'spartan';
+                  
+                  console.log(`🎯 Generating content for ${niche}: ${productName} (${tone} tone, ${template} template, ${aiModel} AI, ${contentFormat} format)`);
+                  
+                  // Step 4: Generate comprehensive content using viral inspiration with specific AI model and format
+                  const generatedContent = await generateComprehensiveContent({
+                    productName,
+                    niche,
+                    tone,
+                    template,
+                    platforms: jobData.platforms,
+                    viralInspiration,
+                    productData,
+                    useSmartStyle: jobData.useSmartStyle,
+                    useSpartanFormat: useSpartanFormat,
+                    userId: jobData.userId,
+                    aiModel: aiModel
+                  });
       
           const generationTime = Date.now() - startTime;
           
@@ -636,22 +685,28 @@ async function processAutomatedBulkJob(
                 console.log(`✅ Generated content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat} (${completedCount} total)`);
               }
 
-        } catch (contentError) {
-          console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat}:`, contentError);
-          
-          // Log error but continue with other products
-          await db.update(bulkContentJobs)
-            .set({ 
-              errorLog: sql`jsonb_set(COALESCE(error_log, '[]'::jsonb), '{-1}', ${JSON.stringify({
-                product: productName,
-                tone,
-                template,
-                error: contentError instanceof Error ? contentError.message : 'Unknown error',
-                timestamp: new Date().toISOString()
-              })})`
-            })
-            .where(eq(bulkContentJobs.id, bulkJobId));
-        }
+                } catch (contentError) {
+                  console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat}:`, contentError);
+                  
+                  // Log error but continue with other products
+                  await db.update(bulkContentJobs)
+                    .set({ 
+                      errorLog: sql`jsonb_set(COALESCE(error_log, '[]'::jsonb), '{-1}', ${JSON.stringify({
+                        product: productName,
+                        tone,
+                        template,
+                        aiModel,
+                        contentFormat,
+                        error: contentError instanceof Error ? contentError.message : 'Unknown error',
+                        timestamp: new Date().toISOString()
+                      })})`
+                    })
+                    .where(eq(bulkContentJobs.id, bulkJobId));
+                }
+              } // Close contentFormat loop
+            } // Close aiModel loop
+          } // Close tone loop
+        } // Close template loop
       } catch (productError) {
         console.error(`❌ Failed to process product ${productName}:`, productError);
       }
@@ -732,7 +787,7 @@ async function generateComprehensiveContent(params: {
     const { generatePlatformSpecificContent } = await import('../services/platformContentGenerator');
 
     // Generate main content using the same function as standard generator
-    const mainContent = await generateContent(
+    let mainContent = await generateContent(
       productName,
       template as any,
       tone as any,
@@ -742,6 +797,12 @@ async function generateComprehensiveContent(params: {
       viralInspiration,
       smartStyleRecommendations
     );
+
+    // Apply Spartan format enforcement to main content if enabled
+    if (useSpartanFormat) {
+      mainContent = enforceSpartanFormat(mainContent);
+      console.log(`🏛️ SPARTAN FORMAT: Applied to main content for ${productName}`);
+    }
 
     // Generate platform-specific content
     const platformContent = await generatePlatformSpecificContent({
@@ -758,14 +819,27 @@ async function generateComprehensiveContent(params: {
 
     console.log(`✅ BULK CONTENT: Successfully generated content for ${productName}`);
     
-    // Return the generated content in the expected format
+    // Return the generated content in the expected format with Spartan format applied
+    let viralHook = viralInspiration?.hook || `Check out ${productName}!`;
+    let productDescription = mainContent || `${productName} is trending for good reasons.`;
+    let videoScript = mainContent || `Here's why ${productName} is going viral...`;
+    let callToAction = `Get ${productName} now!`;
+
+    // Apply Spartan format to all content elements if enabled
+    if (useSpartanFormat) {
+      viralHook = enforceSpartanFormat(viralHook);
+      productDescription = enforceSpartanFormat(productDescription);
+      videoScript = enforceSpartanFormat(videoScript);
+      callToAction = enforceSpartanFormat(callToAction);
+    }
+
     return {
-      viralHooks: [viralInspiration?.hook || `Check out ${productName}!`],
-      productDescription: mainContent || `${productName} is trending for good reasons.`,
-      videoScript: mainContent || `Here's why ${productName} is going viral...`,
+      viralHooks: [viralHook],
+      productDescription,
+      videoScript,
       platformCaptions: platformContent || {},
       hashtags: viralInspiration?.hashtags || [`#${niche}`, '#trending'],
-      callToAction: `Get ${productName} now!`
+      callToAction
     };
     
   } catch (error) {
@@ -782,7 +856,12 @@ async function generateComprehensiveContent(params: {
       videoScript: `[Scene 1] Hook: "${viralInspiration?.hook || `Check out ${productName}!`}"\n\n[Scene 2] Product showcase: Show ${productName} in action\n\n[Scene 3] Benefits: Explain why it's trending in ${niche}\n\n[Scene 4] Call to action: "Link in bio to get yours!"`,
       platformCaptions: platforms.reduce((acc, platform) => {
         const platformKey = `${platform.toLowerCase()}Caption`;
-        acc[platformKey] = generateFallbackCaption(platform, productName, niche, viralInspiration);
+        let fallbackCaption = generateFallbackCaption(platform, productName, niche, viralInspiration);
+        // Apply Spartan format to fallback captions if enabled
+        if (useSpartanFormat) {
+          fallbackCaption = enforceSpartanFormat(fallbackCaption);
+        }
+        acc[platformKey] = fallbackCaption;
         return acc;
       }, {} as Record<string, string>),
       hashtags: viralInspiration?.hashtags || [`#${niche}`, '#trending', '#viral', '#musthave'],

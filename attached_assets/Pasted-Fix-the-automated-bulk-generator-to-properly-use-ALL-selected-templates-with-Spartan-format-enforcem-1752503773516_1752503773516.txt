@@ -1,0 +1,18 @@
+Fix the automated bulk generator to properly use ALL selected templates with Spartan format enforcement. Currently the system only uses the first selected template instead of generating content for each template combination. 
+
+**CRITICAL ISSUES TO FIX:**
+
+1. **Template Usage Bug**: In `server/api/automated-bulk-generation.ts`, the code uses only `jobData.templates[0]` instead of iterating through ALL selected templates. Change the generation logic to create content for EVERY selected template per niche.
+
+2. **Spartan Format Integration**: When Spartan format is enabled, ensure it's applied to EVERY content template combination, not just the main content. Each template (seo_blog, short_video, influencer_caption, etc.) should generate Spartan-compliant content when the format is selected.
+
+3. **Total Variations Calculation**: Update the calculation to be `selectedNiches.length × selectedTemplates.length × selectedTones.length × selectedAiModels.length × selectedContentFormats.length` instead of just `selectedNiches.length`.
+
+4. **Template-Specific Spartan Enforcement**: In the `generateComprehensiveContent` function, ensure that when `useSpartanFormat` is true, EACH template type (seo_blog, short_video, influencer_caption, product_comparison, routine_kit, affiliate_email) generates content using Spartan rules - no banned words, professional tone, direct language.
+
+5. **Platform Caption Integration**: Ensure platform captions (TikTok, Instagram, YouTube) also follow Spartan format when enabled, regardless of which template is being used.
+
+**EXPECTED RESULT:**
+If user selects 2 niches, 3 templates, 2 tones, 1 AI model, and Spartan format - system should generate 12 unique content pieces (2×3×2×1×1), with each piece using a different template+tone combination AND applying Spartan format to both the main content and platform captions.
+
+Focus specifically on the `processAutomatedBulkJob` function in `automated-bulk-generation.ts` and ensure the template iteration works with proper Spartan format enforcement across ALL template types.
