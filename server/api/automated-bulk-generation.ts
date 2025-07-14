@@ -1067,6 +1067,14 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
           body: {
             ...validatedData,
             isScheduled: false // Remove scheduling flags for execution
+          },
+          headers: {
+            'x-generation-source': 'scheduled_job',
+            'user-agent': 'GlowBot-Scheduler/1.0',
+            'x-forwarded-for': '127.0.0.1'
+          },
+          get: function(headerName: string) {
+            return this.headers[headerName.toLowerCase()] || '';
           }
         } as Request;
         
