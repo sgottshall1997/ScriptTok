@@ -23,7 +23,12 @@ import {
   Globe,
   DollarSign,
   Eye,
-  ShoppingCart
+  ShoppingCart,
+  Plus,
+  RefreshCw,
+  RotateCcw,
+  X,
+  Lightbulb
 } from 'lucide-react';
 import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
@@ -459,28 +464,162 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </Button>
         </div>
 
-        {/* Products Preview */}
+        {/* Products Preview with Customization */}
         {showPreview && Object.keys(previewProducts).length > 0 && (
           <Card className="border-blue-200 bg-blue-50">
             <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <ShoppingCart className="h-4 w-4 text-blue-600" />
-                <h4 className="font-semibold text-blue-800">Products to be Selected</h4>
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <ShoppingCart className="h-4 w-4 text-blue-600" />
+                  <h4 className="font-semibold text-blue-800">Products to be Generated</h4>
+                  <Badge variant="outline" className="text-xs">
+                    {Object.keys(previewProducts).length} products
+                  </Badge>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      // Add new product functionality
+                      const newNiche = selectedNiches.find(niche => !previewProducts[niche]);
+                      if (newNiche && trendingProducts && trendingProducts[newNiche]?.length > 0) {
+                        setPreviewProducts(prev => ({
+                          ...prev,
+                          [newNiche]: trendingProducts[newNiche][0]
+                        }));
+                      }
+                    }}
+                    disabled={Object.keys(previewProducts).length >= selectedNiches.length}
+                    className="text-xs"
+                  >
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add Product
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => previewProductsForNiches()}
+                    className="text-xs"
+                  >
+                    <RefreshCw className="h-3 w-3 mr-1" />
+                    Refresh All
+                  </Button>
+                </div>
               </div>
-              <div className="space-y-2">
+
+              <div className="space-y-3">
                 {Object.entries(previewProducts).map(([niche, product]) => (
-                  <div key={niche} className="flex items-center justify-between p-2 bg-white rounded border">
-                    <div className="flex items-center gap-2">
-                      <Badge variant="outline" className="text-xs">
-                        {niche}
-                      </Badge>
-                      <span className="text-sm font-medium">{product.title}</span>
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {product.mentions?.toLocaleString()} mentions
+                  <div key={niche} className="p-3 bg-white rounded-lg border border-blue-200">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex-1 space-y-2">
+                        <div className="flex items-center gap-2">
+                          <Badge variant="outline" className="text-xs bg-blue-100">
+                            {niche}
+                          </Badge>
+                          <div className="text-xs text-gray-500">
+                            {product.mentions?.toLocaleString()} mentions
+                          </div>
+                        </div>
+                        
+                        {/* Editable Product Name */}
+                        <div className="space-y-1">
+                          <input
+                            type="text"
+                            value={product.title}
+                            onChange={(e) => setPreviewProducts(prev => ({
+                              ...prev,
+                              [niche]: { ...product, title: e.target.value }
+                            }))}
+                            className="w-full text-sm font-medium bg-transparent border-0 border-b border-blue-200 focus:border-blue-400 focus:outline-none p-1"
+                            placeholder="Edit product name..."
+                          />
+                          <p className="text-xs text-gray-500">Click to edit product name</p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            // Switch to next product in this niche
+                            if (trendingProducts && trendingProducts[niche]) {
+                              const currentIndex = trendingProducts[niche].findIndex(p => p.title === product.title);
+                              const nextIndex = (currentIndex + 1) % trendingProducts[niche].length;
+                              setPreviewProducts(prev => ({
+                                ...prev,
+                                [niche]: trendingProducts[niche][nextIndex]
+                              }));
+                            }
+                          }}
+                          className="h-8 w-8 p-0 text-blue-600 hover:bg-blue-100"
+                          title="Switch to next product"
+                        >
+                          <RotateCcw className="h-3 w-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const newProducts = { ...previewProducts };
+                            delete newProducts[niche];
+                            setPreviewProducts(newProducts);
+                          }}
+                          className="h-8 w-8 p-0 text-red-500 hover:bg-red-100"
+                          title="Remove product"
+                        >
+                          <X className="h-3 w-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 ))}
+                
+                {/* Add Product from Available Niches */}
+                {selectedNiches.filter(niche => !previewProducts[niche]).length > 0 && (
+                  <div className="p-3 border-2 border-dashed border-blue-300 rounded-lg bg-blue-25">
+                    <div className="text-center space-y-2">
+                      <p className="text-sm text-blue-600 font-medium">Add more products from selected niches</p>
+                      <div className="flex flex-wrap gap-2 justify-center">
+                        {selectedNiches
+                          .filter(niche => !previewProducts[niche])
+                          .map(niche => (
+                            <Button
+                              key={niche}
+                              variant="outline"
+                              size="sm"
+                              onClick={() => {
+                                if (trendingProducts && trendingProducts[niche]?.length > 0) {
+                                  setPreviewProducts(prev => ({
+                                    ...prev,
+                                    [niche]: trendingProducts[niche][0]
+                                  }));
+                                }
+                              }}
+                              className="text-xs border-blue-300 text-blue-700 hover:bg-blue-50"
+                            >
+                              <Plus className="h-3 w-3 mr-1" />
+                              {niche}
+                            </Button>
+                          ))}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 p-3 bg-blue-100 rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Lightbulb className="h-4 w-4 text-blue-600" />
+                  <span className="text-sm font-medium text-blue-800">Product Customization Tips</span>
+                </div>
+                <ul className="text-xs text-blue-700 space-y-1 list-disc list-inside">
+                  <li>Click product names to edit them for better content generation</li>
+                  <li>Use the refresh button to switch to different trending products</li>
+                  <li>Remove products you don't want to include in the generation</li>
+                  <li>Add products from remaining selected niches using the "+" buttons</li>
+                </ul>
               </div>
             </CardContent>
           </Card>
