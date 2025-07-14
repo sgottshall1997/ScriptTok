@@ -48,66 +48,54 @@ export async function getSuggestionsForContent(query: SuggestionQuery): Promise<
   const { niche, templateType, platform, tone, limit = 10 } = query;
   console.log(`🔍 CLAUDE AI SERVICE: Querying suggestions with niche=${niche}, templateType=${templateType}, platform=${platform}, tone=${tone}, limit=${limit}`);
   
-  let dbQuery = db
-    .select({
-      suggestion: claudeAiSuggestions,
-      effectiveness: sql<number>`
-        CASE 
-          WHEN ${claudeAiSuggestions.timesUsed} = 0 THEN ${claudeAiSuggestions.confidence}
-          ELSE (${claudeAiSuggestions.successRate} * 0.7 + ${claudeAiSuggestions.confidence} * 0.3)
-        END
-      `,
-      recentSuccess: sql<boolean>`
-        ${claudeAiSuggestions.lastApplied} > NOW() - INTERVAL '7 days' 
-        AND ${claudeAiSuggestions.successRate} > 70
-      `
-    })
-    .from(claudeAiSuggestions)
-    .where(
-      and(
-        eq(claudeAiSuggestions.niche, niche),
-        eq(claudeAiSuggestions.isActive, true)
-      )
-    );
+  // Build WHERE conditions - using only columns that exist in database
+  const whereConditions = [
+    eq(claudeAiSuggestions.niche, niche)
+  ];
 
-  // Apply additional filters if provided
   if (templateType) {
-    dbQuery = dbQuery.where(
-      and(
-        eq(claudeAiSuggestions.niche, niche),
-        sql`${claudeAiSuggestions.templateTypes} @> ARRAY[${templateType}]::text[]`
-      )
-    );
+    whereConditions.push(eq(claudeAiSuggestions.templateType, templateType));
   }
 
   if (platform) {
-    dbQuery = dbQuery.where(
-      and(
-        eq(claudeAiSuggestions.niche, niche),
-        sql`${claudeAiSuggestions.platforms} @> ARRAY[${platform}]::text[]`
-      )
-    );
+    whereConditions.push(eq(claudeAiSuggestions.platform, platform));
   }
 
   if (tone) {
-    dbQuery = dbQuery.where(
-      and(
-        eq(claudeAiSuggestions.niche, niche),
-        sql`${claudeAiSuggestions.tones} @> ARRAY[${tone}]::text[]`
-      )
-    );
+    whereConditions.push(eq(claudeAiSuggestions.tone, tone));
   }
 
+  const dbQuery = db
+    .select({
+      id: claudeAiSuggestions.id,
+      niche: claudeAiSuggestions.niche,
+      suggestionType: claudeAiSuggestions.suggestionType,
+      category: claudeAiSuggestions.category,
+      suggestion: claudeAiSuggestions.suggestion,
+      context: claudeAiSuggestions.context,
+      example: claudeAiSuggestions.example,
+      confidence: claudeAiSuggestions.confidence,
+      source: claudeAiSuggestions.source,
+      templateType: claudeAiSuggestions.templateType,
+      platform: claudeAiSuggestions.platform,
+      tone: claudeAiSuggestions.tone,
+      effectiveness: claudeAiSuggestions.effectiveness,
+      priority: claudeAiSuggestions.priority,
+      createdAt: claudeAiSuggestions.createdAt,
+      updatedAt: claudeAiSuggestions.updatedAt
+    })
+    .from(claudeAiSuggestions)
+    .where(and(...whereConditions));
+
   const results = await dbQuery
-    .orderBy(desc(sql`effectiveness`), desc(claudeAiSuggestions.priority))
     .limit(limit);
 
   console.log(`📊 CLAUDE AI SERVICE: Found ${results.length} suggestions for niche: ${niche}, template: ${templateType}, tone: ${tone}`);
 
   return results.map(row => ({
-    ...row.suggestion,
-    effectiveness: row.effectiveness,
-    recentSuccess: row.recentSuccess
+    ...row,
+    effectiveness: row.effectiveness || 0.5,
+    recentSuccess: row.updatedAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
   }));
 }
 
@@ -131,13 +119,13 @@ export async function applySuggestionToContent(
   await db
     .update(claudeAiSuggestions)
     .set({
-      timesUsed: sql`${claudeAiSuggestions.timesUsed} + 1`,
-      lastApplied: new Date(),
-      appliedToContent: sql`${claudeAiSuggestions.appliedToContent} + 1`
+      usageCount: sql`${claudeAiSuggestions.usageCount} + 1`,
+      updatedAt: new Date()
     })
     .where(eq(claudeAiSuggestions.id, suggestionId));
 
-  console.log(`✅ Applied suggestion ${suggestionId} to content ${contentHistoryId}`);
+  console.log(`✅ CLAUDE AI SUGGESTION TRACKING: Applied suggestion ${suggestionId} to content ${contentHistoryId}`);
+  console.log(`📊 CLAUDE AI SUGGESTION DATABASE: Updated usage statistics for suggestion ${suggestionId}`);
 }
 
 /**

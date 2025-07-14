@@ -432,8 +432,8 @@ export const claudeAiSuggestions = pgTable("claude_ai_suggestions", {
   
   // Effectiveness tracking
   timesUsed: integer("times_used").notNull().default(0),
-  successRate: decimal("success_rate"), // Success rate when applied (0-100)
-  avgRatingIncrease: decimal("avg_rating_increase"), // Average rating improvement
+  effectiveness: decimal("effectiveness").notNull().default("0.5"), // Effectiveness score (0-1)
+  // Note: using effectiveness instead of success_rate and avg_rating_increase
   
   // Suggestion validation
   isValidated: boolean("is_validated").notNull().default(false), // Has this been tested?
@@ -444,10 +444,14 @@ export const claudeAiSuggestions = pgTable("claude_ai_suggestions", {
   templateTypes: text("template_types").array(), // Which templates this applies to
   platforms: text("platforms").array(), // Which platforms this works best on
   tones: text("tones").array(), // Which tones this suggestion works with
+  templateType: text("template_type"), // Single template type
+  platform: text("platform"), // Single platform
+  tone: text("tone"), // Single tone
   
   // Performance data
   appliedToContent: integer("applied_to_content").notNull().default(0), // How many times used
-  lastApplied: timestamp("last_applied"),
+  usageCount: integer("usage_count").notNull().default(0), // Usage tracking
+  reasoning: text("reasoning"), // AI reasoning for suggestion
   
   // Lifecycle management
   isActive: boolean("is_active").notNull().default(true),

@@ -132,6 +132,16 @@ async function generateMainScript(config: ContentGenerationConfig): Promise<stri
   );
   
   console.log(`🎯 CLAUDE AI SUGGESTIONS: Found ${aiSuggestions.length} targeted suggestions for ${config.niche}-${config.templateType}`);
+  
+  if (aiSuggestions.length > 0) {
+    console.log(`🎯 CLAUDE AI SUGGESTIONS APPLIED:`, aiSuggestions.map(s => ({
+      category: s.category || 'unknown',
+      suggestion: s.suggestion?.substring(0, 100) + '...' || 'No suggestion text',
+      effectiveness: s.effectiveness || 'N/A'
+    })));
+  } else {
+    console.log(`⚠️ CLAUDE AI SUGGESTIONS: No suggestions found for ${config.niche}-${config.templateType}-${config.tone}`);
+  }
 
   const promptConfig: PromptConfig = {
     niche: config.niche,
@@ -160,7 +170,11 @@ ${suggestionText}
 
 Please incorporate these proven optimization strategies naturally into your content generation.`;
     
-    console.log(`🧠 Applied ${aiSuggestions.length} Claude AI suggestions to main content generation`);
+    console.log(`🧠 CLAUDE AI SUGGESTIONS INTEGRATION: Applied ${aiSuggestions.length} suggestions to main content generation`);
+    console.log(`🧠 CLAUDE AI SUGGESTIONS DETAILS:`, aiSuggestions.slice(0, 3).map(s => ({
+      category: s.category,
+      preview: s.suggestion.substring(0, 80) + '...'
+    })));
   }
   
   console.log(`📝 Generating main content with ${config.aiModel.toUpperCase()}`);
