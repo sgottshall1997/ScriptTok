@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,8 +15,7 @@ import {
   Target, 
   Clock, 
   CheckCircle,
-  ChevronDown,
-  ChevronRight,
+
   Sparkles,
   Users,
   BarChart3,
@@ -90,7 +89,6 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
   const [showPreview, setShowPreview] = useState(false);
   const [scheduleAfterGeneration, setScheduleAfterGeneration] = useState(false);
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
-  const [isAdvancedOpen, setIsAdvancedOpen] = useState(false);
   const [useSmartStyle, setUseSmartStyle] = useState(false);
   const [useSpartanFormat, setUseSpartanFormat] = useState(true);
 
@@ -779,6 +777,38 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </div>
         </div>
 
+        <Separator />
+
+        {/* Smart Style Enhancement */}
+        <Card className="bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <Lightbulb className="h-5 w-5 text-purple-600" />
+              <h3 className="font-semibold text-gray-800">Smart Style Enhancement</h3>
+            </div>
+            
+            <div className="flex items-center space-x-3">
+              <Switch
+                id="use-smart-style"
+                checked={useSmartStyle}
+                onCheckedChange={setUseSmartStyle}
+              />
+              <Label htmlFor="use-smart-style" className="text-sm cursor-pointer">
+                <span className="font-medium">Use My Best-Rated Style</span>
+                <p className="text-xs text-gray-500 mt-1">Apply patterns from your highest-rated content (69+ rating) for improved engagement</p>
+              </Label>
+            </div>
+            
+            {useSmartStyle && (
+              <div className="mt-3 p-3 bg-white rounded-lg border border-purple-200">
+                <p className="text-xs text-purple-700">
+                  <strong>Active:</strong> The system will analyze your top-performing content and apply successful patterns to new generations, including tone, structure, and engagement strategies.
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Generation Summary */}
         <Card className="bg-gray-50 border-gray-200">
           <CardContent className="p-4">
@@ -808,64 +838,30 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
           </CardContent>
         </Card>
 
-        {/* Advanced Options */}
-        <Collapsible open={isAdvancedOpen} onOpenChange={setIsAdvancedOpen}>
-          <CollapsibleTrigger className="flex items-center gap-2 text-sm font-medium hover:text-purple-600">
-            {isAdvancedOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-            Advanced Options
-          </CollapsibleTrigger>
-          <CollapsibleContent className="space-y-4 mt-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="schedule-after"
-                    checked={scheduleAfterGeneration}
-                    onCheckedChange={setScheduleAfterGeneration}
-                  />
-                  <Label htmlFor="schedule-after">Schedule after generation</Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="use-smart-style"
-                    checked={useSmartStyle}
-                    onCheckedChange={setUseSmartStyle}
-                  />
-                  <Label htmlFor="use-smart-style" className="text-sm">
-                    <span className="font-medium">Use My Best-Rated Style</span>
-                    <p className="text-xs text-gray-500 mt-1">Apply patterns from your highest-rated content (80+ rating)</p>
-                  </Label>
-                </div>
-                
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="spartan-format"
-                    checked={useSpartanFormat}
-                    onCheckedChange={setUseSpartanFormat}
-                  />
-                  <Label htmlFor="spartan-format" className="text-sm">
-                    <span className="font-medium">Spartan Format</span>
-                    <p className="text-xs text-gray-500 mt-1">Professional, no-fluff content (no emojis, banned words, direct language)</p>
-                  </Label>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="webhook-url">Make.com Webhook URL</Label>
-                <Input
-                  id="webhook-url"
-                  type="url"
-                  placeholder="https://hook.make.com/..."
-                  value={makeWebhookUrl}
-                  onChange={(e) => setMakeWebhookUrl(e.target.value)}
-                />
-              </div>
+        {/* Webhook Configuration */}
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3 mb-3">
+              <Globe className="h-5 w-5 text-blue-600" />
+              <h3 className="font-semibold text-gray-800">Webhook Integration</h3>
             </div>
-          </CollapsibleContent>
-        </Collapsible>
-
-
+            
+            <div className="space-y-2">
+              <Label htmlFor="webhook-url" className="text-sm font-medium">Make.com Webhook URL (Optional)</Label>
+              <Input
+                id="webhook-url"
+                type="url"
+                placeholder="https://hook.make.com/..."
+                value={makeWebhookUrl}
+                onChange={(e) => setMakeWebhookUrl(e.target.value)}
+                className="bg-white border-blue-300 focus:border-blue-500"
+              />
+              <p className="text-xs text-blue-600">
+                Add your Make.com webhook URL to automatically send generated content to your automation workflows
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Start Generation Button */}
         <div className="flex justify-center pt-4">
