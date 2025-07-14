@@ -4,10 +4,8 @@ import { storage } from "./storage";
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
 import { analyticsRouter } from "./api/analytics";
-import { templateTestRouter } from "./api/templateTest";
 import { templateRouter } from "./api/templates";
 import { scraperStatusRouter } from "./api/scraperStatus";
-import { customTemplateTestRouter } from "./api/customTemplateTest";
 import { aiModelConfigRouter } from "./api/aiModelConfig";
 import { hashtagEmojiRouter } from "./api/hashtagEmoji";
 import { socialMediaOptimizationRouter } from "./api/socialMediaOptimization";
@@ -19,16 +17,14 @@ import optionsRouter from "./api/options";
 import { historyRouter } from "./api/history";
 import { usageSummaryRouter } from "./api/usageSummary";
 import { webhooksRouter } from "./api/webhooks";
-import { webhookTestRouter } from "./api/webhook-test";
 import { sendToMakeRouter } from "./api/sendToMake";
 import { sendBatchRouter } from "./api/sendBatch";
-import { testMakeWebhookRouter } from "./api/testMakeWebhook";
 import { setupFeedbackRoutes } from "./api/feedback";
 import { rewriteContent } from "./api/rewrite-content";
 import { generateMultiPlatformContent, scheduleMultiPlatformContent } from "./api/multi-platform-generate";
 import { rewriteCaption } from "./api/post/rewrite-caption";
 import { generateDailyBatch } from "./api/daily-batch";
-import { forceRefreshRouter } from "./api/force-refresh";
+
 import { amazonLinksRouter } from "./api/amazonLinks";
 
 import { cookingPipeline } from "./services/cookingContentPipeline";
@@ -46,11 +42,11 @@ import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
 import { getScheduledJobs, createScheduledJob, updateScheduledJob, deleteScheduledJob, triggerScheduledJob, initializeScheduledJobs, emergencyStopAllCronJobs, getActiveCronJobsStatus } from "./api/scheduled-bulk-generation";
-import { emergencyStopAll, getSystemStatus } from "./api/emergency-stop";
+
 import { cronStatusRouter } from "./api/cron-status";
 import perplexityStatusRouter from "./api/perplexity-status";
 import aiAnalyticsRouter from "./api/ai-analytics";
-import generateContentUnifiedRouter from "./api/generateContentUnified_fixed";
+import generateContentUnifiedRouter from "./api/generateContentUnified";
 import favoritesRouter from "./api/favorites";
 import { bulkGeneratedContent } from "@shared/schema";
 import { eq } from "drizzle-orm";
