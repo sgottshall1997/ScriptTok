@@ -416,6 +416,107 @@ export const apiRateLimits = pgTable("api_rate_limits", {
   lastUpdated: timestamp("last_updated").defaultNow().notNull(),
 });
 
+// Claude AI suggestions database for content improvement by niche
+export const claudeAiSuggestions = pgTable("claude_ai_suggestions", {
+  id: serial("id").primaryKey(),
+  niche: text("niche").notNull(), // beauty, tech, fashion, fitness, food, travel, pets
+  
+  // Suggestion metadata
+  suggestionType: text("suggestion_type").notNull(), // style_improvement, hook_optimization, engagement_boost, cta_enhancement
+  category: text("category").notNull(), // writing_style, structure, tone, format, platform_optimization
+  
+  // The actual suggestion content
+  suggestion: text("suggestion").notNull(), // The Claude recommendation
+  context: text("context"), // When/where this suggestion applies
+  example: text("example"), // Example implementation of the suggestion
+  
+  // Effectiveness tracking
+  timesUsed: integer("times_used").notNull().default(0),
+  successRate: decimal("success_rate"), // Success rate when applied (0-100)
+  avgRatingIncrease: decimal("avg_rating_increase"), // Average rating improvement
+  
+  // Suggestion validation
+  isValidated: boolean("is_validated").notNull().default(false), // Has this been tested?
+  confidence: decimal("confidence"), // Claude's confidence in this suggestion (0-100)
+  source: text("source"), // automated_analysis, user_feedback, pattern_analysis
+  
+  // Content targeting
+  templateTypes: text("template_types").array(), // Which templates this applies to
+  platforms: text("platforms").array(), // Which platforms this works best on
+  tones: text("tones").array(), // Which tones this suggestion works with
+  
+  // Performance data
+  appliedToContent: integer("applied_to_content").notNull().default(0), // How many times used
+  lastApplied: timestamp("last_applied"),
+  
+  // Lifecycle management
+  isActive: boolean("is_active").notNull().default(true),
+  priority: integer("priority").notNull().default(50), // 1-100, higher = more important
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Track applications of Claude suggestions to content
+export const suggestionApplications = pgTable("suggestion_applications", {
+  id: serial("id").primaryKey(),
+  suggestionId: integer("suggestion_id").notNull().references(() => claudeAiSuggestions.id, { onDelete: 'cascade' }),
+  contentHistoryId: integer("content_history_id").notNull().references(() => contentHistory.id, { onDelete: 'cascade' }),
+  
+  // Application details
+  appliedAt: timestamp("applied_at").defaultNow().notNull(),
+  applicationMethod: text("application_method"), // automatic, manual, a_b_test
+  
+  // Results tracking
+  beforeRating: integer("before_rating"), // Rating before applying suggestion
+  afterRating: integer("after_rating"), // Rating after applying suggestion
+  improvementScore: decimal("improvement_score"), // Calculated improvement
+  
+  // User feedback on the suggestion
+  userFeedback: text("user_feedback"),
+  userRating: integer("user_rating"), // User's rating of the suggestion (1-10)
+  
+  // Metadata
+  metadata: jsonb("metadata"), // Additional details about the application
+});
+
+// Niche-specific content insights and patterns
+export const nicheInsights = pgTable("niche_insights", {
+  id: serial("id").primaryKey(),
+  niche: text("niche").notNull(),
+  
+  // Content performance patterns
+  bestPerformingTemplates: text("best_performing_templates").array(),
+  topTones: text("top_tones").array(),
+  highEngagementWords: text("high_engagement_words").array(),
+  lowEngagementWords: text("low_engagement_words").array(),
+  
+  // Platform-specific insights
+  platformPreferences: jsonb("platform_preferences"), // Which platforms work best for this niche
+  optimalContentLength: jsonb("optimal_content_length"), // Length preferences by platform
+  
+  // Trend analysis
+  trendingKeywords: text("trending_keywords").array(),
+  seasonalPatterns: jsonb("seasonal_patterns"),
+  audiencePreferences: jsonb("audience_preferences"),
+  
+  // Performance metrics
+  avgRating: decimal("avg_rating"),
+  totalContent: integer("total_content").notNull().default(0),
+  lastAnalyzed: timestamp("last_analyzed").defaultNow().notNull(),
+  
+  // Analysis metadata
+  dataQuality: decimal("data_quality"), // How reliable this insight is (0-100)
+  sampleSize: integer("sample_size"), // Number of content pieces analyzed
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    unqNiche: unique().on(table.niche),
+  };
+});
+
 // Webhooks for external integrations
 export const integrationWebhooks = pgTable("integration_webhooks", {
   id: serial("id").primaryKey(),
@@ -722,6 +823,32 @@ export const insertTeamSchema = createInsertSchema(teams).pick({
   name: true,
   description: true,
 });
+
+// Claude AI Suggestions schemas
+export const insertClaudeAiSuggestionSchema = createInsertSchema(claudeAiSuggestions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertSuggestionApplicationSchema = createInsertSchema(suggestionApplications).omit({
+  id: true,
+  appliedAt: true,
+});
+
+export const insertNicheInsightSchema = createInsertSchema(nicheInsights).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+// Types for Claude AI Suggestions
+export type ClaudeAiSuggestion = typeof claudeAiSuggestions.$inferSelect;
+export type InsertClaudeAiSuggestion = typeof insertClaudeAiSuggestionSchema._input;
+export type SuggestionApplication = typeof suggestionApplications.$inferSelect;
+export type InsertSuggestionApplication = typeof insertSuggestionApplicationSchema._input;
+export type NicheInsight = typeof nicheInsights.$inferSelect;
+export type InsertNicheInsight = typeof insertNicheInsightSchema._input;
 
 export const insertTeamMemberSchema = createInsertSchema(teamMembers).pick({
   teamId: true,

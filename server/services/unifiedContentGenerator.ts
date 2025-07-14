@@ -7,6 +7,14 @@ import { createPrompt, createPlatformPrompt, PromptConfig } from './promptFactor
 import { generateWithAI } from './aiModelRouter';
 import { generateAmazonAffiliateLink } from './amazonAffiliate';
 import { TrendingProduct } from '../../shared/schema';
+import { 
+  getSuggestionsForContent, 
+  applySuggestionToContent,
+  generateAndStoreSuggestions,
+  analyzeNichePerformance,
+  getNicheInsights,
+  type SuggestionWithEffectiveness 
+} from './claudeAiSuggestionsService';
 
 export interface ContentGenerationConfig {
   productName: string;
@@ -58,7 +66,17 @@ export async function generateUnifiedContent(config: ContentGenerationConfig): P
   console.log(`🔥 UNIFIED GENERATOR: ${config.productName} (${config.niche}) - ${config.templateType}/${config.tone}`);
   console.log(`🤖 AI MODEL: ${config.aiModel.toUpperCase()} | 🏛️ FORMAT: ${config.contentFormat}`);
 
-  // Step 1: Generate main content script
+  // Step 0: Get Claude AI suggestions for this niche and content type
+  const aiSuggestions = await getSuggestionsForContent({
+    niche: config.niche,
+    templateType: config.templateType,
+    tone: config.tone,
+    limit: 3
+  });
+
+  console.log(`🧠 CLAUDE SUGGESTIONS: Found ${aiSuggestions.length} relevant AI suggestions for ${config.niche} niche`);
+
+  // Step 1: Generate main content script with AI suggestions applied
   const mainContent = await generateMainScript(config);
   
   // Step 2: Generate platform-specific captions
@@ -100,9 +118,17 @@ export async function generateUnifiedContent(config: ContentGenerationConfig): P
 }
 
 /**
- * GENERATE MAIN CONTENT SCRIPT
+ * GENERATE MAIN CONTENT SCRIPT WITH AI SUGGESTIONS
  */
 async function generateMainScript(config: ContentGenerationConfig): Promise<string> {
+  // Get Claude AI suggestions for enhancement
+  const aiSuggestions = await getSuggestionsForContent({
+    niche: config.niche,
+    templateType: config.templateType,
+    tone: config.tone,
+    limit: 3
+  });
+
   const promptConfig: PromptConfig = {
     niche: config.niche,
     templateType: config.templateType,
@@ -116,9 +142,26 @@ async function generateMainScript(config: ContentGenerationConfig): Promise<stri
 
   const generatedPrompt = await createPrompt(promptConfig);
   
+  // Enhance prompt with Claude AI suggestions
+  let enhancedUserPrompt = generatedPrompt.userPrompt;
+  
+  if (aiSuggestions.length > 0) {
+    const suggestionText = aiSuggestions
+      .slice(0, 3) // Use top 3 suggestions
+      .map(s => `${s.category.toUpperCase()}: ${s.suggestion}`)
+      .join('\n');
+    
+    enhancedUserPrompt += `\n\nCLAUDE AI OPTIMIZATION SUGGESTIONS for ${config.niche} content:
+${suggestionText}
+
+Please incorporate these proven optimization strategies naturally into your content generation.`;
+    
+    console.log(`🧠 Applied ${aiSuggestions.length} Claude AI suggestions to main content generation`);
+  }
+  
   console.log(`📝 Generating main content with ${config.aiModel.toUpperCase()}`);
   
-  const aiResponse = await generateWithAI(generatedPrompt.userPrompt, {
+  const aiResponse = await generateWithAI(enhancedUserPrompt, {
     model: config.aiModel,
     systemPrompt: generatedPrompt.systemPrompt,
     temperature: config.contentFormat === 'spartan' ? 0.3 : 0.7,

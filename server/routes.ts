@@ -66,7 +66,7 @@ import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-r
 import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
 import syncRatingsRouter from "./api/sync-ratings";
 import { registerContentEvaluationRoutes } from "./api/content-evaluation";
-
+import claudeAiSuggestionsRouter from "./api/claudeAiSuggestions";
 
 import { perplexityAutomationRouter } from "./api/perplexity-automation";
 import safeguardMonitorRouter from "./api/safeguard-monitor";
@@ -680,6 +680,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Register content evaluation routes
   registerContentEvaluationRoutes(app);
+  
+  // Claude AI Suggestions system for niche-specific content optimization
+  app.use('/api/claude-suggestions', claudeAiSuggestionsRouter);
 
   // Test endpoint for scheduled generation validation - DEVELOPMENT ONLY
   app.get('/api/test/scheduled-generation', async (req, res) => {
