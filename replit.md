@@ -178,3 +178,11 @@ Preferred communication style: Simple, everyday language.
 - **FALLBACK CAPTION SPARTAN SUPPORT**: Enhanced generateFallbackCaptions function to apply Spartan format rules when useSpartanFormat is true
 - **COMPREHENSIVE ERROR HANDLING**: Added try-catch blocks for JSON parsing with automatic fallback to prevent system crashes
 - **PRODUCTION STABILITY**: System now handles malformed AI responses gracefully while maintaining Spartan format consistency across all content types
+
+### July 14, 2025 - Perplexity API Integration Enhancement
+- **PERPLEXITY MODEL UPDATES**: Updated all Perplexity API calls from deprecated `sonar-pro` to current `sonar` model across all 7 niche-specific fetchers
+- **ENHANCED JSON PARSING**: Added control character removal and improved error handling for malformed Perplexity API responses
+- **COMPREHENSIVE ERROR HANDLING**: Implemented specific handling for 401, 403, 429, and 500 HTTP status codes with appropriate retry logic
+- **RATE LIMITING SUPPORT**: Added 30-second delays and exponential backoff for rate limit scenarios
+- **API KEY CONFIGURATION**: Updated environment variable handling to use `PERPLEXITY_API` instead of `PERPLEXITY_API_KEY`
+- **AUTHENTICATION ISSUES IDENTIFIED**: Current Perplexity API key requires validation - system falls back to static product data until authentication is resolved

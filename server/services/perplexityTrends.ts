@@ -158,7 +158,7 @@ Respond with JSON array only:`;
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -303,7 +303,7 @@ Example format: "Nike Air Force 1 '07 Sneakers" not "Nike shoes"`;
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
@@ -349,7 +349,7 @@ async function fetchWithFallbackModel(niche: string, prompt: string): Promise<In
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({

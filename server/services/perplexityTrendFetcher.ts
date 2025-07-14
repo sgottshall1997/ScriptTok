@@ -136,7 +136,7 @@ JSON array only:`;
       const response = await fetch(PERPLEXITY_API_URL, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+          'Authorization': `Bearer ${process.env.PERPLEXITY_API}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
