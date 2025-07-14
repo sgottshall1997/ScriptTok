@@ -114,7 +114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);
   app.use('/api/analytics', analyticsRouter);
-  app.use('/api/template-test', templateTestRouter);
+
   app.use('/api/templates', templateRouter);
   
   // Enhanced template management API
@@ -138,7 +138,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     await getTemplateById(req, res);
   });
   app.use('/api/scraper-status', scraperStatusRouter);
-  app.use('/api/custom-template', customTemplateTestRouter);
+
   app.use('/api/ai-model-config', aiModelConfigRouter);
   app.use('/api/hashtag-emoji', hashtagEmojiRouter);
   app.use('/api/social-media-optimization', socialMediaOptimizationRouter);
@@ -179,14 +179,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/usage-summary', usageSummaryRouter);
   app.use('/api/ai-analytics', aiAnalyticsRouter);
   app.use('/api/webhooks', webhooksRouter);
-  app.use('/api/webhooks/test', webhookTestRouter);
-  
-  // Webhook test endpoint
-  app.use('/api/webhook', webhookTestRouter);
+  // Webhook test endpoints removed due to missing router definitions
   app.use('/api/sync-ratings', syncRatingsRouter);
   app.use('/api/post/send-to-make', sendToMakeRouter);
   app.use('/api/post/send-batch', sendBatchRouter);
-  app.use('/api/force-refresh', forceRefreshRouter);
+
   app.use('/api/amazon-links', amazonLinksRouter);
   // Direct webhook test route
   app.get('/api/post/test-make-webhook', async (req, res) => {
@@ -606,9 +603,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/scheduled-bulk/emergency-stop', emergencyStopAllCronJobs);
   app.get('/api/scheduled-bulk/status', getActiveCronJobsStatus);
   
-  // 🚨 EMERGENCY STOP endpoints
-  app.post('/api/emergency-stop-all', emergencyStopAll);
-  app.get('/api/system-status', getSystemStatus);
+  // 🚨 EMERGENCY STOP endpoints removed due to missing function definitions
 
   // 🚨 CRITICAL FIX: Emergency stop all cron jobs
   app.post('/api/scheduled-bulk/emergency-stop', async (req, res) => {

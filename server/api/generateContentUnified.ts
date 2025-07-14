@@ -75,28 +75,26 @@ const unifiedGenerationSchema = z.object({
   useExistingProducts: z.boolean().default(false),
   generateAffiliateLinks: z.boolean().default(false),
   affiliateId: z.string().optional(),
-  aiModels: z.array(z.enum(['chatgpt', 'claude'])).optional(),
   
-  // Webhook and scheduling
-  makeWebhookUrl: z.string().url().optional(),
-  scheduleAfterGeneration: z.boolean().default(false),
-  scheduledTime: z.string().datetime().optional()
+  // Scheduling fields
+  scheduledJobId: z.string().optional(),
+  aiModels: z.array(z.string()).optional(),
+  contentFormats: z.array(z.string()).optional()
 });
 
-// Configuration object for each generation task
+// Type definitions for content generation
 interface GenerationConfig {
   productName: string;
   niche: string;
   templateType: string;
   tone: string;
   platforms: string[];
-  contentType: string;
+  contentType?: string;
   videoDuration?: string;
   affiliateUrl?: string;
-  customHook?: string;
-  useSmartStyle: boolean;
-  useSpartanFormat: boolean;
-  aiModel: 'chatgpt' | 'claude';
+  useSmartStyle?: boolean;
+  useSpartanFormat?: boolean;
+  aiModel: string;
   mode: 'manual' | 'automated';
   jobId?: string;
 }
@@ -105,50 +103,46 @@ interface GenerationConfig {
 function validateGeneratedContent(content: any, config: GenerationConfig): { isValid: boolean; errors: string[]; warnings: string[] } {
   const errors: string[] = [];
   const warnings: string[] = [];
-
-  // Check if content exists
-  if (!content) {
-    errors.push('Generated content is null or undefined');
-    return { isValid: false, errors, warnings };
-  }
-
-  // Extract script from content
-  const script = typeof content === 'string' ? content : (content.script || content.content);
   
-  if (!script) {
-    errors.push('Generated content is missing script/content field');
+  // Convert content to string if it's an object
+  let script = '';
+  if (typeof content === 'object' && content !== null) {
+    script = content.script || content.content || JSON.stringify(content);
+  } else {
+    script = String(content || '');
+  }
+  
+  const scriptLower = script.toLowerCase();
+  
+  // Basic validation
+  if (!script || script.trim().length === 0) {
+    errors.push('Content is empty');
     return { isValid: false, errors, warnings };
   }
-
-  // Check for empty or whitespace-only script
-  const trimmedScript = script.trim();
-  if (trimmedScript.length === 0) {
-    errors.push('Generated script is empty or contains only whitespace');
-    return { isValid: false, errors, warnings };
+  
+  if (script.length < 50) {
+    errors.push('Content is too short (minimum 50 characters)');
   }
-
-  // Check minimum length
-  if (trimmedScript.length < 10) {
-    warnings.push(`Generated script is very short (${trimmedScript.length} characters)`);
+  
+  if (script.length > 5000) {
+    errors.push('Content is too long (maximum 5000 characters)');
   }
-
-  // Check if script contains product reference
+  
+  // Check for product mention
   const productWords = config.productName.toLowerCase().split(' ').filter(word => word.length > 2);
-  const scriptLower = trimmedScript.toLowerCase();
   const hasProductReference = productWords.some(word => scriptLower.includes(word));
   
   if (!hasProductReference) {
-    warnings.push('Generated script may not reference the specified product');
+    errors.push('Content does not mention the product');
   }
-
-  // Spartan format validation - STRICT ENFORCEMENT
+  
+  // Spartan format validation
   if (config.useSpartanFormat) {
-    const bannedWords = ['can', 'may', 'just', 'that', 'very', 'really', 'literally', 'actually', 'amazing', 'incredible', 'awesome'];
+    const bannedWords = ['just', 'literally', 'really', 'very', 'actually', 'basically', 'totally', 'super', 'quite', 'rather'];
     const foundBannedWords = bannedWords.filter(word => 
       scriptLower.includes(` ${word} `) || 
       scriptLower.startsWith(`${word} `) || 
-      scriptLower.endsWith(` ${word}`) ||
-      scriptLower === word
+      scriptLower.endsWith(` ${word}`)
     );
     
     if (foundBannedWords.length > 0) {
@@ -156,14 +150,14 @@ function validateGeneratedContent(content: any, config: GenerationConfig): { isV
     }
 
     // Check word count for Spartan format
-    const wordCount = trimmedScript.split(/\s+/).length;
+    const wordCount = script.trim().split(/\s+/).length;
     if (wordCount > 120) {
       warnings.push(`Spartan format violation: Exceeds 120 words (${wordCount} words)`);
     }
 
-    // Check for emojis in Spartan format (comprehensive emoji detection)
-    const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\\u{1F300}-\u{1F5FF}]|[\\u{1F680}-\u{1F6FF}]|[\\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\\u{1FA00}-\u{1FA6F}]/gu;
-    if (emojiPattern.test(trimmedScript)) {
+    // Check for emojis in Spartan format
+    const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]/gu;
+    if (emojiPattern.test(script)) {
       warnings.push('Spartan format violation: Contains emojis');
     }
 
@@ -173,7 +167,7 @@ function validateGeneratedContent(content: any, config: GenerationConfig): { isV
     if (foundCasualPhrases.length > 0) {
       warnings.push(`Spartan format violation: Contains casual phrases: ${foundCasualPhrases.join(', ')}`);
     }
-  
+  }
 
   return { isValid: errors.length === 0, errors, warnings };
 }
@@ -194,27 +188,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       .orderBy(desc(trendingProducts.createdAt))
       .limit(5);
 
-    // Fetch viral inspiration for the product
-    let viralInspiration = null;
-    try {
-      const viralUrl = `${process.env.BASE_URL || 'http://localhost:5000'}/api/perplexity-trends/viral-inspiration`;
-      const viralResponse = await fetch(viralUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ product: config.productName, niche: config.niche })
-      });
-      
-      if (viralResponse.ok) {
-        const viralData = await viralResponse.json();
-        if (viralData.success) {
-          viralInspiration = viralData.data;
-        }
-      }
-    } catch (error) {
-      console.log('Viral inspiration fetch failed, continuing without it');
-    }
-
-    // Use NEW unified content generator with proper format mapping
+    // Use unified content generator
     const contentFormat = config.useSpartanFormat ? 'spartan' : 'standard';
     console.log(`📝 Content generation mode: ${contentFormat.toUpperCase()}`);
     
@@ -228,7 +202,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       contentFormat: contentFormat,
       aiModel: config.aiModel,
       trendingProducts: trendingProductsData,
-      viralInspiration: viralInspiration
+      viralInspiration: null
     };
 
     // Generate content using unified generator
@@ -238,15 +212,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     const mainContent = unifiedResult.script;
     
     console.log(`✅ Unified content generated successfully (${mainContent.length} chars)`);
-    console.log(`📋 Generated platform captions: ${Object.keys({
-      tiktok: unifiedResult.tiktokCaption,
-      instagram: unifiedResult.instagramCaption,
-      youtube: unifiedResult.youtubeCaption,
-      x: unifiedResult.xCaption,
-      facebook: unifiedResult.facebookCaption
-    }).join(', ')}`);
     
-    // Validate generated content from unified generator
+    // Validate generated content
     const validation = validateGeneratedContent(mainContent, config);
     
     if (!validation.isValid) {
@@ -259,23 +226,22 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       console.log(`⚠️ Warnings: ${validation.warnings.join(', ')}`);
     }
 
-    // Use platform captions from unified generator and sanitize them
+    // Use platform captions from unified generator
     const platformCaptions: Record<string, string> = {
-      tiktok: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.tiktokCaption)) : sanitizeUnicode(unifiedResult.tiktokCaption),
-      instagram: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.instagramCaption)) : sanitizeUnicode(unifiedResult.instagramCaption),
-      youtube: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.youtubeCaption)) : sanitizeUnicode(unifiedResult.youtubeCaption),
-      twitter: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.xCaption)) : sanitizeUnicode(unifiedResult.xCaption),
-      facebook: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.facebookCaption)) : sanitizeUnicode(unifiedResult.facebookCaption)
+      tiktok: unifiedResult.tiktokCaption || '',
+      instagram: unifiedResult.instagramCaption || '',
+      youtube: unifiedResult.youtubeCaption || '',
+      twitter: unifiedResult.xCaption || '',
+      facebook: unifiedResult.facebookCaption || ''
     };
 
     // Estimate video duration
     const videoDuration = config.contentType === "video" ? 
       estimateVideoDuration(mainContent, config.videoDuration) : undefined;
 
-    // Sanitize Unicode characters to prevent JSON encoding errors
+    // Sanitize Unicode characters
     function sanitizeUnicode(text: string): string {
       if (!text) return '';
-      // Remove invalid Unicode surrogates and other problematic characters
       return text
         .replace(/[\uD800-\uDFFF]/g, '') // Remove lone surrogates
         .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
@@ -283,28 +249,19 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         .trim();
     }
 
-    
-
-    // Use mainContent directly as it's already validated and sanitize it
+    // Use mainContent directly as it's already validated
     let script = sanitizeUnicode(mainContent);
     
-    // Apply Spartan format enforcement if needed
-    if (config.useSpartanFormat) {
-      script = enforceSpartanFormat(script);
-      console.log(`🏛️ SPARTAN ENFORCEMENT: Applied automatic content cleaning to main script`);
-    }
-    
     console.log(`🔍 UNIFIED GENERATOR OUTPUT: Script length: ${script.length} chars`);
-    console.log(`🔍 SCRIPT PREVIEW: "${script.substring(0, 150)}..."`);
-    console.log(`✅ Using unified content generator - validation already completed`);
+    console.log(`✅ Using unified content generator - validation completed`);
 
     const executionTime = Date.now() - startTime;
     console.log(`⏱️ Content generation completed in ${executionTime}ms`);
 
-    // Create response structure using unified generator outputs
+    // Create response structure
     const result = {
       script,
-      content: script, // Backward compatibility
+      content: script,
       productName: config.productName,
       niche: config.niche,
       templateType: config.templateType,
@@ -312,171 +269,53 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       platforms: config.platforms,
       platformCaptions,
       videoDuration,
-      // Include unified generator fields (sanitized and Spartan-enforced if needed)
-      productDescription: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.productDescription)) : sanitizeUnicode(unifiedResult.productDescription),
-      demoScript: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.demoScript)) : sanitizeUnicode(unifiedResult.demoScript),
-      instagramCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.instagramCaption)) : sanitizeUnicode(unifiedResult.instagramCaption),
-      tiktokCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.tiktokCaption)) : sanitizeUnicode(unifiedResult.tiktokCaption),
-      youtubeCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.youtubeCaption)) : sanitizeUnicode(unifiedResult.youtubeCaption),
-      xCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.xCaption)) : sanitizeUnicode(unifiedResult.xCaption),
-      facebookCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.facebookCaption)) : sanitizeUnicode(unifiedResult.facebookCaption),
-      affiliateLink: sanitizeUnicode(unifiedResult.affiliateLink),
-      viralInspiration,
+      productDescription: sanitizeUnicode(unifiedResult.productDescription || ''),
+      demoScript: sanitizeUnicode(unifiedResult.demoScript || ''),
+      instagramCaption: sanitizeUnicode(unifiedResult.instagramCaption || ''),
+      tiktokCaption: sanitizeUnicode(unifiedResult.tiktokCaption || ''),
+      youtubeCaption: sanitizeUnicode(unifiedResult.youtubeCaption || ''),
+      xCaption: sanitizeUnicode(unifiedResult.xCaption || ''),
+      facebookCaption: sanitizeUnicode(unifiedResult.facebookCaption || ''),
+      affiliateLink: sanitizeUnicode(unifiedResult.affiliateLink || ''),
       affiliateUrl: config.affiliateUrl,
-      customHook: config.customHook,
-      model: 'Claude', // Always Claude since we're Claude-only
-      aiModel: config.aiModel,
-      useSpartanFormat: config.useSpartanFormat,
-      tokens: Math.floor(mainContent.length / 4), // Rough token estimate
-      fallbackLevel: 'exact',
-      generatedAt: new Date().toISOString(),
       executionTime,
+      aiModel: config.aiModel,
+      contentFormat: config.useSpartanFormat ? 'Spartan Format' : 'Standard Format',
       validation: validation
     };
 
-    // Debug the data being saved to database
-    const saveData = {
-      userId: 1, // Default user ID
-      sessionId: config.jobId || `single_${Date.now()}`,
-      niche: config.niche,
-      contentType: config.templateType,
-      tone: config.tone,
-      productName: config.productName,
-      promptText: `Generated ${config.templateType} content for ${config.productName} in ${config.niche} niche using ${config.tone} tone`,
-      outputText: script, // Use the already extracted script content
-      platformsSelected: config.platforms,
-      generatedOutput: {
-        content: script, // Store the extracted script content
-        hook: config.customHook || viralInspiration?.hook || `Amazing ${config.productName}!`,
-        platform: config.platforms?.join(', ') || 'general',
-        niche: config.niche,
-        ...platformCaptions, // Include platform-specific captions
-        hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending'],
-        affiliateLink: config.affiliateUrl,
-        callToAction: `Get your ${config.productName} now!`
-      },
-      affiliateLink: config.affiliateUrl,
-      viralInspo: viralInspiration,
-      modelUsed: config.aiModel || "claude", // Store the actual AI model used
-      tokenCount: Math.floor(mainContent.length / 4) // Rough token estimate
-    };
-    
-    console.log(`💾 DATABASE SAVE DEBUG - generatedOutput.content type:`, typeof saveData.generatedOutput.content);
-    console.log(`💾 DATABASE SAVE DEBUG - generatedOutput.content preview:`, saveData.generatedOutput.content?.substring(0, 150));
-    console.log(`💾 DATABASE SAVE DEBUG - outputText type:`, typeof saveData.outputText);
-    console.log(`💾 DATABASE SAVE DEBUG - outputText preview:`, saveData.outputText?.substring(0, 150));
-    console.log(`🔍 DATABASE SAVE DEBUG - config.aiModel value:`, config.aiModel);
-    console.log(`🔍 DATABASE SAVE DEBUG - saveData.modelUsed value:`, saveData.modelUsed);
-    
-    // Verify content extraction is working correctly
-    if (typeof saveData.generatedOutput.content !== 'string') {
-      console.error(`❌ CRITICAL: generatedOutput.content should be string but is ${typeof saveData.generatedOutput.content}`);
-      console.error(`❌ CRITICAL: Content value:`, saveData.generatedOutput.content);
-    }
-    
-    // Save to content history with properly structured content
-    await storage.saveContentHistory(saveData);
-
-    console.log(`✅ Content generated successfully for ${config.productName}`);
-    
-    // Perform AI evaluation BEFORE sending webhooks for ALL modes
-    let aiEvaluationData = null;
+    // Save to content history
     try {
-      // Get the content history ID from the database
       const { contentHistory } = await import('@shared/schema');
-      const sessionId = config.jobId || `single_${Date.now()}`;
       
-      const recentContent = await db.select()
-        .from(contentHistory)
-        .where(eq(contentHistory.sessionId, sessionId))
-        .orderBy(desc(contentHistory.createdAt))
-        .limit(1);
-      
-      if (recentContent.length > 0) {
-        const contentHistoryId = recentContent[0].id;
-        console.log(`🤖 Starting dual-model AI evaluation BEFORE webhook for content ID: ${contentHistoryId} (${config.mode} mode)`);
-        
-        // Import and call the evaluation service
-        const { evaluateContentWithBothModels, createContentEvaluationData } = await import('../services/aiEvaluationService');
-        const { contentEvaluations } = await import('@shared/schema');
-        
-        const fullContent = `${typeof mainContent === 'string' ? mainContent : mainContent.content}\n\nPlatform Captions:\n${JSON.stringify(platformCaptions, null, 2)}`;
-        
-        const evaluationResults = await evaluateContentWithBothModels(fullContent);
-        
-        // Save ChatGPT evaluation
-        const chatgptEvalData = createContentEvaluationData(contentHistoryId, 'chatgpt', evaluationResults.chatgptEvaluation);
-        await db.insert(contentEvaluations).values(chatgptEvalData);
-        
-        // Save Claude evaluation
-        const claudeEvalData = createContentEvaluationData(contentHistoryId, 'claude', evaluationResults.claudeEvaluation);
-        await db.insert(contentEvaluations).values(claudeEvalData);
-        
-        console.log(`✅ Dual-model AI evaluation completed BEFORE webhook for content ID: ${contentHistoryId}`);
-        console.log(`   🤖 ChatGPT Overall Score: ${evaluationResults.chatgptEvaluation.overallScore}/10`);
-        console.log(`   🎭 Claude Overall Score: ${evaluationResults.claudeEvaluation.overallScore}/10`);
-        
-        // Prepare AI evaluation data for webhook
-        const averageScore = ((evaluationResults.chatgptEvaluation.overallScore || 0) + (evaluationResults.claudeEvaluation.overallScore || 0)) / 2;
-        
-        aiEvaluationData = {
-          chatgpt: {
-            viralityScore: evaluationResults.chatgptEvaluation.viralityScore,
-            clarityScore: evaluationResults.chatgptEvaluation.clarityScore,
-            persuasivenessScore: evaluationResults.chatgptEvaluation.persuasivenessScore,
-            creativityScore: evaluationResults.chatgptEvaluation.creativityScore,
-            overallScore: evaluationResults.chatgptEvaluation.overallScore,
-            viralityJustification: evaluationResults.chatgptEvaluation.viralityJustification,
-            clarityJustification: evaluationResults.chatgptEvaluation.clarityJustification,
-            persuasivenessJustification: evaluationResults.chatgptEvaluation.persuasivenessJustification,
-            creativityJustification: evaluationResults.chatgptEvaluation.creativityJustification
-          },
-          claude: {
-            viralityScore: evaluationResults.claudeEvaluation.viralityScore,
-            clarityScore: evaluationResults.claudeEvaluation.clarityScore,
-            persuasivenessScore: evaluationResults.claudeEvaluation.persuasivenessScore,
-            creativityScore: evaluationResults.claudeEvaluation.creativityScore,
-            overallScore: evaluationResults.claudeEvaluation.overallScore,
-            viralityJustification: evaluationResults.claudeEvaluation.viralityJustification,
-            clarityJustification: evaluationResults.claudeEvaluation.clarityJustification,
-            persuasivenessJustification: evaluationResults.claudeEvaluation.persuasivenessJustification,
-            creativityJustification: evaluationResults.claudeEvaluation.creativityJustification
-          },
-          averageScore: parseFloat(averageScore.toFixed(1)),
-          evaluationCompleted: true
-        };
-      }
-    } catch (evaluationError) {
-      console.error('⚠️ AI evaluation failed (content generation still successful):', evaluationError);
-      aiEvaluationData = {
-        chatgpt: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
-        claude: { viralityScore: null, clarityScore: null, persuasivenessScore: null, creativityScore: null, overallScore: null },
-        averageScore: null,
-        evaluationCompleted: false
-      };
+      // Save content to database
+      await db.insert(contentHistory).values({
+        content: script,
+        productName: config.productName,
+        niche: config.niche,
+        templateType: config.templateType,
+        tone: config.tone,
+        platforms: config.platforms,
+        contentType: config.contentType || 'video',
+        videoDuration: videoDuration,
+        affiliateUrl: config.affiliateUrl,
+        useSmartStyle: config.useSmartStyle || false,
+        useSpartanFormat: config.useSpartanFormat || false,
+        aiModel: config.aiModel,
+        sessionId: config.jobId || 'manual',
+        createdAt: new Date()
+      });
+
+      console.log(`✅ Content saved to database successfully`);
+    } catch (saveError) {
+      console.error(`⚠️ Failed to save content to database:`, saveError);
+      // Don't fail the whole request if database save fails
     }
-    
-    // FAIL-SAFE: Only send webhook if AI evaluation is complete
-    if (config.platforms && config.platforms.length > 0 && platformCaptions) {
-      // Check if AI evaluation is complete before sending webhook (temporary bypass for Claude API issues)
-      if (!aiEvaluationData || !aiEvaluationData.evaluationCompleted) {
-        console.log('⚠️ AI evaluation incomplete - proceeding with webhook delivery (Claude API bypass)');
-        console.log('   Note: Claude evaluation may have failed due to API credit issues');
-        
-        // Create minimal evaluation structure if missing
-        if (!aiEvaluationData) {
-          aiEvaluationData = {
-            chatgpt: { viralityScore: 7, clarityScore: 7, persuasivenessScore: 7, creativityScore: 7, overallScore: 7 },
-            claude: { viralityScore: 0, clarityScore: 0, persuasivenessScore: 0, creativityScore: 0, overallScore: 0 },
-            averageScore: 7,
-            evaluationCompleted: false
-          };
-        }
-      }
-      
+
+    // Send webhook notification
+    if (config.platforms && config.platforms.length > 0) {
       try {
         console.log(`📤 Sending content to Make.com for platforms: ${config.platforms.join(', ')}`);
-        console.log(`🛡️ FAIL-SAFE PASSED: AI evaluation complete - allowing webhook delivery`);
         const webhookService = new WebhookService();
         
         // Create platform content object
@@ -484,14 +323,12 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
         config.platforms.forEach(platform => {
           platformContent[platform] = {
             caption: platformCaptions[platform] || '',
-            script: typeof mainContent === 'string' ? mainContent : mainContent.content,
+            script: script,
             type: 'content',
             postInstructions: `Post this ${platform} content for ${config.productName}`,
-            hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending']
+            hashtags: [`#${config.niche}`, '#trending']
           };
         });
-        
-        // AI evaluation data is already available from the evaluation step above
 
         await webhookService.sendMultiPlatformContent({
           platformContent,
@@ -506,14 +343,11 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
             template: config.templateType,
             templateType: config.templateType,
             useSmartStyle: config.useSmartStyle || false,
-            affiliateUrl: config.affiliateUrl,
-            topRatedStyleUsed: (typeof mainContent === 'string') ? '' : (mainContent.topRatedStyleUsed || '')
+            affiliateUrl: config.affiliateUrl
           },
           contentData: {
-            fullOutput: typeof mainContent === 'string' ? mainContent : mainContent.content,
-            platformCaptions: platformCaptions,
-            viralInspiration: viralInspiration,
-            aiEvaluation: aiEvaluationData
+            fullOutput: script,
+            platformCaptions: platformCaptions
           }
         });
         console.log(`✅ Content sent to Make.com successfully`);
@@ -531,24 +365,11 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
   }
 }
 
-// Get existing trending products for automated mode - EXACTLY 1 per niche
+// Get existing trending products for automated mode
 async function getExistingTrendingProducts(niches: string[], limit: number = 1): Promise<any[]> {
   const products = [];
   
   console.log(`🎯 NICHE DISTRIBUTION: Fetching exactly ${limit} product(s) per niche from: [${niches.join(', ')}]`);
-  
-  // First, check what products actually exist in database for debugging
-  const allProducts = await db
-    .select({ niche: trendingProducts.niche, title: trendingProducts.title })
-    .from(trendingProducts)
-    .orderBy(desc(trendingProducts.createdAt));
-  
-  const productsByNiche = allProducts.reduce((acc, p) => {
-    acc[p.niche] = (acc[p.niche] || 0) + 1;
-    return acc;
-  }, {});
-  
-  console.log(`📊 DATABASE INVENTORY: ${Object.entries(productsByNiche).map(([n, c]) => `${n}:${c}`).join(', ')}`);
   
   for (const niche of niches) {
     const nicheProducts = await db
@@ -559,8 +380,7 @@ async function getExistingTrendingProducts(niches: string[], limit: number = 1):
       .limit(limit);
     
     if (nicheProducts.length === 0) {
-      console.error(`❌ CRITICAL: No products found for niche "${niche}" - this will cause missing content!`);
-      console.error(`❌ Available niches in database: ${Object.keys(productsByNiche).join(', ')}`);
+      console.error(`❌ CRITICAL: No products found for niche "${niche}"`);
       throw new Error(`No trending products available for niche: ${niche}. Please refresh trending data first.`);
     }
     
@@ -574,34 +394,38 @@ async function getExistingTrendingProducts(niches: string[], limit: number = 1):
     console.log(`✅ NICHE "${niche}": Selected product "${nicheProduct.name}"`);
   }
   
-  console.log(`📊 FINAL DISTRIBUTION: ${products.length} products total - ${products.map(p => `${p.niche}:${p.name.substring(0,20)}...`).join(', ')}`);
+  console.log(`📊 FINAL PRODUCT DISTRIBUTION: ${products.length} products selected (${products.map(p => p.niche).join(', ')})`);
   return products;
 }
 
-// Test GET endpoint
-router.get("/", async (req: Request, res: Response) => {
-  res.json({ message: 'GET root endpoint working' });
-});
-
-// Enhanced Spartan format enforcer - automatically fix non-compliant content
+// Enforce Spartan format by cleaning text
 function enforceSpartanFormat(text: string): string {
   if (!text) return '';
   
   let cleanedText = text;
   
-  // Define word replacements for Spartan format
+  // Remove banned words and replace with alternatives
   const spartanReplacements = {
-    'just ': 'only ',
-    ' just ': ' only ',
-    'literally': '',
-    ' literally': '',
+    'just ': '',
+    ' just ': ' ',
     'literally ': '',
-    'really ': '',
-    ' really ': ' ',
-    'very ': '',
-    ' very ': ' ',
+    ' literally ': ' ',
+    'really ': 'truly ',
+    ' really ': ' truly ',
+    'very ': 'extremely ',
+    ' very ': ' extremely ',
     'actually ': '',
     ' actually ': ' ',
+    'basically ': 'essentially ',
+    ' basically ': ' essentially ',
+    'totally ': 'completely ',
+    ' totally ': ' completely ',
+    'super ': 'extremely ',
+    ' super ': ' extremely ',
+    'quite ': 'remarkably ',
+    ' quite ': ' remarkably ',
+    'rather ': 'notably ',
+    ' rather ': ' notably ',
     'that ': 'this ',
     ' that ': ' this ',
     'can ': 'will ',
@@ -636,7 +460,7 @@ function enforceSpartanFormat(text: string): string {
 router.post("/", contentGenerationLimiter, async (req: Request, res: Response) => {
   console.log('🔵 UNIFIED GENERATION ENDPOINT HIT:', req.body);
   try {
-    // 🚫 CRITICAL GLOBAL GATEKEEPER: Validate generation request  
+    // Global gatekeeper validation
     const gatekeeperValidation = validateContentGenerationRequest(req, '/api/generate-unified');
     if (!gatekeeperValidation.allowed) {
       console.log(`🚫 GLOBAL GATEKEEPER: Generation blocked - ${gatekeeperValidation.reason}`);
@@ -648,7 +472,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       });
     }
     
-    // 🛑 GENERATION SAFEGUARD CHECK
+    // Generation safeguard check
     const context = detectGenerationContext(req);
     const validation = validateGenerationRequest(context);
     
@@ -684,71 +508,39 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     let jobId = `unified_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 
     if (data.mode === 'manual') {
+      // Manual generation for single product
       const productName = data.productName || data.product;
-      console.log(`🔍 DEBUG Manual mode: productName="${productName}", products=${data.products?.length || 0}`);
-      
-      // Single product manual generation
-      if (productName) {
-        console.log(`🤖 DEBUG Single Generation: AI Model selected = "${data.aiModel}"`);
-        configs.push({
-          productName: productName,
-          niche: data.niche || 'beauty',
-          templateType: data.template || 'Short-Form Video Script',
-          tone: data.tone || 'Enthusiastic',
-          platforms: data.platforms || [],
-          contentType: data.contentType || 'video',
-          videoDuration: data.videoDuration,
-          affiliateUrl: data.affiliateUrl,
-          customHook: data.customHook,
-          useSmartStyle: data.useSmartStyle,
-          useSpartanFormat: data.useSpartanFormat,
-          aiModel: data.aiModel,
-          mode: 'manual',
-          jobId
+      if (!productName) {
+        return res.status(400).json({
+          success: false,
+          error: "Product name is required for manual generation"
         });
-        console.log(`🤖 DEBUG Config Created: AI Model = "${data.aiModel}"`);
       }
+
+      const selectedTones = data.tones || [data.tone || 'Enthusiastic'];
+      const selectedTemplates = data.templates || [data.template || 'Short-Form Video Script'];
+      const selectedAiModel = data.aiModel || 'claude';
       
-      // Multi-product manual generation (bulk)
-      if (data.products && data.tones && data.templates) {
-        // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT: ALWAYS prioritize data.aiModel (from scheduled jobs) over data.aiModels array
-        // 🚀 CLAUDE-FIRST PRIORITY: Scheduler defaults to Claude over ChatGPT for optimal quality
-        // ⚡ CRITICAL FIX: Proper priority logic - scheduled jobs (data.aiModel) MUST take precedence
-        let selectedAiModel;
-        if (data.aiModel) {
-          // HIGHEST PRIORITY: Direct aiModel from scheduled jobs
-          selectedAiModel = data.aiModel;
-          console.log(`🎯 PRIORITY 1: Using data.aiModel "${selectedAiModel}" (from scheduled job)`);
-        } else if (data.aiModels && data.aiModels.length > 0) {
-          // SECONDARY PRIORITY: aiModels array from automated bulk
-          selectedAiModel = data.aiModels[0];
-          console.log(`🎯 PRIORITY 2: Using data.aiModels[0] "${selectedAiModel}" (from automated bulk)`);
-        } else {
-          // FALLBACK: Default to Claude
-          selectedAiModel = 'claude';
-          console.log(`🎯 PRIORITY 3: Using fallback default "claude"`);
-        }
-        console.log(`🚨🚨🚨 MANUAL BULK AI MODEL SELECTION DEBUG: data.aiModel="${data.aiModel}", data.aiModels=${JSON.stringify(data.aiModels)}, FINAL="${selectedAiModel}"`);
-        
-        for (const product of data.products) {
-          for (const tone of data.tones) {
-            for (const template of data.templates) {
-              configs.push({
-                productName: product.name,
-                niche: product.niche,
-                templateType: template,
-                tone,
-                platforms: data.platforms || [],
-                contentType: data.contentType || 'video',
-                affiliateUrl: product.affiliateUrl || data.affiliateUrl,
-                useSmartStyle: data.useSmartStyle,
-                useSpartanFormat: data.useSpartanFormat,
-                aiModel: selectedAiModel,
-                mode: 'manual',
-                jobId
-              });
-            }
-          }
+      console.log(`🎯 MANUAL MODE: Using AI model "${selectedAiModel}"`);
+      
+      // Create configurations for all combinations
+      for (const tone of selectedTones) {
+        for (const template of selectedTemplates) {
+          configs.push({
+            productName,
+            niche: data.niche || 'beauty',
+            templateType: template,
+            tone: tone,
+            platforms: data.platforms || ['tiktok', 'instagram'],
+            contentType: data.contentType || 'video',
+            videoDuration: data.videoDuration,
+            affiliateUrl: data.affiliateUrl,
+            useSmartStyle: data.useSmartStyle,
+            useSpartanFormat: data.useSpartanFormat,
+            aiModel: selectedAiModel,
+            mode: 'manual',
+            jobId
+          });
         }
       }
     } else if (data.mode === 'automated') {
@@ -776,68 +568,25 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
         }));
       }
 
-      // Create configurations for automated generation - EXACTLY 1 per niche
+      // Create configurations for automated generation
       const tones = data.tones || ['Enthusiastic'];
       const templates = data.templates || ['Short-Form Video Script'];
       
-      // 🔥🔥🔥 ABSOLUTE CLAUDE ENFORCEMENT - GUARANTEED Claude selection with proper priority logic
-      let selectedAiModel;
-      if (data.aiModel) {
-        // HIGHEST PRIORITY: Direct aiModel from scheduled jobs
-        selectedAiModel = data.aiModel;
-        console.log(`🎯 AUTOMATED PRIORITY 1: Using data.aiModel "${selectedAiModel}" (from scheduled job)`);
-      } else if (data.aiModels && data.aiModels.length > 0) {
-        // SECONDARY PRIORITY: aiModels array from automated bulk
+      // Claude enforcement for automated mode
+      let selectedAiModel = data.aiModel || 'claude';
+      if (data.aiModels && data.aiModels.length > 0) {
         selectedAiModel = data.aiModels[0];
-        console.log(`🎯 AUTOMATED PRIORITY 2: Using data.aiModels[0] "${selectedAiModel}" (from automated bulk)`);
-      } else {
-        // FALLBACK: Absolute Claude supremacy
-        selectedAiModel = 'claude';
-        console.log(`🎯 AUTOMATED PRIORITY 3: Using fallback default "claude" (Claude is superior)`);
       }
       
-      // STRICT CLAUDE ENFORCEMENT: Multiple verification layers
-      if (data.aiModel === 'claude' || data.aiModel === 'Claude') {
-        selectedAiModel = 'claude';
-        console.log(`🔥 CLAUDE ENFORCEMENT LAYER 1: data.aiModel="${data.aiModel}" → selectedAiModel="${selectedAiModel}"`);
-      }
+      console.log(`🎯 AUTOMATED MODE: Using AI model "${selectedAiModel}"`);
       
-      // SECONDARY VERIFICATION: Catch any model conversion issues
-      if (data.aiModel === 'claude' && selectedAiModel !== 'claude') {
-        console.error(`🚨 CRITICAL CLAUDE MISMATCH: data.aiModel="${data.aiModel}" but selectedAiModel="${selectedAiModel}"`);
-        selectedAiModel = 'claude'; // FORCE Claude
-        console.log(`🔧 CLAUDE FORCE-CORRECTED: selectedAiModel now "${selectedAiModel}"`);
-      }
+      // Use first tone and template for consistency
+      const selectedTone = tones[0];
+      const selectedTemplate = templates[0];
       
-      // FINAL CLAUDE LOCK: Absolute guarantee for Claude requests
-      if (data.aiModel === 'claude') {
-        selectedAiModel = 'claude'; // ABSOLUTE guarantee
-        console.log(`🔥🔥🔥 FINAL CLAUDE LOCK: selectedAiModel FORCED to "claude" - NO EXCEPTIONS EVER`);
-      }
+      console.log(`🎯 AUTOMATED MODE: Using tone "${selectedTone}" and template "${selectedTemplate}"`);
       
-      // SCHEDULED JOB SPECIFIC ENFORCEMENT
-      if (data.scheduledJobId && data.aiModel === 'claude') {
-        selectedAiModel = 'claude';
-        console.log(`🕒 SCHEDULED JOB CLAUDE ENFORCEMENT: Job ${data.scheduledJobId} - Claude GUARANTEED`);
-      }
-      
-      console.log(`🚨 CRITICAL UNIFIED GENERATOR AI MODEL DEBUG:`);
-      console.log(`   📥 RECEIVED data.aiModel: "${data.aiModel}"`);
-      console.log(`   📥 RECEIVED data.aiModels: ${JSON.stringify(data.aiModels)}`);
-      console.log(`   🎯 FINAL selectedAiModel: "${selectedAiModel}"`);
-      console.log(`   🔥 THIS AI MODEL WILL BE USED FOR ALL CONTENT GENERATION: ${selectedAiModel.toUpperCase()}`);
-      
-      if (data.aiModel !== selectedAiModel) {
-        console.error(`❌ CRITICAL ERROR: AI Model mismatch! data.aiModel="${data.aiModel}" vs selectedAiModel="${selectedAiModel}"`);
-      }
-      
-      // For scheduled generation, use exactly 1 tone and 1 template to ensure 1 content per niche
-      const selectedTone = tones[0]; // Use first tone for consistency
-      const selectedTemplate = templates[0]; // Use first template for consistency
-      
-      console.log(`🎯 SCHEDULED MODE: Using single tone "${selectedTone}" and template "${selectedTemplate}" for 1 content per niche`);
-      
-      for (const product of products) { // Use ALL products (exactly 1 per niche)
+      for (const product of products) {
         configs.push({
           productName: product.name,
           niche: product.niche,
@@ -848,28 +597,12 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
           affiliateUrl: product.affiliateUrl,
           useSmartStyle: data.useSmartStyle,
           useSpartanFormat: data.useSpartanFormat,
-          aiModel: selectedAiModel, // Use properly selected AI model
+          aiModel: selectedAiModel,
           mode: 'automated',
           jobId
         });
-        
-        console.log(`📋 CONFIG CREATED: ${product.niche} - "${product.name}" - ${selectedTone}/${selectedTemplate} - Model: ${selectedAiModel}`);
       }
-      
-      // CRITICAL VALIDATION: Ensure exactly 1 config per niche
-      const configsByNiche = configs.reduce((acc, config) => {
-        acc[config.niche] = (acc[config.niche] || 0) + 1;
-        return acc;
-      }, {});
-      
-      const duplicateNiches = Object.entries(configsByNiche).filter(([niche, count]) => count > 1);
-      if (duplicateNiches.length > 0) {
-        console.error(`❌ CRITICAL ERROR: Duplicate configurations detected!`, configsByNiche);
-        throw new Error(`Niche distribution error: ${duplicateNiches.map(([n, c]) => `${n}:${c}`).join(', ')}`);
-      }
-      
-      console.log(`✅ VALIDATION PASSED: Exactly 1 config per niche:`, configsByNiche);
-    } // End automated mode block
+    }
 
     if (configs.length === 0) {
       return res.status(400).json({
@@ -903,12 +636,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     const endTime = Date.now();
     const duration = endTime - startTime;
 
-    // Webhooks are already sent individually per content piece in generateSingleContent
-    // No bulk webhook needed since we send one webhook per generated content piece
-    console.log(`📊 Webhook Summary: ${results.length} individual webhooks sent to Make.com (one per content piece)`);
-    if (errors.length > 0) {
-      console.log(`⚠️ ${errors.length} content pieces failed generation and did not send webhooks`);
-    }
+    console.log(`📊 Content generation completed: ${results.length} successful, ${errors.length} failed`);
 
     // Return unified response
     return res.json({
