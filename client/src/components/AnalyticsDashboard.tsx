@@ -302,7 +302,71 @@ const AnalyticsDashboard: FC = () => {
     retry: 1,
   });
 
+  // Fetch AI health status
+  const { data: aiHealth, isLoading: isAiHealthLoading } = useQuery({
+    queryKey: ['/api/ai-analytics/health', timeRange],
+    retry: 1,
+  });
+
   // Fetch Claude analytics
+  const { data: claudeAnalytics, isLoading: isClaudeLoading } = useQuery<AIAnalyticsData>({
+    queryKey: ['/api/ai-analytics/claude', timeRange, selectedNiche, selectedContentType],
+    retry: 1,
+  });
+
+  // Fetch OpenAI analytics
+  const { data: openAIAnalytics, isLoading: isOpenAILoading } = useQuery<AIAnalyticsData>({
+    queryKey: ['/api/ai-analytics/openai', timeRange, selectedNiche, selectedContentType],
+    retry: 1,
+  });
+
+  // Fetch Perplexity analytics
+  const { data: perplexityAnalytics, isLoading: isPerplexityLoading } = useQuery<AIAnalyticsData>({
+    queryKey: ['/api/ai-analytics/perplexity', timeRange, selectedNiche, selectedContentType],
+    retry: 1,
+  });
+
+  // Export functionality
+  const handleExport = (format: 'csv' | 'json') => {
+    const dataToExport = {
+      overview: aiOverview,
+      claude: claudeAnalytics,
+      openai: openAIAnalytics,
+      perplexity: perplexityAnalytics,
+      timestamp: new Date().toISOString(),
+      filters: {
+        timeRange,
+        selectedNiche,
+        selectedContentType
+      }
+    };
+
+    if (format === 'csv') {
+      // Simple CSV export for overview metrics
+      const csvContent = `AI Provider,Total Requests,Total Tokens,Avg Response Time,Total Cost\n` +
+        (aiOverview?.data?.providerMetrics?.map(p => 
+          `${p.provider},${p.totalRequests},${p.totalTokens},${p.avgResponseTime},${p.totalCost || 0}`
+        ).join('\n') || '');
+      
+      const blob = new Blob([csvContent], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ai-analytics-${timeRange}-${Date.now()}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } else {
+      // JSON export
+      const jsonContent = JSON.stringify(dataToExport, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `ai-analytics-${timeRange}-${Date.now()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  };
   const { data: claudeAnalytics, isLoading: isClaudeLoading } = useQuery<AIProviderAnalytics>({
     queryKey: ['/api/ai-analytics/claude', timeRange, selectedNiche, selectedContentType],
     retry: 1,
@@ -523,17 +587,29 @@ const AnalyticsDashboard: FC = () => {
           </div>
         ) : (
           <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid grid-cols-10 mb-4">
+            <TabsList className="flex flex-wrap gap-2 mb-4 h-auto">
               <TabsTrigger value="templates">Template Usage</TabsTrigger>
               <TabsTrigger value="tones">Tone Preferences</TabsTrigger>
               <TabsTrigger value="trends">Generation Trends</TabsTrigger>
               <TabsTrigger value="products">Popular Products</TabsTrigger>
               {!selectedNiche && <TabsTrigger value="niches">Niche Usage</TabsTrigger>}
               <TabsTrigger value="custom">Custom Templates</TabsTrigger>
-              <TabsTrigger value="ai-models">AI Models</TabsTrigger>
-              <TabsTrigger value="claude">Claude Analytics</TabsTrigger>
-              <TabsTrigger value="openai">OpenAI Analytics</TabsTrigger>
-              <TabsTrigger value="perplexity">Perplexity Analytics</TabsTrigger>
+              <TabsTrigger value="ai-models" className="flex items-center space-x-1">
+                <Brain className="h-4 w-4" />
+                <span>AI Models</span>
+              </TabsTrigger>
+              <TabsTrigger value="claude" className="flex items-center space-x-1">
+                <Zap className="h-4 w-4" style={{ color: '#FF6B35' }} />
+                <span>Claude Analytics</span>
+              </TabsTrigger>
+              <TabsTrigger value="openai" className="flex items-center space-x-1">
+                <Activity className="h-4 w-4" style={{ color: '#10B981' }} />
+                <span>OpenAI Analytics</span>
+              </TabsTrigger>
+              <TabsTrigger value="perplexity" className="flex items-center space-x-1">
+                <Eye className="h-4 w-4" style={{ color: '#3B82F6' }} />
+                <span>Perplexity Analytics</span>
+              </TabsTrigger>
             </TabsList>
           
             {/* Templates Tab */}
