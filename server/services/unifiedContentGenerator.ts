@@ -226,7 +226,7 @@ async function generateAllPlatformCaptions(config: ContentGenerationConfig, main
       const platformPrompt = createPlatformSpecificPrompt(platform, config, mainContent);
 
       const aiResponse = await generateWithAI(platformPrompt, {
-        model: config.aiModel,
+        model: 'claude', // CLAUDE-ONLY SYSTEM
         systemPrompt: `You are a ${platform} content specialist. Create platform-native captions that maximize engagement for ${platform} specifically. Do not copy the main content - create original platform-optimized content.`,
         temperature: 0.8,
         maxTokens: 600,

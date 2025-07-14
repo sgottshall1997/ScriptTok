@@ -62,43 +62,7 @@ Provide your evaluation in the following JSON format:
   "improvementSuggestions": "<specific suggestions for improvement>"
 }`;
 
-export async function evaluateContentWithChatGPT(content: string): Promise<EvaluationResult> {
-  try {
-    const response = await openai.chat.completions.create({
-      model: "gpt-4o", // Latest OpenAI model
-      messages: [
-        {
-          role: "system",
-          content: "You are a professional social media content evaluator. Provide detailed, constructive feedback in valid JSON format only."
-        },
-        {
-          role: "user",
-          content: EVALUATION_PROMPT.replace('{content}', content)
-        }
-      ],
-      temperature: 0.3, // Lower temperature for consistent evaluation
-      response_format: { type: "json_object" }
-    });
 
-    const result = JSON.parse(response.choices[0].message.content!);
-    
-    // Calculate overall score as weighted average
-    const overallScore = (
-      result.viralityScore * 0.3 +
-      result.clarityScore * 0.2 +
-      result.persuasivenessScore * 0.3 +
-      result.creativityScore * 0.2
-    );
-
-    return {
-      ...result,
-      overallScore: parseFloat(overallScore.toFixed(1))
-    };
-  } catch (error) {
-    console.error('Error evaluating content with ChatGPT:', error);
-    throw new Error('Failed to evaluate content with ChatGPT');
-  }
-}
 
 export async function evaluateContentWithClaude(content: string): Promise<EvaluationResult> {
   try {
