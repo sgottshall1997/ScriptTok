@@ -121,13 +121,13 @@ export async function generateUnifiedContent(config: ContentGenerationConfig): P
  * GENERATE MAIN CONTENT SCRIPT WITH AI SUGGESTIONS
  */
 async function generateMainScript(config: ContentGenerationConfig): Promise<string> {
-  // Get Claude AI suggestions for enhancement
-  const aiSuggestions = await getSuggestionsForContent({
-    niche: config.niche,
-    templateType: config.templateType,
-    tone: config.tone,
-    limit: 3
-  });
+  // Get targeted Claude AI suggestions for exact niche-template combination
+  const { getTargetedSuggestions } = await import('./retroactiveClaudeSuggestionGenerator');
+  const aiSuggestions = await getTargetedSuggestions(
+    config.niche,
+    config.templateType,
+    config.tone
+  );
 
   const promptConfig: PromptConfig = {
     niche: config.niche,

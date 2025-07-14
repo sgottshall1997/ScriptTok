@@ -321,4 +321,113 @@ router.get('/summary', async (req, res) => {
   }
 });
 
+/**
+ * POST /api/claude-suggestions/retroactive/analyze
+ * Retroactively analyze content history and generate targeted suggestions
+ */
+router.post('/retroactive/analyze', async (req, res) => {
+  try {
+    const { generateRetroactiveClaudeSuggestions } = await import('../services/retroactiveClaudeSuggestionGenerator');
+    
+    const result = await generateRetroactiveClaudeSuggestions();
+
+    res.json({
+      success: true,
+      message: `Retroactive analysis completed: ${result.generated} suggestions generated from ${result.analyzed} content groups`,
+      ...result
+    });
+
+  } catch (error) {
+    console.error('Error in retroactive Claude AI suggestions analysis:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate retroactive suggestions',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * GET /api/claude-suggestions/retroactive/report
+ * Get content distribution report by niche and template
+ */
+router.get('/retroactive/report', async (req, res) => {
+  try {
+    const { getContentDistributionReport } = await import('../services/retroactiveClaudeSuggestionGenerator');
+    
+    const report = await getContentDistributionReport();
+
+    res.json({
+      success: true,
+      report
+    });
+
+  } catch (error) {
+    console.error('Error generating content distribution report:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to generate report',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * GET /api/claude-suggestions/targeted/:niche/:templateType
+ * Get targeted suggestions for specific niche-template combination
+ */
+router.get('/targeted/:niche/:templateType', async (req, res) => {
+  try {
+    const { niche, templateType } = req.params;
+    const { tone = 'professional' } = req.query;
+    
+    const { getTargetedSuggestions } = await import('../services/retroactiveClaudeSuggestionGenerator');
+    
+    const suggestions = await getTargetedSuggestions(niche, templateType, tone as string);
+
+    res.json({
+      success: true,
+      niche,
+      templateType,
+      tone,
+      suggestions,
+      count: suggestions.length
+    });
+
+  } catch (error) {
+    console.error('Error fetching targeted suggestions:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to fetch targeted suggestions',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
+ * POST /api/claude-suggestions/populate
+ * Populate database with niche-specific suggestions
+ */
+router.post('/populate', async (req, res) => {
+  try {
+    const { populateNicheSpecificSuggestions } = await import('../services/nicheSpecificSuggestions');
+    
+    const result = await populateNicheSpecificSuggestions();
+
+    res.json({
+      success: true,
+      message: `Populated ${result.populated} suggestions, skipped ${result.skipped} existing ones`,
+      ...result
+    });
+
+  } catch (error) {
+    console.error('Error populating niche-specific suggestions:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to populate suggestions',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 export default router;
