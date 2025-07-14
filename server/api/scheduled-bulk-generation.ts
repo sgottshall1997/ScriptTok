@@ -491,10 +491,10 @@ async function executeScheduledJob(job: any) {
       useSpartanFormat: Boolean(job.useSpartanFormat),
       useSmartStyle: Boolean(job.useSmartStyle),
       aiModel: finalAiModel, // GUARANTEED CORRECT AI MODEL
-      affiliateId: job.affiliateId || null,
-      webhookUrl: job.webhookUrl || null,
+      ...(job.affiliateId && { affiliateId: job.affiliateId }),
+      ...(job.webhookUrl && { webhookUrl: job.webhookUrl }),
       userId: job.userId || 1,
-      scheduledJobId: job.id,
+      scheduledJobId: String(job.id),
       scheduledJobName: job.name,
       sendToMakeWebhook: Boolean(job.sendToMakeWebhook)
     };

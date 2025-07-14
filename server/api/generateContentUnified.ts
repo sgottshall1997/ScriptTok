@@ -74,12 +74,17 @@ const unifiedGenerationSchema = z.object({
   selectedNiches: z.array(z.string()).optional(),
   useExistingProducts: z.boolean().default(false),
   generateAffiliateLinks: z.boolean().default(false),
-  affiliateId: z.string().optional(),
+  affiliateId: z.string().nullable().optional(),
   
   // Scheduling fields
   scheduledJobId: z.string().optional(),
+  scheduledJobName: z.string().optional(),
   aiModels: z.array(z.string()).optional(),
-  contentFormats: z.array(z.string()).optional()
+  contentFormats: z.array(z.string()).optional(),
+  
+  // Webhook fields
+  webhookUrl: z.string().nullable().optional(),
+  sendToMakeWebhook: z.boolean().default(false)
 });
 
 // Type definitions for content generation
