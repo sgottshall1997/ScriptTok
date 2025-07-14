@@ -1070,6 +1070,12 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
     const cronJob = cron.schedule(cronPattern, async () => {
       console.log(`⏰ EXECUTING SCHEDULED BULK JOB: ${jobId}`);
       
+      const jobData = activeScheduledJobs.get(jobId);
+      if (!jobData) {
+        console.error(`❌ Job data not found for ${jobId}`);
+        return;
+      }
+      
       try {
         // Call the existing automated bulk generation function
         const mockReq = {
@@ -1087,12 +1093,16 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
           }
         } as Request;
         
+        let executionSuccess = false;
+        
         const mockRes = {
           json: (data: any) => {
+            executionSuccess = data.success;
             console.log(`✅ SCHEDULED BULK COMPLETED: ${jobId}`, data.success ? 'SUCCESS' : 'FAILED');
           },
           status: (code: number) => ({
             json: (data: any) => {
+              executionSuccess = false;
               console.error(`❌ SCHEDULED BULK ERROR: ${jobId} - Status ${code}`, data);
             }
           })
@@ -1100,8 +1110,25 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
         
         await startAutomatedBulkGeneration(mockReq, mockRes);
         
+        // Update job statistics
+        jobData.totalRuns = (jobData.totalRuns || 0) + 1;
+        if (executionSuccess) {
+          jobData.consecutiveFailures = 0;
+          jobData.lastError = null;
+        } else {
+          jobData.consecutiveFailures = (jobData.consecutiveFailures || 0) + 1;
+          jobData.lastError = `Execution failed at ${new Date().toISOString()}`;
+        }
+        
       } catch (error) {
         console.error(`❌ SCHEDULED BULK EXECUTION ERROR: ${jobId}`, error);
+        
+        // Update failure statistics
+        if (jobData) {
+          jobData.totalRuns = (jobData.totalRuns || 0) + 1;
+          jobData.consecutiveFailures = (jobData.consecutiveFailures || 0) + 1;
+          jobData.lastError = error instanceof Error ? error.message : 'Unknown error';
+        }
       }
     }, {
       scheduled: false,
@@ -1124,7 +1151,10 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
       config: validatedData,
       createdAt: new Date(),
       scheduleTime: validatedData.scheduleTime,
-      timezone: validatedData.timezone
+      timezone: validatedData.timezone,
+      totalRuns: 0,
+      consecutiveFailures: 0,
+      lastError: null
     });
     
     const willRunToday = isScheduledForFuture;
@@ -1156,20 +1186,45 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
 // Get active scheduled jobs
 export async function getScheduledBulkJobs(req: Request, res: Response) {
   try {
-    const jobs = Array.from(activeScheduledJobs.entries()).map(([jobId, jobData]) => ({
-      id: jobId,
-      scheduleTime: jobData.scheduleTime,
-      timezone: jobData.timezone,
-      createdAt: jobData.createdAt,
-      config: {
-        selectedNiches: jobData.config.selectedNiches,
-        tones: jobData.config.tones,
-        templates: jobData.config.templates,
-        platforms: jobData.config.platforms,
-        aiModels: jobData.config.aiModels,
-        contentFormats: jobData.config.contentFormats
+    const jobs = Array.from(activeScheduledJobs.entries()).map(([jobId, jobData]) => {
+      // Generate a descriptive name based on the job configuration
+      const niches = jobData.config.selectedNiches || [];
+      const tones = jobData.config.tones || [];
+      const nicheText = niches.length === 1 ? niches[0] : `${niches.length} niches`;
+      const toneText = tones.length === 1 ? tones[0] : `${tones.length} tones`;
+      const name = `Daily ${nicheText} content (${toneText})`;
+      
+      // Calculate next run time
+      const [hours, minutes] = jobData.scheduleTime.split(':').map(Number);
+      const nextRun = new Date();
+      nextRun.setHours(hours, minutes, 0, 0);
+      
+      // If time has passed today, set for tomorrow
+      if (nextRun <= new Date()) {
+        nextRun.setDate(nextRun.getDate() + 1);
       }
-    }));
+      
+      return {
+        id: jobId,
+        name,
+        scheduleTime: jobData.scheduleTime,
+        timezone: jobData.timezone,
+        createdAt: jobData.createdAt,
+        isActive: jobData.cronJob && jobData.cronJob.running !== false,
+        nextRunAt: nextRun.toISOString(),
+        totalRuns: jobData.totalRuns || 0,
+        consecutiveFailures: jobData.consecutiveFailures || 0,
+        lastError: jobData.lastError || null,
+        config: {
+          selectedNiches: jobData.config.selectedNiches,
+          tones: jobData.config.tones,
+          templates: jobData.config.templates,
+          platforms: jobData.config.platforms,
+          aiModels: jobData.config.aiModels,
+          contentFormats: jobData.config.contentFormats
+        }
+      };
+    });
     
     res.json({
       success: true,

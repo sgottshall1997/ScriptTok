@@ -24,8 +24,14 @@ const ScheduleManager: React.FC = () => {
 
   // Toggle job active state
   const toggleJobMutation = useMutation({
-    mutationFn: async ({ jobId, isActive }: { jobId: number; isActive: boolean }) => {
-      // PUT endpoint not available in simplified system - use DELETE to stop jobs
+    mutationFn: async ({ jobId, isActive }: { jobId: string; isActive: boolean }) => {
+      if (!isActive) {
+        // Delete/stop the job when toggling off
+        return apiRequest('DELETE', `/api/automated-bulk/scheduled-jobs/${jobId}`);
+      } else {
+        // Job reactivation would require recreating the job - not supported in simplified system
+        throw new Error('Job reactivation not supported. Please create a new scheduled job.');
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/automated-bulk/scheduled-jobs'] });
@@ -45,7 +51,7 @@ const ScheduleManager: React.FC = () => {
 
   // Delete job
   const deleteJobMutation = useMutation({
-    mutationFn: async (jobId: number) => {
+    mutationFn: async (jobId: string) => {
       return apiRequest('DELETE', `/api/automated-bulk/scheduled-jobs/${jobId}`);
     },
     onSuccess: () => {
@@ -66,8 +72,9 @@ const ScheduleManager: React.FC = () => {
 
   // Trigger job manually
   const triggerJobMutation = useMutation({
-    mutationFn: async (jobId: number) => {
+    mutationFn: async (jobId: string) => {
       // Manual trigger not available in simplified system
+      throw new Error('Manual job triggering not supported in simplified system');
     },
     onSuccess: () => {
       toast({
