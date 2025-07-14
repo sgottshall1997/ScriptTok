@@ -309,8 +309,20 @@ const AnalyticsDashboard: FC = () => {
   });
 
   // Fetch Claude analytics
-  const { data: claudeAnalytics, isLoading: isClaudeLoading } = useQuery<AIAnalyticsData>({
+  const { data: claudeAnalytics, isLoading: isClaudeLoading } = useQuery({
     queryKey: ['/api/ai-analytics/claude', timeRange, selectedNiche, selectedContentType],
+    retry: 1,
+  });
+
+  // Fetch OpenAI analytics
+  const { data: openAIAnalytics, isLoading: isOpenAILoading } = useQuery({
+    queryKey: ['/api/ai-analytics/openai', timeRange, selectedNiche, selectedContentType],
+    retry: 1,
+  });
+
+  // Fetch Perplexity analytics
+  const { data: perplexityAnalytics, isLoading: isPerplexityLoading } = useQuery({
+    queryKey: ['/api/ai-analytics/perplexity', timeRange, selectedNiche, selectedContentType],
     retry: 1,
   });
 
