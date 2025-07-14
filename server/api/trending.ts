@@ -27,10 +27,16 @@ router.get("/", async (req, res) => {
     
     for (const niche of niches) {
       try {
-        const nicheProducts = await storage.getTrendingProductsByNiche(niche, 4);
+        console.log(`🔄 Fetching ${niche} products...`);
+        const nicheProducts = await storage.getTrendingProductsByNiche(niche, 3);
         organizedProducts[niche] = nicheProducts;
         totalCount += nicheProducts.length;
         console.log(`📊 ${niche}: ${nicheProducts.length} products`);
+        
+        // Debug: Show first product details
+        if (nicheProducts.length > 0) {
+          console.log(`   First ${niche} product: ${nicheProducts[0].title} (${nicheProducts[0].createdAt})`);
+        }
       } catch (error) {
         console.log(`⚠️ Error getting ${niche} products:`, error);
         organizedProducts[niche] = [];

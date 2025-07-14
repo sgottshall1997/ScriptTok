@@ -1108,6 +1108,12 @@ export class DatabaseStorage implements IStorage {
       .where(eq(trendingProducts.niche, niche))
       .orderBy(desc(trendingProducts.createdAt));
     
+    console.log(`🔍 Debug getTrendingProductsByNiche(${niche}): Found ${allNicheProducts.length} total products`);
+    if (allNicheProducts.length > 0) {
+      console.log(`   First product: ${allNicheProducts[0].title} (${allNicheProducts[0].createdAt})`);
+      console.log(`   Last product: ${allNicheProducts[allNicheProducts.length - 1].title} (${allNicheProducts[allNicheProducts.length - 1].createdAt})`);
+    }
+    
     // Manual deduplication by title, keeping the most recent version
     const seenTitles = new Set<string>();
     const uniqueProducts: typeof allNicheProducts = [];
@@ -1119,9 +1125,33 @@ export class DatabaseStorage implements IStorage {
       }
     }
     
-    // Sort by mentions descending and take the requested limit
+    // Prioritize recent products with good reasons, then sort by mentions
     const nicheProducts = uniqueProducts
-      .sort((a, b) => (b.mentions || 0) - (a.mentions || 0))
+      .sort((a, b) => {
+        // First priority: products with good reasons (non-empty, meaningful)
+        const aHasGoodReason = a.reason && a.reason.trim().length > 10;
+        const bHasGoodReason = b.reason && b.reason.trim().length > 10;
+        
+        if (aHasGoodReason && !bHasGoodReason) return -1;
+        if (!aHasGoodReason && bHasGoodReason) return 1;
+        
+        // Second priority: newer products first (within last 24 hours get priority)
+        const now = new Date();
+        const twentyFourHoursAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        const aIsRecent = a.createdAt && new Date(a.createdAt) > twentyFourHoursAgo;
+        const bIsRecent = b.createdAt && new Date(b.createdAt) > twentyFourHoursAgo;
+        
+        if (aIsRecent && !bIsRecent) return -1;
+        if (!aIsRecent && bIsRecent) return 1;
+        
+        // Third priority: sort by created date (newest first)
+        if (a.createdAt && b.createdAt) {
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        }
+        
+        // Fourth priority: mentions count
+        return (b.mentions || 0) - (a.mentions || 0);
+      })
       .slice(0, limit);
     
     // If we have exactly the requested number of products, return them
