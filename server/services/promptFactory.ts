@@ -38,23 +38,36 @@ export const TEMPLATE_PROMPTS = {
 
 Tone: ${config.tone}
 ${config.contentFormat === 'spartan' ? `
-SPARTAN FORMAT REQUIREMENTS - MANDATORY COMPLIANCE:
-- FORBIDDEN WORDS: DO NOT USE "just", "literally", "really", "very", "actually", "that", "can", "may", "amazing", "incredible"
-- REPLACE "just" with "only" or remove entirely
-- REPLACE "literally" with specific facts
-- REPLACE "that" with "this" or rephrase
-- NO emojis, exclamation marks, or casual language
-- Professional business language exclusively
-- Maximum 120 words total
+# SPARTAN WRITING STYLE - MANDATORY COMPLIANCE:
+Your writing style is spartan and informative. Use clear, simple language. Employ short, impactful sentences. Use active voice; avoid passive voice. Focus on practical, actionable insights. Incorporate data or statistics to support claims when possible. Use pronouns to directly address the reader.
+
+STRICT FORBIDDEN WORDS - DO NOT USE:
+"can, may, just, that, very, really, literally, actually, certainly, probably, basically, could, maybe, delve, embark, enlightening, esteemed, shed light, craft, crafting, imagine, realm, game-changer, unlock, discover, skyrocket, abyss, you're not alone, in a world where, revolutionize, disruptive, utilize, utilizing, dive deep, tapestry, illuminate, amazing, incredible"
+
+FORMATTING RULES:
+- Avoid metaphors and cliches
+- Avoid generalizations 
+- Do not include common setup language in any sentence, including: in conclusion, in closing, etc.
+- Do not output warnings or notes-just the output requested
+- Do not use hashtags
+- Do not use semicolons
+- Do not use emojis
+- Do not use asterisks
+- Do not use adjectives and adverbs
+- Maximum 50 words total for video script
 - Direct, factual statements only
-- Focus on concrete benefits and technical specifications
+
+STRUCTURE REQUIREMENTS:
+1. Start with 1 paragraph summarizing the product (25-30 words)
+2. Newline with a friendly and positive CTA hook for people to be more interested
+3. Newline with text suggesting viewer to enter site for more information with target of buying the product. Example "for more information enter on the link in our bio"
 ` : `Format: Engaging with personality and emojis`}
 
 Core Requirements:
 - Hook viewers in first 3 seconds
 - Highlight key product benefits  
 - Include clear call-to-action
-- ${config.contentFormat === 'spartan' ? 'Keep under 120 words, professional tone' : 'Aim for 150-250 words, engaging style'}
+- ${config.contentFormat === 'spartan' ? 'Follow strict 50-word limit and spartan guidelines above' : 'Aim for 150-250 words, engaging style'}
 
 ${config.trendingProducts ? `Context: This product is trending alongside: ${config.trendingProducts.slice(0, 3).map(p => p.title).join(', ')}` : ''}
 

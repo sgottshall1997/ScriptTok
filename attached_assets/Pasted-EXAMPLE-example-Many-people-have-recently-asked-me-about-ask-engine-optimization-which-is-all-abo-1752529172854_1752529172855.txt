@@ -1,0 +1,49 @@
+EXAMPLE
+‹example>
+Many people have recently asked me about ask engine optimization, which is all about optimizing your website and existing content, so it can be pulled into ChatGPT and other generative Al tools.Consider that generative Al tools tend to be more conversational in nature and have a Q&A type format, so search engines will want to pull in snippets that concisely answer a user's question.- what is ask engine optimization in the age of Al?- How does traditional SEO compare to ask engine optimization today?- top tips and tricks to get started with ask engine optimization?
+#ai #askengineoptimization #chatgpts #seo #aitools #digitalmarketing
+ </example>
+# CONTEXT
+Infer the topic from the sources provided
+# WRITING STYLE
+Here's how you always write:
+<writing_style>
+﻿﻿Your writing style is spartan and informative.﻿﻿ Use clear, simple language.﻿﻿Employ short, impactful sentences.﻿﻿ Use active voice; avoid passive voice.﻿﻿ Focus on practical, actionable insights. ﻿﻿Incorporate data or statistics to support claims when possible.﻿﻿ Use pronouns to directly address the reader.
+- avoid metaphors and cliches
+- avoid generalizations 
+- do not include common setup language in any sentence, including: in conclusion, in closing, etc.
+- ﻿﻿Do not output warnings or notes-just the output requested.
+- ﻿﻿Do not use hashtags.
+- ﻿﻿Do not use semicolons.﻿﻿
+- Do not use emojis.﻿﻿
+- Do not use asterisks.﻿﻿
+- Do not use adjectives and adverbs.
+- ﻿﻿Do NOT use these words: """"""""""can, may, just, that, very, really, literally, actually, certainly, probably, basically, could, maybe, del ve, embark, enlightening, esteemed, sh ed light, craft, crafting, imagine, realm, game-changer, unlock, discover, skyrocket, abyss, you're not alone, in a world where, revolutionize, disruptive, utilize, utilizing, dive deep, tapestry, illuminate, game-changer, unlock, discover, skyrocket, abyss, you're not alone, in a world where, revolutionize, disruptive, utilize, utilizing, dive deep, tapestry, illuminate, unveil, pivotal, enrich, intricate, elucidate, hence, furthermore, realm, however, harness, exciting, groundbreaking, cutting-edge, remarkable, it remains to be seen, glimpse into, navigating, landscape, stark, testament, in summary, in conclusion, moreover, boost, bustling, op ened up, powerful, inquiries, ever-evolving""""""""""
+</writing_style>
+# PLANNING
+Your goal is to write a 50-word video caption based on the provided source.
+1. Analyze the provided sources thoroughly.﻿﻿﻿ 
+2. Study the ‹example> post carefully. You will be asked to replicate their:﻿﻿ 
+- Overall structure.﻿﻿
+- Tone and voice.﻿﻿
+- Formatting (including line breaks and spacing).﻿﻿
+- Opening with the address and list price
+- Length (aim for a similarly detailed post)
+- paragraphs with different info should be separated by new line (between each paragraph should be an empty line)
+- emojis in front of each paragraph
+- emojis used in front of each paragraph should be related to the information in the respectively paragraph
+- use of trending hashtags for the niche
+- emotional resonance
+# OUTPUT
+Follow the guidelines below to write the post. Use your analysis from step 1 and step 2. Use the provided sources as the foundation for your post, expanding on it significantly while maintaining the tone and structure of the examples provided from step 2. You MUST use information from the provided sources. Make sure you adhere to our <writing_style>
+<guidelines>
+the description should be structured as follows:
+1. Start with 1 paragraph summarizing the source
+2. Newline with a friendly and positive CTA hook for people to be more interested
+3. Newline with a text suggesting the viewer to enter on the site for more information with the target of buying the product. Example “for more information enter on the link in our bio”
+2. Newline, followed by the 5 most popular hashtags related to the source
+</guidelines>
+Take a deep breath and take it step-by-step
+#INPUT
+Use the following information sources:
+<sources>
