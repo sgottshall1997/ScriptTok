@@ -39,8 +39,8 @@ export interface AIGenerationResponse {
 export async function generateWithAI(prompt: string, config: AIGenerationRequest): Promise<AIGenerationResponse> {
   const startTime = Date.now();
   
-  // Support both Claude and ChatGPT models, default to Claude
-  const selectedModel = config.model || 'claude';
+  // CLAUDE-ONLY SYSTEM - No ChatGPT allowed
+  const selectedModel = 'claude';
   
   console.log(`🤖 AI ROUTER: Using ${selectedModel.toUpperCase()} for generation`);
   console.log(`📝 Prompt length: ${prompt.length} chars`);
@@ -49,13 +49,8 @@ export async function generateWithAI(prompt: string, config: AIGenerationRequest
   try {
     let response: AIGenerationResponse;
     
-    if (selectedModel === 'chatgpt') {
-      // Use ChatGPT/OpenAI
-      response = await generateWithOpenAI(prompt, config);
-    } else {
-      // Default to Claude
-      response = await generateWithClaudeRouter(prompt, config);
-    }
+    // CLAUDE-ONLY SYSTEM
+    response = await generateWithClaudeRouter(prompt, config);
     
     const processingTime = Date.now() - startTime;
     response.processingTime = processingTime;

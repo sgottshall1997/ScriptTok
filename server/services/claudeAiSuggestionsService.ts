@@ -95,7 +95,7 @@ export async function getSuggestionsForContent(query: SuggestionQuery): Promise<
   return results.map(row => ({
     ...row,
     effectiveness: row.effectiveness || 0.5,
-    recentSuccess: row.updatedAt > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+    recentSuccess: row.updatedAt ? new Date(row.updatedAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) : false
   }));
 }
 
