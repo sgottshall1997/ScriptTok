@@ -124,7 +124,7 @@ function generateStrictQuery(niche: string): string {
  */
 export async function fetchTrendingProductsFromPerplexity(niche: string): Promise<InsertTrendingProduct[]> {
   try {
-    if (!process.env.PERPLEXITY_API_KEY) {
+    if (!process.env.PERPLEXITY_API_KEY_KEY) {
       throw new Error('PERPLEXITY_API_KEY environment variable is not set');
     }
 
@@ -158,11 +158,11 @@ Respond with JSON array only:`;
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.PERPLEXITY_API}`,
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "sonar", // Current Perplexity model - sonar-pro deprecated
+        model: "sonar-pro", // Current Perplexity model - sonar-pro deprecated
         messages: [
           {
             role: "system",
@@ -303,11 +303,11 @@ Example format: "Nike Air Force 1 '07 Sneakers" not "Nike shoes"`;
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.PERPLEXITY_API}`,
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "sonar", // Current Perplexity model - sonar-pro deprecated
+        model: "sonar-pro", // Current Perplexity model - sonar-pro deprecated
         messages: [
           {
             role: "user",
@@ -349,11 +349,11 @@ async function fetchWithFallbackModel(niche: string, prompt: string): Promise<In
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${process.env.PERPLEXITY_API}`,
+        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "sonar", // Basic model as fallback
+        model: "sonar-pro", // Basic model as fallback
         messages: [
           {
             role: "system",
