@@ -15,6 +15,7 @@ import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
 import { db } from '../db.js';
 import { eq, desc, sql } from 'drizzle-orm';
+import { contentHistory } from '../../shared/schema.js';
 
 const router = Router();
 
@@ -266,6 +267,35 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     console.log(`✅ Content generation completed in ${duration}ms`);
     if (config.useSpartanFormat) {
       console.log(`🏛️ SPARTAN ENFORCEMENT: All content cleaned and formatted according to Spartan standards`);
+    }
+
+    // Save to content history database
+    try {
+      const sessionId = `unified_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      const historyEntry = await db.insert(contentHistory).values({
+        userId: 1, // Default user for now
+        sessionId: sessionId,
+        niche: config.niche,
+        contentType: config.templateType,
+        tone: config.tone,
+        productName: config.productName,
+        promptText: `Generated ${config.templateType} content for ${config.productName} in ${config.niche} niche using ${config.tone} tone`,
+        outputText: contentResult.content,
+        platformsSelected: config.platforms,
+        generatedOutput: contentResult,
+        affiliateLink: contentResult.affiliateLink,
+        modelUsed: 'Claude',
+        tokenCount: Math.floor(contentResult.content.length / 4),
+        aiModel: 'claude',
+        contentFormat: config.useSpartanFormat ? 'Spartan Format' : 'Regular Format'
+      }).returning();
+      
+      console.log(`💾 Content saved to history with ID: ${historyEntry[0].id}`);
+      
+    } catch (saveError) {
+      console.error('❌ Failed to save content to history:', saveError);
+      // Don't fail the whole request if saving fails
     }
 
     return res.json({
