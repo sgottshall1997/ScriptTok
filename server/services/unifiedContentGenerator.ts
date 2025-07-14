@@ -135,14 +135,16 @@ async function generateMainScript(config: ContentGenerationConfig): Promise<stri
     throw new Error(`Main content generation failed: ${aiResponse.error}`);
   }
 
-  // Extract content from Claude AI response structure
+  // Extract content from AI response structure (supports both Claude and ChatGPT)
   let content = '';
   if (aiResponse.content?.content) {
     content = aiResponse.content.content; // Claude structure
   } else if (aiResponse.data) {
-    content = aiResponse.data; // Alternative Claude response structure
+    content = aiResponse.data; // Alternative structure
+  } else if (aiResponse.content && typeof aiResponse.content === 'string') {
+    content = aiResponse.content; // ChatGPT/OpenAI structure
   } else {
-    throw new Error('Invalid Claude AI response structure');
+    throw new Error('Invalid AI response structure');
   }
 
   return content.trim();
@@ -181,7 +183,9 @@ async function generateAllPlatformCaptions(config: ContentGenerationConfig, main
         if (aiResponse.content?.content) {
           caption = aiResponse.content.content; // Claude structure
         } else if (aiResponse.data) {
-          caption = aiResponse.data; // Alternative Claude structure
+          caption = aiResponse.data; // Alternative structure
+        } else if (aiResponse.content && typeof aiResponse.content === 'string') {
+          caption = aiResponse.content; // ChatGPT/OpenAI structure
         }
 
         // Clean up caption and remove truncation markers

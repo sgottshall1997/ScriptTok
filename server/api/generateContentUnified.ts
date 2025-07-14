@@ -61,7 +61,7 @@ const unifiedGenerationSchema = z.object({
   customHook: z.string().optional(),
   useSmartStyle: z.boolean().default(false),
   useSpartanFormat: z.boolean().default(false),
-  aiModel: z.enum(['claude']).default('claude'),
+  aiModel: z.enum(['claude', 'chatgpt']).default('claude'),
   
   // Bulk/automated fields
   products: z.array(z.object({

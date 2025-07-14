@@ -7,9 +7,10 @@ export function registerAIModelsRoutes(app: Express) {
     try {
       const models = await getAvailableModels();
       
-      // Return in the expected format for the frontend - Claude only
+      // Return in the expected format for the frontend - Claude and ChatGPT
       const modelArray = [
-        { id: 'claude', name: 'Claude', available: models.claude }
+        { id: 'claude', name: 'Claude', available: models.claude },
+        { id: 'chatgpt', name: 'ChatGPT', available: models.chatgpt }
       ];
       
       res.json(modelArray);
