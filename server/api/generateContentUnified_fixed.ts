@@ -8,7 +8,7 @@ import { generateContent, estimateVideoDuration } from "../services/contentGener
 import { generatePlatformCaptions } from "../services/platformContentGenerator";
 import { generateUnifiedContent, ContentGenerationConfig } from "../services/unifiedContentGenerator";
 import { CacheService } from "../services/cacheService";
-import { insertContentHistorySchema, trendingProducts } from "@shared/schema";
+import { insertContentHistorySchema, trendingProducts, contentHistory } from "@shared/schema";
 import { sendWebhookNotification, WebhookService } from "../services/webhookService";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
