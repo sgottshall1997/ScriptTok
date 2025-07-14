@@ -45,7 +45,7 @@ import { getScheduledJobs, createScheduledJob, updateScheduledJob, deleteSchedul
 
 import { cronStatusRouter } from "./api/cron-status";
 import perplexityStatusRouter from "./api/perplexity-status";
-import aiAnalyticsRouter from "./api/ai-analytics";
+import aiAnalyticsRouter from "./api/ai-analytics-fixed";
 import generateContentUnifiedRouter from "./api/generateContentUnified";
 import favoritesRouter from "./api/favorites";
 import { bulkGeneratedContent } from "@shared/schema";

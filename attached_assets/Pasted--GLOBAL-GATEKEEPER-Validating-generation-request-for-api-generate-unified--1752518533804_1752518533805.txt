@@ -1,0 +1,30 @@
+🚫 GLOBAL GATEKEEPER: Validating generation request for /api/generate-unified
+================================================================================
+🔍 DETECTION DEBUG: source="scheduled_job", userAgent="node", referer=""
+🔍 APPROVED SOURCES: manual_ui, automated_bulk, bulk_scheduler, automated_generator, scheduled_job, make_com_webhook
+🔍 SOURCE CHECK: source in approved? true
+🟢 CONTEXT: Approved source "scheduled_job" detected in header
+🟢 SAFEGUARD: Approved source "scheduled_job" - ALLOWED
+✅ GATEKEEPER: GENERATION ALLOWED
+   Source: scheduled_job
+   Endpoint: /api/generate-unified
+   User Agent: node
+   Referer: unknown
+================================================================================
+🔍 DETECTION DEBUG: source="scheduled_job", userAgent="node", referer=""
+🔍 APPROVED SOURCES: manual_ui, automated_bulk, bulk_scheduler, automated_generator, scheduled_job, make_com_webhook
+🔍 SOURCE CHECK: source in approved? true
+🟢 CONTEXT: Approved source "scheduled_job" detected in header
+🟢 SAFEGUARD: Approved source "scheduled_job" - ALLOWED
+6:33:00 PM [express] POST /api/generate-unified 400 in 6ms :: {"success":false,"error":"Invalid requ…
+❌ Error executing scheduled job Daily 7 niches content (Enthusiastic): Error: Invalid request parameters
+    at executeScheduledJob (/home/runner/workspace/server/api/scheduled-bulk-generation.ts:520:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async cron.schedule.scheduled (/home/runner/workspace/server/api/scheduled-bulk-generation.ts:391:7)
+    at async Timeout._onTimeout (/home/runner/workspace/node_modules/node-cron/src/scheduler/runner.ts:100:30)
+❌ CRON ERROR: Failed executing job "Daily 7 niches content (Enthusiastic)" (ID: 113): Error: Invalid request parameters
+    at executeScheduledJob (/home/runner/workspace/server/api/scheduled-bulk-generation.ts:520:13)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async cron.schedule.scheduled (/home/runner/workspace/server/api/scheduled-bulk-generation.ts:391:7)
+    at async Timeout._onTimeout (/home/runner/workspace/node_modules/node-cron/src/scheduler/runner.ts:100:30)
+🔓 EXECUTION UNLOCKED: Released lock for job 113

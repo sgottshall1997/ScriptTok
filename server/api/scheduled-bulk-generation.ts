@@ -479,61 +479,113 @@ async function executeScheduledJob(job: any) {
     console.log(`   🔥 THIS MODEL WILL BE USED FOR SCHEDULED GENERATION: ${finalAiModel.toUpperCase()}`);
     console.log(`   ✅ CLAUDE ENFORCEMENT: ${finalAiModel === 'claude' ? 'ACTIVE' : 'NOT ACTIVE'}`);
 
-    // Prepare the request payload for the unified generator
+    // Prepare the request payload for the unified generator with proper field mapping
     const payload = {
       mode: 'automated',
-      selectedNiches: job.selectedNiches,
-      tones: job.tones,
-      templates: job.templates,
-      platforms: job.platforms,
-      useExistingProducts: job.useExistingProducts,
-      generateAffiliateLinks: job.generateAffiliateLinks,
-      useSpartanFormat: job.useSpartanFormat,
-      useSmartStyle: job.useSmartStyle,
+      selectedNiches: Array.isArray(job.selectedNiches) ? job.selectedNiches : [],
+      tones: Array.isArray(job.tones) ? job.tones : ['professional'],
+      templates: Array.isArray(job.templates) ? job.templates : ['product_review'],
+      platforms: Array.isArray(job.platforms) ? job.platforms : ['tiktok', 'instagram'],
+      useExistingProducts: Boolean(job.useExistingProducts),
+      generateAffiliateLinks: Boolean(job.generateAffiliateLinks),
+      useSpartanFormat: Boolean(job.useSpartanFormat),
+      useSmartStyle: Boolean(job.useSmartStyle),
       aiModel: finalAiModel, // GUARANTEED CORRECT AI MODEL
-      affiliateId: job.affiliateId,
-      webhookUrl: job.webhookUrl,
-      sendToMakeWebhook: job.sendToMakeWebhook,
-      userId: job.userId,
-      scheduledJobId: job.id, // Track that this was from a scheduled job
-      scheduledJobName: job.name
+      affiliateId: job.affiliateId || null,
+      webhookUrl: job.webhookUrl || null,
+      userId: job.userId || 1,
+      scheduledJobId: job.id,
+      scheduledJobName: job.name,
+      sendToMakeWebhook: Boolean(job.sendToMakeWebhook)
     };
 
-    console.log(`🚨 CRITICAL AI MODEL DEBUG: job.aiModel="${job.aiModel}", payload.aiModel="${payload.aiModel}"`);
-    console.log(`🔥 FINAL PAYLOAD AI MODEL: "${payload.aiModel}" - THIS MUST BE USED IN GENERATION`);
-    console.log(`🎯 NICHE LIST: [${payload.selectedNiches.join(', ')}] - Expecting exactly ${payload.selectedNiches.length} outputs`);
-    console.log(`🎭 GENERATION PARAMS: Tones: [${payload.tones.join(', ')}], Templates: [${payload.templates.join(', ')}]`);
-
-    // Call the unified content generator
-    const response = await fetch('http://localhost:5000/api/generate-unified', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-generation-source': 'scheduled_job'
-      },
-      body: JSON.stringify(payload)
-    });
-
-    const result = await response.json();
-
-    if (!result.success) {
-      throw new Error(result.error || 'Content generation failed');
+    // Add comprehensive validation and logging
+    console.log(`🚨🚨🚨 SCHEDULED JOB PAYLOAD VALIDATION:`);
+    console.log(`   📥 Job Name: "${job.name}" (ID: ${job.id})`);
+    console.log(`   🎯 AI Model: "${payload.aiModel}"`);
+    console.log(`   🏷️  Selected Niches: [${payload.selectedNiches.join(', ')}]`);
+    console.log(`   🎭 Tones: [${payload.tones.join(', ')}]`);
+    console.log(`   📋 Templates: [${payload.templates.join(', ')}]`);
+    console.log(`   📱 Platforms: [${payload.platforms.join(', ')}]`);
+    console.log(`   ⚙️  Settings: Spartan=${payload.useSpartanFormat}, Smart=${payload.useSmartStyle}, Existing=${payload.useExistingProducts}`);
+    
+    // Validate required fields
+    if (payload.selectedNiches.length === 0) {
+      throw new Error('No niches selected for scheduled job');
+    }
+    if (payload.tones.length === 0) {
+      throw new Error('No tones selected for scheduled job');
+    }
+    if (payload.templates.length === 0) {
+      throw new Error('No templates selected for scheduled job');
+    }
+    if (payload.platforms.length === 0) {
+      throw new Error('No platforms selected for scheduled job');
     }
 
-    console.log(`✅ Scheduled job "${job.name}" completed successfully`);
+    // Call the unified content generator with enhanced error handling
+    console.log(`🌐 CALLING UNIFIED GENERATOR: Sending payload to /api/generate-unified`);
+    console.log(`📦 PAYLOAD SIZE: ${JSON.stringify(payload).length} characters`);
+    
+    let response;
+    let result;
+    
+    try {
+      response = await fetch('http://localhost:5000/api/generate-unified', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-generation-source': 'scheduled_job',
+          'User-Agent': 'scheduled-job-runner'
+        },
+        body: JSON.stringify(payload)
+      });
+      
+      console.log(`📡 HTTP RESPONSE: Status ${response.status} (${response.statusText})`);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(`❌ HTTP ERROR: ${response.status} - ${errorText}`);
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+      
+      result = await response.json();
+      console.log(`📥 RESPONSE RECEIVED: Success=${result.success}, Keys=[${Object.keys(result).join(', ')}]`);
+      
+    } catch (fetchError) {
+      console.error(`❌ FETCH ERROR: Failed to call unified generator:`, fetchError);
+      throw new Error(`Network error calling unified generator: ${fetchError.message}`);
+    }
+
+    if (!result.success) {
+      console.error(`❌ GENERATION FAILED: ${result.error}`);
+      throw new Error(`Content generation failed: ${result.error || 'Unknown error'}`);
+    }
+
+    console.log(`✅ SCHEDULED JOB SUCCESS: "${job.name}" completed successfully`);
+    console.log(`📊 GENERATION RESULTS: Generated ${result.generatedCount || 0} content pieces`);
     return result;
 
   } catch (error) {
-    console.error(`❌ Error executing scheduled job ${job.name}:`, error);
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error(`❌ SCHEDULED JOB ERROR: Job "${job.name}" (ID: ${job.id}) failed:`, errorMessage);
+    console.error(`❌ FULL ERROR DETAILS:`, error);
     
-    // Update failure count and error
-    await db
-      .update(scheduledBulkJobs)
-      .set({
-        consecutiveFailures: job.consecutiveFailures + 1,
-        lastError: error instanceof Error ? error.message : 'Unknown error'
-      })
-      .where(eq(scheduledBulkJobs.id, job.id));
+    // Update failure count and error with enhanced logging
+    try {
+      await db
+        .update(scheduledBulkJobs)
+        .set({
+          consecutiveFailures: (job.consecutiveFailures || 0) + 1,
+          lastError: errorMessage,
+          lastRunAt: new Date()
+        })
+        .where(eq(scheduledBulkJobs.id, job.id));
+      
+      console.log(`📝 FAILURE RECORDED: Updated job ${job.id} with failure count ${(job.consecutiveFailures || 0) + 1}`);
+    } catch (dbError) {
+      console.error(`❌ DATABASE ERROR: Failed to record job failure:`, dbError);
+    }
 
     throw error;
   }
