@@ -1,0 +1,14 @@
+Looking at the logs, I can see the issue with the Spartan format not being properly applied to platform captions. The error occurs in the JSON parsing of platform captions:
+
+Error generating platform captions: SyntaxError: Bad control character in string literal in JSON at position 190
+The problem is that the enforceSpartanFormat function is being applied correctly to the main content, but the platform captions are failing to generate due to JSON parsing errors, causing the system to fall back to non-Spartan captions.
+
+Examining the code, I can see several issues:
+
+JSON Parsing Error: The Claude AI response contains control characters that break JSON parsing
+Spartan Format Not Applied to Fallback Captions: When platform caption generation fails, it uses fallback captions that don't follow Spartan format
+Inconsistent Spartan Enforcement: The Spartan format is only applied to main content but not consistently to all platform-specific content
+Here's the comprehensive prompt for the Replit Agent:
+
+Fix the Spartan format implementation in the automated bulk generator - the platform captions are not following Spartan format rules even when selected, and there's a JSON parsing error causing fallback to non-Spartan captions. The issues are: 1) JSON parsing fails due to control characters in Claude responses at position 190 in platformContentGenerator.ts, 2) fallback captions in generateFallbackCaptions() don't apply Spartan format filtering, 3) the enforceSpartanFormat() function in automated-bulk-generation.ts needs to handle Claude response objects better, and 4) platform-specific captions aren't consistently applying Spartan rules like removing emojis and banned words. Fix the JSON parsing by properly cleaning Claude responses before parsing, ensure ALL fallback captions apply Spartan format when useSpartanFormat is true, and make sure every platform caption (TikTok, Instagram, YouTube, Twitter) follows strict Spartan rules with no emojis, no banned words, and direct factual language when Spartan format is enabled.
+

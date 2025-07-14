@@ -164,10 +164,10 @@ PLATFORM-SPECIFIC REQUIREMENTS:
           responseKeys: Object.keys(aiResponse)
         });
         // Use fallback instead of throwing error
-        return generateFallbackCaptions(productName, platforms, niche, affiliateId);
+        return generateFallbackCaptions(productName, platforms, niche, affiliateId, useSpartanFormat);
       }
 
-      // Parse JSON response - handle markdown code blocks
+      // Parse JSON response - handle markdown code blocks and control characters
       let cleanContent = extractedContent.trim();
       if (cleanContent.startsWith('```json')) {
         cleanContent = cleanContent.replace(/^```json\s*/, '').replace(/\s*```$/, '');
@@ -175,7 +175,18 @@ PLATFORM-SPECIFIC REQUIREMENTS:
         cleanContent = cleanContent.replace(/^```\s*/, '').replace(/\s*```$/, '');
       }
       
-      const captions = JSON.parse(cleanContent);
+      // Remove control characters that break JSON parsing
+      cleanContent = cleanContent.replace(/[\u0000-\u001F\u007F-\u009F]/g, '');
+      
+      let captions;
+      try {
+        captions = JSON.parse(cleanContent);
+      } catch (jsonError) {
+        console.error('JSON parsing error:', jsonError);
+        console.error('Problematic content:', cleanContent);
+        // Use fallback instead of throwing error
+        return generateFallbackCaptions(productName, platforms, niche, affiliateId, useSpartanFormat);
+      }
       
       // Generate Amazon affiliate link
       const amazonLink = generateAmazonAffiliateLink(productName, affiliateId);
@@ -273,17 +284,17 @@ PLATFORM-SPECIFIC REQUIREMENTS:
       attempts++;
       
       if (attempts >= maxAttempts) {
-        return generateFallbackCaptions(productName, platforms, niche, affiliateId);
+        return generateFallbackCaptions(productName, platforms, niche, affiliateId, useSpartanFormat);
       }
     }
   }
   
   // Fallback if all attempts fail
-  return generateFallbackCaptions(productName, platforms, niche, affiliateId);
+  return generateFallbackCaptions(productName, platforms, niche, affiliateId, useSpartanFormat);
 }
 
 // Fallback captions generator
-function generateFallbackCaptions(productName: string, platforms: string[], niche: string, affiliateId: string = "sgottshall107-20"): Record<string, string> {
+function generateFallbackCaptions(productName: string, platforms: string[], niche: string, affiliateId: string = "sgottshall107-20", useSpartanFormat: boolean = false): Record<string, string> {
   const captions: Record<string, string> = {};
   const amazonLink = generateAmazonAffiliateLink(productName, affiliateId);
   
@@ -291,19 +302,39 @@ function generateFallbackCaptions(productName: string, platforms: string[], nich
     let caption = '';
     switch (platform.toLowerCase()) {
       case 'tiktok':
-        caption = `${productName} is trending for a reason! This ${niche} find is about to blow up your feed #fyp #viral\n\nShop here: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        if (useSpartanFormat) {
+          caption = `${productName} is trending for a reason! This ${niche} find is about to blow up your feed.\n\nShop here: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        } else {
+          caption = `${productName} is trending for a reason! This ${niche} find is about to blow up your feed #fyp #viral\n\nShop here: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        }
         break;
       case 'instagram':
-        caption = `Discovered this ${productName} and had to share. Perfect addition to my ${niche} routine #aesthetic #musthave\n\nShop the link: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        if (useSpartanFormat) {
+          caption = `Discovered this ${productName} and had to share. Perfect addition to my ${niche} routine.\n\nShop the link: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        } else {
+          caption = `Discovered this ${productName} and had to share. Perfect addition to my ${niche} routine #aesthetic #musthave\n\nShop the link: ${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        }
         break;
       case 'youtube':
-        caption = `In this video, I'm reviewing the *${productName}* - here's everything you need to know about this trending ${niche} product.\n\nAmazon link: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+        if (useSpartanFormat) {
+          caption = `In this video, I'm reviewing the ${productName} - here's everything you need to know about this trending ${niche} product.\n\nAmazon link: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+        } else {
+          caption = `In this video, I'm reviewing the *${productName}* - here's everything you need to know about this trending ${niche} product.\n\nAmazon link: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+        }
         break;
       case 'twitter':
-        caption = `Plot twist: ${productName} actually lives up to the hype. Best ${niche} purchase this year.\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        if (useSpartanFormat) {
+          caption = `Plot twist: ${productName} lives up to the hype. Best ${niche} purchase this year.\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        } else {
+          caption = `Plot twist: ${productName} actually lives up to the hype. Best ${niche} purchase this year.\n\n${amazonLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        }
         break;
       default:
-        caption = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+        if (useSpartanFormat) {
+          caption = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+        } else {
+          caption = `Discover why ${productName} is making waves in the ${niche} industry. A comprehensive look at this trending product.\n\nShop on Amazon: ${amazonLink}\n\nDisclosure: As an Amazon Associate I earn from qualifying purchases.`;
+        }
     }
     captions[platform] = caption;
   });
