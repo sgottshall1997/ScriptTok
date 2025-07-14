@@ -39,45 +39,45 @@ function enforceSpartanFormat(text: string): string {
   
   let cleanedText = text;
   
-  // Define word replacements for Spartan format
-  const spartanReplacements = {
-    'just ': 'only ',
-    ' just ': ' only ',
-    'literally': '',
-    ' literally': '',
-    'literally ': '',
-    'really ': '',
-    ' really ': ' ',
-    'very ': '',
-    ' very ': ' ',
-    'actually ': '',
-    ' actually ': ' ',
-    'that ': 'this ',
-    ' that ': ' this ',
-    'can ': 'will ',
-    ' can ': ' will ',
-    'may ': 'will ',
-    ' may ': ' will ',
-    'amazing ': 'excellent ',
-    ' amazing': ' excellent',
-    'incredible ': 'exceptional ',
-    ' incredible': ' exceptional',
-    'awesome ': 'excellent ',
-    ' awesome': ' excellent'
-  };
+  // Remove stage directions and action text (anything in brackets)
+  cleanedText = cleanedText.replace(/\[.*?\]/g, '');
   
-  // Apply replacements
-  Object.entries(spartanReplacements).forEach(([banned, replacement]) => {
-    const regex = new RegExp(banned, 'gi');
-    cleanedText = cleanedText.replace(regex, replacement);
-  });
+  // Remove specific pricing mentions
+  cleanedText = cleanedText.replace(/\$\d+\.?\d*/g, '');
+  cleanedText = cleanedText.replace(/at \$\d+/g, '');
+  cleanedText = cleanedText.replace(/for \$\d+/g, '');
+  cleanedText = cleanedText.replace(/priced at/gi, '');
+  cleanedText = cleanedText.replace(/worth every penny/gi, '');
+  cleanedText = cleanedText.replace(/they're often on sale/gi, '');
+  cleanedText = cleanedText.replace(/check current prices/gi, '');
+  cleanedText = cleanedText.replace(/tap the link to check current prices/gi, '');
   
-  // Remove multiple spaces
+  // Simple word replacements for Spartan format
+  cleanedText = cleanedText.replace(/\bjust\b/gi, 'only');
+  cleanedText = cleanedText.replace(/\bliterally\b/gi, '');
+  cleanedText = cleanedText.replace(/\breally\b/gi, '');
+  cleanedText = cleanedText.replace(/\bvery\b/gi, '');
+  cleanedText = cleanedText.replace(/\bactually\b/gi, '');
+  cleanedText = cleanedText.replace(/\bthat\b/gi, 'this');
+  cleanedText = cleanedText.replace(/\bcan\b/gi, 'will');
+  cleanedText = cleanedText.replace(/\bmay\b/gi, 'will');
+  cleanedText = cleanedText.replace(/\bamazing\b/gi, 'excellent');
+  cleanedText = cleanedText.replace(/\bincredible\b/gi, 'exceptional');
+  cleanedText = cleanedText.replace(/\bawesome\b/gi, 'excellent');
+  
+  // Remove multiple spaces and clean up
   cleanedText = cleanedText.replace(/\s+/g, ' ').trim();
   
-  // Remove emojis
-  const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]/gu;
-  cleanedText = cleanedText.replace(emojiPattern, '');
+  // Remove emojis - simplified approach
+  cleanedText = cleanedText.replace(/[\u{1F600}-\u{1F64F}]/gu, ''); // emoticons
+  cleanedText = cleanedText.replace(/[\u{1F300}-\u{1F5FF}]/gu, ''); // misc symbols
+  cleanedText = cleanedText.replace(/[\u{1F680}-\u{1F6FF}]/gu, ''); // transport
+  cleanedText = cleanedText.replace(/[\u{2600}-\u{26FF}]/gu, ''); // misc symbols
+  cleanedText = cleanedText.replace(/[\u{2700}-\u{27BF}]/gu, ''); // dingbats
+  
+  // Clean up any remaining artifacts
+  cleanedText = cleanedText.replace(/\s*-\s*they're\s*-\s*/gi, ' - ');
+  cleanedText = cleanedText.replace(/\s*\.\s*\[\s*End\s*.*?\]\s*/gi, '.');
   
   return cleanedText.trim();
 }
