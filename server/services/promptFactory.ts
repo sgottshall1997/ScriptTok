@@ -243,6 +243,16 @@ export async function createPrompt(config: PromptConfig): Promise<GeneratedPromp
 }
 
 /**
+ * SYNCHRONOUS PROMPT GENERATOR FOR TRANSPARENCY
+ */
+export function generatePrompt(config: PromptConfig): GeneratedPrompt {
+  // Get template-specific prompt
+  const templateGenerator = TEMPLATE_PROMPTS[config.templateType] || TEMPLATE_PROMPTS['Short-Form Video Script'];
+  
+  return templateGenerator(config);
+}
+
+/**
  * PLATFORM-SPECIFIC PROMPT CREATOR
  */
 export async function createPlatformPrompt(platform: string, config: PromptConfig): Promise<string> {

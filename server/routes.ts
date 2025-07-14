@@ -271,6 +271,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/rating/track-application', trackApplication);
   app.get('/api/rating/stats', getRatingStats);
   app.get('/api/rating/smart-style', getSmartStyleRecommendations);
+
+  // Prompt structure endpoint for Template Explorer transparency
+  app.post('/api/prompt-structure', async (req, res) => {
+    try {
+      const { templateType, niche, tone, productName } = req.body;
+      
+      if (!templateType || !niche || !tone) {
+        return res.status(400).json({
+          error: 'Missing required fields',
+          required: ['templateType', 'niche', 'tone']
+        });
+      }
+
+      // Import prompt factory to get the actual prompt structure
+      const { generatePrompt } = await import('./services/promptFactory');
+      
+      const promptConfig = {
+        niche,
+        templateType,
+        tone,
+        productName: productName || 'Sample Product',
+        contentFormat: 'standard' as const
+      };
+
+      const promptStructure = generatePrompt(promptConfig);
+      
+      res.json({
+        success: true,
+        systemPrompt: promptStructure.systemPrompt,
+        userPrompt: promptStructure.userPrompt,
+        templateType: promptStructure.templateMetadata.templateType,
+        niche: promptStructure.templateMetadata.niche,
+        tone: promptStructure.templateMetadata.tone,
+        contentFormat: promptStructure.templateMetadata.contentFormat
+      });
+    } catch (error) {
+      console.error('Error generating prompt structure:', error);
+      res.status(500).json({
+        error: 'Failed to generate prompt structure',
+        details: error.message
+      });
+    }
+  });
   
   // Get scraper health endpoint
   app.get('/api/scraper-health', async (req, res) => {

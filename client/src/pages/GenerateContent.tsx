@@ -94,6 +94,11 @@ const GenerateContent = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
   const [useSmartStyle, setUseSmartStyle] = useState(false);
+  const [currentPromptStructure, setCurrentPromptStructure] = useState<{
+    systemPrompt: string;
+    userPrompt: string;
+    templateType: string;
+  } | null>(null);
   
   // Viral inspiration data (will be populated when product is selected)
   const [viralInspo, setViralInspo] = useState<{
@@ -190,6 +195,45 @@ const GenerateContent = () => {
     console.log('useEffect triggered:', { selectedProduct, selectedNiche });
     fetchViralInspirationForProduct(selectedProduct);
   }, [selectedProduct, selectedNiche]);
+
+  // Fetch prompt structure when template type, niche, or tone changes
+  const fetchPromptStructure = async () => {
+    if (!templateType || !selectedNiche || !tone) {
+      setCurrentPromptStructure(null);
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/prompt-structure', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          templateType,
+          niche: selectedNiche,
+          tone,
+          productName: selectedProduct || 'Sample Product',
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setCurrentPromptStructure(data);
+      } else {
+        console.error('Failed to fetch prompt structure');
+        setCurrentPromptStructure(null);
+      }
+    } catch (error) {
+      console.error('Error fetching prompt structure:', error);
+      setCurrentPromptStructure(null);
+    }
+  };
+
+  // Watch for changes in template type, niche, or tone to update prompt structure
+  useEffect(() => {
+    fetchPromptStructure();
+  }, [templateType, selectedNiche, tone]);
 
   // Debug: Log viralInspo state changes
   useEffect(() => {
@@ -777,6 +821,38 @@ ${config.hashtags.join(' ')}`;
                 selectedNiche={selectedNiche}
               />
             </div>
+
+            {/* Prompt Structure Card */}
+            {currentPromptStructure && (
+              <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
+                <CardHeader className="pb-3">
+                  <CardTitle className="flex items-center gap-2 text-sm font-semibold text-blue-800">
+                    📋 Prompt Structure
+                  </CardTitle>
+                  <p className="text-xs text-blue-600">
+                    See exactly how AI prompts are structured for {selectedNiche} content with {templateType} template
+                  </p>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  <div>
+                    <Label className="text-xs font-medium text-gray-700">System Prompt</Label>
+                    <div className="bg-white rounded-md border border-blue-200 p-3 text-xs font-mono text-gray-700 max-h-32 overflow-y-auto">
+                      {currentPromptStructure.systemPrompt}
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-xs font-medium text-gray-700">User Prompt Template</Label>
+                    <div className="bg-white rounded-md border border-blue-200 p-3 text-xs font-mono text-gray-700 max-h-40 overflow-y-auto">
+                      {currentPromptStructure.userPrompt}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-blue-600">
+                    <span>Template: {currentPromptStructure.templateType}</span>
+                    <span>Format: Standard</span>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {/* Tone */}
             <div>
