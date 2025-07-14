@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { db } from "../db";
+import { db, pool } from "../db";
 import { contentHistory } from "../../shared/schema";
 import { eq, gte, and, sql, desc } from 'drizzle-orm';
 
@@ -50,71 +50,92 @@ router.get("/overview", async (req, res) => {
     const { timeRange = '7d', niche, contentType } = req.query;
     const startDate = getDateRange(timeRange as string);
     
-    let whereConditions = [gte(contentHistory.createdAt, startDate)];
+    // Build raw SQL query using only existing columns
+    let baseQuery = `
+      SELECT 
+        COALESCE(ai_model, model_used, 'unknown') as model_name,
+        COALESCE(token_count, 0) as token_count,
+        created_at,
+        niche,
+        content_type,
+        fallback_level
+      FROM content_history 
+      WHERE created_at >= $1
+    `;
+    
+    const queryParams: any[] = [startDate];
+    let paramIndex = 2;
     
     if (niche) {
-      whereConditions.push(eq(contentHistory.niche, niche as string));
+      baseQuery += ` AND niche = $${paramIndex}`;
+      queryParams.push(niche);
+      paramIndex++;
     }
     
     if (contentType) {
-      whereConditions.push(eq(contentHistory.contentType, contentType as string));
+      baseQuery += ` AND content_type = $${paramIndex}`;
+      queryParams.push(contentType);
+      paramIndex++;
     }
+    
+    baseQuery += ` ORDER BY created_at DESC`;
+    
+    const result = await pool.query(baseQuery, queryParams);
+    
+    const records = result.rows;
 
-    // Get all records first
-    const records = await db
-      .select({
-        aiModel: contentHistory.aiModel,
-        tokenCount: contentHistory.tokenCount,
-        responseTime: contentHistory.responseTime,
-        error: contentHistory.error,
-        createdAt: contentHistory.createdAt
-      })
-      .from(contentHistory)
-      .where(and(...whereConditions));
-
-    // Process provider metrics in JavaScript
+    // Process provider metrics
     const providerGroups: Record<string, any[]> = {};
     
-    records.forEach(record => {
-      const provider = getProviderCategory(record.aiModel || '');
+    records.forEach((record: any) => {
+      const modelName = record.model_name || 'unknown';
+      const provider = getProviderCategory(modelName);
       if (!providerGroups[provider]) {
         providerGroups[provider] = [];
       }
-      providerGroups[provider].push(record);
+      providerGroups[provider].push({
+        aiModel: modelName,
+        tokenCount: Number(record.token_count) || 0,
+        niche: record.niche,
+        contentType: record.content_type,
+        fallbackLevel: record.fallback_level,
+        createdAt: record.created_at
+      });
     });
 
     const providerMetrics = Object.entries(providerGroups).map(([provider, records]) => {
       const totalRequests = records.length;
       const totalTokens = records.reduce((sum, r) => sum + (r.tokenCount || 0), 0);
       const avgTokens = totalRequests > 0 ? totalTokens / totalRequests : 0;
-      const avgResponseTime = records.reduce((sum, r) => sum + (r.responseTime || 0), 0) / totalRequests;
-      const errorCount = records.filter(r => r.error).length;
-      const successRate = totalRequests > 0 ? ((totalRequests - errorCount) * 100.0 / totalRequests) : 0;
+      const fallbackCount = records.filter(r => r.fallbackLevel && r.fallbackLevel !== 'none').length;
+      const successRate = totalRequests > 0 ? ((totalRequests - fallbackCount) * 100.0 / totalRequests) : 0;
       const uniqueModels = new Set(records.map(r => r.aiModel)).size;
-      const lastUsed = records.reduce((latest, r) => 
-        r.createdAt && (!latest || new Date(r.createdAt) > new Date(latest)) ? r.createdAt : latest, null);
+      const lastUsed = records.length > 0 ? records[0].createdAt : null;
 
       return {
         provider,
         totalRequests,
         totalTokens,
         avgTokens,
-        avgResponseTime,
         successRate,
-        errorCount,
+        fallbackCount,
         uniqueModels,
         lastUsed
       };
     });
 
     // Calculate costs
-    const costData = records.map(record => ({
-      provider: getProviderCategory(record.aiModel || ''),
-      model: record.aiModel || '',
-      estimatedCost: calculateCost(record.aiModel || '', record.tokenCount || 0),
-      tokenCount: record.tokenCount || 0,
-      requestCount: 1
-    }));
+    const costData = records.map((record: any) => {
+      const modelName = record.model_name || 'unknown';
+      const tokenCount = Number(record.token_count) || 0;
+      return {
+        provider: getProviderCategory(modelName),
+        model: modelName,
+        estimatedCost: calculateCost(modelName, tokenCount),
+        tokenCount,
+        requestCount: 1
+      };
+    });
 
     // Aggregate cost data by provider
     const providerCostSummary: Record<string, any> = {};
@@ -132,7 +153,8 @@ router.get("/overview", async (req, res) => {
       data: {
         providerMetrics,
         costData,
-        providerCostSummary
+        providerCostSummary,
+        totalRecords: records.length
       }
     });
 
@@ -154,39 +176,47 @@ router.get("/health", async (req, res) => {
     const { timeRange = '7d' } = req.query;
     const startDate = getDateRange(timeRange as string);
     
-    const records = await db
-      .select({
-        aiModel: contentHistory.aiModel,
-        responseTime: contentHistory.responseTime,
-        error: contentHistory.error,
-        createdAt: contentHistory.createdAt
-      })
-      .from(contentHistory)
-      .where(gte(contentHistory.createdAt, startDate));
+    // Use raw SQL with existing columns only
+    const result = await pool.query(`
+      SELECT 
+        COALESCE(ai_model, model_used, 'unknown') as model_name,
+        COALESCE(token_count, 0) as token_count,
+        fallback_level,
+        created_at
+      FROM content_history 
+      WHERE created_at >= $1
+      ORDER BY created_at DESC
+    `, [startDate]);
+    
+    const records = result.rows;
 
     const providerGroups: Record<string, any[]> = {};
     
-    records.forEach(record => {
-      const provider = getProviderCategory(record.aiModel || '');
+    records.forEach((record: any) => {
+      const modelName = record.model_name || 'unknown';
+      const provider = getProviderCategory(modelName);
       if (!providerGroups[provider]) {
         providerGroups[provider] = [];
       }
-      providerGroups[provider].push(record);
+      providerGroups[provider].push({
+        aiModel: modelName,
+        tokenCount: Number(record.token_count) || 0,
+        fallbackLevel: record.fallback_level,
+        createdAt: record.created_at
+      });
     });
 
     const healthData = Object.entries(providerGroups).map(([provider, records]) => {
       const totalRequests = records.length;
-      const errorCount = records.filter(r => r.error).length;
-      const successRate = totalRequests > 0 ? ((totalRequests - errorCount) * 100.0 / totalRequests) : 0;
-      const avgResponseTime = records.reduce((sum, r) => sum + (r.responseTime || 0), 0) / totalRequests;
-      const lastRequest = records.reduce((latest, r) => 
-        r.createdAt && (!latest || new Date(r.createdAt) > new Date(latest)) ? r.createdAt : latest, null);
-      const lastError = records.filter(r => r.error).pop()?.error || '';
+      const fallbackCount = records.filter(r => r.fallbackLevel && r.fallbackLevel !== 'none').length;
+      const successRate = totalRequests > 0 ? ((totalRequests - fallbackCount) * 100.0 / totalRequests) : 0;
+      const avgTokens = totalRequests > 0 ? records.reduce((sum, r) => sum + (r.tokenCount || 0), 0) / totalRequests : 0;
+      const lastRequest = records.length > 0 ? records[0].createdAt : null;
 
       let status: 'healthy' | 'warning' | 'critical' = 'healthy';
       if (successRate < 50) {
         status = 'critical';
-      } else if (successRate < 80 || avgResponseTime > 10000) {
+      } else if (successRate < 80 || fallbackCount > totalRequests * 0.3) {
         status = 'warning';
       }
 
@@ -194,11 +224,10 @@ router.get("/health", async (req, res) => {
         provider,
         status,
         successRate,
-        avgResponseTime,
+        avgTokens,
         totalRequests,
-        errorCount,
-        lastRequest: lastRequest || '',
-        lastError
+        fallbackCount,
+        lastRequest: lastRequest || ''
       };
     });
 

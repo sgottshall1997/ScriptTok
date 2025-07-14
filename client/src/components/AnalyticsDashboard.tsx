@@ -141,16 +141,20 @@ const AnalyticsDashboard: FC = () => {
   const [selectedContentType, setSelectedContentType] = useState<string | null>(null);
   
   // Fetch AI analytics overview
-  const { data: aiOverview, isLoading: isAiOverviewLoading } = useQuery<AIOverviewData>({
+  const { data: aiOverviewResponse, isLoading: isAiOverviewLoading } = useQuery<{success: boolean, data: AIOverviewData}>({
     queryKey: ['/api/ai-analytics/overview', timeRange, selectedNiche, selectedContentType],
     retry: 1,
   });
+  
+  const aiOverview = aiOverviewResponse?.data;
 
   // Fetch AI health status
-  const { data: aiHealth, isLoading: isAiHealthLoading } = useQuery<AIHealthStatus[]>({
+  const { data: aiHealthResponse, isLoading: isAiHealthLoading } = useQuery<{success: boolean, data: AIHealthStatus[]}>({
     queryKey: ['/api/ai-analytics/health', timeRange],
     retry: 1,
   });
+  
+  const aiHealth = aiHealthResponse?.data || [];
 
   // Fetch Claude analytics
   const { data: claudeAnalytics, isLoading: isClaudeLoading } = useQuery<{data: AIAnalyticsData}>({
