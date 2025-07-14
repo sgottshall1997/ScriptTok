@@ -283,15 +283,18 @@ const ScheduleManager: React.FC = () => {
                     <div>
                       <span className="font-medium text-gray-600">Niches:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {job.selectedNiches?.slice(0, 3).map((niche: string) => (
+                        {job.config?.selectedNiches?.slice(0, 3).map((niche: string) => (
                           <Badge key={niche} variant="outline" className="text-xs">
                             {niche}
                           </Badge>
                         ))}
-                        {job.selectedNiches?.length > 3 && (
+                        {job.config?.selectedNiches?.length > 3 && (
                           <Badge variant="outline" className="text-xs">
-                            +{job.selectedNiches.length - 3}
+                            +{job.config.selectedNiches.length - 3}
                           </Badge>
+                        )}
+                        {(!job.config?.selectedNiches || job.config.selectedNiches.length === 0) && (
+                          <span className="text-gray-500 text-xs">No niches configured</span>
                         )}
                       </div>
                     </div>
@@ -299,29 +302,62 @@ const ScheduleManager: React.FC = () => {
                     <div>
                       <span className="font-medium text-gray-600">Platforms:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
-                        {job.platforms?.slice(0, 3).map((platform: string) => (
+                        {job.config?.platforms?.slice(0, 3).map((platform: string) => (
                           <Badge key={platform} variant="outline" className="text-xs">
                             {platform}
                           </Badge>
                         ))}
-                        {job.platforms?.length > 3 && (
+                        {job.config?.platforms?.length > 3 && (
                           <Badge variant="outline" className="text-xs">
-                            +{job.platforms.length - 3}
+                            +{job.config.platforms.length - 3}
                           </Badge>
                         )}
+                        {(!job.config?.platforms || job.config.platforms.length === 0) && (
+                          <span className="text-gray-500 text-xs">No platforms configured</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Additional Configuration */}
+                  <div className="grid grid-cols-2 gap-4 text-xs">
+                    <div>
+                      <span className="font-medium text-gray-600">Templates:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {job.config?.templates?.slice(0, 2).map((template: string) => (
+                          <Badge key={template} variant="secondary" className="text-xs">
+                            {template}
+                          </Badge>
+                        ))}
+                        {job.config?.templates?.length > 2 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{job.config.templates.length - 2}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-600">AI Models:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {job.config?.aiModels?.map((model: string) => (
+                          <Badge key={model} variant="default" className="text-xs">
+                            {model}
+                          </Badge>
+                        ))}
                       </div>
                     </div>
                   </div>
 
                   {/* Advanced Settings */}
                   <div className="flex flex-wrap gap-2 text-xs">
-                    {job.useSpartanFormat && (
+                    {job.config?.useSpartanFormat && (
                       <Badge className="bg-purple-600 text-white">Spartan Format</Badge>
                     )}
-                    {job.generateAffiliateLinks && (
+                    {job.config?.generateAffiliateLinks && (
                       <Badge className="bg-orange-600 text-white">Affiliate Links</Badge>
                     )}
-                    {job.useSmartStyle && (
+                    {job.config?.useSmartStyle && (
                       <Badge className="bg-blue-600 text-white">Smart Style</Badge>
                     )}
                   </div>
