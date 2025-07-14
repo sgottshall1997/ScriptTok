@@ -184,5 +184,5 @@ Preferred communication style: Simple, everyday language.
 - **ENHANCED JSON PARSING**: Added control character removal and improved error handling for malformed Perplexity API responses
 - **COMPREHENSIVE ERROR HANDLING**: Implemented specific handling for 401, 403, 429, and 500 HTTP status codes with appropriate retry logic
 - **RATE LIMITING SUPPORT**: Added 30-second delays and exponential backoff for rate limit scenarios
-- **API KEY CONFIGURATION**: Updated environment variable handling to use `PERPLEXITY_API` instead of `PERPLEXITY_API_KEY`
-- **AUTHENTICATION ISSUES IDENTIFIED**: Current Perplexity API key requires validation - system falls back to static product data until authentication is resolved
+- **API KEY CONFIGURATION**: Updated environment variable handling to use `PERPLEXITY_API_KEY` instead of `PERPLEXITY_API`
+- **AUTHENTICATION ISSUES IDENTIFIED**: Current Perplexity API key is malformed (shows "pplxpplx-x..." instead of "pplx-") - system falls back to static product data until valid key is provided
