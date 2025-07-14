@@ -16,10 +16,32 @@ import { generatePlatformSpecificContent, generatePlatformCaptions } from '../se
 import { WebhookService } from '../services/webhookService';
 
 // Enhanced Spartan format enforcer - automatically fix non-compliant content
-function enforceSpartanFormat(text: string): string {
-  if (!text) return '';
+function enforceSpartanFormat(input: any): string {
+  if (!input) return '';
   
-  let cleanedText = text;
+  // Handle different input types from AI responses
+  let cleanedText: string;
+  
+  console.log(`🏛️ SPARTAN FORMAT DEBUG: Input type: ${typeof input}, value:`, input);
+  
+  if (typeof input === 'string') {
+    cleanedText = input;
+  } else if (typeof input === 'object' && input !== null) {
+    // Extract string from Claude AI response object
+    if (Array.isArray(input)) {
+      cleanedText = input.join(' ');
+    } else {
+      cleanedText = input.content || input.text || input.message || input.script || input.output || JSON.stringify(input);
+    }
+  } else {
+    cleanedText = String(input || '');
+  }
+  
+  // Ensure we have a valid string
+  if (typeof cleanedText !== 'string') {
+    console.warn(`🏛️ SPARTAN FORMAT WARNING: Could not extract string from input, using fallback`);
+    cleanedText = String(cleanedText || '');
+  }
   
   // Define word replacements for Spartan format
   const spartanReplacements = {
@@ -48,10 +70,20 @@ function enforceSpartanFormat(text: string): string {
     ' awesome': ' excellent'
   };
   
-  // Apply replacements
+  // Apply replacements with additional safety checks
   Object.entries(spartanReplacements).forEach(([banned, replacement]) => {
-    const regex = new RegExp(banned, 'gi');
-    cleanedText = cleanedText.replace(regex, replacement);
+    try {
+      if (typeof cleanedText === 'string') {
+        const regex = new RegExp(banned, 'gi');
+        cleanedText = cleanedText.replace(regex, replacement);
+      } else {
+        console.error(`🏛️ SPARTAN FORMAT ERROR: cleanedText is not a string at replacement step:`, typeof cleanedText, cleanedText);
+        cleanedText = String(cleanedText || '');
+      }
+    } catch (replacementError) {
+      console.error(`🏛️ SPARTAN FORMAT REPLACEMENT ERROR:`, replacementError);
+      // Continue with other replacements
+    }
   });
   
   // Remove multiple spaces
