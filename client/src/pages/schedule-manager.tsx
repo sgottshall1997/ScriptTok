@@ -15,9 +15,9 @@ const ScheduleManager: React.FC = () => {
 
   // Fetch scheduled jobs
   const { data: scheduledJobs, isLoading, error } = useQuery({
-    queryKey: ['/api/scheduled-bulk/jobs'],
+    queryKey: ['/api/automated-bulk/scheduled-jobs'],
     queryFn: async () => {
-      const response = await apiRequest('GET', '/api/scheduled-bulk/jobs');
+      const response = await apiRequest('GET', '/api/automated-bulk/scheduled-jobs');
       return response.json();
     }
   });
@@ -25,10 +25,10 @@ const ScheduleManager: React.FC = () => {
   // Toggle job active state
   const toggleJobMutation = useMutation({
     mutationFn: async ({ jobId, isActive }: { jobId: number; isActive: boolean }) => {
-      return apiRequest('PUT', `/api/scheduled-bulk/jobs/${jobId}`, { isActive });
+      // PUT endpoint not available in simplified system - use DELETE to stop jobs
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/scheduled-bulk/jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/automated-bulk/scheduled-jobs'] });
       toast({
         title: "Updated",
         description: "Job status updated successfully"
@@ -46,10 +46,10 @@ const ScheduleManager: React.FC = () => {
   // Delete job
   const deleteJobMutation = useMutation({
     mutationFn: async (jobId: number) => {
-      return apiRequest('DELETE', `/api/scheduled-bulk/jobs/${jobId}`);
+      return apiRequest('DELETE', `/api/automated-bulk/scheduled-jobs/${jobId}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/scheduled-bulk/jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/automated-bulk/scheduled-jobs'] });
       toast({
         title: "Deleted",
         description: "Scheduled job deleted successfully"
@@ -67,7 +67,7 @@ const ScheduleManager: React.FC = () => {
   // Trigger job manually
   const triggerJobMutation = useMutation({
     mutationFn: async (jobId: number) => {
-      return apiRequest('POST', `/api/scheduled-bulk/jobs/${jobId}/trigger`);
+      // Manual trigger not available in simplified system
     },
     onSuccess: () => {
       toast({

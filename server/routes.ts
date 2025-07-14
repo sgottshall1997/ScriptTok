@@ -41,7 +41,7 @@ import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/sp
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId, createScheduledBulkGeneration, getScheduledBulkJobs, stopScheduledBulkJob } from "./api/automated-bulk-generation";
-import { getScheduledJobs, createScheduledJob, updateScheduledJob, deleteScheduledJob, triggerScheduledJob, initializeScheduledJobs, emergencyStopAllCronJobs, getActiveCronJobsStatus } from "./api/scheduled-bulk-generation";
+// Old scheduled-bulk-generation system removed - using simplified automated-bulk scheduling
 
 import { cronStatusRouter } from "./api/cron-status";
 import perplexityStatusRouter from "./api/perplexity-status";
@@ -594,28 +594,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   app.get('/api/automated-bulk/details/:jobId', getBulkJobDetails);
   
-  // Scheduled bulk generation
-  app.get('/api/scheduled-bulk/jobs', getScheduledJobs);
-  app.post('/api/scheduled-bulk/jobs', createScheduledJob);
-  app.put('/api/scheduled-bulk/jobs/:id', updateScheduledJob);
-  app.delete('/api/scheduled-bulk/jobs/:id', deleteScheduledJob);
-  app.post('/api/scheduled-bulk/jobs/:id/trigger', triggerScheduledJob);
-  app.post('/api/scheduled-bulk/emergency-stop', emergencyStopAllCronJobs);
-  app.get('/api/scheduled-bulk/status', getActiveCronJobsStatus);
-  
-  // 🚨 EMERGENCY STOP endpoints removed due to missing function definitions
-
-  // 🚨 CRITICAL FIX: Emergency stop all cron jobs
-  app.post('/api/scheduled-bulk/emergency-stop', async (req, res) => {
-    const { emergencyStopAllCronJobs } = await import('./api/scheduled-bulk-generation');
-    await emergencyStopAllCronJobs(req, res);
-  });
-
-  // Get active cron jobs status
-  app.get('/api/scheduled-bulk/cron-status', async (req, res) => {
-    const { getActiveCronJobsStatus } = await import('./api/scheduled-bulk-generation');
-    await getActiveCronJobsStatus(req, res);
-  });
+  // OLD SCHEDULED BULK GENERATION ROUTES REMOVED
+  // Now using simplified scheduling: /api/automated-bulk/schedule
   
   // NEW: Simplified scheduling that extends automated bulk generator
   app.post('/api/automated-bulk/schedule', createScheduledBulkGeneration);

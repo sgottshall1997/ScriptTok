@@ -47,14 +47,14 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
 
   const createScheduledJobMutation = useMutation({
     mutationFn: async (jobData: any) => {
-      return apiRequest('POST', '/api/scheduled-bulk/jobs', jobData);
+      return apiRequest('POST', '/api/automated-bulk/schedule', jobData);
     },
     onSuccess: () => {
       toast({
         title: "✅ Scheduled!",
         description: `Your daily bulk generation will run at ${scheduleSettings.scheduleTime}.`,
       });
-      queryClient.invalidateQueries({ queryKey: ['/api/scheduled-bulk/jobs'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/automated-bulk/scheduled-jobs'] });
       setIsScheduleEnabled(false); // Reset the toggle
     },
     onError: (error: any) => {
@@ -77,21 +77,19 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
     }
 
     const jobData = {
-      name: scheduleSettings.name,
-      scheduleTime: scheduleSettings.scheduleTime,
-      timezone: scheduleSettings.timezone,
       selectedNiches: formData.selectedNiches || [],
       tones: formData.tones || [],
       templates: formData.templates || [],
       platforms: formData.platforms || [],
+      aiModels: ['claude'], // Claude-only for scheduled jobs
+      contentFormats: formData.useSpartanFormat ? ['spartan'] : ['regular'],
       useExistingProducts: formData.useExistingProducts || true,
       generateAffiliateLinks: formData.generateAffiliateLinks || false,
       useSpartanFormat: formData.useSpartanFormat || false,
-      useSmartStyle: formData.useSmartStyle || false,
       affiliateId: formData.affiliateId || 'sgottshall107-20',
-      aiModel: formData.selectedAiModels?.[0] || 'claude', // 🚀 CLAUDE-FIRST: Prioritize Claude for scheduled jobs
-      webhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
-      sendToMakeWebhook: true
+      isScheduled: true,
+      scheduleTime: scheduleSettings.scheduleTime,
+      timezone: scheduleSettings.timezone
     };
 
     createScheduledJobMutation.mutate(jobData);

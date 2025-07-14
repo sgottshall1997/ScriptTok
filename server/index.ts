@@ -75,9 +75,6 @@ app.use((req, res, next) => {
     console.log('🚫 DISABLED: Automatic scheduled job initialization disabled to prevent unauthorized job creation');
     console.log('   ℹ️  Scheduled jobs must be manually activated through the UI');
     
-    // Manual initialization option (commented out)
-    // const { stopAllCronJobs, initializeScheduledJobs } = await import("./api/scheduled-bulk-generation");
-    // await stopAllCronJobs();
-    // await initializeScheduledJobs();
+    // OLD SCHEDULED SYSTEM REMOVED - using simplified unified scheduling
   });
 })();
