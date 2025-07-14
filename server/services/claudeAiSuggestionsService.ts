@@ -46,6 +46,7 @@ export async function storeSuggestion(suggestion: InsertClaudeAiSuggestion): Pro
  */
 export async function getSuggestionsForContent(query: SuggestionQuery): Promise<SuggestionWithEffectiveness[]> {
   const { niche, templateType, platform, tone, limit = 10 } = query;
+  console.log(`🔍 CLAUDE AI SERVICE: Querying suggestions with niche=${niche}, templateType=${templateType}, platform=${platform}, tone=${tone}, limit=${limit}`);
   
   let dbQuery = db
     .select({
@@ -100,6 +101,8 @@ export async function getSuggestionsForContent(query: SuggestionQuery): Promise<
   const results = await dbQuery
     .orderBy(desc(sql`effectiveness`), desc(claudeAiSuggestions.priority))
     .limit(limit);
+
+  console.log(`📊 CLAUDE AI SERVICE: Found ${results.length} suggestions for niche: ${niche}, template: ${templateType}, tone: ${tone}`);
 
   return results.map(row => ({
     ...row.suggestion,

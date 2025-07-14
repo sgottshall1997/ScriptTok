@@ -344,6 +344,8 @@ export async function getTargetedSuggestions(
   templateType: string, 
   tone: string = 'professional'
 ): Promise<any[]> {
+  console.log(`🔍 TARGETED SUGGESTIONS: Starting search for ${niche} + ${templateType} + ${tone}`);
+  
   // First try exact match
   let suggestions = await getSuggestionsForContent({
     niche,
@@ -351,24 +353,36 @@ export async function getTargetedSuggestions(
     tone,
     limit: 5
   });
+  console.log(`🔍 TARGETED SUGGESTIONS: Exact match found ${suggestions.length} suggestions`);
 
   // If no exact match, try niche + template (any tone)
   if (suggestions.length === 0) {
+    console.log(`🔍 TARGETED SUGGESTIONS: No exact match, trying niche + template only`);
     suggestions = await getSuggestionsForContent({
       niche,
       templateType,
       limit: 3
     });
+    console.log(`🔍 TARGETED SUGGESTIONS: Niche + template found ${suggestions.length} suggestions`);
   }
 
   // If still no match, try niche only
   if (suggestions.length === 0) {
+    console.log(`🔍 TARGETED SUGGESTIONS: No niche + template match, trying niche only`);
     suggestions = await getSuggestionsForContent({
       niche,
       limit: 2
     });
+    console.log(`🔍 TARGETED SUGGESTIONS: Niche only found ${suggestions.length} suggestions`);
   }
 
-  console.log(`🎯 Found ${suggestions.length} targeted suggestions for ${niche}-${templateType}-${tone}`);
+  console.log(`🎯 TARGETED SUGGESTIONS RESULT: Found ${suggestions.length} targeted suggestions for ${niche}-${templateType}-${tone}`);
+  if (suggestions.length > 0) {
+    console.log(`🎯 TARGETED SUGGESTIONS SAMPLE:`, suggestions.slice(0, 2).map(s => ({
+      category: s.category,
+      suggestion: s.suggestion?.substring(0, 80) + '...'
+    })));
+  }
+  
   return suggestions;
 }

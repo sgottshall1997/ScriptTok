@@ -122,12 +122,16 @@ export async function generateUnifiedContent(config: ContentGenerationConfig): P
  */
 async function generateMainScript(config: ContentGenerationConfig): Promise<string> {
   // Get targeted Claude AI suggestions for exact niche-template combination
+  console.log(`🎯 CLAUDE AI SUGGESTIONS: Fetching targeted suggestions for ${config.niche} + ${config.templateType} + ${config.tone}`);
+  
   const { getTargetedSuggestions } = await import('./retroactiveClaudeSuggestionGenerator');
   const aiSuggestions = await getTargetedSuggestions(
     config.niche,
     config.templateType,
     config.tone
   );
+  
+  console.log(`🎯 CLAUDE AI SUGGESTIONS: Found ${aiSuggestions.length} targeted suggestions for ${config.niche}-${config.templateType}`);
 
   const promptConfig: PromptConfig = {
     niche: config.niche,
