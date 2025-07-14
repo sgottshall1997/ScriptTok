@@ -260,6 +260,45 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     // Generate content
     const contentResult = await generateSingleContent(config);
     
+    // Save to content history database
+    try {
+      const sessionId = `unified_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      const historyRecord = {
+        userId: 1, // Default user ID - you can modify this based on your auth system
+        sessionId: sessionId,
+        niche: config.niche,
+        contentType: config.templateType,
+        tone: config.tone,
+        productName: config.productName,
+        promptText: `Generated ${config.templateType} content for ${config.productName} in ${config.niche} niche using ${config.tone} tone`,
+        outputText: contentResult.script || contentResult.content || 'No content generated',
+        platformsSelected: config.platforms,
+        generatedOutput: {
+          ...contentResult,
+          mode: config.mode,
+          aiModel: config.aiModel,
+          useSpartanFormat: config.useSpartanFormat,
+          affiliateLink: contentResult.affiliateLink
+        },
+        affiliateLink: contentResult.affiliateLink || null,
+        viralInspo: null,
+        modelUsed: 'Claude',
+        tokenCount: Math.floor((contentResult.script || contentResult.content || '').length / 4),
+        fallbackLevel: null,
+        aiModel: config.aiModel,
+        contentFormat: config.useSpartanFormat ? 'Spartan Format' : 'Regular Format',
+        topRatedStyleUsed: config.useSmartStyle || false
+      };
+
+      const [savedRecord] = await db.insert(contentHistory).values(historyRecord).returning();
+      console.log(`💾 Content saved to history with ID: ${savedRecord.id}`);
+      
+    } catch (dbError) {
+      console.error('📊 Failed to save content to history:', dbError);
+      // Continue with response even if database save fails
+    }
+    
     const endTime = Date.now();
     const duration = endTime - startTime;
 
