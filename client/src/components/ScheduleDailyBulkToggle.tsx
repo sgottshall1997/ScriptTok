@@ -49,10 +49,11 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
     mutationFn: async (jobData: any) => {
       return apiRequest('POST', '/api/automated-bulk/schedule', jobData);
     },
-    onSuccess: () => {
+    onSuccess: (response: any) => {
+      const nextRun = response?.nextRun || `at ${scheduleSettings.scheduleTime}`;
       toast({
         title: "✅ Scheduled!",
-        description: `Your daily bulk generation will run at ${scheduleSettings.scheduleTime}.`,
+        description: `Your daily bulk generation will run ${nextRun.toLowerCase()}.`,
       });
       queryClient.invalidateQueries({ queryKey: ['/api/automated-bulk/scheduled-jobs'] });
       setIsScheduleEnabled(false); // Reset the toggle

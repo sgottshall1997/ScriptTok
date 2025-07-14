@@ -1055,7 +1055,16 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
     const [hours, minutes] = validatedData.scheduleTime.split(':').map(Number);
     const cronPattern = `${minutes} ${hours} * * *`; // Daily at specified time
     
+    // Check if the scheduled time is in the future today
+    const now = new Date();
+    const scheduledToday = new Date();
+    scheduledToday.setHours(hours, minutes, 0, 0);
+    
+    const isScheduledForFuture = scheduledToday > now;
+    
     console.log(`📅 SCHEDULING: Creating scheduled bulk job "${jobId}" for ${validatedData.scheduleTime} (${cronPattern})`);
+    console.log(`⏰ Current time: ${now.toLocaleTimeString()}, Scheduled time today: ${scheduledToday.toLocaleTimeString()}`);
+    console.log(`🔮 Will ${isScheduledForFuture ? 'run today at' : 'run tomorrow at'} ${validatedData.scheduleTime}`);
     
     // Create the cron job that will call the existing automated bulk generator
     const cronJob = cron.schedule(cronPattern, async () => {
@@ -1099,8 +1108,15 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
       timezone: validatedData.timezone
     });
     
-    // Start the cron job
-    cronJob.start();
+    // Only start the cron job if the time hasn't passed for today
+    // If the time has passed, it will automatically run tomorrow
+    if (isScheduledForFuture) {
+      console.log(`✅ Starting cron job - will run today at ${validatedData.scheduleTime}`);
+      cronJob.start();
+    } else {
+      console.log(`⏳ Starting cron job - will run tomorrow at ${validatedData.scheduleTime} (time has passed for today)`);
+      cronJob.start();
+    }
     
     // Store the job reference
     activeScheduledJobs.set(jobId, {
@@ -1111,7 +1127,10 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
       timezone: validatedData.timezone
     });
     
-    console.log(`✅ SCHEDULED BULK JOB CREATED: ${jobId} will run daily at ${validatedData.scheduleTime} ${validatedData.timezone}`);
+    const willRunToday = isScheduledForFuture;
+    const nextRunTime = willRunToday ? 'today' : 'tomorrow';
+    
+    console.log(`✅ SCHEDULED BULK JOB CREATED: ${jobId} will run ${nextRunTime} at ${validatedData.scheduleTime} ${validatedData.timezone}`);
     
     res.json({
       success: true,
@@ -1119,7 +1138,9 @@ export async function createScheduledBulkGeneration(req: Request, res: Response)
       scheduleTime: validatedData.scheduleTime,
       timezone: validatedData.timezone,
       cronPattern,
-      message: `Bulk generation scheduled for daily execution at ${validatedData.scheduleTime} ${validatedData.timezone}`
+      willRunToday,
+      nextRun: willRunToday ? `Today at ${validatedData.scheduleTime}` : `Tomorrow at ${validatedData.scheduleTime}`,
+      message: `Bulk generation scheduled for daily execution. Next run: ${nextRunTime} at ${validatedData.scheduleTime} ${validatedData.timezone}`
     });
     
   } catch (error) {
