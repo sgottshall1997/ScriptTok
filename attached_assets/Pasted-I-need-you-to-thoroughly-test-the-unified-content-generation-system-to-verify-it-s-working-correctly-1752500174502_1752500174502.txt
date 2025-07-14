@@ -1,0 +1,55 @@
+I need you to thoroughly test the unified content generation system to verify it's working correctly. Please test and report on the following:
+**CRITICAL TEST 1: Main Content vs Platform Caption Separation**
+Generate content for "Echo Dot 5th Generation Smart Speaker" in tech niche and verify:
+- ONE main video script is generated (the primary content)
+- SEPARATE platform captions are generated for TikTok, Instagram, YouTube, Twitter, Facebook
+- Each platform caption is DIFFERENT from the main script and from each other
+- No "[TRUNCATED]" text appears anywhere in the output
+- Platform captions are truly platform-native (not just reformatted main content)
+**CRITICAL TEST 2: Content Display Verification**
+Check the UI displays:
+- Main script in its own clearly labeled section
+- Each platform caption in separate, distinct sections with platform labels
+- Individual copy buttons for main script AND each platform caption
+- All content is complete and properly formatted
+**CRITICAL TEST 3: Content Generation Flow**
+Test these files work together correctly:
+- `server/services/unifiedContentGenerator.ts` - Main orchestrator
+- `server/services/platformContentGenerator.ts` - Platform caption generator
+- `server/api/generateContentUnified.ts` - API endpoint
+- `client/src/components/UnifiedContentGenerator.tsx` - UI component
+- `client/src/components/GeneratedContentCard.tsx` - Content display
+**CRITICAL TEST 4: Platform-Specific Quality Check**
+Verify each platform caption has:
+- TikTok: Gen Z language, viral hooks, trending elements
+- Instagram: Aesthetic, lifestyle-focused, hashtag-heavy
+- YouTube: Descriptive, SEO-friendly, longer format
+- Twitter: Concise, witty, under 280 characters
+- Facebook: Professional, family-friendly, community-focused
+**CRITICAL TEST 5: Data Flow Validation**
+Test the complete flow:
+1. User selects product and platforms
+2. System generates main content + platform captions
+3. Content is properly stored in database
+4. UI displays all pieces correctly
+5. Copy buttons work for each individual piece
+6. Webhook sends complete data to Make.com
+**POTENTIAL ISSUES TO CHECK:**
+1. **Content Extraction**: In `generateContentUnified.ts` line ~200, verify Claude response structure is properly handled:
+let extractedContent = null;
+if (aiResponse.content?.content) {
+extractedContent = aiResponse.content.content; // Claude structure
+}
+
+2. **Platform Caption Uniqueness**: In `platformContentGenerator.ts`, verify the uniqueness enforcement is working and not generating similar content.
+3. **UI Display**: In `GeneratedContentCard.tsx`, check if platform captions are displayed separately from main content with proper labels.
+4. **Truncation Issues**: Search for any remaining "[TRUNCATED]" text in generated content.
+5. **Database Storage**: Verify content is properly saved with both main script and platform captions.
+**TEST COMMAND:**
+Run this test and provide detailed output showing:
+- The main script content (first 200 characters)
+- Each platform caption (first 100 characters each)
+- Confirmation that all content is unique and platform-optimized
+- Any errors or issues found
+**IF YOU FIND ISSUES:**
+Report exactly what's broken and which files need fixes. The system should generate ONE main script + SEPARATE platform captions that are genuinely different and optimized for each platform.
