@@ -337,7 +337,7 @@ export async function getSmartStyleRecommendations(
   platform?: string
 ) {
   try {
-    // Get high-rated content from user ratings (80+ on 1-100 scale)
+    // Get high-rated content from user ratings (69+ on 1-100 scale)
     const userRatedContent = await db
       .select({
         contentHistory: contentHistory,
@@ -349,13 +349,13 @@ export async function getSmartStyleRecommendations(
       .innerJoin(contentHistory, eq(contentRatings.contentHistoryId, contentHistory.id))
       .where(and(
         eq(contentRatings.userId, userId),
-        gte(contentRatings.overallRating, 80),
+        gte(contentRatings.overallRating, 69),
         niche ? eq(contentHistory.niche, niche) : sql`true`
       ))
       .orderBy(desc(contentRatings.overallRating))
-      .limit(10);
+      .limit(15);
 
-    // Get high-rated content from AI evaluations (8+ on 1-10 scale = 80+ equivalent)
+    // Get high-rated content from AI evaluations (6.9+ on 1-10 scale = 69+ equivalent)
     const { contentEvaluations } = await import('@shared/schema');
     const aiEvaluatedContent = await db
       .select({
@@ -367,11 +367,11 @@ export async function getSmartStyleRecommendations(
       .from(contentEvaluations)
       .innerJoin(contentHistory, eq(contentEvaluations.contentHistoryId, contentHistory.id))
       .where(and(
-        sql`${contentEvaluations.overallScore}::numeric >= 8`, // 8+ on 1-10 scale
+        sql`${contentEvaluations.overallScore}::numeric >= 6.9`, // 6.9+ on 1-10 scale
         niche ? eq(contentHistory.niche, niche) : sql`true`
       ))
       .orderBy(desc(contentEvaluations.overallScore))
-      .limit(10);
+      .limit(15);
 
     // Combine both sources
     const allHighRatedContent = [
@@ -559,7 +559,7 @@ export async function getTopRatedContentForStyle(
   highRatedCaptionExample?: string;
 } | null> {
   try {
-    // Fetch highly rated content from user ratings (90+) for the user in this niche
+    // Fetch highly rated content from user ratings (85+) for the user in this niche
     const userRatedContent = await db
       .select({
         rating: contentRatings,
@@ -571,14 +571,14 @@ export async function getTopRatedContentForStyle(
       .where(
         and(
           eq(contentRatings.userId, userId),
-          gte(contentRatings.overallRating, 90),
+          gte(contentRatings.overallRating, 85),
           eq(contentHistory.niche, niche)
         )
       )
       .orderBy(desc(contentRatings.overallRating))
-      .limit(10);
+      .limit(15);
 
-    // Fetch highly rated content from AI evaluations (9+ on 1-10 scale = 90+ equivalent)
+    // Fetch highly rated content from AI evaluations (8.5+ on 1-10 scale = 85+ equivalent)
     const { contentEvaluations } = await import('@shared/schema');
     const aiEvaluatedContent = await db
       .select({
@@ -590,12 +590,12 @@ export async function getTopRatedContentForStyle(
       .innerJoin(contentHistory, eq(contentEvaluations.contentHistoryId, contentHistory.id))
       .where(
         and(
-          sql`${contentEvaluations.overallScore}::numeric >= 9`, // 9+ on 1-10 scale
+          sql`${contentEvaluations.overallScore}::numeric >= 8.5`, // 8.5+ on 1-10 scale
           eq(contentHistory.niche, niche)
         )
       )
       .orderBy(desc(contentEvaluations.overallScore))
-      .limit(10);
+      .limit(15);
 
     // Combine both sources
     const allHighRatedContent = [
@@ -699,4 +699,225 @@ function getFrequencyMap(arr: string[]): Record<string, number> {
     freq[item] = (freq[item] || 0) + 1;
     return freq;
   }, {} as Record<string, number>);
+}
+
+// Comprehensive rating storage function with validation
+export async function storeContentRating(data: {
+  contentHistoryId: number;
+  userId: number;
+  overallRating: number;
+  tiktokRating?: number;
+  instagramRating?: number;
+  youtubeRating?: number;
+  twitterRating?: number;
+  facebookRating?: number;
+  notes?: string;
+  timestamp?: Date;
+}) {
+  try {
+    // Validate rating ranges (1-100)
+    if (data.overallRating < 1 || data.overallRating > 100) {
+      throw new Error('Overall rating must be between 1 and 100');
+    }
+
+    // Check if rating already exists
+    const existingRating = await db
+      .select()
+      .from(contentRatings)
+      .where(
+        and(
+          eq(contentRatings.contentHistoryId, data.contentHistoryId),
+          eq(contentRatings.userId, data.userId)
+        )
+      )
+      .limit(1);
+
+    if (existingRating.length > 0) {
+      // Update existing rating
+      await db
+        .update(contentRatings)
+        .set({
+          overallRating: data.overallRating,
+          tiktokRating: data.tiktokRating,
+          instagramRating: data.instagramRating,
+          youtubeRating: data.youtubeRating,
+          twitterRating: data.twitterRating,
+          facebookRating: data.facebookRating,
+          notes: data.notes,
+          ratedAt: data.timestamp || new Date()
+        })
+        .where(
+          and(
+            eq(contentRatings.contentHistoryId, data.contentHistoryId),
+            eq(contentRatings.userId, data.userId)
+          )
+        );
+    } else {
+      // Insert new rating
+      await db.insert(contentRatings).values({
+        contentHistoryId: data.contentHistoryId,
+        userId: data.userId,
+        overallRating: data.overallRating,
+        tiktokRating: data.tiktokRating,
+        instagramRating: data.instagramRating,
+        youtubeRating: data.youtubeRating,
+        twitterRating: data.twitterRating,
+        facebookRating: data.facebookRating,
+        notes: data.notes,
+        ratedAt: data.timestamp || new Date()
+      });
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error storing content rating:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// AI evaluation storage function with comprehensive validation
+export async function storeAIEvaluation(data: {
+  contentHistoryId: number;
+  evaluatorModel: string;
+  viralityScore: number;
+  clarityScore: number;
+  persuasivenessScore: number;
+  creativityScore: number;
+  viralityJustification: string;
+  clarityJustification: string;
+  persuasivenessJustification: string;
+  creativityJustification: string;
+  needsRevision: boolean;
+  improvementSuggestions?: string;
+}) {
+  try {
+    // Validate AI evaluation scores (1-10)
+    const scores = [data.viralityScore, data.clarityScore, data.persuasivenessScore, data.creativityScore];
+    for (const score of scores) {
+      if (score < 1 || score > 10) {
+        throw new Error('AI evaluation scores must be between 1 and 10');
+      }
+    }
+
+    // Calculate overall score (average of all scores)
+    const overallScore = (scores.reduce((sum, score) => sum + score, 0) / scores.length).toFixed(1);
+
+    // Import contentEvaluations table
+    const { contentEvaluations } = await import('@shared/schema');
+
+    // Check if evaluation already exists
+    const existingEvaluation = await db
+      .select()
+      .from(contentEvaluations)
+      .where(
+        and(
+          eq(contentEvaluations.contentHistoryId, data.contentHistoryId),
+          eq(contentEvaluations.evaluatorModel, data.evaluatorModel)
+        )
+      )
+      .limit(1);
+
+    if (existingEvaluation.length > 0) {
+      // Update existing evaluation
+      await db
+        .update(contentEvaluations)
+        .set({
+          viralityScore: data.viralityScore,
+          clarityScore: data.clarityScore,
+          persuasivenessScore: data.persuasivenessScore,
+          creativityScore: data.creativityScore,
+          viralityJustification: data.viralityJustification,
+          clarityJustification: data.clarityJustification,
+          persuasivenessJustification: data.persuasivenessJustification,
+          creativityJustification: data.creativityJustification,
+          needsRevision: data.needsRevision,
+          improvementSuggestions: data.improvementSuggestions,
+          overallScore: overallScore,
+          createdAt: new Date()
+        })
+        .where(
+          and(
+            eq(contentEvaluations.contentHistoryId, data.contentHistoryId),
+            eq(contentEvaluations.evaluatorModel, data.evaluatorModel)
+          )
+        );
+    } else {
+      // Insert new evaluation
+      await db.insert(contentEvaluations).values({
+        contentHistoryId: data.contentHistoryId,
+        evaluatorModel: data.evaluatorModel,
+        viralityScore: data.viralityScore,
+        clarityScore: data.clarityScore,
+        persuasivenessScore: data.persuasivenessScore,
+        creativityScore: data.creativityScore,
+        viralityJustification: data.viralityJustification,
+        clarityJustification: data.clarityJustification,
+        persuasivenessJustification: data.persuasivenessJustification,
+        creativityJustification: data.creativityJustification,
+        needsRevision: data.needsRevision,
+        improvementSuggestions: data.improvementSuggestions,
+        overallScore: overallScore,
+        createdAt: new Date()
+      });
+    }
+
+    return { success: true, overallScore: parseFloat(overallScore) };
+  } catch (error) {
+    console.error('Error storing AI evaluation:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// Get comprehensive rating statistics for a user
+export async function getUserRatingStats(userId: number) {
+  try {
+    const { contentEvaluations } = await import('@shared/schema');
+    
+    // Get user ratings statistics
+    const userRatingsStats = await db
+      .select({
+        totalRatings: sql<number>`COUNT(*)`,
+        avgRating: sql<number>`AVG(${contentRatings.overallRating})`,
+        highRatedCount: sql<number>`COUNT(CASE WHEN ${contentRatings.overallRating} >= 69 THEN 1 END)`,
+        excellentRatedCount: sql<number>`COUNT(CASE WHEN ${contentRatings.overallRating} >= 85 THEN 1 END)`,
+        latestRating: sql<Date>`MAX(${contentRatings.ratedAt})`
+      })
+      .from(contentRatings)
+      .where(eq(contentRatings.userId, userId))
+      .groupBy(contentRatings.userId);
+
+    // Get AI evaluation statistics
+    const aiEvaluationStats = await db
+      .select({
+        totalEvaluations: sql<number>`COUNT(*)`,
+        avgScore: sql<number>`AVG(${contentEvaluations.overallScore}::numeric)`,
+        highScoreCount: sql<number>`COUNT(CASE WHEN ${contentEvaluations.overallScore}::numeric >= 6.9 THEN 1 END)`,
+        excellentScoreCount: sql<number>`COUNT(CASE WHEN ${contentEvaluations.overallScore}::numeric >= 8.5 THEN 1 END)`,
+        latestEvaluation: sql<Date>`MAX(${contentEvaluations.createdAt})`
+      })
+      .from(contentEvaluations)
+      .innerJoin(contentHistory, eq(contentEvaluations.contentHistoryId, contentHistory.id))
+      .where(eq(contentHistory.userId, userId))
+      .groupBy(contentHistory.userId);
+
+    return {
+      userRatings: userRatingsStats[0] || {
+        totalRatings: 0,
+        avgRating: 0,
+        highRatedCount: 0,
+        excellentRatedCount: 0,
+        latestRating: null
+      },
+      aiEvaluations: aiEvaluationStats[0] || {
+        totalEvaluations: 0,
+        avgScore: 0,
+        highScoreCount: 0,
+        excellentScoreCount: 0,
+        latestEvaluation: null
+      }
+    };
+  } catch (error) {
+    console.error('Error getting user rating stats:', error);
+    return null;
+  }
 }
