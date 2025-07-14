@@ -102,6 +102,7 @@ interface GenerationConfig {
   aiModel: string;
   mode: 'manual' | 'automated';
   jobId?: string;
+  userId?: number;
 }
 
 // Enhanced validation function for generated content
@@ -193,6 +194,29 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       .orderBy(desc(trendingProducts.createdAt))
       .limit(5);
 
+    // Get smart style recommendations if enabled
+    let smartStyleRecommendations = null;
+    if (config.useSmartStyle && config.userId) {
+      try {
+        const { getSmartStyleRecommendations } = await import('../services/ratingSystem');
+        smartStyleRecommendations = await getSmartStyleRecommendations(
+          config.userId,
+          config.niche,
+          config.templateType,
+          config.tone,
+          config.platforms[0] // Use first platform for recommendations
+        );
+        
+        if (smartStyleRecommendations) {
+          console.log(`🎯 Smart style recommendations found for user ${config.userId}: ${smartStyleRecommendations.recommendation}`);
+        } else {
+          console.log(`ℹ️ No smart style recommendations available for user ${config.userId} (need 80+ rated content)`);
+        }
+      } catch (error) {
+        console.error('Error fetching smart style recommendations:', error);
+      }
+    }
+
     // Use unified content generator
     const contentFormat = config.useSpartanFormat ? 'spartan' : 'standard';
     console.log(`📝 Content generation mode: ${contentFormat.toUpperCase()}`);
@@ -207,7 +231,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       contentFormat: contentFormat,
       aiModel: config.aiModel,
       trendingProducts: trendingProductsData,
-      viralInspiration: null
+      viralInspiration: null,
+      smartStyleRecommendations: smartStyleRecommendations
     };
 
     // Generate content using unified generator
@@ -544,7 +569,8 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
             useSpartanFormat: data.useSpartanFormat,
             aiModel: selectedAiModel,
             mode: 'manual',
-            jobId
+            jobId,
+            userId: data.userId || 1
           });
         }
       }
@@ -604,7 +630,8 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
           useSpartanFormat: data.useSpartanFormat,
           aiModel: selectedAiModel,
           mode: 'automated',
-          jobId
+          jobId,
+          userId: data.userId || 1
         });
       }
     }
