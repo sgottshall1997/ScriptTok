@@ -101,7 +101,7 @@ Respond ONLY with a valid JSON array of 3 products. No markdown, headers, or exp
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'sonar-pro',
+        model: 'sonar',
         messages: [
           {
             role: 'system',

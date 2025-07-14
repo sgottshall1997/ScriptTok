@@ -140,7 +140,7 @@ JSON array only:`;
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'sonar-pro', // Updated model - llama-3.1-sonar deprecated Feb 2025
+          model: 'sonar', // Current Perplexity model - sonar-pro deprecated
           messages: [
             {
               role: 'system',
@@ -165,8 +165,22 @@ JSON array only:`;
       if (!response.ok) {
         const errorText = await response.text();
         console.error(`❌ Perplexity API error for ${niche}:`, response.status, errorText);
-        console.error(`❌ Request model: sonar-pro`);
+        console.error(`❌ Request model: sonar`);
         console.error(`❌ Full error response:`, errorText);
+        
+        // Handle specific error types
+        if (response.status === 429) {
+          console.log(`⏳ Rate limit hit for ${niche}, waiting 30 seconds...`);
+          await new Promise(resolve => setTimeout(resolve, 30000));
+          // Add retry logic here if needed
+        } else if (response.status === 401) {
+          console.error(`🔑 API key invalid or expired for ${niche}`);
+        } else if (response.status === 403) {
+          console.error(`🚫 Access denied for ${niche} - check API permissions`);
+        } else if (response.status === 500) {
+          console.error(`🔥 Server error for ${niche} - Perplexity API issue`);
+        }
+        
         errors.push(`${niche}: ${response.status} ${errorText}`);
         continue;
       }
@@ -185,8 +199,11 @@ JSON array only:`;
       let validProducts: any[] = [];
       
       try {
-        // Clean and parse JSON response
+        // Clean and parse JSON response with control character removal
         let cleanContent = content.trim();
+        
+        // Remove control characters that can break JSON parsing
+        cleanContent = cleanContent.replace(/[\x00-\x1F\x7F-\x9F]/g, '');
         
         // Remove any non-JSON text before/after the array
         const jsonMatch = cleanContent.match(/\[[\s\S]*\]/);

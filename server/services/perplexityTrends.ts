@@ -162,7 +162,7 @@ Respond with JSON array only:`;
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "sonar-pro", // Updated model - llama-3.1-sonar deprecated Feb 2025
+        model: "sonar", // Current Perplexity model - sonar-pro deprecated
         messages: [
           {
             role: "system",
@@ -187,12 +187,19 @@ Respond with JSON array only:`;
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`❌ Perplexity API error details:`, errorText);
-      console.error(`❌ Request model: sonar-pro`);
+      console.error(`❌ Request model: sonar`);
       console.error(`❌ Request status: ${response.status} ${response.statusText}`);
       
-      // Try fallback with basic sonar model if sonar-pro fails
-      if (response.status === 400 && errorText.includes('model')) {
-        console.log(`🔄 Trying fallback with basic 'sonar' model...`);
+      // Handle rate limiting and quota issues
+      if (response.status === 429) {
+        console.log(`⏳ Rate limit hit, waiting 30 seconds...`);
+        await new Promise(resolve => setTimeout(resolve, 30000));
+        return await fetchWithFallbackModel(niche, prompt);
+      }
+      
+      // Try fallback with alternative prompt if main fails
+      if (response.status === 400 || response.status === 500) {
+        console.log(`🔄 Trying fallback with alternative prompt...`);
         return await fetchWithFallbackModel(niche, prompt);
       }
       
@@ -300,7 +307,7 @@ Example format: "Nike Air Force 1 '07 Sneakers" not "Nike shoes"`;
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "sonar-pro", // Updated model - llama-3.1-sonar deprecated Feb 2025
+        model: "sonar", // Current Perplexity model - sonar-pro deprecated
         messages: [
           {
             role: "user",
