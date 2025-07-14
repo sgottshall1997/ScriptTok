@@ -14,6 +14,7 @@ import { validateGenerationRequest, detectGenerationContext, logGenerationAttemp
 import { generateContent } from '../services/contentGenerator';
 import { generatePlatformSpecificContent, generatePlatformCaptions } from '../services/platformContentGenerator';
 import { WebhookService } from '../services/webhookService';
+import * as cron from 'node-cron';
 
 // Enhanced Spartan format enforcer - automatically fix non-compliant content
 function enforceSpartanFormat(input: any): string {
@@ -144,7 +145,10 @@ const automatedBulkSchema = z.object({
   useManualAffiliateLinks: z.boolean().default(false),
   manualAffiliateLinks: z.record(z.string()).optional(),
   scheduleAfterGeneration: z.boolean().default(false),
-  scheduledTime: z.string().datetime().optional(),
+  scheduledTime: z.string().optional(),
+  scheduleTime: z.string().optional(), // Format: "HH:mm"
+  timezone: z.string().default("America/New_York"),
+  isScheduled: z.boolean().default(false),
   makeWebhookUrl: z.string().url().optional(),
   useSmartStyle: z.boolean().default(false),
   userId: z.number().optional(),
@@ -1026,6 +1030,165 @@ export async function getBulkJobDetails(req: Request, res: Response) {
     res.status(500).json({ 
       error: 'Failed to get bulk job details',
       details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}
+
+// Store for active scheduled jobs
+const activeScheduledJobs = new Map<string, any>();
+
+// Simple scheduling function that reuses the existing automated bulk generator
+export async function createScheduledBulkGeneration(req: Request, res: Response) {
+  try {
+    const validatedData = automatedBulkSchema.parse(req.body);
+    
+    if (!validatedData.isScheduled || !validatedData.scheduleTime) {
+      return res.status(400).json({
+        success: false,
+        error: 'Schedule time required for scheduled generation'
+      });
+    }
+
+    const jobId = `scheduled_bulk_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Convert time format (HH:mm) to cron format
+    const [hours, minutes] = validatedData.scheduleTime.split(':').map(Number);
+    const cronPattern = `${minutes} ${hours} * * *`; // Daily at specified time
+    
+    console.log(`📅 SCHEDULING: Creating scheduled bulk job "${jobId}" for ${validatedData.scheduleTime} (${cronPattern})`);
+    
+    // Create the cron job that will call the existing automated bulk generator
+    const cronJob = cron.schedule(cronPattern, async () => {
+      console.log(`⏰ EXECUTING SCHEDULED BULK JOB: ${jobId}`);
+      
+      try {
+        // Call the existing automated bulk generation function
+        const mockReq = {
+          body: {
+            ...validatedData,
+            isScheduled: false // Remove scheduling flags for execution
+          }
+        } as Request;
+        
+        const mockRes = {
+          json: (data: any) => {
+            console.log(`✅ SCHEDULED BULK COMPLETED: ${jobId}`, data.success ? 'SUCCESS' : 'FAILED');
+          },
+          status: (code: number) => ({
+            json: (data: any) => {
+              console.error(`❌ SCHEDULED BULK ERROR: ${jobId} - Status ${code}`, data);
+            }
+          })
+        } as any;
+        
+        await startAutomatedBulkGeneration(mockReq, mockRes);
+        
+      } catch (error) {
+        console.error(`❌ SCHEDULED BULK EXECUTION ERROR: ${jobId}`, error);
+      }
+    }, {
+      scheduled: false,
+      timezone: validatedData.timezone
+    });
+    
+    // Start the cron job
+    cronJob.start();
+    
+    // Store the job reference
+    activeScheduledJobs.set(jobId, {
+      cronJob,
+      config: validatedData,
+      createdAt: new Date(),
+      scheduleTime: validatedData.scheduleTime,
+      timezone: validatedData.timezone
+    });
+    
+    console.log(`✅ SCHEDULED BULK JOB CREATED: ${jobId} will run daily at ${validatedData.scheduleTime} ${validatedData.timezone}`);
+    
+    res.json({
+      success: true,
+      scheduledJobId: jobId,
+      scheduleTime: validatedData.scheduleTime,
+      timezone: validatedData.timezone,
+      cronPattern,
+      message: `Bulk generation scheduled for daily execution at ${validatedData.scheduleTime} ${validatedData.timezone}`
+    });
+    
+  } catch (error) {
+    console.error('❌ Create scheduled bulk generation error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to create scheduled bulk generation',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+}
+
+// Get active scheduled jobs
+export async function getScheduledBulkJobs(req: Request, res: Response) {
+  try {
+    const jobs = Array.from(activeScheduledJobs.entries()).map(([jobId, jobData]) => ({
+      id: jobId,
+      scheduleTime: jobData.scheduleTime,
+      timezone: jobData.timezone,
+      createdAt: jobData.createdAt,
+      config: {
+        selectedNiches: jobData.config.selectedNiches,
+        tones: jobData.config.tones,
+        templates: jobData.config.templates,
+        platforms: jobData.config.platforms,
+        aiModels: jobData.config.aiModels,
+        contentFormats: jobData.config.contentFormats
+      }
+    }));
+    
+    res.json({
+      success: true,
+      jobs,
+      total: jobs.length
+    });
+    
+  } catch (error) {
+    console.error('❌ Get scheduled bulk jobs error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to get scheduled bulk jobs'
+    });
+  }
+}
+
+// Stop a scheduled job
+export async function stopScheduledBulkJob(req: Request, res: Response) {
+  try {
+    const { jobId } = req.params;
+    
+    const jobData = activeScheduledJobs.get(jobId);
+    if (!jobData) {
+      return res.status(404).json({
+        success: false,
+        error: 'Scheduled job not found'
+      });
+    }
+    
+    // Stop and destroy the cron job
+    jobData.cronJob.stop();
+    jobData.cronJob.destroy();
+    
+    // Remove from active jobs
+    activeScheduledJobs.delete(jobId);
+    
+    console.log(`🛑 STOPPED SCHEDULED BULK JOB: ${jobId}`);
+    
+    res.json({
+      success: true,
+      message: `Scheduled bulk job ${jobId} stopped successfully`
+    });
+    
+  } catch (error) {
+    console.error('❌ Stop scheduled bulk job error:', error);
+    res.status(500).json({ 
+      success: false,
+      error: 'Failed to stop scheduled bulk job'
     });
   }
 }

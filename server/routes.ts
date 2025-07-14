@@ -40,7 +40,7 @@ import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
 import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/spartan-content";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
-import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
+import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId, createScheduledBulkGeneration, getScheduledBulkJobs, stopScheduledBulkJob } from "./api/automated-bulk-generation";
 import { getScheduledJobs, createScheduledJob, updateScheduledJob, deleteScheduledJob, triggerScheduledJob, initializeScheduledJobs, emergencyStopAllCronJobs, getActiveCronJobsStatus } from "./api/scheduled-bulk-generation";
 
 import { cronStatusRouter } from "./api/cron-status";
@@ -616,6 +616,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { getActiveCronJobsStatus } = await import('./api/scheduled-bulk-generation');
     await getActiveCronJobsStatus(req, res);
   });
+  
+  // NEW: Simplified scheduling that extends automated bulk generator
+  app.post('/api/automated-bulk/schedule', createScheduledBulkGeneration);
+  app.get('/api/automated-bulk/scheduled-jobs', getScheduledBulkJobs);
+  app.delete('/api/automated-bulk/scheduled-jobs/:jobId', stopScheduledBulkJob);
   
   // Spartan content generation endpoints
   app.post('/api/spartan/generate', generateSpartanFormatContent);

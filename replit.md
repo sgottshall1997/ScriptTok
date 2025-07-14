@@ -190,14 +190,13 @@ Preferred communication style: Simple, everyday language.
 - **REAL-TIME DATA INTEGRATION**: System now pulls authentic trending product data with proper attribution and mention counts
 - **PRODUCTION READY**: All 7 Perplexity API fetchers operational with comprehensive error handling and retry logic
 
-### July 14, 2025 - Scheduled Bulk Generation System Fixes & Analytics Dashboard Integration
-- **SCHEDULED BULK GENERATION SYSTEM REPAIRED**: Fixed critical payload formatting and parameter validation issues causing "Invalid request parameters" errors
-- **COMPREHENSIVE ERROR HANDLING**: Enhanced scheduled job execution with proper HTTP error handling, JSON response validation, and database failure tracking
-- **PAYLOAD FIELD MAPPING**: Corrected field mapping between scheduled job database schema and unified generator API requirements
-- **AI ANALYTICS DASHBOARD FIXED**: Resolved SQL syntax errors in ai-analytics.ts by creating ai-analytics-fixed.ts with JavaScript-based data processing
-- **ENHANCED PAYLOAD VALIDATION**: Added comprehensive validation for required fields (niches, tones, templates, platforms) with detailed error logging
-- **CLAUDE AI ENFORCEMENT**: Maintained Claude-only AI model enforcement across all scheduled generation workflows
-- **CRON JOB LIFECYCLE MANAGEMENT**: Implemented proper cron job creation, destruction, and overlap prevention for scheduled bulk operations
-- **PRODUCTION TESTING VERIFIED**: Successfully created and tested scheduled job for beauty products with proper Claude AI integration and Spartan format support
-- **DATABASE INTEGRATION CONFIRMED**: Content generation system properly stores results in content_history table with full audit trail
-- **END-TO-END WORKFLOW OPERATIONAL**: Complete scheduled bulk generation pipeline functional from job creation to content delivery
+### July 14, 2025 - Simplified Unified Scheduling System Implementation
+- **ARCHITECTURAL SIMPLIFICATION COMPLETED**: Replaced complex separate scheduling system with simple timing extension to existing automated bulk generator
+- **UNIFIED SCHEDULING ENDPOINTS**: Created three clean endpoints: POST /api/automated-bulk/schedule, GET /api/automated-bulk/scheduled-jobs, DELETE /api/automated-bulk/scheduled-jobs/:jobId
+- **DIRECT AUTOMATED BULK INTEGRATION**: Scheduled jobs now directly call existing startAutomatedBulkGeneration function eliminating duplicate code and complexity
+- **IN-MEMORY CRON MANAGEMENT**: Simple Map-based storage for active scheduled jobs with proper cron lifecycle management (start/stop/destroy)
+- **CLEAN SCHEMA EXTENSION**: Added isScheduled, scheduleTime, timezone fields to existing automatedBulkSchema for seamless integration
+- **PRODUCTION-READY TESTING**: Successfully created, listed, and stopped scheduled jobs with proper cron pattern generation (HH:mm to "mm HH * * *")
+- **CLAUDE AI ENFORCEMENT MAINTAINED**: All scheduled generation continues using Claude-only AI model with Spartan format support
+- **ELIMINATED DUPLICATE SYSTEMS**: Removed need for separate scheduled-bulk-generation.ts complexity by leveraging proven automated bulk generator
+- **END-TO-END VERIFICATION COMPLETED**: Full workflow tested from job creation to scheduled execution with proper error handling and job management
