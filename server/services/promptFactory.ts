@@ -32,7 +32,7 @@ export interface GeneratedPrompt {
  * CORE PROMPT TEMPLATES BY TYPE
  */
 export const TEMPLATE_PROMPTS = {
-  'Short-Form Video Script': (config: PromptConfig): GeneratedPrompt => ({
+  'short_video': (config: PromptConfig): GeneratedPrompt => ({
     systemPrompt: `You are an expert short-form video content creator specializing in ${config.niche} content. Create engaging, platform-native scripts that drive conversions.`,
     userPrompt: `Create a ${config.contentFormat === 'spartan' ? 'concise, professional' : 'engaging'} video script for "${config.productName}" in the ${config.niche} niche.
 
@@ -67,7 +67,7 @@ Respond with script content only.`,
     }
   }),
 
-  'Instagram Post': (config: PromptConfig): GeneratedPrompt => ({
+  'influencer_caption': (config: PromptConfig): GeneratedPrompt => ({
     systemPrompt: `You are an Instagram content strategist creating aesthetic, engaging posts that drive engagement and conversions in the ${config.niche} space.`,
     userPrompt: `Create an Instagram post for "${config.productName}" in the ${config.niche} niche.
 
@@ -92,7 +92,7 @@ Respond with post content only.`,
     }
   }),
 
-  'Product Review': (config: PromptConfig): GeneratedPrompt => ({
+  'product_comparison': (config: PromptConfig): GeneratedPrompt => ({
     systemPrompt: `You are a trusted product reviewer with expertise in ${config.niche}. Create honest, detailed reviews that help consumers make informed decisions.`,
     userPrompt: `Write a comprehensive product review for "${config.productName}" in the ${config.niche} category.
 
@@ -118,7 +118,7 @@ Respond with review content only.`,
     }
   }),
 
-  'Unboxing Experience': (config: PromptConfig): GeneratedPrompt => ({
+  'unboxing': (config: PromptConfig): GeneratedPrompt => ({
     systemPrompt: `You are creating an exciting unboxing experience that captures the anticipation and discovery of new ${config.niche} products.`,
     userPrompt: `Create an unboxing experience script for "${config.productName}" in the ${config.niche} niche.
 
@@ -142,7 +142,7 @@ Respond with unboxing script only.`,
     }
   }),
 
-  'Tutorial/How-To': (config: PromptConfig): GeneratedPrompt => ({
+  'tutorial': (config: PromptConfig): GeneratedPrompt => ({
     systemPrompt: `You are an educational content creator specializing in ${config.niche} tutorials. Create clear, actionable how-to content.`,
     userPrompt: `Create a tutorial featuring "${config.productName}" in the ${config.niche} niche.
 
@@ -157,6 +157,105 @@ Requirements:
 - ${config.contentFormat === 'spartan' ? 'Concise, actionable steps' : 'Include helpful context and explanations'}
 
 Respond with tutorial content only.`,
+    templateMetadata: {
+      templateType: config.templateType,
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: config.contentFormat || 'regular'
+    }
+  }),
+
+  'seo_blog': (config: PromptConfig): GeneratedPrompt => ({
+    systemPrompt: `You are an expert SEO content writer specializing in ${config.niche} content. Create comprehensive, keyword-optimized blog posts that rank well in search engines.`,
+    userPrompt: `Write an SEO-optimized blog post about "${config.productName}" in the ${config.niche} niche.
+
+Tone: ${config.tone}
+Format: ${config.contentFormat === 'spartan' ? 'Professional, concise blog format' : 'Comprehensive SEO blog post'}
+
+Requirements:
+- Compelling headline with target keywords
+- Meta description (150-160 characters)
+- H2 and H3 subheadings with semantic keywords
+- ${config.contentFormat === 'spartan' ? '800-1000 words' : '1000-1500 words'}
+- Natural keyword integration
+- Internal linking opportunities
+- Clear value proposition
+- Call-to-action sections
+
+${config.smartStyleRecommendations ? `SEO guidance: ${config.smartStyleRecommendations.recommendation}` : ''}
+
+Respond with blog post content only.`,
+    templateMetadata: {
+      templateType: config.templateType,
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: config.contentFormat || 'regular'
+    }
+  }),
+
+  'routine_kit': (config: PromptConfig): GeneratedPrompt => ({
+    systemPrompt: `You are a ${config.niche} expert creating comprehensive routine guides that combine multiple products into effective daily regimens.`,
+    userPrompt: `Create a comprehensive routine featuring "${config.productName}" as a key component in the ${config.niche} niche.
+
+Tone: ${config.tone}
+Format: ${config.contentFormat === 'spartan' ? 'Step-by-step routine, concise' : 'Detailed routine with explanations'}
+
+Requirements:
+- Complete routine breakdown (morning/evening/weekly)
+- Product order and timing
+- Expected results and timeline
+- Tips for maximizing effectiveness
+- ${config.contentFormat === 'spartan' ? 'Focused on essential steps' : 'Include additional tips and variations'}
+
+Respond with routine guide content only.`,
+    templateMetadata: {
+      templateType: config.templateType,
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: config.contentFormat || 'regular'
+    }
+  }),
+
+  'bullet_points': (config: PromptConfig): GeneratedPrompt => ({
+    systemPrompt: `You are a content creator specializing in concise, scannable content that delivers maximum value in minimal time for ${config.niche} audiences.`,
+    userPrompt: `Create bullet-point content about "${config.productName}" in the ${config.niche} niche.
+
+Tone: ${config.tone}
+Format: ${config.contentFormat === 'spartan' ? 'Direct bullet points, no fluff' : 'Engaging bullet points with context'}
+
+Requirements:
+- 5-8 key bullet points
+- Each point delivers specific value
+- Easy to scan and share
+- Strong opening statement
+- ${config.contentFormat === 'spartan' ? 'Factual, concise points' : 'Include brief explanations'}
+
+Respond with bullet-point content only.`,
+    templateMetadata: {
+      templateType: config.templateType,
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: config.contentFormat || 'regular'
+    }
+  }),
+
+  'trending_explainer': (config: PromptConfig): GeneratedPrompt => ({
+    systemPrompt: `You are a trend analyst and content creator who explains why products and trends gain popularity in the ${config.niche} space.`,
+    userPrompt: `Explain why "${config.productName}" is trending in the ${config.niche} niche.
+
+Tone: ${config.tone}
+Format: ${config.contentFormat === 'spartan' ? 'Factual trend analysis' : 'Engaging trend explanation'}
+
+Requirements:
+- Clear explanation of the trend
+- Supporting factors and evidence
+- Market context and timing
+- Future predictions
+- ${config.contentFormat === 'spartan' ? 'Data-focused, minimal speculation' : 'Include cultural and social factors'}
+
+${config.trendingProducts ? `Context: Similar trending products include ${config.trendingProducts.slice(0, 3).map(p => p.title).join(', ')}` : ''}
+
+Respond with trend explanation content only.`,
     templateMetadata: {
       templateType: config.templateType,
       niche: config.niche,
@@ -237,7 +336,7 @@ Respond with Twitter post only.`
  */
 export async function createPrompt(config: PromptConfig): Promise<GeneratedPrompt> {
   // Get template-specific prompt
-  const templateGenerator = TEMPLATE_PROMPTS[config.templateType] || TEMPLATE_PROMPTS['Short-Form Video Script'];
+  const templateGenerator = TEMPLATE_PROMPTS[config.templateType] || TEMPLATE_PROMPTS['short_video'];
   
   return templateGenerator(config);
 }
@@ -247,7 +346,7 @@ export async function createPrompt(config: PromptConfig): Promise<GeneratedPromp
  */
 export function generatePrompt(config: PromptConfig): GeneratedPrompt {
   // Get template-specific prompt
-  const templateGenerator = TEMPLATE_PROMPTS[config.templateType] || TEMPLATE_PROMPTS['Short-Form Video Script'];
+  const templateGenerator = TEMPLATE_PROMPTS[config.templateType] || TEMPLATE_PROMPTS['short_video'];
   
   return templateGenerator(config);
 }
