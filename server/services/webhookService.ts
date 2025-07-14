@@ -139,155 +139,143 @@ export class WebhookService {
       const ytCaption = data.platformContent?.youtube?.caption || data.platformContent?.youtube?.script || '';
       const xCaption = data.platformContent?.twitter?.caption || data.platformContent?.x?.caption || '';
 
-      // Send one payload per platform with your new simplified format
-      for (const platform of platforms) {
-        const platformData = data.platformContent[platform];
+      // Send ONE consolidated payload with all platform data instead of one per platform
+      const newPayload = {
+        event_type: "content_generated",
+        platforms: platforms, // All selected platforms
+        niche: data.metadata?.niche || '',
+        script: data.contentData?.fullOutput || data.platformContent[platforms[0]]?.script || '',
+        instagramCaption: igCaption,
+        tiktokCaption: tiktokCaption,
+        youtubeCaption: ytCaption,
+        xCaption: xCaption,
+        facebookCaption: data.platformContent?.facebook?.caption || igCaption,
+        affiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
+        product: data.metadata?.product || data.metadata?.productName || '',
+        imageUrl: data.metadata?.imageUrl || `https://via.placeholder.com/400x400?text=${encodeURIComponent(data.metadata?.product || 'Product')}`,
+        tone: data.metadata?.tone || '',
+        template: data.metadata?.template || data.metadata?.templateType || '',
+        model: data.metadata?.aiModel === 'chatgpt' ? 'ChatGPT' : data.metadata?.aiModel === 'claude' ? 'Claude' : 'ChatGPT',
+        contentFormat: data.metadata?.contentFormat || 'Regular Format',
+        postType: 'reel',
+        topRatedStyleUsed: data.metadata?.useSmartStyle || false,
         
-        // Create comprehensive JSON payload with viral inspiration and AI evaluation data
-        const newPayload = {
-          event_type: "content_generated",
-          platform: platform, // Added platform field
-          niche: data.metadata?.niche || '',
-          script: data.contentData?.fullOutput || platformData.script || '',
-          instagramCaption: igCaption,
-          tiktokCaption: tiktokCaption,
-          youtubeCaption: ytCaption, // Added YouTube caption field
-          xCaption: xCaption,
-          facebookCaption: data.platformContent?.facebook?.caption || igCaption, // Use IG caption as fallback for Facebook
-          affiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
-          product: data.metadata?.product || data.metadata?.productName || '',
-          imageUrl: data.metadata?.imageUrl || `https://via.placeholder.com/400x400?text=${encodeURIComponent(data.metadata?.product || 'Product')}`,
-          tone: data.metadata?.tone || '',
-          template: data.metadata?.template || data.metadata?.templateType || '',
-          model: data.metadata?.aiModel === 'chatgpt' ? 'ChatGPT' : data.metadata?.aiModel === 'claude' ? 'Claude' : 'ChatGPT', // Transform to display names
-          contentFormat: data.metadata?.contentFormat || 'Regular Format', // Either 'Regular Format' or 'Spartan Format'
-          postType: platformData.type || 'reel',
-          topRatedStyleUsed: data.metadata?.useSmartStyle || false, // Include smart style tracking
-          
-          // VIRAL INSPIRATION DATA from Perplexity
-          viralHook: data.contentData?.viralInspiration?.hook || '',
-          viralFormat: data.contentData?.viralInspiration?.format || '',
-          viralCaption: data.contentData?.viralInspiration?.caption || '',
-          viralHashtags: data.contentData?.viralInspiration?.hashtags ? data.contentData.viralInspiration.hashtags.join(', ') : '',
-          viralInspirationFound: !!data.contentData?.viralInspiration,
-          
-          // AI EVALUATION SCORES (now populated by dual-model evaluation system)
-          chatgptViralityScore: data.contentData?.aiEvaluation?.chatgpt?.viralityScore || null,
-          chatgptClarityScore: data.contentData?.aiEvaluation?.chatgpt?.clarityScore || null,
-          chatgptPersuasivenessScore: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessScore || null,
-          chatgptCreativityScore: data.contentData?.aiEvaluation?.chatgpt?.creativityScore || null,
-          chatgptOverallScore: data.contentData?.aiEvaluation?.chatgpt?.overallScore || null,
-          
-          claudeViralityScore: data.contentData?.aiEvaluation?.claude?.viralityScore || null,
-          claudeClarityScore: data.contentData?.aiEvaluation?.claude?.clarityScore || null,
-          claudePersuasivenessScore: data.contentData?.aiEvaluation?.claude?.persuasivenessScore || null,
-          claudeCreativityScore: data.contentData?.aiEvaluation?.claude?.creativityScore || null,
-          claudeOverallScore: data.contentData?.aiEvaluation?.claude?.overallScore || null,
-          
-          // EVALUATION SUMMARY
-          averageOverallScore: data.contentData?.aiEvaluation?.averageScore || null,
-          evaluationCompleted: data.contentData?.aiEvaluation?.evaluationCompleted || false,
-          
-          // ENHANCED AI EVALUATION DATA with justifications
-          ratings: {
-            gpt: {
-              virality: data.contentData?.aiEvaluation?.chatgpt?.viralityScore || null,
-              clarity: data.contentData?.aiEvaluation?.chatgpt?.clarityScore || null,
-              persuasiveness: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessScore || null,
-              creativity: data.contentData?.aiEvaluation?.chatgpt?.creativityScore || null,
-              overall: data.contentData?.aiEvaluation?.chatgpt?.overallScore || null,
-              viralityJustification: data.contentData?.aiEvaluation?.chatgpt?.viralityJustification || '',
-              clarityJustification: data.contentData?.aiEvaluation?.chatgpt?.clarityJustification || '',
-              persuasivenessJustification: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessJustification || '',
-              creativityJustification: data.contentData?.aiEvaluation?.chatgpt?.creativityJustification || ''
-            },
-            claude: {
-              virality: data.contentData?.aiEvaluation?.claude?.viralityScore || null,
-              clarity: data.contentData?.aiEvaluation?.claude?.clarityScore || null,
-              persuasiveness: data.contentData?.aiEvaluation?.claude?.persuasivenessScore || null,
-              creativity: data.contentData?.aiEvaluation?.claude?.creativityScore || null,
-              overall: data.contentData?.aiEvaluation?.claude?.overallScore || null,
-              viralityJustification: data.contentData?.aiEvaluation?.claude?.viralityJustification || '',
-              clarityJustification: data.contentData?.aiEvaluation?.claude?.clarityJustification || '',
-              persuasivenessJustification: data.contentData?.aiEvaluation?.claude?.persuasivenessJustification || '',
-              creativityJustification: data.contentData?.aiEvaluation?.claude?.creativityJustification || ''
-            }
+        // VIRAL INSPIRATION DATA from Perplexity
+        viralHook: data.contentData?.viralInspiration?.hook || '',
+        viralFormat: data.contentData?.viralInspiration?.format || '',
+        viralCaption: data.contentData?.viralInspiration?.caption || '',
+        viralHashtags: data.contentData?.viralInspiration?.hashtags ? data.contentData.viralInspiration.hashtags.join(', ') : '',
+        viralInspirationFound: !!data.contentData?.viralInspiration,
+        
+        // AI EVALUATION SCORES (now populated by dual-model evaluation system)
+        chatgptViralityScore: data.contentData?.aiEvaluation?.chatgpt?.viralityScore || null,
+        chatgptClarityScore: data.contentData?.aiEvaluation?.chatgpt?.clarityScore || null,
+        chatgptPersuasivenessScore: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessScore || null,
+        chatgptCreativityScore: data.contentData?.aiEvaluation?.chatgpt?.creativityScore || null,
+        chatgptOverallScore: data.contentData?.aiEvaluation?.chatgpt?.overallScore || null,
+        
+        claudeViralityScore: data.contentData?.aiEvaluation?.claude?.viralityScore || null,
+        claudeClarityScore: data.contentData?.aiEvaluation?.claude?.clarityScore || null,
+        claudePersuasivenessScore: data.contentData?.aiEvaluation?.claude?.persuasivenessScore || null,
+        claudeCreativityScore: data.contentData?.aiEvaluation?.claude?.creativityScore || null,
+        claudeOverallScore: data.contentData?.aiEvaluation?.claude?.overallScore || null,
+        
+        // EVALUATION SUMMARY
+        averageOverallScore: data.contentData?.aiEvaluation?.averageScore || null,
+        evaluationCompleted: data.contentData?.aiEvaluation?.evaluationCompleted || false,
+        
+        // ENHANCED AI EVALUATION DATA with justifications
+        ratings: {
+          gpt: {
+            virality: data.contentData?.aiEvaluation?.chatgpt?.viralityScore || null,
+            clarity: data.contentData?.aiEvaluation?.chatgpt?.clarityScore || null,
+            persuasiveness: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessScore || null,
+            creativity: data.contentData?.aiEvaluation?.chatgpt?.creativityScore || null,
+            overall: data.contentData?.aiEvaluation?.chatgpt?.overallScore || null,
+            viralityJustification: data.contentData?.aiEvaluation?.chatgpt?.viralityJustification || '',
+            clarityJustification: data.contentData?.aiEvaluation?.chatgpt?.clarityJustification || '',
+            persuasivenessJustification: data.contentData?.aiEvaluation?.chatgpt?.persuasivenessJustification || '',
+            creativityJustification: data.contentData?.aiEvaluation?.chatgpt?.creativityJustification || ''
           },
-          
-          timestamp: new Date().toISOString()
-        };
+          claude: {
+            virality: data.contentData?.aiEvaluation?.claude?.viralityScore || null,
+            clarity: data.contentData?.aiEvaluation?.claude?.clarityScore || null,
+            persuasiveness: data.contentData?.aiEvaluation?.claude?.persuasivenessScore || null,
+            creativity: data.contentData?.aiEvaluation?.claude?.creativityScore || null,
+            overall: data.contentData?.aiEvaluation?.claude?.overallScore || null,
+            viralityJustification: data.contentData?.aiEvaluation?.claude?.viralityJustification || '',
+            clarityJustification: data.contentData?.aiEvaluation?.claude?.clarityJustification || '',
+            persuasivenessJustification: data.contentData?.aiEvaluation?.claude?.persuasivenessJustification || '',
+            creativityJustification: data.contentData?.aiEvaluation?.claude?.creativityJustification || ''
+          }
+        },
+        
+        timestamp: new Date().toISOString()
+      };
 
-        // Enhanced logging with timestamp and highlighted fields including viral inspiration and AI evaluation
-        const timestamp = new Date().toLocaleString();
-        console.log(`\n🚀 [${timestamp}] WEBHOOK PAYLOAD TO MAKE.COM`);
-        console.log('━'.repeat(80));
-        console.log(`📤 Platform: ${platform}`);
-        console.log(`🎯 Niche: ${newPayload.niche}`);
-        console.log(`📝 Script Preview: ${typeof newPayload.script === 'string' ? newPayload.script.substring(0, 100) : JSON.stringify(newPayload.script).substring(0, 100)}...`);
-        console.log(`🔗 Product: ${newPayload.product}`);
-        console.log(`🤖 AI Model: ${newPayload.model}`);
-        console.log(`📄 Content Format: ${newPayload.contentFormat}`);
-        console.log(`💰 Affiliate Link: ${newPayload.affiliateLink ? 'Yes' : 'No'}`);
-        console.log(`✨ Viral Inspiration: ${newPayload.viralInspirationFound ? 'Yes' : 'No'}`);
-        if (newPayload.viralInspirationFound) {
-          console.log(`   🎣 Hook: ${newPayload.viralHook}`);
-          console.log(`   📐 Format: ${newPayload.viralFormat}`);
-          console.log(`   🏷️ Hashtags: ${newPayload.viralHashtags}`);
-        }
-        console.log(`🎯 AI Evaluation: ${newPayload.evaluationCompleted ? 'Completed' : 'Pending'}`);
-        if (newPayload.evaluationCompleted) {
-          console.log(`   🤖 ChatGPT Overall: ${newPayload.chatgptOverallScore}/10`);
-          console.log(`   🎭 Claude Overall: ${newPayload.claudeOverallScore}/10`);
-          console.log(`   📊 Average Score: ${newPayload.averageOverallScore}/10`);
-          console.log(`   📈 Detailed Scores: V:${newPayload.chatgptViralityScore}/${newPayload.claudeViralityScore} C:${newPayload.chatgptClarityScore}/${newPayload.claudeClarityScore} P:${newPayload.chatgptPersuasivenessScore}/${newPayload.claudePersuasivenessScore} Cr:${newPayload.chatgptCreativityScore}/${newPayload.claudeCreativityScore}`);
-        }
-        console.log('━'.repeat(80));
-        
-        // CRITICAL VALIDATION: Ensure AI evaluation data is present
-        const hasGptRatings = newPayload.ratings?.gpt?.overall !== null && newPayload.ratings?.gpt?.overall !== undefined;
-        const hasClaudeRatings = newPayload.ratings?.claude?.overall !== null && newPayload.ratings?.claude?.overall !== undefined;
-        const evaluationValid = hasGptRatings && hasClaudeRatings && newPayload.evaluationCompleted;
-        
-        console.log(`🛡️ AI EVALUATION VALIDATION:`);
-        console.log(`   ✅ ChatGPT Rating: ${hasGptRatings ? '✓' : '❌'} (${newPayload.ratings?.gpt?.overall || 'MISSING'})`);
-        console.log(`   ✅ Claude Rating: ${hasClaudeRatings ? '✓' : '❌'} (${newPayload.ratings?.claude?.overall || 'MISSING'})`);
-        console.log(`   ✅ Evaluation Complete: ${newPayload.evaluationCompleted ? '✓' : '❌'}`);
-        console.log(`   🎯 VALIDATION STATUS: ${evaluationValid ? '✅ PASSED' : '❌ FAILED'}`);
-        
-        if (!evaluationValid) {
-          console.error('🚨 CRITICAL ERROR: Incomplete AI evaluation data in webhook payload!');
-          console.error('   This should not happen due to fail-safe protection.');
-          console.error('   Payload will still be sent but with incomplete ratings.');
-        }
-        
-        console.log('📋 COMPLETE PAYLOAD:');
-        console.log(JSON.stringify(newPayload, null, 2));
-        console.log('━'.repeat(80));
-
-        const response = await axios.post(webhookUrl, newPayload, {
-          headers: {
-            'Content-Type': 'application/json; charset=utf-8',
-            'Accept': 'application/json',
-            'User-Agent': 'GlowBot/1.0'
-          },
-          timeout: 15000
-        });
-
-        console.log(`✅ Make.com webhook response for ${platform}:`, {
-          status: response.status,
-          statusText: response.statusText,
-          data: response.data
-        });
-
-        results.push({ platform, status: response.status });
-        
-        // Add delay between requests to avoid overwhelming Make.com
-        if (platforms.length > 1) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
+      // Enhanced logging with timestamp and highlighted fields including viral inspiration and AI evaluation
+      const timestamp = new Date().toLocaleString();
+      console.log(`\n🚀 [${timestamp}] CONSOLIDATED WEBHOOK PAYLOAD TO MAKE.COM`);
+      console.log('━'.repeat(80));
+      console.log(`📤 Platforms: ${newPayload.platforms.join(', ')}`);
+      console.log(`🎯 Niche: ${newPayload.niche}`);
+      console.log(`📝 Script Preview: ${typeof newPayload.script === 'string' ? newPayload.script.substring(0, 100) : JSON.stringify(newPayload.script).substring(0, 100)}...`);
+      console.log(`🔗 Product: ${newPayload.product}`);
+      console.log(`🤖 AI Model: ${newPayload.model}`);
+      console.log(`📄 Content Format: ${newPayload.contentFormat}`);
+      console.log(`💰 Affiliate Link: ${newPayload.affiliateLink ? 'Yes' : 'No'}`);
+      console.log(`✨ Viral Inspiration: ${newPayload.viralInspirationFound ? 'Yes' : 'No'}`);
+      if (newPayload.viralInspirationFound) {
+        console.log(`   🎣 Hook: ${newPayload.viralHook}`);
+        console.log(`   📐 Format: ${newPayload.viralFormat}`);
+        console.log(`   🏷️ Hashtags: ${newPayload.viralHashtags}`);
       }
+      console.log(`🎯 AI Evaluation: ${newPayload.evaluationCompleted ? 'Completed' : 'Pending'}`);
+      if (newPayload.evaluationCompleted) {
+        console.log(`   🤖 ChatGPT Overall: ${newPayload.chatgptOverallScore}/10`);
+        console.log(`   🎭 Claude Overall: ${newPayload.claudeOverallScore}/10`);
+        console.log(`   📊 Average Score: ${newPayload.averageOverallScore}/10`);
+        console.log(`   📈 Detailed Scores: V:${newPayload.chatgptViralityScore}/${newPayload.claudeViralityScore} C:${newPayload.chatgptClarityScore}/${newPayload.claudeClarityScore} P:${newPayload.chatgptPersuasivenessScore}/${newPayload.claudePersuasivenessScore} Cr:${newPayload.chatgptCreativityScore}/${newPayload.claudeCreativityScore}`);
+      }
+      console.log('━'.repeat(80));
+      
+      // CRITICAL VALIDATION: Ensure AI evaluation data is present
+      const hasGptRatings = newPayload.ratings?.gpt?.overall !== null && newPayload.ratings?.gpt?.overall !== undefined;
+      const hasClaudeRatings = newPayload.ratings?.claude?.overall !== null && newPayload.ratings?.claude?.overall !== undefined;
+      const evaluationValid = hasGptRatings && hasClaudeRatings && newPayload.evaluationCompleted;
+      
+      console.log(`🛡️ AI EVALUATION VALIDATION:`);
+      console.log(`   ✅ ChatGPT Rating: ${hasGptRatings ? '✓' : '❌'} (${newPayload.ratings?.gpt?.overall || 'MISSING'})`);
+      console.log(`   ✅ Claude Rating: ${hasClaudeRatings ? '✓' : '❌'} (${newPayload.ratings?.claude?.overall || 'MISSING'})`);
+      console.log(`   ✅ Evaluation Complete: ${newPayload.evaluationCompleted ? '✓' : '❌'}`);
+      console.log(`   🎯 VALIDATION STATUS: ${evaluationValid ? '✅ PASSED' : '❌ FAILED'}`);
+      
+      if (!evaluationValid) {
+        console.error('🚨 CRITICAL ERROR: Incomplete AI evaluation data in webhook payload!');
+        console.error('   This should not happen due to fail-safe protection.');
+        console.error('   Payload will still be sent but with incomplete ratings.');
+      }
+      
+      console.log('📋 COMPLETE PAYLOAD:');
+      console.log(JSON.stringify(newPayload, null, 2));
+      console.log('━'.repeat(80));
 
-      console.log('✅ All platforms sent to Make.com successfully');
+      const response = await axios.post(webhookUrl, newPayload, {
+        headers: {
+          'Content-Type': 'application/json; charset=utf-8',
+          'Accept': 'application/json',
+          'User-Agent': 'GlowBot/1.0'
+        },
+        timeout: 15000
+      });
+
+      console.log(`✅ Make.com webhook response:`, {
+        status: response.status,
+        statusText: response.statusText,
+        data: response.data
+      });
+
+      console.log(`✅ Bulk content sent to Make.com for ${newPayload.product}`);
       return { success: true };
 
     } catch (error: any) {
