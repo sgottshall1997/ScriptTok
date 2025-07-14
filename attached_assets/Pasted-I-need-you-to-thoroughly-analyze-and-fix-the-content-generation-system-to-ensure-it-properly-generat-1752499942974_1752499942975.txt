@@ -1,0 +1,53 @@
+I need you to thoroughly analyze and fix the content generation system to ensure it properly generates:
+
+1. ONE main video script/content piece
+2. SEPARATE platform-specific captions for each selected platform (TikTok, Instagram, YouTube) that are optimized for each platform's unique style and audience
+
+Please check and fix these specific files and functionality:
+
+**FILES TO ANALYZE:**
+- server/services/unifiedContentGenerator.ts
+- server/api/generateContentUnified.ts
+- server/services/platformContentGenerator.ts
+- client/src/components/UnifiedContentGenerator.tsx
+- client/src/components/ContentOutput.tsx
+
+**SPECIFIC ISSUES TO VERIFY AND FIX:**
+
+1. **Main Content Generation**: Ensure the system generates ONE primary video script/content piece that serves as the foundation
+
+2. **Platform Caption Generation**: Verify that SEPARATE captions are generated for each selected platform with:
+   - TikTok: Gen Z language, trending hooks, viral elements, short and punchy
+   - Instagram: Aesthetic, lifestyle-focused, hashtag-heavy, influencer tone
+   - YouTube: Descriptive, SEO-friendly, engaging for longer attention spans
+   - Twitter/X: Concise, witty, conversation-starting
+   - Facebook: Professional, family-friendly, community-focused
+
+3. **Content Display Issues**: Fix the UI to properly display:
+   - The main script/content clearly labeled
+   - Each platform caption in separate, clearly labeled sections
+   - Platform-specific styling and formatting
+   - Copy buttons for each individual piece
+
+4. **Platform Caption Uniqueness**: Ensure each platform caption is:
+   - Written independently (not just reformatted versions of the main content)
+   - Optimized for that platform's specific audience and engagement patterns
+   - Different in tone, structure, and approach from other platforms
+   - Includes platform-appropriate CTAs and hashtags
+
+5. **Fix Truncation Issues**: Remove any "[TRUNCATED]" text that's appearing in generated content
+
+6. **Spartan Format Compliance**: If Spartan format is enabled, ensure all content (main + platform captions) follows Spartan rules
+
+7. **Data Flow Validation**: Verify the complete flow from:
+   - User selects platforms → API generates main content + platform captions → UI displays all pieces correctly
+
+**TEST REQUIREMENTS:**
+After fixing, test by generating content for "Echo Dot 5th Generation Smart Speaker" with TikTok, Instagram, and YouTube selected. Verify you get:
+- 1 main video script
+- 1 unique TikTok caption (Gen Z style)
+- 1 unique Instagram caption (aesthetic/lifestyle)
+- 1 unique YouTube caption (descriptive/SEO)
+- All displayed separately in the UI with proper labels
+
+**CRITICAL**: Ensure the platform captions are NOT just reformatted versions of the main content, but genuinely platform-native content that maximizes engagement for each specific platform.

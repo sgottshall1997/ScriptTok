@@ -14,12 +14,17 @@ export interface ContentGenerationConfig {
   templateType: string;
   tone: string;
   platforms: string[];
-  contentFormat: 'standard' | 'spartan';
+  contentFormat?: 'standard' | 'spartan';
   aiModel: 'claude';
   affiliateId?: string;
   trendingProducts?: TrendingProduct[];
   viralInspiration?: any;
   smartStyleRecommendations?: any;
+  contentType?: string;
+  affiliateUrl?: string;
+  customHook?: string;
+  useSmartStyle?: boolean;
+  useSpartanFormat?: boolean;
 }
 
 export interface GeneratedContentPayload {
@@ -154,32 +159,20 @@ async function generateAllPlatformCaptions(config: ContentGenerationConfig, main
 
   for (const platform of platforms) {
     try {
-      const platformPrompt = await createPlatformPrompt(platform, {
-        ...config,
-        platforms: [platform]
-      });
+      // Create platform-specific prompt
+      const platformPrompt = createPlatformSpecificPrompt(platform, config, mainContent);
 
-      // Add main content context to platform prompt
-      const enhancedPrompt = `${platformPrompt}
-
-Main content for reference:
-"""
-${mainContent.substring(0, 500)}...
-"""
-
-Create platform-native content that complements but doesn't repeat the main content.`;
-
-      const aiResponse = await generateWithAI(enhancedPrompt, {
+      const aiResponse = await generateWithAI(platformPrompt, {
         model: config.aiModel,
-        systemPrompt: `You are a ${platform} content specialist. Create platform-native captions that maximize engagement.`,
+        systemPrompt: `You are a ${platform} content specialist. Create platform-native captions that maximize engagement for ${platform} specifically. Do not copy the main content - create original platform-optimized content.`,
         temperature: 0.8,
-        maxTokens: 500,
+        maxTokens: 600,
         useJson: false,
         metadata: {
           platform,
           niche: config.niche,
           productName: config.productName,
-          contentFormat: config.contentFormat
+          contentFormat: config.contentFormat || 'standard'
         }
       });
 
@@ -190,6 +183,9 @@ Create platform-native content that complements but doesn't repeat the main cont
         } else if (aiResponse.data) {
           caption = aiResponse.data; // Alternative Claude structure
         }
+
+        // Clean up caption and remove truncation markers
+        caption = caption.replace(/\[TRUNCATED\]/gi, '').trim();
 
         // Add affiliate link and compliance disclosure
         captions[platform] = enhancePlatformCaption(caption, platform, config);
@@ -204,6 +200,67 @@ Create platform-native content that complements but doesn't repeat the main cont
   }
 
   return captions;
+}
+
+/**
+ * CREATE PLATFORM-SPECIFIC PROMPTS
+ */
+function createPlatformSpecificPrompt(platform: string, config: ContentGenerationConfig, mainContent: string): string {
+  const isSparta = config.contentFormat === 'spartan';
+  const contentSnippet = mainContent.substring(0, 300);
+
+  const platformSpecs = {
+    tiktok: {
+      style: 'Gen Z language, trending hooks, viral elements, short and punchy',
+      maxLength: '150 words',
+      requirements: 'Use trending slang, hashtags like #TechTok #ProductName, conversational tone, hook viewers in first 3 seconds',
+      format: isSparta ? 'Direct, factual language only. No emojis or filler words.' : 'Emojis, trending phrases, casual language'
+    },
+    instagram: {
+      style: 'Aesthetic, lifestyle-focused, hashtag-heavy, influencer tone',
+      maxLength: '200 words',
+      requirements: 'Lifestyle integration, aesthetic appeal, 10-15 hashtags, story-driven content',
+      format: isSparta ? 'Professional lifestyle language. No emojis.' : 'Aesthetic emojis, lifestyle language, inspiring tone'
+    },
+    youtube: {
+      style: 'Descriptive, SEO-friendly, engaging for longer attention spans',
+      maxLength: '250 words',
+      requirements: 'SEO keywords, detailed benefits, call-to-action, longer engagement',
+      format: isSparta ? 'Detailed, factual descriptions. Professional tone.' : 'Descriptive, enthusiastic, informative'
+    },
+    twitter: {
+      style: 'Concise, witty, conversation-starting',
+      maxLength: '280 characters',
+      requirements: 'Twitter threads, witty observations, conversation starters, viral potential',
+      format: isSparta ? 'Concise facts only. No hashtags except #ad.' : 'Witty, conversational, hashtag-optimized'
+    },
+    facebook: {
+      style: 'Professional, family-friendly, community-focused',
+      maxLength: '200 words',
+      requirements: 'Community engagement, family-safe content, group sharing potential',
+      format: isSparta ? 'Professional, factual community content.' : 'Warm, community-focused, sharing-friendly'
+    }
+  };
+
+  const spec = platformSpecs[platform as keyof typeof platformSpecs];
+  
+  return `Create a ${platform.toUpperCase()}-native caption for "${config.productName}" (${config.niche} niche).
+
+MAIN CONTENT REFERENCE (DO NOT COPY):
+"${contentSnippet}..."
+
+PLATFORM REQUIREMENTS:
+- Style: ${spec.style}
+- Max Length: ${spec.maxLength}
+- Platform Focus: ${spec.requirements}
+- Format: ${spec.format}
+- Tone: ${config.tone}
+
+CRITICAL: Create original ${platform}-specific content that maximizes engagement for ${platform} users. Do not copy or rephrase the main content. Write native ${platform} content that feels organic to the platform.
+
+${isSparta ? 'SPARTAN FORMAT: Use direct, factual language only. No filler words, metaphors, or casual expressions.' : ''}
+
+Generate only the caption content, no explanations.`;
 }
 
 /**

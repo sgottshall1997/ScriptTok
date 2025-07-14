@@ -143,3 +143,11 @@ Preferred communication style: Simple, everyday language.
 - **SCHEMA MISMATCH CORRECTED**: Fixed database field mapping to match actual PostgreSQL table structure
 - **COMPREHENSIVE DATABASE INTEGRATION**: Added complete content history storage with session tracking, Spartan format flags, and affiliate links
 - **TESTING IN PROGRESS**: Currently validating that generated content properly saves to database after import fix
+
+### July 14, 2025 - Content Generation Architecture Overhaul
+- **MAIN CONTENT VS PLATFORM CAPTION FIX**: Fixed critical issue where system used demoScript instead of main script for primary content
+- **PLATFORM-SPECIFIC PROMPT SYSTEM**: Implemented dedicated platform-native prompt generation for TikTok, Instagram, YouTube, Twitter, Facebook
+- **CONTENT UNIQUENESS ENFORCEMENT**: Each platform now gets genuinely different content optimized for platform-specific engagement patterns
+- **TRUNCATION REMOVAL**: Eliminated [TRUNCATED] markers from generated content to ensure complete outputs
+- **UI DISPLAY IMPROVEMENT**: Enhanced GeneratedContentCard to properly display main content + separate platform captions with individual copy buttons
+- **COMPREHENSIVE TESTING**: System now generates one main video script plus separate platform-optimized captions for maximum engagement

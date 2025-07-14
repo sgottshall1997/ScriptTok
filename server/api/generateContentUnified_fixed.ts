@@ -129,20 +129,22 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
   
   const unifiedConfig: ContentGenerationConfig = {
     productName: config.productName,
-    niche: config.niche as any,
-    templateType: config.templateType as any,
-    tone: config.tone as any,
-    platforms: config.platforms as any[],
-    contentType: config.contentType as any,
+    niche: config.niche,
+    templateType: config.templateType,
+    tone: config.tone,
+    platforms: config.platforms,
+    contentFormat: config.useSpartanFormat ? 'spartan' : 'standard',
+    aiModel: config.aiModel,
+    affiliateId: 'sgottshall107-20',
+    contentType: config.contentType,
     affiliateUrl: config.affiliateUrl,
     customHook: config.customHook,
     useSmartStyle: config.useSmartStyle,
-    useSpartanFormat: config.useSpartanFormat,
-    aiModel: config.aiModel
+    useSpartanFormat: config.useSpartanFormat
   };
 
   const unifiedResult = await generateUnifiedContent(unifiedConfig);
-  const mainContent = unifiedResult.demoScript || unifiedResult.productDescription || "Content generation failed";
+  const mainContent = unifiedResult.script || "Content generation failed";
 
   // Sanitize Unicode characters
   function sanitizeUnicode(text: string): string {
