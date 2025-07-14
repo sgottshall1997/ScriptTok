@@ -501,7 +501,7 @@ async function processAutomatedBulkJob(
                         viralInspiration,
                         enforceCaptionUniqueness: true,
                         affiliateId: jobData.affiliateId || "sgottshall107-20",
-                        useSpartanFormat: jobData.useSpartanFormat
+                        useSpartanFormat: useSpartanFormat // Use the local variable instead of jobData.useSpartanFormat
                       });
                       
                       // Map to expected field names for content history
@@ -844,7 +844,7 @@ async function generateComprehensiveContent(params: {
       tone: tone as any,
       template: template as any,
       mainContent: mainContent,
-      useSpartanFormat: useSpartanFormat || false,
+      useSpartanFormat: useSpartanFormat, // Don't default to false - pass through the actual value
       affiliateId: 'sgottshall107-20',
       aiModel: aiModel || 'claude'
     });

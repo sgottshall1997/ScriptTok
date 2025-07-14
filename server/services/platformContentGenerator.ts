@@ -357,7 +357,7 @@ export async function generatePlatformSpecificContent(
       tone,
       niche,
       viralInspiration: trendingData,
-      useSpartanFormat: useSpartanFormat || false,
+      useSpartanFormat: useSpartanFormat,
       aiModel: aiModel
     });
     
