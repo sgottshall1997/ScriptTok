@@ -151,3 +151,15 @@ Preferred communication style: Simple, everyday language.
 - **TRUNCATION REMOVAL**: Eliminated [TRUNCATED] markers from generated content to ensure complete outputs
 - **UI DISPLAY IMPROVEMENT**: Enhanced GeneratedContentCard to properly display main content + separate platform captions with individual copy buttons
 - **COMPREHENSIVE TESTING**: System now generates one main video script plus separate platform-optimized captions for maximum engagement
+
+### July 14, 2025 - Caption Length Optimization System Implementation
+- **CRITICAL LENGTH ISSUE IDENTIFIED**: Platform captions were generating 500+ characters (TikTok: 560, Instagram: 740+) despite being intended for short-form content
+- **COMPREHENSIVE LENGTH CONTROLS IMPLEMENTED**: Added enforceStrictPlatformLimits() function with precise limits:
+  - TikTok: 60 words/300 chars max (before affiliate link)
+  - Instagram: 80 words/400 chars max (before affiliate link)  
+  - YouTube: 100 words/500 chars max (before affiliate link)
+  - Twitter: 40 words/180 chars max (before affiliate link)
+  - Facebook: 70 words/350 chars max (before affiliate link)
+- **PROMPT OPTIMIZATION**: Updated platform-specific prompts to explicitly enforce "ABSOLUTE MAX LENGTH" requirements
+- **AFFILIATE LINK STREAMLINING**: Shortened affiliate link formatting to reduce total caption length
+- **ACTIVE TESTING**: Currently validating length enforcement system with comprehensive test cases

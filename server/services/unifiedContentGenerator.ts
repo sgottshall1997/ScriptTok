@@ -187,6 +187,9 @@ async function generateAllPlatformCaptions(config: ContentGenerationConfig, main
         // Clean up caption and remove truncation markers
         caption = caption.replace(/\[TRUNCATED\]/gi, '').trim();
 
+        // Apply strict length limits before adding affiliate links
+        caption = enforceStrictPlatformLimits(caption, platform);
+
         // Add affiliate link and compliance disclosure
         captions[platform] = enhancePlatformCaption(caption, platform, config);
       } else {
@@ -203,6 +206,39 @@ async function generateAllPlatformCaptions(config: ContentGenerationConfig, main
 }
 
 /**
+ * ENFORCE STRICT PLATFORM LENGTH LIMITS
+ */
+function enforceStrictPlatformLimits(caption: string, platform: string): string {
+  const limits = {
+    tiktok: { words: 60, chars: 300 },
+    instagram: { words: 80, chars: 400 },
+    youtube: { words: 100, chars: 500 },
+    twitter: { words: 40, chars: 180 },
+    facebook: { words: 70, chars: 350 }
+  };
+
+  const limit = limits[platform as keyof typeof limits];
+  if (!limit) return caption;
+
+  let trimmedCaption = caption.trim();
+
+  // First, enforce word limit
+  const words = trimmedCaption.split(/\s+/);
+  if (words.length > limit.words) {
+    trimmedCaption = words.slice(0, limit.words).join(' ');
+  }
+
+  // Then, enforce character limit
+  if (trimmedCaption.length > limit.chars) {
+    trimmedCaption = trimmedCaption.substring(0, limit.chars - 3) + '...';
+  }
+
+  console.log(`🔪 TRIMMED ${platform.toUpperCase()}: ${words.length} words → ${trimmedCaption.split(/\s+/).length} words, ${caption.length} chars → ${trimmedCaption.length} chars`);
+  
+  return trimmedCaption;
+}
+
+/**
  * CREATE PLATFORM-SPECIFIC PROMPTS
  */
 function createPlatformSpecificPrompt(platform: string, config: ContentGenerationConfig, mainContent: string): string {
@@ -212,31 +248,31 @@ function createPlatformSpecificPrompt(platform: string, config: ContentGeneratio
   const platformSpecs = {
     tiktok: {
       style: 'Gen Z language, trending hooks, viral elements, short and punchy',
-      maxLength: '150 words',
+      maxLength: '60 words MAXIMUM (before affiliate link)',
       requirements: 'Use trending slang, hashtags like #TechTok #ProductName, conversational tone, hook viewers in first 3 seconds',
       format: isSparta ? 'Direct, factual language only. No emojis or filler words.' : 'Emojis, trending phrases, casual language'
     },
     instagram: {
       style: 'Aesthetic, lifestyle-focused, hashtag-heavy, influencer tone',
-      maxLength: '200 words',
-      requirements: 'Lifestyle integration, aesthetic appeal, 10-15 hashtags, story-driven content',
+      maxLength: '80 words MAXIMUM (before affiliate link)',
+      requirements: 'Lifestyle integration, aesthetic appeal, 5-8 hashtags, story-driven content',
       format: isSparta ? 'Professional lifestyle language. No emojis.' : 'Aesthetic emojis, lifestyle language, inspiring tone'
     },
     youtube: {
       style: 'Descriptive, SEO-friendly, engaging for longer attention spans',
-      maxLength: '250 words',
+      maxLength: '100 words MAXIMUM (before affiliate link)',
       requirements: 'SEO keywords, detailed benefits, call-to-action, longer engagement',
       format: isSparta ? 'Detailed, factual descriptions. Professional tone.' : 'Descriptive, enthusiastic, informative'
     },
     twitter: {
       style: 'Concise, witty, conversation-starting',
-      maxLength: '280 characters',
+      maxLength: '180 characters MAXIMUM (before affiliate link)',
       requirements: 'Twitter threads, witty observations, conversation starters, viral potential',
       format: isSparta ? 'Concise facts only. No hashtags except #ad.' : 'Witty, conversational, hashtag-optimized'
     },
     facebook: {
       style: 'Professional, family-friendly, community-focused',
-      maxLength: '200 words',
+      maxLength: '70 words MAXIMUM (before affiliate link)',
       requirements: 'Community engagement, family-safe content, group sharing potential',
       format: isSparta ? 'Professional, factual community content.' : 'Warm, community-focused, sharing-friendly'
     }
@@ -249,18 +285,24 @@ function createPlatformSpecificPrompt(platform: string, config: ContentGeneratio
 MAIN CONTENT REFERENCE (DO NOT COPY):
 "${contentSnippet}..."
 
-PLATFORM REQUIREMENTS:
+STRICT PLATFORM REQUIREMENTS:
 - Style: ${spec.style}
-- Max Length: ${spec.maxLength}
+- ABSOLUTE MAX LENGTH: ${spec.maxLength}
 - Platform Focus: ${spec.requirements}
 - Format: ${spec.format}
 - Tone: ${config.tone}
+
+CRITICAL LENGTH ENFORCEMENT:
+- This is the COMPLETE caption before affiliate links are added
+- Do NOT exceed the word/character limit specified
+- Keep it short, punchy, and platform-native
+- Affiliate link and compliance text will be added separately
 
 CRITICAL: Create original ${platform}-specific content that maximizes engagement for ${platform} users. Do not copy or rephrase the main content. Write native ${platform} content that feels organic to the platform.
 
 ${isSparta ? 'SPARTAN FORMAT: Use direct, factual language only. No filler words, metaphors, or casual expressions.' : ''}
 
-Generate only the caption content, no explanations.`;
+Generate ONLY the caption content (no affiliate links, no explanations). Stay within the length limit.`;
 }
 
 /**
@@ -281,28 +323,28 @@ function enhancePlatformCaption(caption: string, platform: string, config: Conte
       .trim();
   }
 
-  // Add platform-specific affiliate link formatting
+  // Add platform-specific affiliate link formatting with length awareness
   switch (platform.toLowerCase()) {
     case 'tiktok':
       enhancedCaption += config.contentFormat === 'spartan' 
-        ? `\n\nShop here: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`
-        : `\n\n🛒 Shop here: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        ? `\n\nShop: ${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases. #ad`
+        : `\n\n🛒 ${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
       break;
     case 'instagram':
       enhancedCaption += config.contentFormat === 'spartan'
-        ? `\n\nShop the link: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`
-        : `\n\n🛍️ Shop the link: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        ? `\n\nShop: ${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases. #ad`
+        : `\n\n🛍️ ${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
       break;
     case 'youtube':
-      enhancedCaption += `\n\n🔗 Amazon link: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+      enhancedCaption += `\n\n🔗 ${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases.`;
       break;
     case 'twitter':
       enhancedCaption += config.contentFormat === 'spartan'
-        ? `\n\nShop: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`
-        : `\n\n🛒 ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
+        ? `\n\n${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases. #ad`
+        : `\n\n🛒 ${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases. #ad`;
       break;
     case 'facebook':
-      enhancedCaption += `\n\nShop on Amazon: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
+      enhancedCaption += `\n\n${affiliateLink}\nAs an Amazon Associate I earn from qualifying purchases.`;
       break;
     default:
       enhancedCaption += `\n\nShop on Amazon: ${affiliateLink}\n\nAs an Amazon Associate I earn from qualifying purchases.`;
