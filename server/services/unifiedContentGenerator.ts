@@ -117,7 +117,7 @@ async function generateMainScript(config: ContentGenerationConfig): Promise<stri
     model: config.aiModel,
     systemPrompt: generatedPrompt.systemPrompt,
     temperature: config.contentFormat === 'spartan' ? 0.3 : 0.7,
-    maxTokens: config.contentFormat === 'spartan' ? 1000 : 1500, // Increased for Spartan to prevent truncation
+    maxTokens: config.contentFormat === 'spartan' ? 800 : 1500,
     metadata: {
       templateType: config.templateType,
       niche: config.niche,
@@ -140,15 +140,7 @@ async function generateMainScript(config: ContentGenerationConfig): Promise<stri
     throw new Error('Invalid Claude AI response structure');
   }
 
-  let cleanedContent = content.trim();
-  
-  // Apply Spartan formatting to main content if needed
-  if (config.contentFormat === 'spartan') {
-    cleanedContent = applySpartanFormatting(cleanedContent);
-    console.log(`🏛️ SPARTAN ENFORCEMENT: Applied to main script (${cleanedContent.length} chars)`);
-  }
-
-  return cleanedContent;
+  return content.trim();
 }
 
 /**
@@ -167,21 +159,21 @@ async function generateAllPlatformCaptions(config: ContentGenerationConfig, main
         platforms: [platform]
       });
 
-      // Add main content context to platform prompt (DO NOT TRUNCATE)
+      // Add main content context to platform prompt
       const enhancedPrompt = `${platformPrompt}
 
 Main content for reference:
 """
-${mainContent}
+${mainContent.substring(0, 500)}...
 """
 
 Create platform-native content that complements but doesn't repeat the main content.`;
 
       const aiResponse = await generateWithAI(enhancedPrompt, {
         model: config.aiModel,
-        systemPrompt: `You are a ${platform} content specialist. Create complete, untruncated platform-native captions that maximize engagement. Never truncate content mid-sentence.`,
+        systemPrompt: `You are a ${platform} content specialist. Create platform-native captions that maximize engagement.`,
         temperature: 0.8,
-        maxTokens: 1200, // Increased from 500 to prevent truncation
+        maxTokens: 500,
         useJson: false,
         metadata: {
           platform,
@@ -222,9 +214,14 @@ function enhancePlatformCaption(caption: string, platform: string, config: Conte
   
   let enhancedCaption = caption.trim();
   
-  // Apply comprehensive Spartan format filtering if needed
+  // Apply Spartan format filtering if needed
   if (config.contentFormat === 'spartan') {
-    enhancedCaption = applySpartanFormatting(enhancedCaption);
+    enhancedCaption = enhancedCaption
+      .replace(/[✨🌿🔥💫⭐️🌟💎✊🏻🔗🛒🛍️📝💰🎯🚀📱📷⚡️💯🎉👏🙌✅❤️💕🥰😍🤩🔑🎊💪🏆🌈]/g, '')
+      .replace(/[\u{1F300}-\u{1F9FF}]/gu, '')
+      .replace(/\b(amazing|incredible|stunning|absolutely|literally|super|totally|completely|perfect|ultimate|revolutionary|game-changing|life-changing|mind-blowing)\b/gi, '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
   // Add platform-specific affiliate link formatting
@@ -290,78 +287,4 @@ function generateProductDescription(productName: string, niche: string, mainCont
   const description = words.slice(0, 50).join(' ').trim();
   
   return `${productName} - A premium ${niche} product that ${description.toLowerCase()}...`.substring(0, 200) + '.';
-}
-
-/**
- * COMPREHENSIVE SPARTAN FORMAT ENFORCEMENT
- */
-function applySpartanFormatting(text: string): string {
-  if (!text) return '';
-  
-  let cleanedText = text;
-  
-  // Remove stage directions and action text (anything in brackets)
-  cleanedText = cleanedText.replace(/\[.*?\]/g, '');
-  
-  // Remove specific pricing mentions
-  cleanedText = cleanedText.replace(/\$\d+\.?\d*/g, '');
-  cleanedText = cleanedText.replace(/at \$\d+/g, '');
-  cleanedText = cleanedText.replace(/for \$\d+/g, '');
-  cleanedText = cleanedText.replace(/priced at/gi, '');
-  cleanedText = cleanedText.replace(/worth every penny/gi, '');
-  cleanedText = cleanedText.replace(/they're often on sale/gi, '');
-  cleanedText = cleanedText.replace(/check current prices/gi, '');
-  cleanedText = cleanedText.replace(/tap the link to check current prices/gi, '');
-  
-  // Word replacements for professional tone
-  const spartanReplacements = {
-    'just': 'only',
-    'literally': '',
-    'really': '',
-    'very': '',
-    'actually': '',
-    'that': 'this',
-    'can': 'will',
-    'may': 'will',
-    'amazing': 'excellent',
-    'incredible': 'exceptional',
-    'awesome': 'excellent',
-    'super': '',
-    'totally': '',
-    'completely': '',
-    'absolutely': '',
-    'perfect': 'ideal',
-    'ultimate': 'optimal',
-    'revolutionary': 'innovative',
-    'game-changing': 'effective',
-    'life-changing': 'beneficial',
-    'mind-blowing': 'remarkable'
-  };
-  
-  // Apply word replacements (whole words only)
-  Object.entries(spartanReplacements).forEach(([banned, replacement]) => {
-    const regex = new RegExp(`\\b${banned}\\b`, 'gi');
-    cleanedText = cleanedText.replace(regex, replacement);
-  });
-  
-  // Remove emojis using simple and safe patterns
-  cleanedText = cleanedText.replace(/[\u{1F600}-\u{1F64F}]/gu, ''); // emoticons
-  cleanedText = cleanedText.replace(/[\u{1F300}-\u{1F5FF}]/gu, ''); // misc symbols
-  cleanedText = cleanedText.replace(/[\u{1F680}-\u{1F6FF}]/gu, ''); // transport
-  cleanedText = cleanedText.replace(/[\u{2600}-\u{26FF}]/gu, ''); // misc symbols
-  cleanedText = cleanedText.replace(/[\u{2700}-\u{27BF}]/gu, ''); // dingbats
-  cleanedText = cleanedText.replace(/[\u{1F900}-\u{1F9FF}]/gu, ''); // supplemental symbols
-  cleanedText = cleanedText.replace(/[\u{1FA00}-\u{1FA6F}]/gu, ''); // extended symbols
-  
-  // Remove specific emoji characters that might slip through
-  cleanedText = cleanedText.replace(/[✨🌿🔥💫⭐️🌟💎✊🏻🔗🛒🛍️📝💰🎯🚀📱📷⚡️💯🎉👏🙌✅❤️💕🥰😍🤩🔑🎊💪🏆🌈]/g, '');
-  
-  // Clean up multiple spaces and trim
-  cleanedText = cleanedText.replace(/\s+/g, ' ').trim();
-  
-  // Clean up any remaining artifacts
-  cleanedText = cleanedText.replace(/\s*-\s*they're\s*-\s*/gi, ' - ');
-  cleanedText = cleanedText.replace(/\s*\.\s*\[\s*End\s*.*?\]\s*/gi, '.');
-  
-  return cleanedText.trim();
 }

@@ -44,8 +44,6 @@ SPARTAN FORMAT REQUIREMENTS - MANDATORY COMPLIANCE:
 - REPLACE "literally" with specific facts
 - REPLACE "that" with "this" or rephrase
 - NO emojis, exclamation marks, or casual language
-- NO stage directions or action text in brackets like "[Looking at camera]"
-- NO specific pricing or dollar amounts
 - Professional business language exclusively
 - Maximum 120 words total
 - Direct, factual statements only
@@ -56,13 +54,11 @@ Core Requirements:
 - Hook viewers in first 3 seconds
 - Highlight key product benefits  
 - Include clear call-to-action
-- ${config.contentFormat === 'spartan' ? 'Keep under 120 words, professional tone, no stage directions' : 'Aim for 150-250 words, engaging style'}
-- DO NOT include specific pricing or dollar amounts
-- DO NOT include stage directions like "[Looking at camera]" or "[Demo gesture]"
+- ${config.contentFormat === 'spartan' ? 'Keep under 120 words, professional tone' : 'Aim for 150-250 words, engaging style'}
 
 ${config.trendingProducts ? `Context: This product is trending alongside: ${config.trendingProducts.slice(0, 3).map(p => p.title).join(', ')}` : ''}
 
-Respond with script content only, no stage directions or pricing.`,
+Respond with script content only.`,
     templateMetadata: {
       templateType: config.templateType,
       niche: config.niche,

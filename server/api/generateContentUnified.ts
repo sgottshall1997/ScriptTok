@@ -259,16 +259,14 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       console.log(`⚠️ Warnings: ${validation.warnings.join(', ')}`);
     }
 
-    // Use platform captions from unified generator (already processed with Spartan format)
+    // Use platform captions from unified generator and sanitize them
     const platformCaptions: Record<string, string> = {
-      tiktok: sanitizeUnicode(unifiedResult.tiktokCaption || ''),
-      instagram: sanitizeUnicode(unifiedResult.instagramCaption || ''),
-      youtube: sanitizeUnicode(unifiedResult.youtubeCaption || ''),
-      twitter: sanitizeUnicode(unifiedResult.xCaption || ''),
-      facebook: sanitizeUnicode(unifiedResult.facebookCaption || unifiedResult.instagramCaption || '')
+      tiktok: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.tiktokCaption)) : sanitizeUnicode(unifiedResult.tiktokCaption),
+      instagram: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.instagramCaption)) : sanitizeUnicode(unifiedResult.instagramCaption),
+      youtube: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.youtubeCaption)) : sanitizeUnicode(unifiedResult.youtubeCaption),
+      twitter: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.xCaption)) : sanitizeUnicode(unifiedResult.xCaption),
+      facebook: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.facebookCaption)) : sanitizeUnicode(unifiedResult.facebookCaption)
     };
-    
-    console.log(`📊 Platform captions lengths: TikTok=${platformCaptions.tiktok.length}, Instagram=${platformCaptions.instagram.length}, YouTube=${platformCaptions.youtube.length}, Twitter=${platformCaptions.twitter.length}, Facebook=${platformCaptions.facebook.length}`);
 
     // Estimate video duration
     const videoDuration = config.contentType === "video" ? 
@@ -303,7 +301,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
     const executionTime = Date.now() - startTime;
     console.log(`⏱️ Content generation completed in ${executionTime}ms`);
 
-    // Create response structure using unified generator outputs (avoid double Spartan enforcement)
+    // Create response structure using unified generator outputs
     const result = {
       script,
       content: script, // Backward compatibility
@@ -312,16 +310,16 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       templateType: config.templateType,
       tone: config.tone,
       platforms: config.platforms,
-      platformCaptions, // Already processed with Spartan format if needed
+      platformCaptions,
       videoDuration,
-      // Include unified generator fields (already sanitized and Spartan-enforced)
-      productDescription: sanitizeUnicode(unifiedResult.productDescription),
-      demoScript: sanitizeUnicode(unifiedResult.demoScript),
-      instagramCaption: sanitizeUnicode(unifiedResult.instagramCaption),
-      tiktokCaption: sanitizeUnicode(unifiedResult.tiktokCaption),
-      youtubeCaption: sanitizeUnicode(unifiedResult.youtubeCaption),
-      xCaption: sanitizeUnicode(unifiedResult.xCaption),
-      facebookCaption: sanitizeUnicode(unifiedResult.facebookCaption),
+      // Include unified generator fields (sanitized and Spartan-enforced if needed)
+      productDescription: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.productDescription)) : sanitizeUnicode(unifiedResult.productDescription),
+      demoScript: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.demoScript)) : sanitizeUnicode(unifiedResult.demoScript),
+      instagramCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.instagramCaption)) : sanitizeUnicode(unifiedResult.instagramCaption),
+      tiktokCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.tiktokCaption)) : sanitizeUnicode(unifiedResult.tiktokCaption),
+      youtubeCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.youtubeCaption)) : sanitizeUnicode(unifiedResult.youtubeCaption),
+      xCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.xCaption)) : sanitizeUnicode(unifiedResult.xCaption),
+      facebookCaption: config.useSpartanFormat ? enforceSpartanFormat(sanitizeUnicode(unifiedResult.facebookCaption)) : sanitizeUnicode(unifiedResult.facebookCaption),
       affiliateLink: sanitizeUnicode(unifiedResult.affiliateLink),
       viralInspiration,
       affiliateUrl: config.affiliateUrl,
@@ -336,7 +334,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       validation: validation
     };
 
-    // Create properly structured database save data (prevent JSON truncation)
+    // Debug the data being saved to database
     const saveData = {
       userId: 1, // Default user ID
       sessionId: config.jobId || `single_${Date.now()}`,
@@ -349,28 +347,13 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       platformsSelected: config.platforms,
       generatedOutput: {
         content: script, // Store the extracted script content
-        hook: config.customHook || viralInspiration?.hook || `Great ${config.productName} content!`,
+        hook: config.customHook || viralInspiration?.hook || `Amazing ${config.productName}!`,
         platform: config.platforms?.join(', ') || 'general',
         niche: config.niche,
-        // Ensure complete platform captions are saved
-        platformCaptions: {
-          tiktok: platformCaptions.tiktok,
-          instagram: platformCaptions.instagram,
-          youtube: platformCaptions.youtube,
-          twitter: platformCaptions.twitter,
-          facebook: platformCaptions.facebook
-        },
-        // Also include individual platform fields for backward compatibility
-        tiktok: platformCaptions.tiktok,
-        instagram: platformCaptions.instagram,
-        youtube: platformCaptions.youtube,
-        twitter: platformCaptions.twitter,
-        facebook: platformCaptions.facebook,
+        ...platformCaptions, // Include platform-specific captions
         hashtags: viralInspiration?.hashtags || [`#${config.niche}`, '#trending'],
         affiliateLink: config.affiliateUrl,
-        callToAction: `Get your ${config.productName} now!`,
-        spartanFormat: config.useSpartanFormat,
-        aiModel: config.aiModel || 'claude'
+        callToAction: `Get your ${config.productName} now!`
       },
       affiliateLink: config.affiliateUrl,
       viralInspo: viralInspiration,

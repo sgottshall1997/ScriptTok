@@ -15,7 +15,6 @@ import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
 import { db } from '../db.js';
 import { eq, desc, sql } from 'drizzle-orm';
-import { contentHistory } from '../../shared/schema.js';
 
 const router = Router();
 
@@ -40,45 +39,45 @@ function enforceSpartanFormat(text: string): string {
   
   let cleanedText = text;
   
-  // Remove stage directions and action text (anything in brackets)
-  cleanedText = cleanedText.replace(/\[.*?\]/g, '');
+  // Define word replacements for Spartan format
+  const spartanReplacements = {
+    'just ': 'only ',
+    ' just ': ' only ',
+    'literally': '',
+    ' literally': '',
+    'literally ': '',
+    'really ': '',
+    ' really ': ' ',
+    'very ': '',
+    ' very ': ' ',
+    'actually ': '',
+    ' actually ': ' ',
+    'that ': 'this ',
+    ' that ': ' this ',
+    'can ': 'will ',
+    ' can ': ' will ',
+    'may ': 'will ',
+    ' may ': ' will ',
+    'amazing ': 'excellent ',
+    ' amazing': ' excellent',
+    'incredible ': 'exceptional ',
+    ' incredible': ' exceptional',
+    'awesome ': 'excellent ',
+    ' awesome': ' excellent'
+  };
   
-  // Remove specific pricing mentions
-  cleanedText = cleanedText.replace(/\$\d+\.?\d*/g, '');
-  cleanedText = cleanedText.replace(/at \$\d+/g, '');
-  cleanedText = cleanedText.replace(/for \$\d+/g, '');
-  cleanedText = cleanedText.replace(/priced at/gi, '');
-  cleanedText = cleanedText.replace(/worth every penny/gi, '');
-  cleanedText = cleanedText.replace(/they're often on sale/gi, '');
-  cleanedText = cleanedText.replace(/check current prices/gi, '');
-  cleanedText = cleanedText.replace(/tap the link to check current prices/gi, '');
+  // Apply replacements
+  Object.entries(spartanReplacements).forEach(([banned, replacement]) => {
+    const regex = new RegExp(banned, 'gi');
+    cleanedText = cleanedText.replace(regex, replacement);
+  });
   
-  // Simple word replacements for Spartan format
-  cleanedText = cleanedText.replace(/\bjust\b/gi, 'only');
-  cleanedText = cleanedText.replace(/\bliterally\b/gi, '');
-  cleanedText = cleanedText.replace(/\breally\b/gi, '');
-  cleanedText = cleanedText.replace(/\bvery\b/gi, '');
-  cleanedText = cleanedText.replace(/\bactually\b/gi, '');
-  cleanedText = cleanedText.replace(/\bthat\b/gi, 'this');
-  cleanedText = cleanedText.replace(/\bcan\b/gi, 'will');
-  cleanedText = cleanedText.replace(/\bmay\b/gi, 'will');
-  cleanedText = cleanedText.replace(/\bamazing\b/gi, 'excellent');
-  cleanedText = cleanedText.replace(/\bincredible\b/gi, 'exceptional');
-  cleanedText = cleanedText.replace(/\bawesome\b/gi, 'excellent');
-  
-  // Remove multiple spaces and clean up
+  // Remove multiple spaces
   cleanedText = cleanedText.replace(/\s+/g, ' ').trim();
   
-  // Remove emojis - simplified approach
-  cleanedText = cleanedText.replace(/[\u{1F600}-\u{1F64F}]/gu, ''); // emoticons
-  cleanedText = cleanedText.replace(/[\u{1F300}-\u{1F5FF}]/gu, ''); // misc symbols
-  cleanedText = cleanedText.replace(/[\u{1F680}-\u{1F6FF}]/gu, ''); // transport
-  cleanedText = cleanedText.replace(/[\u{2600}-\u{26FF}]/gu, ''); // misc symbols
-  cleanedText = cleanedText.replace(/[\u{2700}-\u{27BF}]/gu, ''); // dingbats
-  
-  // Clean up any remaining artifacts
-  cleanedText = cleanedText.replace(/\s*-\s*they're\s*-\s*/gi, ' - ');
-  cleanedText = cleanedText.replace(/\s*\.\s*\[\s*End\s*.*?\]\s*/gi, '.');
+  // Remove emojis
+  const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]/gu;
+  cleanedText = cleanedText.replace(emojiPattern, '');
   
   return cleanedText.trim();
 }
@@ -267,35 +266,6 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
     console.log(`✅ Content generation completed in ${duration}ms`);
     if (config.useSpartanFormat) {
       console.log(`🏛️ SPARTAN ENFORCEMENT: All content cleaned and formatted according to Spartan standards`);
-    }
-
-    // Save to content history database
-    try {
-      const sessionId = `unified_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      
-      const historyEntry = await db.insert(contentHistory).values({
-        userId: 1, // Default user for now
-        sessionId: sessionId,
-        niche: config.niche,
-        contentType: config.templateType,
-        tone: config.tone,
-        productName: config.productName,
-        promptText: `Generated ${config.templateType} content for ${config.productName} in ${config.niche} niche using ${config.tone} tone`,
-        outputText: contentResult.content,
-        platformsSelected: config.platforms,
-        generatedOutput: contentResult,
-        affiliateLink: contentResult.affiliateLink,
-        modelUsed: 'Claude',
-        tokenCount: Math.floor(contentResult.content.length / 4),
-        aiModel: 'claude',
-        contentFormat: config.useSpartanFormat ? 'Spartan Format' : 'Regular Format'
-      }).returning();
-      
-      console.log(`💾 Content saved to history with ID: ${historyEntry[0].id}`);
-      
-    } catch (saveError) {
-      console.error('❌ Failed to save content to history:', saveError);
-      // Don't fail the whole request if saving fails
     }
 
     return res.json({

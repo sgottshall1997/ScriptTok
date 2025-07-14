@@ -748,15 +748,9 @@ const EnhancedContentHistory = () => {
                       )}
                       
                       {/* Content Format Badge */}
-                      {(entry.contentFormat || entry.useSpartanFormat !== undefined) && (
-                        <Badge className={
-                          (entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat) 
-                            ? 'bg-orange-100 text-orange-800 border border-orange-300 font-semibold shadow-sm' 
-                            : 'bg-blue-100 text-blue-800 border border-blue-300'
-                        }>
-                          {(entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat) 
-                            ? '🏛️ Spartan Format' 
-                            : '📝 Regular Format'}
+                      {entry.contentFormat && (
+                        <Badge className={entry.contentFormat.toLowerCase().includes('spartan') ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'}>
+                          {entry.contentFormat.includes('spartan') ? '🏛️ Spartan' : '📝 Regular'}
                         </Badge>
                       )}
                       
@@ -809,52 +803,6 @@ const EnhancedContentHistory = () => {
               
               <CollapsibleContent>
                 <CardContent className="space-y-4 border-t bg-gray-50">
-                  {/* Spartan Format Status Card */}
-                  {(entry.contentFormat || entry.useSpartanFormat) && (
-                    <div className={`p-4 rounded-lg border-2 ${
-                      entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat 
-                        ? 'bg-orange-50 border-orange-200' 
-                        : 'bg-blue-50 border-blue-200'
-                    }`}>
-                      <div className="flex items-center gap-3">
-                        <div className={`text-2xl ${
-                          entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat 
-                            ? 'text-orange-600' 
-                            : 'text-blue-600'
-                        }`}>
-                          {entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat ? '🏛️' : '📝'}
-                        </div>
-                        <div className="flex-1">
-                          <h4 className={`font-semibold ${
-                            entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat 
-                              ? 'text-orange-800' 
-                              : 'text-blue-800'
-                          }`}>
-                            {entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat 
-                              ? 'Spartan Format Applied' 
-                              : 'Regular Format Used'}
-                          </h4>
-                          <p className={`text-sm ${
-                            entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat 
-                              ? 'text-orange-700' 
-                              : 'text-blue-700'
-                          }`}>
-                            {entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat 
-                              ? 'Professional tone with removed filler words, stage directions, and casual language'
-                              : 'Standard content generation without additional formatting constraints'}
-                          </p>
-                        </div>
-                        <Badge className={
-                          entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat 
-                            ? 'bg-orange-100 text-orange-800 border-orange-300' 
-                            : 'bg-blue-100 text-blue-800 border-blue-300'
-                        }>
-                          {entry.contentFormat?.toLowerCase().includes('spartan') || entry.useSpartanFormat ? 'SPARTAN' : 'REGULAR'}
-                        </Badge>
-                      </div>
-                    </div>
-                  )}
-
                   {/* Main Content */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
