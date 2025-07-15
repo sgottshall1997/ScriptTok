@@ -506,13 +506,15 @@ const Dashboard = () => {
           </Card>
         </Link>
 
-        <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
-          <CardContent className="p-6 text-center">
-            <Zap className="h-8 w-8 mx-auto mb-3 text-green-600" />
-            <h3 className="font-semibold text-green-900">⚡ Generate Daily Batch</h3>
-            <p className="text-sm text-green-700 mt-1">Bulk content generation</p>
-          </CardContent>
-        </Card>
+        <Link href="/content-history">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+            <CardContent className="p-6 text-center">
+              <Eye className="h-8 w-8 mx-auto mb-3 text-green-600" />
+              <h3 className="font-semibold text-green-900">📚 Content History</h3>
+              <p className="text-sm text-green-700 mt-1">View and manage your content</p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
 

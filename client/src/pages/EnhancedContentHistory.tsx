@@ -27,7 +27,8 @@ import {
   TrendingUp,
   CheckSquare,
   Square,
-  Trash
+  Trash,
+  Eye
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
@@ -497,7 +498,20 @@ const EnhancedContentHistory = () => {
 
   if (history.length === 0) {
     return (
-      <div className="container mx-auto py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Eye className="h-6 w-6 text-green-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Content History</h1>
+              <p className="text-gray-600">View and manage your generated content history</p>
+            </div>
+          </div>
+        </div>
+
         <div className="text-center py-12 bg-gray-50 rounded-lg">
           <Zap className="h-12 w-12 mx-auto text-gray-400 mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -506,7 +520,7 @@ const EnhancedContentHistory = () => {
           <p className="text-gray-500 mb-4">
             Start by selecting a trending product and generating your first viral content!
           </p>
-          <Button onClick={() => window.location.href = '/generate'}>
+          <Button onClick={() => window.location.href = '/unified-generator'}>
             Create Content
           </Button>
         </div>
@@ -515,15 +529,21 @@ const EnhancedContentHistory = () => {
   }
 
   return (
-    <div className="container mx-auto py-8">
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Header */}
       <div className="mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <div>
-            <h1 className="text-3xl font-bold mb-2">Content History</h1>
-            <p className="text-gray-600">
-              View and manage your generated content history
-            </p>
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-green-100 rounded-lg">
+            <Eye className="h-6 w-6 text-green-600" />
           </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Content History</h1>
+            <p className="text-gray-600">View and manage your generated content history</p>
+          </div>
+        </div>
+        
+        <div className="flex justify-between items-center mb-4">
+          <div></div>
           <div className="flex gap-2">
             {!bulkDeleteMode ? (
               <Button 
