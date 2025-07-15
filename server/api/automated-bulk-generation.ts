@@ -334,6 +334,7 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
     }).returning();
 
     // Start automated processing in background
+    console.log(`🎯 BULK JOB DEBUG: Starting job with topRatedStyleUsed = ${validatedData.topRatedStyleUsed}`);
     processAutomatedBulkJob(bulkJob.id, autoSelectedProducts, validatedData).catch(error => {
       console.error('❌ Automated bulk job processing error:', error);
     });
@@ -424,6 +425,7 @@ async function processAutomatedBulkJob(
 ) {
   try {
     console.log(`🚀 Starting automated bulk job processing for ${bulkJobId}`);
+    console.log(`🎯 JOB DATA DEBUG: topRatedStyleUsed = ${jobData.topRatedStyleUsed}`);
     
     // Update job status to processing
     await db.update(bulkContentJobs)
@@ -485,6 +487,7 @@ async function processAutomatedBulkJob(
           const useSpartanFormat = contentFormat === 'spartan';
           
           console.log(`🎯 Generating content for ${niche}: ${productName} (${tone} tone, ${template} template, ${aiModel} AI, ${contentFormat} format)`);
+          console.log(`🎯 SMART STYLE DEBUG: topRatedStyleUsed = ${jobData.topRatedStyleUsed}`);
           
           // Step 4: Generate comprehensive content using viral inspiration with specific AI model and format
           const generatedContent = await generateComprehensiveContent({

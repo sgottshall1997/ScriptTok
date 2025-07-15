@@ -76,7 +76,7 @@ export async function promptFactory(params: {
     templateType: template,
     tone,
     platform: platform || 'general',
-    useSmartStyle: useSmartStyle || false,
+    useSmartStyle: topRatedStyleUsed || false,
     hasSmartStyleData: !!smartStyleData,
     toneSummary: smartStyleData?.toneSummary || null,
     structureHint: smartStyleData?.structureHint || null,
@@ -91,7 +91,7 @@ export async function promptFactory(params: {
     templateType: template,
     tone,
     trendingProducts,
-    useSmartStyle,
+    useSmartStyle: topRatedStyleUsed,
     bestRatedStyle: smartStyleData,
     platform
   };

@@ -158,7 +158,7 @@ export class WebhookService {
         model: data.metadata?.aiModel === 'chatgpt' ? 'ChatGPT' : data.metadata?.aiModel === 'claude' ? 'Claude' : 'ChatGPT',
         contentFormat: data.metadata?.contentFormat || 'Regular Format',
         postType: 'reel',
-        topRatedStyleUsed: data.metadata?.useSmartStyle || false,
+        topRatedStyleUsed: data.metadata?.topRatedStyleUsed || false,
         
         // VIRAL INSPIRATION DATA from Perplexity
         viralHook: data.contentData?.viralInspiration?.hook || '',
