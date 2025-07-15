@@ -88,24 +88,18 @@ const EnhancedContentHistory = () => {
     const fetchEvaluationData = async () => {
       const newEvaluationData: Record<string, any> = {};
       
-      console.log('🔍 EVAL DEBUG: Starting to fetch evaluation data for', history.length, 'entries');
-      
       for (const entry of history) {
         if (entry.databaseId) {
           try {
             const response = await fetch(`/api/content-evaluation/${entry.databaseId}`);
             const data = await response.json();
             
-            console.log(`🔍 EVAL DEBUG: Response for ${entry.id} (DB: ${entry.databaseId}):`, data);
-            
             if (data.success && data.evaluations && data.evaluations.length > 0) {
               const evaluations: any = {};
               data.evaluations.forEach((evaluation: any) => {
-                console.log(`🔍 EVAL DEBUG: Processing evaluation for ${entry.id}, model: ${evaluation.evaluatorModel}`, evaluation);
                 evaluations[evaluation.evaluatorModel] = evaluation;
               });
               newEvaluationData[entry.id] = evaluations;
-              console.log(`🔍 EVAL DEBUG: Stored evaluations for ${entry.id}:`, evaluations);
             }
           } catch (error) {
             console.error(`Failed to fetch evaluations for ${entry.id}:`, error);
@@ -113,7 +107,6 @@ const EnhancedContentHistory = () => {
         }
       }
       
-      console.log('🔍 EVAL DEBUG: Final evaluation data:', newEvaluationData);
       setEvaluationData(newEvaluationData);
     };
 
@@ -330,11 +323,7 @@ const EnhancedContentHistory = () => {
 
   // Calculate average rating from evaluation scores
   const calculateAverageRating = (evaluation: any): number => {
-    console.log('🔍 RATING DEBUG: calculateAverageRating called with:', evaluation);
-    if (!evaluation) {
-      console.log('🔍 RATING DEBUG: No evaluation provided, returning 0');
-      return 0;
-    }
+    if (!evaluation) return 0;
     const scores = [
       evaluation.viralityScore,
       evaluation.clarityScore,
@@ -342,21 +331,8 @@ const EnhancedContentHistory = () => {
       evaluation.creativityScore
     ].filter(score => score != null);
     
-    console.log('🔍 RATING DEBUG: Individual scores:', {
-      viralityScore: evaluation.viralityScore,
-      clarityScore: evaluation.clarityScore,
-      persuasivenessScore: evaluation.persuasivenessScore,
-      creativityScore: evaluation.creativityScore
-    });
-    console.log('🔍 RATING DEBUG: Filtered scores:', scores);
-    
-    if (scores.length === 0) {
-      console.log('🔍 RATING DEBUG: No valid scores found, returning 0');
-      return 0;
-    }
-    const average = scores.reduce((sum, score) => sum + score, 0) / scores.length;
-    console.log('🔍 RATING DEBUG: Calculated average:', average);
-    return average;
+    if (scores.length === 0) return 0;
+    return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   };
 
   // Enhanced content extraction function
