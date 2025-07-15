@@ -59,7 +59,7 @@ const unifiedGenerationSchema = z.object({
   videoDuration: z.string().optional(),
   affiliateUrl: z.string().optional(),
   customHook: z.string().optional(),
-  useSmartStyle: z.boolean().default(false),
+  topRatedStyleUsed: z.boolean().default(false),
   useSpartanFormat: z.boolean().default(false),
   aiModel: z.enum(['claude', 'chatgpt']).default('claude'),
   
@@ -97,7 +97,7 @@ interface GenerationConfig {
   contentType?: string;
   videoDuration?: string;
   affiliateUrl?: string;
-  useSmartStyle?: boolean;
+  topRatedStyleUsed?: boolean;
   useSpartanFormat?: boolean;
   aiModel: string;
   mode: 'manual' | 'automated';
@@ -196,7 +196,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     // Get smart style recommendations if enabled
     let smartStyleRecommendations = null;
-    if (config.useSmartStyle && config.userId) {
+    if (config.topRatedStyleUsed && config.userId) {
       try {
         const { getSmartStyleRecommendations } = await import('../services/ratingSystem');
         smartStyleRecommendations = await getSmartStyleRecommendations(

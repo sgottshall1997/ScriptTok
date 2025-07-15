@@ -18,7 +18,7 @@ export interface ScheduleConfig {
   platforms: string[];
   aiModel: 'chatgpt' | 'claude';
   contentFormat: 'regular' | 'spartan';
-  useSmartStyle: boolean;
+  topRatedStyleUsed: boolean;
   cronExpression: string;
   isActive: boolean;
   affiliateId?: string;
@@ -78,7 +78,7 @@ export async function createScheduledJob(config: ScheduleConfig): Promise<string
       platforms: config.platforms,
       aiModel: config.aiModel,
       useSpartanFormat: config.contentFormat === 'spartan',
-      useSmartStyle: config.useSmartStyle,
+      topRatedStyleUsed: config.topRatedStyleUsed,
       cronExpression: config.cronExpression,
       isActive: config.isActive,
       affiliateId: config.affiliateId || 'sgottshall107-20',

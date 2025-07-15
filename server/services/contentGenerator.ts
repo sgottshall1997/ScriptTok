@@ -15,7 +15,7 @@ export function logSmartStyleUsage(params: {
   niche: string;
   templateType: string;
   tone: string;
-  useSmartStyle: boolean;
+  topRatedStyleUsed: boolean;
   hasRecommendations: boolean;
   averageRating?: number;
   sampleCount?: number;
@@ -26,7 +26,7 @@ export function logSmartStyleUsage(params: {
     niche: params.niche,
     templateType: params.templateType,
     tone: params.tone,
-    useSmartStyle: params.useSmartStyle,
+    topRatedStyleUsed: params.topRatedStyleUsed,
     hasRecommendations: params.hasRecommendations,
     averageRating: params.averageRating || null,
     sampleCount: params.sampleCount || null
@@ -215,7 +215,7 @@ export async function generateContent(
         template: templateType,
         platform: 'general', // Could be enhanced to detect platform
         niche,
-        useSmartStyle: true,
+        topRatedStyleUsed: true,
         userId: 1, // Demo user ID
         bestRatedStyle,
         trendingProducts
@@ -298,7 +298,7 @@ Generate a highly engaging script that mimics this viral format, tone, and pacin
         niche,
         templateType,
         tone,
-        useSmartStyle: true,
+        topRatedStyleUsed: true,
         hasRecommendations: true,
         averageRating: smartStyleRecommendations.averageRating,
         sampleCount: smartStyleRecommendations.sampleCount

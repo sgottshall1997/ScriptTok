@@ -35,7 +35,7 @@ export interface PromptParams {
     mostUsedTone: string | null;
     mostUsedTemplateType: string | null;
   };
-  useSmartStyle?: boolean; // Whether to use smart style learning
+  topRatedStyleUsed?: boolean; // Whether to use smart style learning
   bestRatedStyle?: BestRatedStyle; // Dynamic learning data from top-rated outputs
   platform?: string; // Platform for smart style filtering
 }
@@ -50,16 +50,16 @@ export async function promptFactory(params: {
   template: TemplateType;
   platform?: string;
   niche: string;
-  useSmartStyle?: boolean;
+  topRatedStyleUsed?: boolean;
   userId?: number;
   bestRatedStyle?: BestRatedStyle;
   trendingProducts?: TrendingProduct[];
 }): Promise<string> {
-  const { productName, tone, template, platform, niche, useSmartStyle, userId, bestRatedStyle, trendingProducts = [] } = params;
+  const { productName, tone, template, platform, niche, topRatedStyleUsed, userId, bestRatedStyle, trendingProducts = [] } = params;
 
-  // If useSmartStyle is enabled and no bestRatedStyle provided, fetch it
+  // If topRatedStyleUsed is enabled and no bestRatedStyle provided, fetch it
   let smartStyleData = bestRatedStyle;
-  if (useSmartStyle && !smartStyleData && userId) {
+  if (topRatedStyleUsed && !smartStyleData && userId) {
     try {
       smartStyleData = await getTopRatedContentForStyle(userId, niche, platform, tone, template);
       console.log('🎯 Smart style data fetched:', smartStyleData ? 'Found patterns from high-rated content' : 'No high-rated content available');

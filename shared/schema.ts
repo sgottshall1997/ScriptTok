@@ -1049,7 +1049,7 @@ export const insertScheduledBulkJobSchema = createInsertSchema(scheduledBulkJobs
   useExistingProducts: true,
   generateAffiliateLinks: true,
   useSpartanFormat: true,
-  useSmartStyle: true,
+  topRatedStyleUsed: true,
   aiModel: true,
   affiliateId: true,
   webhookUrl: true,

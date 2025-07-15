@@ -939,7 +939,7 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
             useExistingProducts,
             generateAffiliateLinks,
             useSpartanFormat,
-            useSmartStyle,
+            topRatedStyleUsed,
             affiliateId: affiliateId || 'sgottshall107-20'
           }}
           isVisible={!startAutomatedBulkMutation.isPending}
