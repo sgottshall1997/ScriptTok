@@ -58,6 +58,8 @@ const EnhancedContentHistory = () => {
     contentFormat: 'all',
     smartStyle: 'all'
   });
+  const [sortBy, setSortBy] = useState('newest');
+  const [evaluationData, setEvaluationData] = useState<Record<string, any>>({});
 
   // Load history from database API
   const { data: dbHistory, refetch: refetchDbHistory } = useQuery({
@@ -79,7 +81,39 @@ const EnhancedContentHistory = () => {
   // Apply filters when history or filters change, and reload when db data changes
   useEffect(() => {
     applyFilters();
-  }, [history, filters]);
+  }, [history, filters, sortBy]);
+
+  // Fetch evaluation data for all content items
+  useEffect(() => {
+    const fetchEvaluationData = async () => {
+      const newEvaluationData: Record<string, any> = {};
+      
+      for (const entry of history) {
+        if (entry.databaseId) {
+          try {
+            const response = await fetch(`/api/content-evaluation/${entry.databaseId}`);
+            const data = await response.json();
+            
+            if (data.success && data.evaluations && data.evaluations.length > 0) {
+              const evaluations: any = {};
+              data.evaluations.forEach((evaluation: any) => {
+                evaluations[evaluation.evaluatorModel] = evaluation;
+              });
+              newEvaluationData[entry.id] = evaluations;
+            }
+          } catch (error) {
+            console.error(`Failed to fetch evaluations for ${entry.id}:`, error);
+          }
+        }
+      }
+      
+      setEvaluationData(newEvaluationData);
+    };
+
+    if (history.length > 0) {
+      fetchEvaluationData();
+    }
+  }, [history]);
 
   useEffect(() => {
     if (dbHistory) {
@@ -226,6 +260,35 @@ const EnhancedContentHistory = () => {
         return filters.smartStyle === 'used' ? smartStyleUsed : !smartStyleUsed;
       });
     }
+
+    // Apply sorting
+    if (sortBy !== 'newest') {
+      filtered = filtered.sort((a, b) => {
+        const aEvals = evaluationData[a.id] || {};
+        const bEvals = evaluationData[b.id] || {};
+        
+        switch (sortBy) {
+          case 'gpt-highest':
+            const aGptScore = aEvals.chatgpt ? (aEvals.chatgpt.viralityScore + aEvals.chatgpt.clarityScore + aEvals.chatgpt.persuasivenessScore + aEvals.chatgpt.creativityScore) / 4 : 0;
+            const bGptScore = bEvals.chatgpt ? (bEvals.chatgpt.viralityScore + bEvals.chatgpt.clarityScore + bEvals.chatgpt.persuasivenessScore + bEvals.chatgpt.creativityScore) / 4 : 0;
+            return bGptScore - aGptScore;
+          case 'gpt-lowest':
+            const aGptScoreLow = aEvals.chatgpt ? (aEvals.chatgpt.viralityScore + aEvals.chatgpt.clarityScore + aEvals.chatgpt.persuasivenessScore + aEvals.chatgpt.creativityScore) / 4 : 10;
+            const bGptScoreLow = bEvals.chatgpt ? (bEvals.chatgpt.viralityScore + bEvals.chatgpt.clarityScore + bEvals.chatgpt.persuasivenessScore + bEvals.chatgpt.creativityScore) / 4 : 10;
+            return aGptScoreLow - bGptScoreLow;
+          case 'claude-highest':
+            const aClaudeScore = aEvals.claude ? (aEvals.claude.viralityScore + aEvals.claude.clarityScore + aEvals.claude.persuasivenessScore + aEvals.claude.creativityScore) / 4 : 0;
+            const bClaudeScore = bEvals.claude ? (bEvals.claude.viralityScore + bEvals.claude.clarityScore + bEvals.claude.persuasivenessScore + bEvals.claude.creativityScore) / 4 : 0;
+            return bClaudeScore - aClaudeScore;
+          case 'claude-lowest':
+            const aClaudeScoreLow = aEvals.claude ? (aEvals.claude.viralityScore + aEvals.claude.clarityScore + aEvals.claude.persuasivenessScore + aEvals.claude.creativityScore) / 4 : 10;
+            const bClaudeScoreLow = bEvals.claude ? (bEvals.claude.viralityScore + bEvals.claude.clarityScore + bEvals.claude.persuasivenessScore + bEvals.claude.creativityScore) / 4 : 10;
+            return aClaudeScoreLow - bClaudeScoreLow;
+          default:
+            return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
+        }
+      });
+    }
     
     setFilteredHistory(filtered);
   };
@@ -242,6 +305,20 @@ const EnhancedContentHistory = () => {
       ...prev,
       [entryId]: !prev[entryId]
     }));
+  };
+
+  // Calculate average rating from evaluation scores
+  const calculateAverageRating = (evaluation: any): number => {
+    if (!evaluation) return 0;
+    const scores = [
+      evaluation.viralityScore,
+      evaluation.clarityScore,
+      evaluation.persuasivenessScore,
+      evaluation.creativityScore
+    ].filter(score => score != null);
+    
+    if (scores.length === 0) return 0;
+    return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   };
 
   // Enhanced content extraction function
@@ -607,6 +684,25 @@ const EnhancedContentHistory = () => {
         {/* Sync Ratings to Google Sheet Button */}
         <SyncRatingsButton className="mb-6" />
 
+        {/* Sort by AI Ratings */}
+        <div className="mb-6">
+          <div className="flex items-center gap-4">
+            <label className="text-sm font-medium text-gray-700">Sort by:</label>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-48">
+                <SelectValue placeholder="Sort options" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest First</SelectItem>
+                <SelectItem value="gpt-highest">GPT Rating: Highest</SelectItem>
+                <SelectItem value="gpt-lowest">GPT Rating: Lowest</SelectItem>
+                <SelectItem value="claude-highest">Claude Rating: Highest</SelectItem>
+                <SelectItem value="claude-lowest">Claude Rating: Lowest</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
         {/* Filters */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
           <div>
@@ -747,7 +843,37 @@ const EnhancedContentHistory = () => {
                     />
                   )}
                   <div className="flex-1">
-                    <CardTitle className="text-xl mb-2">📦 {entry.productName}</CardTitle>
+                    <div className="flex justify-between items-start mb-2">
+                      <CardTitle className="text-xl">📦 {entry.productName}</CardTitle>
+                      
+                      {/* AI Ratings Display */}
+                      <div className="flex items-center gap-3 text-sm">
+                        {(() => {
+                          const evals = evaluationData[entry.id];
+                          if (!evals) return null;
+                          
+                          const gptRating = evals.chatgpt ? calculateAverageRating(evals.chatgpt) : null;
+                          const claudeRating = evals.claude ? calculateAverageRating(evals.claude) : null;
+                          
+                          return (
+                            <>
+                              {gptRating && (
+                                <div className="flex items-center gap-1 bg-blue-50 px-2 py-1 rounded">
+                                  <span className="text-blue-600 font-medium">GPT:</span>
+                                  <span className="text-blue-800 font-bold">{gptRating.toFixed(1)}</span>
+                                </div>
+                              )}
+                              {claudeRating && (
+                                <div className="flex items-center gap-1 bg-orange-50 px-2 py-1 rounded">
+                                  <span className="text-orange-600 font-medium">Claude:</span>
+                                  <span className="text-orange-800 font-bold">{claudeRating.toFixed(1)}</span>
+                                </div>
+                              )}
+                            </>
+                          );
+                        })()}
+                      </div>
+                    </div>
                     <div className="flex flex-wrap gap-2 mb-2">
                       <Badge className={getNicheColor(entry.niche)}>
                         {entry.niche.charAt(0).toUpperCase() + entry.niche.slice(1)}
