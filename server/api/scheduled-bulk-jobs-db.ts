@@ -57,7 +57,7 @@ async function startCronJob(job: any) {
             useSpartanFormat: job.useSpartanFormat,
             useSmartStyle: job.useSmartStyle,
             aiModels: [job.aiModel],
-            contentFormats: ['Regular Format'],
+            contentFormats: job.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
             affiliateId: job.affiliateId,
             webhookUrl: job.webhookUrl,
             sendToMakeWebhook: job.sendToMakeWebhook,
@@ -263,7 +263,9 @@ export async function getScheduledBulkJobs(req: Request, res: Response) {
           templates: job.templates,
           platforms: job.platforms,
           aiModels: [job.aiModel],
-          contentFormats: ['Regular Format']
+          contentFormats: job.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
+          useSmartStyle: job.useSmartStyle,
+          useSpartanFormat: job.useSpartanFormat
         }
       };
     });

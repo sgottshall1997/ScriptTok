@@ -881,7 +881,8 @@ async function generateComprehensiveContent(params: {
       niche as any,
       aiModel || 'claude',
       viralInspiration,
-      smartStyleRecommendations
+      smartStyleRecommendations,
+      aiModel || 'claude' // Pass AI model parameter correctly
     );
 
     // Apply Spartan format enforcement to main content if enabled
