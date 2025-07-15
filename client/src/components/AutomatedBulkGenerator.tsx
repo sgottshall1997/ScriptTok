@@ -94,7 +94,7 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
   const [showPreview, setShowPreview] = useState(false);
   const [scheduleAfterGeneration, setScheduleAfterGeneration] = useState(false);
   const [makeWebhookUrl, setMakeWebhookUrl] = useState('');
-  const [useSmartStyle, setUseSmartStyle] = useState(false);
+  const [topRatedStyleUsed, setTopRatedStyleUsed] = useState(false);
   const [useSpartanFormat, setUseSpartanFormat] = useState(true);
 
   const { toast } = useToast();
@@ -328,7 +328,7 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
       manualAffiliateLinks: useManualAffiliateLinks ? manualAffiliateLinks : undefined,
       scheduleAfterGeneration,
       makeWebhookUrl: 'https://hook.us2.make.com/rkemtdx2hmy4tpd0to9bht6dg23s8wjw',
-      useSmartStyle,
+      topRatedStyleUsed,
       useSpartanFormat,
       userId: 1, // Demo user ID for rating system
       previewedProducts: Object.keys(previewProducts).length > 0 ? previewProducts : undefined,
@@ -833,8 +833,8 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
             <div className="flex items-center space-x-3">
               <Switch
                 id="use-smart-style"
-                checked={useSmartStyle}
-                onCheckedChange={setUseSmartStyle}
+                checked={topRatedStyleUsed}
+                onCheckedChange={setTopRatedStyleUsed}
               />
               <Label htmlFor="use-smart-style" className="text-sm cursor-pointer">
                 <span className="font-medium">Use My Best-Rated Style</span>
@@ -842,7 +842,7 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
               </Label>
             </div>
             
-            {useSmartStyle && (
+            {topRatedStyleUsed && (
               <div className="mt-3 p-3 bg-white rounded-lg border border-purple-200">
                 <p className="text-xs text-purple-700">
                   <strong>Active:</strong> The system will analyze your top-performing content and apply successful patterns to new generations, including tone, structure, and engagement strategies.

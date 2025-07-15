@@ -152,7 +152,7 @@ const automatedBulkSchema = z.object({
   timezone: z.string().default("America/New_York"),
   isScheduled: z.boolean().default(false),
   makeWebhookUrl: z.string().url().optional(),
-  useSmartStyle: z.boolean().default(false),
+  topRatedStyleUsed: z.boolean().default(false),
   userId: z.number().optional(),
   previewedProducts: z.record(z.object({
     title: z.string(),
@@ -392,7 +392,7 @@ export async function resumeInterruptedJobs() {
             aiModels: ['claude'], // Use Claude for resumed jobs
             contentFormats: ['Regular Format'],
             userId: 1,
-            useSmartStyle: job.useSmartStyle || false,
+            topRatedStyleUsed: job.useSmartStyle || false,
             useSpartanFormat: job.useSpartanFormat || false,
             generateAffiliateLinks: true,
             affiliateId: "sgottshall107-20",
@@ -636,7 +636,7 @@ async function processAutomatedBulkJob(
                       viralInspo: viralInspiration,
                       modelUsed: aiModel,
                       tokenCount: Math.floor(Math.random() * 500) + 200,
-                      topRatedStyleUsed: jobData.useSmartStyle || false,
+                      topRatedStyleUsed: jobData.topRatedStyleUsed || false,
                       contentFormat: contentFormat
                     });
 
@@ -652,7 +652,7 @@ async function processAutomatedBulkJob(
                       platforms,
                       aiModel,
                       contentFormat,
-                      useSmartStyle: jobData.useSmartStyle
+                      topRatedStyleUsed: jobData.topRatedStyleUsed
                     });
                   }
                   
@@ -748,12 +748,11 @@ async function processAutomatedBulkJob(
                           tone,
                           template: template,
                           templateType: template,
-                          useSmartStyle: jobData.useSmartStyle || false,
                           jobType: 'automated_bulk',
                           jobId: savedContent?.bulkJobId || sessionId,
                           affiliateUrl: affiliateLink,
                           affiliateLink: affiliateLink,
-                          topRatedStyleUsed: jobData.useSmartStyle || false,
+                          topRatedStyleUsed: jobData.topRatedStyleUsed || false,
                           aiModel: aiModel,
                           contentFormat: contentFormat,
                           useSpartanFormat: useSpartanFormat
