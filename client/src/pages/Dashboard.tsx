@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 import { 
   ArrowRight, 
@@ -29,6 +29,7 @@ import { trackEvent } from "@/lib/analytics";
 const Dashboard = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [location, setLocation] = useLocation();
   const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
 
@@ -439,19 +440,21 @@ const Dashboard = () => {
                       
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2">
-                        <Link 
-                          href={`/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`}
+                        <Button 
+                          size="sm" 
+                          className="flex-1 bg-red-500 hover:bg-red-600 text-white"
                           onClick={() => {
+                            const url = `/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`;
+                            console.log('🔄 Navigating to:', url);
                             trackEvent('trending_product_click', 'bulk_generator', `${product.niche}_${product.title}`, 1);
+                            setLocation(url);
                             // Scroll to top after navigation
                             setTimeout(() => window.scrollTo(0, 0), 100);
                           }}
                         >
-                          <Button size="sm" className="flex-1 bg-red-500 hover:bg-red-600 text-white">
-                            <Zap className="h-3 w-3 mr-1" />
-                            Generate Content
-                          </Button>
-                        </Link>
+                          <Zap className="h-3 w-3 mr-1" />
+                          Generate Content
+                        </Button>
                         <Button 
                           size="sm" 
                           variant="outline" 
