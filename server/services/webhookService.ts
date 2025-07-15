@@ -159,6 +159,7 @@ export class WebhookService {
         contentFormat: data.metadata?.contentFormat || 'Regular Format',
         postType: 'reel',
         topRatedStyleUsed: data.metadata?.topRatedStyleUsed || false,
+        useSpartanFormat: data.metadata?.useSpartanFormat || false,
         
         // VIRAL INSPIRATION DATA from Perplexity
         viralHook: data.contentData?.viralInspiration?.hook || '',
@@ -223,6 +224,8 @@ export class WebhookService {
       console.log(`🔗 Product: ${newPayload.product}`);
       console.log(`🤖 AI Model: ${newPayload.model}`);
       console.log(`📄 Content Format: ${newPayload.contentFormat}`);
+      console.log(`🎯 Top Rated Style Used: ${newPayload.topRatedStyleUsed}`);
+      console.log(`🏛️ Spartan Format: ${newPayload.useSpartanFormat}`);
       console.log(`💰 Affiliate Link: ${newPayload.affiliateLink ? 'Yes' : 'No'}`);
       console.log(`✨ Viral Inspiration: ${newPayload.viralInspirationFound ? 'Yes' : 'No'}`);
       if (newPayload.viralInspirationFound) {

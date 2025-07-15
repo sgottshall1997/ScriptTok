@@ -43,6 +43,7 @@ async function startCronJob(job: any) {
     const cronJob = cron.schedule(cronPattern, async () => {
       console.log(`⏰ EXECUTING SCHEDULED BULK JOB: ${job.id} at ${new Date().toLocaleTimeString()}`);
       console.log(`🎯 SCHEDULED JOB PARAMETERS: topRatedStyleUsed=${job.topRatedStyleUsed}, useSpartanFormat=${job.useSpartanFormat}`);
+      console.log(`🎯 FULL JOB OBJECT:`, JSON.stringify(job, null, 2));
       
       try {
         // Update last run timestamp

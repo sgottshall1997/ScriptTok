@@ -361,3 +361,14 @@ Preferred communication style: Simple, everyday language.
 - **SUCCESSFUL TESTING**: Created job #135 for 16:05 execution with topRatedStyleUsed: true parameter flowing correctly
 - **API ENDPOINTS UNIFIED**: All routes updated to use new simple scheduler (/api/automated-bulk/schedule, /api/automated-bulk/scheduled-jobs)
 - **PRODUCTION READY**: Scheduled generator now works exactly like automated bulk generator with timing - no complexity, no parameter mismatches
+
+### July 15, 2025 - Scheduled Generator Parameter Parity Fix Complete
+- **CRITICAL PARAMETER BUG FIXED**: Resolved issue where `|| false` fallback operators in simple-scheduler.ts were overriding actual database values
+- **EXACT PARAMETER MATCHING**: Changed `topRatedStyleUsed: job.topRatedStyleUsed || false` to `topRatedStyleUsed: job.topRatedStyleUsed` to use actual stored values
+- **COMPREHENSIVE TESTING COMPLETED**: Created multiple test jobs (142, 143, 145, 146, 147) to verify parameter flow works correctly
+- **WEBHOOK PAYLOAD VERIFICATION**: Confirmed scheduled job webhook payloads contain correct `topRatedStyleUsed` and `useSpartanFormat` values
+- **MANUAL VS SCHEDULED PARITY**: Both manual and scheduled generators now produce identical webhook payloads with same parameter values
+- **PARAMETER FLOW TRACED**: Added debug logging to trace parameter flow from database → job execution → webhook payload
+- **SIMULATION TESTING**: Created comprehensive test script that simulates scheduled job execution and verified parameter passing works correctly
+- **SMART STYLE INTEGRATION**: Confirmed smart style recommendations are properly applied when `topRatedStyleUsed: true` in scheduled jobs
+- **PRODUCTION READY**: Scheduled generator now achieves exact parity with automated bulk generator - identical operation, parameter consistency, and output
