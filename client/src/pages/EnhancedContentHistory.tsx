@@ -643,7 +643,7 @@ const EnhancedContentHistory = () => {
                 <SelectValue placeholder="Has / Does not have Affiliate Link" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Content</SelectItem>
+                <SelectItem value="all">Affiliate Link / No Affiliate Link</SelectItem>
                 <SelectItem value="has">Has Affiliate Link</SelectItem>
                 <SelectItem value="none">No Affiliate Link</SelectItem>
               </SelectContent>
@@ -680,10 +680,10 @@ const EnhancedContentHistory = () => {
           <div>
             <Select value={filters.contentFormat} onValueChange={(value) => setFilters(prev => ({ ...prev, contentFormat: value }))}>
               <SelectTrigger>
-                <SelectValue placeholder="Content Format" />
+                <SelectValue placeholder="Regular or Spartan Format" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Formats</SelectItem>
+                <SelectItem value="all">Regular or Spartan Format</SelectItem>
                 <SelectItem value="regular">Regular Format</SelectItem>
                 <SelectItem value="spartan">Spartan Format</SelectItem>
                 <SelectItem value="unknown">Unknown</SelectItem>
@@ -697,7 +697,7 @@ const EnhancedContentHistory = () => {
                 <SelectValue placeholder="Smart Style" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Content</SelectItem>
+                <SelectItem value="all">Smart Style or Standard</SelectItem>
                 <SelectItem value="used">Smart Style Used</SelectItem>
                 <SelectItem value="none">Standard Style</SelectItem>
               </SelectContent>
