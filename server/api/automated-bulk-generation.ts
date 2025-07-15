@@ -308,9 +308,8 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
       });
     }
     
-    // Calculate total variations - for scheduled jobs, generate one piece per product (niche)
-    // This ensures proper completion tracking
-    const totalVariations = totalSelectedProducts;
+    // Calculate total variations properly - products × templates × tones × AI models × content formats
+    const totalVariations = totalSelectedProducts * validatedData.templates.length * validatedData.tones.length * validatedData.aiModels.length * validatedData.contentFormats.length;
     
     // Create bulk job record
     const [bulkJob] = await db.insert(bulkContentJobs).values({
@@ -475,19 +474,17 @@ async function processAutomatedBulkJob(
           };
         }
 
-        // Step 3: Generate content - use only first template/tone/AI/format for scheduled jobs to avoid duplicates
-        // For scheduled jobs: one product per niche = one piece of content per niche
-        const template = jobData.templates[0] || 'product-spotlight';
-        const tone = jobData.tones[0] || 'engaging';
-        const aiModel = jobData.aiModels[0] || 'claude';
-        const contentFormat = jobData.contentFormats[0] || 'standard';
-        
-        try {
-          const startTime = Date.now();
-          const useSpartanFormat = contentFormat === 'spartan';
-          
-          console.log(`🎯 Generating content for ${niche}: ${productName} (${tone} tone, ${template} template, ${aiModel} AI, ${contentFormat} format)`);
-          console.log(`🎯 SMART STYLE DEBUG: topRatedStyleUsed = ${jobData.topRatedStyleUsed}`);
+        // Step 3: Generate content for ALL combinations - templates × tones × AI models × content formats
+        for (const template of jobData.templates) {
+          for (const tone of jobData.tones) {
+            for (const aiModel of jobData.aiModels) {
+              for (const contentFormat of jobData.contentFormats) {
+                try {
+                  const startTime = Date.now();
+                  const useSpartanFormat = contentFormat === 'spartan';
+                  
+                  console.log(`🎯 Generating content for ${niche}: ${productName} (${tone} tone, ${template} template, ${aiModel} AI, ${contentFormat} format)`);
+                  console.log(`🎯 SMART STYLE DEBUG: topRatedStyleUsed = ${jobData.topRatedStyleUsed}`);
           
           // Step 4: Generate comprehensive content using viral inspiration with specific AI model and format
           const generatedContent = await generateComprehensiveContent({
@@ -779,40 +776,44 @@ async function processAutomatedBulkJob(
                 }
               }
               
-              if (savedContent) {
-                generatedContentIds.push(savedContent.id);
-                completedCount++;
-                
-                // Update progress
-                await db.update(bulkContentJobs)
-                  .set({ 
-                    completedVariations: completedCount,
-                    updatedAt: new Date(),
-                    progressLog: sql`jsonb_set(progress_log, '{currentProduct}', ${JSON.stringify(productName)})`
-                  })
-                  .where(eq(bulkContentJobs.id, bulkJobId));
-                
-                console.log(`✅ Generated content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat} (${completedCount} total)`);
-              }
+                  if (savedContent) {
+                    generatedContentIds.push(savedContent.id);
+                    completedCount++;
+                    
+                    // Update progress
+                    await db.update(bulkContentJobs)
+                      .set({ 
+                        completedVariations: completedCount,
+                        updatedAt: new Date(),
+                        progressLog: sql`jsonb_set(progress_log, '{currentProduct}', ${JSON.stringify(productName)})`
+                      })
+                      .where(eq(bulkContentJobs.id, bulkJobId));
+                    
+                    console.log(`✅ Generated content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat} (${completedCount} total)`);
+                  }
 
-        } catch (contentError) {
-          console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat}:`, contentError);
-          
-          // Log error but continue with other products
-          await db.update(bulkContentJobs)
-            .set({ 
-              errorLog: sql`jsonb_set(COALESCE(error_log, '[]'::jsonb), '{-1}', ${JSON.stringify({
-                product: productName,
-                tone,
-                template,
-                aiModel,
-                contentFormat,
-                error: contentError instanceof Error ? contentError.message : 'Unknown error',
-                timestamp: new Date().toISOString()
-              })})`
-            })
-            .where(eq(bulkContentJobs.id, bulkJobId));
-        }
+                } catch (contentError) {
+                  console.log(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat}:`, contentError);
+                  
+                  // Log error but continue with other variations
+                  await db.update(bulkContentJobs)
+                    .set({ 
+                      errorLog: sql`jsonb_set(COALESCE(error_log, '[]'::jsonb), '{-1}', ${JSON.stringify({
+                        product: productName,
+                        tone,
+                        template,
+                        aiModel,
+                        contentFormat,
+                        error: contentError instanceof Error ? contentError.message : 'Unknown error',
+                        timestamp: new Date().toISOString()
+                      })})`
+                    })
+                    .where(eq(bulkContentJobs.id, bulkJobId));
+                }
+              } // Close contentFormat loop
+            } // Close aiModel loop
+          } // Close tone loop
+        } // Close template loop
       } catch (productError) {
         console.error(`❌ Failed to process product ${productName}:`, productError);
       }
