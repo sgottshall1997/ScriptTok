@@ -10,6 +10,9 @@ import {
   type InsertClaudeAiSuggestion 
 } from './claudeAiSuggestionsService';
 import { storage } from '../storage';
+import { db } from '../db';
+import { contentHistory, contentEvaluations } from '../../shared/schema';
+import { eq, and, gte, desc } from 'drizzle-orm';
 
 interface ContentAnalysis {
   niche: string;
@@ -40,13 +43,24 @@ export async function generateRetroactiveClaudeSuggestions(): Promise<{
   console.log('🔍 Starting retroactive Claude AI suggestions generation...');
   
   try {
-    // Get all content history
-    const contentHistory = await storage.getAllContentHistory(1000, 0);
-    console.log(`📊 Found ${contentHistory.length} content entries to analyze`);
+    // Get high-rated content with evaluations (6.9+ threshold)
+    console.log('🔄 About to call getHighRatedContentWithEvaluations...');
+    const highRatedContent = await getHighRatedContentWithEvaluations();
+    console.log(`📊 MAIN FUNCTION: Found ${highRatedContent.length} high-rated content entries to analyze`);
+
+    if (highRatedContent.length === 0) {
+      console.log('📊 No high-rated content found for analysis');
+      return {
+        success: true,
+        analyzed: 0,
+        generated: 0,
+        suggestions: []
+      };
+    }
 
     // Group content by niche and template type
-    const contentGroups = groupContentByNicheAndTemplate(contentHistory);
-    console.log(`🎯 Grouped content into ${Object.keys(contentGroups).length} niche-template combinations`);
+    const contentGroups = groupHighRatedContentByNiche(highRatedContent);
+    console.log(`🎯 Grouped high-rated content into ${Object.keys(contentGroups).length} niche combinations`);
 
     let totalGenerated = 0;
     const allSuggestions = [];
@@ -385,4 +399,107 @@ export async function getTargetedSuggestions(
   }
   
   return suggestions;
+}
+
+/**
+ * Get high-rated content with evaluations (6.9+ average score)
+ */
+async function getHighRatedContentWithEvaluations() {
+  console.log('🔍 Fetching high-rated content with evaluations...');
+  
+  const results = await db
+    .select({
+      id: contentHistory.id,
+      niche: contentHistory.niche,
+      tone: contentHistory.tone,
+      templateType: contentHistory.contentType,
+      productName: contentHistory.productName,
+      outputText: contentHistory.outputText,
+      createdAt: contentHistory.createdAt,
+      viralityScore: contentEvaluations.viralityScore,
+      clarityScore: contentEvaluations.clarityScore,
+      persuasivenessScore: contentEvaluations.persuasivenessScore,
+      creativityScore: contentEvaluations.creativityScore,
+      evaluatorModel: contentEvaluations.evaluatorModel
+    })
+    .from(contentHistory)
+    .innerJoin(contentEvaluations, eq(contentHistory.id, contentEvaluations.contentHistoryId))
+    .orderBy(desc(contentHistory.createdAt));
+
+  console.log(`📊 Raw query returned ${results.length} content-evaluation pairs`);
+
+  // Group by content_history_id and calculate average scores across models
+  const groupedContent = {};
+  for (const row of results) {
+    const avgScore = (row.viralityScore + row.clarityScore + row.persuasivenessScore + row.creativityScore) / 4.0;
+    
+    if (!groupedContent[row.id]) {
+      groupedContent[row.id] = {
+        id: row.id,
+        niche: row.niche,
+        tone: row.tone,
+        templateType: row.templateType,
+        productName: row.productName,
+        outputText: row.outputText,
+        createdAt: row.createdAt,
+        scores: [],
+        evaluators: []
+      };
+    }
+    
+    groupedContent[row.id].scores.push(avgScore);
+    groupedContent[row.id].evaluators.push(row.evaluatorModel);
+  }
+
+  console.log(`📊 Grouped into ${Object.keys(groupedContent).length} unique content pieces`);
+
+  // Calculate final average scores and filter
+  const filteredContent = Object.values(groupedContent)
+    .map((content: any) => ({
+      ...content,
+      avgScore: content.scores.reduce((a, b) => a + b, 0) / content.scores.length,
+      evaluatorCount: content.evaluators.length
+    }))
+    .filter((content: any) => content.avgScore >= 6.9);
+
+  console.log(`🎯 Found ${filteredContent.length} pieces of content with 6.9+ average scores`);
+  filteredContent.forEach(content => {
+    console.log(`   - ${content.productName} (${content.niche}): ${content.avgScore.toFixed(1)} avg score from ${content.evaluatorCount} evaluators`);
+  });
+  
+  return filteredContent;
+}
+
+/**
+ * Group high-rated content by niche for targeted analysis
+ */
+function groupHighRatedContentByNiche(highRatedContent: any[]): Record<string, ContentAnalysis> {
+  const groups: Record<string, ContentAnalysis> = {};
+
+  for (const content of highRatedContent) {
+    const groupKey = `${content.niche}-${content.templateType}-${content.tone}`;
+    
+    if (!groups[groupKey]) {
+      groups[groupKey] = {
+        niche: content.niche,
+        templateType: content.templateType,
+        tone: content.tone,
+        sampleContent: [],
+        commonPatterns: [],
+        averageLength: 0,
+        contentCount: 0
+      };
+    }
+
+    groups[groupKey].sampleContent.push(content.outputText);
+    groups[groupKey].contentCount++;
+  }
+
+  // Calculate average length for each group
+  for (const group of Object.values(groups)) {
+    group.averageLength = group.sampleContent
+      .reduce((total, content) => total + content.length, 0) / group.sampleContent.length;
+  }
+
+  return groups;
 }
