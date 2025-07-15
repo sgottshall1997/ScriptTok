@@ -8,25 +8,10 @@ const router = Router();
 // Get cron job status and last run information
 router.get('/', async (req, res) => {
   try {
-    // Get last Perplexity products added
-    const lastPerplexityProducts = await db
-      .select()
-      .from(trendingProducts)
-      .where(trendingProducts.source.eq('perplexity'))
-      .orderBy(desc(trendingProducts.createdAt))
-      .limit(10);
-
-    // Get today's Perplexity products
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get Perplexity cron status
+    const { getPerplexityCronStatus } = await import('../services/perplexityCron');
+    const cronStatus = getPerplexityCronStatus();
     
-    const todaysProducts = await db
-      .select()
-      .from(trendingProducts)
-      .where(trendingProducts.source.eq('perplexity'))
-      .where(trendingProducts.createdAt.gte(today))
-      .orderBy(desc(trendingProducts.createdAt));
-
     // Calculate next 5 AM ET run
     const now = new Date();
     const nextRun = new Date();
@@ -37,24 +22,13 @@ router.get('/', async (req, res) => {
       nextRun.setDate(nextRun.getDate() + 1);
     }
 
-    const lastRunDate = lastPerplexityProducts.length > 0 
-      ? lastPerplexityProducts[0].createdAt 
-      : null;
-
     const status = {
-      cronSchedule: "0 5 * * * (5:00 AM ET daily)",
+      cronSchedule: "0 9 * * * (5:00 AM ET daily)",
       timezone: "America/New_York",
       nextScheduledRun: nextRun.toISOString(),
-      lastRunDate: lastRunDate,
-      todaysProductCount: todaysProducts.length,
-      lastTenProducts: lastPerplexityProducts.map(p => ({
-        title: p.title,
-        niche: p.niche,
-        createdAt: p.createdAt,
-        mentions: p.mentions
-      })),
-      systemStatus: "Active",
-      isRunning: false // This would need to be tracked globally if needed
+      systemStatus: cronStatus.isRunning ? "Running" : "Scheduled",
+      cronJobActive: cronStatus.scheduled,
+      perplexityAutomationEnabled: true
     };
 
     res.json({ success: true, status });

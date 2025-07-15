@@ -81,6 +81,15 @@ app.use((req, res, next) => {
     } catch (error) {
       console.error('❌ Failed to resume interrupted jobs:', error);
     }
+    
+    // ✅ Initialize Perplexity automation cron job
+    try {
+      const { initializePerplexityCron } = await import('./services/perplexityCron');
+      initializePerplexityCron();
+    } catch (error) {
+      console.error('❌ Failed to initialize Perplexity automation:', error);
+    }
+    
     console.log('   ℹ️  Scheduled jobs must be manually activated through the UI');
     
     // OLD SCHEDULED SYSTEM REMOVED - using simplified unified scheduling
