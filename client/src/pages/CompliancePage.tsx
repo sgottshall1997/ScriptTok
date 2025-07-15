@@ -125,50 +125,105 @@ const CompliancePage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Content Generation Compliance */}
+        {/* Advanced AI System Compliance */}
         <Card>
           <CardHeader>
-            <CardTitle>AI-Generated Content Compliance</CardTitle>
+            <CardTitle>Advanced AI Content Generation & Compliance</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">
-              Our AI content generation system automatically includes appropriate disclosure language for all platforms:
+              Our sophisticated AI system ensures comprehensive compliance across all content generation features:
             </p>
             
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-800 mb-3">Automated Compliance Features</h4>
+              <h4 className="font-semibold text-blue-800 mb-3">Claude AI-Powered Compliance System</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <strong className="text-blue-700">Content Generation:</strong>
                   <ul className="text-sm text-blue-600 mt-1 space-y-1">
-                    <li>• Automatic Amazon disclosure inclusion</li>
-                    <li>• Platform-specific compliance language</li>
-                    <li>• FTC-compliant hashtag integration</li>
+                    <li>• Claude AI primary generation with automatic disclosures</li>
+                    <li>• Platform-specific compliance language (TikTok, Instagram, YouTube, Twitter)</li>
+                    <li>• Spartan format option for professional tone enforcement</li>
+                    <li>• Automated bulk generation with compliance across all content</li>
+                    <li>• Smart Style recommendations from your highest-rated compliant content</li>
                   </ul>
                 </div>
                 <div>
-                  <strong className="text-blue-700">User Interface:</strong>
+                  <strong className="text-blue-700">Advanced Features:</strong>
                   <ul className="text-sm text-blue-600 mt-1 space-y-1">
-                    <li>• Compliance wrapper on all pages</li>
-                    <li>• Clear affiliate link labeling</li>
-                    <li>• Disclosure prominence verification</li>
+                    <li>• Dual AI evaluation system for quality assurance</li>
+                    <li>• Claude AI suggestions database for optimization</li>
+                    <li>• Scheduled generation with maintained compliance</li>
+                    <li>• Perplexity API integration for trending products</li>
+                    <li>• Comprehensive content history and analytics</li>
                   </ul>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-semibold">Example Compliant Disclosures:</h4>
+              <h4 className="font-semibold">Platform-Specific Compliant Disclosures (Auto-Generated):</h4>
               <div className="space-y-2">
                 <div className="bg-gray-100 rounded p-3">
-                  <strong className="text-sm">TikTok/Instagram:</strong>
-                  <p className="text-sm mt-1">"As an Amazon Associate I earn from qualifying purchases. #ad #affiliate"</p>
+                  <strong className="text-sm">TikTok (60 words max):</strong>
+                  <p className="text-sm mt-1">"This amazing product is trending! As an Amazon Associate I earn from qualifying purchases. #ad #affiliate"</p>
                 </div>
                 <div className="bg-gray-100 rounded p-3">
-                  <strong className="text-sm">YouTube:</strong>
-                  <p className="text-sm mt-1">"This video contains affiliate links. I earn a commission from qualifying purchases at no extra cost to you."</p>
+                  <strong className="text-sm">Instagram (80 words max):</strong>
+                  <p className="text-sm mt-1">"Loving this find! Quality is incredible and shipping was super fast. As an Amazon Associate I earn from qualifying purchases. Link in bio! #affiliate #ad"</p>
+                </div>
+                <div className="bg-gray-100 rounded p-3">
+                  <strong className="text-sm">YouTube (100 words max):</strong>
+                  <p className="text-sm mt-1">"This video contains affiliate links. I earn a commission from qualifying purchases at no extra cost to you. All opinions are my own and based on personal experience."</p>
+                </div>
+                <div className="bg-gray-100 rounded p-3">
+                  <strong className="text-sm">Twitter (40 words max):</strong>
+                  <p className="text-sm mt-1">"Found the perfect product! As an Amazon Associate I earn from qualifying purchases. #ad"</p>
                 </div>
               </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* AI Technology Compliance */}
+        <Card>
+          <CardHeader>
+            <CardTitle>AI Technology & Data Processing Compliance</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+              <h4 className="font-semibold text-purple-800 mb-3">Our AI Technology Stack</h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <strong className="text-purple-700">Primary AI Models:</strong>
+                  <ul className="text-sm text-purple-600 mt-1 space-y-1">
+                    <li>• Claude AI: Content generation and suggestions</li>
+                    <li>• Perplexity API: Trend discovery and viral insights</li>
+                    <li>• Dual evaluation system for quality assurance</li>
+                    <li>• Smart Style learning from your best content</li>
+                  </ul>
+                </div>
+                <div>
+                  <strong className="text-purple-700">Compliance Features:</strong>
+                  <ul className="text-sm text-purple-600 mt-1 space-y-1">
+                    <li>• Automatic FTC disclosure integration</li>
+                    <li>• Platform-specific word limits enforced</li>
+                    <li>• Content evaluation and rating systems</li>
+                    <li>• Comprehensive audit trails and history</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-semibold">Data Processing Transparency:</h4>
+              <ul className="text-sm space-y-1">
+                <li>• All content generation is logged with timestamps and AI model attribution</li>
+                <li>• User ratings and feedback improve future content recommendations</li>
+                <li>• Trending product data refreshed automatically via Perplexity API</li>
+                <li>• Claude AI suggestions database continuously optimized from high-rated content</li>
+                <li>• Scheduled generation maintains same compliance standards as manual generation</li>
+              </ul>
             </div>
           </CardContent>
         </Card>
@@ -201,6 +256,15 @@ const CompliancePage: React.FC = () => {
                     <ExternalLink className="h-3 w-3 mr-2" />
                     Amazon Associates Operating Agreement
                   </a>
+                  <a 
+                    href="https://www.ftc.gov/business-guidance/resources/disclosures-101-social-media-influencers"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-2" />
+                    FTC Social Media Disclosure Guidelines
+                  </a>
                 </div>
               </div>
               
@@ -224,6 +288,15 @@ const CompliancePage: React.FC = () => {
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
                     YouTube Paid Promotion Guidelines
+                  </a>
+                  <a 
+                    href="https://business.twitter.com/en/help/ads-policies/restricted-content-policies/political-content.html"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-2" />
+                    Twitter/X Advertising Policies
                   </a>
                 </div>
               </div>

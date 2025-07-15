@@ -32,22 +32,33 @@ const PrivacyPolicyPage: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4">2. The Data We Collect</h2>
             <p>
               We collect several different types of information for various purposes to provide and improve our 
-              service to you.
+              AI-powered content generation service.
             </p>
             <h3 className="text-lg font-medium mt-4 mb-2">Personal Data</h3>
             <p>While using our service, we may ask you to provide us with certain personally identifiable information that can be used to contact or identify you. This may include:</p>
             <ul className="list-disc pl-6 mb-4">
               <li>Email address</li>
               <li>First name and last name</li>
-              <li>Usage data</li>
+              <li>Content preferences and niche selections</li>
+              <li>Account settings and configuration data</li>
+            </ul>
+            
+            <h3 className="text-lg font-medium mt-4 mb-2">AI-Generated Content Data</h3>
+            <p>Our platform processes and stores the following content-related data:</p>
+            <ul className="list-disc pl-6 mb-4">
+              <li>Generated social media content and scripts</li>
+              <li>User ratings and feedback on generated content</li>
+              <li>AI evaluation scores and performance metrics</li>
+              <li>Content optimization suggestions and recommendations</li>
+              <li>Platform-specific content variations (TikTok, Instagram, YouTube, Twitter)</li>
+              <li>Content generation history and session data</li>
             </ul>
             
             <h3 className="text-lg font-medium mt-4 mb-2">Usage Data</h3>
             <p>
-              We may also collect information on how the service is accessed and used. This usage data may include 
-              information such as your computer's Internet Protocol address (e.g., IP address), browser type, browser 
-              version, the pages of our service that you visit, the time and date of your visit, the time spent on those 
-              pages, unique device identifiers, and other diagnostic data.
+              We collect information on how the service is accessed and used, including AI model performance data. 
+              This usage data may include your computer's Internet Protocol address, browser type, the pages visited, 
+              time and date of visits, AI model selection preferences, content generation patterns, and diagnostic data.
             </p>
           </section>
 
@@ -55,11 +66,17 @@ const PrivacyPolicyPage: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4">3. How We Use Your Data</h2>
             <p>We use the collected data for various purposes:</p>
             <ul className="list-disc pl-6 mb-4">
-              <li>To provide and maintain our service</li>
+              <li>To provide and maintain our AI-powered content generation service</li>
+              <li>To personalize content recommendations through our Smart Style system</li>
+              <li>To improve Claude AI suggestions based on your highest-rated content</li>
+              <li>To perform dual AI evaluations for content quality assessment</li>
+              <li>To optimize content generation across different social media platforms</li>
+              <li>To provide automated bulk generation and scheduling capabilities</li>
+              <li>To ensure FTC and affiliate marketing compliance</li>
               <li>To notify you about changes to our service</li>
-              <li>To provide customer support</li>
-              <li>To gather analysis or valuable information so that we can improve our service</li>
-              <li>To monitor the usage of our service</li>
+              <li>To provide customer support and content optimization guidance</li>
+              <li>To gather analysis for improving AI model performance and accuracy</li>
+              <li>To monitor service usage and prevent abuse</li>
               <li>To detect, prevent and address technical issues</li>
             </ul>
           </section>
@@ -105,15 +122,25 @@ const PrivacyPolicyPage: React.FC = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">7. Service Providers</h2>
+            <h2 className="text-xl font-semibold mb-4">7. AI Service Providers and Third-Party Integrations</h2>
             <p>
-              We may employ third-party companies and individuals to facilitate our service ("Service Providers"), 
-              provide the service on our behalf, perform service-related services, or assist us in analyzing how our 
-              service is used.
+              We utilize several AI service providers and third-party integrations to deliver our content generation capabilities:
             </p>
+            <h3 className="text-lg font-medium mt-4 mb-2">AI Model Providers</h3>
+            <ul className="list-disc pl-6 mb-4">
+              <li><strong>Anthropic Claude:</strong> Primary content generation and optimization suggestions</li>
+              <li><strong>Perplexity API:</strong> Trend discovery and viral content inspiration</li>
+              <li><strong>OpenAI:</strong> Content evaluation and quality assessment</li>
+            </ul>
+            <h3 className="text-lg font-medium mt-4 mb-2">Database and Infrastructure</h3>
+            <ul className="list-disc pl-6 mb-4">
+              <li><strong>Neon Database:</strong> Secure PostgreSQL hosting for content and user data</li>
+              <li><strong>Amazon Associates:</strong> Affiliate link generation and compliance</li>
+            </ul>
             <p>
-              These third parties have access to your personal data only to perform these tasks on our behalf and are 
-              obligated not to disclose or use it for any other purpose.
+              These third parties have access to your data only to perform specific tasks on our behalf and are 
+              obligated not to disclose or use it for any other purpose. All AI processing follows respective 
+              provider privacy policies and terms of service.
             </p>
           </section>
 
@@ -133,8 +160,26 @@ const PrivacyPolicyPage: React.FC = () => {
             </p>
           </section>
 
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">9. AI Data Processing and Content Storage</h2>
+            <p>
+              Our platform processes content through multiple AI systems for optimization and evaluation:
+            </p>
+            <ul className="list-disc pl-6 mb-4">
+              <li><strong>Content Generation:</strong> Your prompts and preferences are processed by Claude AI to generate social media content</li>
+              <li><strong>Smart Suggestions:</strong> High-rated content is analyzed to build personalized recommendation systems</li>
+              <li><strong>Dual Evaluation:</strong> Generated content is automatically evaluated by multiple AI models for quality scoring</li>
+              <li><strong>Performance Tracking:</strong> Content ratings and user feedback are stored to improve future generations</li>
+              <li><strong>Trend Integration:</strong> External trend data is processed to enhance content relevance and virality</li>
+            </ul>
+            <p>
+              All content generated through our platform is stored securely and may be used in aggregate to improve 
+              AI model performance and suggestion accuracy while maintaining individual privacy.
+            </p>
+          </section>
+
           <section>
-            <h2 className="text-xl font-semibold mb-4">9. Contact Us</h2>
+            <h2 className="text-xl font-semibold mb-4">10. Contact Us</h2>
             <p>
               If you have any questions about this privacy policy, please contact us by email at: 
               <a href="mailto:privacy@glowbotai.com" className="text-blue-600 hover:text-blue-800"> privacy@glowbotai.com</a>

@@ -37,6 +37,8 @@ const TermsPage: React.FC = () => {
               <li>Not to use the service in any way that could damage the service or impair its availability</li>
               <li>Not to attempt to gain unauthorized access to any part of the service</li>
               <li>Not to use any automated systems or software to extract data from the website for commercial purposes ('scraping')</li>
+              <li>Comply with all applicable affiliate marketing regulations including FTC disclosure requirements</li>
+              <li>Use AI-generated content responsibly and in accordance with platform-specific guidelines</li>
             </ul>
           </section>
 
@@ -58,16 +60,27 @@ const TermsPage: React.FC = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">4. User-Generated Content</h2>
+            <h2 className="text-xl font-semibold mb-4">4. AI-Generated Content and User Responsibilities</h2>
             <p>
-              When you submit, upload, or otherwise make available any content through our service, you grant us 
-              a worldwide, non-exclusive, royalty-free license to use, reproduce, modify, adapt, publish, translate, 
-              create derivative works from, distribute, and display such content.
+              Our platform utilizes advanced AI models including Claude AI for content generation. When you use our 
+              AI-powered services, you acknowledge and agree that:
+            </p>
+            <ul className="list-disc pl-6 mb-4">
+              <li>AI-generated content is provided as a starting point and should be reviewed before publication</li>
+              <li>You are responsible for ensuring all generated content complies with applicable laws and platform policies</li>
+              <li>You must verify accuracy of product claims and pricing information before publication</li>
+              <li>Our Claude AI suggestions system learns from high-rated content to improve recommendations</li>
+              <li>Content evaluations are performed by dual AI systems for quality assessment</li>
+            </ul>
+            <p>
+              When you submit, upload, or generate content through our service, you grant us a worldwide, 
+              non-exclusive, royalty-free license to use, reproduce, modify, adapt, publish, translate, create 
+              derivative works from, distribute, and display such content for service improvement purposes.
             </p>
             <p>
-              You represent and warrant that you own or control all rights to the content you submit, and that the 
-              content is accurate, not confidential, and not in violation of any contractual restrictions or other 
-              parties' rights.
+              You represent and warrant that you own or control all rights to any content you submit, and that 
+              all content is accurate, not confidential, and not in violation of any contractual restrictions or 
+              other parties' rights.
             </p>
           </section>
 
@@ -102,20 +115,26 @@ const TermsPage: React.FC = () => {
           </section>
 
           <section className="mb-8">
-            <h2 className="text-xl font-semibold mb-4">7. Affiliate Links and Third-Party Content</h2>
+            <h2 className="text-xl font-semibold mb-4">7. Affiliate Marketing and Compliance</h2>
             <p>
-              Our service may contain affiliate links to third-party websites or services that are not owned or 
-              controlled by GlowBot AI. We have no control over, and assume no responsibility for, the content, 
-              privacy policies, or practices of any third-party websites or services.
+              Our platform is designed to assist with compliant affiliate marketing content creation. We automatically 
+              include appropriate FTC and Amazon Associates disclosures in generated content. However, you remain solely 
+              responsible for:
+            </p>
+            <ul className="list-disc pl-6 mb-4">
+              <li>Ensuring all affiliate disclosures are properly displayed and conspicuous</li>
+              <li>Complying with FTC guidelines and platform-specific affiliate marketing policies</li>
+              <li>Maintaining current Amazon Associates Program compliance</li>
+              <li>Verifying that product information and pricing is accurate at time of publication</li>
+            </ul>
+            <p>
+              Our service may contain affiliate links to third-party websites or services. We have no control over, 
+              and assume no responsibility for, the content, privacy policies, or practices of any third-party websites 
+              or services. All affiliate relationships are clearly disclosed in accordance with FTC guidelines.
             </p>
             <p>
-              You acknowledge and agree that GlowBot AI shall not be responsible or liable, directly or indirectly, 
-              for any damage or loss caused or alleged to be caused by or in connection with the use of or reliance 
-              on any such content, goods, or services available on or through any such websites or services.
-            </p>
-            <p>
-              We strongly advise you to read the terms and conditions and privacy policies of any third-party 
-              websites or services that you visit.
+              You acknowledge and agree that GlowBot AI shall not be responsible or liable for any damage or loss 
+              caused by or in connection with affiliate link usage, product purchases, or third-party services.
             </p>
           </section>
 
@@ -145,8 +164,26 @@ const TermsPage: React.FC = () => {
             </p>
           </section>
 
+          <section className="mb-8">
+            <h2 className="text-xl font-semibold mb-4">10. AI Model Usage and Data Processing</h2>
+            <p>
+              Our platform utilizes multiple AI models and services to provide content generation capabilities:
+            </p>
+            <ul className="list-disc pl-6 mb-4">
+              <li><strong>Claude AI:</strong> Primary content generation and optimization suggestions</li>
+              <li><strong>Perplexity API:</strong> Trend discovery and viral content inspiration</li>
+              <li><strong>Dual AI Evaluation:</strong> Content quality assessment and performance tracking</li>
+              <li><strong>Smart Style System:</strong> Personalized content optimization based on your highest-rated content</li>
+            </ul>
+            <p>
+              All AI processing is performed in accordance with our Privacy Policy and respective AI service 
+              provider terms. Content generated through our platform may be used to improve AI model performance 
+              and suggestion accuracy.
+            </p>
+          </section>
+
           <section>
-            <h2 className="text-xl font-semibold mb-4">10. Contact Us</h2>
+            <h2 className="text-xl font-semibold mb-4">11. Contact Us</h2>
             <p>
               If you have any questions about these Terms, please contact us at{' '}
               <a href="mailto:terms@glowbotai.com" className="text-blue-600 hover:text-blue-800">terms@glowbotai.com</a>

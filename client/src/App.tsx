@@ -42,6 +42,7 @@ import PerformanceAnalytics from "@/pages/PerformanceAnalytics";
 import CompliancePage from "@/pages/CompliancePage";
 import SpartanContentPage from "@/pages/SpartanContentPage";
 import ScheduleManager from "@/pages/schedule-manager";
+import SupportPage from "@/pages/SupportPage";
 
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
@@ -71,6 +72,7 @@ function Router() {
       <Route path="/faq" component={FAQPage} />
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />
+      <Route path="/support" component={SupportPage} />
       <Route path="/contact" component={ContactPage} />
       <Route path="/ai-model-test" component={AIModelTestPage} />
       <Route path="/claude-generator" component={ClaudeGeneratorPage} />
