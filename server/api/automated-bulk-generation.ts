@@ -392,8 +392,8 @@ export async function resumeInterruptedJobs() {
             aiModels: ['claude'], // Use Claude for resumed jobs
             contentFormats: ['Regular Format'],
             userId: 1,
-            useSmartStyle: false,
-            useSpartanFormat: false,
+            useSmartStyle: job.useSmartStyle || false,
+            useSpartanFormat: job.useSpartanFormat || false,
             generateAffiliateLinks: true,
             affiliateId: "sgottshall107-20",
             makeWebhookUrl: job.makeWebhookUrl
