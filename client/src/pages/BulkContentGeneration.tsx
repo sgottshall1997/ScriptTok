@@ -28,12 +28,15 @@ export default function BulkContentGeneration() {
   // Parse URL parameters for auto-population
   useEffect(() => {
     console.log('🔍 BulkContentGeneration - Current location:', location);
-    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    console.log('🔍 Window location search:', window.location.search);
+    
+    // Use window.location.search directly instead of wouter location
+    const urlParams = new URLSearchParams(window.location.search);
     const product = urlParams.get('product');
     const niche = urlParams.get('niche');
     const autopopulate = urlParams.get('autopopulate') === 'true';
 
-    console.log('🔍 URL Parameters:', { product, niche, autopopulate });
+    console.log('🔍 URL Parameters from window.location:', { product, niche, autopopulate });
 
     if (autopopulate && product && niche) {
       console.log('✅ Setting autoPopulateData:', { product, niche, autopopulate });
