@@ -58,6 +58,7 @@ async function startCronJob(job: any) {
             generateAffiliateLinks: job.generateAffiliateLinks || false,
             useSpartanFormat: job.useSpartanFormat || false,
             useSmartStyle: job.useSmartStyle || false,
+            topRatedStyleUsed: job.useSmartStyle || false,
             affiliateId: job.affiliateId || "sgottshall107-20",
             makeWebhookUrl: job.webhookUrl || undefined,
             sendToMakeWebhook: job.sendToMakeWebhook || false,
