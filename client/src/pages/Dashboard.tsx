@@ -248,7 +248,7 @@ const Dashboard = () => {
           🚀 GlowBot AI: Your Content Command Center
         </h1>
         <p className="text-lg text-muted-foreground">
-          Trend-to-traffic in under 10 minutes. Powered by Perplexity + GPT.
+          Trend-to-traffic in under 10 minutes. Powered by Perplexity + Claude + GPT.
         </p>
       </div>
 
@@ -440,9 +440,9 @@ const Dashboard = () => {
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2">
                         <Link 
-                          href={`/unified-generator?product=${encodeURIComponent(product.title)}&niche=${product.niche}`}
+                          href={`/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`}
                           onClick={() => {
-                            trackEvent('trending_product_click', 'research', `${product.niche}_${product.title}`, 1);
+                            trackEvent('trending_product_click', 'bulk_generator', `${product.niche}_${product.title}`, 1);
                             // Scroll to top after navigation
                             setTimeout(() => window.scrollTo(0, 0), 100);
                           }}

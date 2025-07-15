@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -71,9 +71,14 @@ const CONTENT_FORMATS = [
 
 interface AutomatedBulkGeneratorProps {
   onJobCreated?: (jobData: any) => void;
+  autoPopulateData?: {
+    product?: string;
+    niche?: string;
+    autopopulate?: boolean;
+  };
 }
 
-export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGeneratorProps) {
+export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData }: AutomatedBulkGeneratorProps) {
   const [selectedNiches, setSelectedNiches] = useState<string[]>(['beauty', 'fitness', 'tech']);
   const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
@@ -94,6 +99,32 @@ export default function AutomatedBulkGenerator({ onJobCreated }: AutomatedBulkGe
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Handle auto-population from URL parameters
+  useEffect(() => {
+    if (autoPopulateData?.autopopulate && autoPopulateData.product && autoPopulateData.niche) {
+      // Auto-select the niche
+      if (!selectedNiches.includes(autoPopulateData.niche)) {
+        setSelectedNiches(prev => [autoPopulateData.niche!, ...prev]);
+      }
+      
+      // Auto-add the product to preview products
+      setPreviewProducts(prev => ({
+        ...prev,
+        [autoPopulateData.niche!]: {
+          id: Date.now(), // Temporary ID
+          title: autoPopulateData.product!,
+          niche: autoPopulateData.niche!,
+          source: 'trending',
+          mentions: 0,
+          createdAt: new Date().toISOString()
+        }
+      }));
+      
+      // Enable preview mode to show the selected product
+      setShowPreview(true);
+    }
+  }, [autoPopulateData]);
 
   // Fetch trending products for preview
   const { data: trendingProducts } = useQuery({

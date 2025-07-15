@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -12,11 +12,35 @@ import BulkJobsList from '@/components/BulkJobsList';
 import AutomatedBulkGenerator from '@/components/AutomatedBulkGenerator';
 import AutomatedBulkJobsList from '@/components/AutomatedBulkJobsList';
 import { useToast } from '@/hooks/use-toast';
+import { useLocation } from 'wouter';
 
 export default function BulkContentGeneration() {
   const [activeTab, setActiveTab] = useState('automated');
+  const [location] = useLocation();
+  const [autoPopulateData, setAutoPopulateData] = useState<{
+    product?: string;
+    niche?: string;
+    autopopulate?: boolean;
+  }>({});
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  // Parse URL parameters for auto-population
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.split('?')[1] || '');
+    const product = urlParams.get('product');
+    const niche = urlParams.get('niche');
+    const autopopulate = urlParams.get('autopopulate') === 'true';
+
+    if (autopopulate && product && niche) {
+      setAutoPopulateData({ product, niche, autopopulate });
+      toast({
+        title: 'Product Auto-Selected',
+        description: `"${product}" from ${niche} has been added to the bulk generator`,
+        duration: 4000,
+      });
+    }
+  }, [location, toast]);
 
   // Fetch bulk jobs
   const { data: bulkJobs, isLoading: jobsLoading } = useQuery({
@@ -139,10 +163,13 @@ export default function BulkContentGeneration() {
         </TabsList>
 
         <TabsContent value="automated" className="space-y-6">
-          <AutomatedBulkGenerator onJobCreated={(jobData) => {
-            setActiveTab('jobs');
-            queryClient.invalidateQueries({ queryKey: ['/api/bulk/jobs'] });
-          }} />
+          <AutomatedBulkGenerator 
+            onJobCreated={(jobData) => {
+              setActiveTab('jobs');
+              queryClient.invalidateQueries({ queryKey: ['/api/bulk/jobs'] });
+            }}
+            autoPopulateData={autoPopulateData}
+          />
         </TabsContent>
 
         <TabsContent value="manual" className="space-y-6">
