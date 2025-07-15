@@ -193,7 +193,7 @@ export async function createScheduledBulkJob(req: Request, res: Response) {
       useExistingProducts: validatedData.useExistingProducts || true,
       generateAffiliateLinks: validatedData.generateAffiliateLinks || false,
       useSpartanFormat: validatedData.useSpartanFormat || false,
-      useSmartStyle: validatedData.useSmartStyle || false,
+      topRatedStyleUsed: validatedData.topRatedStyleUsed || false,
       aiModel: validatedData.aiModels?.[0] || 'claude',
       affiliateId: validatedData.affiliateId || 'sgottshall107-20',
       webhookUrl: validatedData.webhookUrl,
@@ -265,7 +265,7 @@ export async function getScheduledBulkJobs(req: Request, res: Response) {
           platforms: job.platforms,
           aiModels: [job.aiModel],
           contentFormats: job.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
-          useSmartStyle: job.useSmartStyle,
+          topRatedStyleUsed: job.topRatedStyleUsed,
           useSpartanFormat: job.useSpartanFormat
         }
       };

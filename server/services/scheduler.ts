@@ -277,7 +277,7 @@ export async function getScheduledJobs(): Promise<ScheduledJob[]> {
         platforms: job.platforms,
         aiModel: job.aiModel,
         contentFormat: job.useSpartanFormat ? 'spartan' : 'regular',
-        useSmartStyle: job.useSmartStyle,
+        topRatedStyleUsed: job.topRatedStyleUsed,
         cronExpression: job.cronExpression,
         isActive: job.isActive,
         affiliateId: job.affiliateId
@@ -305,7 +305,7 @@ export async function updateScheduledJob(jobId: string, updates: Partial<Schedul
     if (updates.platforms) updateData.platforms = updates.platforms;
     if (updates.aiModel) updateData.aiModel = updates.aiModel;
     if (updates.contentFormat !== undefined) updateData.useSpartanFormat = updates.contentFormat === 'spartan';
-    if (updates.useSmartStyle !== undefined) updateData.useSmartStyle = updates.useSmartStyle;
+    if (updates.topRatedStyleUsed !== undefined) updateData.topRatedStyleUsed = updates.topRatedStyleUsed;
     if (updates.cronExpression) updateData.cronExpression = updates.cronExpression;
     if (updates.isActive !== undefined) updateData.isActive = updates.isActive;
     if (updates.affiliateId) updateData.affiliateId = updates.affiliateId;

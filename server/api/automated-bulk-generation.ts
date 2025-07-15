@@ -392,7 +392,7 @@ export async function resumeInterruptedJobs() {
             aiModels: ['claude'], // Use Claude for resumed jobs
             contentFormats: ['Regular Format'],
             userId: 1,
-            topRatedStyleUsed: job.useSmartStyle || false,
+            topRatedStyleUsed: job.topRatedStyleUsed || false,
             useSpartanFormat: job.useSpartanFormat || false,
             generateAffiliateLinks: true,
             affiliateId: "sgottshall107-20",
@@ -495,7 +495,7 @@ async function processAutomatedBulkJob(
             platforms: jobData.platforms,
             viralInspiration,
             productData,
-            useSmartStyle: jobData.useSmartStyle,
+            topRatedStyleUsed: jobData.topRatedStyleUsed,
             useSpartanFormat: useSpartanFormat,
             userId: jobData.userId,
             aiModel: aiModel
@@ -855,12 +855,12 @@ async function generateComprehensiveContent(params: {
   platforms: string[];
   viralInspiration: any;
   productData: any;
-  useSmartStyle?: boolean;
+  topRatedStyleUsed?: boolean;
   useSpartanFormat?: boolean;
   userId?: number;
   aiModel?: string;
 }) {
-  const { productName, niche, tone, template, platforms, viralInspiration, productData, useSmartStyle, useSpartanFormat, userId, aiModel } = params;
+  const { productName, niche, tone, template, platforms, viralInspiration, productData, topRatedStyleUsed, useSpartanFormat, userId, aiModel } = params;
   
   try {
     console.log(`🎯 BULK CONTENT GENERATION: Starting for ${productName} (${niche}, ${tone}, ${template})`);
@@ -870,7 +870,7 @@ async function generateComprehensiveContent(params: {
     
     // Fetch smart style recommendations if enabled
     let smartStyleRecommendations = null;
-    if (useSmartStyle && userId) {
+    if (topRatedStyleUsed && userId) {
       try {
         const { getSmartStyleRecommendations } = await import('../services/ratingSystem');
         smartStyleRecommendations = await getSmartStyleRecommendations(
