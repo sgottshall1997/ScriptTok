@@ -45,23 +45,24 @@ async function startCronJob(job: any) {
           })
           .where(eq(scheduledBulkJobs.id, job.id));
         
-        // Execute the bulk generation
+        // Execute the bulk generation - use EXACT same parameters as manual bulk generator
         const mockReq = {
           body: {
             selectedNiches: job.selectedNiches,
             tones: job.tones,
             templates: job.templates,
             platforms: job.platforms,
-            useExistingProducts: job.useExistingProducts,
-            generateAffiliateLinks: job.generateAffiliateLinks,
-            useSpartanFormat: job.useSpartanFormat,
-            useSmartStyle: job.useSmartStyle,
             aiModels: [job.aiModel],
             contentFormats: job.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
-            affiliateId: job.affiliateId,
-            webhookUrl: job.webhookUrl,
-            sendToMakeWebhook: job.sendToMakeWebhook,
-            isScheduled: false
+            useExistingProducts: job.useExistingProducts || true,
+            generateAffiliateLinks: job.generateAffiliateLinks || false,
+            useSpartanFormat: job.useSpartanFormat || false,
+            useSmartStyle: job.useSmartStyle || false,
+            affiliateId: job.affiliateId || "sgottshall107-20",
+            makeWebhookUrl: job.webhookUrl || undefined,
+            sendToMakeWebhook: job.sendToMakeWebhook || false,
+            isScheduled: true,
+            userId: 1
           },
           headers: {
             'x-generation-source': 'scheduled_job',
