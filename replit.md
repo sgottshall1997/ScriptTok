@@ -372,3 +372,11 @@ Preferred communication style: Simple, everyday language.
 - **SIMULATION TESTING**: Created comprehensive test script that simulates scheduled job execution and verified parameter passing works correctly
 - **SMART STYLE INTEGRATION**: Confirmed smart style recommendations are properly applied when `topRatedStyleUsed: true` in scheduled jobs
 - **PRODUCTION READY**: Scheduled generator now achieves exact parity with automated bulk generator - identical operation, parameter consistency, and output
+
+### July 15, 2025 - Frontend Scheduled Job Creation Bug Fix
+- **CRITICAL FRONTEND BUG IDENTIFIED**: Found that ScheduleDailyBulkToggle.tsx was missing `topRatedStyleUsed` parameter in job creation
+- **PARAMETER MISSING FROM FRONTEND**: Previous scheduled jobs (150, 151) created with `topRatedStyleUsed: false` due to missing parameter in handleSaveSchedule function
+- **FRONTEND PARAMETER ADDITION**: Added `topRatedStyleUsed: formData.topRatedStyleUsed || false` to job creation payload in ScheduleDailyBulkToggle.tsx
+- **VERIFICATION TESTING**: Created test job 152 with `topRatedStyleUsed: true` to confirm fix works correctly
+- **COMPLETE PARAMETER FLOW**: Frontend now properly passes both `topRatedStyleUsed` and `useSpartanFormat` parameters to scheduled job creation
+- **PRODUCTION READY**: All scheduled jobs created after this fix will properly include smart style and Spartan format parameters

@@ -87,6 +87,7 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
       useExistingProducts: formData.useExistingProducts || true,
       generateAffiliateLinks: formData.generateAffiliateLinks || false,
       useSpartanFormat: formData.useSpartanFormat || false,
+      topRatedStyleUsed: formData.topRatedStyleUsed || false,
       affiliateId: formData.affiliateId || 'sgottshall107-20',
       isScheduled: true,
       scheduleTime: scheduleSettings.scheduleTime,
