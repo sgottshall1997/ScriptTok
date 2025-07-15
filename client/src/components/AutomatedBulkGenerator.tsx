@@ -103,28 +103,40 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
   // Handle auto-population from URL parameters
   useEffect(() => {
     if (autoPopulateData?.autopopulate && autoPopulateData.product && autoPopulateData.niche) {
+      console.log('🔄 Auto-populating with:', autoPopulateData);
+      
       // Auto-select the niche
-      if (!selectedNiches.includes(autoPopulateData.niche)) {
-        setSelectedNiches(prev => [autoPopulateData.niche!, ...prev]);
-      }
+      setSelectedNiches(prev => {
+        if (!prev.includes(autoPopulateData.niche!)) {
+          console.log('✅ Auto-selecting niche:', autoPopulateData.niche);
+          return [autoPopulateData.niche!, ...prev];
+        }
+        return prev;
+      });
       
       // Auto-add the product to preview products
-      setPreviewProducts(prev => ({
-        ...prev,
-        [autoPopulateData.niche!]: {
-          id: Date.now(), // Temporary ID
-          title: autoPopulateData.product!,
-          niche: autoPopulateData.niche!,
-          source: 'trending',
-          mentions: 0,
-          createdAt: new Date().toISOString()
-        }
-      }));
+      const productData = {
+        id: Date.now(), // Temporary ID
+        title: autoPopulateData.product!,
+        niche: autoPopulateData.niche!,
+        source: 'trending',
+        mentions: 0,
+        createdAt: new Date().toISOString()
+      };
+      
+      setPreviewProducts(prev => {
+        console.log('✅ Auto-adding product to preview:', productData);
+        return {
+          ...prev,
+          [autoPopulateData.niche!]: productData
+        };
+      });
       
       // Enable preview mode to show the selected product
       setShowPreview(true);
+      console.log('✅ Auto-population complete - preview enabled');
     }
-  }, [autoPopulateData]);
+  }, [autoPopulateData?.autopopulate, autoPopulateData?.product, autoPopulateData?.niche]);
 
   // Fetch trending products for preview
   const { data: trendingProducts } = useQuery({
