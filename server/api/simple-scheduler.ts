@@ -42,6 +42,7 @@ async function startCronJob(job: any) {
     
     const cronJob = cron.schedule(cronPattern, async () => {
       console.log(`⏰ EXECUTING SCHEDULED BULK JOB: ${job.id} at ${new Date().toLocaleTimeString()}`);
+      console.log(`🎯 SCHEDULED JOB PARAMETERS: topRatedStyleUsed=${job.topRatedStyleUsed}, useSpartanFormat=${job.useSpartanFormat}`);
       
       try {
         // Update last run timestamp
@@ -61,10 +62,10 @@ async function startCronJob(job: any) {
             platforms: job.platforms,
             aiModels: [job.aiModel],
             contentFormats: job.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
-            useExistingProducts: job.useExistingProducts || true,
-            generateAffiliateLinks: job.generateAffiliateLinks || false,
-            useSpartanFormat: job.useSpartanFormat || false,
-            topRatedStyleUsed: job.topRatedStyleUsed || false,
+            useExistingProducts: job.useExistingProducts,
+            generateAffiliateLinks: job.generateAffiliateLinks,
+            useSpartanFormat: job.useSpartanFormat,
+            topRatedStyleUsed: job.topRatedStyleUsed,
             affiliateId: job.affiliateId || "sgottshall107-20",
             userId: 1
           },
