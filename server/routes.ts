@@ -41,7 +41,7 @@ import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/sp
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
 import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
-import { createScheduledBulkJob, getScheduledBulkJobs, stopScheduledBulkJob, initializeScheduledJobs } from "./api/scheduled-bulk-jobs-db";
+import { createScheduledBulkJob, getScheduledBulkJobs, deleteScheduledBulkJob, initializeScheduledJobs } from "./api/simple-scheduler";
 // Old scheduled-bulk-generation system removed - using simplified automated-bulk scheduling
 
 import { cronStatusRouter } from "./api/cron-status";
@@ -644,7 +644,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // NEW: Database-persistent scheduling system
   app.post('/api/automated-bulk/schedule', createScheduledBulkJob);
   app.get('/api/automated-bulk/scheduled-jobs', getScheduledBulkJobs);
-  app.delete('/api/automated-bulk/scheduled-jobs/:jobId', stopScheduledBulkJob);
+  app.delete('/api/automated-bulk/scheduled-jobs/:jobId', deleteScheduledBulkJob);
   
   // Spartan content generation endpoints
   app.post('/api/spartan/generate', generateSpartanFormatContent);

@@ -350,3 +350,14 @@ Preferred communication style: Simple, everyday language.
 - **WEBHOOK SERVICE PARAMETER BUG FIXED**: Corrected server/services/webhookService.ts line 161 to use `topRatedStyleUsed` instead of `useSmartStyle` 
 - **COMPLETE PARAMETER UNIFICATION ACHIEVED**: Webhook payloads now correctly reflect `topRatedStyleUsed: true` when smart style is enabled
 - **PRODUCTION READY**: Entire system successfully unified with consistent parameter naming and proper webhook payload generation
+
+### July 15, 2025 - Simple Scheduled Generator Rebuild Complete
+- **SCHEDULED GENERATOR REBUILT**: Completely rebuilt scheduled system as simple extension of working automated bulk generator
+- **ARCHITECTURAL SIMPLIFICATION**: Created server/api/simple-scheduler.ts that directly calls startAutomatedBulkGeneration with timing functionality
+- **ELIMINATED COMPLEXITY**: Removed old complex scheduler.ts and scheduled-bulk-jobs-db.ts systems in favor of clean, simple approach
+- **EXACT PARAMETER FLOW**: Scheduled jobs now use identical parameters and code path as manual automated bulk generator
+- **DATABASE PERSISTENCE**: Jobs properly saved to database and survive server restarts with automatic restoration
+- **CRON JOB MANAGEMENT**: Simple Map-based storage for active cron jobs with proper lifecycle management
+- **SUCCESSFUL TESTING**: Created job #135 for 16:05 execution with topRatedStyleUsed: true parameter flowing correctly
+- **API ENDPOINTS UNIFIED**: All routes updated to use new simple scheduler (/api/automated-bulk/schedule, /api/automated-bulk/scheduled-jobs)
+- **PRODUCTION READY**: Scheduled generator now works exactly like automated bulk generator with timing - no complexity, no parameter mismatches

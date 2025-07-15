@@ -1,3 +1,6 @@
+// THIS FILE IS DEPRECATED - USE simple-scheduler.ts INSTEAD
+// Keeping only for reference until fully migrated
+
 import { Request, Response } from 'express';
 import { db } from '../db.js';
 import { scheduledBulkJobs, insertScheduledBulkJobSchema } from '@shared/schema';
