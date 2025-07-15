@@ -633,7 +633,9 @@ async function processAutomatedBulkJob(
                     affiliateLink,
                     viralInspo: viralInspiration,
                     modelUsed: aiModel,
-                    tokenCount: Math.floor(Math.random() * 500) + 200
+                    tokenCount: Math.floor(Math.random() * 500) + 200,
+                    topRatedStyleUsed: useSmartStyle || false,
+                    contentFormat: contentFormat
                   });
 
                   console.log(`✅ Saved content to history for ${productName} (${niche})`);
