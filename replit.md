@@ -280,3 +280,13 @@ Preferred communication style: Simple, everyday language.
 - **USER EXPERIENCE OPTIMIZATION**: Added confirmation toast notifications to inform users when products are auto-selected and added to bulk generator
 - **DEFAULT SELECTION CLEANUP**: Removed pre-selected defaults from bulk generator - now starts with empty selections for niches, tones, templates, and platforms for cleaner user experience
 - **END-TO-END WORKFLOW OPERATIONAL**: Complete workflow from trending product discovery to bulk content generation with intelligent auto-population system now fully functional
+
+### July 15, 2025 - Critical Scheduled Jobs System Fix & Database Persistence Implementation
+- **SCHEDULED JOBS PERSISTENCE ISSUE RESOLVED**: Fixed critical bug where scheduled jobs disappeared after server restarts due to in-memory storage instead of database persistence
+- **DATABASE-PERSISTENT SCHEDULED JOBS**: Replaced volatile Map-based storage with PostgreSQL table storage ensuring jobs survive server restarts and deployments
+- **AUTOMATIC JOB RESTORATION**: Implemented automatic initialization of scheduled jobs from database on server startup with proper cron pattern recreation
+- **DUPLICATE PRODUCT GENERATION BUG FIXED**: Resolved issue where scheduled jobs generated multiple pieces of content per product instead of one unique product per niche
+- **OPTIMIZED LOOP STRUCTURE**: Modified nested template loops to use only first template/tone/AI/format for scheduled jobs preventing duplicate content creation
+- **ONE-TO-ONE NICHE MAPPING**: Ensured scheduled bulk jobs now generate exactly one product per niche as intended (fitness=1 product, beauty=1 product, etc.)
+- **DATABASE SCHEMA INTEGRATION**: Updated server routes and initialization to use new database-persistent scheduled jobs system with proper error handling
+- **PRODUCTION GRADE RELIABILITY**: Scheduled jobs now persist across server restarts and execute correctly with proper product distribution across selected niches

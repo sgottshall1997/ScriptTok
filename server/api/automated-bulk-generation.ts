@@ -422,32 +422,33 @@ async function processAutomatedBulkJob(
           };
         }
 
-        // Step 3: Generate content for ALL template combinations
-        // Iterate through all selected templates, tones, AI models, and content formats
-        for (const template of jobData.templates) {
-          for (const tone of jobData.tones) {
-            for (const aiModel of jobData.aiModels) {
-              for (const contentFormat of jobData.contentFormats) {
-                try {
-                  const startTime = Date.now();
-                  const useSpartanFormat = contentFormat === 'spartan';
-                  
-                  console.log(`🎯 Generating content for ${niche}: ${productName} (${tone} tone, ${template} template, ${aiModel} AI, ${contentFormat} format)`);
-                  
-                  // Step 4: Generate comprehensive content using viral inspiration with specific AI model and format
-                  const generatedContent = await generateComprehensiveContent({
-                    productName,
-                    niche,
-                    tone,
-                    template,
-                    platforms: jobData.platforms,
-                    viralInspiration,
-                    productData,
-                    useSmartStyle: jobData.useSmartStyle,
-                    useSpartanFormat: useSpartanFormat,
-                    userId: jobData.userId,
-                    aiModel: aiModel
-                  });
+        // Step 3: Generate content - use only first template/tone/AI/format for scheduled jobs to avoid duplicates
+        // For scheduled jobs: one product per niche = one piece of content per niche
+        const template = jobData.templates[0] || 'product-spotlight';
+        const tone = jobData.tones[0] || 'engaging';
+        const aiModel = jobData.aiModels[0] || 'claude';
+        const contentFormat = jobData.contentFormats[0] || 'standard';
+        
+        try {
+          const startTime = Date.now();
+          const useSpartanFormat = contentFormat === 'spartan';
+          
+          console.log(`🎯 Generating content for ${niche}: ${productName} (${tone} tone, ${template} template, ${aiModel} AI, ${contentFormat} format)`);
+          
+          // Step 4: Generate comprehensive content using viral inspiration with specific AI model and format
+          const generatedContent = await generateComprehensiveContent({
+            productName,
+            niche,
+            tone,
+            template,
+            platforms: jobData.platforms,
+            viralInspiration,
+            productData,
+            useSmartStyle: jobData.useSmartStyle,
+            useSpartanFormat: useSpartanFormat,
+            userId: jobData.userId,
+            aiModel: aiModel
+          });
       
           const generationTime = Date.now() - startTime;
           
@@ -723,28 +724,24 @@ async function processAutomatedBulkJob(
                 console.log(`✅ Generated content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat} (${completedCount} total)`);
               }
 
-                } catch (contentError) {
-                  console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat}:`, contentError);
-                  
-                  // Log error but continue with other products
-                  await db.update(bulkContentJobs)
-                    .set({ 
-                      errorLog: sql`jsonb_set(COALESCE(error_log, '[]'::jsonb), '{-1}', ${JSON.stringify({
-                        product: productName,
-                        tone,
-                        template,
-                        aiModel,
-                        contentFormat,
-                        error: contentError instanceof Error ? contentError.message : 'Unknown error',
-                        timestamp: new Date().toISOString()
-                      })})`
-                    })
-                    .where(eq(bulkContentJobs.id, bulkJobId));
-                }
-              } // Close contentFormat loop
-            } // Close aiModel loop
-          } // Close tone loop
-        } // Close template loop
+        } catch (contentError) {
+          console.error(`❌ Failed to generate content for ${productName} - ${tone}/${template}/${aiModel}/${contentFormat}:`, contentError);
+          
+          // Log error but continue with other products
+          await db.update(bulkContentJobs)
+            .set({ 
+              errorLog: sql`jsonb_set(COALESCE(error_log, '[]'::jsonb), '{-1}', ${JSON.stringify({
+                product: productName,
+                tone,
+                template,
+                aiModel,
+                contentFormat,
+                error: contentError instanceof Error ? contentError.message : 'Unknown error',
+                timestamp: new Date().toISOString()
+              })})`
+            })
+            .where(eq(bulkContentJobs.id, bulkJobId));
+        }
       } catch (productError) {
         console.error(`❌ Failed to process product ${productName}:`, productError);
       }
