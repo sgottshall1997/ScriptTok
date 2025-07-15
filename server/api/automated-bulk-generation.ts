@@ -612,33 +612,49 @@ async function processAutomatedBulkJob(
                                    generatedContent.videoScript || 
                                    'Generated content';
                   
-                  await db.insert(contentHistory).values({
-                    sessionId,
-                    niche,
-                    contentType: template,
-                    tone,
-                    productName,
-                    promptText: `Bulk generated content for ${productName} in ${niche} niche using ${tone} tone and ${template} template with ${aiModel} model in ${contentFormat} format`,
-                    outputText,
-                    platformsSelected: platforms,
-                    generatedOutput: {
-                      content: generatedContent.productDescription || generatedContent.viralHooks?.[0] || 'Generated content',
-                      hook: generatedContent.viralHooks?.[0] || viralInspiration?.hook || 'Generated hook',
-                      platform: platforms.join(', '),
+                  try {
+                    await db.insert(contentHistory).values({
+                      userId: 1, // Default user ID for bulk generations
+                      sessionId,
                       niche,
-                      ...platformCaptions,
-                      hashtags: generatedContent.hashtags || viralInspiration?.hashtags || [],
-                      affiliateLink
-                    },
-                    affiliateLink,
-                    viralInspo: viralInspiration,
-                    modelUsed: aiModel,
-                    tokenCount: Math.floor(Math.random() * 500) + 200,
-                    topRatedStyleUsed: useSmartStyle || false,
-                    contentFormat: contentFormat
-                  });
+                      contentType: template,
+                      tone,
+                      productName,
+                      promptText: `Bulk generated content for ${productName} in ${niche} niche using ${tone} tone and ${template} template with ${aiModel} model in ${contentFormat} format`,
+                      outputText,
+                      platformsSelected: platforms,
+                      generatedOutput: {
+                        content: generatedContent.productDescription || generatedContent.viralHooks?.[0] || 'Generated content',
+                        hook: generatedContent.viralHooks?.[0] || viralInspiration?.hook || 'Generated hook',
+                        platform: platforms.join(', '),
+                        niche,
+                        ...platformCaptions,
+                        hashtags: generatedContent.hashtags || viralInspiration?.hashtags || [],
+                        affiliateLink
+                      },
+                      affiliateLink,
+                      viralInspo: viralInspiration,
+                      modelUsed: aiModel,
+                      tokenCount: Math.floor(Math.random() * 500) + 200,
+                      topRatedStyleUsed: useSmartStyle || false,
+                      contentFormat: contentFormat
+                    });
 
-                  console.log(`✅ Saved content to history for ${productName} (${niche})`);
+                    console.log(`✅ Saved content to history for ${productName} (${niche})`);
+                  } catch (historyError) {
+                    console.error(`❌ CRITICAL ERROR: Failed to save content to history for ${productName}:`, historyError);
+                    console.error('❌ HISTORY ERROR DETAILS:', {
+                      sessionId,
+                      niche,
+                      template,
+                      tone,
+                      productName,
+                      platforms,
+                      aiModel,
+                      contentFormat,
+                      useSmartStyle
+                    });
+                  }
                   
                   // Perform AI evaluation BEFORE sending webhook
                   let aiEvaluationData = null;

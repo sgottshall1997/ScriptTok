@@ -320,6 +320,7 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
       
       // Save content to database with correct field mapping
       await db.insert(contentHistory).values({
+        userId: config.userId || 1, // Use provided user ID or default to 1
         sessionId: config.jobId || `manual_${Date.now()}`,
         niche: config.niche,
         contentType: config.templateType,
