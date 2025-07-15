@@ -5,8 +5,10 @@ import {
   bulkGeneratedContent, 
   trendingProducts,
   contentHistory,
+  scheduledBulkJobs,
   insertBulkContentJobSchema,
-  insertBulkGeneratedContentSchema 
+  insertBulkGeneratedContentSchema,
+  insertScheduledBulkJobSchema
 } from '@shared/schema';
 import { eq, desc, sql } from 'drizzle-orm';
 import { z } from 'zod';

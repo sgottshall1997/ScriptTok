@@ -40,7 +40,8 @@ import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
 import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/spartan-content";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
 import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
-import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId, createScheduledBulkGeneration, getScheduledBulkJobs, stopScheduledBulkJob } from "./api/automated-bulk-generation";
+import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
+import { createScheduledBulkJob, getScheduledBulkJobs, stopScheduledBulkJob, initializeScheduledJobs } from "./api/scheduled-bulk-jobs-db";
 // Old scheduled-bulk-generation system removed - using simplified automated-bulk scheduling
 
 import { cronStatusRouter } from "./api/cron-status";
@@ -640,8 +641,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // OLD SCHEDULED BULK GENERATION ROUTES REMOVED
   // Now using simplified scheduling: /api/automated-bulk/schedule
   
-  // NEW: Simplified scheduling that extends automated bulk generator
-  app.post('/api/automated-bulk/schedule', createScheduledBulkGeneration);
+  // NEW: Database-persistent scheduling system
+  app.post('/api/automated-bulk/schedule', createScheduledBulkJob);
   app.get('/api/automated-bulk/scheduled-jobs', getScheduledBulkJobs);
   app.delete('/api/automated-bulk/scheduled-jobs/:jobId', stopScheduledBulkJob);
   
@@ -805,5 +806,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // Initialize scheduled jobs from database
+  initializeScheduledJobs().catch(error => {
+    console.error('❌ Failed to initialize scheduled jobs:', error);
+  });
+  
   return httpServer;
 }
