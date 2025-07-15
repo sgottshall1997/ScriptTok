@@ -636,7 +636,7 @@ async function processAutomatedBulkJob(
                       viralInspo: viralInspiration,
                       modelUsed: aiModel,
                       tokenCount: Math.floor(Math.random() * 500) + 200,
-                      topRatedStyleUsed: useSmartStyle || false,
+                      topRatedStyleUsed: jobData.useSmartStyle || false,
                       contentFormat: contentFormat
                     });
 
@@ -652,7 +652,7 @@ async function processAutomatedBulkJob(
                       platforms,
                       aiModel,
                       contentFormat,
-                      useSmartStyle
+                      useSmartStyle: jobData.useSmartStyle
                     });
                   }
                   
