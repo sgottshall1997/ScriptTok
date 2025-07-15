@@ -146,6 +146,8 @@ export async function createScheduledBulkJob(req: Request, res: Response) {
 
     // Create job in database
     const [newJob] = await db.insert(scheduledBulkJobs).values({
+      userId: 1,
+      name: `Daily ${selectedNiches.join(', ')} content (${tones.join(', ')})`,
       selectedNiches,
       tones,
       templates,
@@ -161,6 +163,7 @@ export async function createScheduledBulkJob(req: Request, res: Response) {
       isActive: true,
       totalRuns: 0,
       consecutiveFailures: 0,
+      sendToMakeWebhook: true,
       createdAt: new Date()
     }).returning();
 
