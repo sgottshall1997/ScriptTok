@@ -79,10 +79,10 @@ interface AutomatedBulkGeneratorProps {
 }
 
 export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData }: AutomatedBulkGeneratorProps) {
-  const [selectedNiches, setSelectedNiches] = useState<string[]>(['beauty', 'fitness', 'tech']);
-  const [selectedTones, setSelectedTones] = useState<string[]>(['Friendly', 'Enthusiastic']);
+  const [selectedNiches, setSelectedNiches] = useState<string[]>([]);
+  const [selectedTones, setSelectedTones] = useState<string[]>([]);
   const [selectedTemplates, setSelectedTemplates] = useState<string[]>([]);
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok', 'instagram', 'youtube']);
+  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>([]);
   const [selectedAiModels, setSelectedAiModels] = useState<string[]>(['claude']); // 🚀 CLAUDE-FIRST: Superior AI quality for automated bulk generation
   const [selectedContentFormats, setSelectedContentFormats] = useState<string[]>(['spartan']); // 🏛️ SPARTAN DEFAULT: Clean, professional format
   const [useExistingProducts, setUseExistingProducts] = useState(true);
