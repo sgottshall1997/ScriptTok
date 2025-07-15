@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Mail, Phone, MapPin, Send, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Mail, Send, ArrowRight, CheckCircle2 } from "lucide-react";
 
 const ContactPage: React.FC = () => {
   const [name, setName] = useState('');
@@ -57,29 +57,8 @@ const ContactPage: React.FC = () => {
                 <Mail className="h-5 w-5 text-blue-600 mt-1" />
                 <div>
                   <h3 className="font-medium">Email</h3>
-                  <p className="text-sm text-gray-600">support@glowbotai.com</p>
+                  <p className="text-sm text-gray-600">shallsdigital@gmail.com</p>
                   <p className="text-xs text-gray-500 mt-1">For general inquiries and support</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <Phone className="h-5 w-5 text-blue-600 mt-1" />
-                <div>
-                  <h3 className="font-medium">Phone</h3>
-                  <p className="text-sm text-gray-600">+1 (555) 123-4567</p>
-                  <p className="text-xs text-gray-500 mt-1">Monday-Friday, 9am-5pm EST</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start space-x-3">
-                <MapPin className="h-5 w-5 text-blue-600 mt-1" />
-                <div>
-                  <h3 className="font-medium">Location</h3>
-                  <p className="text-sm text-gray-600">
-                    123 AI Innovation Center<br />
-                    Tech District, SF 94103<br />
-                    United States
-                  </p>
                 </div>
               </div>
               

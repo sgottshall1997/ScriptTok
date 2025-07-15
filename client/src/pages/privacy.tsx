@@ -182,7 +182,7 @@ const PrivacyPolicyPage: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4">10. Contact Us</h2>
             <p>
               If you have any questions about this privacy policy, please contact us by email at: 
-              <a href="mailto:privacy@glowbotai.com" className="text-blue-600 hover:text-blue-800"> privacy@glowbotai.com</a>
+              <a href="mailto:shallsdigital@gmail.com" className="text-blue-600 hover:text-blue-800"> shallsdigital@gmail.com</a>
             </p>
           </section>
         </CardContent>

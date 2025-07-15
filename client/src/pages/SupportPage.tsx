@@ -265,16 +265,10 @@ const SupportPage: React.FC = () => {
               
               <div className="space-y-2">
                 <a 
-                  href="mailto:support@glowbotai.com" 
+                  href="mailto:shallsdigital@gmail.com" 
                   className="block text-blue-600 hover:text-blue-800 text-sm"
                 >
-                  📧 support@glowbotai.com
-                </a>
-                <a 
-                  href="mailto:technical@glowbotai.com" 
-                  className="block text-blue-600 hover:text-blue-800 text-sm"
-                >
-                  🔧 technical@glowbotai.com (Technical issues)
+                  📧 shallsdigital@gmail.com
                 </a>
                 <a 
                   href="mailto:compliance@glowbotai.com" 
