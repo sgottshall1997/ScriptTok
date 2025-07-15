@@ -308,8 +308,9 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
       });
     }
     
-    // Calculate total variations based on all selected options
-    const totalVariations = totalSelectedProducts * validatedData.templates.length * validatedData.tones.length * validatedData.aiModels.length * validatedData.contentFormats.length;
+    // Calculate total variations - for scheduled jobs, generate one piece per product (niche)
+    // This ensures proper completion tracking
+    const totalVariations = totalSelectedProducts;
     
     // Create bulk job record
     const [bulkJob] = await db.insert(bulkContentJobs).values({
@@ -362,6 +363,56 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
       console.error('❌ Failed to send error response:', responseError);
       res.status(500).send('Internal server error');
     }
+  }
+}
+
+// Resume interrupted bulk jobs on server startup
+export async function resumeInterruptedJobs() {
+  try {
+    console.log('🔄 Checking for interrupted bulk jobs...');
+    
+    // Find jobs that are stuck in 'processing' status
+    const interruptedJobs = await db.select()
+      .from(bulkContentJobs)
+      .where(eq(bulkContentJobs.status, 'processing'));
+    
+    if (interruptedJobs.length > 0) {
+      console.log(`🔄 Found ${interruptedJobs.length} interrupted bulk jobs, resuming...`);
+      
+      for (const job of interruptedJobs) {
+        try {
+          console.log(`🔄 Resuming job ${job.jobId} (completed: ${job.completedVariations}/${job.totalVariations})`);
+          
+          // Reconstruct job data from database record
+          const jobData = {
+            selectedNiches: job.selectedNiches,
+            platforms: job.platforms,
+            tones: job.tones,
+            templates: job.templates,
+            aiModels: ['claude'], // Use Claude for resumed jobs
+            contentFormats: ['Regular Format'],
+            userId: 1,
+            useSmartStyle: false,
+            useSpartanFormat: false,
+            generateAffiliateLinks: true,
+            affiliateId: "sgottshall107-20",
+            makeWebhookUrl: job.makeWebhookUrl
+          };
+          
+          // Resume processing from where it left off
+          processAutomatedBulkJob(job.id, job.autoSelectedProducts, jobData).catch(error => {
+            console.error(`❌ Failed to resume job ${job.jobId}:`, error);
+          });
+          
+        } catch (resumeError) {
+          console.error(`❌ Error resuming job ${job.jobId}:`, resumeError);
+        }
+      }
+    } else {
+      console.log('✅ No interrupted bulk jobs found');
+    }
+  } catch (error) {
+    console.error('❌ Error checking for interrupted jobs:', error);
   }
 }
 
