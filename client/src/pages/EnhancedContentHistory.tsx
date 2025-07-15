@@ -263,27 +263,41 @@ const EnhancedContentHistory = () => {
 
     // Apply sorting
     if (sortBy !== 'newest') {
-      filtered = filtered.sort((a, b) => {
+      console.log('🔍 SORTING DEBUG: sortBy =', sortBy);
+      console.log('🔍 SORTING DEBUG: evaluationData keys =', Object.keys(evaluationData));
+      console.log('🔍 SORTING DEBUG: first few evaluation entries =', Object.values(evaluationData).slice(0, 2));
+      
+      filtered = [...filtered].sort((a, b) => {
         const aEvals = evaluationData[a.id] || {};
         const bEvals = evaluationData[b.id] || {};
         
+        console.log(`🔍 SORTING DEBUG: Comparing ${a.id} vs ${b.id}`);
+        console.log(`🔍 SORTING DEBUG: aEvals =`, aEvals);
+        console.log(`🔍 SORTING DEBUG: bEvals =`, bEvals);
+        
         switch (sortBy) {
           case 'gpt-highest':
-            const aGptScore = aEvals.chatgpt ? (aEvals.chatgpt.viralityScore + aEvals.chatgpt.clarityScore + aEvals.chatgpt.persuasivenessScore + aEvals.chatgpt.creativityScore) / 4 : 0;
-            const bGptScore = bEvals.chatgpt ? (bEvals.chatgpt.viralityScore + bEvals.chatgpt.clarityScore + bEvals.chatgpt.persuasivenessScore + bEvals.chatgpt.creativityScore) / 4 : 0;
-            return bGptScore - aGptScore;
+            const aGptScore = calculateAverageRating(aEvals.chatgpt);
+            const bGptScore = calculateAverageRating(bEvals.chatgpt);
+            return bGptScore - aGptScore; // Higher scores first
           case 'gpt-lowest':
-            const aGptScoreLow = aEvals.chatgpt ? (aEvals.chatgpt.viralityScore + aEvals.chatgpt.clarityScore + aEvals.chatgpt.persuasivenessScore + aEvals.chatgpt.creativityScore) / 4 : 10;
-            const bGptScoreLow = bEvals.chatgpt ? (bEvals.chatgpt.viralityScore + bEvals.chatgpt.clarityScore + bEvals.chatgpt.persuasivenessScore + bEvals.chatgpt.creativityScore) / 4 : 10;
-            return aGptScoreLow - bGptScoreLow;
+            const aGptScoreLow = calculateAverageRating(aEvals.chatgpt);
+            const bGptScoreLow = calculateAverageRating(bEvals.chatgpt);
+            // For lowest, treat missing evaluations as high scores (10) so they appear last
+            const aGptFinal = aGptScoreLow === 0 ? 10 : aGptScoreLow;
+            const bGptFinal = bGptScoreLow === 0 ? 10 : bGptScoreLow;
+            return aGptFinal - bGptFinal; // Lower scores first
           case 'claude-highest':
-            const aClaudeScore = aEvals.claude ? (aEvals.claude.viralityScore + aEvals.claude.clarityScore + aEvals.claude.persuasivenessScore + aEvals.claude.creativityScore) / 4 : 0;
-            const bClaudeScore = bEvals.claude ? (bEvals.claude.viralityScore + bEvals.claude.clarityScore + bEvals.claude.persuasivenessScore + bEvals.claude.creativityScore) / 4 : 0;
-            return bClaudeScore - aClaudeScore;
+            const aClaudeScore = calculateAverageRating(aEvals.claude);
+            const bClaudeScore = calculateAverageRating(bEvals.claude);
+            return bClaudeScore - aClaudeScore; // Higher scores first
           case 'claude-lowest':
-            const aClaudeScoreLow = aEvals.claude ? (aEvals.claude.viralityScore + aEvals.claude.clarityScore + aEvals.claude.persuasivenessScore + aEvals.claude.creativityScore) / 4 : 10;
-            const bClaudeScoreLow = bEvals.claude ? (bEvals.claude.viralityScore + bEvals.claude.clarityScore + bEvals.claude.persuasivenessScore + bEvals.claude.creativityScore) / 4 : 10;
-            return aClaudeScoreLow - bClaudeScoreLow;
+            const aClaudeScoreLow = calculateAverageRating(aEvals.claude);
+            const bClaudeScoreLow = calculateAverageRating(bEvals.claude);
+            // For lowest, treat missing evaluations as high scores (10) so they appear last
+            const aClaudeFinal = aClaudeScoreLow === 0 ? 10 : aClaudeScoreLow;
+            const bClaudeFinal = bClaudeScoreLow === 0 ? 10 : bClaudeScoreLow;
+            return aClaudeFinal - bClaudeFinal; // Lower scores first
           default:
             return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
         }
