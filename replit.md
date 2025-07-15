@@ -380,3 +380,12 @@ Preferred communication style: Simple, everyday language.
 - **VERIFICATION TESTING**: Created test job 152 with `topRatedStyleUsed: true` to confirm fix works correctly
 - **COMPLETE PARAMETER FLOW**: Frontend now properly passes both `topRatedStyleUsed` and `useSpartanFormat` parameters to scheduled job creation
 - **PRODUCTION READY**: All scheduled jobs created after this fix will properly include smart style and Spartan format parameters
+
+### July 15, 2025 - Critical Database Parameter Refresh Fix for Scheduled Jobs
+- **STALE DATA ISSUE RESOLVED**: Fixed critical bug where scheduled jobs used cached job objects instead of fresh database values during execution
+- **FRESH PARAMETER FETCHING**: Updated simple-scheduler.ts to re-fetch job data from database before each execution to ensure current parameter values
+- **PARAMETER VERIFICATION LOGGING**: Added comprehensive logging to trace parameter flow from database → execution → webhook payload
+- **DATABASE CONSISTENCY**: Ensured all scheduled jobs use fresh topRatedStyleUsed and useSpartanFormat values from database at execution time
+- **COMPLETE PARAMETER PARITY**: Scheduled generator now achieves exact parameter parity with automated bulk generator using identical fresh data
+- **COMPREHENSIVE TESTING**: Created test job 153 with topRatedStyleUsed: true and useSpartanFormat: true - verified correct parameter storage and retrieval
+- **PRODUCTION GRADE**: All scheduled jobs now execute with fresh database parameters ensuring consistent behavior with manual generation

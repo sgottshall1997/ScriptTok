@@ -42,32 +42,43 @@ async function startCronJob(job: any) {
     
     const cronJob = cron.schedule(cronPattern, async () => {
       console.log(`⏰ EXECUTING SCHEDULED BULK JOB: ${job.id} at ${new Date().toLocaleTimeString()}`);
-      console.log(`🎯 SCHEDULED JOB PARAMETERS: topRatedStyleUsed=${job.topRatedStyleUsed}, useSpartanFormat=${job.useSpartanFormat}`);
-      console.log(`🎯 FULL JOB OBJECT:`, JSON.stringify(job, null, 2));
       
       try {
+        // CRITICAL FIX: Re-fetch fresh job data from database before execution
+        const [freshJob] = await db.select()
+          .from(scheduledBulkJobs)
+          .where(eq(scheduledBulkJobs.id, job.id));
+        
+        if (!freshJob) {
+          console.error(`❌ SCHEDULED JOB ${job.id} NOT FOUND IN DATABASE`);
+          return;
+        }
+        
+        console.log(`🎯 FRESH JOB PARAMETERS: topRatedStyleUsed=${freshJob.topRatedStyleUsed}, useSpartanFormat=${freshJob.useSpartanFormat}`);
+        console.log(`🎯 FULL FRESH JOB OBJECT:`, JSON.stringify(freshJob, null, 2));
+        
         // Update last run timestamp
         await db.update(scheduledBulkJobs)
           .set({ 
             lastRunAt: new Date(),
-            totalRuns: job.totalRuns + 1 
+            totalRuns: freshJob.totalRuns + 1 
           })
-          .where(eq(scheduledBulkJobs.id, job.id));
+          .where(eq(scheduledBulkJobs.id, freshJob.id));
         
-        // Create exact same request as manual bulk generator
+        // Create exact same request as manual bulk generator using FRESH data
         const scheduledRequest = {
           body: {
-            selectedNiches: job.selectedNiches,
-            tones: job.tones,
-            templates: job.templates,
-            platforms: job.platforms,
-            aiModels: [job.aiModel],
-            contentFormats: job.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
-            useExistingProducts: job.useExistingProducts,
-            generateAffiliateLinks: job.generateAffiliateLinks,
-            useSpartanFormat: job.useSpartanFormat,
-            topRatedStyleUsed: job.topRatedStyleUsed,
-            affiliateId: job.affiliateId || "sgottshall107-20",
+            selectedNiches: freshJob.selectedNiches,
+            tones: freshJob.tones,
+            templates: freshJob.templates,
+            platforms: freshJob.platforms,
+            aiModels: [freshJob.aiModel],
+            contentFormats: freshJob.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
+            useExistingProducts: freshJob.useExistingProducts,
+            generateAffiliateLinks: freshJob.generateAffiliateLinks,
+            useSpartanFormat: freshJob.useSpartanFormat,
+            topRatedStyleUsed: freshJob.topRatedStyleUsed,
+            affiliateId: freshJob.affiliateId || "sgottshall107-20",
             userId: 1
           },
           headers: {
@@ -78,6 +89,12 @@ async function startCronJob(job: any) {
             return this.headers[headerName.toLowerCase()] || '';
           }
         } as Request;
+        
+        console.log(`🔍 PARAMETER VERIFICATION - REQUEST BODY:`, {
+          useSpartanFormat: scheduledRequest.body.useSpartanFormat,
+          topRatedStyleUsed: scheduledRequest.body.topRatedStyleUsed,
+          contentFormats: scheduledRequest.body.contentFormats
+        });
 
         const scheduledResponse = {
           json: (data: any) => {
@@ -99,13 +116,19 @@ async function startCronJob(job: any) {
       } catch (executionError) {
         console.error(`❌ SCHEDULED JOB ${job.id} EXECUTION FAILED:`, executionError);
         
-        // Update error count
-        await db.update(scheduledBulkJobs)
-          .set({ 
-            consecutiveFailures: job.consecutiveFailures + 1,
-            lastError: String(executionError)
-          })
+        // Update error count using fresh job data
+        const currentJob = await db.select()
+          .from(scheduledBulkJobs)
           .where(eq(scheduledBulkJobs.id, job.id));
+        
+        if (currentJob.length > 0) {
+          await db.update(scheduledBulkJobs)
+            .set({ 
+              consecutiveFailures: currentJob[0].consecutiveFailures + 1,
+              lastError: String(executionError)
+            })
+            .where(eq(scheduledBulkJobs.id, job.id));
+        }
       }
     }, {
       scheduled: true,
