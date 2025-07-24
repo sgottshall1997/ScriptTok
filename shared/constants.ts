@@ -35,7 +35,9 @@ export const TRAVEL_TEMPLATE_TYPES = [
   "travel"             // Optimized travel content template
 ] as const;
 
-// No pet-specific templates in the new system - pets uses universal templates
+export const PET_TEMPLATE_TYPES = [
+  "pet"                // Optimized pet content template
+] as const;
 
 // Combined template types for validation (optimized PDF system)
 export const TEMPLATE_TYPES = [
@@ -45,7 +47,8 @@ export const TEMPLATE_TYPES = [
   ...FITNESS_TEMPLATE_TYPES,
   ...FOOD_TEMPLATE_TYPES,
   ...TECH_TEMPLATE_TYPES,
-  ...TRAVEL_TEMPLATE_TYPES
+  ...TRAVEL_TEMPLATE_TYPES,
+  ...PET_TEMPLATE_TYPES
 ] as const;
 
 export type TemplateType = typeof TEMPLATE_TYPES[number];

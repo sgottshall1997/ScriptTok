@@ -173,6 +173,19 @@ export const TEMPLATE_METADATA: Record<TemplateType, TemplateMetadata> = {
     example: 'Travel benefits + convenience features + adventure use',
     usesProduct: true,
     contentType: 'product-focused'
+  },
+  'pet': {
+    id: 'pet',
+    name: 'Pet Content',
+    description: 'Pet product content with direct reviews and functionality focus',
+    category: 'Pet',
+    icon: '🐕',
+    platforms: ['All'],
+    estimatedLength: '100-170 words',
+    useCase: 'Pet product review and promotion',
+    example: 'Features + pet benefits + owner convenience + value',
+    usesProduct: true,
+    contentType: 'product-focused'
   }
 };
 
@@ -196,7 +209,8 @@ export function getNicheTemplates(niche: string): TemplateMetadata[] {
     fitness: 'Fitness',
     food: 'Food',
     tech: 'Tech',
-    travel: 'Travel'
+    travel: 'Travel',
+    pet: 'Pet'
   };
   
   const category = nicheCategories[niche as keyof typeof nicheCategories];

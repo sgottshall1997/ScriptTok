@@ -1,0 +1,114 @@
+Write a direct, impactful review script for the pet product ”{{productName}}”, intended for a 30–60 second social media video about pets or pet care.
+
+Your task is to help viewers quickly understand why {{productName}} is worth using for their pets by presenting clear, specific information about its functionality, quality, benefits, and value—while avoiding vague claims and filler.
+
+⸻
+
+The script must include the following sections, in order:
+
+⸻
+
+1. Attention-grabbing hook
+
+Start with a surprising or slightly negative statement that includes the product name and stops the viewer from scrolling.
+
+Use a different hook each time – do not reuse hooks.
+
+Examples:
+	•	“Still using old bowls instead of {{productName}}? Here’s what your pet is missing.”
+	•	“Most pet owners skip {{productName}} — here’s why they regret it.”
+	•	“Stop guessing what works — here’s why {{productName}} delivers real results.”
+	•	“Is {{productName}} just another gimmick? Let’s test it.”
+	•	“Think all pet gear is the same? {{productName}} proves otherwise.”
+	•	“Don’t buy another toy before seeing this about {{productName}}.”
+
+⸻
+
+2. Specific features and pet-focused benefits
+
+List 3–4 clear, factual benefits of the product based on its design or function.
+
+Include details like:
+	•	Pet-specific design (e.g., chew-resistant, slow-feed, ergonomic for paws)
+	•	Safety or health benefits (e.g., BPA-free, vet-approved, supports digestion)
+	•	Materials and durability (e.g., non-toxic silicone, stainless steel, tear-resistant fabric)
+	•	Comfort or ease of use (e.g., padded straps, anti-slip base, breathable mesh)
+	•	Ease of cleaning (e.g., dishwasher-safe, machine-washable)
+
+Avoid generic claims like “great for pets.” Be precise about why and how it works.
+
+⸻
+
+3. Solves real pet-owner problems
+
+Explain how it makes life easier for pet owners or improves the pet’s daily experience.
+
+Examples:
+	•	“No more spilled water bowls during zoomies.”
+	•	“Keeps pets calm during travel or vet visits.”
+	•	“Helps reduce anxiety when left alone.”
+	•	“Stops fast eaters from choking or bloating.”
+	•	“Keeps fur off furniture without constant vacuuming.”
+
+⸻
+
+4. Pet type or lifestyle fit
+
+State who it’s best for: species, breed size, activity level, or situation.
+
+Examples:
+	•	“Perfect for small dogs with sensitive digestion.”
+	•	“Great for high-energy breeds that destroy everything else.”
+	•	“Best for indoor cats needing mental stimulation.”
+	•	“Ideal for pets with allergies or special diets.”
+	•	“Designed for travel, crates, or small apartments.”
+
+⸻
+
+5. Value and durability
+
+Summarize the long-term benefit or cost-efficiency.
+
+Examples:
+	•	“Built to last — saves you money replacing cheap toys.”
+	•	“Affordable for the quality, especially if your pet destroys gear fast.”
+	•	“Worth it for pet parents who want convenience and peace of mind.”
+	•	“Outperforms more expensive brands we’ve tried.”
+
+⸻
+
+6. Call-to-action
+
+End with a direct question or prompt to engage viewers and encourage action.
+
+Pick a different CTA every time.
+
+Examples:
+	•	“Would your pet actually use this?”
+	•	“Ready to stop wasting money on stuff they ignore?”
+	•	“What would your dog do with this right now?”
+	•	“Could this finally solve your pet’s biggest issue?”
+	•	“How would this upgrade your routine?”
+
+⸻
+
+✍️ Writing Guidelines
+	•	Use clear, simple, specific language.
+	•	Use short, punchy, declarative sentences.
+	•	Use active voice only.
+	•	Avoid filler (e.g., “really,” “very,” “literally”), metaphors, clichés, and vague claims.
+	•	Do not include emojis, hashtags, asterisks, or notes.
+	•	Don’t generalize (e.g., “all pets love it”) — stay factual and grounded.
+
+⸻
+
+📏 Length & Structure
+	•	Target: 100–170 words (30–60 seconds spoken).
+	•	Structured for clean on-camera delivery or voiceover.
+	•	Smooth but crisp transitions between sections.
+
+⸻
+
+🎯 Goal
+
+Help viewers clearly understand why {{productName}} is a smart buy for their pet, what problem it solves, how it fits their lifestyle, and prompt them to imagine it in their home.
