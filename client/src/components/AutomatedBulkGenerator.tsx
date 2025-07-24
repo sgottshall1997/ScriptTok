@@ -291,10 +291,52 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
     );
   };
 
+  // Helper function to filter templates by niche (matches backend filtering)
+  const filterTemplatesForNiche = (templates: string[], niche: string): string[] => {
+    const nicheSpecificTemplates: Record<string, string[]> = {
+      'fitness': ['fitness'],
+      'tech': ['tech'],
+      'beauty': ['skincare'],
+      'fashion': ['fashion'],
+      'food': ['food'],
+      'travel': ['travel'],
+      'pet': ['pet']
+    };
+
+    const universalTemplates = [
+      'affiliate_email',
+      'influencer_caption', 
+      'product_comparison',
+      'routine_kit',
+      'seo_blog',
+      'short_video'
+    ];
+
+    return templates.filter(template => {
+      // Universal templates apply to all niches
+      if (universalTemplates.includes(template)) {
+        return true;
+      }
+      
+      // Niche-specific templates only apply to their matching niche
+      const nicheTemplates = nicheSpecificTemplates[niche] || [];
+      return nicheTemplates.includes(template);
+    });
+  };
+
   const calculateTotalVariations = () => {
     const effectiveTones = selectedTones.length > 0 ? selectedTones.length : 1; // Default to 1 tone if none selected
     const effectiveFormats = selectedContentFormats.length > 0 ? selectedContentFormats.length : 1; // Default to 1 format if none selected
-    return selectedNiches.length * effectiveTones * selectedTemplates.length * selectedAiModels.length * effectiveFormats;
+    
+    // Calculate total variations by summing applicable templates per niche (matches backend logic)
+    let totalVariations = 0;
+    for (const niche of selectedNiches) {
+      const applicableTemplates = filterTemplatesForNiche(selectedTemplates, niche);
+      const nicheVariations = applicableTemplates.length * effectiveTones * selectedAiModels.length * effectiveFormats;
+      totalVariations += nicheVariations;
+    }
+    
+    return totalVariations;
   };
 
   const startAutomatedGeneration = () => {
