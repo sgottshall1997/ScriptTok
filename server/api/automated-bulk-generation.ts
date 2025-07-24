@@ -894,7 +894,7 @@ async function generateComprehensiveContent(params: {
     const { generatePlatformSpecificContent } = await import('../services/platformContentGenerator');
 
     // Generate main content using the same function as standard generator
-    let mainContent = await generateContent(
+    const mainContentResult = await generateContent(
       productName,
       template as any,
       tone as any,
@@ -905,6 +905,9 @@ async function generateComprehensiveContent(params: {
       smartStyleRecommendations,
       aiModel || 'claude' // Pass AI model parameter correctly
     );
+
+    // Extract clean text content from the result object
+    let mainContent = mainContentResult.content || `${productName} is trending for good reasons.`;
 
     // Apply Spartan format enforcement to main content if enabled
     if (useSpartanFormat) {
