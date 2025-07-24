@@ -1080,7 +1080,7 @@ Respond with Twitter post only.`
  */
 export async function createPrompt(config: PromptConfig): Promise<GeneratedPrompt> {
   // Get template-specific prompt
-  const templateGenerator = TEMPLATE_PROMPTS[config.templateType] || TEMPLATE_PROMPTS['short_video'];
+  const templateGenerator = TEMPLATE_PROMPTS[config.templateType as keyof typeof TEMPLATE_PROMPTS] || TEMPLATE_PROMPTS['short_video'];
   
   return templateGenerator(config);
 }
@@ -1090,7 +1090,7 @@ export async function createPrompt(config: PromptConfig): Promise<GeneratedPromp
  */
 export function generatePrompt(config: PromptConfig): GeneratedPrompt {
   // Get template-specific prompt
-  const templateGenerator = TEMPLATE_PROMPTS[config.templateType] || TEMPLATE_PROMPTS['short_video'];
+  const templateGenerator = TEMPLATE_PROMPTS[config.templateType as keyof typeof TEMPLATE_PROMPTS] || TEMPLATE_PROMPTS['short_video'];
   
   return templateGenerator(config);
 }
@@ -1099,7 +1099,7 @@ export function generatePrompt(config: PromptConfig): GeneratedPrompt {
  * PLATFORM-SPECIFIC PROMPT CREATOR
  */
 export async function createPlatformPrompt(platform: string, config: PromptConfig): Promise<string> {
-  const platformGenerator = PLATFORM_PROMPTS[platform.toLowerCase()] || PLATFORM_PROMPTS.instagram;
+  const platformGenerator = PLATFORM_PROMPTS[platform.toLowerCase() as keyof typeof PLATFORM_PROMPTS] || PLATFORM_PROMPTS.instagram;
   
   return platformGenerator(config);
 }
