@@ -1,112 +1,51 @@
 // Shared constants used across the application
 
-// Universal template types that apply to all niches
+// Universal template types that apply to all niches (from optimized PDF system)
 export const UNIVERSAL_TEMPLATE_TYPES = [
-  "seo_blog",           // SEO Blog Post (1000+ words, keyword-optimized)
-  "short_video",        // Short-Form Video Script (TikTok, Reels, YT Shorts)
-  "spartan_video_script", // Spartan Video Script (Direct, no-fluff, 120 words max)
-  "influencer_caption", // Influencer Caption (with hashtags, emojis, CTAs)
-  "product_comparison", // Product Comparison (X vs Y, Pros/Cons breakdown)
-  "bullet_points",      // Bullet-Point Summary (for newsletters or carousel posts)
-  "review_style",       // Honest review with pros, cons, and rating
-  "tutorial_guide",     // Step-by-step instructional content
-  "trending_news",      // Current events and trending topics
-  "surprise_me"         // Random template selection
+  "affiliate_email",    // Affiliate Email Blurb (persuasive email sections)
+  "influencer_caption", // Influencer Caption (authentic social media posts)
+  "product_comparison", // Product Comparison (comprehensive comparison guides)
+  "routine_kit",        // Routine Kit (step-by-step routine guides)
+  "seo_blog",           // SEO Blog Post (1000+ words, search optimized)
+  "short_video"         // Short-Form Video Script (TikTok, Reels, YT Shorts)
 ] as const;
 
-// Beauty & Personal Care specific templates
+// Niche-specific template types (from optimized PDF system)
 export const BEAUTY_TEMPLATE_TYPES = [
-  "beauty_routine",     // "Morning & Night Beauty Routine" Templates
-  "expert_approved",    // "Dermatologist-Approved" TikTok Skits
-  "transformation_story", // "Before & After Transformation" Captions
-  "product_type_list",  // "5 Must-Haves for [Skin Type]" Listicles
-  "dupe_alert"          // "Dupe Alert" Product Comparison
+  "skincare"           // Optimized skincare content template
 ] as const;
 
-// Supplements & Fitness specific templates
-export const FITNESS_TEMPLATE_TYPES = [
-  "supplement_stack",   // "Supplement Stack Guide"
-  "eat_in_day",         // "What I Eat in a Day" Scripts
-  "best_supplements",   // "5 Best Supplements for [Goal]" Blog Post
-  "myth_busting",       // "Myth-Busting" Infographics or Tweets
-  "fitness_influencer"  // "Fitness Influencer Voiceover" for Reels
-] as const;
-
-// Tech & Gadgets specific templates
-export const TECH_TEMPLATE_TYPES = [
-  "unboxing",           // "Unboxing Experience" Script
-  "top_use_cases",      // "Top 5 Use Cases" Lists
-  "worth_it",           // "Is It Worth It?" Value Breakdown Posts
-  "setup_guide",        // "Gadget Setup Guide" Blog or Video
-  "hidden_features"     // "Hidden Features" Carousel
-] as const;
-
-// Food & Kitchen specific templates  
-export const FOOD_TEMPLATE_TYPES = [
-  "recipe_featuring",   // "Recipe Featuring Product"
-  "kitchen_must_haves", // Essential kitchen tools and gadgets
-  "meal_prep_guide",    // Weekly meal preparation tips and tools
-  "food_trend_analysis", // Analysis of current food trends
-  "budget_cooking"      // Affordable recipes and money-saving tips
-] as const;
-
-// Pet Products specific templates
-export const PET_TEMPLATE_TYPES = [
-  "dog_testimonial",    // "Dog Testimonial Voiceover" Script
-  "pet_owner_tips",     // "5 Things I Wish I Knew" Blog
-  "grooming_before_after", // "Before & After Grooming Product" Visual Caption
-  "pet_parent_guide",   // "Pet Parent Guide"
-  "trainer_tip"         // "Trainer Tip" Skits
-] as const;
-
-// Fashion & Accessories specific templates
 export const FASHION_TEMPLATE_TYPES = [
-  "style_this",         // "How to Style This" Reels Script
-  "capsule_wardrobe",   // "Seasonal Capsule Wardrobe" Blog
-  "dupes_lookalikes",   // "Dupes & Lookalikes" Comparison Table
-  "outfit_inspo",       // "Outfit Inspo" Carousel Captions
-  "haul_review"         // "Haul Review" Narration Script
+  "fashion"            // Optimized fashion content template
 ] as const;
 
-// Outdoor & Sports Gear specific templates
-export const OUTDOOR_TEMPLATE_TYPES = [
-  "packlist",           // "Weekend Warrior Packlist" Templates
-  "gear_breakdown",     // "Survival Gear Breakdown" for YouTube/Blog
-  "adventure_vlog",     // "Adventure Vlog" Script
-  "durability_test",    // "Durability Test" Product Caption
-  "top_activity"        // "Top 5 for [Activity]" Lists
+export const FITNESS_TEMPLATE_TYPES = [
+  "fitness"            // Optimized fitness content template
 ] as const;
 
-// Legacy templates (for backward compatibility)
-export const LEGACY_TEMPLATE_TYPES = [
-  "original",           // Original review
-  "comparison",         // Product comparison
-  "caption",            // Social media caption
-  "pros_cons",          // Pros and cons list
-  "routine",            // Beauty routine
-  "beginner_kit",       // Beginner beauty kit
-  "demo_script",        // Product demo script
-  "drugstore_dupe",     // Drugstore dupe review
-  "personal_review",    // Personal product review
-  "surprise_me",        // Creative/unexpected content
-  "tiktok_breakdown",   // TikTok trend breakdown
-  "dry_skin_list",      // Dry skin product list
-  "top5_under25",       // Affordable options
-  "recipe",             // Recipe featuring product
-  "packing_list"        // Travel packing list
+export const FOOD_TEMPLATE_TYPES = [
+  "food"               // Optimized food content template
 ] as const;
 
-// Combined template types for validation
+export const TECH_TEMPLATE_TYPES = [
+  "tech"               // Optimized tech content template
+] as const;
+
+export const TRAVEL_TEMPLATE_TYPES = [
+  "travel"             // Optimized travel content template
+] as const;
+
+// No pet-specific templates in the new system - pets uses universal templates
+
+// Combined template types for validation (optimized PDF system)
 export const TEMPLATE_TYPES = [
   ...UNIVERSAL_TEMPLATE_TYPES,
   ...BEAUTY_TEMPLATE_TYPES,
-  ...FITNESS_TEMPLATE_TYPES,
-  ...TECH_TEMPLATE_TYPES,
-  ...FOOD_TEMPLATE_TYPES,
-  ...PET_TEMPLATE_TYPES,
   ...FASHION_TEMPLATE_TYPES,
-  ...OUTDOOR_TEMPLATE_TYPES,
-  ...LEGACY_TEMPLATE_TYPES
+  ...FITNESS_TEMPLATE_TYPES,
+  ...FOOD_TEMPLATE_TYPES,
+  ...TECH_TEMPLATE_TYPES,
+  ...TRAVEL_TEMPLATE_TYPES
 ] as const;
 
 export type TemplateType = typeof TEMPLATE_TYPES[number];

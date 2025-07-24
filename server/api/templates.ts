@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { TEMPLATE_METADATA, getTemplatesByCategory } from '@shared/templateMetadata';
+import { TEMPLATE_METADATA, getUniversalTemplates, getNicheTemplates } from '@shared/templateMetadata';
 import { TemplateType, TEMPLATE_TYPES } from '@shared/constants';
 
 // Get all available templates with metadata
@@ -19,13 +19,13 @@ export const getTemplates = async (req: Request, res: Response) => {
     // Filter by niche relevance if specified
     if (niche && typeof niche === 'string') {
       const nicheMap: Record<string, string[]> = {
-        'beauty': ['Universal', 'Beauty & Personal Care'],
-        'tech': ['Universal', 'Tech & Gadgets'], 
-        'fashion': ['Universal', 'Fashion & Accessories'],
-        'fitness': ['Universal', 'Supplements & Fitness'],
-        'food': ['Universal', 'Home & Kitchen'],
-        'travel': ['Universal', 'Outdoor & Sports Gear'],
-        'pets': ['Universal', 'Pet Products']
+        'beauty': ['Universal', 'Beauty'],
+        'tech': ['Universal', 'Tech'], 
+        'fashion': ['Universal', 'Fashion'],
+        'fitness': ['Universal', 'Fitness'],
+        'food': ['Universal', 'Food'],
+        'travel': ['Universal', 'Travel'],
+        'pets': ['Universal']
       };
       
       const relevantCategories = nicheMap[niche.toLowerCase()] || ['Universal'];
@@ -34,7 +34,15 @@ export const getTemplates = async (req: Request, res: Response) => {
       );
     }
     
-    const categorizedTemplates = getTemplatesByCategory();
+    const categorizedTemplates = {
+      universal: getUniversalTemplates(),
+      beauty: getNicheTemplates('beauty'),
+      fashion: getNicheTemplates('fashion'),
+      fitness: getNicheTemplates('fitness'),
+      food: getNicheTemplates('food'),
+      tech: getNicheTemplates('tech'),
+      travel: getNicheTemplates('travel')
+    };
     
     res.json({
       success: true,
@@ -87,9 +95,8 @@ export const getPopularTemplates = async (req: Request, res: Response) => {
       'influencer_caption',
       'product_comparison', 
       'seo_blog',
-      'unboxing',
-      'skincare_routine',
-      'surprise_me'
+      'affiliate_email',
+      'routine_kit'
     ];
     
     const popularTemplates = popularTemplateIds
@@ -119,21 +126,21 @@ export const getTemplateRecommendations = async (req: Request, res: Response) =>
     
     // Default recommendations based on niche
     const nicheRecommendations: Record<string, TemplateType[]> = {
-      'skincare': ['skincare_routine', 'derm_approved', 'transformation', 'dupe_alert'],
-      'tech': ['unboxing', 'worth_it', 'setup_guide', 'hidden_features'],
-      'fashion': ['style_this', 'outfit_inspo', 'dupes_lookalikes', 'haul_review'],
-      'fitness': ['supplement_stack', 'eat_in_day', 'fitness_influencer', 'myth_busting'],
-      'food': ['product_recipe', 'kitchen_must_haves', 'amazon_finds'],
-      'travel': ['packlist', 'adventure_vlog', 'gear_breakdown'],
-      'pet': ['dog_testimonial', 'pet_owner_tips', 'trainer_tip']
+      'beauty': ['skincare', 'routine_kit', 'product_comparison'],
+      'tech': ['tech', 'product_comparison', 'seo_blog'],
+      'fashion': ['fashion', 'routine_kit', 'influencer_caption'],
+      'fitness': ['fitness', 'routine_kit', 'affiliate_email'],
+      'food': ['food', 'routine_kit', 'seo_blog'],
+      'travel': ['travel', 'product_comparison', 'short_video'],
+      'pets': ['routine_kit', 'product_comparison', 'influencer_caption']
     };
     
     // Platform-specific recommendations
     const platformRecommendations: Record<string, TemplateType[]> = {
-      'tiktok': ['short_video', 'dupe_alert', 'myth_busting', 'hidden_features'],
-      'instagram': ['influencer_caption', 'transformation', 'outfit_inspo', 'unboxing'],
-      'youtube': ['unboxing', 'setup_guide', 'adventure_vlog', 'haul_review'],
-      'blog': ['seo_blog', 'product_comparison', 'buyer_persona', 'routine_kit']
+      'tiktok': ['short_video', 'influencer_caption'],
+      'instagram': ['influencer_caption', 'short_video'],
+      'youtube': ['short_video', 'seo_blog'],
+      'blog': ['seo_blog', 'product_comparison', 'routine_kit']
     };
     
     if (niche && typeof niche === 'string') {
@@ -145,12 +152,12 @@ export const getTemplateRecommendations = async (req: Request, res: Response) =>
     }
     
     // Add universal templates that work for everything
-    recommendedTemplates.push('product_comparison', 'bullet_points', 'trending_explainer');
+    recommendedTemplates.push('product_comparison', 'affiliate_email');
     
     // Remove duplicates and get template metadata
-    const uniqueTemplates = [...new Set(recommendedTemplates)];
+    const uniqueTemplates = Array.from(new Set(recommendedTemplates));
     const templates = uniqueTemplates
-      .map(id => TEMPLATE_METADATA[id])
+      .map(id => TEMPLATE_METADATA[id as TemplateType])
       .filter(Boolean)
       .slice(0, 10); // Limit to top 10 recommendations
     
