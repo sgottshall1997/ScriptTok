@@ -27,7 +27,7 @@ function filterTemplatesForNiche(templates: string[], niche: string): string[] {
     'fashion': ['fashion'],
     'food': ['food'],
     'travel': ['travel'],
-    'pets': ['pets']
+    'pet': ['pet'] // Note: using 'pet' not 'pets' to match constants
   };
 
   const universalTemplates = [
@@ -517,7 +517,11 @@ async function processAutomatedBulkJob(
 
         // Step 3: Filter templates to only apply niche-specific templates to matching niches
         const applicableTemplates = filterTemplatesForNiche(jobData.templates, niche);
-        console.log(`🎯 Niche ${niche}: ${jobData.templates.length} total templates → ${applicableTemplates.length} applicable templates`);
+        console.log(`🎯 NICHE FILTERING DEBUG:`);
+        console.log(`   Niche: ${niche}`);
+        console.log(`   Original templates: [${jobData.templates.join(', ')}]`);
+        console.log(`   Applicable templates: [${applicableTemplates.join(', ')}]`);
+        console.log(`   ${jobData.templates.length} total → ${applicableTemplates.length} applicable`);
         
         // Generate content for filtered combinations - templates × tones × AI models × content formats
         for (const template of applicableTemplates) {
