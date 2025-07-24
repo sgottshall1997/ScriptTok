@@ -292,7 +292,9 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
   };
 
   const calculateTotalVariations = () => {
-    return selectedNiches.length * selectedTones.length * selectedTemplates.length * selectedAiModels.length * selectedContentFormats.length;
+    const effectiveTones = selectedTones.length > 0 ? selectedTones.length : 1; // Default to 1 tone if none selected
+    const effectiveFormats = selectedContentFormats.length > 0 ? selectedContentFormats.length : 1; // Default to 1 format if none selected
+    return selectedNiches.length * effectiveTones * selectedTemplates.length * selectedAiModels.length * effectiveFormats;
   };
 
   const startAutomatedGeneration = () => {
@@ -305,10 +307,10 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
       return;
     }
 
-    if (selectedTones.length === 0 || selectedTemplates.length === 0 || selectedPlatforms.length === 0 || selectedAiModels.length === 0 || selectedContentFormats.length === 0) {
+    if (selectedTemplates.length === 0 || selectedPlatforms.length === 0 || selectedAiModels.length === 0) {
       toast({
         title: "❌ Incomplete Selection",
-        description: "Please select at least one tone, template, platform, AI model, and content format",
+        description: "Please select at least one template, platform, and AI model",
         variant: "destructive",
       });
       return;
@@ -316,11 +318,11 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
 
     const bulkData = {
       selectedNiches,
-      tones: selectedTones,
+      tones: selectedTones.length > 0 ? selectedTones : ['friendly'], // Default to friendly tone if none selected
       templates: selectedTemplates,
       platforms: selectedPlatforms,
       aiModels: selectedAiModels,
-      contentFormats: selectedContentFormats,
+      contentFormats: selectedContentFormats.length > 0 ? selectedContentFormats : ['main_content'], // Default to main content if none selected
       useExistingProducts,
       generateAffiliateLinks,
       affiliateId: generateAffiliateLinks && !useManualAffiliateLinks ? affiliateId : undefined,
@@ -674,7 +676,7 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Users className="h-5 w-5 text-blue-600" />
-              <h3 className="font-semibold">Content Tones ({selectedTones.length})</h3>
+              <h3 className="font-semibold">Content Tones ({selectedTones.length}) <span className="text-sm text-gray-500 font-normal">(Optional)</span></h3>
             </div>
             <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
               {CONTENT_TONES.map((tone) => (
@@ -790,7 +792,7 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <BarChart3 className="h-5 w-5 text-purple-600" />
-            <h3 className="font-semibold">Content Formats ({selectedContentFormats.length})</h3>
+            <h3 className="font-semibold">Content Formats ({selectedContentFormats.length}) <span className="text-sm text-gray-500 font-normal">(Optional)</span></h3>
             <span className="text-sm text-gray-500">Select formats to generate different content styles</span>
           </div>
           

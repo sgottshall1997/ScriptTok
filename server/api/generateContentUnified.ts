@@ -52,10 +52,10 @@ const unifiedGenerationSchema = z.object({
   product: z.string().optional(),
   productName: z.string().optional(),
   template: z.string().optional(),
-  tone: z.string().optional(),
+  tone: z.string().optional().default("friendly"),
   niche: z.string().optional(),
   platforms: z.array(z.string()).optional(),
-  contentType: z.string().optional(),
+  contentType: z.string().optional().default("main_content"),
   videoDuration: z.string().optional(),
   affiliateUrl: z.string().optional(),
   customHook: z.string().optional(),
@@ -69,7 +69,7 @@ const unifiedGenerationSchema = z.object({
     niche: z.string(),
     affiliateUrl: z.string().optional()
   })).optional(),
-  tones: z.array(z.string()).optional(),
+  tones: z.array(z.string()).optional().default(["friendly"]).transform(arr => arr && arr.length > 0 ? arr : ["friendly"]),
   templates: z.array(z.string()).optional(),
   selectedNiches: z.array(z.string()).optional(),
   useExistingProducts: z.boolean().default(false),
@@ -80,7 +80,7 @@ const unifiedGenerationSchema = z.object({
   scheduledJobId: z.string().optional(),
   scheduledJobName: z.string().optional(),
   aiModels: z.array(z.string()).optional(),
-  contentFormats: z.array(z.string()).optional(),
+  contentFormats: z.array(z.string()).optional().default(["main_content"]).transform(arr => arr && arr.length > 0 ? arr : ["main_content"]),
   
   // Webhook fields
   webhookUrl: z.string().nullable().optional(),

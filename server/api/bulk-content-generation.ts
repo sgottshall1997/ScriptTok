@@ -10,7 +10,7 @@ const bulkGenerationSchema = z.object({
   productName: z.string().min(1),
   niche: z.string().min(1),
   platforms: z.array(z.string()).min(1),
-  tones: z.array(z.string()).min(1),
+  tones: z.array(z.string()).default(["friendly"]).transform(arr => arr.length > 0 ? arr : ["friendly"]),
   templates: z.array(z.string()).min(1),
   scheduleAfterGeneration: z.boolean().default(false),
   scheduledTime: z.string().datetime().optional(),

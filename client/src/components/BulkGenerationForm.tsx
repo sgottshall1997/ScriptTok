@@ -144,14 +144,7 @@ export default function BulkGenerationForm() {
       return;
     }
 
-    if (formData.selectedTones.length === 0) {
-      toast({
-        title: 'Tones Required',
-        description: 'Please select at least one tone',
-        variant: 'destructive',
-      });
-      return;
-    }
+    // Tones are now optional - use default "friendly" if none selected
 
     if (formData.selectedTemplates.length === 0) {
       toast({
@@ -175,7 +168,7 @@ export default function BulkGenerationForm() {
       productName: formData.productName.trim(),
       niche: formData.niche,
       platforms: formData.selectedPlatforms,
-      tones: formData.selectedTones,
+      tones: formData.selectedTones.length > 0 ? formData.selectedTones : ['friendly'], // Default to friendly if none selected
       templates: formData.selectedTemplates,
       scheduleAfterGeneration: formData.scheduleAfterGeneration,
       scheduledTime: formData.scheduleAfterGeneration && formData.scheduledDateTime 
@@ -187,8 +180,9 @@ export default function BulkGenerationForm() {
     startBulkMutation.mutate(bulkData);
   };
 
-  // Calculate total variations
-  const totalVariations = formData.selectedTones.length * formData.selectedTemplates.length;
+  // Calculate total variations with default values for optional fields
+  const effectiveTones = formData.selectedTones.length > 0 ? formData.selectedTones.length : 1; // Default to 1 tone if none selected
+  const totalVariations = effectiveTones * formData.selectedTemplates.length;
 
   // Generate minimum datetime (1 hour from now for bulk generation)
   const minDateTime = new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16);
@@ -253,7 +247,7 @@ export default function BulkGenerationForm() {
       {/* Tones Selection */}
       <div className="space-y-3">
         <Label className="text-base font-medium">
-          Select Tones ({formData.selectedTones.length} selected)
+          Select Tones ({formData.selectedTones.length} selected) <span className="text-sm text-gray-500">(Optional - defaults to friendly)</span>
         </Label>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
           {TONES.map((tone) => {
@@ -369,7 +363,7 @@ export default function BulkGenerationForm() {
                 Total Variations: {totalVariations}
               </p>
               <p className="text-sm text-gray-600">
-                {formData.selectedTones.length} tones × {formData.selectedTemplates.length} templates = {totalVariations} unique content pieces
+                {effectiveTones} tone{effectiveTones !== 1 ? 's' : ''} × {formData.selectedTemplates.length} templates = {totalVariations} unique content pieces
               </p>
             </div>
           </div>

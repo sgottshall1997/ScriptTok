@@ -136,11 +136,11 @@ import { trendingProducts } from '@shared/schema';
 
 const automatedBulkSchema = z.object({
   selectedNiches: z.array(z.string()).min(1, "At least one niche must be selected"),
-  tones: z.array(z.string()).min(1, "At least one tone must be selected"),
+  tones: z.array(z.string()).default(["friendly"]).transform(arr => arr.length > 0 ? arr : ["friendly"]),
   templates: z.array(z.string()).min(1, "At least one template must be selected"),
   platforms: z.array(z.string()).min(1, "At least one platform must be selected"),
   aiModels: z.array(z.string()).min(1, "At least one AI model must be selected").default(["claude"]),
-  contentFormats: z.array(z.string()).min(1, "At least one content format must be selected").default(["regular"]),
+  contentFormats: z.array(z.string()).default(["main_content"]).transform(arr => arr.length > 0 ? arr : ["main_content"]),
   useExistingProducts: z.boolean().default(true),
   generateAffiliateLinks: z.boolean().default(false),
   affiliateId: z.string().optional(),
