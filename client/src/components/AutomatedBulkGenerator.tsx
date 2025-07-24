@@ -300,7 +300,8 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
       'fashion': ['fashion'],
       'food': ['food'],
       'travel': ['travel'],
-      'pet': ['pet']
+      'pet': ['pet'],
+      'pets': ['pet']  // Handle both 'pet' and 'pets' for compatibility
     };
 
     const universalTemplates = [
