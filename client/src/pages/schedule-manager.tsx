@@ -319,7 +319,7 @@ const ScheduleManager: React.FC = () => {
                     </div>
                   </div>
 
-                  {/* Additional Configuration */}
+                  {/* Templates and Content Tone */}
                   <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>
                       <span className="font-medium text-gray-600">Templates:</span>
@@ -334,9 +334,29 @@ const ScheduleManager: React.FC = () => {
                             +{job.config.templates.length - 2}
                           </Badge>
                         )}
+                        {(!job.config?.templates || job.config.templates.length === 0) && (
+                          <span className="text-gray-500 text-xs">No templates configured</span>
+                        )}
                       </div>
                     </div>
                     
+                    <div>
+                      <span className="font-medium text-gray-600">Content Tone:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {job.config?.tones?.map((tone: string) => (
+                          <Badge key={tone} variant="outline" className="text-xs">
+                            {tone}
+                          </Badge>
+                        ))}
+                        {(!job.config?.tones || job.config.tones.length === 0) && (
+                          <span className="text-gray-500 text-xs">friendly</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* AI Models and Content Formats */}
+                  <div className="grid grid-cols-2 gap-4 text-xs">
                     <div>
                       <span className="font-medium text-gray-600">AI Models:</span>
                       <div className="flex flex-wrap gap-1 mt-1">
@@ -345,6 +365,20 @@ const ScheduleManager: React.FC = () => {
                             {model}
                           </Badge>
                         ))}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <span className="font-medium text-gray-600">Content Formats:</span>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {job.config?.contentFormats?.map((format: string) => (
+                          <Badge key={format} variant="outline" className="text-xs">
+                            {format}
+                          </Badge>
+                        ))}
+                        {(!job.config?.contentFormats || job.config.contentFormats.length === 0) && (
+                          <span className="text-gray-500 text-xs">main_content</span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -357,7 +391,7 @@ const ScheduleManager: React.FC = () => {
                     {job.config?.generateAffiliateLinks && (
                       <Badge className="bg-orange-600 text-white">Affiliate Links</Badge>
                     )}
-                    {job.config?.useSmartStyle && (
+                    {job.config?.topRatedStyleUsed && (
                       <Badge className="bg-blue-600 text-white">Smart Style</Badge>
                     )}
                   </div>

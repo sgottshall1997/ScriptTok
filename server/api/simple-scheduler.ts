@@ -229,15 +229,45 @@ export async function getScheduledBulkJobs(req: Request, res: Response) {
   try {
     const jobs = await db.select().from(scheduledBulkJobs);
     
-    const jobsWithStatus = jobs.map(job => ({
-      ...job,
-      isRunning: activeScheduledJobs.has(job.id.toString()),
-      nextRun: calculateNextRun(job.scheduleTime, job.timezone)
-    }));
+    const jobsWithStatus = jobs.map(job => {
+      // Calculate next run time
+      const [hours, minutes] = job.scheduleTime.split(':').map(Number);
+      const nextRun = new Date();
+      nextRun.setHours(hours, minutes, 0, 0);
+      
+      // If time has passed today, set for tomorrow
+      if (nextRun <= new Date()) {
+        nextRun.setDate(nextRun.getDate() + 1);
+      }
+
+      return {
+        id: job.id,
+        name: job.name,
+        scheduleTime: job.scheduleTime,
+        timezone: job.timezone,
+        createdAt: job.createdAt,
+        isActive: activeScheduledJobs.has(job.id.toString()),
+        nextRunAt: nextRun.toISOString(),
+        totalRuns: job.totalRuns || 0,
+        consecutiveFailures: job.consecutiveFailures || 0,
+        lastError: job.lastError || null,
+        config: {
+          selectedNiches: job.selectedNiches,
+          tones: job.tones,
+          templates: job.templates,
+          platforms: job.platforms,
+          aiModels: [job.aiModel],
+          contentFormats: job.useSpartanFormat ? ['Spartan Format'] : ['Regular Format'],
+          topRatedStyleUsed: job.topRatedStyleUsed,
+          useSpartanFormat: job.useSpartanFormat
+        }
+      };
+    });
 
     res.json({
       success: true,
-      jobs: jobsWithStatus
+      jobs: jobsWithStatus,
+      total: jobsWithStatus.length
     });
   } catch (error) {
     console.error('Error fetching scheduled jobs:', error);
