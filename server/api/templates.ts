@@ -25,7 +25,8 @@ export const getTemplates = async (req: Request, res: Response) => {
         'fitness': ['Universal', 'Fitness'],
         'food': ['Universal', 'Food'],
         'travel': ['Universal', 'Travel'],
-        'pets': ['Universal']
+        'pet': ['Universal', 'Pet'],
+        'pets': ['Universal', 'Pet']
       };
       
       const relevantCategories = nicheMap[niche.toLowerCase()] || ['Universal'];
@@ -41,7 +42,8 @@ export const getTemplates = async (req: Request, res: Response) => {
       fitness: getNicheTemplates('fitness'),
       food: getNicheTemplates('food'),
       tech: getNicheTemplates('tech'),
-      travel: getNicheTemplates('travel')
+      travel: getNicheTemplates('travel'),
+      pet: getNicheTemplates('pet')
     };
     
     res.json({
@@ -132,7 +134,8 @@ export const getTemplateRecommendations = async (req: Request, res: Response) =>
       'fitness': ['fitness', 'routine_kit', 'affiliate_email'],
       'food': ['food', 'routine_kit', 'seo_blog'],
       'travel': ['travel', 'product_comparison', 'short_video'],
-      'pets': ['routine_kit', 'product_comparison', 'influencer_caption']
+      'pet': ['pet', 'routine_kit', 'product_comparison'],
+      'pets': ['pet', 'routine_kit', 'product_comparison']
     };
     
     // Platform-specific recommendations
