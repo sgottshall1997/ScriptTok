@@ -129,27 +129,60 @@ export class WebhookService {
         throw new Error('Make.com webhook URL not configured');
       }
 
+      // Extract clean text content from AI response
+      const extractCleanContent = (content: any): string => {
+        if (typeof content === 'string') {
+          return content;
+        }
+        
+        if (content && typeof content === 'object') {
+          // Try to extract text from various possible structures
+          if (content.text) return content.text;
+          if (content.content) return content.content;
+          if (content.script) return content.script;
+          if (content.message) return content.message;
+          
+          // If it's an array, join the content
+          if (Array.isArray(content)) {
+            return content.map(item => 
+              typeof item === 'string' ? item : 
+              item.text || item.content || JSON.stringify(item)
+            ).join(' ');
+          }
+          
+          // If it has type and text (Claude format)
+          if (content.type === 'text' && content.text) {
+            return content.text;
+          }
+          
+          // Last resort: stringify and clean
+          return JSON.stringify(content);
+        }
+        
+        return '';
+      };
+
       // Send comprehensive payload with all CSV fields
       const platforms = Object.keys(data.platformContent);
       const results = [];
 
-      // Extract platform-specific captions
-      const tiktokCaption = data.platformContent?.tiktok?.caption || '';
-      const igCaption = data.platformContent?.instagram?.caption || '';
-      const ytCaption = data.platformContent?.youtube?.caption || data.platformContent?.youtube?.script || '';
-      const xCaption = data.platformContent?.twitter?.caption || data.platformContent?.x?.caption || '';
+      // Extract platform-specific captions (clean text only)
+      const tiktokCaption = extractCleanContent(data.platformContent?.tiktok?.caption) || '';
+      const igCaption = extractCleanContent(data.platformContent?.instagram?.caption) || '';
+      const ytCaption = extractCleanContent(data.platformContent?.youtube?.caption) || extractCleanContent(data.platformContent?.youtube?.script) || '';
+      const xCaption = extractCleanContent(data.platformContent?.twitter?.caption) || extractCleanContent(data.platformContent?.x?.caption) || '';
 
       // Send ONE consolidated payload with all platform data instead of one per platform
       const newPayload = {
         event_type: "content_generated",
         platforms: platforms, // All selected platforms
         niche: data.metadata?.niche || '',
-        script: data.contentData?.fullOutput || data.platformContent[platforms[0]]?.script || '',
+        script: extractCleanContent(data.contentData?.fullOutput) || extractCleanContent(data.platformContent[platforms[0]]?.script) || '',
         instagramCaption: igCaption,
         tiktokCaption: tiktokCaption,
         youtubeCaption: ytCaption,
         xCaption: xCaption,
-        facebookCaption: data.platformContent?.facebook?.caption || igCaption,
+        facebookCaption: extractCleanContent(data.platformContent?.facebook?.caption) || igCaption,
         affiliateLink: data.metadata?.affiliateUrl || data.metadata?.affiliateLink || '',
         product: data.metadata?.product || data.metadata?.productName || '',
         imageUrl: data.metadata?.imageUrl || `https://via.placeholder.com/400x400?text=${encodeURIComponent(data.metadata?.product || 'Product')}`,
@@ -220,7 +253,7 @@ export class WebhookService {
       console.log('━'.repeat(80));
       console.log(`📤 Platforms: ${newPayload.platforms.join(', ')}`);
       console.log(`🎯 Niche: ${newPayload.niche}`);
-      console.log(`📝 Script Preview: ${typeof newPayload.script === 'string' ? newPayload.script.substring(0, 100) : JSON.stringify(newPayload.script).substring(0, 100)}...`);
+      console.log(`📝 Script Preview: ${newPayload.script.substring(0, 100)}...`);
       console.log(`🔗 Product: ${newPayload.product}`);
       console.log(`🤖 AI Model: ${newPayload.model}`);
       console.log(`📄 Content Format: ${newPayload.contentFormat}`);
