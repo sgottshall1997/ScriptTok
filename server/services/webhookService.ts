@@ -1,6 +1,23 @@
 import axios from 'axios';
 import { ContentHistory } from '@shared/schema';
 
+// Helper function to format timestamp for user-friendly display
+const formatTimestampForWebhook = (date: Date = new Date()): string => {
+  // Convert to Central Time
+  const centralTime = date.toLocaleString('en-US', {
+    timeZone: 'America/Chicago',
+    year: '2-digit',
+    month: 'numeric', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+  
+  // Format as "7/24/25 1:23 PM CT" (remove comma)
+  return `${centralTime.replace(',', '')} CT`;
+};
+
 // Webhook configuration interface
 export interface WebhookConfig {
   url: string;
@@ -250,7 +267,7 @@ export class WebhookService {
           }
         },
         
-        timestamp: new Date().toISOString()
+        timestamp: formatTimestampForWebhook()
       };
 
       // Enhanced logging with timestamp and highlighted fields including viral inspiration and AI evaluation

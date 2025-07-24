@@ -4,6 +4,23 @@ import axios from 'axios';
 
 const router = Router();
 
+// Helper function to format timestamp for user-friendly display
+const formatTimestampForWebhook = (date: Date = new Date()): string => {
+  // Convert to Central Time
+  const centralTime = date.toLocaleString('en-US', {
+    timeZone: 'America/Chicago',
+    year: '2-digit',
+    month: 'numeric', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+  
+  // Format as "7/24/25 1:23 PM CT" (remove comma)
+  return `${centralTime.replace(',', '')} CT`;
+};
+
 // Validation schema for the send-to-make payload
 const sendToMakeSchema = z.object({
   platform: z.string().min(1, 'Platform is required'),
@@ -68,7 +85,7 @@ router.post('/', async (req, res) => {
       scheduledTime: payload.scheduledTime || '',
       
       // Metadata
-      timestamp: new Date().toISOString(),
+      timestamp: formatTimestampForWebhook(),
       source: 'GlowBot',
       version: '1.0'
     };

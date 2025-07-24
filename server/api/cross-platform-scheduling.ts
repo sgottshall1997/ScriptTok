@@ -4,6 +4,23 @@ import { scheduledPosts, contentGenerations, platformContent, insertScheduledPos
 import { eq, and } from 'drizzle-orm';
 import { z } from 'zod';
 
+// Helper function to format timestamp for user-friendly display
+const formatTimestampForWebhook = (date: Date = new Date()): string => {
+  // Convert to Central Time
+  const centralTime = date.toLocaleString('en-US', {
+    timeZone: 'America/Chicago',
+    year: '2-digit',
+    month: 'numeric', 
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true
+  });
+  
+  // Format as "7/24/25 1:23 PM CT" (remove comma)
+  return `${centralTime.replace(',', '')} CT`;
+};
+
 const scheduleContentSchema = z.object({
   contentId: z.number(),
   platforms: z.array(z.string()),
@@ -265,7 +282,7 @@ async function sendToMakeWebhook(post: any) {
       contentId: post.contentId,
       platforms: post.platforms,
       scheduledTime: post.scheduledTime,
-      timestamp: new Date().toISOString(),
+      timestamp: formatTimestampForWebhook(),
     };
 
     const response = await fetch(post.makeWebhookUrl, {
