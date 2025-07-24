@@ -131,35 +131,41 @@ export class WebhookService {
 
       // Extract clean text content from AI response
       const extractCleanContent = (content: any): string => {
-        if (typeof content === 'string') {
-          return content;
-        }
+        let cleanText = '';
         
-        if (content && typeof content === 'object') {
+        if (typeof content === 'string') {
+          cleanText = content;
+        } else if (content && typeof content === 'object') {
           // Try to extract text from various possible structures
-          if (content.text) return content.text;
-          if (content.content) return content.content;
-          if (content.script) return content.script;
-          if (content.message) return content.message;
-          
-          // If it's an array, join the content
-          if (Array.isArray(content)) {
-            return content.map(item => 
+          if (content.text) {
+            cleanText = content.text;
+          } else if (content.content) {
+            cleanText = content.content;
+          } else if (content.script) {
+            cleanText = content.script;
+          } else if (content.message) {
+            cleanText = content.message;
+          } else if (Array.isArray(content)) {
+            // If it's an array, join the content
+            cleanText = content.map(item => 
               typeof item === 'string' ? item : 
               item.text || item.content || JSON.stringify(item)
             ).join(' ');
+          } else if (content.type === 'text' && content.text) {
+            // If it has type and text (Claude format)
+            cleanText = content.text;
+          } else {
+            // Last resort: stringify and clean
+            cleanText = JSON.stringify(content);
           }
-          
-          // If it has type and text (Claude format)
-          if (content.type === 'text' && content.text) {
-            return content.text;
-          }
-          
-          // Last resort: stringify and clean
-          return JSON.stringify(content);
         }
         
-        return '';
+        // Remove surrounding quotes and extra whitespace
+        return cleanText
+          .replace(/^["']|["']$/g, '') // Remove leading/trailing quotes
+          .replace(/\\"/g, '"') // Unescape quotes
+          .replace(/\\n/g, '\n') // Convert \\n to actual newlines
+          .trim();
       };
 
       // Send comprehensive payload with all CSV fields
