@@ -18,6 +18,39 @@ import { generatePlatformSpecificContent, generatePlatformCaptions } from '../se
 import { WebhookService } from '../services/webhookService';
 import * as cron from 'node-cron';
 
+// Helper function to filter templates by niche
+function filterTemplatesForNiche(templates: string[], niche: string): string[] {
+  const nicheSpecificTemplates = {
+    'fitness': ['fitness'],
+    'tech': ['tech'],
+    'beauty': ['skincare'],
+    'fashion': ['fashion'],
+    'food': ['food'],
+    'travel': ['travel'],
+    'pets': ['pets']
+  };
+
+  const universalTemplates = [
+    'affiliate_email',
+    'influencer_caption', 
+    'product_comparison',
+    'routine_kit',
+    'seo_blog',
+    'short_video'
+  ];
+
+  return templates.filter(template => {
+    // Universal templates apply to all niches
+    if (universalTemplates.includes(template)) {
+      return true;
+    }
+    
+    // Niche-specific templates only apply to their matching niche
+    const nicheTemplates = nicheSpecificTemplates[niche as keyof typeof nicheSpecificTemplates] || [];
+    return nicheTemplates.includes(template);
+  });
+}
+
 // Enhanced Spartan format enforcer - automatically fix non-compliant content
 function enforceSpartanFormat(input: any): string {
   if (!input) return '';
@@ -308,8 +341,16 @@ export async function startAutomatedBulkGeneration(req: Request, res: Response) 
       });
     }
     
-    // Calculate total variations properly - products × templates × tones × AI models × content formats
-    const totalVariations = totalSelectedProducts * validatedData.templates.length * validatedData.tones.length * validatedData.aiModels.length * validatedData.contentFormats.length;
+    // Calculate total variations properly - sum of (applicable templates per niche × tones × AI models × content formats)
+    let totalVariations = 0;
+    for (const niche of validatedData.selectedNiches) {
+      if (autoSelectedProducts[niche]) {
+        const applicableTemplates = filterTemplatesForNiche(validatedData.templates, niche);
+        const nicheVariations = applicableTemplates.length * validatedData.tones.length * validatedData.aiModels.length * validatedData.contentFormats.length;
+        totalVariations += nicheVariations;
+        console.log(`🎯 Niche ${niche}: ${applicableTemplates.length} applicable templates × ${validatedData.tones.length} tones × ${validatedData.aiModels.length} AI models × ${validatedData.contentFormats.length} formats = ${nicheVariations} variations`);
+      }
+    }
     
     // Create bulk job record
     const [bulkJob] = await db.insert(bulkContentJobs).values({
@@ -474,8 +515,12 @@ async function processAutomatedBulkJob(
           };
         }
 
-        // Step 3: Generate content for ALL combinations - templates × tones × AI models × content formats
-        for (const template of jobData.templates) {
+        // Step 3: Filter templates to only apply niche-specific templates to matching niches
+        const applicableTemplates = filterTemplatesForNiche(jobData.templates, niche);
+        console.log(`🎯 Niche ${niche}: ${jobData.templates.length} total templates → ${applicableTemplates.length} applicable templates`);
+        
+        // Generate content for filtered combinations - templates × tones × AI models × content formats
+        for (const template of applicableTemplates) {
           for (const tone of jobData.tones) {
             for (const aiModel of jobData.aiModels) {
               for (const contentFormat of jobData.contentFormats) {
