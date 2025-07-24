@@ -27,7 +27,8 @@ function filterTemplatesForNiche(templates: string[], niche: string): string[] {
     'fashion': ['fashion'],
     'food': ['food'],
     'travel': ['travel'],
-    'pet': ['pet'] // Note: using 'pet' not 'pets' to match constants
+    'pet': ['pet'], // Handle 'pet' niche
+    'pets': ['pet'] // Handle 'pets' niche (compatibility)
   };
 
   const universalTemplates = [
