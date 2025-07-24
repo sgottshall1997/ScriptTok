@@ -30,13 +30,14 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
 
   // Auto-generate a meaningful name when form data changes
   useEffect(() => {
-    if (formData.selectedNiches?.length && formData.tones?.length) {
+    if (formData.selectedNiches?.length) {
       const nicheText = formData.selectedNiches.length === 1 
         ? formData.selectedNiches[0] 
         : `${formData.selectedNiches.length} niches`;
-      const toneText = formData.tones.length === 1 
-        ? formData.tones[0] 
-        : `${formData.tones.length} tones`;
+      const effectiveTones = formData.tones?.length > 0 ? formData.tones : ['friendly'];
+      const toneText = effectiveTones.length === 1 
+        ? effectiveTones[0] 
+        : `${effectiveTones.length} tones`;
       
       setScheduleSettings(prev => ({
         ...prev,
@@ -79,11 +80,11 @@ const ScheduleDailyBulkToggle: React.FC<ScheduleDailyBulkToggleProps> = ({
 
     const jobData = {
       selectedNiches: formData.selectedNiches || [],
-      tones: formData.tones || [],
+      tones: (formData.tones && formData.tones.length > 0) ? formData.tones : ['friendly'], // Default to friendly tone if none selected
       templates: formData.templates || [],
       platforms: formData.platforms || [],
       aiModels: ['claude'], // Claude-only for scheduled jobs
-      contentFormats: formData.useSpartanFormat ? ['spartan'] : ['regular'],
+      contentFormats: (formData.contentFormats && formData.contentFormats.length > 0) ? formData.contentFormats : ['main_content'], // Default to main_content if none selected
       useExistingProducts: formData.useExistingProducts || true,
       generateAffiliateLinks: formData.generateAffiliateLinks || false,
       useSpartanFormat: formData.useSpartanFormat || false,

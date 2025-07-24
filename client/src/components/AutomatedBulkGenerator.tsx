@@ -176,12 +176,12 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
 
   // Preview products for selected niches (matches backend selection logic)
   const previewProductsForNiches = () => {
-    if (!trendingProducts) return;
+    if (!trendingProducts || !Array.isArray(trendingProducts)) return;
     
     const productsByNiche: Record<string, any> = {};
     
     selectedNiches.forEach(niche => {
-      const nicheProducts = trendingProducts.filter((product: any) => product.niche === niche);
+      const nicheProducts = (trendingProducts || []).filter((product: any) => product.niche === niche);
       if (nicheProducts.length > 0) {
         // Sort by creation date (newest first) to match backend selection logic
         const sortedProducts = nicheProducts.sort((a: any, b: any) => {
@@ -552,7 +552,7 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
               </div>
 
               <div className="space-y-3">
-                {Object.entries(previewProducts).map(([niche, product]) => (
+                {Object.entries(previewProducts).map(([niche, product]: [string, any]) => (
                   <div key={niche} className="p-3 bg-white rounded-lg border border-blue-200">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1 space-y-2">
@@ -587,12 +587,13 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
                           size="sm"
                           onClick={() => {
                             // Switch to next product in this niche
-                            if (trendingProducts && trendingProducts[niche]) {
-                              const currentIndex = trendingProducts[niche].findIndex(p => p.title === product.title);
-                              const nextIndex = (currentIndex + 1) % trendingProducts[niche].length;
+                            const nicheProducts = (trendingProducts || []).filter((p: any) => p.niche === niche);
+                            if (nicheProducts.length > 1) {
+                              const currentIndex = nicheProducts.findIndex((p: any) => p.title === product.title);
+                              const nextIndex = (currentIndex + 1) % nicheProducts.length;
                               setPreviewProducts(prev => ({
                                 ...prev,
-                                [niche]: trendingProducts[niche][nextIndex]
+                                [niche]: nicheProducts[nextIndex]
                               }));
                             }
                           }}
@@ -620,23 +621,23 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
                 ))}
                 
                 {/* Add Product from Available Niches */}
-                {selectedNiches.filter(niche => !previewProducts[niche]).length > 0 && (
+                {selectedNiches.filter(niche => !(previewProducts as any)[niche]).length > 0 && (
                   <div className="p-3 border-2 border-dashed border-blue-300 rounded-lg bg-blue-25">
                     <div className="text-center space-y-2">
                       <p className="text-sm text-blue-600 font-medium">Add more products from selected niches</p>
                       <div className="flex flex-wrap gap-2 justify-center">
                         {selectedNiches
-                          .filter(niche => !previewProducts[niche])
+                          .filter(niche => !(previewProducts as any)[niche])
                           .map(niche => (
                             <Button
                               key={niche}
                               variant="outline"
                               size="sm"
                               onClick={() => {
-                                if (trendingProducts && trendingProducts[niche]?.length > 0) {
+                                if (trendingProducts && (trendingProducts as any)[niche]?.length > 0) {
                                   setPreviewProducts(prev => ({
                                     ...prev,
-                                    [niche]: trendingProducts[niche][0]
+                                    [niche]: (trendingProducts as any)[niche][0]
                                   }));
                                 }
                               }}
@@ -935,9 +936,10 @@ export default function AutomatedBulkGenerator({ onJobCreated, autoPopulateData 
         <ScheduleDailyBulkToggle 
           formData={{
             selectedNiches,
-            tones: selectedTones,
+            tones: selectedTones, // Pass actual selected tones (empty array if none selected)
             templates: selectedTemplates,
             platforms: selectedPlatforms,
+            contentFormats: selectedContentFormats, // Pass content formats to scheduled generator
             useExistingProducts,
             generateAffiliateLinks,
             useSpartanFormat,
