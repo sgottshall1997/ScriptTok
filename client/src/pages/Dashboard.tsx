@@ -22,7 +22,6 @@ import {
   Target,
   RotateCcw
 } from "lucide-react";
-import { Shield, FileText, Users, CheckCircle } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
@@ -518,54 +517,7 @@ const Dashboard = () => {
         </Link>
       </div>
 
-      {/* 4️⃣ Amazon Associates Compliance Status */}
-      <Card className="border-green-200 bg-gradient-to-r from-green-50 to-emerald-50">
-        <CardHeader>
-          <CardTitle className="text-lg flex items-center gap-2">
-            <Shield className="h-5 w-5 text-green-600" />
-            Amazon Associates Compliance
-          </CardTitle>
-          <p className="text-sm text-green-700">Enhanced compliance system ensuring 95% Amazon Associates Operating Agreement alignment</p>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="text-center p-4 bg-white rounded-lg border border-green-200">
-              <FileText className="h-6 w-6 mx-auto mb-2 text-blue-600" />
-              <h4 className="font-medium text-sm">Content Policy Filter</h4>
-              <Badge variant="default" className="mt-1 bg-green-100 text-green-800">Active</Badge>
-              <p className="text-xs text-gray-600 mt-1">Automated content compliance monitoring</p>
-            </div>
-            
-            <div className="text-center p-4 bg-white rounded-lg border border-green-200">
-              <Users className="h-6 w-6 mx-auto mb-2 text-purple-600" />
-              <h4 className="font-medium text-sm">User Verification</h4>
-              <Badge variant="default" className="mt-1 bg-green-100 text-green-800">Active</Badge>
-              <p className="text-xs text-gray-600 mt-1">Complete eligibility validation</p>
-            </div>
-            
-            <div className="text-center p-4 bg-white rounded-lg border border-green-200">
-              <BarChart3 className="h-6 w-6 mx-auto mb-2 text-orange-600" />
-              <h4 className="font-medium text-sm">Link Tracking</h4>
-              <Badge variant="default" className="mt-1 bg-green-100 text-green-800">Active</Badge>
-              <p className="text-xs text-gray-600 mt-1">Comprehensive affiliate monitoring</p>
-            </div>
-          </div>
-          
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="h-4 w-4 text-green-600" />
-              <span className="text-sm font-medium text-green-800">95% Compliant</span>
-              <span className="text-xs text-green-600">3 Enhanced Systems Active</span>
-            </div>
-            <Link href="/compliance">
-              <Button size="sm" variant="outline" className="border-green-300 text-green-700 hover:bg-green-100">
-                View Details
-                <ArrowRight className="h-3 w-3 ml-1" />
-              </Button>
-            </Link>
-          </div>
-        </CardContent>
-      </Card>
+
 
       {/* 5️⃣ Daily Content Showcase */}
       <Card>

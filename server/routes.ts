@@ -64,6 +64,7 @@ import {
 } from "./api/rating";
 
 import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
+import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
 import syncRatingsRouter from "./api/sync-ratings";
 import { registerContentEvaluationRoutes } from "./api/content-evaluation";
 import claudeAiSuggestionsRouter from "./api/claudeAiSuggestions";
@@ -104,7 +105,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // New unified content generation endpoint (moved earlier to prevent conflicts)
   app.use('/api/generate-unified', generateContentUnifiedRouter);
   
-  // Compliance endpoints will be added via the imported compliance routes
+  // Compliance API routes
+  app.post('/api/compliance/enhance', enhanceCompliance);
+  app.post('/api/compliance/validate', validateCompliance);
+  app.get('/api/compliance/guidelines/:platform', getGuidelines);
+  app.get('/api/compliance/platforms', getSupportedPlatforms);
   // Register API routes
   // Legacy endpoint (deprecated - use /api/generate-unified instead)
   app.use('/api/generate-content', generateContentRouter);
@@ -799,10 +804,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-
-  // Import and register compliance routes
-  const complianceRoutes = await import('./api/compliance.js');
-  app.use('/api/compliance', complianceRoutes.default);
 
   const httpServer = createServer(app);
   
