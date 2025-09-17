@@ -1,0 +1,258 @@
+You are a senior full-stack engineer. Build “GlowBot – CookAIng Marketing Engine”, a TypeScript monorepo that turns one content brief into multi-channel campaigns (email, blog, social, push), with analytics feedback, personalization, and affiliate hooks.
+
+# 0) Non-negotiables
+- Language: TypeScript everywhere.
+- Frameworks: Next.js (App Router) for web/app + API routes; Prisma + Postgres; tRPC optional; Zod for input validation; Inngest for background jobs; PostHog for analytics; Vitest for tests; Playwright for e2e; ESLint + Prettier.
+- Clean architecture: feature folders; strong typing; .env driven; no secrets hardcoded.
+- Everything must run locally via `pnpm dev` and `docker-compose up db`.
+- Provide seed scripts and demo content.
+- Include a concise README with setup steps and screenshots/gifs.
+
+# 1) Repository structure
+packages/
+  ui/                  # shared UI (shadcn + Tailwind components)
+  types/               # shared types + zod schemas
+apps/
+  web/                 # Next.js app (marketing + admin)
+  worker/              # Inngest worker for jobs
+  webhook/             # minimal server for third-party webhooks (Brevo/Buffer/OneSignal/PostHog)
+infra/
+  prisma/              # schema.prisma + migrations + seeds
+  scripts/             # seed, import/export, cron wrappers
+
+# 2) .env.example (document all)
+DATABASE_URL=postgres://postgres:postgres@localhost:5432/cookaing
+POSTHOG_KEY=phc_xxx
+POSTHOG_HOST=https://app.posthog.com
+BREVO_API_KEY=...
+POSTMARK_TOKEN=...           # optional alternative to Brevo
+BUFFER_ACCESS_TOKEN=...
+META_PAGE_ACCESS_TOKEN=...   # optional if using Meta direct
+NOTION_TOKEN=...
+NOTION_BLOG_DB_ID=...
+ONESIGNAL_APP_ID=...
+ONESIGNAL_API_KEY=...
+CANVA_API_KEY=...            # optional for carousel generation
+AMAZON_ASSOC_TAG=yourtag-20
+AMAZON_PA_API_KEY=...
+AMAZON_PA_API_SECRET=...
+INSTACART_PARTNER_KEY=...
+JWT_SECRET=devsecret
+NEXTAUTH_SECRET=devsecret
+NEXTAUTH_URL=http://localhost:3000
+CRON_SECRET=devcron
+PUBLIC_URL=http://localhost:3000
+
+# 3) Data model (Prisma, multi-tenant ready but single-org by default)
+- Organization (id, name, plan)
+- User (id, orgId, email, name, role: 'admin'|'editor'|'viewer')
+- Segment (id, orgId, name, rulesJson JSONB)                      # dynamic audience rules
+- Contact (id, orgId, email unique, name, prefsJson, pantryJson, segments[])  # pantry/preferences stored JSON
+- Company (optional for future)
+- ContentBrief (id, orgId, title, goal, audience, inputsJson, createdBy)
+- Campaign (id, orgId, type enum: 'email'|'blog'|'social'|'push'|'multi', name, status enum: 'draft'|'scheduled'|'sent', scheduledAt, metaJson)
+- CampaignArtifact (id, campaignId, channel enum, payloadJson, variant char(1)) # stores generated JSON blocks for each channel
+- CampaignRecipient (id, campaignId, contactId, variant, sentAt, openAt, clickAt, bounceAt, unsubscribeAt)
+- Workflow (id, orgId, name, definitionJson, isActive)
+- ContactWorkflowState (id, contactId, workflowId, stepIndex, lastAt)
+- Form (id, orgId, slug unique, schemaJson)
+- FormSubmission (id, formId, contactId?, dataJson, utmJson, createdAt)
+- LeadScore (contactId uniq, score int, reasonsJson, updatedAt)
+- PageEvent (id, orgId, contactId?, anonId, event, propsJson, at)
+- AffiliateProduct (id, orgId, source enum: 'amazon'|'instacart'|'manual', sku, name, url, price, imageUrl, attributesJson)
+- Template (id, orgId, kind enum: 'recipe_card'|'pantry_tip'|'meal_plan'|'viral_script'|'comparison'|'email_layout'|'carousel', schemaJson, renderFnRef)
+- ABTest (id, orgId, entity enum: 'headline'|'cta'|'subject', contextJson, variantAJson, variantBJson, status, winner?)
+- AuditLog (id, orgId, actorId, entity, entityId, action, before, after, at)
+
+Implement Prisma schema with indexes on (orgId), foreign keys, and JSONB where noted. Generate migrations + seed minimal data (segments: Vegans, Busy Parents, College Students).
+
+# 4) Core templates (GlowBot content modules)
+Create schema-first, reusable JSON outputs with zod types in packages/types:
+
+A) recipe_card
+{
+  "title": string,
+  "ingredients": string[],
+  "steps": string[],
+  "timeMinutes": number,
+  "servings": number,
+  "nutrition": { "calories": number, "protein": number, "carbs": number, "fat": number },
+  "affiliateProducts": [{ "name": string, "url": string }]
+}
+
+B) pantry_tip
+{
+  "headline": string,
+  "swaps": [{ "have": string, "use": string, "why": string }]
+}
+
+C) meal_plan
+{
+  "period": "5-day",
+  "days": [{ "day": string, "breakfast": string, "lunch": string, "dinner": string, "shoppingList": string[] }]
+}
+
+D) viral_script
+{
+  "hook": string,
+  "beats": [{ "shot": string, "voiceover": string, "onscreenText": string }],
+  "cta": string,
+  "hashtags": string[]
+}
+
+E) comparison
+{
+  "topic": string,
+  "items": [{ "name": string, "pros": string[], "cons": string[], "bestFor": string }]
+}
+
+F) campaign_bundle (multi-channel wrapper)
+{
+  "campaignType": "weekly_recipe_email" | "seasonal_pack" | "winback" | "referral_push",
+  "subject": string,
+  "preheader": string,
+  "blocks": [ { "type": "hero" | "recipe_card" | "tip" | "cta" | "faq" | "sponsor", ... } ],
+  "socialCaptions": [{ "platform": "instagram" | "tiktok" | "x", "caption"?: string, "script"?: string }],
+  "seoMeta": { "title": string, "description": string, "keywords": string[] }
+}
+
+Add Zod validators and export TypeScript types. Include example fixtures.
+
+# 5) API endpoints (Next.js app routes with Zod validation)
+POST /api/generate/campaign
+  body: { briefId?: string, brief?: { title, goal, audience, inputsJson }, segments?: string[], includeAffiliate?: boolean, variants?: boolean }
+  action: Uses LLM (stub function) to produce a campaign_bundle + child artifacts per channel (email/blog/social/push). If variants=true, produce A/B for headline/subject.
+  persist: Campaign, CampaignArtifacts (per channel + variant), link to segments.
+
+POST /api/forms/[slug]/submit
+  body: { fields: Record<string,any>, utm?: Record<string,string>, anonId?: string }
+  action: upsert Contact by email (if present), store FormSubmission, add contact to segments per Form.rules; enqueue workflow “welcome_series_v1”; log PageEvent.
+  respond: { ok: true }
+
+POST /api/email/send
+  body: { campaignId, channel:"email", variant?: "A"|"B", segmentIds?: string[] }
+  action: materialize recipients from segments; send via Brevo/Postmark; store CampaignRecipient rows; sign links with contactId & campaignId query params.
+
+POST /api/social/schedule
+  body: { campaignId, platform: "buffer"|"meta", scheduledAt }
+  action: push artifacts to Buffer or Meta; store post ids in metaJson.
+
+POST /api/blog/publish
+  body: { campaignId, notionDbId? }
+  action: create Notion page from blog payload (or write local MDX); return URL.
+
+POST /api/push/send
+  body: { campaignId, segmentIds? }
+  action: send OneSignal notification with deep link.
+
+POST /api/ab/assign
+  body: { entity, contextJson }
+  action: assign variant A/B 50/50 (cookie or anonId), return chosen variant.
+
+POST /api/lead/score/recalc
+  body: { contactId? }
+  action: recalc per heuristic: +10(form) +5(pricing visit) +3(>=2 opens) +8(recipe saved) −10(inactive 30d)
+
+POST /api/reports/performance
+  query: { from, to, by?: "campaign"|"channel"|"segment" }
+  action: aggregate opens/clicks/signups, ROAS (if costs uploaded).
+
+POST /api/affiliate/lookup
+  body: { query: string, attributes?: Record<string,string> }
+  action: stub calls to Amazon PA/Instacart (mock if no keys); return AffiliateProduct[].
+
+# 6) Webhooks (apps/webhook)
+- /webhooks/brevo: accept events (delivered, open, click, bounce, unsub), update CampaignRecipient, bump LeadScore, log Audit.
+- /webhooks/buffer: post_success, post_error → log to Campaign.metaJson.
+- /webhooks/onesignal: delivery stats → attach to Campaign.
+- /webhooks/posthog: optional relay to enrich PageEvent with contact mapping.
+
+# 7) Background jobs (apps/worker with Inngest)
+- welcome_series_v1: 3–5 emails spaced over 10 days; uses campaign templates, personalizes with pantryJson; writes AuditLog.
+- seasonal_campaigns: daily cron; 30 days pre-holiday (map JSON list), auto-generate “Thanksgiving Prep Pack” or “Summer BBQ Hacks”, draft status.
+- referral_nudge: weekly cron; target users with 2+ shares but no conversion; generate copy.
+- trending_detector: daily cron; mock Google Trends/Reddit/TikTok fetchers (provide adapters with clear TODOs); output list of trending ingredients & topics to seed ContentBriefs.
+- ab_decider: evaluate ABTest results after threshold; set winner; future sends choose winner.
+- data_hygiene: dedupe contacts by email/domain; merge logic.
+
+# 8) Personalization engine
+- Segment rules processed into SQL: examples: diet=vegan; timeBudget<=20; pantry contains('beans').
+- Smart insertions: server-side renderers that inject contact-specific lines: “{firstName}, this takes 18 minutes with your pantry.”
+- Weekly “Meal Prep Coach” digest: job that composes per-contact email from their pantryJson/preferences + top performing recipes.
+
+# 9) Analytics & optimization
+- PostHog JS in web app: capture utm_* & (gclid/fbclid).
+- First-touch/last-touch attribution stored on Contact.
+- A/B testing middleware: when serving landing pages, read ab cookie, call /api/ab/assign if absent, render variant; log to PostHog + DB.
+- Cost import: simple CSV uploader at /admin/attribution to map ad platform costs → ROAS.
+
+# 10) Admin UI (Next.js pages)
+- /admin/dashboard: KPIs (active users, email OR/CTR, signups by channel, top recipes).
+- /admin/campaigns: list, create from ContentBrief, view per-channel artifacts, send/schedule, see live metrics.
+- /admin/forms: build forms from JSON schema; copy embed code; view submissions.
+- /admin/segments: rule builder (UI -> rulesJson).
+- /admin/workflows: toggle welcome series; view per-contact states.
+- /admin/affiliate: search/add products; connect to campaign blocks.
+- /admin/abtests: create, monitor, pick winner.
+
+Use shadcn/ui, Tailwind, and dnd-kit for drag-and-drop block ordering in campaign editor. Add simple Kanban for workflow steps.
+
+# 11) Security & compliance
+- NextAuth (or Clerk if quick) with Email/Google; roles: admin/editor/viewer.
+- Rate limit external endpoints; validate with Zod; audit all mutations.
+- GDPR basics: export my data (JSON dump), delete me (anonymize PII), suppression list honored on sends.
+
+# 12) Testing
+- Vitest unit tests for utilities, renderers, and API validation.
+- Playwright e2e: submit a form, create a campaign, schedule email, receive webhook (mock), see metrics update.
+- Include factory helpers and mock adapters for third-party APIs so tests pass without keys.
+
+# 13) Seeds & demos
+- Seed 50 contacts with segments (vegan/parents/students), pantryJson samples.
+- Seed templates for recipe_card, pantry_tip, meal_plan, viral_script, comparison, email_layout.
+- Seed one “Weekly Pantry Wins” multi-channel campaign in DRAFT with A/B subject variants.
+
+# 14) Make.com/Zapier interop (optional but scaffold)
+- Outbound webhooks after: FormSubmission, CampaignSent, CampaignMetricUpdated.
+- Inbound endpoint /api/integrations/make dispatch with token auth to kick “content drop → multi-channel” scenario.
+
+# 15) Example campaign JSON (use this everywhere for fixtures)
+{
+  "campaignType": "weekly_recipe_email",
+  "subject": "5 Dinners from What’s Already in Your Pantry",
+  "preheader": "Quick, affordable, and delicious – no grocery trip needed.",
+  "blocks": [
+    {"type":"hero","h1":"Pantry to Plate in 20 Minutes","cta":"Open CookAIng","url":"https://cookaing.com/app"},
+    {"type":"recipe_card","title":"Chickpea Curry","ingredients":["1 can chickpeas","1 onion","spices"],"steps":["Sauté onion","Add spices","Add chickpeas"],"affiliateProducts":[{"name":"Spice Kit","url":"https://amzn.to/12345"}]}
+  ],
+  "socialCaptions":[
+    {"platform":"instagram","caption":"POV: Dinner in 20 min with pantry staples 🥫✨ #cookaing"},
+    {"platform":"tiktok","script":"Show pantry → show CookAIng app → plate dish in 20 sec edit."}
+  ],
+  "seoMeta":{"title":"Easy Pantry Meals | CookAIng","description":"5 quick recipes using only what’s in your pantry.","keywords":["pantry recipes","cheap dinners","20 min meals"]}
+}
+
+# 16) Acceptance criteria (checklist)
+- [ ] `pnpm i && docker-compose up -d db && pnpm dev` starts web + worker + webhook locally.
+- [ ] Visit /admin/forms, create form “demo”, embed on /demo, submit → Contact upsert, Segment add, Workflow queued.
+- [ ] Create Campaign from ContentBrief; generate artifacts (email/blog/social/push) with A/B subject; reorder blocks; validate JSON by Zod.
+- [ ] Send email to a seed segment via Brevo/Postmark mock; webhook updates open/click; metrics reflected in /admin/campaigns and /admin/dashboard.
+- [ ] Schedule IG post via Buffer mock; status updates.
+- [ ] Publish blog to Notion mock (or local MDX); returns URL.
+- [ ] OneSignal mock receives push; recipients recorded.
+- [ ] AB test decides winner after N sends; subsequent sends use winner automatically.
+- [ ] Trending detector job generates a new ContentBrief with “pumpkin spice” example.
+- [ ] Weekly “Meal Prep Coach” digest composes personalized emails based on pantryJson.
+- [ ] CSV cost import computes ROAS by campaign.
+- [ ] “Export my data” and “Delete me” endpoints work for a seed contact.
+
+# 17) Developer experience
+- Provide `pnpm gen` (prisma generate/migrate), `pnpm seed`, `pnpm test`, `pnpm e2e`, `pnpm lint`.
+- README: setup, env explanation, common flows (Form→CRM→Sequence), screenshots/gifs of admin screens.
+- Add a minimal design system in packages/ui (buttons, cards, table, tag, badge, editor).
+
+# 18) Notes on LLM usage
+- Stub LLM calls with deterministic fixtures first (no external network). Wrap in `lib/llm.ts` with an interface so we can swap to OpenAI later.
+- All LLM outputs MUST conform to the Zod schemas; include a safe parser that returns typed errors shown in UI.
+
+Deliver all code, migrations, seeds, tests, and README within this monorepo.
