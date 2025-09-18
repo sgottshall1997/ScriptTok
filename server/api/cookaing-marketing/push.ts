@@ -23,13 +23,25 @@ router.post("/send", async (req: Request, res: Response) => {
     const artifacts = await storage.getCampaignArtifacts(campaignId);
     const pushArtifact = artifacts.find((a: any) => a.channel === "push");
     
-    if (!pushArtifact) {
+    // In development mode, allow sending even without content (mock mode)
+    if (!pushArtifact && process.env.NODE_ENV !== 'development') {
       return res.status(400).json({ 
         error: "No push notification content found for this campaign. Please generate push content first." 
       });
     }
     
-    const content = pushArtifact.payloadJson as any;
+    // Generate mock content if no artifact exists (development mode)
+    let content;
+    if (!pushArtifact && process.env.NODE_ENV === 'development') {
+      console.log('🔄 No push artifact found, using mock content for development');
+      content = {
+        title: `📱 ${campaign.name}`,
+        message: `Don't miss out on ${campaign.name}! Check out our latest updates and exciting offers.`,
+        actionUrl: 'https://example.com/campaign'
+      };
+    } else {
+      content = pushArtifact?.payloadJson as any || {};
+    }
     
     // Validate required push content
     if (!content.title && !content.contents?.en) {
@@ -47,7 +59,7 @@ router.post("/send", async (req: Request, res: Response) => {
         data: {
           campaign_id: campaignId,
           channel: 'push',
-          variant: pushArtifact.variant,
+          variant: pushArtifact?.variant || 'A',
           ...customData,
           ...content.data
         }
@@ -121,8 +133,8 @@ router.post("/send", async (req: Request, res: Response) => {
           recipients: oneSignalResponse.recipients,
           segment: segmentName,
           sent_at: scheduledAt || new Date().toISOString(),
-          artifact_id: pushArtifact.id,
-          variant: pushArtifact.variant,
+          artifact_id: pushArtifact?.id || 'mock-push-artifact',
+          variant: pushArtifact?.variant || 'A',
           external_id: oneSignalResponse.external_id
         }
       };
@@ -131,19 +143,25 @@ router.post("/send", async (req: Request, res: Response) => {
         metaJson: updatedMeta
       });
       
-      // Record analytics event for delivery
-      await storage.insertAnalyticsEvent({
-        orgId: campaign.orgId,
-        eventType: 'push_sent',
-        eventData: {
-          campaign_id: campaignId,
-          platform: 'onesignal',
-          notification_id: oneSignalResponse.id,
-          recipients: oneSignalResponse.recipients,
-          segment: segmentName,
-          scheduled: !!scheduledAt
+      // Record analytics event for delivery - skip in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        try {
+          await storage.createAnalyticsEvent({
+            eventType: 'push_sent',
+            metadata: {
+              orgId: campaign.orgId,
+              campaign_id: campaignId,
+              platform: 'onesignal',
+              notification_id: oneSignalResponse.id,
+              recipients: oneSignalResponse.recipients,
+              segment: segmentName,
+              scheduled: !!scheduledAt
+            }
+          });
+        } catch (error) {
+          console.warn('⚠️ Failed to log analytics event:', error);
         }
-      });
+      }
       
       // If not scheduled, get initial delivery stats
       let deliveryStats = null;
@@ -153,17 +171,20 @@ router.post("/send", async (req: Request, res: Response) => {
           setTimeout(async () => {
             try {
               const stats = await oneSignalService.getNotificationStats(oneSignalResponse.id);
-              await storage.insertAnalyticsEvent({
-                orgId: campaign.orgId,
-                eventType: 'push_delivered',
-                eventData: {
-                  campaign_id: campaignId,
-                  notification_id: oneSignalResponse.id,
-                  successful: stats.successful,
-                  failed: stats.failed,
-                  errored: stats.errored
-                }
-              });
+              // Skip analytics in development
+              if (process.env.NODE_ENV !== 'development') {
+                await storage.createAnalyticsEvent({
+                  eventType: 'push_delivered',
+                  metadata: {
+                    orgId: campaign.orgId,
+                    campaign_id: campaignId,
+                    notification_id: oneSignalResponse.id,
+                    successful: stats.successful,
+                    failed: stats.failed,
+                    errored: stats.errored
+                  }
+                });
+              }
             } catch (error) {
               console.error('❌ Failed to record delivery stats:', error);
             }
@@ -235,16 +256,22 @@ router.get("/status/:campaignId", async (req: Request, res: Response) => {
     try {
       deliveryStats = await oneSignalService.getNotificationStats(pushNotifications.onesignal_id);
       
-      // Record updated stats to analytics
-      await storage.insertAnalyticsEvent({
-        orgId: campaign.orgId,
-        eventType: 'push_stats_updated',
-        eventData: {
-          campaign_id: campaignId,
-          notification_id: pushNotifications.onesignal_id,
-          ...deliveryStats
+      // Record updated stats to analytics - skip in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        try {
+          await storage.createAnalyticsEvent({
+            eventType: 'push_stats_updated',
+            metadata: {
+              orgId: campaign.orgId,
+              campaign_id: campaignId,
+              notification_id: pushNotifications.onesignal_id,
+              ...deliveryStats
+            }
+          });
+        } catch (error) {
+          console.warn('⚠️ Failed to log analytics event:', error);
         }
-      });
+      }
     } catch (error) {
       console.error('❌ Failed to get notification stats:', error);
     }

@@ -671,6 +671,33 @@ const CampaignsPage = () => {
                       </div>
                     )}
                   </div>
+                  
+                  {/* Integration Status Row */}
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">Social</div>
+                      <IntegrationStatus 
+                        status={getIntegrationStatus(campaign, 'social')} 
+                        type="social" 
+                      />
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">Blog</div>
+                      <IntegrationStatus 
+                        status={getIntegrationStatus(campaign, 'blog')} 
+                        type="blog" 
+                      />
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs text-gray-500 mb-1">Push</div>
+                      <IntegrationStatus 
+                        status={getIntegrationStatus(campaign, 'push')} 
+                        type="push" 
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Action Buttons Row */}
                   <div className="flex justify-between">
                     <div className="flex space-x-1">
                       <Button 
@@ -707,6 +734,56 @@ const CampaignsPage = () => {
                         Launch
                       </Button>
                     )}
+                  </div>
+                  
+                  {/* Integration Actions */}
+                  <Separator className="my-3" />
+                  <div className="flex space-x-1">
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => handleSchedulePost(campaign)}
+                      disabled={schedulePostMutation.isPending || getIntegrationStatus(campaign, 'social') === 'scheduled'}
+                      data-testid={`button-schedule-social-${campaign.id}`}
+                      className="flex-1"
+                    >
+                      {schedulePostMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      ) : (
+                        <Share2 className="h-4 w-4 mr-1" />
+                      )}
+                      Schedule Social
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => handlePublishBlog(campaign)}
+                      disabled={publishBlogMutation.isPending || getIntegrationStatus(campaign, 'blog') === 'published'}
+                      data-testid={`button-publish-blog-${campaign.id}`}
+                      className="flex-1"
+                    >
+                      {publishBlogMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      ) : (
+                        <FileText className="h-4 w-4 mr-1" />
+                      )}
+                      Publish Blog
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="ghost"
+                      onClick={() => handleSendPush(campaign)}
+                      disabled={sendPushMutation.isPending || getIntegrationStatus(campaign, 'push') === 'sent'}
+                      data-testid={`button-send-push-${campaign.id}`}
+                      className="flex-1"
+                    >
+                      {sendPushMutation.isPending ? (
+                        <Loader2 className="h-4 w-4 mr-1 animate-spin" />
+                      ) : (
+                        <Bell className="h-4 w-4 mr-1" />
+                      )}
+                      Send Push
+                    </Button>
                   </div>
                 </CardContent>
               </Card>

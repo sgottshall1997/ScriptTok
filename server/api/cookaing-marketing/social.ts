@@ -23,7 +23,8 @@ router.post("/schedule", async (req: Request, res: Response) => {
     const artifacts = await storage.getCampaignArtifacts(campaignId);
     const socialArtifacts = artifacts.filter((a: any) => a.channel === "social");
     
-    if (socialArtifacts.length === 0) {
+    // In development mode, allow scheduling even without content (mock mode)
+    if (socialArtifacts.length === 0 && process.env.NODE_ENV !== 'development') {
       return res.status(400).json({ 
         error: "No social content found for this campaign. Please generate social content first." 
       });
@@ -38,8 +39,23 @@ router.post("/schedule", async (req: Request, res: Response) => {
     
     const scheduledPosts = [];
     
+    // Generate mock artifacts if none exist (development mode)
+    let artifactsToSchedule = socialArtifacts;
+    if (socialArtifacts.length === 0 && process.env.NODE_ENV === 'development') {
+      console.log('🔄 No social artifacts found, using mock content for development');
+      artifactsToSchedule = [{
+        id: 'mock-1',
+        variant: 'A',
+        channel: 'social',
+        payloadJson: {
+          content: `📢 Exciting news from ${campaign.name}! Join us for this amazing campaign. #marketing #campaign`,
+          platform: 'buffer'
+        }
+      }];
+    }
+
     // Schedule each social artifact
-    for (const artifact of socialArtifacts) {
+    for (const artifact of artifactsToSchedule) {
       const content = artifact.payloadJson as any;
       const postText = content.content || content.text || content.caption || '';
       
@@ -99,18 +115,24 @@ router.post("/schedule", async (req: Request, res: Response) => {
       metaJson: updatedMeta
     });
     
-    // Record analytics event
-    await storage.insertAnalyticsEvent({
-      orgId: campaign.orgId,
-      eventType: 'social_scheduled',
-      eventData: {
-        campaign_id: campaignId,
-        platform: 'buffer',
-        posts_scheduled: scheduledPosts.length,
-        profiles: targetProfiles,
-        scheduled_at: scheduledAt
+    // Record analytics event - skip in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      try {
+        await storage.createAnalyticsEvent({
+          eventType: 'social_scheduled',
+          metadata: {
+            orgId: campaign.orgId,
+            campaign_id: campaignId,
+            platform: 'buffer',
+            posts_scheduled: scheduledPosts.length,
+            profiles: targetProfiles,
+            scheduled_at: scheduledAt
+          }
+        });
+      } catch (error) {
+        console.warn('⚠️ Failed to log analytics event:', error);
       }
-    });
+    }
     
     res.json({
       success: true,

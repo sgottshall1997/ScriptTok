@@ -23,13 +23,26 @@ router.post("/publish", async (req: Request, res: Response) => {
     const artifacts = await storage.getCampaignArtifacts(campaignId);
     const blogArtifact = artifacts.find((a: any) => a.channel === "blog");
     
-    if (!blogArtifact) {
+    // In development mode, allow publishing even without content (mock mode)
+    if (!blogArtifact && process.env.NODE_ENV !== 'development') {
       return res.status(400).json({ 
         error: "No blog content found for this campaign. Please generate blog content first." 
       });
     }
     
-    const content = blogArtifact.payloadJson as any;
+    // Generate mock content if no artifact exists (development mode)
+    let content;
+    if (!blogArtifact && process.env.NODE_ENV === 'development') {
+      console.log('🔄 No blog artifact found, using mock content for development');
+      content = {
+        title: campaign.name,
+        content: `This is a comprehensive blog post about ${campaign.name}. This campaign represents our latest marketing initiative designed to engage our audience with compelling content and drive meaningful results.\n\nKey highlights of this campaign include innovative strategies, targeted messaging, and measurable outcomes that will help grow our brand presence.`,
+        body: `## About ${campaign.name}\n\nThis campaign showcases our commitment to excellence in marketing communications.`
+      };
+    } else {
+      content = blogArtifact?.payloadJson as any || {};
+    }
+    
     const blogTitle = title || content.title || campaign.name;
     const blogContent = content.content || content.body || '';
     
@@ -43,8 +56,8 @@ router.post("/publish", async (req: Request, res: Response) => {
       // Prepare metadata
       const metadata = {
         campaign_id: campaignId,
-        channel: blogArtifact.channel,
-        variant: blogArtifact.variant,
+        channel: blogArtifact?.channel || 'blog',
+        variant: blogArtifact?.variant || 'A',
         tags: content.tags || [],
         author: content.author || 'CookAIng Team',
         publishDate: status === 'Published' ? new Date().toISOString() : undefined,
@@ -74,8 +87,8 @@ router.post("/publish", async (req: Request, res: Response) => {
           title: blogTitle,
           status: status,
           published_at: new Date().toISOString(),
-          artifact_id: blogArtifact.id,
-          variant: blogArtifact.variant
+          artifact_id: blogArtifact?.id || 'mock-blog-artifact',
+          variant: blogArtifact?.variant || 'A'
         }
       };
       
@@ -83,20 +96,26 @@ router.post("/publish", async (req: Request, res: Response) => {
         metaJson: updatedMeta
       });
       
-      // Record analytics event
-      await storage.insertAnalyticsEvent({
-        orgId: campaign.orgId,
-        eventType: 'blog_published',
-        eventData: {
-          campaign_id: campaignId,
-          platform: 'notion',
-          page_id: notionPage.id,
-          title: blogTitle,
-          status: status,
-          url: notionPage.url,
-          public_url: notionPage.public_url
+      // Record analytics event - skip in development mode
+      if (process.env.NODE_ENV !== 'development') {
+        try {
+          await storage.createAnalyticsEvent({
+            eventType: 'blog_published',
+            metadata: {
+              orgId: campaign.orgId,
+              campaign_id: campaignId,
+              platform: 'notion',
+              page_id: notionPage.id,
+              title: blogTitle,
+              status: status,
+              url: notionPage.url,
+              public_url: notionPage.public_url
+            }
+          });
+        } catch (error) {
+          console.warn('⚠️ Failed to log analytics event:', error);
         }
-      });
+      }
       
       res.json({
         success: true,
@@ -182,18 +201,24 @@ router.patch("/status", async (req: Request, res: Response) => {
       metaJson: updatedMeta
     });
     
-    // Record analytics event
-    await storage.insertAnalyticsEvent({
-      orgId: campaign.orgId,
-      eventType: 'blog_status_updated',
-      eventData: {
-        campaign_id: campaignId,
-        platform: 'notion',
-        page_id: blogPublishing.notion_page_id,
-        old_status: blogPublishing.status,
-        new_status: status
+    // Record analytics event - skip in development mode
+    if (process.env.NODE_ENV !== 'development') {
+      try {
+        await storage.createAnalyticsEvent({
+          eventType: 'blog_status_updated',
+          metadata: {
+            orgId: campaign.orgId,
+            campaign_id: campaignId,
+            platform: 'notion',
+            page_id: blogPublishing.notion_page_id,
+            old_status: blogPublishing.status,
+            new_status: status
+          }
+        });
+      } catch (error) {
+        console.warn('⚠️ Failed to log analytics event:', error);
       }
-    });
+    }
     
     res.json({
       success: true,
