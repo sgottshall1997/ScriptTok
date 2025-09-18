@@ -30,7 +30,13 @@ import {
   Send,
   Users,
   TestTube,
-  X
+  X,
+  Share2,
+  FileText,
+  Bell,
+  Clock,
+  CheckCircle,
+  AlertCircle
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { insertCampaignSchema, campaigns, organizations } from "@shared/schema";
@@ -69,6 +75,9 @@ const CampaignsPage = () => {
   const [selectedSegments, setSelectedSegments] = useState<number[]>([]);
   const [selectedVariant, setSelectedVariant] = useState<string>('A');
   const [isDryRun, setIsDryRun] = useState(true);
+
+  // Integration states
+  const [selectedCampaignForIntegration, setSelectedCampaignForIntegration] = useState<Campaign | null>(null);
 
   // Fetch campaigns
   const { data: campaigns, isLoading } = useQuery<Campaign[]>({
@@ -205,6 +214,83 @@ const CampaignsPage = () => {
     },
   });
 
+  // Social scheduling mutation
+  const schedulePostMutation = useMutation({
+    mutationFn: async (data: { campaignId: number; scheduledAt?: string }) => {
+      const response = await apiRequest('POST', '/api/cookaing-marketing/social/schedule', {
+        campaignId: data.campaignId,
+        platform: 'buffer',
+        scheduledAt: data.scheduledAt
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: `Scheduled ${data.posts_scheduled} social media posts`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/cookaing-marketing/campaigns'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Social Scheduling Failed",
+        description: error instanceof Error ? error.message : "Failed to schedule posts",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Blog publishing mutation
+  const publishBlogMutation = useMutation({
+    mutationFn: async (data: { campaignId: number; title?: string; status?: string }) => {
+      const response = await apiRequest('POST', '/api/cookaing-marketing/blog/publish', {
+        campaignId: data.campaignId,
+        title: data.title,
+        status: data.status || 'Draft'
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: `Blog published to Notion: ${data.notion_page?.title}`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/cookaing-marketing/campaigns'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Blog Publishing Failed",
+        description: error instanceof Error ? error.message : "Failed to publish blog",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Push notification mutation
+  const sendPushMutation = useMutation({
+    mutationFn: async (data: { campaignId: number; segmentName?: string }) => {
+      const response = await apiRequest('POST', '/api/cookaing-marketing/push/send', {
+        campaignId: data.campaignId,
+        segmentName: data.segmentName || 'All'
+      });
+      return response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: `Push notification sent to ${data.notification?.recipients} users`,
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/cookaing-marketing/campaigns'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Push Send Failed",
+        description: error instanceof Error ? error.message : "Failed to send push notification",
+        variant: "destructive",
+      });
+    },
+  });
+
   const form = useForm<z.infer<typeof campaignFormSchema>>({
     resolver: zodResolver(campaignFormSchema),
     defaultValues: {
@@ -278,6 +364,71 @@ const CampaignsPage = () => {
       segmentIds: selectedSegments.length > 0 ? selectedSegments : undefined,
       dryRun: isDryRun
     });
+  };
+
+  // Integration handlers
+  const handleSchedulePost = (campaign: Campaign) => {
+    schedulePostMutation.mutate({ 
+      campaignId: campaign.id,
+      scheduledAt: new Date(Date.now() + 5 * 60 * 1000).toISOString() // Schedule 5 minutes from now
+    });
+  };
+
+  const handlePublishBlog = (campaign: Campaign) => {
+    publishBlogMutation.mutate({ 
+      campaignId: campaign.id,
+      status: 'Draft'
+    });
+  };
+
+  const handleSendPush = (campaign: Campaign) => {
+    sendPushMutation.mutate({ 
+      campaignId: campaign.id,
+      segmentName: 'All'
+    });
+  };
+
+  // Get integration status from campaign metadata
+  const getIntegrationStatus = (campaign: Campaign, type: 'social' | 'blog' | 'push') => {
+    const meta = campaign.metaJson as any;
+    if (!meta) return 'not_started';
+
+    switch (type) {
+      case 'social':
+        return meta.social_scheduling ? 'scheduled' : 'not_started';
+      case 'blog':
+        return meta.blog_publishing ? 'published' : 'not_started';
+      case 'push':
+        return meta.push_notifications ? 'sent' : 'not_started';
+      default:
+        return 'not_started';
+    }
+  };
+
+  // Status chip component for integrations
+  const IntegrationStatus = ({ status, type }: { status: string; type: string }) => {
+    const getStatusConfig = (status: string) => {
+      switch (status) {
+        case 'scheduled':
+          return { icon: Clock, color: 'bg-blue-100 text-blue-800', label: 'Scheduled' };
+        case 'published':
+          return { icon: CheckCircle, color: 'bg-green-100 text-green-800', label: 'Published' };
+        case 'sent':
+          return { icon: CheckCircle, color: 'bg-green-100 text-green-800', label: 'Sent' };
+        default:
+          return { icon: AlertCircle, color: 'bg-gray-100 text-gray-600', label: 'Not Started' };
+      }
+    };
+
+    const config = getStatusConfig(status);
+    const Icon = config.icon;
+
+    return (
+      <div className={`inline-flex items-center px-2 py-1 text-xs rounded-full ${config.color}`}>
+        <Icon className="h-3 w-3 mr-1" />
+        {config.label}
+      </div>
+    );
   };
 
   const handleSegmentToggle = (segmentId: number) => {
