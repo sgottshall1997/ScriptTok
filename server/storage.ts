@@ -16,11 +16,21 @@ import {
   PublishedContent, InsertPublishedContent,
   IntegrationWebhook, InsertIntegrationWebhook,
   ContentHistory, InsertContentHistory,
+  // CookAIng Marketing Engine types
+  Organization, InsertOrganization,
+  Contact, InsertContact,
+  Campaign, InsertCampaign,
+  Workflow, InsertWorkflow,
+  Form, InsertForm,
+  FormSubmission, InsertFormSubmission,
+  AffiliateProduct, InsertAffiliateProduct,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
   socialMediaPlatforms, publishedContent, integrationWebhooks, userActivityLogs,
-  contentHistory
+  contentHistory,
+  // CookAIng Marketing Engine tables
+  organizations, contacts, campaigns, workflows, forms, formSubmissions, affiliateProducts
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -141,10 +151,64 @@ export interface IStorage {
   getCustomTemplates(): Promise<Array<{id: number, name: string, content: string, niche: string}>>;
   saveCustomTemplate(template: {name: string, content: string, niche: string}): Promise<{id: number, name: string, content: string, niche: string}>;
   deleteCustomTemplate(id: number): Promise<boolean>;
+  
+  // CookAIng Marketing Engine operations
+  // Organization operations
+  createOrganization(organization: InsertOrganization): Promise<Organization>;
+  getOrganization(id: number): Promise<Organization | undefined>;
+  getOrganizations(): Promise<Organization[]>;
+  updateOrganization(id: number, updates: Partial<InsertOrganization>): Promise<Organization | undefined>;
+  deleteOrganization(id: number): Promise<boolean>;
+  
+  // Contact operations
+  createContact(contact: InsertContact): Promise<Contact>;
+  getContact(id: number): Promise<Contact | undefined>;
+  getContactsByOrganization(organizationId: number): Promise<Contact[]>;
+  getContacts(limit?: number): Promise<Contact[]>;
+  updateContact(id: number, updates: Partial<InsertContact>): Promise<Contact | undefined>;
+  deleteContact(id: number): Promise<boolean>;
+  
+  // Campaign operations
+  createCampaign(campaign: InsertCampaign): Promise<Campaign>;
+  getCampaign(id: number): Promise<Campaign | undefined>;
+  getCampaignsByOrganization(organizationId: number): Promise<Campaign[]>;
+  getCampaigns(limit?: number): Promise<Campaign[]>;
+  updateCampaign(id: number, updates: Partial<InsertCampaign>): Promise<Campaign | undefined>;
+  deleteCampaign(id: number): Promise<boolean>;
+  
+  // Workflow operations
+  createWorkflow(workflow: InsertWorkflow): Promise<Workflow>;
+  getWorkflow(id: number): Promise<Workflow | undefined>;
+  getWorkflowsByOrganization(organizationId: number): Promise<Workflow[]>;
+  getWorkflows(limit?: number): Promise<Workflow[]>;
+  updateWorkflow(id: number, updates: Partial<InsertWorkflow>): Promise<Workflow | undefined>;
+  deleteWorkflow(id: number): Promise<boolean>;
+  
+  // Form operations
+  createForm(form: InsertForm): Promise<Form>;
+  getForm(id: number): Promise<Form | undefined>;
+  getFormsByOrganization(organizationId: number): Promise<Form[]>;
+  getForms(limit?: number): Promise<Form[]>;
+  updateForm(id: number, updates: Partial<InsertForm>): Promise<Form | undefined>;
+  deleteForm(id: number): Promise<boolean>;
+  
+  // Form submission operations
+  createFormSubmission(submission: InsertFormSubmission): Promise<FormSubmission>;
+  getFormSubmission(id: number): Promise<FormSubmission | undefined>;
+  getFormSubmissionsByForm(formId: number): Promise<FormSubmission[]>;
+  getFormSubmissions(limit?: number): Promise<FormSubmission[]>;
+  
+  // Affiliate product operations
+  createAffiliateProduct(product: InsertAffiliateProduct): Promise<AffiliateProduct>;
+  getAffiliateProduct(id: number): Promise<AffiliateProduct | undefined>;
+  getAffiliateProductsByOrganization(organizationId: number): Promise<AffiliateProduct[]>;
+  getAffiliateProducts(limit?: number): Promise<AffiliateProduct[]>;
+  updateAffiliateProduct(id: number, updates: Partial<InsertAffiliateProduct>): Promise<AffiliateProduct | undefined>;
+  deleteAffiliateProduct(id: number): Promise<boolean>;
 }
 
-// In-memory storage implementation
-export class MemStorage implements IStorage {
+// In-memory storage implementation (not actively used - DatabaseStorage is the active implementation)
+export class MemStorage {
   private users: Map<number, User>;
   private contentGenerations: Map<number, ContentGeneration>;
   private trendingProducts: Map<number, TrendingProduct>;
@@ -166,6 +230,15 @@ export class MemStorage implements IStorage {
   // Custom templates
   private customTemplates: Map<number, {id: number, name: string, content: string, niche: string}>;
   
+  // CookAIng Marketing Engine storage maps
+  private organizations: Map<number, Organization>;
+  private contacts: Map<number, Contact>;
+  private campaigns: Map<number, Campaign>;
+  private workflows: Map<number, Workflow>;
+  private forms: Map<number, Form>;
+  private formSubmissions: Map<number, FormSubmission>;
+  private affiliateProducts: Map<number, AffiliateProduct>;
+  
   // Trending products refresh tracking
   private lastTrendingRefresh: string | null = null;
   
@@ -175,12 +248,30 @@ export class MemStorage implements IStorage {
   private scraperStatusId: number;
   private apiUsageId: number;
   
+  // CookAIng Marketing Engine ID counters
+  private organizationId: number;
+  private contactId: number;
+  private campaignId: number;
+  private workflowId: number;
+  private formId: number;
+  private formSubmissionId: number;
+  private affiliateProductId: number;
+  
   constructor() {
     this.users = new Map();
     this.contentGenerations = new Map();
     this.trendingProducts = new Map();
     this.scraperStatuses = new Map();
     this.apiUsage = new Map();
+    
+    // Initialize CookAIng Marketing Engine maps
+    this.organizations = new Map();
+    this.contacts = new Map();
+    this.campaigns = new Map();
+    this.workflows = new Map();
+    this.forms = new Map();
+    this.formSubmissions = new Map();
+    this.affiliateProducts = new Map();
     
     // Initialize analytics tracking
     this.templateUsage = new Map();
@@ -202,6 +293,15 @@ export class MemStorage implements IStorage {
     this.trendingProductId = 1;
     this.scraperStatusId = 1;
     this.apiUsageId = 1;
+    
+    // Initialize CookAIng Marketing Engine ID counters
+    this.organizationId = 1;
+    this.contactId = 1;
+    this.campaignId = 1;
+    this.workflowId = 1;
+    this.formId = 1;
+    this.formSubmissionId = 1;
+    this.affiliateProductId = 1;
     
     // Initialize scraper statuses
     this.initializeScraperStatuses();
@@ -800,6 +900,221 @@ export class MemStorage implements IStorage {
   
   async deleteCustomTemplate(id: number): Promise<boolean> {
     return this.customTemplates.delete(id);
+  }
+  
+  // CookAIng Marketing Engine implementations
+  // Organization operations
+  async createOrganization(organization: InsertOrganization): Promise<Organization> {
+    const id = this.organizationId++;
+    const newOrg: Organization = { ...organization, id, createdAt: new Date(), updatedAt: new Date() };
+    this.organizations.set(id, newOrg);
+    return newOrg;
+  }
+  
+  async getOrganization(id: number): Promise<Organization | undefined> {
+    return this.organizations.get(id);
+  }
+  
+  async getOrganizations(): Promise<Organization[]> {
+    return Array.from(this.organizations.values());
+  }
+  
+  async updateOrganization(id: number, updates: Partial<InsertOrganization>): Promise<Organization | undefined> {
+    const org = this.organizations.get(id);
+    if (!org) return undefined;
+    const updated: Organization = { ...org, ...updates, updatedAt: new Date() };
+    this.organizations.set(id, updated);
+    return updated;
+  }
+  
+  async deleteOrganization(id: number): Promise<boolean> {
+    return this.organizations.delete(id);
+  }
+  
+  // Contact operations
+  async createContact(contact: InsertContact): Promise<Contact> {
+    const id = this.contactId++;
+    const newContact: Contact = { ...contact, id, createdAt: new Date(), updatedAt: new Date() };
+    this.contacts.set(id, newContact);
+    return newContact;
+  }
+  
+  async getContact(id: number): Promise<Contact | undefined> {
+    return this.contacts.get(id);
+  }
+  
+  async getContactsByOrganization(organizationId: number): Promise<Contact[]> {
+    return Array.from(this.contacts.values()).filter(contact => contact.organizationId === organizationId);
+  }
+  
+  async getContacts(limit = 50): Promise<Contact[]> {
+    const contacts = Array.from(this.contacts.values());
+    return contacts.slice(0, limit);
+  }
+  
+  async updateContact(id: number, updates: Partial<InsertContact>): Promise<Contact | undefined> {
+    const contact = this.contacts.get(id);
+    if (!contact) return undefined;
+    const updated: Contact = { ...contact, ...updates, updatedAt: new Date() };
+    this.contacts.set(id, updated);
+    return updated;
+  }
+  
+  async deleteContact(id: number): Promise<boolean> {
+    return this.contacts.delete(id);
+  }
+  
+  // Campaign operations
+  async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
+    const id = this.campaignId++;
+    const newCampaign: Campaign = { ...campaign, id, createdAt: new Date(), updatedAt: new Date() };
+    this.campaigns.set(id, newCampaign);
+    return newCampaign;
+  }
+  
+  async getCampaign(id: number): Promise<Campaign | undefined> {
+    return this.campaigns.get(id);
+  }
+  
+  async getCampaignsByOrganization(organizationId: number): Promise<Campaign[]> {
+    return Array.from(this.campaigns.values()).filter(campaign => campaign.organizationId === organizationId);
+  }
+  
+  async getCampaigns(limit = 50): Promise<Campaign[]> {
+    const campaigns = Array.from(this.campaigns.values());
+    return campaigns.slice(0, limit);
+  }
+  
+  async updateCampaign(id: number, updates: Partial<InsertCampaign>): Promise<Campaign | undefined> {
+    const campaign = this.campaigns.get(id);
+    if (!campaign) return undefined;
+    const updated: Campaign = { ...campaign, ...updates, updatedAt: new Date() };
+    this.campaigns.set(id, updated);
+    return updated;
+  }
+  
+  async deleteCampaign(id: number): Promise<boolean> {
+    return this.campaigns.delete(id);
+  }
+  
+  // Workflow operations
+  async createWorkflow(workflow: InsertWorkflow): Promise<Workflow> {
+    const id = this.workflowId++;
+    const newWorkflow: Workflow = { ...workflow, id, createdAt: new Date(), updatedAt: new Date() };
+    this.workflows.set(id, newWorkflow);
+    return newWorkflow;
+  }
+  
+  async getWorkflow(id: number): Promise<Workflow | undefined> {
+    return this.workflows.get(id);
+  }
+  
+  async getWorkflowsByOrganization(organizationId: number): Promise<Workflow[]> {
+    return Array.from(this.workflows.values()).filter(workflow => workflow.organizationId === organizationId);
+  }
+  
+  async getWorkflows(limit = 50): Promise<Workflow[]> {
+    const workflows = Array.from(this.workflows.values());
+    return workflows.slice(0, limit);
+  }
+  
+  async updateWorkflow(id: number, updates: Partial<InsertWorkflow>): Promise<Workflow | undefined> {
+    const workflow = this.workflows.get(id);
+    if (!workflow) return undefined;
+    const updated: Workflow = { ...workflow, ...updates, updatedAt: new Date() };
+    this.workflows.set(id, updated);
+    return updated;
+  }
+  
+  async deleteWorkflow(id: number): Promise<boolean> {
+    return this.workflows.delete(id);
+  }
+  
+  // Form operations
+  async createForm(form: InsertForm): Promise<Form> {
+    const id = this.formId++;
+    const newForm: Form = { ...form, id, createdAt: new Date(), updatedAt: new Date() };
+    this.forms.set(id, newForm);
+    return newForm;
+  }
+  
+  async getForm(id: number): Promise<Form | undefined> {
+    return this.forms.get(id);
+  }
+  
+  async getFormsByOrganization(organizationId: number): Promise<Form[]> {
+    return Array.from(this.forms.values()).filter(form => form.organizationId === organizationId);
+  }
+  
+  async getForms(limit = 50): Promise<Form[]> {
+    const forms = Array.from(this.forms.values());
+    return forms.slice(0, limit);
+  }
+  
+  async updateForm(id: number, updates: Partial<InsertForm>): Promise<Form | undefined> {
+    const form = this.forms.get(id);
+    if (!form) return undefined;
+    const updated: Form = { ...form, ...updates, updatedAt: new Date() };
+    this.forms.set(id, updated);
+    return updated;
+  }
+  
+  async deleteForm(id: number): Promise<boolean> {
+    return this.forms.delete(id);
+  }
+  
+  // Form submission operations
+  async createFormSubmission(submission: InsertFormSubmission): Promise<FormSubmission> {
+    const id = this.formSubmissionId++;
+    const newSubmission: FormSubmission = { ...submission, id, createdAt: new Date() };
+    this.formSubmissions.set(id, newSubmission);
+    return newSubmission;
+  }
+  
+  async getFormSubmission(id: number): Promise<FormSubmission | undefined> {
+    return this.formSubmissions.get(id);
+  }
+  
+  async getFormSubmissionsByForm(formId: number): Promise<FormSubmission[]> {
+    return Array.from(this.formSubmissions.values()).filter(submission => submission.formId === formId);
+  }
+  
+  async getFormSubmissions(limit = 50): Promise<FormSubmission[]> {
+    const submissions = Array.from(this.formSubmissions.values());
+    return submissions.slice(0, limit);
+  }
+  
+  // Affiliate product operations
+  async createAffiliateProduct(product: InsertAffiliateProduct): Promise<AffiliateProduct> {
+    const id = this.affiliateProductId++;
+    const newProduct: AffiliateProduct = { ...product, id, createdAt: new Date(), updatedAt: new Date() };
+    this.affiliateProducts.set(id, newProduct);
+    return newProduct;
+  }
+  
+  async getAffiliateProduct(id: number): Promise<AffiliateProduct | undefined> {
+    return this.affiliateProducts.get(id);
+  }
+  
+  async getAffiliateProductsByOrganization(organizationId: number): Promise<AffiliateProduct[]> {
+    return Array.from(this.affiliateProducts.values()).filter(product => product.organizationId === organizationId);
+  }
+  
+  async getAffiliateProducts(limit = 50): Promise<AffiliateProduct[]> {
+    const products = Array.from(this.affiliateProducts.values());
+    return products.slice(0, limit);
+  }
+  
+  async updateAffiliateProduct(id: number, updates: Partial<InsertAffiliateProduct>): Promise<AffiliateProduct | undefined> {
+    const product = this.affiliateProducts.get(id);
+    if (!product) return undefined;
+    const updated: AffiliateProduct = { ...product, ...updates, updatedAt: new Date() };
+    this.affiliateProducts.set(id, updated);
+    return updated;
+  }
+  
+  async deleteAffiliateProduct(id: number): Promise<boolean> {
+    return this.affiliateProducts.delete(id);
   }
 }
 
@@ -1481,6 +1796,196 @@ export class DatabaseStorage implements IStorage {
     // This would typically be its own table, but for now we'll return success
     // Will be implemented with actual table in upcoming code
     return true;
+  }
+  
+  // CookAIng Marketing Engine implementations using Drizzle ORM
+  // Organization operations
+  async createOrganization(organization: InsertOrganization): Promise<Organization> {
+    const [result] = await db.insert(organizations).values(organization).returning();
+    return result;
+  }
+  
+  async getOrganization(id: number): Promise<Organization | undefined> {
+    const [result] = await db.select().from(organizations).where(eq(organizations.id, id));
+    return result;
+  }
+  
+  async getOrganizations(): Promise<Organization[]> {
+    return await db.select().from(organizations);
+  }
+  
+  async updateOrganization(id: number, updates: Partial<InsertOrganization>): Promise<Organization | undefined> {
+    const [result] = await db.update(organizations).set(updates).where(eq(organizations.id, id)).returning();
+    return result;
+  }
+  
+  async deleteOrganization(id: number): Promise<boolean> {
+    const result = await db.delete(organizations).where(eq(organizations.id, id));
+    return result.rowCount > 0;
+  }
+  
+  // Contact operations
+  async createContact(contact: InsertContact): Promise<Contact> {
+    const [result] = await db.insert(contacts).values(contact).returning();
+    return result;
+  }
+  
+  async getContact(id: number): Promise<Contact | undefined> {
+    const [result] = await db.select().from(contacts).where(eq(contacts.id, id));
+    return result;
+  }
+  
+  async getContactsByOrganization(organizationId: number): Promise<Contact[]> {
+    return await db.select().from(contacts).where(eq(contacts.orgId, organizationId));
+  }
+  
+  async getContacts(limit = 50): Promise<Contact[]> {
+    return await db.select().from(contacts).limit(limit);
+  }
+  
+  async updateContact(id: number, updates: Partial<InsertContact>): Promise<Contact | undefined> {
+    const [result] = await db.update(contacts).set(updates).where(eq(contacts.id, id)).returning();
+    return result;
+  }
+  
+  async deleteContact(id: number): Promise<boolean> {
+    const result = await db.delete(contacts).where(eq(contacts.id, id));
+    return result.rowCount > 0;
+  }
+  
+  // Campaign operations
+  async createCampaign(campaign: InsertCampaign): Promise<Campaign> {
+    const [result] = await db.insert(campaigns).values(campaign).returning();
+    return result;
+  }
+  
+  async getCampaign(id: number): Promise<Campaign | undefined> {
+    const [result] = await db.select().from(campaigns).where(eq(campaigns.id, id));
+    return result;
+  }
+  
+  async getCampaignsByOrganization(organizationId: number): Promise<Campaign[]> {
+    return await db.select().from(campaigns).where(eq(campaigns.orgId, organizationId));
+  }
+  
+  async getCampaigns(limit = 50): Promise<Campaign[]> {
+    return await db.select().from(campaigns).limit(limit);
+  }
+  
+  async updateCampaign(id: number, updates: Partial<InsertCampaign>): Promise<Campaign | undefined> {
+    const [result] = await db.update(campaigns).set(updates).where(eq(campaigns.id, id)).returning();
+    return result;
+  }
+  
+  async deleteCampaign(id: number): Promise<boolean> {
+    const result = await db.delete(campaigns).where(eq(campaigns.id, id));
+    return result.rowCount > 0;
+  }
+  
+  // Workflow operations
+  async createWorkflow(workflow: InsertWorkflow): Promise<Workflow> {
+    const [result] = await db.insert(workflows).values(workflow).returning();
+    return result;
+  }
+  
+  async getWorkflow(id: number): Promise<Workflow | undefined> {
+    const [result] = await db.select().from(workflows).where(eq(workflows.id, id));
+    return result;
+  }
+  
+  async getWorkflowsByOrganization(organizationId: number): Promise<Workflow[]> {
+    return await db.select().from(workflows).where(eq(workflows.orgId, organizationId));
+  }
+  
+  async getWorkflows(limit = 50): Promise<Workflow[]> {
+    return await db.select().from(workflows).limit(limit);
+  }
+  
+  async updateWorkflow(id: number, updates: Partial<InsertWorkflow>): Promise<Workflow | undefined> {
+    const [result] = await db.update(workflows).set(updates).where(eq(workflows.id, id)).returning();
+    return result;
+  }
+  
+  async deleteWorkflow(id: number): Promise<boolean> {
+    const result = await db.delete(workflows).where(eq(workflows.id, id));
+    return result.rowCount > 0;
+  }
+  
+  // Form operations
+  async createForm(form: InsertForm): Promise<Form> {
+    const [result] = await db.insert(forms).values(form).returning();
+    return result;
+  }
+  
+  async getForm(id: number): Promise<Form | undefined> {
+    const [result] = await db.select().from(forms).where(eq(forms.id, id));
+    return result;
+  }
+  
+  async getFormsByOrganization(organizationId: number): Promise<Form[]> {
+    return await db.select().from(forms).where(eq(forms.orgId, organizationId));
+  }
+  
+  async getForms(limit = 50): Promise<Form[]> {
+    return await db.select().from(forms).limit(limit);
+  }
+  
+  async updateForm(id: number, updates: Partial<InsertForm>): Promise<Form | undefined> {
+    const [result] = await db.update(forms).set(updates).where(eq(forms.id, id)).returning();
+    return result;
+  }
+  
+  async deleteForm(id: number): Promise<boolean> {
+    const result = await db.delete(forms).where(eq(forms.id, id));
+    return result.rowCount > 0;
+  }
+  
+  // Form submission operations
+  async createFormSubmission(submission: InsertFormSubmission): Promise<FormSubmission> {
+    const [result] = await db.insert(formSubmissions).values(submission).returning();
+    return result;
+  }
+  
+  async getFormSubmission(id: number): Promise<FormSubmission | undefined> {
+    const [result] = await db.select().from(formSubmissions).where(eq(formSubmissions.id, id));
+    return result;
+  }
+  
+  async getFormSubmissionsByForm(formId: number): Promise<FormSubmission[]> {
+    return await db.select().from(formSubmissions).where(eq(formSubmissions.formId, formId));
+  }
+  
+  async getFormSubmissions(limit = 50): Promise<FormSubmission[]> {
+    return await db.select().from(formSubmissions).limit(limit);
+  }
+  
+  // Affiliate product operations
+  async createAffiliateProduct(product: InsertAffiliateProduct): Promise<AffiliateProduct> {
+    const [result] = await db.insert(affiliateProducts).values(product).returning();
+    return result;
+  }
+  
+  async getAffiliateProduct(id: number): Promise<AffiliateProduct | undefined> {
+    const [result] = await db.select().from(affiliateProducts).where(eq(affiliateProducts.id, id));
+    return result;
+  }
+  
+  async getAffiliateProductsByOrganization(organizationId: number): Promise<AffiliateProduct[]> {
+    return await db.select().from(affiliateProducts).where(eq(affiliateProducts.orgId, organizationId));
+  }
+  
+  async getAffiliateProducts(limit = 50): Promise<AffiliateProduct[]> {
+    return await db.select().from(affiliateProducts).limit(limit);
+  }
+  
+  async updateAffiliateProduct(id: number, updates: Partial<InsertAffiliateProduct>): Promise<AffiliateProduct | undefined> {
+    const [result] = await db.update(affiliateProducts).set(updates).where(eq(affiliateProducts.id, id)).returning();
+    return result;
+  }
+  
+  async deleteAffiliateProduct(id: number): Promise<boolean> {
+    const result = await db.delete(affiliateProducts).where(eq(affiliateProducts.id, id));
+    return result.rowCount > 0;
   }
 
   // AI Model Config operations

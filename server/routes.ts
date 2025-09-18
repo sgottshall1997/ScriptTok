@@ -72,7 +72,23 @@ import claudeAiSuggestionsRouter from "./api/claudeAiSuggestions";
 import { perplexityAutomationRouter } from "./api/perplexity-automation";
 import safeguardMonitorRouter from "./api/safeguard-monitor";
 
+// CookAIng Marketing Engine routers
+import organizationsRouter from "./api/organizations";
+import contactsRouter from "./api/contacts";
+import campaignsRouter from "./api/campaigns";
+import workflowsRouter from "./api/workflows";
+import formsRouter from "./api/forms";
+import affiliateProductsRouter from "./api/affiliate-products";
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // CookAIng Marketing Engine routes
+  app.use('/api/cookaing-marketing/organizations', organizationsRouter);
+  app.use('/api/cookaing-marketing/contacts', contactsRouter);
+  app.use('/api/cookaing-marketing/campaigns', campaignsRouter);
+  app.use('/api/cookaing-marketing/workflows', workflowsRouter);
+  app.use('/api/cookaing-marketing/forms', formsRouter);
+  app.use('/api/cookaing-marketing/affiliate-products', affiliateProductsRouter);
+  
   // Redirect system for affiliate tracking
   app.use('/api/redirect', redirectRouter);
   app.use('/go', redirectRouter);
