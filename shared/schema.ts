@@ -1445,6 +1445,23 @@ export const contacts = pgTable("contacts", {
   prefsJson: jsonb("prefs_json"), // user preferences
   pantryJson: jsonb("pantry_json"), // pantry contents
   segmentIds: text("segment_ids").array().default([]), // array of segment IDs
+  // Attribution tracking
+  firstTouchUtmSource: text("first_touch_utm_source"),
+  firstTouchUtmMedium: text("first_touch_utm_medium"),
+  firstTouchUtmCampaign: text("first_touch_utm_campaign"),
+  firstTouchUtmTerm: text("first_touch_utm_term"),
+  firstTouchUtmContent: text("first_touch_utm_content"),
+  firstTouchGclid: text("first_touch_gclid"), // Google Ads click ID
+  firstTouchFbclid: text("first_touch_fbclid"), // Facebook click ID
+  firstTouchAt: timestamp("first_touch_at"),
+  lastTouchUtmSource: text("last_touch_utm_source"),
+  lastTouchUtmMedium: text("last_touch_utm_medium"),
+  lastTouchUtmCampaign: text("last_touch_utm_campaign"),
+  lastTouchUtmTerm: text("last_touch_utm_term"),
+  lastTouchUtmContent: text("last_touch_utm_content"),
+  lastTouchGclid: text("last_touch_gclid"),
+  lastTouchFbclid: text("last_touch_fbclid"),
+  lastTouchAt: timestamp("last_touch_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -1636,6 +1653,16 @@ export const abTests = pgTable("ab_tests", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// A/B test assignments
+export const abAssignments = pgTable("ab_assignments", {
+  id: serial("id").primaryKey(),
+  abTestId: integer("ab_test_id").notNull().references(() => abTests.id, { onDelete: 'cascade' }),
+  contactId: integer("contact_id").references(() => contacts.id, { onDelete: 'set null' }),
+  anonId: text("anon_id"), // for anonymous users
+  variant: text("variant").notNull(), // A or B
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Audit logging for compliance
 export const auditLogs = pgTable("audit_logs", {
   id: serial("id").primaryKey(),
@@ -1671,6 +1698,7 @@ export const insertAffiliateProductSchema = createInsertSchema(affiliateProducts
 export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents).omit({ id: true, createdAt: true });
 export const insertTemplateSchema = createInsertSchema(templates).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertABTestSchema = createInsertSchema(abTests).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertABAssignmentSchema = createInsertSchema(abAssignments).omit({ id: true, createdAt: true });
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
 
 // Type exports
@@ -1724,6 +1752,9 @@ export type InsertTemplate = z.infer<typeof insertTemplateSchema>;
 
 export type ABTest = typeof abTests.$inferSelect;
 export type InsertABTest = z.infer<typeof insertABTestSchema>;
+
+export type ABAssignment = typeof abAssignments.$inferSelect;
+export type InsertABAssignment = z.infer<typeof insertABAssignmentSchema>;
 
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;

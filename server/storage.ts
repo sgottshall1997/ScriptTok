@@ -24,13 +24,17 @@ import {
   Form, InsertForm,
   FormSubmission, InsertFormSubmission,
   AffiliateProduct, InsertAffiliateProduct,
+  AnalyticsEvent, InsertAnalyticsEvent,
+  ABTest, InsertABTest,
+  ABAssignment, InsertABAssignment,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
   socialMediaPlatforms, publishedContent, integrationWebhooks, userActivityLogs,
   contentHistory,
   // CookAIng Marketing Engine tables
-  organizations, contacts, campaigns, workflows, forms, formSubmissions, affiliateProducts
+  organizations, contacts, campaigns, workflows, forms, formSubmissions, affiliateProducts,
+  analyticsEvents, abTests, abAssignments
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -220,6 +224,20 @@ export interface IStorage {
   
   // Analytics Event operations
   createAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent>;
+  
+  // A/B Testing operations
+  createABTest(test: InsertABTest): Promise<ABTest>;
+  getABTest(id: number): Promise<ABTest | undefined>;
+  getABTestsByEntity(entity: string, contextJson: any): Promise<ABTest[]>;
+  updateABTest(id: number, updates: Partial<InsertABTest>): Promise<ABTest | undefined>;
+  deleteABTest(id: number): Promise<boolean>;
+  
+  // A/B Assignment operations  
+  createABAssignment(assignment: InsertABAssignment): Promise<ABAssignment>;
+  getABAssignment(testId: number, contactId?: number, anonId?: string): Promise<ABAssignment | undefined>;
+  getABAssignmentsByTest(testId: number): Promise<ABAssignment[]>;
+  getABTestResults(testId: number): Promise<{ variantA: number; variantB: number }>;
+  updateContactAttribution(contactId: number, utmData: any, touchType: 'first' | 'last'): Promise<Contact | undefined>;
 }
 
 // In-memory storage implementation (not actively used - DatabaseStorage is the active implementation)
@@ -2041,6 +2059,115 @@ export class DatabaseStorage implements IStorage {
   // Analytics Event operations
   async createAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent> {
     const [result] = await db.insert(analyticsEvents).values(event).returning();
+    return result;
+  }
+
+  // A/B Testing operations
+  async createABTest(test: InsertABTest): Promise<ABTest> {
+    const [result] = await db.insert(abTests).values(test).returning();
+    return result;
+  }
+
+  async getABTest(id: number): Promise<ABTest | undefined> {
+    const [result] = await db.select().from(abTests).where(eq(abTests.id, id));
+    return result;
+  }
+
+  async getABTestsByEntity(entity: string, contextJson: any): Promise<ABTest[]> {
+    const results = await db
+      .select()
+      .from(abTests)
+      .where(
+        and(
+          eq(abTests.entity, entity),
+          eq(abTests.status, "running")
+        )
+      );
+    return results;
+  }
+
+  async updateABTest(id: number, updates: Partial<InsertABTest>): Promise<ABTest | undefined> {
+    const [result] = await db
+      .update(abTests)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(abTests.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteABTest(id: number): Promise<boolean> {
+    const result = await db.delete(abTests).where(eq(abTests.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // A/B Assignment operations  
+  async createABAssignment(assignment: InsertABAssignment): Promise<ABAssignment> {
+    const [result] = await db.insert(abAssignments).values(assignment).returning();
+    return result;
+  }
+
+  async getABAssignment(testId: number, contactId?: number, anonId?: string): Promise<ABAssignment | undefined> {
+    const conditions = [eq(abAssignments.abTestId, testId)];
+    
+    if (contactId) {
+      conditions.push(eq(abAssignments.contactId, contactId));
+    } else if (anonId) {
+      conditions.push(eq(abAssignments.anonId, anonId));
+    }
+
+    const [result] = await db
+      .select()
+      .from(abAssignments)
+      .where(and(...conditions));
+    return result;
+  }
+
+  async getABAssignmentsByTest(testId: number): Promise<ABAssignment[]> {
+    const results = await db
+      .select()
+      .from(abAssignments)
+      .where(eq(abAssignments.abTestId, testId));
+    return results;
+  }
+
+  async getABTestResults(testId: number): Promise<{ variantA: number; variantB: number }> {
+    const assignments = await this.getABAssignmentsByTest(testId);
+    const variantA = assignments.filter(a => a.variant === 'A').length;
+    const variantB = assignments.filter(a => a.variant === 'B').length;
+    return { variantA, variantB };
+  }
+
+  async updateContactAttribution(contactId: number, utmData: any, touchType: 'first' | 'last'): Promise<Contact | undefined> {
+    const updateData: any = {};
+    const now = new Date();
+
+    if (touchType === 'first') {
+      updateData.firstTouchUtmSource = utmData.utm_source;
+      updateData.firstTouchUtmMedium = utmData.utm_medium;
+      updateData.firstTouchUtmCampaign = utmData.utm_campaign;
+      updateData.firstTouchUtmTerm = utmData.utm_term;
+      updateData.firstTouchUtmContent = utmData.utm_content;
+      updateData.firstTouchGclid = utmData.gclid;
+      updateData.firstTouchFbclid = utmData.fbclid;
+      updateData.firstTouchAt = now;
+    } else {
+      updateData.lastTouchUtmSource = utmData.utm_source;
+      updateData.lastTouchUtmMedium = utmData.utm_medium;
+      updateData.lastTouchUtmCampaign = utmData.utm_campaign;
+      updateData.lastTouchUtmTerm = utmData.utm_term;
+      updateData.lastTouchUtmContent = utmData.utm_content;
+      updateData.lastTouchGclid = utmData.gclid;
+      updateData.lastTouchFbclid = utmData.fbclid;
+      updateData.lastTouchAt = now;
+    }
+
+    updateData.updatedAt = now;
+
+    const [result] = await db
+      .update(contacts)
+      .set(updateData)
+      .where(eq(contacts.id, contactId))
+      .returning();
     return result;
   }
 
