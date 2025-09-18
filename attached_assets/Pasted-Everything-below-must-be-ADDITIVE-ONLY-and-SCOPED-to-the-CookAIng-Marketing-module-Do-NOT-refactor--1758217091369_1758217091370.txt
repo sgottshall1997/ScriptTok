@@ -1,0 +1,148 @@
+Everything below must be ADDITIVE-ONLY and SCOPED to the CookAIng Marketing module.
+Do NOT refactor, rename, or delete any existing files or tables outside this module.
+
+SCOPE / GUARDRAILS
+- Server code: /src/cookaing-marketing/** and /api/cookaing-marketing/**
+- Client code: /src/cookaing-marketing/**
+- All new REST endpoints live under /api/cookaing-marketing/**
+- Database: Drizzle migrations only; no destructive changes to existing tables
+- External APIs must have mock adapters so the app runs w/o keys
+- Skip heavy security for now; include TODOs + flags to enable later
+
+GOAL
+Round out analytics, attribution, A/B dashboards, digest controls, integration health checks, seeds,
+docs, and e2e tests—so we have a tight end-to-end loop:
+Form → Welcome Series → Multi-channel publish → Webhooks → Analytics → A/B winner → Next content.
+
+ENV VARS (append to .env.example if missing)
+# Optional keys already known to the module; ensure they’re documented in docs page:
+BREVO_API_KEY=           # email
+RESEND_API_KEY=
+BUFFER_ACCESS_TOKEN=     # social
+ONESIGNAL_APP_ID=        # push
+ONESIGNAL_REST_API_KEY=
+NOTION_API_KEY=          # blog
+NOTION_BLOG_DB_ID=
+AMAZON_ACCESS_KEY=       # affiliate
+AMAZON_SECRET_KEY=
+AMAZON_PARTNER_TAG=
+GOOGLE_TRENDS_API_KEY=   # trends (optional)
+REDDIT_API_CLIENT_ID=
+TIKTOK_API_KEY=
+WEBHOOK_SECRET=
+JWT_SECRET=
+
+====================================================
+A) ANALYTICS, ATTRIBUTION & REPORTS (HIGH PRIORITY)
+====================================================
+1) Attribution middleware (client + server)
+   - Client: capture utm_* and gclid/fbclid on entry; store in localStorage; include on form submit.
+   - Server: when POST /forms/* hits, persist first_touch/last_touch fields on contacts; also insert row into analytics_events.
+
+2) Performance rollups API
+   - Add /api/cookaing-marketing/reports/performance?from&to&by=(campaign|channel|segment)
+   - Returns:
+     * Email: sends, delivered, OR, CTR per campaign and per variant (A/B)
+     * Social: scheduled vs published counts + remote IDs
+     * Blog: published URLs + basic read counts (if PostHog present; otherwise 0)
+     * Push: delivered/failed
+   - Implement read-optimized SQL with indexes (see section E).
+
+3) Dashboard widgets (client)
+   - Update /cookaing-marketing (Marketing Dashboard) to show:
+     * “Last 14 days” KPI row: New contacts, Emails sent, OR, CTR, Blog posts, Social posts, Push sends
+     * A/B at-a-glance: top 3 live tests with winner chip (if decided)
+     * Top content: top 5 recipes by clicks (from campaign_recipients/analytics_events)
+
+4) Cost/ROAS (lightweight)
+   - Add /cookaing-marketing/attribution page with CSV upload for ad costs
+     schema: date,campaign_platform,campaign_name,cost
+   - Store to a cm_costs table (add migration) and surface ROAS (clicks as proxy) in reports
+
+===========================================
+B) A/B TEST UI & AUTO-WINNER (HIGH PRIORITY)
+===========================================
+1) Ensure ab_tests + ab_assignments are used by email send:
+   - When variant chosen=auto, split 50/50 among targeted recipients until decision made.
+   - After decision, subsequent sends use winner automatically.
+
+2) Decision job / endpoint
+   - POST /api/cookaing-marketing/ab/decide {abTestId}
+   - Two-proportion z-test (OR and CTR); require min n per arm (default 200 or configured)
+   - Mark winner; write to campaigns.metadata
+
+3) Client: A/B panel on Campaign detail
+   - Shows counts, OR/CTR per arm, p-value, and “Winner” badge when set
+   - Button: “Recompute now” (calls decide endpoint)
+
+==================================================
+C) DIGEST & PERSONALIZATION CONTROLS (MED PRIORITY)
+==================================================
+1) Weekly “Meal Prep Coach” controls
+   - In Workflows page: toggle, day/time pickers, next run preview, and “Send test to me”
+   - Expose endpoint: POST /api/cookaing-marketing/digest/preview {contactId} to render personalized HTML
+
+2) Personalization render test
+   - In Campaign editor: “Preview as Contact” select; render tokens ({{firstName}}, {{pantryItems}}, {{diet}}, {{skillLevel}})
+   - Ensure pantry-aware swaps appear in preview (pulls from contact.pantryJson)
+
+===================================================
+D) INTEGRATION HEALTH + RUNBOOK (MED PRIORITY)
+===================================================
+1) Health endpoint (server)
+   - GET /api/cookaing-marketing/integrations/health → { email, buffer, onesignal, notion, affiliate, trends } with status: "ok"|"degraded"|"missing_keys"|"error"
+   - Each adapter implements a lightweight check or key presence check (no network on missing keys)
+
+2) Docs page
+   - /cookaing-marketing/docs:
+     * ENV setup table
+     * Webhook endpoints + sample payloads
+     * Health checks section
+     * “Send flow runbook” (how to resend, how to roll back, common failures, where logs live)
+     * “Mock mode” explanation for each integration
+
+============================================
+E) PERFORMANCE OPTIMIZATION (MED PRIORITY)
+============================================
+1) Drizzle migrations for helpful indexes:
+   - campaign_recipients (campaign_id, status)
+   - campaign_recipients (contact_id, campaign_id)
+   - analytics_events (type, created_at)
+   - analytics_events (campaign_id, event)
+   - ab_assignments (ab_test_id, created_at)
+   - costs table (date, campaign_platform)
+2) Paginate all large queries; add server-side limits
+3) Client: lazy-load large tables (data grid) and use skeletons
+
+=================================================
+F) QA: SEEDS, E2E, LOGGING (MED PRIORITY)
+=================================================
+1) Seeds
+   - Extend seed to include:
+     * 3 A/B tests attached to real campaigns
+     * 2 weeks of fake analytics_events (opens/clicks) for charting
+     * A digest-ready contact set with pantry/diet variety
+     * A mock costs CSV under /fixtures
+
+2) Playwright e2e (headless)
+   - Scenario: submit form → contact created → welcome email queued →
+     webhook open (mock) → dashboard reflects OR>0 → decide A/B winner
+
+3) Logging
+   - Add structured logs (pino or console JSON) for:
+     * send attempts (email/social/push/blog)
+     * webhook parsing results
+     * A/B decisions
+   - Place logs behind a DEBUG flag, default on in dev
+
+=========================================
+G) FEATURE FLAGS (LOW, NICE TO HAVE)
+=========================================
+- Add boolean flags (env-driven) under a central config:
+  ENABLE_EMAIL, ENABLE_SOCIAL, ENABLE_BLOG, ENABLE_PUSH, ENABLE_DIGEST, ENABLE_TRENDS
+- UI should grey out disabled features with tooltip “disabled in this environment”
+
+DELIVERABLES
+- New/updated routes, pages, jobs, migrations, seeds, tests, and docs as specified
+- No regressions in existing GlowBot or previously built CookAIng Marketing features
+- A short CHANGELOG.md in /cookaing-marketing noting what was added
