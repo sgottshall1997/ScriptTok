@@ -29,7 +29,8 @@ import {
   Layers,
   Package,
   Clock,
-  DollarSign
+  DollarSign,
+  Mail
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -67,6 +68,12 @@ const sidebarData: SidebarCategory[] = [
       { name: "Schedule Manager", href: "/schedule-manager", icon: Clock },
       { name: "Cross-Platform Scheduling", href: "/cross-platform-scheduling", icon: Calendar },
       { name: "Performance Analytics", href: "/performance-analytics", icon: DollarSign },
+    ]
+  },
+  {
+    name: "CookAIng Marketing",
+    items: [
+      { name: "Marketing Dashboard", href: "/cookaing-marketing", icon: Mail },
     ]
   },
   {
