@@ -143,4 +143,81 @@ contactsRouter.delete('/:id', async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * PUT /api/contacts/:id/attribution
+ * Update contact attribution data
+ */
+contactsRouter.put('/:id/attribution', async (req: Request, res: Response) => {
+  try {
+    const contactId = parseInt(req.params.id);
+    
+    if (isNaN(contactId)) {
+      return res.status(400).json({ error: 'Invalid contact ID' });
+    }
+
+    const {
+      firstTouchUtmSource,
+      firstTouchUtmMedium,
+      firstTouchUtmCampaign,
+      firstTouchUtmTerm,
+      firstTouchUtmContent,
+      firstTouchGclid,
+      firstTouchFbclid,
+      lastTouchUtmSource,
+      lastTouchUtmMedium,
+      lastTouchUtmCampaign,
+      lastTouchUtmTerm,
+      lastTouchUtmContent,
+      lastTouchGclid,
+      lastTouchFbclid,
+    } = req.body;
+
+    console.log(`🎯 Attribution Update for Contact ${contactId}:`, {
+      firstTouch: {
+        source: firstTouchUtmSource,
+        medium: firstTouchUtmMedium,
+        campaign: firstTouchUtmCampaign
+      },
+      lastTouch: {
+        source: lastTouchUtmSource,
+        medium: lastTouchUtmMedium,
+        campaign: lastTouchUtmCampaign
+      }
+    });
+
+    const contact = await storage.updateContact(contactId, {
+      firstTouchUtmSource,
+      firstTouchUtmMedium,
+      firstTouchUtmCampaign,
+      firstTouchUtmTerm,
+      firstTouchUtmContent,
+      firstTouchGclid,
+      firstTouchFbclid,
+      firstTouchAt: firstTouchUtmSource ? new Date() : undefined, // Only set if we have first touch data
+      lastTouchUtmSource,
+      lastTouchUtmMedium,
+      lastTouchUtmCampaign,
+      lastTouchUtmTerm,
+      lastTouchUtmContent,
+      lastTouchGclid,
+      lastTouchFbclid,
+      lastTouchAt: new Date(), // Always update last touch timestamp
+    });
+
+    if (!contact) {
+      return res.status(404).json({ error: 'Contact not found' });
+    }
+
+    res.json({
+      success: true,
+      message: 'Attribution updated successfully',
+      contact
+    });
+
+  } catch (error) {
+    console.error('Error updating contact attribution:', error);
+    res.status(500).json({ error: 'Failed to update contact attribution' });
+  }
+});
+
 export default contactsRouter;
