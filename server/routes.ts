@@ -87,6 +87,7 @@ import blogRouter from "./api/cookaing-marketing/blog";
 import pushRouter from "./api/cookaing-marketing/push";
 import abRouter from "./api/cookaing-marketing/ab";
 import conversionsRouter from "./api/cookaing-marketing/conversions";
+import { seedDataRouter } from "./api/seed-data";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // CookAIng Marketing Engine routes
@@ -104,6 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/conversions', conversionsRouter);
   app.use('/api/cookaing-marketing/trends', trendsRouter);
   app.use('/api/cookaing-marketing/affiliate-auto-insert', affiliateAutoInsertRouter);
+  app.use('/api/cookaing-marketing/seed-data', seedDataRouter);
   
   // Redirect system for affiliate tracking
   app.use('/api/redirect', redirectRouter);
