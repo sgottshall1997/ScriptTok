@@ -27,6 +27,7 @@ import {
   AnalyticsEvent, InsertAnalyticsEvent,
   ABTest, InsertABTest,
   ABAssignment, InsertABAssignment,
+  ABConversion, InsertABConversion,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
@@ -34,7 +35,7 @@ import {
   contentHistory,
   // CookAIng Marketing Engine tables
   organizations, contacts, campaigns, workflows, forms, formSubmissions, affiliateProducts,
-  analyticsEvents, abTests, abAssignments
+  analyticsEvents, abTests, abAssignments, abConversions
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -235,8 +236,22 @@ export interface IStorage {
   // A/B Assignment operations  
   createABAssignment(assignment: InsertABAssignment): Promise<ABAssignment>;
   getABAssignment(testId: number, contactId?: number, anonId?: string): Promise<ABAssignment | undefined>;
+  getABAssignmentById(assignmentId: number): Promise<ABAssignment | undefined>;
   getABAssignmentsByTest(testId: number): Promise<ABAssignment[]>;
-  getABTestResults(testId: number): Promise<{ variantA: number; variantB: number }>;
+  getABTestResults(testId: number): Promise<{ 
+    assignmentsA: number; 
+    assignmentsB: number; 
+    conversionsA: number; 
+    conversionsB: number;
+    conversionRateA: number;
+    conversionRateB: number;
+  }>;
+  
+  // A/B Conversion operations
+  recordABTestConversion(testId: number, variant: string, conversionType: string, value?: number, assignmentId?: number): Promise<ABConversion>;
+  getABConversionsByTest(testId: number): Promise<ABConversion[]>;
+  getABConversionsByVariant(testId: number, variant: string): Promise<ABConversion[]>;
+  
   updateContactAttribution(contactId: number, utmData: any, touchType: 'first' | 'last'): Promise<Contact | undefined>;
 }
 
@@ -2122,6 +2137,15 @@ export class DatabaseStorage implements IStorage {
     return result;
   }
 
+  async getABAssignmentById(assignmentId: number): Promise<ABAssignment | undefined> {
+    const [result] = await db
+      .select()
+      .from(abAssignments)
+      .where(eq(abAssignments.id, assignmentId))
+      .limit(1);
+    return result;
+  }
+
   async getABAssignmentsByTest(testId: number): Promise<ABAssignment[]> {
     const results = await db
       .select()
@@ -2130,11 +2154,71 @@ export class DatabaseStorage implements IStorage {
     return results;
   }
 
-  async getABTestResults(testId: number): Promise<{ variantA: number; variantB: number }> {
+  async getABTestResults(testId: number): Promise<{ 
+    assignmentsA: number; 
+    assignmentsB: number; 
+    conversionsA: number; 
+    conversionsB: number;
+    conversionRateA: number;
+    conversionRateB: number;
+  }> {
+    // Get both assignments (exposures) and conversions for proper statistical analysis
     const assignments = await this.getABAssignmentsByTest(testId);
-    const variantA = assignments.filter(a => a.variant === 'A').length;
-    const variantB = assignments.filter(a => a.variant === 'B').length;
-    return { variantA, variantB };
+    const conversions = await this.getABConversionsByTest(testId);
+    
+    const assignmentsA = assignments.filter(a => a.variant === 'A').length;
+    const assignmentsB = assignments.filter(a => a.variant === 'B').length;
+    const conversionsA = conversions.filter(c => c.variant === 'A').length;
+    const conversionsB = conversions.filter(c => c.variant === 'B').length;
+    
+    // Calculate proper conversion rates (conversions/assignments)
+    const conversionRateA = assignmentsA > 0 ? conversionsA / assignmentsA : 0;
+    const conversionRateB = assignmentsB > 0 ? conversionsB / assignmentsB : 0;
+    
+    return { 
+      assignmentsA, 
+      assignmentsB, 
+      conversionsA, 
+      conversionsB,
+      conversionRateA,
+      conversionRateB
+    };
+  }
+
+  // A/B Conversion operations
+  async recordABTestConversion(testId: number, variant: string, conversionType: string, value?: number, assignmentId?: number): Promise<ABConversion> {
+    const conversion: InsertABConversion = {
+      abTestId: testId,
+      assignmentId,
+      variant,
+      conversionType,
+      value: value?.toString(),
+      metadata: assignmentId ? { assignmentId } : null
+    };
+    
+    const [result] = await db.insert(abConversions).values(conversion).returning();
+    return result;
+  }
+
+  async getABConversionsByTest(testId: number): Promise<ABConversion[]> {
+    const results = await db
+      .select()
+      .from(abConversions)
+      .where(eq(abConversions.abTestId, testId))
+      .orderBy(desc(abConversions.createdAt));
+    return results;
+  }
+
+  async getABConversionsByVariant(testId: number, variant: string): Promise<ABConversion[]> {
+    const results = await db
+      .select()
+      .from(abConversions)
+      .where(and(
+        eq(abConversions.abTestId, testId),
+        eq(abConversions.variant, variant)
+      ))
+      .orderBy(desc(abConversions.createdAt));
+    return results;
   }
 
   async updateContactAttribution(contactId: number, utmData: any, touchType: 'first' | 'last'): Promise<Contact | undefined> {

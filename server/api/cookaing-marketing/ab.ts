@@ -1,6 +1,7 @@
 import express from "express";
 import { abAssignmentService } from "../../cookaing-marketing/ab/assignment.service";
 import { storage } from "../../storage";
+import { z } from "zod";
 
 const router = express.Router();
 
@@ -87,11 +88,96 @@ router.post("/assign", async (req, res) => {
  */
 router.post("/convert", async (req, res) => {
   try {
-    const { testId, variant, conversionType, value, metadata } = req.body;
+    // Dedicated request schema for the conversion API (separate from DB schema)
+    const conversionRequestSchema = z.object({
+      conversionType: z.string(),
+      value: z.union([z.number(), z.string().transform(Number)]).refine(Number.isFinite, "Value must be a finite number").optional(),
+      metadata: z.object({
+        assignmentId: z.union([z.string(), z.number()]).transform(val => Number(val)),
+        contactId: z.union([z.string(), z.number()]).transform(val => Number(val)).optional(),
+        anonId: z.string().optional()
+      }),
+      testId: z.union([z.string(), z.number()]).transform(val => Number(val)).optional(),
+      variant: z.enum(["A", "B"]).optional()
+    });
 
-    if (!testId || !variant || !conversionType) {
-      return res.status(400).json({ 
-        error: "testId, variant, and conversionType are required" 
+    const parseResult = conversionRequestSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({
+        error: "Validation failed",
+        details: parseResult.error.flatten()
+      });
+    }
+
+    const { conversionType, value, metadata } = parseResult.data;
+    let { testId, variant } = parseResult.data; // Optional, may be derived - using let for reassignment
+    const assignmentId = metadata.assignmentId; // Already coerced to number by schema
+
+    // Get assignment by ID directly - more efficient and avoids testId type mismatch
+    const assignment = await storage.getABAssignmentById(assignmentId);
+    
+    if (!assignment) {
+      return res.status(400).json({
+        error: "Assignment not found for the provided assignmentId"
+      });
+    }
+
+    // Derive testId and variant from assignment if not provided (or validate if provided)
+    const actualTestId = assignment.abTestId;
+    const actualVariant = assignment.variant;
+    
+    if (testId && testId !== actualTestId) {
+      return res.status(400).json({
+        error: "Provided testId does not match assignment"
+      });
+    }
+    
+    if (variant && variant !== actualVariant) {
+      return res.status(400).json({
+        error: "Provided variant does not match assignment"
+      });
+    }
+    
+    // Use actual values from assignment
+    testId = actualTestId;
+    variant = actualVariant;
+
+    // Validate identity to prevent fraud - require either contactId or anonId to match assignment
+    // Use parsed values exclusively for consistency
+    const providedContactId = metadata.contactId;
+    const providedAnonId = metadata.anonId;
+    
+    if (!providedContactId && !providedAnonId) {
+      return res.status(400).json({
+        error: "Either contactId or anonId is required for conversion validation"
+      });
+    }
+    
+    // Coerce contactId to number for comparison (frontend might send as string)
+    const normalizedProvidedContactId = providedContactId ? Number(providedContactId) : undefined;
+    const normalizedAssignmentContactId = assignment.contactId ? Number(assignment.contactId) : undefined;
+    
+    // Check that the identity matches the assignment (fix truthy logic issues)
+    const identityMatches = 
+      (normalizedAssignmentContactId !== undefined && normalizedProvidedContactId === normalizedAssignmentContactId) ||
+      (assignment.anonId !== undefined && assignment.anonId !== null && providedAnonId === assignment.anonId);
+    
+    if (!identityMatches) {
+      return res.status(400).json({
+        error: "Conversion identity does not match assignment - potential fraud detected"
+      });
+    }
+
+    // Check for duplicate conversion to prevent fraud
+    const existingConversions = await storage.getABConversionsByTest(testId);
+    const duplicateConversion = existingConversions.find(c => 
+      c.assignmentId === assignmentId && 
+      c.conversionType === conversionType
+    );
+    
+    if (duplicateConversion) {
+      return res.status(409).json({
+        error: "Conversion already recorded for this assignment and conversion type"
       });
     }
 
@@ -100,15 +186,31 @@ router.post("/convert", async (req, res) => {
       variant,
       conversionType,
       value,
+      assignmentId,
+      anonId: providedAnonId,
+      contactId: providedContactId,
       timestamp: new Date().toISOString()
     });
 
     // Store actual conversion data for statistical analysis
     try {
-      await storage.recordABTestConversion(testId, variant, conversionType, value, metadata?.assignmentId);
-    } catch (conversionError) {
+      await storage.recordABTestConversion(actualTestId, actualVariant, conversionType, value, assignmentId);
+    } catch (conversionError: any) {
       console.warn('⚠️ Failed to record A/B test conversion:', conversionError);
-      // Continue - analytics tracking is still valuable even if conversion recording fails
+      
+      // Handle unique constraint violations gracefully (when DB constraints are added)
+      if (conversionError?.message?.includes('unique') || conversionError?.code === '23505') {
+        return res.status(409).json({
+          error: "Conversion already recorded for this assignment and conversion type",
+          details: "Database-level duplicate prevention triggered"
+        });
+      }
+      
+      // For other database errors, return server error
+      return res.status(500).json({
+        error: "Failed to record conversion",
+        details: "Database operation failed"
+      });
     }
 
     // Track conversion in analytics (non-fatal)

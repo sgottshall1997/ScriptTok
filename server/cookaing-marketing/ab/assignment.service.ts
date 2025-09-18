@@ -66,32 +66,44 @@ export class ABAssignmentService {
     }
 
     const results = await storage.getABTestResults(testId);
-    const totalSamples = results.variantA + results.variantB;
+    const totalAssignments = results.assignmentsA + results.assignmentsB;
+    const totalConversions = results.conversionsA + results.conversionsB;
 
-    // Need minimum sample size
-    const MIN_SAMPLE_SIZE = 100;
-    if (totalSamples < MIN_SAMPLE_SIZE) {
+    // Need minimum sample sizes for proper statistical analysis
+    const MIN_ASSIGNMENTS_PER_VARIANT = 100;
+    const MIN_CONVERSIONS_PER_VARIANT = 5;
+    
+    if (results.assignmentsA < MIN_ASSIGNMENTS_PER_VARIANT || 
+        results.assignmentsB < MIN_ASSIGNMENTS_PER_VARIANT ||
+        results.conversionsA < MIN_CONVERSIONS_PER_VARIANT || 
+        results.conversionsB < MIN_CONVERSIONS_PER_VARIANT) {
       return {
         shouldContinue: true,
         confidence: 0
       };
     }
 
-    // Calculate basic statistical significance
-    const pA = results.variantA / totalSamples;
-    const pB = results.variantB / totalSamples;
+    // Use the calculated conversion rates from storage
+    const conversionRateA = results.conversionRateA;
+    const conversionRateB = results.conversionRateB;
     
-    // Simple z-test approximation
-    const pooledP = (results.variantA + results.variantB) / (2 * totalSamples);
-    const se = Math.sqrt(pooledP * (1 - pooledP) * (2 / totalSamples));
-    const zScore = Math.abs(pA - pB) / se;
+    // Two-proportion z-test for conversion rates
+    const n1 = results.assignmentsA;
+    const n2 = results.assignmentsB;
+    const x1 = results.conversionsA;
+    const x2 = results.conversionsB;
+    
+    // Pooled proportion
+    const pooledP = (x1 + x2) / (n1 + n2);
+    const se = Math.sqrt(pooledP * (1 - pooledP) * (1/n1 + 1/n2));
+    const zScore = Math.abs(conversionRateA - conversionRateB) / se;
     
     // Convert to confidence level (rough approximation)
     const confidence = this.zScoreToConfidence(zScore);
     
     // Require 95% confidence to declare winner
     if (confidence >= 0.95) {
-      const winner = pA > pB ? 'A' : 'B';
+      const winner = conversionRateA > conversionRateB ? 'A' : 'B';
       
       // Update test in database
       await storage.updateABTest(testId, {
@@ -122,18 +134,25 @@ export class ABAssignmentService {
     }
 
     const results = await storage.getABTestResults(testId);
-    const totalSamples = results.variantA + results.variantB;
-    
-    const conversionRateA = totalSamples > 0 ? results.variantA / totalSamples : 0;
-    const conversionRateB = totalSamples > 0 ? results.variantB / totalSamples : 0;
+    const totalAssignments = results.assignmentsA + results.assignmentsB;
+    const totalConversions = results.conversionsA + results.conversionsB;
 
     return {
       test,
       results,
-      totalSamples,
+      totalAssignments,
+      totalConversions,
       conversionRates: {
-        A: conversionRateA,
-        B: conversionRateB
+        A: results.conversionRateA,
+        B: results.conversionRateB
+      },
+      assignments: {
+        A: results.assignmentsA,
+        B: results.assignmentsB
+      },
+      conversions: {
+        A: results.conversionsA,
+        B: results.conversionsB
       },
       status: test.status,
       winner: test.winner

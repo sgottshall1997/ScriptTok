@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey, varchar, decimal, unique, index, pgEnum } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey, varchar, decimal, unique, index, uniqueIndex, pgEnum } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -1663,6 +1663,25 @@ export const abAssignments = pgTable("ab_assignments", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// A/B test conversions
+export const abConversions = pgTable("ab_conversions", {
+  id: serial("id").primaryKey(),
+  abTestId: integer("ab_test_id").notNull().references(() => abTests.id, { onDelete: 'cascade' }),
+  assignmentId: integer("assignment_id").references(() => abAssignments.id, { onDelete: 'set null' }),
+  variant: text("variant").notNull(), // A or B
+  conversionType: text("conversion_type").notNull(), // signup, purchase, etc.
+  value: decimal("value"), // conversion value if applicable
+  metadata: jsonb("metadata"), // additional conversion data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => ({
+  // Prevent duplicate conversions for same assignment and conversion type
+  assignmentConversionUnique: uniqueIndex("ab_conversions_assignment_conversion_unique")
+    .on(table.assignmentId, table.conversionType),
+  // Add performance indexes
+  abTestIdIdx: index("ab_conversions_ab_test_id_idx").on(table.abTestId),
+  abTestVariantIdx: index("ab_conversions_ab_test_variant_idx").on(table.abTestId, table.variant),
+}));
+
 // Audit logging for compliance
 export const auditLogs = pgTable("audit_logs", {
   id: serial("id").primaryKey(),
@@ -1699,6 +1718,7 @@ export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents).om
 export const insertTemplateSchema = createInsertSchema(templates).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertABTestSchema = createInsertSchema(abTests).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertABAssignmentSchema = createInsertSchema(abAssignments).omit({ id: true, createdAt: true });
+export const insertABConversionSchema = createInsertSchema(abConversions).omit({ id: true, createdAt: true });
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
 
 // Type exports
@@ -1755,6 +1775,9 @@ export type InsertABTest = z.infer<typeof insertABTestSchema>;
 
 export type ABAssignment = typeof abAssignments.$inferSelect;
 export type InsertABAssignment = z.infer<typeof insertABAssignmentSchema>;
+
+export type ABConversion = typeof abConversions.$inferSelect;
+export type InsertABConversion = z.infer<typeof insertABConversionSchema>;
 
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
