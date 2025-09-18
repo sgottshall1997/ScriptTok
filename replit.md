@@ -33,6 +33,7 @@ Preferred communication style: Simple, everyday language.
 - **Webhook System**: Consolidates multiple platform captions into a single webhook payload for efficient integration with external automation platforms like Make.com.
 - **Spartan Format Enforcement**: A system that automatically cleans and transforms casual language into a professional tone, removing common filler words.
 - **Claude AI Suggestions System**: Stores and applies AI-generated recommendations by niche during content creation to enhance quality.
+- **CookAIng Marketing Engine**: Comprehensive multi-channel marketing platform with dedicated sidebar section featuring 15+ individual tool links including segments, A/B testing, personalization, form submissions, trends/seasonal campaigns, reports, cost tracking, attribution analysis, webhooks monitoring, email delivery testing, and developer tools. All pages are fully scaffolded with shadcn/ui components, mock data, responsive design, and consistent UX patterns.
 
 ### UI/UX Decisions
 The platform utilizes Shadcn/ui components on Radix UI primitives, styled with Tailwind CSS for a modern and customizable interface. The user experience is enhanced with features like trending product auto-population, confirmation toasts, and clear display of generated content, including main content and platform-specific captions. Legal documentation and support pages are also integrated to provide transparency and assistance.

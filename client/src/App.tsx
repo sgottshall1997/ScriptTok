@@ -54,6 +54,17 @@ import CookAIngForms from "@/pages/cookaing-marketing/forms";
 import CookAIngAffiliateProducts from "@/pages/cookaing-marketing/affiliate-products";
 import CookAIngMarketingDocs from "@/pages/cookaing-marketing/docs";
 import CookAIngIntegrationsHealth from "@/pages/cookaing-marketing/integrations-health";
+import CookAIngSegments from "@/pages/cookaing-marketing/segments";
+import CookAIngExperiments from "@/pages/cookaing-marketing/experiments";
+import CookAIngPersonalization from "@/pages/cookaing-marketing/personalization";
+import CookAIngSubmissions from "@/pages/cookaing-marketing/submissions";
+import CookAIngTrends from "@/pages/cookaing-marketing/trends";
+import CookAIngReports from "@/pages/cookaing-marketing/reports";
+import CookAIngCosts from "@/pages/cookaing-marketing/costs";
+import CookAIngAttribution from "@/pages/cookaing-marketing/attribution";
+import CookAIngWebhooks from "@/pages/cookaing-marketing/webhooks";
+import CookAIngEmailTest from "@/pages/cookaing-marketing/email-test";
+import CookAIngDevTools from "@/pages/cookaing-marketing/devtools";
 import PublicForm from "@/pages/public-form";
 
 import Layout from "@/components/Layout";
@@ -119,6 +130,17 @@ function Router() {
       <Route path="/cookaing-marketing/affiliate-products" component={CookAIngAffiliateProducts} />
       <Route path="/cookaing-marketing/docs" component={CookAIngMarketingDocs} />
       <Route path="/cookaing-marketing/integrations-health" component={CookAIngIntegrationsHealth} />
+      <Route path="/cookaing-marketing/segments" component={CookAIngSegments} />
+      <Route path="/cookaing-marketing/experiments" component={CookAIngExperiments} />
+      <Route path="/cookaing-marketing/personalization" component={CookAIngPersonalization} />
+      <Route path="/cookaing-marketing/submissions" component={CookAIngSubmissions} />
+      <Route path="/cookaing-marketing/trends" component={CookAIngTrends} />
+      <Route path="/cookaing-marketing/reports" component={CookAIngReports} />
+      <Route path="/cookaing-marketing/costs" component={CookAIngCosts} />
+      <Route path="/cookaing-marketing/attribution" component={CookAIngAttribution} />
+      <Route path="/cookaing-marketing/webhooks" component={CookAIngWebhooks} />
+      <Route path="/cookaing-marketing/email-test" component={CookAIngEmailTest} />
+      <Route path="/cookaing-marketing/devtools" component={CookAIngDevTools} />
       
       {/* Public form route */}
       <Route path="/forms/:slug" component={PublicForm} />
