@@ -62,7 +62,7 @@ interface CookAIngLayoutProps {
 }
 
 const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
-  const [location] = useLocation();
+  const [location, navigate] = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const currentPath = location.startsWith('/cookaing/') ? location.replace('/cookaing/', '/cookaing-marketing/') : location;
@@ -126,14 +126,12 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
           {/* Exit CookAIng Button */}
           <div className="p-4 border-b border-gray-200 dark:border-gray-700">
             <Button
-              asChild
               variant="outline"
               className="w-full justify-start"
+              onClick={() => navigate('/')}
             >
-              <Link href="/">
-                <ArrowLeft className="w-4 h-4 mr-2" />
-                Exit CookAIng
-              </Link>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Exit CookAIng
             </Button>
           </div>
 
@@ -145,10 +143,15 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
                 const isActive = currentPath === item.href || 
                   (item.href === '/cookaing-marketing' && currentPath === '/cookaing-marketing');
                 
+                // Convert /cookaing-marketing/xxx to /xxx for proper routing under /cookaing namespace
+                const cleanHref = item.href === '/cookaing-marketing' 
+                  ? '/cookaing-marketing' 
+                  : item.href.replace('/cookaing-marketing', '');
+                
                 return (
                   <Link
                     key={item.name}
-                    href={`/cookaing${item.href.replace('/cookaing-marketing', '')}`}
+                    href={cleanHref}
                     className={cn(
                       "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors group",
                       isActive
@@ -195,12 +198,12 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
               {/* Breadcrumbs */}
               <nav className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
                 {breadcrumbs.map((crumb, index) => (
-                  <React.Fragment key={crumb}>
+                  <span key={crumb} className="flex items-center">
                     {index > 0 && <span className="mx-2">/</span>}
                     <span className={index === breadcrumbs.length - 1 ? "font-medium text-gray-900 dark:text-white" : ""}>
                       {crumb}
                     </span>
-                  </React.Fragment>
+                  </span>
                 ))}
               </nav>
             </div>

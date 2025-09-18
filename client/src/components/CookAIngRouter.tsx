@@ -32,7 +32,7 @@ const CookAIngRouter: React.FC = () => {
         <Switch>
         {/* Default redirect to marketing dashboard */}
         <Route path="/" >
-          <Redirect to="/cookaing/cookaing-marketing" />
+          <Redirect to="/cookaing-marketing" />
         </Route>
         
         {/* CookAIng Marketing Engine routes - all mounted under /cookaing */}
