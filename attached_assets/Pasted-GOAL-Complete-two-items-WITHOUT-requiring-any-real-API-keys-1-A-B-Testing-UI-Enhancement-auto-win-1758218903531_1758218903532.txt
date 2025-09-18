@@ -1,0 +1,155 @@
+GOAL
+Complete two items WITHOUT requiring any real API keys:
+1) A/B Testing UI Enhancement (auto-winner selection surfaced in UI)
+2) Integration Health Checks Dashboard (reads adapter/key presence and mock checks)
+
+SCOPE / GUARDRAILS
+- ADDITIVE ONLY. Do NOT refactor or delete existing modules outside CookAIng Marketing.
+- Server code lives under: /src/cookaing-marketing/** and /api/cookaing-marketing/**
+- Client code lives under: /src/cookaing-marketing/**
+- Drizzle migrations only if needed (but avoid schema changes for this task).
+- Provide mocks so everything runs with empty .env.
+
+================================================================================
+TASK 1 — A/B TESTING UI ENHANCEMENT (AUTO-WINNER SURFACE)
+================================================================================
+
+CONTEXT
+Back-end exists: ab_tests, ab_assignments, /api/cookaing-marketing/ab/assign and /ab/decide endpoints are available.
+We need an improved UI on the Campaign detail to:
+- Display live A/B metrics per arm (Sends, Delivered, Open Rate, Click Rate).
+- Show significance status and current “Winner” (if any).
+- Allow a “Recompute Now” button that calls the decide endpoint.
+- Allow “Auto” mode for future sends (if winner exists, UI reflects that the winner will be used).
+
+SERVER (ensure read endpoint)
+1) Create a read endpoint (if missing):
+   - GET /api/cookaing-marketing/ab/summary?campaignId=<id>
+   - Returns JSON:
+     {
+       "campaignId": "...",
+       "abTestId": "...",
+       "variantA": { "sends": n, "delivered": n, "opens": n, "clicks": n, "openRate": %, "clickRate": % },
+       "variantB": { same shape },
+       "pValues": { "openRate": number|null, "clickRate": number|null },
+       "winner": "A"|"B"|null,
+       "autoModeEnabled": boolean
+     }
+   - Compute metrics from campaign_recipients and analytics_events.
+   - If no data, return zeroed metrics and winner=null.
+   - NO KEYS REQUIRED.
+
+2) If not present, add a small setting on campaign metadata (no schema change): store autoModeEnabled in campaigns.metadata JSON (read/write via update route if such route exists; otherwise add a minimal PATCH route):
+   - PATCH /api/cookaing-marketing/ab/auto
+     body: { campaignId: string, autoModeEnabled: boolean }
+
+CLIENT (Campaign Detail page)
+3) Add an “A/B Testing” panel component:
+   - Location: /src/cookaing-marketing/components/ab/AbPanel.tsx
+   - Props: { campaignId: string }
+   - Fetch from GET /ab/summary to render two side-by-side cards (Variant A, Variant B) showing: Sends, Delivered, OR, CTR.
+   - Show p-values (if available) and a Winner badge on the winning card.
+   - Include: 
+     - Button “Recompute Now” → POST /api/cookaing-marketing/ab/decide { abTestId }
+     - Toggle “Use winner automatically for future sends” → PATCH /ab/auto
+   - Visual states:
+     - Loading skeletons
+     - Empty state if no A/B test configured
+     - Success/error toasts
+
+4) Wire the panel into Campaign Detail page:
+   - File likely: /src/cookaing-marketing/pages/campaigns/CampaignDetail.tsx (or equivalent)
+   - Place below existing campaign metrics.
+
+TESTS
+5) Vitest component tests (no keys needed):
+   - Renders Variant A/B stats from mocked /ab/summary.
+   - Shows Winner badge when winner exists.
+   - Clicking “Recompute Now” calls decide endpoint and refetches.
+   - Toggling Auto Mode calls PATCH and reflects new state.
+
+ACCEPTANCE
+- Visiting a campaign with seeded A/B data shows two variants, rates, and winner (or none).
+- “Recompute Now” updates winner when data supports it.
+- Auto Mode toggle persists to campaigns.metadata (no schema migration required).
+- Works with empty .env (uses local DB + seeds).
+
+================================================================================
+TASK 2 — INTEGRATION HEALTH CHECKS DASHBOARD (NO API KEYS)
+================================================================================
+
+OBJECTIVE
+Provide a unified dashboard that reports the status of all integrations WITHOUT making external calls when keys are missing.
+Statuses: "ok" | "missing_keys" | "mock_mode" | "error".
+- “missing_keys”: required env not present.
+- “mock_mode”: keys absent but adapter is running in local mock mode.
+- “ok”: keys present and adapter basic self-check passes (for this task, simulate a local self-check without calling the external API).
+- “error”: adapter self-check throws.
+
+SERVER
+1) Create an Integration Health service:
+   - /src/cookaing-marketing/integrations/health.service.ts
+   - For each integration (email/Brevo+Resend, Buffer, OneSignal, Notion, Affiliate/Amazon, Trends adapters, GA4/GTM presence), implement a lightweight “check()” that:
+     * inspects process.env for required keys
+     * DOES NOT call external APIs when keys are missing
+     * returns { name, status, details }
+   - If keys exist, run a LOCAL self-check (e.g., validate key format, ensure required config fields exist). DO NOT perform network calls for this task.
+
+2) Expose GET /api/cookaing-marketing/integrations/health
+   - Returns array:
+     [
+       { "name":"email", "status":"missing_keys|mock_mode|ok|error", "details":{...} },
+       { "name":"buffer", "status": ... },
+       { "name":"onesignal", "status": ... },
+       { "name":"notion", "status": ... },
+       { "name":"affiliate", "status": ... },
+       { "name":"trends", "status": ... },
+       { "name":"analytics", "status": ... } // GA4/GTM presence (just env/config flags, no network)
+     ]
+
+CLIENT
+3) Create Dashboard page:
+   - Route: /cookaing-marketing/health
+   - Component: /src/cookaing-marketing/pages/health/IntegrationsHealth.tsx
+   - UI spec:
+     * Grid of cards using shadcn/ui with name, status chip (color-coded), and brief details.
+     * Legend for statuses.
+     * “Re-run checks” button that refetches endpoint.
+     * Links to /cookaing-marketing/docs for setup instructions and required envs.
+   - Also add a compact “Integrations” widget to the main Marketing Dashboard page showing a summary row (counts of ok / mock / missing).
+
+4) Docs entry (update existing docs page):
+   - /src/cookaing-marketing/pages/docs/Docs.tsx (or similar)
+   - Add a section “Integration Health” describing statuses, required env vars, and how to switch from mock_mode to ok.
+
+TESTS
+5) Vitest tests:
+   - With empty env, GET /integrations/health returns statuses = “missing_keys” or “mock_mode” (per adapter design).
+   - With a fake env (set process.env in test), status flips to “ok”.
+   - React tests: page renders list, color-coded chips, and refetch button.
+
+ACCEPTANCE
+- /cookaing-marketing/health renders with no API keys and shows reasonable statuses (no crashes).
+- Main Marketing Dashboard shows a compact health summary.
+- No external network calls performed when keys are missing.
+- Works fully with empty .env.
+
+================================================================================
+DELIVERABLES
+- New/updated server routes:
+  * GET /api/cookaing-marketing/ab/summary
+  * PATCH /api/cookaing-marketing/ab/auto
+  * GET /api/cookaing-marketing/integrations/health
+- New/updated client components/pages:
+  * components/ab/AbPanel.tsx
+  * pages/campaigns/CampaignDetail.tsx (or equivalent) — embed AbPanel
+  * pages/health/IntegrationsHealth.tsx
+  * docs page updated with “Integration Health” section
+  * dashboard widget for health summary
+- Tests:
+  * Vitest for AbPanel, Integration Health service and page
+- No new external dependencies required; no API keys required.
+
+Ensure clear commit messages and update the module README (or /cookaing-marketing/docs) with:
+- A/B Panel usage and Auto Mode behavior
+- Integration Health page purpose and how to interpret statuses

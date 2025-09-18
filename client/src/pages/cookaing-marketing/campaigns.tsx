@@ -36,12 +36,16 @@ import {
   Bell,
   Clock,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  ChevronDown,
+  ChevronRight,
+  BarChart3
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { insertCampaignSchema, campaigns, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import AutoInsertAffiliateButton from '@/components/AutoInsertAffiliateButton';
+import AbPanel from '@/components/cookaing-marketing/ab/AbPanel';
 
 type Campaign = typeof campaigns.$inferSelect;
 type Organization = typeof organizations.$inferSelect;
@@ -79,6 +83,9 @@ const CampaignsPage = () => {
 
   // Integration states
   const [selectedCampaignForIntegration, setSelectedCampaignForIntegration] = useState<Campaign | null>(null);
+  
+  // A/B Testing states
+  const [expandedAbTestCampaigns, setExpandedAbTestCampaigns] = useState<Set<number>>(new Set());
 
   // Fetch campaigns
   const { data: campaigns, isLoading } = useQuery<Campaign[]>({
@@ -440,6 +447,19 @@ const CampaignsPage = () => {
     );
   };
 
+  // Toggle A/B testing panel expansion
+  const toggleAbTestPanel = (campaignId: number) => {
+    setExpandedAbTestCampaigns(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(campaignId)) {
+        newSet.delete(campaignId);
+      } else {
+        newSet.add(campaignId);
+      }
+      return newSet;
+    });
+  };
+
   const getTotalRecipients = () => {
     if (selectedSegments.length === 0) return 0;
     return mockSegments
@@ -790,6 +810,34 @@ const CampaignsPage = () => {
                       )}
                       Send Push
                     </Button>
+                  </div>
+
+                  {/* A/B Testing Section */}
+                  <Separator className="my-3" />
+                  <div className="space-y-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleAbTestPanel(campaign.id)}
+                      className="w-full justify-between"
+                      data-testid={`button-toggle-ab-test-${campaign.id}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <BarChart3 className="h-4 w-4" />
+                        A/B Testing
+                      </div>
+                      {expandedAbTestCampaigns.has(campaign.id) ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </Button>
+
+                    {expandedAbTestCampaigns.has(campaign.id) && (
+                      <div className="mt-3">
+                        <AbPanel campaignId={campaign.id.toString()} />
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
