@@ -238,7 +238,6 @@ export const contentRatings = pgTable("content_ratings", {
   notes: text("notes"), // Optional user notes about the rating
   ratedAt: timestamp("rated_at").defaultNow().notNull(),
   
-  // Ensure one rating per content piece per user
 }, (table) => {
   return {
     unq: unique().on(table.contentHistoryId, table.userId),
@@ -419,11 +418,11 @@ export const apiRateLimits = pgTable("api_rate_limits", {
 // Claude AI suggestions database for content improvement by niche
 export const claudeAiSuggestions = pgTable("claude_ai_suggestions", {
   id: serial("id").primaryKey(),
-  niche: text("niche").notNull(), // beauty, tech, fashion, fitness, food, travel, pets
+  niche: varchar("niche", { length: 50 }).notNull(), // beauty, tech, fashion, fitness, food, travel, pets
   
   // Suggestion metadata
-  suggestionType: text("suggestion_type").notNull(), // style_improvement, hook_optimization, engagement_boost, cta_enhancement
-  category: text("category").notNull(), // writing_style, structure, tone, format, platform_optimization
+  suggestionType: varchar("suggestion_type", { length: 50 }).notNull(), // style_improvement, hook_optimization, engagement_boost, cta_enhancement
+  category: varchar("category", { length: 50 }).notNull(), // writing_style, structure, tone, format, platform_optimization
   
   // The actual suggestion content
   suggestion: text("suggestion").notNull(), // The Claude recommendation
@@ -432,21 +431,21 @@ export const claudeAiSuggestions = pgTable("claude_ai_suggestions", {
   
   // Effectiveness tracking
   timesUsed: integer("times_used").notNull().default(0),
-  effectiveness: decimal("effectiveness").notNull().default("0.5"), // Effectiveness score (0-1)
+  effectiveness: decimal("effectiveness", { precision: 3, scale: 2 }).notNull().default("0.5"), // Effectiveness score (0-1)
   // Note: using effectiveness instead of success_rate and avg_rating_increase
   
   // Suggestion validation
   isValidated: boolean("is_validated").notNull().default(false), // Has this been tested?
-  confidence: decimal("confidence"), // Claude's confidence in this suggestion (0-100)
-  source: text("source"), // automated_analysis, user_feedback, pattern_analysis
+  confidence: varchar("confidence", { length: 10 }), // Claude's confidence in this suggestion (kept as varchar to match DB)
+  source: varchar("source", { length: 50 }), // automated_analysis, user_feedback, pattern_analysis
   
   // Content targeting
   templateTypes: text("template_types").array(), // Which templates this applies to
   platforms: text("platforms").array(), // Which platforms this works best on
   tones: text("tones").array(), // Which tones this suggestion works with
-  templateType: text("template_type"), // Single template type
-  platform: text("platform"), // Single platform
-  tone: text("tone"), // Single tone
+  templateType: varchar("template_type", { length: 50 }), // Single template type
+  platform: varchar("platform", { length: 50 }), // Single platform
+  tone: varchar("tone", { length: 50 }), // Single tone
   
   // Performance data
   appliedToContent: integer("applied_to_content").notNull().default(0), // How many times used
@@ -680,39 +679,43 @@ export const scheduledPosts = pgTable("scheduled_posts", {
 // Enhanced Bulk content generation jobs with auto-trending product selection
 export const bulkContentJobs = pgTable("bulk_content_jobs", {
   id: serial("id").primaryKey(),
-  jobId: text("job_id").notNull().unique(),
-  userId: integer("user_id"), // Optional user reference
-  status: text("status").notNull().default("pending"), // pending, processing, completed, failed
+  jobId: varchar("job_id", { length: 255 }).notNull().unique(),
+  productName: varchar("product_name", { length: 255 }), // Product name for single-product jobs
+  niche: varchar("niche", { length: 100 }), // Niche for single-product jobs
   totalVariations: integer("total_variations").notNull().default(0),
   completedVariations: integer("completed_variations").notNull().default(0),
-  autoSelectedProducts: jsonb("auto_selected_products"), // Array of selected products per niche
-  selectedNiches: text("selected_niches").array().notNull(), // Which niches to generate for
+  status: varchar("status", { length: 50 }).notNull().default("pending"), // pending, processing, completed, failed
+  platforms: text("platforms").array().notNull(),
   tones: text("tones").array().notNull(),
   templates: text("templates").array().notNull(),
-  platforms: text("platforms").array().notNull(),
   scheduleAfterGeneration: boolean("schedule_after_generation").default(false),
   scheduledTime: timestamp("scheduled_time"),
   makeWebhookUrl: text("make_webhook_url"),
+  autoSelectedProducts: jsonb("auto_selected_products"), // Array of selected products per niche
+  selectedNiches: text("selected_niches").array().notNull(), // Which niches to generate for
   viralInspiration: jsonb("viral_inspiration"), // Perplexity viral data for each product
   progressLog: jsonb("progress_log"), // Detailed progress tracking
   errorLog: jsonb("error_log"), // Error details if any
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  userId: integer("user_id"), // Optional user reference
+  progressPercentage: integer("progress_percentage"), // Progress as percentage
+  generatedContentCount: integer("generated_content_count"), // Count of generated content
 });
 
 // Generated content from bulk jobs
 export const bulkGeneratedContent = pgTable("bulk_generated_content", {
   id: serial("id").primaryKey(),
-  bulkJobId: text("bulk_job_id").notNull().references(() => bulkContentJobs.jobId, { onDelete: 'cascade' }),
-  productName: text("product_name").notNull(),
-  niche: text("niche").notNull(),
-  tone: text("tone").notNull(),
-  template: text("template").notNull(),
+  bulkJobId: varchar("bulk_job_id", { length: 255 }).notNull().references(() => bulkContentJobs.jobId, { onDelete: 'cascade' }),
+  productName: varchar("product_name", { length: 255 }).notNull(),
+  niche: varchar("niche", { length: 100 }).notNull(),
+  tone: varchar("tone", { length: 100 }).notNull(),
+  template: varchar("template", { length: 100 }).notNull(),
   platforms: text("platforms").array().notNull(),
   generatedContent: jsonb("generated_content").notNull(), // Full content with hooks, scripts, captions
   viralInspiration: jsonb("viral_inspiration"), // Product-specific viral data
   affiliateLink: text("affiliate_link"),
-  modelUsed: text("model_used").notNull(),
+  modelUsed: varchar("model_used", { length: 50 }).notNull(),
   tokenCount: integer("token_count").notNull(),
   generationTime: integer("generation_time"), // Time taken in ms
   status: text("status").notNull().default("completed"), // completed, failed
@@ -804,6 +807,8 @@ export const dailyScraperCache = pgTable("daily_scraper_cache", {
   source: text("source").notNull(), // "amazon", "reddit", "tiktok", "youtube", etc.
   date: text("date").notNull(), // YYYY-MM-DD format
   data: text("data").notNull(), // Stringified JSON result from the scraper
+  success: boolean("success"), // Success status
+  lastUpdated: timestamp("last_updated"), // Last update timestamp
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => {
@@ -1076,7 +1081,7 @@ export const insertTrendingEmojisHashtagsSchema = createInsertSchema(trendingEmo
 export const contentEvaluations = pgTable("content_evaluations", {
   id: serial("id").primaryKey(),
   contentHistoryId: integer("content_history_id").notNull().references(() => contentHistory.id, { onDelete: 'cascade' }),
-  evaluatorModel: text("evaluator_model").notNull(), // 'chatgpt' or 'claude'
+  evaluatorModel: varchar("evaluator_model", { length: 20 }).notNull(), // 'chatgpt' or 'claude'
   viralityScore: integer("virality_score").notNull(),
   clarityScore: integer("clarity_score").notNull(),
   persuasivenessScore: integer("persuasiveness_score").notNull(),
@@ -1087,8 +1092,8 @@ export const contentEvaluations = pgTable("content_evaluations", {
   creativityJustification: text("creativity_justification").notNull(),
   needsRevision: boolean("needs_revision").notNull().default(false),
   improvementSuggestions: text("improvement_suggestions"),
-  overallScore: decimal("overall_score", { precision: 3, scale: 1 }), // Calculated average
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  overallScore: varchar("overall_score", { length: 10 }), // Calculated average (kept as varchar to match DB)
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
 // Insert schema for content evaluations
@@ -1396,9 +1401,6 @@ export const insertPerformanceAnalyticsSchema = createInsertSchema(performanceAn
 export type ScheduledPost = typeof scheduledPosts.$inferSelect;
 export type InsertScheduledPost = z.infer<typeof insertScheduledPostSchema>;
 
-export type BulkContentJob = typeof bulkContentJobs.$inferSelect;
-export type InsertBulkContentJob = z.infer<typeof insertBulkContentJobSchema>;
-
 export type PerformanceAnalytics = typeof performanceAnalytics.$inferSelect;
 export type InsertPerformanceAnalytics = z.infer<typeof insertPerformanceAnalyticsSchema>;
 
@@ -1410,3 +1412,282 @@ export const insertFavoriteProductSchema = createInsertSchema(favoriteProducts).
 
 export type FavoriteProduct = typeof favoriteProducts.$inferSelect;
 export type InsertFavoriteProduct = z.infer<typeof insertFavoriteProductSchema>;
+
+// ==========================================================================
+// COOKAING MARKETING ENGINE SCHEMA
+// ==========================================================================
+
+// Organization schema - single organization setup by default
+export const organizations = pgTable("organizations", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
+  plan: text("plan").notNull().default("starter"), // starter, pro, enterprise
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Segments for dynamic audience targeting
+export const segments = pgTable("segments", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  rulesJson: jsonb("rules_json").notNull(), // dynamic audience rules
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Contact schema with pantry and preferences
+export const contacts = pgTable("contacts", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  email: text("email").notNull().unique(),
+  name: text("name"),
+  prefsJson: jsonb("prefs_json"), // user preferences
+  pantryJson: jsonb("pantry_json"), // pantry contents
+  segmentIds: text("segment_ids").array().default([]), // array of segment IDs
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Content brief for campaign creation
+export const contentBriefs = pgTable("content_briefs", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  title: text("title").notNull(),
+  goal: text("goal").notNull(),
+  audience: text("audience").notNull(),
+  inputsJson: jsonb("inputs_json"), // additional inputs
+  createdBy: integer("created_by").references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Campaign schema
+export const campaigns = pgTable("campaigns", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  type: text("type").notNull(), // email, blog, social, push, multi
+  name: text("name").notNull(),
+  status: text("status").notNull().default("draft"), // draft, scheduled, sent
+  scheduledAt: timestamp("scheduled_at"),
+  metaJson: jsonb("meta_json"), // additional metadata
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Campaign artifacts - stores generated JSON for each channel
+export const campaignArtifacts = pgTable("campaign_artifacts", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  channel: text("channel").notNull(), // email, blog, social, push
+  payloadJson: jsonb("payload_json").notNull(), // generated content
+  variant: text("variant").default("A"), // A/B testing variants
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Campaign recipients tracking
+export const campaignRecipients = pgTable("campaign_recipients", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id").notNull().references(() => campaigns.id, { onDelete: 'cascade' }),
+  contactId: integer("contact_id").notNull().references(() => contacts.id, { onDelete: 'cascade' }),
+  variant: text("variant").default("A"),
+  sentAt: timestamp("sent_at"),
+  openAt: timestamp("open_at"),
+  clickAt: timestamp("click_at"),
+  bounceAt: timestamp("bounce_at"),
+  unsubscribeAt: timestamp("unsubscribe_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Workflow definitions
+export const workflows = pgTable("workflows", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  name: text("name").notNull(),
+  definitionJson: jsonb("definition_json").notNull(), // workflow steps
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Contact workflow state tracking
+export const contactWorkflowStates = pgTable("contact_workflow_states", {
+  id: serial("id").primaryKey(),
+  contactId: integer("contact_id").notNull().references(() => contacts.id, { onDelete: 'cascade' }),
+  workflowId: integer("workflow_id").notNull().references(() => workflows.id, { onDelete: 'cascade' }),
+  stepIndex: integer("step_index").notNull().default(0),
+  lastAt: timestamp("last_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    unq: unique().on(table.contactId, table.workflowId),
+  };
+});
+
+// Forms for lead generation
+export const forms = pgTable("forms", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  slug: text("slug").notNull().unique(),
+  schemaJson: jsonb("schema_json").notNull(), // form field definitions
+  rulesJson: jsonb("rules_json"), // segment assignment rules
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Form submissions
+export const formSubmissions = pgTable("form_submissions", {
+  id: serial("id").primaryKey(),
+  formId: integer("form_id").notNull().references(() => forms.id, { onDelete: 'cascade' }),
+  contactId: integer("contact_id").references(() => contacts.id),
+  dataJson: jsonb("data_json").notNull(), // submitted form data
+  utmJson: jsonb("utm_json"), // UTM parameters
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Lead scoring system
+export const leadScores = pgTable("lead_scores", {
+  contactId: integer("contact_id").primaryKey().references(() => contacts.id, { onDelete: 'cascade' }),
+  score: integer("score").notNull().default(0),
+  reasonsJson: jsonb("reasons_json"), // scoring breakdown
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Page events for analytics
+export const pageEvents = pgTable("page_events", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  contactId: integer("contact_id").references(() => contacts.id),
+  anonId: text("anon_id"), // anonymous visitor ID
+  event: text("event").notNull(),
+  propsJson: jsonb("props_json"), // event properties
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Affiliate products management
+export const affiliateProducts = pgTable("affiliate_products", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  source: text("source").notNull(), // amazon, instacart, manual
+  sku: text("sku").notNull(),
+  name: text("name").notNull(),
+  url: text("url").notNull(),
+  price: decimal("price"),
+  imageUrl: text("image_url"),
+  attributesJson: jsonb("attributes_json"), // additional product attributes
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Content templates
+export const templates = pgTable("templates", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  kind: text("kind").notNull(), // recipe_card, pantry_tip, meal_plan, viral_script, comparison, email_layout, carousel
+  name: text("name").notNull(),
+  schemaJson: jsonb("schema_json").notNull(), // template schema
+  renderFnRef: text("render_fn_ref"), // reference to render function
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// A/B testing system
+export const abTests = pgTable("ab_tests", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  entity: text("entity").notNull(), // headline, cta, subject
+  contextJson: jsonb("context_json").notNull(), // test context
+  variantAJson: jsonb("variant_a_json").notNull(),
+  variantBJson: jsonb("variant_b_json").notNull(),
+  status: text("status").notNull().default("running"), // running, completed, paused
+  winner: text("winner"), // A, B, or null
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Audit logging for compliance
+export const auditLogs = pgTable("audit_logs", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  actorId: integer("actor_id").references(() => users.id),
+  entity: text("entity").notNull(), // table/resource name
+  entityId: integer("entity_id").notNull(),
+  action: text("action").notNull(), // create, update, delete, view
+  beforeJson: jsonb("before_json"), // state before change
+  afterJson: jsonb("after_json"), // state after change
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// ==========================================================================
+// COOKAING MARKETING ENGINE INSERT SCHEMAS & TYPES
+// ==========================================================================
+
+// Insert schemas
+export const insertOrganizationSchema = createInsertSchema(organizations).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertSegmentSchema = createInsertSchema(segments).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertContactSchema = createInsertSchema(contacts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertContentBriefSchema = createInsertSchema(contentBriefs).omit({ id: true, createdAt: true });
+export const insertCampaignSchema = createInsertSchema(campaigns).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertCampaignArtifactSchema = createInsertSchema(campaignArtifacts).omit({ id: true, createdAt: true });
+export const insertCampaignRecipientSchema = createInsertSchema(campaignRecipients).omit({ id: true, createdAt: true });
+export const insertWorkflowSchema = createInsertSchema(workflows).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertContactWorkflowStateSchema = createInsertSchema(contactWorkflowStates).omit({ id: true, createdAt: true });
+export const insertFormSchema = createInsertSchema(forms).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertFormSubmissionSchema = createInsertSchema(formSubmissions).omit({ id: true, createdAt: true });
+export const insertLeadScoreSchema = createInsertSchema(leadScores).omit({ updatedAt: true });
+export const insertPageEventSchema = createInsertSchema(pageEvents).omit({ id: true, createdAt: true });
+export const insertAffiliateProductSchema = createInsertSchema(affiliateProducts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertTemplateSchema = createInsertSchema(templates).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertABTestSchema = createInsertSchema(abTests).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
+
+// Type exports
+export type Organization = typeof organizations.$inferSelect;
+export type InsertOrganization = z.infer<typeof insertOrganizationSchema>;
+
+export type Segment = typeof segments.$inferSelect;
+export type InsertSegment = z.infer<typeof insertSegmentSchema>;
+
+export type Contact = typeof contacts.$inferSelect;
+export type InsertContact = z.infer<typeof insertContactSchema>;
+
+export type ContentBrief = typeof contentBriefs.$inferSelect;
+export type InsertContentBrief = z.infer<typeof insertContentBriefSchema>;
+
+export type Campaign = typeof campaigns.$inferSelect;
+export type InsertCampaign = z.infer<typeof insertCampaignSchema>;
+
+export type CampaignArtifact = typeof campaignArtifacts.$inferSelect;
+export type InsertCampaignArtifact = z.infer<typeof insertCampaignArtifactSchema>;
+
+export type CampaignRecipient = typeof campaignRecipients.$inferSelect;
+export type InsertCampaignRecipient = z.infer<typeof insertCampaignRecipientSchema>;
+
+export type Workflow = typeof workflows.$inferSelect;
+export type InsertWorkflow = z.infer<typeof insertWorkflowSchema>;
+
+export type ContactWorkflowState = typeof contactWorkflowStates.$inferSelect;
+export type InsertContactWorkflowState = z.infer<typeof insertContactWorkflowStateSchema>;
+
+export type Form = typeof forms.$inferSelect;
+export type InsertForm = z.infer<typeof insertFormSchema>;
+
+export type FormSubmission = typeof formSubmissions.$inferSelect;
+export type InsertFormSubmission = z.infer<typeof insertFormSubmissionSchema>;
+
+export type LeadScore = typeof leadScores.$inferSelect;
+export type InsertLeadScore = z.infer<typeof insertLeadScoreSchema>;
+
+export type PageEvent = typeof pageEvents.$inferSelect;
+export type InsertPageEvent = z.infer<typeof insertPageEventSchema>;
+
+export type AffiliateProduct = typeof affiliateProducts.$inferSelect;
+export type InsertAffiliateProduct = z.infer<typeof insertAffiliateProductSchema>;
+
+export type Template = typeof templates.$inferSelect;
+export type InsertTemplate = z.infer<typeof insertTemplateSchema>;
+
+export type ABTest = typeof abTests.$inferSelect;
+export type InsertABTest = z.infer<typeof insertABTestSchema>;
+
+export type AuditLog = typeof auditLogs.$inferSelect;
+export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
