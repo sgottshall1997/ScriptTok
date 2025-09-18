@@ -130,7 +130,10 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
             <Button
               variant="outline"
               className="w-full justify-start"
-              onClick={() => navigate('/')}
+              onClick={() => {
+                // Navigate to main app dashboard, avoiding the cookaing redirect
+                window.location.href = '/';
+              }}
             >
               <ArrowLeft className="w-4 h-4 mr-2" />
               Exit CookAIng
