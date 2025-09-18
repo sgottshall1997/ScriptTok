@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { Textarea } from "@/components/ui/textarea";
 import { 
   Webhook, 
@@ -531,6 +532,20 @@ export default function WebhooksPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Webhooks Monitor"
+        whatIsIt="Monitor webhook endpoints, delivery status, and payload logs for real-time integrations."
+        setupSteps={[
+          "Add webhook endpoints for platforms like Make.com, Zapier, and CRMs.",
+          "Use secret keys for security and configure retry policies."
+        ]}
+        usageSteps={[
+          "Monitor delivery status and troubleshoot failed webhooks.",
+          "Use payload logs to debug integration issues and ensure reliable data flow."
+        ]}
+      />
     </div>
   );
 }

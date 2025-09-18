@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   BarChart2, 
   Download, 
@@ -543,6 +544,21 @@ export default function ReportsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Reports"
+        whatIsIt="Performance analytics, attribution, and ROI across all channels."
+        setupSteps={[
+          "Connect Google Analytics for web tracking.",
+          "Configure UTM parameters in campaigns for proper attribution."
+        ]}
+        usageSteps={[
+          "Review weekly reports; focus on trends and ROAS.",
+          "Use attribution analysis to optimize budget allocation."
+        ]}
+        envKeys={["GOOGLE_ANALYTICS_TRACKING_ID"]}
+      />
     </div>
   );
 }

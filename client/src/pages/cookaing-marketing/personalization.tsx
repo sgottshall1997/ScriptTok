@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   PersonStanding, 
   ChefHat, 
@@ -441,6 +442,20 @@ export default function PersonalizationPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Personalization"
+        whatIsIt="Rules- and attribute-based personalization across email, social, and blog content."
+        setupSteps={[
+          "Populate contact attributes/preferences and define segments."
+        ]}
+        usageSteps={[
+          "Create rules, preview personalized variants, A/B test impact."
+        ]}
+        featureFlags={["email","social","blog"]}
+        relatedLinks={[{"label":"Segments", "href":"/cookaing-marketing/segments"},{"label":"Contacts", "href":"/cookaing-marketing/contacts"}]}
+      />
     </div>
   );
 }

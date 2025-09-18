@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   GitBranch, 
   Search, 
@@ -541,6 +542,21 @@ export default function AttributionPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Attribution Analysis"
+        whatIsIt="Track customer touchpoints from first discovery to final conversion across all channels."
+        setupSteps={[
+          "Set up UTM parameters for all campaigns and channels.",
+          "Configure Google Analytics for multi-channel funnels."
+        ]}
+        usageSteps={[
+          "Analyze first-touch attribution for discovery channels.",
+          "Use last-touch attribution to optimize conversion touchpoints."
+        ]}
+        envKeys={["GOOGLE_ANALYTICS_TRACKING_ID", "GOOGLE_ANALYTICS_MEASUREMENT_ID"]}
+      />
     </div>
   );
 }

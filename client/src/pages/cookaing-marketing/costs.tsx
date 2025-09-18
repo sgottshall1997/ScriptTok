@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   CreditCard, 
   Upload, 
@@ -494,6 +495,20 @@ export default function CostsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Costs & ROAS"
+        whatIsIt="Upload campaign costs and analyze return on ad spend across channels."
+        setupSteps={[
+          "Download the CSV template with required columns: date, campaign_platform, campaign_name, cost.",
+          "Upload cost data regularly for accurate ROAS calculations."
+        ]}
+        usageSteps={[
+          "Link cost data with revenue tracking for comprehensive performance analysis.",
+          "Monitor ROAS trends to optimize budget allocation across channels."
+        ]}
+      />
     </div>
   );
 }

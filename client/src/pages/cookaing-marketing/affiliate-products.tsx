@@ -26,6 +26,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { insertAffiliateProductSchema, affiliateProducts, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 type AffiliateProduct = typeof affiliateProducts.$inferSelect;
 type Organization = typeof organizations.$inferSelect;
@@ -184,7 +185,7 @@ const AffiliateProductsPage = () => {
   };
 
   // Get unique sources for filter
-  const uniqueSources = [...new Set(products?.map(p => p.source) || [])];
+  const uniqueSources = Array.from(new Set(products?.map(p => p.source) || []));
 
   const getSourceBadgeColor = (source: string) => {
     switch (source.toLowerCase()) {
@@ -310,7 +311,8 @@ const AffiliateProductsPage = () => {
                           <Input 
                             placeholder="$19.99" 
                             data-testid="input-product-price"
-                            {...field} 
+                            {...field}
+                            value={field.value || ''}
                           />
                         </FormControl>
                         <FormMessage />
@@ -330,7 +332,8 @@ const AffiliateProductsPage = () => {
                           <Input 
                             placeholder="https://example.com/image.jpg" 
                             data-testid="input-product-image"
-                            {...field} 
+                            {...field}
+                            value={field.value || ''}
                           />
                         </FormControl>
                         <FormMessage />
@@ -531,6 +534,20 @@ const AffiliateProductsPage = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Affiliate Products"
+        whatIsIt="Product database with affiliate links for auto-insertion into campaigns."
+        setupSteps={[
+          "Add products manually or integrate with affiliate networks.",
+          "Include name, price, image URL, source, and affiliate link."
+        ]}
+        usageSteps={[
+          "Browse products; use Auto-Insert Affiliate button in campaigns.",
+          "Products are automatically inserted based on niche and keywords."
+        ]}
+      />
     </div>
   );
 };

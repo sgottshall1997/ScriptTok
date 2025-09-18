@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   FlaskConical, 
   Plus, 
@@ -391,6 +392,20 @@ export default function ExperimentsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="A/B Testing & Experiments"
+        whatIsIt="Run statistically valid A/B tests to optimize campaigns and improve conversion rates."
+        setupSteps={[
+          "Create test variants (subject lines, content, timing).",
+          "Set statistical significance threshold (≥95% confidence)."
+        ]}
+        usageSteps={[
+          "Run tests for minimum 1-2 weeks for reliable results.",
+          "Analyze winning variants and apply insights to future campaigns."
+        ]}
+      />
     </div>
   );
 }

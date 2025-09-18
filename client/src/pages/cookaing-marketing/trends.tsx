@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   TrendingUp, 
   Calendar, 
@@ -428,6 +429,22 @@ export default function TrendsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Trends & Seasonal"
+        whatIsIt="Track trending topics and plan seasonal marketing campaigns."
+        setupSteps={[
+          "Monitor trending topics weekly using Perplexity automation.",
+          "Plan seasonal campaigns 2-3 months in advance for peak periods."
+        ]}
+        usageSteps={[
+          "Align content with peak search periods and trending keywords.",
+          "Leverage related terms and seasonal hooks for better discoverability."
+        ]}
+        envKeys={["PERPLEXITY_API_KEY"]}
+        featureFlags={["trends"]}
+      />
     </div>
   );
 }

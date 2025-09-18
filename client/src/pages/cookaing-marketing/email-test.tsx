@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   Mail, 
   Send, 
@@ -494,6 +495,22 @@ export default function EmailTestPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Email Delivery Test"
+        whatIsIt="Test email deliverability, check spam scores, and validate DNS authentication."
+        setupSteps={[
+          "Configure email provider (Brevo, Resend) with API keys.",
+          "Set up domain authentication: SPF, DKIM, and DMARC records."
+        ]}
+        usageSteps={[
+          "Send test emails to various providers (Gmail, Outlook, Yahoo).",
+          "Check deliverability reports and spam scoring."
+        ]}
+        envKeys={["BREVO_API_KEY", "RESEND_API_KEY", "SENDGRID_API_KEY"]}
+        featureFlags={["email"]}
+      />
     </div>
   );
 }

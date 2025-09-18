@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { Copy, Key, Webhook, Play, RotateCcw, AlertTriangle, CheckCircle, Info } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -710,6 +711,20 @@ export default function CookAIngMarketingDocs() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="CookAIng Documentation"
+        whatIsIt="In-app reference for concepts, workflows, and integrations."
+        setupSteps={[
+          "None — explore sections below."
+        ]}
+        usageSteps={[
+          "Follow guides to configure features.",
+          "Use links to jump to related tools."
+        ]}
+        relatedLinks={[{"label":"About", "href":"/cookaing-marketing/about"},{"label":"Integrations Health", "href":"/cookaing-marketing/integrations-health"}]}
+      />
     </div>
   );
 }

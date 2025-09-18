@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   Shield, 
   CheckCircle, 
@@ -373,6 +374,25 @@ export default function IntegrationsHealthPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Integrations Health"
+        whatIsIt="Real-time status and diagnostics for connected integrations."
+        setupSteps={[
+          "Add API keys for each provider (email, push, social, docs).",
+          "Configure webhooks/callback URLs and test connectivity.",
+          "Click 'Run Health Check' regularly."
+        ]}
+        usageSteps={[
+          "Review status, error rates, and last sync.",
+          "Re-auth or rotate keys when failures are detected.",
+          "Drill into logs to resolve issues quickly."
+        ]}
+        envKeys={["RESEND_API_KEY","BREVO_API_KEY","SENDGRID_API_KEY","ONESIGNAL_API_KEY","BUFFER_API_KEY","NOTION_API_KEY","PERPLEXITY_API_KEY","GOOGLE_ANALYTICS_TRACKING_ID"]}
+        featureFlags={["email","social","blog","push","trends"]}
+        relatedLinks={[{"label":"Docs", "href":"/cookaing-marketing/docs"}]}
+      />
     </div>
   );
 }

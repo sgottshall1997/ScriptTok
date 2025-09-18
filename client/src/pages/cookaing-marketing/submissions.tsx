@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   FileSpreadsheet, 
   Search, 
@@ -379,6 +380,19 @@ export default function SubmissionsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Submissions Inbox"
+        whatIsIt="Capture and triage inbound form and UGC submissions."
+        setupSteps={[
+          "Create forms and configure webhooks to post submissions."
+        ]}
+        usageSteps={[
+          "Review, approve, tag, and route to workflows."
+        ]}
+        relatedLinks={[{"label":"Forms", "href":"/cookaing-marketing/forms"},{"label":"Webhooks", "href":"/cookaing-marketing/webhooks"}]}
+      />
     </div>
   );
 }

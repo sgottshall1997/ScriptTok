@@ -27,6 +27,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { insertFormSchema, forms, formSubmissions, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 type FormType = typeof forms.$inferSelect;
 type FormSubmission = typeof formSubmissions.$inferSelect;
@@ -478,6 +479,19 @@ const FormsPage = () => {
           )}
         </TabsContent>
       </Tabs>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Forms"
+        whatIsIt="Embeddable forms (newsletter, lead gen, contact) with webhook automation."
+        setupSteps={[
+          "Create a form record with fields; copy/paste the embed code or iframe.",
+          "Add webhook to trigger workflows when forms are submitted."
+        ]}
+        usageSteps={[
+          "Preview the form; monitor submissions; use data for segmentation."
+        ]}
+      />
     </div>
   );
 };

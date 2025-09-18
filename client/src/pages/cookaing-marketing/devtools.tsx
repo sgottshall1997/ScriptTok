@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 import { 
   Code2, 
   Database,
@@ -574,6 +575,21 @@ export default function DevToolsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Developer Tools"
+        whatIsIt="Diagnostics, webhook simulators, and feature flag visibility for developers."
+        setupSteps={[
+          "Optionally set LOG_LEVEL for verbose output."
+        ]}
+        usageSteps={[
+          "Inspect requests/logs and simulate webhooks.",
+          "Clear caches and verify feature flags."
+        ]}
+        envKeys={["LOG_LEVEL"]}
+        relatedLinks={[{"label":"Webhooks", "href":"/cookaing-marketing/webhooks"}]}
+      />
     </div>
   );
 }
