@@ -90,10 +90,17 @@ export default function CookAIngMarketingDocs() {
       category: "Social Media"
     },
     {
-      name: "WEBHOOK_SECRET",
-      description: "Secret key for webhook signature verification",
-      example: "whsec_...",
+      name: "MAKE_WEBHOOK_URL",
+      description: "Make.com webhook URL for automation integration",
+      example: "https://hook.us2.make.com/your-webhook-id",
       required: true,
+      category: "Integrations"
+    },
+    {
+      name: "WEBHOOK_SECRET",
+      description: "Optional secret key for webhook configuration",
+      example: "whsec_...",
+      required: false,
       category: "Security"
     },
     {
@@ -146,14 +153,21 @@ export default function CookAIngMarketingDocs() {
       method: "POST",
       description: "Send single content item to Make.com webhook",
       events: ["content_sent"],
-      security: "Configured webhook secret verification"
+      security: "MAKE_WEBHOOK_URL required"
     },
     {
       endpoint: "/api/post/send-batch",
       method: "POST",
       description: "Send multiple content items to Make.com webhook in batch",
       events: ["batch_sent"],
-      security: "Configured webhook secret verification"
+      security: "MAKE_WEBHOOK_URL required"
+    },
+    {
+      endpoint: "/api/post/test-make-webhook",
+      method: "GET",
+      description: "Test Make.com webhook connection with mock payload",
+      events: ["test_webhook"],
+      security: "MAKE_WEBHOOK_URL required"
     }
   ];
 
@@ -223,7 +237,7 @@ export default function CookAIngMarketingDocs() {
                   <AlertTriangle className="h-4 w-4" />
                   <AlertTitle>Required Variables</AlertTitle>
                   <AlertDescription>
-                    DATABASE_URL, OPENAI_API_KEY, SENDGRID_API_KEY, and WEBHOOK_SECRET are required for basic functionality
+                    DATABASE_URL, OPENAI_API_KEY, SENDGRID_API_KEY, and MAKE_WEBHOOK_URL are required for basic functionality
                   </AlertDescription>
                 </Alert>
               </div>
@@ -231,7 +245,23 @@ export default function CookAIngMarketingDocs() {
               <Separator />
 
               <div className="space-y-3">
-                <h3 className="text-lg font-semibold">4. Test Campaign Flow</h3>
+                <h3 className="text-lg font-semibold">4. Test Webhook Integration</h3>
+                <div className="bg-green-50 p-4 rounded-lg space-y-2">
+                  <code className="text-sm block">GET /api/post/test-make-webhook</code>
+                  <p className="text-xs text-muted-foreground">
+                    Validates Make.com webhook connection with a test payload. Ensure MAKE_WEBHOOK_URL is set first.
+                  </p>
+                  <div className="text-xs bg-white p-2 rounded border">
+                    <strong>Example:</strong> <code>curl ${window.location.origin}/api/post/test-make-webhook</code>
+                    <br /><span className="text-muted-foreground">Or use the copy button in the Webhooks tab</span>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              <div className="space-y-3">
+                <h3 className="text-lg font-semibold">5. Test Campaign Flow</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Card>
                     <CardHeader className="pb-3">
@@ -308,7 +338,7 @@ export default function CookAIngMarketingDocs() {
             </CardHeader>
             <CardContent>
               <div className="space-y-6">
-                {["Database", "AI Services", "Email Services", "Communication", "Social Media", "Security", "Affiliate Networks"].map((category) => (
+                {["Database", "AI Services", "Email Services", "Communication", "Social Media", "Security", "Integrations", "Affiliate Networks"].map((category) => (
                   <div key={category} className="space-y-3">
                     <h3 className="text-lg font-semibold">{category}</h3>
                     <div className="space-y-3">
@@ -411,7 +441,7 @@ export default function CookAIngMarketingDocs() {
                 <Info className="h-4 w-4" />
                 <AlertTitle>Webhook Configuration</AlertTitle>
                 <AlertDescription>
-                  Configure these webhooks in your service provider's dashboard. All webhooks require proper authentication and signature verification.
+                  Configure these webhooks in your service provider's dashboard. Send endpoints require MAKE_WEBHOOK_URL; WEBHOOK_SECRET is optional if configured. The test endpoint is unauthenticated—use only in development or restrict access.
                 </AlertDescription>
               </Alert>
             </CardContent>

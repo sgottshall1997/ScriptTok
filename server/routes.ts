@@ -80,6 +80,7 @@ import contactsRouter from "./api/contacts";
 import campaignsRouter from "./api/campaigns";
 import workflowsRouter from "./api/workflows";
 import formsRouter from "./api/forms";
+import publicFormsRouter from "./api/public-forms";
 import affiliateProductsRouter from "./api/affiliate-products";
 import emailRouter from "./api/cookaing-marketing/email";
 import socialRouter from "./api/cookaing-marketing/social";
@@ -97,6 +98,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/workflows', workflowsRouter);
   app.use('/api/cookaing-marketing/forms', formsRouter);
   app.use('/api/cookaing-marketing/affiliate-products', affiliateProductsRouter);
+  
+  // Public forms access (limited to public endpoints only)
+  app.use('/api/forms', publicFormsRouter);
   app.use('/api/cookaing-marketing/email', emailRouter);
   app.use('/api/cookaing-marketing/social', socialRouter);
   app.use('/api/cookaing-marketing/blog', blogRouter);

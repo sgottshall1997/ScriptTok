@@ -192,6 +192,7 @@ export interface IStorage {
   // Form operations
   createForm(form: InsertForm): Promise<Form>;
   getForm(id: number): Promise<Form | undefined>;
+  getFormBySlug(slug: string): Promise<Form | undefined>;
   getFormsByOrganization(organizationId: number): Promise<Form[]>;
   getForms(limit?: number): Promise<Form[]>;
   updateForm(id: number, updates: Partial<InsertForm>): Promise<Form | undefined>;
@@ -1090,6 +1091,10 @@ export class MemStorage {
     return this.forms.get(id);
   }
   
+  async getFormBySlug(slug: string): Promise<Form | undefined> {
+    return Array.from(this.forms.values()).find(form => form.slug === slug);
+  }
+  
   async getFormsByOrganization(organizationId: number): Promise<Form[]> {
     return Array.from(this.forms.values()).filter(form => form.organizationId === organizationId);
   }
@@ -1967,6 +1972,11 @@ export class DatabaseStorage implements IStorage {
   
   async getForm(id: number): Promise<Form | undefined> {
     const [result] = await db.select().from(forms).where(eq(forms.id, id));
+    return result;
+  }
+  
+  async getFormBySlug(slug: string): Promise<Form | undefined> {
+    const [result] = await db.select().from(forms).where(eq(forms.slug, slug));
     return result;
   }
   

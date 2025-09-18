@@ -29,6 +29,31 @@ formsRouter.get('/', async (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/forms/by-slug/:slug
+ * Get a specific form by slug (for public access)
+ */
+formsRouter.get('/by-slug/:slug', async (req: Request, res: Response) => {
+  try {
+    const slug = req.params.slug;
+    
+    if (!slug) {
+      return res.status(400).json({ error: 'Form slug is required' });
+    }
+    
+    const form = await storage.getFormBySlug(slug);
+    
+    if (!form) {
+      return res.status(404).json({ error: 'Form not found' });
+    }
+    
+    res.json(form);
+  } catch (error) {
+    console.error('Error fetching form by slug:', error);
+    res.status(500).json({ error: 'Failed to fetch form' });
+  }
+});
+
+/**
  * GET /api/forms/:id
  * Get a specific form
  */

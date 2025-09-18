@@ -53,6 +53,7 @@ import CookAIngWorkflows from "@/pages/cookaing-marketing/workflows";
 import CookAIngForms from "@/pages/cookaing-marketing/forms";
 import CookAIngAffiliateProducts from "@/pages/cookaing-marketing/affiliate-products";
 import CookAIngMarketingDocs from "@/pages/cookaing-marketing/docs";
+import PublicForm from "@/pages/public-form";
 
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
@@ -116,6 +117,9 @@ function Router() {
       <Route path="/cookaing-marketing/forms" component={CookAIngForms} />
       <Route path="/cookaing-marketing/affiliate-products" component={CookAIngAffiliateProducts} />
       <Route path="/cookaing-marketing/docs" component={CookAIngMarketingDocs} />
+      
+      {/* Public form route */}
+      <Route path="/forms/:slug" component={PublicForm} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
