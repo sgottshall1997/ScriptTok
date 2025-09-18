@@ -205,6 +205,21 @@ export interface IStorage {
   getAffiliateProducts(limit?: number): Promise<AffiliateProduct[]>;
   updateAffiliateProduct(id: number, updates: Partial<InsertAffiliateProduct>): Promise<AffiliateProduct | undefined>;
   deleteAffiliateProduct(id: number): Promise<boolean>;
+
+  // Campaign Artifact operations
+  getCampaignArtifacts(campaignId: number): Promise<any[]>;
+  
+  // Segment operations
+  getSegment(id: number): Promise<any | undefined>;
+  getContactsBySegment(segmentId: number): Promise<Contact[]>;
+  
+  // Campaign Recipient operations  
+  createCampaignRecipient(recipient: any): Promise<any>;
+  getCampaignRecipientsByEmail(email: string): Promise<any[]>;
+  updateCampaignRecipient(id: number, updates: any): Promise<any>;
+  
+  // Analytics Event operations
+  createAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent>;
 }
 
 // In-memory storage implementation (not actively used - DatabaseStorage is the active implementation)
@@ -1986,6 +2001,47 @@ export class DatabaseStorage implements IStorage {
   async deleteAffiliateProduct(id: number): Promise<boolean> {
     const result = await db.delete(affiliateProducts).where(eq(affiliateProducts.id, id));
     return result.rowCount > 0;
+  }
+
+  // Campaign Artifact operations (stub implementations)
+  async getCampaignArtifacts(campaignId: number): Promise<any[]> {
+    // TODO: Implement with campaign_artifacts table
+    return [];
+  }
+  
+  // Segment operations (stub implementations)
+  async getSegment(id: number): Promise<any | undefined> {
+    // TODO: Implement with segments table
+    return undefined;
+  }
+  
+  async getContactsBySegment(segmentId: number): Promise<Contact[]> {
+    // TODO: Implement with segment rules
+    return [];
+  }
+  
+  // Campaign Recipient operations (stub implementations)  
+  async createCampaignRecipient(recipient: any): Promise<any> {
+    // TODO: Implement with campaign_recipients table
+    console.log('Creating campaign recipient (stub):', recipient);
+    return { id: Date.now(), ...recipient };
+  }
+  
+  async getCampaignRecipientsByEmail(email: string): Promise<any[]> {
+    // TODO: Implement with campaign_recipients table
+    return [];
+  }
+  
+  async updateCampaignRecipient(id: number, updates: any): Promise<any> {
+    // TODO: Implement with campaign_recipients table
+    console.log('Updating campaign recipient (stub):', { id, updates });
+    return { id, ...updates };
+  }
+  
+  // Analytics Event operations
+  async createAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent> {
+    const [result] = await db.insert(analyticsEvents).values(event).returning();
+    return result;
   }
 
   // AI Model Config operations

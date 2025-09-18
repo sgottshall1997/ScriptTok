@@ -79,6 +79,7 @@ import campaignsRouter from "./api/campaigns";
 import workflowsRouter from "./api/workflows";
 import formsRouter from "./api/forms";
 import affiliateProductsRouter from "./api/affiliate-products";
+import emailRouter from "./api/cookaing-marketing/email";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // CookAIng Marketing Engine routes
@@ -88,6 +89,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/workflows', workflowsRouter);
   app.use('/api/cookaing-marketing/forms', formsRouter);
   app.use('/api/cookaing-marketing/affiliate-products', affiliateProductsRouter);
+  app.use('/api/cookaing-marketing/email', emailRouter);
   
   // Redirect system for affiliate tracking
   app.use('/api/redirect', redirectRouter);
