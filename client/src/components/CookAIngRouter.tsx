@@ -1,6 +1,7 @@
 import React from 'react';
 import { Switch, Route, Redirect } from 'wouter';
 import CookAIngLayout from '@/cookaing-marketing/layouts/CookAIngLayout';
+import CookAIngAuth from '@/components/CookAIngAuth';
 
 // CookAIng Marketing Engine pages
 import CookAIngMarketingDashboard from "@/pages/cookaing-marketing/index";
@@ -26,11 +27,12 @@ import CookAIngDevTools from "@/pages/cookaing-marketing/devtools";
 
 const CookAIngRouter: React.FC = () => {
   return (
-    <CookAIngLayout>
-      <Switch>
+    <CookAIngAuth>
+      <CookAIngLayout>
+        <Switch>
         {/* Default redirect to marketing dashboard */}
         <Route path="/" >
-          <Redirect to="/cookaing-marketing" />
+          <Redirect to="/cookaing/cookaing-marketing" />
         </Route>
         
         {/* CookAIng Marketing Engine routes - all mounted under /cookaing */}
@@ -56,6 +58,7 @@ const CookAIngRouter: React.FC = () => {
         <Route path="/docs" component={CookAIngMarketingDocs} />
       </Switch>
     </CookAIngLayout>
+    </CookAIngAuth>
   );
 };
 

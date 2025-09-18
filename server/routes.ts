@@ -115,6 +115,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/affiliate-auto-insert', affiliateAutoInsertRouter);
   app.use('/api/cookaing-marketing/seed-data', seedDataRouter);
   
+  // CookAIng Marketing Engine authentication
+  app.post('/api/cookaing-marketing/auth/login', (req, res) => {
+    const { password } = req.body;
+    const expectedPassword = process.env.COOKAING_SECTION_PASSWORD;
+    
+    if (!expectedPassword) {
+      return res.json({ success: true }); // No password protection configured
+    }
+    
+    if (password === expectedPassword) {
+      return res.json({ success: true });
+    }
+    
+    return res.status(401).json({ success: false, error: 'Invalid password' });
+  });
+  
   // Redirect system for affiliate tracking
   app.use('/api/redirect', redirectRouter);
   app.use('/go', redirectRouter);

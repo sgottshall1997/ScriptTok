@@ -81,11 +81,24 @@ function Router() {
   
   return (
     <Switch>
-      {/* CookAIng Mode - Separate routing namespace */}
+      {/* CookAIng Mode - Separate routing namespace (no main layout) */}
       <Route path="/cookaing" nest>
         <CookAIngRouter />
       </Route>
       
+      {/* All other routes wrapped in main Layout */}
+      <Route path="*">
+        <Layout>
+          <MainAppRouter />
+        </Layout>
+      </Route>
+    </Switch>
+  );
+}
+
+function MainAppRouter() {
+  return (
+    <Switch>
       {/* Dashboard as the landing page */}
       <Route path="/" component={Dashboard} />
       <Route path="/home" component={Home} />
@@ -180,9 +193,7 @@ function App() {
       <TooltipProvider>
         <Toaster />
         <GlobalComplianceHeader />
-        <Layout>
-          <Router />
-        </Layout>
+        <Router />
       </TooltipProvider>
     </QueryClientProvider>
   );
