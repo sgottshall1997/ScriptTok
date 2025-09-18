@@ -1,0 +1,232 @@
+You are working in a React + Vite + Express + PostgreSQL + Drizzle app.
+
+GOAL
+Replicate the GlowBot “Unified Content Generator” for the CookAIng app, but specialize it for RECIPES as the primary source input and generate production-ready cooking content assets (esp. video scripts) for multiple channels. Integrate with existing CookAIng Marketing Engine (campaigns, artifacts, distributions). Must run in MOCK mode with empty .env and use the same abstractions used in GlowBot. Reuse the design/UX patterns from the following GlowBot files for parity:
+
+- /mnt/data/UnifiedContentGenerator.tsx
+- /mnt/data/UnifiedContentGeneration.tsx
+- /mnt/data/generateContentUnified.tsx
+- /mnt/data/unifiedContentGenerator.tsx
+
+Do NOT modify these files; use them as reference only. Implement CookAIng-scoped equivalents.
+
+SCOPE / GUARDRAILS
+- ADDITIVE ONLY. All new server routes under /api/cookaing-marketing/**
+- All new client components/pages under /src/cookaing-marketing/**
+- Database changes via Drizzle migrations only; avoid destructive changes.
+- Respect feature flags (ENABLE_EMAIL, ENABLE_SOCIAL, ENABLE_BLOG, ENABLE_PUSH, ENABLE_DIGEST, ENABLE_TRENDS).
+- Provide MOCK generation when no AI key is present (deterministic, seeded outputs).
+- No breaking changes to existing GlowBot Unified Content features.
+
+--------------------------------------------------------------------------------
+A) DATA MODEL & STORAGE
+--------------------------------------------------------------------------------
+1) Drizzle migration (non-destructive):
+   - table: content_blueprints (id, name, kind, description, input_schema_json, output_schema_json, defaults_json, created_at)
+   - table: content_jobs (id, recipe_id?, source_type 'recipe'|'freeform', blueprint_id, status 'draft'|'queued'|'generated'|'failed', inputs_json, outputs_json, errors_json, created_at, updated_at)
+   - NOTE: Do not duplicate campaign_artifacts; we will continue to save distributable outputs there after generation.
+
+2) Wire persistence:
+   - After generation, write key outputs (e.g., video scripts, captions, thumbnails prompts) to campaign_artifacts with channel tags:
+     * channel='video_script' (platform subtypes: tiktok, reels, shorts, yt-long)
+     * channel='social' (instagram, tiktok)
+     * channel='blog'
+     * channel='email'
+     * channel='push'
+     * channel='affiliate'
+   - Keep the entire raw output in content_jobs.outputs_json for traceability.
+
+--------------------------------------------------------------------------------
+B) SERVER API
+--------------------------------------------------------------------------------
+3) Create service/adapters: /src/cookaing-marketing/contentGen/
+   - provider.ts: abstraction for AI provider; supports OPENAI_API_KEY if present; otherwise MOCK generator with seeded templates.
+   - render.ts: recipe-aware prompt builder (normalizes recipe object: title, ingredients[], quantities, steps[], time, diet tags, pantry flags).
+   - postprocess.ts: validation against output schemas; safe HTML, link signing hook (reuse existing link-signing util).
+
+4) Routes:
+   - POST /api/cookaing-marketing/content/preview
+     body: { sourceType, recipeId?, freeformText?, blueprintId, options }
+     → returns generated outputs_json (NOT persisted), suitable for on-screen preview.
+   - POST /api/cookaing-marketing/content/generate
+     body: { sourceType, recipeId?, freeformText?, blueprintId, options, persist?: boolean=true, linkToCampaignId?: string }
+     → validates, generates; persists to content_jobs; if linkToCampaignId provided, materialize channel-specific artifacts into campaign_artifacts.
+   - GET /api/cookaing-marketing/content/blueprints
+     → returns list of available content_blueprints with input/output schemas and defaults.
+   - POST /api/cookaing-marketing/content/blueprints/seed
+     → seeds CookAIng blueprints (see Section D).
+   - GET /api/cookaing-marketing/content/jobs?status=&recipeId=&limit=
+     → manage/inspect prior generations.
+
+5) Health:
+   - Extend existing /integrations/health to include { name:"contentGen", status:"ok|mock_mode|missing_keys" } based on OPENAI_API_KEY presence (format-only check; no network call in missing_keys).
+
+--------------------------------------------------------------------------------
+C) CLIENT UI
+--------------------------------------------------------------------------------
+6) New page: /cookaing-marketing/content (Unified Content Generator)
+   - Components under /src/cookaing-marketing/pages/content/*
+   - Left column: Source selector
+     * “Use Recipe” → searchable select of existing recipes (if recipes live externally, accept pasted JSON or connect to your recipe source).
+     * “Freeform” → textarea for structured inputs when no recipe record exists.
+   - Center: Blueprint & Options
+     * Blueprint dropdown; show description; show dynamic form driven by input_schema_json + defaults_json.
+     * Options common to all:
+       - persona (Chef, Busy Parent, College, Vegan, Athlete)
+       - tone (Friendly, Expert, Playful)
+       - platform (TikTok/Reel/Shorts/YouTubeLong/Instagram/Blog/Email/Push)
+       - duration (15s, 30s, 60s, 3m, 8m)
+       - ctas (App install, Pantry feature, Affiliate pick)
+   - Right: Preview & Save
+     * “Preview” → calls /content/preview; renders tabs per asset (Script, Shot List, Captions, Thumbnails, SEO, Schema, Carousel, Email, Push).
+     * “Save & Attach to Campaign” → choose existing campaign or create new; calls /content/generate with linkToCampaignId.
+     * “Export JSON” → download outputs_json.
+
+7) Job history panel:
+   - Collapsible drawer listing recent content_jobs with status, recipe, blueprint, timestamp; click to load outputs.
+
+8) UX finesse:
+   - shadcn/ui Cards; skeletons on network; error toasts; copy-to-clipboard buttons; platform filter quick-toggles.
+
+--------------------------------------------------------------------------------
+D) COOKAIng CONTENT BLUEPRINTS (SEED)
+--------------------------------------------------------------------------------
+9) Seed these blueprints with input/output schemas and defaults:
+
+   (a) Video Script — TikTok/Reels/Shorts
+   kind: "video_script_short"
+   input_schema: { fields: ["hookStyle","timeCapSecs","cameraStyle","voiceover","brollIdeas","ctaStyle"] }
+   output_schema:
+     {
+       "hook": string,
+       "beats": [
+         {"timecode":"0-3s","scene":"Open pantry; tight shot on staple ingredient","dialogue":"...","action":"...","broll":"...","onScreenText":"..."}
+       ],
+       "callToAction": {"primary":"Open CookAIng…","alt":["…"]},
+       "captions": [ "..." ],
+       "hashtags": [ "..." ],
+       "thumbnailPrompts": [ "..." ]
+     }
+   defaults: { hookStyle:"POV", timeCapSecs:30, cameraStyle:"phone handheld", voiceover:true, ctaStyle:"AppOpen" }
+
+   (b) Video Script — YouTube Long
+   kind: "video_script_long"
+   inputs: { outlineDepth, chapters, gear, pace }
+   outputs: { title, description, chapters:[{title, keyPoints[]}], broll, callToAction, timestamps }
+
+   (c) Instagram Carousel — Step-by-Step
+   outputs: { slides:[{headline, body, imagePrompt}], caption, hashtags }
+
+   (d) Blog Recipe — SEO + Schema
+   outputs: { title, h2s[], meta:{title,description,keywords[]}, faq:[{q,a}], schemaOrgJsonLd }
+
+   (e) Email Campaign — Pantry to Plate
+   outputs: { subject, preheader, blocks:[{type,content}], affiliateProducts:[{name,url}] }
+
+   (f) Push Notification — Pantry Hack
+   outputs: { title, body, deepLink }
+
+   (g) Shopping List + Substitutions
+   outputs: { list:[{item,qty,notes}], substitutions:[{ingredient,swap,reason}] }
+
+   (h) Affiliate Insert Pack
+   outputs: { blurbs:[{product,oneLiner,angle}], placements:["email","blog","carousel"] }
+
+   (i) Performance Variant Pack (A/B)
+   outputs: { subjects:["A","B"], hooks:["A","B"], ctas:["A","B"] }
+
+   (j) Voiceover-Only Script
+   outputs: { lines:[{timecode,text,pacing}] }
+
+   (k) Storyboard + Shot List
+   outputs: { shots:[{scene,angle,action,durationSec,notes}] }
+
+   (l) Captions-Only Pack
+   outputs: { captions:[string], altTexts:[string] }
+
+   (m) “One-Ingredient, Three Ways”
+   outputs: { ideas:[{title,steps[],estTime,angle}] }
+
+   (n) Seasonal/Trending Booster
+   outputs: { ideas:[{theme,hook,scriptStub,hashtags}] }
+
+Ensure each blueprint includes a short description and defaults suitable for immediate use. Register them via POST /content/blueprints/seed if absent.
+
+--------------------------------------------------------------------------------
+E) GENERATION LOGIC
+--------------------------------------------------------------------------------
+10) Prompt construction (render.ts):
+    - Normalize recipe: {title, yield, time, ingredients[{name,qty}], steps[], dietTags[], pantry: {has:[…]}}
+    - Add platform/tone/persona/context from options.
+    - For each blueprint, create a specific system+user prompt template that:
+      * Uses cooking-native language (tempo, beats, timecodes).
+      * Produces STRICT JSON matching output_schema_json.
+    - If no OPENAI_API_KEY, return MOCK outputs (use deterministic templates + faker seeded by (recipeId, blueprintId)).
+
+11) Post-processing:
+    - Validate against output_schema_json (zod).
+    - Sanitize HTML; sign outbound links using existing link-signing util.
+    - Attach affiliate picks if option enabled (reuse affiliate lookup service; skip if no keys).
+
+--------------------------------------------------------------------------------
+F) CAMPAIGN INTEGRATION
+--------------------------------------------------------------------------------
+12) “Attach to Campaign” workflow:
+    - When persist + linkToCampaignId, create/update campaign_artifacts:
+      * Map each asset to appropriate channel and platform subtype.
+      * For video scripts, store as channel='video_script' with platform metadata.
+      * For carousel/blog/email/push, use existing channels accordingly.
+    - Show toasts and deep-link to the target campaign detail.
+
+13) Distribution readiness:
+    - Respect existing Publish/Schedule actions (Buffer, Notion, OneSignal, Email). If keys missing, show “mock mode” but allow preview/export.
+
+--------------------------------------------------------------------------------
+G) TESTS & SEEDS
+--------------------------------------------------------------------------------
+14) Seed content:
+    - Add 3 demo recipes (vegan 10-min, family 30-min, athlete 20-min) as JSON fixtures for the generator to pick if no recipe DB exists.
+    - Seed 4–6 blueprints and 2 content_jobs for demo preview on first load.
+
+15) Vitest:
+    - provider.mock: stable seeded outputs across runs.
+    - render: given a recipe + blueprint, outputs pass schema validation.
+    - postprocess: link signing applied; HTML sanitized.
+    - API: /content/preview and /content/generate return shapes; generate persists jobs; attach writes campaign_artifacts.
+
+16) Playwright:
+    - Navigate to /cookaing-marketing/content: choose demo recipe → select “Video Script — TikTok/Reels” → Preview shows beats/timecodes → Save & Attach creates artifacts → navigate to campaign detail and verify artifact presence.
+    - Toggle platform/tone/persona and confirm output changes.
+    - Mock env: no external keys; UI still works.
+
+--------------------------------------------------------------------------------
+H) UI COPY & HELP
+--------------------------------------------------------------------------------
+17) Add an InstructionFooter to the new page with:
+    title: "Unified Content Generator (CookAIng)"
+    whatIsIt: "Takes a recipe or freeform idea and generates multi-channel cooking content assets—especially beat-timed video scripts—with ready-to-publish outputs."
+    setupSteps: [
+      "Optional: add OPENAI_API_KEY to enable live AI generation; mock mode works without keys.",
+      "Have at least one recipe (or paste JSON) to drive accurate ingredient lists and steps.",
+      "Optionally add affiliate keys to enrich outputs with product picks."
+    ]
+    usageSteps: [
+      "Select a recipe or freeform input.",
+      "Pick a blueprint and adjust options (platform, tone, duration, persona).",
+      "Preview, then Save & Attach to a campaign for distribution."
+    ]
+    relatedLinks: [
+      {label:"Campaigns", href:"/cookaing-marketing/campaigns"},
+      {label:"Affiliate Products", href:"/cookaing-marketing/affiliates"},
+      {label:"Reports", href:"/cookaing-marketing/reports"}
+    ]
+    envKeys: ["OPENAI_API_KEY","AMAZON_ACCESS_KEY","AMAZON_SECRET_KEY","AMAZON_PARTNER_TAG"]
+
+--------------------------------------------------------------------------------
+I) ACCEPTANCE
+--------------------------------------------------------------------------------
+- /cookaing-marketing/content exists with a three-pane generator (Source → Blueprint/Options → Preview/Save).
+- /content/blueprints returns seeded CookAIng blueprints; preview/generate works in MOCK mode (no keys).
+- /content/generate with linkToCampaignId writes artifacts to campaign_artifacts mapped by channel/platform.
+- Job History displays recent generations; artifacts open in their respective editors/viewers.
+- Playwright + Vitest pass; no regressions to existing CookAIng pages or GlowBot features.
