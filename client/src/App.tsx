@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
-import { Switch, Route } from "wouter";
+import { Switch, Route, Redirect } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -129,27 +129,27 @@ function Router() {
       <Route path="/compliance" component={CompliancePage} />
       <Route path="/spartan-generator" component={SpartanContentPage} />
       
-      {/* CookAIng Marketing Engine routes */}
-      <Route path="/cookaing-marketing" component={CookAIngMarketingDashboard} />
-      <Route path="/cookaing-marketing/organizations" component={CookAIngOrganizations} />
-      <Route path="/cookaing-marketing/contacts" component={CookAIngContacts} />
-      <Route path="/cookaing-marketing/campaigns" component={CookAIngCampaigns} />
-      <Route path="/cookaing-marketing/workflows" component={CookAIngWorkflows} />
-      <Route path="/cookaing-marketing/forms" component={CookAIngForms} />
-      <Route path="/cookaing-marketing/affiliate-products" component={CookAIngAffiliateProducts} />
-      <Route path="/cookaing-marketing/docs" component={CookAIngMarketingDocs} />
-      <Route path="/cookaing-marketing/integrations-health" component={CookAIngIntegrationsHealth} />
-      <Route path="/cookaing-marketing/segments" component={CookAIngSegments} />
-      <Route path="/cookaing-marketing/experiments" component={CookAIngExperiments} />
-      <Route path="/cookaing-marketing/personalization" component={CookAIngPersonalization} />
-      <Route path="/cookaing-marketing/submissions" component={CookAIngSubmissions} />
-      <Route path="/cookaing-marketing/trends" component={CookAIngTrends} />
-      <Route path="/cookaing-marketing/reports" component={CookAIngReports} />
-      <Route path="/cookaing-marketing/costs" component={CookAIngCosts} />
-      <Route path="/cookaing-marketing/attribution" component={CookAIngAttribution} />
-      <Route path="/cookaing-marketing/webhooks" component={CookAIngWebhooks} />
-      <Route path="/cookaing-marketing/email-test" component={CookAIngEmailTest} />
-      <Route path="/cookaing-marketing/devtools" component={CookAIngDevTools} />
+      {/* Router guards - redirect /cookaing-marketing/* to /cookaing/* for CookAIng layout adoption */}
+      <Route path="/cookaing-marketing" component={() => <Redirect to="/cookaing/cookaing-marketing" />} />
+      <Route path="/cookaing-marketing/organizations" component={() => <Redirect to="/cookaing/organizations" />} />
+      <Route path="/cookaing-marketing/contacts" component={() => <Redirect to="/cookaing/contacts" />} />
+      <Route path="/cookaing-marketing/segments" component={() => <Redirect to="/cookaing/segments" />} />
+      <Route path="/cookaing-marketing/campaigns" component={() => <Redirect to="/cookaing/campaigns" />} />
+      <Route path="/cookaing-marketing/experiments" component={() => <Redirect to="/cookaing/experiments" />} />
+      <Route path="/cookaing-marketing/workflows" component={() => <Redirect to="/cookaing/workflows" />} />
+      <Route path="/cookaing-marketing/personalization" component={() => <Redirect to="/cookaing/personalization" />} />
+      <Route path="/cookaing-marketing/forms" component={() => <Redirect to="/cookaing/forms" />} />
+      <Route path="/cookaing-marketing/submissions" component={() => <Redirect to="/cookaing/submissions" />} />
+      <Route path="/cookaing-marketing/affiliate-products" component={() => <Redirect to="/cookaing/affiliate-products" />} />
+      <Route path="/cookaing-marketing/trends" component={() => <Redirect to="/cookaing/trends" />} />
+      <Route path="/cookaing-marketing/reports" component={() => <Redirect to="/cookaing/reports" />} />
+      <Route path="/cookaing-marketing/costs" component={() => <Redirect to="/cookaing/costs" />} />
+      <Route path="/cookaing-marketing/attribution" component={() => <Redirect to="/cookaing/attribution" />} />
+      <Route path="/cookaing-marketing/integrations-health" component={() => <Redirect to="/cookaing/integrations-health" />} />
+      <Route path="/cookaing-marketing/webhooks" component={() => <Redirect to="/cookaing/webhooks" />} />
+      <Route path="/cookaing-marketing/email-test" component={() => <Redirect to="/cookaing/email-test" />} />
+      <Route path="/cookaing-marketing/devtools" component={() => <Redirect to="/cookaing/devtools" />} />
+      <Route path="/cookaing-marketing/docs" component={() => <Redirect to="/cookaing/docs" />} />
       
       {/* Public form route */}
       <Route path="/forms/:slug" component={PublicForm} />
