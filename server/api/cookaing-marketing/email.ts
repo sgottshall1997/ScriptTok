@@ -33,33 +33,97 @@ router.post("/send", async (req: Request, res: Response) => {
     const artifacts = await storage.getCampaignArtifacts(campaignId);
     const emailArtifact = artifacts.find(a => a.channel === "email" && (variant ? a.variant === variant : true));
     
+    // Define mock email content for testing
+    const mockEmailContent = {
+      subject: `${campaign.name} - Email Campaign`,
+      html: `
+        <html>
+        <body style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+          <h1 style="color: #333; text-align: center;">Welcome to ${campaign.name}</h1>
+          <p>This is a sample email content for campaign: <strong>${campaign.name}</strong></p>
+          <p>This email was generated for testing purposes.</p>
+          <div style="margin: 30px 0; padding: 20px; background-color: #f5f5f5; border-radius: 8px;">
+            <h2 style="color: #555; margin-top: 0;">Campaign Details:</h2>
+            <ul>
+              <li>Campaign Name: ${campaign.name}</li>
+              <li>Campaign Type: ${campaign.type}</li>
+              <li>Status: ${campaign.status}</li>
+              <li>Variant: ${variant || 'A'}</li>
+            </ul>
+          </div>
+          <p style="text-align: center; margin-top: 40px;">
+            <a href="https://example.com/unsubscribe" style="color: #666; text-decoration: none; font-size: 12px;">
+              Unsubscribe from this campaign
+            </a>
+          </p>
+        </body>
+        </html>
+      `,
+      text: `
+Welcome to ${campaign.name}
+
+This is a sample email content for campaign: ${campaign.name}
+This email was generated for testing purposes.
+
+Campaign Details:
+- Campaign Name: ${campaign.name}
+- Campaign Type: ${campaign.type}
+- Status: ${campaign.status}
+- Variant: ${variant || 'A'}
+
+Unsubscribe: https://example.com/unsubscribe
+      `
+    };
+    
     if (!emailArtifact) {
-      return res.status(404).json({ 
-        error: `No email content found for campaign${variant ? ` variant ${variant}` : ''}` 
-      });
+      console.log(`📧 No email content found for campaign ${campaignId} variant ${variant || 'default'}`);
+      
+      if (!dryRun) {
+        // CRITICAL: Never allow live sends without real email content
+        console.error(`❌ Attempted live send without email content for campaign ${campaignId}`);
+        return res.status(400).json({ 
+          error: "Cannot send campaign without email content. Please create email content for this campaign first, or use dry run mode to preview." 
+        });
+      }
+      
+      console.log('📧 Using mock email content for dry run testing only');
     }
 
-    // Get recipients from segments
+    // Get recipients from segments or organization
     let recipients: any[] = [];
     
     if (segmentIds && segmentIds.length > 0) {
-      // Get contacts from specific segments
-      for (const segmentId of segmentIds) {
-        const segment = await storage.getSegment(segmentId);
-        if (segment) {
-          const segmentContacts = await storage.getContactsBySegment(segmentId);
-          recipients.push(...segmentContacts);
-        }
+      // TEMPORARY: Segment implementation not complete - using mock contacts for testing
+      console.warn('⚠️ Using mock recipients for segment testing - segments not fully implemented');
+      
+      // Mock recipients based on segment selection for testing
+      const mockRecipients = [
+        { id: 1, email: 'test1@example.com', name: 'Test User 1' },
+        { id: 2, email: 'test2@example.com', name: 'Test User 2' },
+        { id: 3, email: 'test3@example.com', name: 'Test User 3' }
+      ];
+      
+      if (!dryRun) {
+        // For live sends, prevent using mock data
+        console.error('❌ Cannot perform live send with incomplete segment implementation');
+        return res.status(400).json({ 
+          error: "Segment targeting is not yet fully implemented. Please use 'All Contacts' or enable dry run mode for testing." 
+        });
       }
+      
+      recipients = mockRecipients;
     } else {
-      // Get all contacts for the organization
-      recipients = await storage.getContactsByOrganization(campaign.orgId);
+      // Get all contacts for the organization (this should work with existing implementation)
+      try {
+        recipients = await storage.getContactsByOrganization(campaign.orgId);
+        console.log(`📊 Found ${recipients.length} contacts for organization ${campaign.orgId}`);
+      } catch (error) {
+        console.error('❌ Error fetching contacts:', error);
+        return res.status(500).json({ 
+          error: "Failed to fetch contacts for this campaign" 
+        });
+      }
     }
-
-    // Remove duplicates
-    recipients = recipients.filter((contact, index, self) => 
-      index === self.findIndex(c => c.id === contact.id)
-    );
 
     console.log(`📊 Found ${recipients.length} recipients for campaign ${campaignId}`);
 
@@ -82,7 +146,7 @@ router.post("/send", async (req: Request, res: Response) => {
     }
 
     // Process email content
-    const emailContent = emailArtifact.contentJson as any;
+    const emailContent = emailArtifact ? (emailArtifact.contentJson as any) : mockEmailContent;
     const subject = emailContent.subject || campaign.name;
     const htmlContent = emailContent.html || emailContent.content || '';
 
@@ -181,10 +245,52 @@ router.post("/send", async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/cookaing-marketing/webhooks/brevo
+// Webhook signature verification function
+const verifyBrevoWebhookSignature = (payload: any, signature: string | undefined, secret: string): boolean => {
+  if (!signature || !secret) {
+    return false;
+  }
+  
+  try {
+    // Brevo webhook signature verification (implement based on Brevo's documentation)
+    const crypto = require('crypto');
+    const payloadString = JSON.stringify(payload);
+    const expectedSignature = crypto.createHmac('sha256', secret).update(payloadString).digest('hex');
+    
+    // Compare signatures securely
+    return crypto.timingSafeEqual(
+      Buffer.from(signature, 'hex'),
+      Buffer.from(expectedSignature, 'hex')
+    );
+  } catch (error) {
+    console.error('❌ Webhook signature verification error:', error);
+    return false;
+  }
+};
+
+// POST /api/cookaing-marketing/webhooks/brevo  
 router.post("/webhooks/brevo", async (req: Request, res: Response) => {
   try {
-    console.log("🔗 Brevo webhook received:", req.body);
+    const webhookSecret = process.env.BREVO_WEBHOOK_SECRET;
+    
+    // SECURITY: Enforce webhook secret in production
+    if (!webhookSecret) {
+      console.error("❌ BREVO_WEBHOOK_SECRET not configured - webhook disabled");
+      return res.status(503).json({ 
+        error: "Webhook service unavailable - configuration missing" 
+      });
+    }
+    
+    // SECURITY: Verify webhook signature
+    const signature = req.headers['x-brevo-signature'] as string;
+    if (!verifyBrevoWebhookSignature(req.body, signature, webhookSecret)) {
+      console.error("❌ Invalid Brevo webhook signature");
+      return res.status(401).json({ 
+        error: "Unauthorized - Invalid webhook signature" 
+      });
+    }
+    
+    console.log("✅ Brevo webhook signature verified");
 
     const { event, email, 'message-id': messageId, date, url } = req.body;
     
