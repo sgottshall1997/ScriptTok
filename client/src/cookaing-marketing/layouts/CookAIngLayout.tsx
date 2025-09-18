@@ -22,6 +22,7 @@ import {
   Mail,
   Wrench,
   BookOpen,
+  Info,
   Menu,
   X,
   ArrowLeft
@@ -36,6 +37,7 @@ interface SidebarItem {
 
 const cookAIngNavigation: SidebarItem[] = [
   { name: "Marketing Dashboard", href: "/cookaing-marketing", icon: Home },
+  { name: "About", href: "/cookaing-marketing/about", icon: Info },
   { name: "Organizations", href: "/cookaing-marketing/organizations", icon: Building },
   { name: "Contacts", href: "/cookaing-marketing/contacts", icon: Users },
   { name: "Segments", href: "/cookaing-marketing/segments", icon: Users2 },

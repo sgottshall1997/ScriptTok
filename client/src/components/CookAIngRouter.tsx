@@ -12,6 +12,7 @@ import CookAIngWorkflows from "@/pages/cookaing-marketing/workflows";
 import CookAIngForms from "@/pages/cookaing-marketing/forms";
 import CookAIngAffiliateProducts from "@/pages/cookaing-marketing/affiliate-products";
 import CookAIngMarketingDocs from "@/pages/cookaing-marketing/docs";
+import CookAIngAbout from "@/pages/cookaing-marketing/about";
 import CookAIngIntegrationsHealth from "@/pages/cookaing-marketing/integrations-health";
 import CookAIngSegments from "@/pages/cookaing-marketing/segments";
 import CookAIngExperiments from "@/pages/cookaing-marketing/experiments";
@@ -37,6 +38,7 @@ const CookAIngRouter: React.FC = () => {
         
         {/* CookAIng Marketing Engine routes - all mounted under /cookaing */}
         <Route path="/cookaing-marketing" component={CookAIngMarketingDashboard} />
+        <Route path="/about" component={CookAIngAbout} />
         <Route path="/organizations" component={CookAIngOrganizations} />
         <Route path="/contacts" component={CookAIngContacts} />
         <Route path="/segments" component={CookAIngSegments} />
