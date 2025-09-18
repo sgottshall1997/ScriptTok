@@ -1586,6 +1586,30 @@ export const affiliateProducts = pgTable("affiliate_products", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// Email event types enum
+export const emailEventTypeEnum = pgEnum("email_event_type", [
+  "sent",
+  "delivered", 
+  "open",
+  "click",
+  "bounce",
+  "unsubscribe",
+  "complaint"
+]);
+
+// Analytics events for marketing activities
+export const analyticsEvents = pgTable("analytics_events", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: "cascade" }),
+  eventType: varchar("event_type", { length: 100 }).notNull(),
+  entityType: varchar("entity_type", { length: 50 }).notNull(), // 'campaign', 'workflow', 'form', etc.
+  entityId: integer("entity_id").notNull(),
+  contactId: integer("contact_id").references(() => contacts.id, { onDelete: "set null" }),
+  emailEventType: emailEventTypeEnum("email_event_type"), // For email-specific events
+  metaJson: jsonb("meta_json"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Content templates
 export const templates = pgTable("templates", {
   id: serial("id").primaryKey(),
@@ -1644,6 +1668,7 @@ export const insertFormSubmissionSchema = createInsertSchema(formSubmissions).om
 export const insertLeadScoreSchema = createInsertSchema(leadScores).omit({ updatedAt: true });
 export const insertPageEventSchema = createInsertSchema(pageEvents).omit({ id: true, createdAt: true });
 export const insertAffiliateProductSchema = createInsertSchema(affiliateProducts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAnalyticsEventSchema = createInsertSchema(analyticsEvents).omit({ id: true, createdAt: true });
 export const insertTemplateSchema = createInsertSchema(templates).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertABTestSchema = createInsertSchema(abTests).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
@@ -1690,6 +1715,9 @@ export type InsertPageEvent = z.infer<typeof insertPageEventSchema>;
 
 export type AffiliateProduct = typeof affiliateProducts.$inferSelect;
 export type InsertAffiliateProduct = z.infer<typeof insertAffiliateProductSchema>;
+
+export type AnalyticsEvent = typeof analyticsEvents.$inferSelect;
+export type InsertAnalyticsEvent = z.infer<typeof insertAnalyticsEventSchema>;
 
 export type Template = typeof templates.$inferSelect;
 export type InsertTemplate = z.infer<typeof insertTemplateSchema>;
