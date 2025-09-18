@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey, varchar, decimal, unique } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, foreignKey, varchar, decimal, unique, index } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -1482,7 +1482,9 @@ export const campaignArtifacts = pgTable("campaign_artifacts", {
   payloadJson: jsonb("payload_json").notNull(), // generated content
   variant: text("variant").default("A"), // A/B testing variants
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => ({
+  campaignIdIdx: index("campaign_artifacts_campaign_id_idx").on(table.campaignId),
+}));
 
 // Campaign recipients tracking
 export const campaignRecipients = pgTable("campaign_recipients", {
@@ -1496,7 +1498,10 @@ export const campaignRecipients = pgTable("campaign_recipients", {
   bounceAt: timestamp("bounce_at"),
   unsubscribeAt: timestamp("unsubscribe_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => ({
+  campaignContactIdx: index("campaign_recipients_campaign_contact_idx").on(table.campaignId, table.contactId),
+  campaignIdIdx: index("campaign_recipients_campaign_id_idx").on(table.campaignId),
+}));
 
 // Workflow definitions
 export const workflows = pgTable("workflows", {
@@ -1542,7 +1547,10 @@ export const formSubmissions = pgTable("form_submissions", {
   dataJson: jsonb("data_json").notNull(), // submitted form data
   utmJson: jsonb("utm_json"), // UTM parameters
   createdAt: timestamp("created_at").defaultNow().notNull(),
-});
+}, (table) => ({
+  formCreatedIdx: index("form_submissions_form_created_idx").on(table.formId, table.createdAt),
+  formIdIdx: index("form_submissions_form_id_idx").on(table.formId),
+}));
 
 // Lead scoring system
 export const leadScores = pgTable("lead_scores", {
