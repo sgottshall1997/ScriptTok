@@ -24,6 +24,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { insertContactSchema, contacts, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 type Contact = typeof contacts.$inferSelect;
 type Organization = typeof organizations.$inferSelect;
@@ -414,6 +415,24 @@ const ContactsPage = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Contacts"
+        whatIsIt="Lead/customer directory with preferences, pantry data, tags, and attribution."
+        setupSteps={[
+          "Embed a /forms/{slug} on your site to start capturing contacts.",
+          "Confirm UTM parameters are passed via GA4/GTM and stored on submission."
+        ]}
+        usageSteps={[
+          "Search/filter by segment rules, edit preferences, view first/last touch.",
+          "Open a contact to inspect events and campaign engagement."
+        ]}
+        relatedLinks={[
+          {label:"Segments", href:"/cookaing-marketing/segments"},
+          {label:"Form Submissions", href:"/cookaing-marketing/submissions"}
+        ]}
+      />
     </div>
   );
 };

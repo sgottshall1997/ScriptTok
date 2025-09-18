@@ -27,6 +27,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { insertWorkflowSchema, workflows, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 type WorkflowType = typeof workflows.$inferSelect;
 type Organization = typeof organizations.$inferSelect;
@@ -471,6 +472,19 @@ const WorkflowsPage = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Workflows"
+        whatIsIt="JSON-driven automations (welcome series, seasonal packs, referral, digest)."
+        setupSteps={[
+          "Create or enable a workflow and define triggers (form submitted, segment joined).",
+          "If using Digest, set schedule and preview as a contact."
+        ]}
+        usageSteps={[
+          "Toggle active/inactive; review recent runs and logs."
+        ]}
+      />
     </div>
   );
 };

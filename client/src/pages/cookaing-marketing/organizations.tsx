@@ -24,6 +24,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { insertOrganizationSchema, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 type Organization = typeof organizations.$inferSelect;
 
@@ -406,6 +407,19 @@ const OrganizationsPage = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Organizations"
+        whatIsIt="Multi-tenant admin for brands/accounts and plan settings."
+        setupSteps={[
+          "Create your primary organization (CookAIng).",
+          "Assign plan level and defaults for sending limits if applicable."
+        ]}
+        usageSteps={[
+          "Filter records, update plan or metadata, and manage linked contacts."
+        ]}
+      />
     </div>
   );
 };

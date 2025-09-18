@@ -15,6 +15,7 @@ import {
   TrendingUp,
   BarChart3
 } from "lucide-react";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 const CookAIngMarketingDashboard = () => {
   // Fetch overview stats
@@ -205,6 +206,26 @@ const CookAIngMarketingDashboard = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Marketing Dashboard"
+        whatIsIt="Central KPI overview for CookAIng marketing. Pulls recent activity across contacts, campaigns, email, social/blog/push, A/B, and costs/ROAS."
+        setupSteps={[
+          "Ensure seeds or real data exist in Contacts, Campaigns, and Analytics.",
+          "Optionally upload a costs CSV in Costs & ROAS to enable spend/ROAS tiles.",
+          "Verify feature flags for channels you plan to use (ENABLE_EMAIL/SOCIAL/BLOG/PUSH)."
+        ]}
+        usageSteps={[
+          "Scan 14-day KPIs; click into any widget to drill into the source page.",
+          "Use A/B snapshot to identify winners to reuse in upcoming sends.",
+          "Review Top Content to inform social and ad creative."
+        ]}
+        relatedLinks={[
+          {label:"Reports", href:"/cookaing-marketing/reports"},
+          {label:"Costs & ROAS", href:"/cookaing-marketing/costs"}
+        ]}
+      />
     </div>
   );
 };

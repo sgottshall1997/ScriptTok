@@ -12,6 +12,7 @@ import {
   Edit,
   Trash2
 } from "lucide-react";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 interface Segment {
   id: string;
@@ -254,6 +255,19 @@ export default function SegmentsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Segments"
+        whatIsIt="Dynamic lists driven by rules (e.g., diet = vegan, time ≤ 20 min)."
+        setupSteps={[
+          "Define rules using contact fields and tags.",
+          "Save and verify previewed membership counts."
+        ]}
+        usageSteps={[
+          "Use a segment as audience for Campaign sends and Workflows."
+        ]}
+      />
     </div>
   );
 }

@@ -46,6 +46,7 @@ import { insertCampaignSchema, campaigns, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import AutoInsertAffiliateButton from '@/components/AutoInsertAffiliateButton';
 import AbPanel from '@/components/cookaing-marketing/ab/AbPanel';
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 type Campaign = typeof campaigns.$inferSelect;
 type Organization = typeof organizations.$inferSelect;
@@ -1097,6 +1098,22 @@ const CampaignsPage = () => {
           </Form>
         </DialogContent>
       </Dialog>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Campaigns"
+        whatIsIt="Multi-channel campaigns (email/social/blog/push) with artifacts per channel."
+        setupSteps={[
+          "Create a campaign record; add artifacts for the channels you plan to use.",
+          "If using email, authenticate domain (SPF/DKIM/DMARC) in your sender service."
+        ]}
+        usageSteps={[
+          "Preview artifacts; choose a segment; send/schedule.",
+          "Open the campaign detail to watch recipients and events update."
+        ]}
+        envKeys={["BREVO_API_KEY","RESEND_API_KEY","BUFFER_ACCESS_TOKEN","ONESIGNAL_APP_ID","ONESIGNAL_REST_API_KEY","NOTION_API_KEY","NOTION_BLOG_DB_ID"]}
+        featureFlags={["email", "social", "blog", "push"]}
+      />
     </div>
   );
 };
