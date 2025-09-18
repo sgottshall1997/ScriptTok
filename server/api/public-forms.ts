@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { storage } from '../storage';
 import { z } from 'zod';
 import { insertFormSubmissionSchema } from '@shared/schema';
+import { captureAttribution, applyContactAttribution } from '../middleware/attribution';
 
 export const publicFormsRouter = Router();
 
@@ -34,7 +35,7 @@ publicFormsRouter.get('/by-slug/:slug', async (req: Request, res: Response) => {
  * POST /api/forms/:id/submit
  * Submit data to a form (public endpoint with complete e2e flow)
  */
-publicFormsRouter.post('/:id/submit', async (req: Request, res: Response) => {
+publicFormsRouter.post('/:id/submit', captureAttribution, async (req: Request, res: Response) => {
   try {
     const formId = parseInt(req.params.id);
     
@@ -48,12 +49,25 @@ publicFormsRouter.post('/:id/submit', async (req: Request, res: Response) => {
       return res.status(404).json({ error: 'Form not found' });
     }
     
+    // Set orgId in request context for attribution middleware
+    (req as any).orgId = form.orgId;
+    
     // Parse and validate submission
+    const attributionData = (req as any).attribution || {};
+    
+    // Merge UTM from middleware and request body (body takes precedence for explicit data)
+    const utmData = {
+      ...attributionData,
+      ...(req.body.utmJson || {}),
+      // If there's a landing page in body, use it over the middleware's referer-based detection
+      landingPage: req.body.utmJson?.landingPage || attributionData.landingPage
+    };
+    
     const submissionInput = insertFormSubmissionSchema.parse({
       formId: formId,
       contactId: req.body.contactId || null,
       dataJson: req.body.dataJson || {},
-      utmJson: req.body.utmJson || {}
+      utmJson: Object.keys(utmData).length > 0 ? utmData : {}
     });
     
     // Create form submission
@@ -63,9 +77,8 @@ publicFormsRouter.post('/:id/submit', async (req: Request, res: Response) => {
     const submissionData = submissionInput.dataJson as any;
     if (submissionData.name && submissionData.email) {
       try {
-        // Check if contact exists
-        const existingContacts = await storage.getContacts();
-        const existingContact = existingContacts.find(c => c.email === submissionData.email);
+        // Check if contact exists (efficient targeted query)
+        const existingContact = await storage.getContactByEmail(submissionData.email);
         
         if (!existingContact) {
           // Create new contact
@@ -84,8 +97,18 @@ publicFormsRouter.post('/:id/submit', async (req: Request, res: Response) => {
           
           const contact = await storage.createContact(contactInput);
           console.log(`✅ Created contact ${contact.id} from form submission ${submission.id}`);
+          
+          // Apply attribution if captured
+          if (utmData && Object.keys(utmData).length > 0) {
+            await applyContactAttribution(contact.id, utmData, form.orgId);
+          }
         } else {
           console.log(`✅ Associated submission ${submission.id} with existing contact ${existingContact.id}`);
+          
+          // Apply attribution to existing contact as well (for last-touch tracking)
+          if (utmData && Object.keys(utmData).length > 0) {
+            await applyContactAttribution(existingContact.id, utmData, form.orgId);
+          }
         }
       } catch (contactError) {
         console.error('Error creating/updating contact:', contactError);

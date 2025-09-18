@@ -1682,6 +1682,24 @@ export const abConversions = pgTable("ab_conversions", {
   abTestVariantIdx: index("ab_conversions_ab_test_variant_idx").on(table.abTestId, table.variant),
 }));
 
+// Cost tracking for ROAS analysis
+export const costs = pgTable("costs", {
+  id: serial("id").primaryKey(),
+  orgId: integer("org_id").notNull().references(() => organizations.id, { onDelete: 'cascade' }),
+  date: timestamp("date").notNull(),
+  campaignPlatform: text("campaign_platform").notNull(), // facebook, google, tiktok, etc.
+  campaignName: text("campaign_name").notNull(),
+  cost: decimal("cost").notNull(),
+  currency: text("currency").notNull().default("USD"),
+  metaJson: jsonb("meta_json"), // additional cost data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => ({
+  dateIdx: index("costs_date_idx").on(table.date),
+  campaignPlatformIdx: index("costs_campaign_platform_idx").on(table.campaignPlatform),
+  orgIdDateIdx: index("costs_org_id_date_idx").on(table.orgId, table.date),
+}));
+
 // Audit logging for compliance
 export const auditLogs = pgTable("audit_logs", {
   id: serial("id").primaryKey(),
@@ -1719,6 +1737,7 @@ export const insertTemplateSchema = createInsertSchema(templates).omit({ id: tru
 export const insertABTestSchema = createInsertSchema(abTests).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertABAssignmentSchema = createInsertSchema(abAssignments).omit({ id: true, createdAt: true });
 export const insertABConversionSchema = createInsertSchema(abConversions).omit({ id: true, createdAt: true });
+export const insertCostSchema = createInsertSchema(costs).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
 
 // Type exports
@@ -1778,6 +1797,9 @@ export type InsertABAssignment = z.infer<typeof insertABAssignmentSchema>;
 
 export type ABConversion = typeof abConversions.$inferSelect;
 export type InsertABConversion = z.infer<typeof insertABConversionSchema>;
+
+export type Cost = typeof costs.$inferSelect;
+export type InsertCost = z.infer<typeof insertCostSchema>;
 
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;

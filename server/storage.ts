@@ -28,6 +28,7 @@ import {
   ABTest, InsertABTest,
   ABAssignment, InsertABAssignment,
   ABConversion, InsertABConversion,
+  Cost, InsertCost,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
@@ -35,7 +36,7 @@ import {
   contentHistory,
   // CookAIng Marketing Engine tables
   organizations, contacts, campaigns, workflows, forms, formSubmissions, affiliateProducts,
-  analyticsEvents, abTests, abAssignments, abConversions
+  analyticsEvents, abTests, abAssignments, abConversions, costs
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -168,6 +169,7 @@ export interface IStorage {
   // Contact operations
   createContact(contact: InsertContact): Promise<Contact>;
   getContact(id: number): Promise<Contact | undefined>;
+  getContactByEmail(email: string): Promise<Contact | undefined>;
   getContactsByOrganization(organizationId: number): Promise<Contact[]>;
   getContacts(limit?: number): Promise<Contact[]>;
   updateContact(id: number, updates: Partial<InsertContact>): Promise<Contact | undefined>;
@@ -226,6 +228,16 @@ export interface IStorage {
   
   // Analytics Event operations
   createAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent>;
+  
+  // Cost operations for ROAS tracking
+  createCost(cost: InsertCost): Promise<Cost>;
+  getCost(id: number): Promise<Cost | undefined>;
+  getCostsByOrganization(organizationId: number): Promise<Cost[]>;
+  getCosts(limit?: number): Promise<Cost[]>;
+  updateCost(id: number, updates: Partial<InsertCost>): Promise<Cost | undefined>;
+  deleteCost(id: number): Promise<boolean>;
+  getCostsByDateRange(orgId: number, from: Date, to: Date): Promise<Cost[]>;
+  getCostsByPlatform(orgId: number, platform: string): Promise<Cost[]>;
   
   // A/B Testing operations
   createABTest(test: InsertABTest): Promise<ABTest>;
@@ -1887,6 +1899,11 @@ export class DatabaseStorage implements IStorage {
     const [result] = await db.select().from(contacts).where(eq(contacts.id, id));
     return result;
   }
+
+  async getContactByEmail(email: string): Promise<Contact | undefined> {
+    const [result] = await db.select().from(contacts).where(eq(contacts.email, email));
+    return result;
+  }
   
   async getContactsByOrganization(organizationId: number): Promise<Contact[]> {
     return await db.select().from(contacts).where(eq(contacts.orgId, organizationId));
@@ -2085,6 +2102,77 @@ export class DatabaseStorage implements IStorage {
   async createAnalyticsEvent(event: InsertAnalyticsEvent): Promise<AnalyticsEvent> {
     const [result] = await db.insert(analyticsEvents).values(event).returning();
     return result;
+  }
+
+  // Cost operations for ROAS tracking
+  async createCost(cost: InsertCost): Promise<Cost> {
+    const [result] = await db.insert(costs).values(cost).returning();
+    return result;
+  }
+
+  async getCost(id: number): Promise<Cost | undefined> {
+    const [result] = await db.select().from(costs).where(eq(costs.id, id));
+    return result;
+  }
+
+  async getCostsByOrganization(organizationId: number): Promise<Cost[]> {
+    const results = await db
+      .select()
+      .from(costs)
+      .where(eq(costs.orgId, organizationId))
+      .orderBy(desc(costs.date));
+    return results;
+  }
+
+  async getCosts(limit?: number): Promise<Cost[]> {
+    let query = db.select().from(costs).orderBy(desc(costs.date));
+    if (limit) {
+      query = query.limit(limit);
+    }
+    return await query;
+  }
+
+  async updateCost(id: number, updates: Partial<InsertCost>): Promise<Cost | undefined> {
+    const [result] = await db
+      .update(costs)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(costs.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteCost(id: number): Promise<boolean> {
+    const result = await db.delete(costs).where(eq(costs.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  async getCostsByDateRange(orgId: number, from: Date, to: Date): Promise<Cost[]> {
+    const results = await db
+      .select()
+      .from(costs)
+      .where(
+        and(
+          eq(costs.orgId, orgId),
+          gte(costs.date, from),
+          lte(costs.date, to)
+        )
+      )
+      .orderBy(desc(costs.date));
+    return results;
+  }
+
+  async getCostsByPlatform(orgId: number, platform: string): Promise<Cost[]> {
+    const results = await db
+      .select()
+      .from(costs)
+      .where(
+        and(
+          eq(costs.orgId, orgId),
+          eq(costs.campaignPlatform, platform)
+        )
+      )
+      .orderBy(desc(costs.date));
+    return results;
   }
 
   // A/B Testing operations
