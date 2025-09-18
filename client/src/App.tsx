@@ -44,6 +44,15 @@ import SpartanContentPage from "@/pages/SpartanContentPage";
 import ScheduleManager from "@/pages/schedule-manager";
 import SupportPage from "@/pages/SupportPage";
 
+// CookAIng Marketing Engine pages
+import CookAIngMarketingDashboard from "@/pages/cookaing-marketing/index";
+import CookAIngOrganizations from "@/pages/cookaing-marketing/organizations";
+import CookAIngContacts from "@/pages/cookaing-marketing/contacts";
+import CookAIngCampaigns from "@/pages/cookaing-marketing/campaigns";
+import CookAIngWorkflows from "@/pages/cookaing-marketing/workflows";
+import CookAIngForms from "@/pages/cookaing-marketing/forms";
+import CookAIngAffiliateProducts from "@/pages/cookaing-marketing/affiliate-products";
+
 import Layout from "@/components/Layout";
 import Footer from "@/components/Footer";
 import { initScraperConsole } from "./lib/scraperConsole";
@@ -96,6 +105,15 @@ function Router() {
       <Route path="/performance-analytics" component={PerformanceAnalytics} />
       <Route path="/compliance" component={CompliancePage} />
       <Route path="/spartan-generator" component={SpartanContentPage} />
+      
+      {/* CookAIng Marketing Engine routes */}
+      <Route path="/cookaing-marketing" component={CookAIngMarketingDashboard} />
+      <Route path="/cookaing-marketing/organizations" component={CookAIngOrganizations} />
+      <Route path="/cookaing-marketing/contacts" component={CookAIngContacts} />
+      <Route path="/cookaing-marketing/campaigns" component={CookAIngCampaigns} />
+      <Route path="/cookaing-marketing/workflows" component={CookAIngWorkflows} />
+      <Route path="/cookaing-marketing/forms" component={CookAIngForms} />
+      <Route path="/cookaing-marketing/affiliate-products" component={CookAIngAffiliateProducts} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
