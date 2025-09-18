@@ -41,6 +41,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { insertCampaignSchema, campaigns, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
+import AutoInsertAffiliateButton from '@/components/AutoInsertAffiliateButton';
 
 type Campaign = typeof campaigns.$inferSelect;
 type Organization = typeof organizations.$inferSelect;
@@ -718,6 +719,11 @@ const CampaignsPage = () => {
                           <Send className="h-4 w-4" />
                         </Button>
                       )}
+                      <AutoInsertAffiliateButton 
+                        campaignId={campaign.id}
+                        size="sm"
+                        variant="outline"
+                      />
                       <Button 
                         size="sm" 
                         variant="outline"
