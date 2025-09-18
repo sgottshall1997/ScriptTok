@@ -30,7 +30,24 @@ import {
   Package,
   Clock,
   DollarSign,
-  Mail
+  Mail,
+  Users,
+  Users2,
+  UserCheck,
+  FlaskConical,
+  Workflow,
+  PersonStanding,
+  FormInput,
+  FileSpreadsheet,
+  ShoppingCart,
+  BarChart2,
+  CreditCard,
+  GitBranch,
+  Monitor,
+  Send,
+  Wrench,
+  BookOpen,
+  Building
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -71,9 +88,28 @@ const sidebarData: SidebarCategory[] = [
     ]
   },
   {
-    name: "CookAIng Marketing",
+    name: "CookAIng",
     items: [
-      { name: "Marketing Dashboard", href: "/cookaing-marketing", icon: Mail },
+      { name: "Marketing Dashboard", href: "/cookaing-marketing", icon: BarChart3 },
+      { name: "Organizations", href: "/cookaing-marketing/organizations", icon: Building },
+      { name: "Contacts", href: "/cookaing-marketing/contacts", icon: Users },
+      { name: "Segments", href: "/cookaing-marketing/segments", icon: Users2 },
+      { name: "Campaigns", href: "/cookaing-marketing/campaigns", icon: Mail },
+      { name: "A/B Testing", href: "/cookaing-marketing/experiments", icon: FlaskConical },
+      { name: "Workflows", href: "/cookaing-marketing/workflows", icon: Workflow },
+      { name: "Personalization", href: "/cookaing-marketing/personalization", icon: PersonStanding },
+      { name: "Forms", href: "/cookaing-marketing/forms", icon: FormInput },
+      { name: "Form Submissions", href: "/cookaing-marketing/submissions", icon: FileSpreadsheet },
+      { name: "Affiliate Products", href: "/cookaing-marketing/affiliates", icon: ShoppingCart },
+      { name: "Trends & Seasonal", href: "/cookaing-marketing/trends", icon: TrendingUp },
+      { name: "Reports", href: "/cookaing-marketing/reports", icon: BarChart2 },
+      { name: "Costs & ROAS", href: "/cookaing-marketing/costs", icon: CreditCard },
+      { name: "Attribution Inspector", href: "/cookaing-marketing/attribution", icon: GitBranch },
+      { name: "Health", href: "/cookaing-marketing/health", icon: Shield },
+      { name: "Webhooks Monitor", href: "/cookaing-marketing/webhooks", icon: Webhook },
+      { name: "Email Delivery Test", href: "/cookaing-marketing/email-test", icon: Send },
+      { name: "Developer Tools", href: "/cookaing-marketing/devtools", icon: Wrench },
+      { name: "Docs", href: "/cookaing-marketing/docs", icon: BookOpen },
     ]
   },
   {
