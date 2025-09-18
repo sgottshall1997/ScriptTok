@@ -1,0 +1,88 @@
+GOAL
+Create a top-level **CookAIng Mode** that behaves like a separate section/app:
+- Clicking into CookAIng shows a **dedicated layout and sidebar** that lists ONLY CookAIng pages.
+- Existing (non-CookAIng) sections remain unchanged.
+- All work is additive and scoped; do not break current routes.
+
+SCOPE / GUARDRAILS
+- ADDITIVE ONLY; do not refactor non-CookAIng code.
+- Keep server APIs under /api/cookaing-marketing/**
+- Keep CookAIng pages under /cookaing-marketing/**
+- Implement a **mode-level layout** at /cookaing (router namespace) that renders only CookAIng nav.
+
+ARCHITECTURE
+1) ROUTER & LAYOUT
+- Create a top-level route namespace: **/cookaing/**
+- Add a dedicated layout component: **src/cookaing-marketing/layouts/CookAIngLayout.tsx**
+  - Left sidebar shows only CookAIng links.
+  - Top header with “Exit CookAIng” button that returns to the main app root.
+  - Persisted active state and breadcrumb trail.
+
+2) MODE SWITCHER
+- Add a global “Mode Switcher” to the main header/user menu with entries:
+  - “Main App”
+  - “CookAIng”
+- Clicking “CookAIng” navigates to **/cookaing** (landing = Marketing Dashboard).
+- Clicking “Main App” navigates to the existing default landing.
+
+3) COOKAING SIDEBAR (ONLY THESE LINKS)
+Use shadcn/ui nav; icons ok. Each item links to the existing page (or scaffold if missing).
+- Marketing Dashboard            → /cookaing-marketing
+- Organizations                  → /cookaing-marketing/organizations
+- Contacts                       → /cookaing-marketing/contacts
+- Segments                       → /cookaing-marketing/segments
+- Campaigns                      → /cookaing-marketing/campaigns
+- A/B Testing                    → /cookaing-marketing/experiments
+- Workflows                      → /cookaing-marketing/workflows
+- Personalization                → /cookaing-marketing/personalization
+- Forms                          → /cookaing-marketing/forms
+- Form Submissions               → /cookaing-marketing/submissions
+- Affiliate Products             → /cookaing-marketing/affiliates
+- Trends & Seasonal              → /cookaing-marketing/trends
+- Reports                        → /cookaing-marketing/reports
+- Costs & ROAS                   → /cookaing-marketing/costs
+- Attribution Inspector          → /cookaing-marketing/attribution
+- Health                         → /cookaing-marketing/health
+- Webhooks Monitor               → /cookaing-marketing/webhooks
+- Email Delivery Test            → /cookaing-marketing/email-test
+- Developer Tools                → /cookaing-marketing/devtools
+- Docs                           → /cookaing-marketing/docs
+
+4) NESTED ROUTING
+- Mount all /cookaing-marketing/* routes **inside** /cookaing using nested routes:
+  Example:
+    /cookaing → renders CookAIngLayout + redirects to /cookaing-marketing
+    /cookaing/(all child routes) → show CookAIngLayout + child content
+- Add a router guard so direct hits to /cookaing-marketing/* automatically adopt CookAIngLayout (i.e., redirect to /cookaing/{same-child}).
+
+5) OPTIONAL PASSWORD GATE (lightweight)
+- If env COOKAING_SECTION_PASSWORD is set:
+  - Show /cookaing/login screen.
+  - POST /api/cookaing-marketing/auth/login to set signed session cookie (JWT_SECRET).
+  - Protect all /cookaing and /cookaing-marketing routes with a small auth wrapper.
+- If env not set → no gate.
+
+6) UX DETAILS
+- Sidebar: active item highlighting, collapsible on small screens.
+- Breadcrumbs: “CookAIng / {Section} / {Detail}”.
+- Keep feature flags respected (ENABLE_EMAIL, ENABLE_SOCIAL, etc.); grey out disabled items with tooltip.
+
+7) TESTS
+- Vitest: layout renders; sidebar lists ONLY CookAIng links; active highlight works.
+- Playwright e2e (mock env): navigating to /cookaing shows CookAIng layout and each link renders without external keys.
+- If password is set, unauthenticated access redirects to /cookaing/login; successful login unlocks mode.
+
+8) ACCEPTANCE
+- New top-level **CookAIng** entry in Mode Switcher takes user to **/cookaing**.
+- Inside /cookaing, the sidebar shows ONLY the CookAIng tools listed above.
+- All existing non-CookAIng sections and routes remain unchanged.
+- Deep links like /cookaing-marketing/campaigns still show within the CookAIng layout (via redirect/guard).
+- Works in empty .env using mock adapters; no regressions.
+
+DELIVERABLES
+- src/cookaing-marketing/layouts/CookAIngLayout.tsx
+- Router updates mounting /cookaing and nesting /cookaing-marketing/*
+- Header Mode Switcher component update
+- (Optional) auth middleware + /cookaing/login screen controlled by COOKAING_SECTION_PASSWORD
+- Playwright + Vitest tests as described
+- Docs: update /cookaing-marketing/docs with “How to enter/exit CookAIng Mode”, password option, and deep-link behavior.
