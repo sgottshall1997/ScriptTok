@@ -92,7 +92,7 @@ export class SocialListeningProvider implements ICompetitorProvider {
     throw new Error('Social listening not yet implemented');
   }
 
-  async analyzeTrends(posts: CompetitorPost[]) {
+  async analyzeTrends(posts: CompetitorPost[]): Promise<{ trending_topics: string[]; engagement_patterns: object }> {
     if (!this.apiKey) {
       throw new Error('Social listening API key not configured');
     }

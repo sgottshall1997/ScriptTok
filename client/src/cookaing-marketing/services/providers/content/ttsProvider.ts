@@ -58,7 +58,7 @@ export class ElevenLabsTTSProvider implements ITTSProvider {
     throw new Error('ElevenLabs TTS not yet implemented');
   }
 
-  async getVoices() {
+  async getVoices(): Promise<Array<{ id: string; name: string; language: string }>> {
     if (!this.apiKey) {
       throw new Error('ElevenLabs API key not configured');
     }

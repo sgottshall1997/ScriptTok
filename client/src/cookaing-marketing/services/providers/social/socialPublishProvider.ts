@@ -68,7 +68,7 @@ export class BufferSocialProvider implements ISocialPublishProvider {
     this.accessToken = accessToken;
   }
 
-  async publishPost(queueItem: SocialQueueItem) {
+  async publishPost(queueItem: SocialQueueItem): Promise<{ success: boolean; postId?: string; url?: string; error?: string }> {
     if (!this.accessToken) {
       throw new Error('Buffer access token not configured');
     }
@@ -77,7 +77,7 @@ export class BufferSocialProvider implements ISocialPublishProvider {
     throw new Error('Buffer publishing not yet implemented');
   }
 
-  async schedulePost(queueItem: SocialQueueItem) {
+  async schedulePost(queueItem: SocialQueueItem): Promise<{ success: boolean; scheduledId?: string; error?: string }> {
     if (!this.accessToken) {
       throw new Error('Buffer access token not configured');
     }
@@ -86,7 +86,7 @@ export class BufferSocialProvider implements ISocialPublishProvider {
     throw new Error('Buffer scheduling not yet implemented');
   }
 
-  async getAccountInfo(platform: string, accountId: string) {
+  async getAccountInfo(platform: string, accountId: string): Promise<{ name: string; followers: number; verified: boolean }> {
     if (!this.accessToken) {
       throw new Error('Buffer access token not configured');
     }

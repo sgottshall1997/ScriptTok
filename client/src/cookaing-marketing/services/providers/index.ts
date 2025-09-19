@@ -49,30 +49,24 @@ export class ProviderFactory {
   }
 
   private static createProviders(): IProviderRegistry {
-    // Check for API keys in environment
-    const openaiKey = import.meta.env.VITE_OPENAI_API_KEY;
-    const anthropicKey = import.meta.env.VITE_ANTHROPIC_API_KEY;
-    const elevenLabsKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
-    const runwayKey = import.meta.env.VITE_RUNWAY_API_KEY;
-    const googleCloudKey = import.meta.env.VITE_GOOGLE_CLOUD_API_KEY;
-    const bufferToken = import.meta.env.VITE_BUFFER_ACCESS_TOKEN;
-
+    // SECURITY: Force all client-side providers to mock mode to prevent API key exposure
+    // Live providers should only be used server-side where secrets can be safely stored
     return {
-      // Content Enhancement - prefer real providers if keys available
-      imageGen: openaiKey ? new OpenAIImageGenProvider(openaiKey) : new MockImageGenProvider(),
-      videoGen: runwayKey ? new RunwayVideoGenProvider(runwayKey) : new MockVideoGenProvider(),
-      tts: elevenLabsKey ? new ElevenLabsTTSProvider(elevenLabsKey) : new MockTTSProvider(),
-      rewrite: anthropicKey ? new ClaudeRewriteProvider(anthropicKey) : new MockRewriteProvider(),
+      // Content Enhancement - using mock providers only on client
+      imageGen: new MockImageGenProvider(),
+      videoGen: new MockVideoGenProvider(),
+      tts: new MockTTSProvider(),
+      rewrite: new MockRewriteProvider(),
       
-      // Intelligence - prefer real providers if keys available
-      competitor: new MockCompetitorProvider(), // No real provider keys yet
-      sentiment: googleCloudKey ? new GoogleSentimentProvider(googleCloudKey) : new MockSentimentProvider(),
+      // Intelligence - using mock providers only on client
+      competitor: new MockCompetitorProvider(),
+      sentiment: new MockSentimentProvider(),
       
-      // Social - prefer real providers if tokens available
-      socialPublish: bufferToken ? new BufferSocialProvider(bufferToken) : new MockSocialPublishProvider(),
+      // Social - using mock providers only on client
+      socialPublish: new MockSocialPublishProvider(),
       
-      // Compliance - prefer real providers if keys available
-      moderation: openaiKey ? new OpenAIModerationProvider(openaiKey) : new MockModerationProvider(),
+      // Compliance - using mock providers only on client
+      moderation: new MockModerationProvider(),
     };
   }
 
