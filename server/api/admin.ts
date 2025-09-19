@@ -165,7 +165,7 @@ router.get('/self-test', async (req, res) => {
 
     // Storage/schema validation
     try {
-      const tables = ['contentHistory', 'trendingProducts', 'analyticsEvents'];
+      const tables = ['content_history', 'trending_products', 'analytics_events'];
       for (const table of tables) {
         await db.execute(sql.raw(`SELECT 1 FROM ${table} LIMIT 1`));
       }
@@ -175,7 +175,7 @@ router.get('/self-test', async (req, res) => {
         status: 'ok', 
         message: 'All required tables accessible'
       });
-    } catch (error) {
+    } catch (error: any) {
       checks.push({
         category: 'storage',
         name: 'Schema Validation',
