@@ -10,6 +10,7 @@ import collaborationRouter from './collaboration';
 import approvalsRouter from './approvals';
 import portalRouter from './portal';
 import calendarRouter from './calendar';
+import adminRouter from './admin';
 import { ensureDemoRoles, optionalAuth } from '../../cookaing-marketing/middleware/rbac';
 
 const router = Router();
@@ -26,7 +27,26 @@ router.use('/approvals', approvalsRouter);
 router.use('/portal', portalRouter);
 router.use('/calendar', calendarRouter);
 
-// Health check for Phase 5 features
+// Mount Phase 6 admin routes
+router.use('/admin', adminRouter);
+
+// Compatibility route for Phase 6 spec compliance
+router.get('/self-test', async (req, res) => {
+  // Delegate to admin self-test but allow anonymous access
+  try {
+    const response = await fetch('http://localhost:5000/api/cookaing-marketing/admin/self-test');
+    const data = await response.json();
+    res.json(data);
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      error: 'Self-test delegation failed',
+      details: error.message
+    });
+  }
+});
+
+// Health check for Phase 5 features  
 router.get('/phase5-health', async (req, res) => {
   try {
     const mode = process.env.OPENAI_API_KEY ? 'live' : 'mock';
