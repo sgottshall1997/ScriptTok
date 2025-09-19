@@ -103,6 +103,7 @@ import enhanceRouter from "./api/cookaing-marketing/enhance";
 import { seedDataRouter } from "./api/seed-data";
 import phase5Router from "./api/cookaing-marketing";
 import glowbotAdminRouter from "./api/admin";
+import { cookAIngGeneratorRouter } from "./routes/cookAIng/generator";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // GlowBot Admin routes (for comprehensive testing)
@@ -139,6 +140,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/trends', trendsRouter);
   app.use('/api/cookaing-marketing/affiliate-auto-insert', affiliateAutoInsertRouter);
   app.use('/api/cookaing-marketing/seed-data', seedDataRouter);
+  
+  // CookAIng Generator routes
+  app.use('/api/cookAIng/generator', cookAIngGeneratorRouter);
   
   // CookAIng Marketing Engine authentication
   app.post('/api/cookaing-marketing/auth/login', (req, res) => {

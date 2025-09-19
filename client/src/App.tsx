@@ -44,6 +44,9 @@ import SpartanContentPage from "@/pages/SpartanContentPage";
 import ScheduleManager from "@/pages/schedule-manager";
 import SupportPage from "@/pages/SupportPage";
 
+// CookAIng Generator
+import CookAIngGeneratorPage from "@/features/cookAIngGenerator/CookAIngGeneratorPage";
+
 // CookAIng Marketing Engine pages
 import CookAIngMarketingDashboard from "@/pages/cookaing-marketing/index";
 import CookAIngOrganizations from "@/pages/cookaing-marketing/organizations";
@@ -139,6 +142,7 @@ function MainAppRouter() {
       <Route path="/schedule-manager" component={ScheduleManager} />
       <Route path="/cross-platform-scheduling" component={CrossPlatformScheduling} />
       <Route path="/bulk-content-generation" component={BulkContentGeneration} />
+      <Route path="/cookaing-generator" component={CookAIngGeneratorPage} />
       <Route path="/performance-analytics" component={PerformanceAnalytics} />
       <Route path="/compliance" component={CompliancePage} />
       <Route path="/spartan-generator" component={SpartanContentPage} />
