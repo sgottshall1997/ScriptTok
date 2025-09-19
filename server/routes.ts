@@ -95,6 +95,7 @@ import contentEnhancementRouter from "./api/cookaing-marketing/content-enhanceme
 import intelligenceRouter from "./api/cookaing-marketing/intelligence";
 import socialAutomationRouter from "./api/cookaing-marketing/social-automation";
 import complianceRouter from "./api/cookaing-marketing/compliance";
+import enhanceRouter from "./api/cookaing-marketing/enhance";
 import { seedDataRouter } from "./api/seed-data";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -121,6 +122,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/intelligence', intelligenceRouter);
   app.use('/api/cookaing-marketing/social-automation', socialAutomationRouter);
   app.use('/api/cookaing-marketing/compliance', complianceRouter);
+  app.use('/api/cookaing-marketing/enhance', enhanceRouter);
   app.use('/api/cookaing-marketing/trends', trendsRouter);
   app.use('/api/cookaing-marketing/affiliate-auto-insert', affiliateAutoInsertRouter);
   app.use('/api/cookaing-marketing/seed-data', seedDataRouter);
