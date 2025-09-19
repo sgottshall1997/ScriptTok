@@ -26,6 +26,8 @@ import ContentCalendarPage from "@/pages/content-calendar";
 import CompetitiveAnalysisPage from "@/pages/competitive-analysis";
 import ExportImportPage from "@/pages/export-import";
 
+// CookAIng Unified Content Generator
+import CookaingUnifiedContentGenerator from "@/cookaing-marketing/pages/UnifiedContentGenerator";
 
 import AiModelConfigPage from "@/pages/ai-model-config";
 import EmojiHashtagTestPage from "@/pages/emoji-hashtag-test";
@@ -105,6 +107,7 @@ function MainAppRouter() {
       <Route path="/home" component={Home} />
       <Route path="/generate" component={GenerateContent} />
       <Route path="/unified-generator" component={UnifiedContentGeneration} />
+      <Route path="/cookaing-generator" component={CookaingUnifiedContentGenerator} />
       <Route path="/niche/:niche" component={GenerateContent} />
 
       <Route path="/dashboard" component={Dashboard} />

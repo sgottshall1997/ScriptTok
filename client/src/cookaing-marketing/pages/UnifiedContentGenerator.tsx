@@ -1,372 +1,420 @@
 import React, { useState } from 'react';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { z } from 'zod';
-import { useMutation } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { ChefHat, Layers, CheckCircle, TrendingUp, Package, PlayCircle, Wand2, Volume2, Image, Video, Type, BookOpen, Mail, Instagram, Youtube } from 'lucide-react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
-import { 
-  Sparkles, 
-  FileText, 
-  Mail, 
-  MessageSquare, 
-  Image, 
-  Video, 
-  Mic,
-  Settings,
-  Wand2,
-  Copy,
-  Download,
-  AlertCircle
-} from 'lucide-react';
+import CookaingBulkGenerationForm from '../components/CookaingBulkGenerationForm';
+import CookaingAutomatedGenerator from '../components/CookaingAutomatedGenerator';
+import CookaingJobsList from '../components/CookaingJobsList';
 
-// Form validation schema
-const formSchema = z.object({
-  contentType: z.string().min(1, 'Content type is required'),
-  tone: z.string().min(1, 'Tone is required'),
-  targetAudience: z.string().min(1, 'Target audience is required'),
-  description: z.string().min(10, 'Description must be at least 10 characters long')
-});
-
-type FormData = z.infer<typeof formSchema>;
-
-export default function UnifiedContentGenerator() {
-  const [generatedContent, setGeneratedContent] = useState<any>(null);
+const CookaingUnifiedContentGenerator: React.FC = () => {
+  const [activeTab, setActiveTab] = useState('automated');
+  const [generationResults, setGenerationResults] = useState<any[]>([]);
+  const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      contentType: 'social',
-      tone: 'professional',
-      targetAudience: '',
-      description: ''
-    }
+  // Fetch CookAIng content jobs for stats
+  const { data: contentJobs, isLoading: jobsLoading } = useQuery({
+    queryKey: ['/api/cookaing-marketing/content/jobs'],
+    staleTime: 30000,
   });
 
-  const generateMutation = useMutation({
-    mutationFn: async (data: FormData) => {
-      const response = await apiRequest('POST', '/api/generate-unified', {
-        mode: 'manual',
-        productName: 'Content Request',
-        niche: data.targetAudience || 'general',
-        template: data.contentType,
-        tone: data.tone,
-        platforms: ['general'],
-        customHook: data.description
-      });
-      return await response.json();
-    },
-    onSuccess: (result) => {
-      // Extract the actual generated content from the API response
-      const content = result?.data?.results?.[0] || null;
-      setGeneratedContent(content);
-      toast({
-        title: 'Content Generated Successfully',
-        description: 'Your content has been generated and is ready to use.'
-      });
-    },
-    onError: (error: any) => {
-      toast({
-        title: 'Generation Failed',
-        description: error?.message || 'Failed to generate content. Please try again.',
-        variant: 'destructive'
-      });
-    }
+  // Fetch content stats from unified system
+  const { data: contentStats, isLoading: statsLoading } = useQuery({
+    queryKey: ['/api/cookaing-marketing/unified-content/stats', { source_app: 'cookAIng' }],
+    staleTime: 30000,
   });
 
-  const handleGenerate = (data: FormData) => {
-    generateMutation.mutate(data);
+  // Calculate summary stats
+  const totalJobs = contentJobs?.jobs?.length || 0;
+  const generatedJobs = contentJobs?.jobs?.filter((j: any) => j.status === 'generated').length || 0;
+  const pendingJobs = contentJobs?.jobs?.filter((j: any) => j.status === 'pending').length || 0;
+  const failedJobs = contentJobs?.jobs?.filter((j: any) => j.status === 'failed').length || 0;
+
+  // Content stats from unified system
+  const totalContent = contentStats?.stats?.total || 0;
+  const recentContent = contentStats?.stats?.recent_count || 0;
+  const avgRating = contentStats?.stats?.avg_rating || 0;
+  const favoriteContent = contentStats?.stats?.favorites_count || 0;
+
+  const handleContentGenerated = (results: any[]) => {
+    setGenerationResults(results);
   };
 
   return (
-    <div className="space-y-6" data-testid="unified-content-generator-page">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white" data-testid="page-title">
-            Unified Content Generator
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">
-            Generate content across all formats with our AI-powered unified engine
-          </p>
+    <div className="container mx-auto px-4 py-8 max-w-7xl">
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="p-2 bg-orange-100 rounded-lg">
+            <ChefHat className="h-6 w-6 text-orange-600" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900" data-testid="heading-unified-generator">
+              CookAIng Content Generator
+            </h1>
+            <p className="text-gray-600">
+              Generate recipe content variations automatically across multiple platforms and formats
+            </p>
+          </div>
         </div>
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" data-testid="button-templates">
-            <FileText className="w-4 h-4 mr-2" />
-            Templates
-          </Button>
-          <Button variant="outline" data-testid="button-settings">
-            <Settings className="w-4 h-4 mr-2" />
-            Settings
-          </Button>
+
+        {/* Summary Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <Card data-testid="stat-card-total-jobs">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Content</p>
+                  <p className="text-2xl font-bold">{totalContent}</p>
+                </div>
+                <Package className="h-8 w-8 text-orange-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="stat-card-recent">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Recent (7 days)</p>
+                  <p className="text-2xl font-bold text-blue-600">{recentContent}</p>
+                </div>
+                <PlayCircle className="h-8 w-8 text-blue-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="stat-card-favorites">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Favorites</p>
+                  <p className="text-2xl font-bold text-green-600">{favoriteContent}</p>
+                </div>
+                <CheckCircle className="h-8 w-8 text-green-500" />
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="stat-card-rating">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Avg Rating</p>
+                  <p className="text-2xl font-bold text-purple-600">
+                    {avgRating ? avgRating.toFixed(1) : '0.0'}
+                  </p>
+                </div>
+                <Layers className="h-8 w-8 text-purple-500" />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Quick Stats */}
+        <div className="bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <h3 className="font-semibold text-orange-900">Recipe Content Generation</h3>
+              <p className="text-sm text-orange-700">
+                Transform recipes into engaging content across blogs, social media, emails, and video scripts
+              </p>
+            </div>
+            <div className="flex gap-4 text-center">
+              <div>
+                <p className="text-lg font-bold text-orange-800">{totalJobs}</p>
+                <p className="text-xs text-orange-600">Generation Jobs</p>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-orange-800">{totalContent}</p>
+                <p className="text-xs text-orange-600">Content Pieces</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Configuration Panel */}
-        <div className="lg:col-span-1">
-          <Card data-testid="configuration-card">
+      {/* Main Content */}
+      <Tabs 
+        value={activeTab} 
+        onValueChange={(value) => {
+          setActiveTab(value);
+          window.scrollTo(0, 0);
+        }}
+      >
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="automated" className="flex items-center gap-2" data-testid="tab-automated">
+            <TrendingUp className="h-4 w-4" />
+            🚀 Smart Generate
+          </TabsTrigger>
+          <TabsTrigger value="manual" className="flex items-center gap-2" data-testid="tab-manual">
+            <ChefHat className="h-4 w-4" />
+            Recipe Templates
+          </TabsTrigger>
+          <TabsTrigger value="jobs" className="flex items-center gap-2" data-testid="tab-jobs">
+            <Layers className="h-4 w-4" />
+            Jobs ({totalJobs})
+          </TabsTrigger>
+          <TabsTrigger value="enhance" className="flex items-center gap-2" data-testid="tab-enhance">
+            <Wand2 className="h-4 w-4" />
+            ✨ Enhance
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="automated" className="space-y-6">
+          <Card>
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Wand2 className="w-5 h-5 mr-2" />
-                Generation Settings
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5" />
+                Smart Recipe Content Generation
               </CardTitle>
+              <CardDescription>
+                AI-powered content generation that automatically selects trending recipes and creates multi-platform content
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(handleGenerate)} className="space-y-4">
-                  <FormField
-                    control={form.control}
-                    name="contentType"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Content Type</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value} data-testid="select-content-type">
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select content type" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="social">Social Media Post</SelectItem>
-                            <SelectItem value="email">Email Campaign</SelectItem>
-                            <SelectItem value="blog">Blog Article</SelectItem>
-                            <SelectItem value="ad">Advertisement Copy</SelectItem>
-                            <SelectItem value="newsletter">Newsletter</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="tone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Tone & Style</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value} data-testid="select-tone">
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select tone" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="professional">Professional</SelectItem>
-                            <SelectItem value="casual">Casual & Friendly</SelectItem>
-                            <SelectItem value="persuasive">Persuasive</SelectItem>
-                            <SelectItem value="informative">Informative</SelectItem>
-                            <SelectItem value="creative">Creative & Fun</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="targetAudience"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Target Audience</FormLabel>
-                        <Select onValueChange={field.onChange} value={field.value} data-testid="select-audience">
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select audience" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="general">General Audience</SelectItem>
-                            <SelectItem value="business">Business Professionals</SelectItem>
-                            <SelectItem value="millennials">Millennials</SelectItem>
-                            <SelectItem value="genz">Gen Z</SelectItem>
-                            <SelectItem value="parents">Parents</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="description"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Content Description *</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            placeholder="Describe what you want to create (e.g., 'A promotional post about our new product launch targeting young professionals')"
-                            className="min-h-[100px]"
-                            data-testid="textarea-description"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button 
-                    type="submit"
-                    className="w-full" 
-                    disabled={generateMutation.isPending}
-                    data-testid="button-generate"
-                  >
-                    {generateMutation.isPending ? (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2 animate-spin" />
-                        Generating...
-                      </>
-                    ) : (
-                      <>
-                        <Sparkles className="w-4 h-4 mr-2" />
-                        Generate Content
-                      </>
-                    )}
-                  </Button>
-                </form>
-              </Form>
+              <CookaingAutomatedGenerator 
+                onJobCreated={(jobData) => {
+                  setActiveTab('jobs');
+                  queryClient.invalidateQueries({ queryKey: ['/api/cookaing-marketing/content/jobs'] });
+                }} 
+              />
             </CardContent>
           </Card>
-        </div>
+        </TabsContent>
 
-        {/* Output Panel */}
-        <div className="lg:col-span-2">
-          <Card data-testid="output-card">
+        <TabsContent value="manual" className="space-y-6">
+          <Card>
             <CardHeader>
-              <CardTitle>Generated Content</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <ChefHat className="h-5 w-5" />
+                Recipe Template Generation
+              </CardTitle>
+              <CardDescription>
+                Generate content from specific recipes using customizable templates and content formats
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="text" className="w-full" data-testid="output-tabs">
-                <TabsList className="grid w-full grid-cols-4">
-                  <TabsTrigger value="text" data-testid="tab-text">
-                    <FileText className="w-4 h-4 mr-2" />
-                    Text
-                  </TabsTrigger>
-                  <TabsTrigger value="image" data-testid="tab-image">
-                    <Image className="w-4 h-4 mr-2" />
-                    Images
-                  </TabsTrigger>
-                  <TabsTrigger value="video" data-testid="tab-video">
-                    <Video className="w-4 h-4 mr-2" />
-                    Video
-                  </TabsTrigger>
-                  <TabsTrigger value="audio" data-testid="tab-audio">
-                    <Mic className="w-4 h-4 mr-2" />
-                    Audio
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="text" className="mt-4" data-testid="content-text">
-                  <div className="space-y-4">
-                    <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <h4 className="font-semibold text-gray-900 dark:text-white" data-testid="text-output-title">
-                          Primary Content
-                        </h4>
-                        <div className="flex space-x-2">
-                          <Button variant="outline" size="sm" data-testid="button-copy-text">
-                            <Copy className="w-4 h-4" />
-                          </Button>
-                          <Button variant="outline" size="sm" data-testid="button-download-text">
-                            <Download className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                      <div className="text-gray-700 dark:text-gray-300" data-testid="text-output-content">
-                        {generateMutation.isPending ? (
-                          <span className="text-gray-500 italic">Content will appear here once generated...</span>
-                        ) : generatedContent ? (
-                          <div className="space-y-2">
-                            <p>{generatedContent.script || generatedContent.content || 'Generated content will appear here'}</p>
-                            {generatedContent.metadata && (
-                              <div className="text-sm text-gray-500 mt-2">
-                                <p>Generated with {generatedContent.metadata.aiModel} • {generatedContent.metadata.templateType}</p>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="flex items-center space-x-2 text-gray-500 italic">
-                            <AlertCircle className="w-4 h-4" />
-                            <span>Fill out the form and click Generate to create content</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                        <h5 className="font-semibold text-gray-900 dark:text-white mb-2" data-testid="variation-1-title">
-                          Variation 1 - Casual
-                        </h5>
-                        <p className="text-sm text-gray-700 dark:text-gray-300" data-testid="variation-1-content">
-                          {generatedContent?.instagramCaption || 'Casual variation will appear here after generation'}
-                        </p>
-                      </div>
-                      <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-                        <h5 className="font-semibold text-gray-900 dark:text-white mb-2" data-testid="variation-2-title">
-                          Variation 2 - Professional
-                        </h5>
-                        <p className="text-sm text-gray-700 dark:text-gray-300" data-testid="variation-2-content">
-                          {generatedContent?.tiktokCaption || 'Professional variation will appear here after generation'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="image" className="mt-4" data-testid="content-image">
-                  <div className="text-center py-12">
-                    <Image className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                      Image Generation
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Generate AI-powered images to accompany your content
-                    </p>
-                    <Button data-testid="button-generate-image">Generate Images</Button>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="video" className="mt-4" data-testid="content-video">
-                  <div className="text-center py-12">
-                    <Video className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                      Video Generation
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Create engaging video content from your text
-                    </p>
-                    <Button data-testid="button-generate-video">Generate Video</Button>
-                  </div>
-                </TabsContent>
-
-                <TabsContent value="audio" className="mt-4" data-testid="content-audio">
-                  <div className="text-center py-12">
-                    <Mic className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                      Audio Generation
-                    </h3>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                      Convert your content to natural-sounding speech
-                    </p>
-                    <Button data-testid="button-generate-audio">Generate Audio</Button>
-                  </div>
-                </TabsContent>
-              </Tabs>
+              <CookaingBulkGenerationForm onContentGenerated={handleContentGenerated} />
             </CardContent>
           </Card>
-        </div>
-      </div>
+
+          {/* Show generation results if any */}
+          {generationResults.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Generated Content</CardTitle>
+                <CardDescription>Latest content generation results</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {generationResults.map((result, index) => (
+                    <div key={index} className="p-4 border rounded-lg">
+                      <h4 className="font-semibold mb-2">{result.blueprint?.name}</h4>
+                      <div className="text-sm text-gray-600">
+                        <p><strong>Recipe:</strong> {result.sourceData?.title}</p>
+                        <p><strong>Platform:</strong> {result.options?.platform}</p>
+                        <p><strong>Persona:</strong> {result.options?.persona}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        <TabsContent value="jobs" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Layers className="h-5 w-5" />
+                Content Generation Jobs
+              </CardTitle>
+              <CardDescription>
+                Track and manage all your recipe content generation jobs and their status
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <CookaingJobsList />
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="enhance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wand2 className="h-5 w-5" />
+                Content Enhancement Suite
+              </CardTitle>
+              <CardDescription>
+                Enhance your recipe content with AI-powered tools for different media formats
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Recipe Blog Enhancement */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-blog">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <BookOpen className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Blog Enhancement</CardTitle>
+                        <CardDescription className="text-sm">Optimize recipes for blog posts and SEO</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • SEO optimization<br/>
+                        • Nutritional information<br/>
+                        • Cooking tips and variations
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-blog-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "Recipe blog enhancement is being implemented."
+                          });
+                        }}
+                      >
+                        <BookOpen className="h-4 w-4 mr-2" />
+                        Enhance for Blog
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Social Media Enhancement */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-social">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-pink-100 rounded-lg">
+                        <Instagram className="h-5 w-5 text-pink-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Social Media Posts</CardTitle>
+                        <CardDescription className="text-sm">Create engaging social media content</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • Instagram-ready captions<br/>
+                        • Trending hashtags<br/>
+                        • Multiple platform formats
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-social-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "Social media enhancement is being implemented."
+                          });
+                        }}
+                      >
+                        <Instagram className="h-4 w-4 mr-2" />
+                        Create Social Posts
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Email Campaign Enhancement */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-email">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <Mail className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Email Campaigns</CardTitle>
+                        <CardDescription className="text-sm">Transform recipes into email newsletters</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • Newsletter formatting<br/>
+                        • Compelling subject lines<br/>
+                        • Call-to-action optimization
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-email-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "Email campaign enhancement is being implemented."
+                          });
+                        }}
+                      >
+                        <Mail className="h-4 w-4 mr-2" />
+                        Create Email Campaign
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Video Script Enhancement */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-video">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-red-100 rounded-lg">
+                        <Youtube className="h-5 w-5 text-red-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Video Scripts</CardTitle>
+                        <CardDescription className="text-sm">Create cooking video scripts and instructions</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • Step-by-step narration<br/>
+                        • Engaging introductions<br/>
+                        • YouTube optimization
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-video-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "Video script enhancement is being implemented."
+                          });
+                        }}
+                      >
+                        <Youtube className="h-4 w-4 mr-2" />
+                        Generate Video Script
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
-}
+};
+
+export default CookaingUnifiedContentGenerator;

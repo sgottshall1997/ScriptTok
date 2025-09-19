@@ -2,7 +2,6 @@ import { Request, Response, Router } from "express";
 import { z } from "zod";
 import { db } from "../../db";
 import { UnifiedContentService } from "../../../shared/services/contentService";
-import { ContentListParamsSchema, ContentActionSchema } from "../../../shared/types/content";
 
 const router = Router();
 
@@ -63,8 +62,22 @@ router.post("/save", async (req: Request, res: Response) => {
  */
 router.get("/list", async (req: Request, res: Response) => {
   try {
-    // Parse and validate query parameters
-    const params = ContentListParamsSchema.parse(req.query);
+    // Create inline schema for query parameters
+    const querySchema = z.object({
+      source_app: z.enum(['glowbot', 'cookAIng']).optional(),
+      content_types: z.string().optional().transform(val => val ? val.split(',') : []),
+      q: z.string().optional(),
+      dateFrom: z.string().optional(),
+      dateTo: z.string().optional(),
+      page: z.string().transform(val => parseInt(val) || 1).optional(),
+      pageSize: z.string().transform(val => parseInt(val) || 20).optional(),
+      favoritesOnly: z.string().transform(val => val === 'true').optional(),
+      rating: z.string().transform(val => val ? parseInt(val) : undefined).optional(),
+      niche: z.string().optional(),
+      sortBy: z.enum(['newest', 'oldest', 'rating_high', 'rating_low', 'title_asc', 'title_desc']).optional()
+    });
+    
+    const params = querySchema.parse(req.query);
     
     const result = await unifiedContentService.listContent(params);
     
