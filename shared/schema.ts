@@ -843,6 +843,76 @@ export const dailyScraperCache = pgTable("daily_scraper_cache", {
   };
 });
 
+// ===============================================================================
+// CookAIng Content History & Rating System
+// ===============================================================================
+
+// Content versions for immutable content snapshots and rating
+export const cookaingContentVersions = pgTable("cookaing_content_versions", {
+  id: serial("id").primaryKey(),
+  campaignId: integer("campaign_id"), // Optional reference to campaign
+  recipeId: integer("recipe_id"), // Optional reference to recipe
+  sourceJobId: integer("source_job_id").references(() => contentJobs.id, { onDelete: 'set null' }), // Link to Unified Content Generator job if applicable
+  channel: text("channel").notNull(), // 'video_script'|'social'|'blog'|'email'|'push'|'affiliate'|...
+  platform: text("platform"), // 'tiktok'|'instagram'|'yt-long'|'carousel'|...
+  title: text("title"),
+  summary: text("summary"),
+  niche: text("niche"), // e.g., pantry hacks, vegan, etc.
+  template: text("template"), // blueprint/template name
+  model: text("model"), // ai model identifier used (mock/openai/claude)
+  metadataJson: jsonb("metadata_json").notNull(), // persona/tone/duration/options
+  payloadJson: jsonb("payload_json").notNull(), // immutable snapshot of the content
+  createdBy: text("created_by"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  version: integer("version").notNull().default(1),
+}, (table) => {
+  return {
+    unqCampaignVersion: unique().on(table.campaignId, table.channel, table.platform, table.version),
+    idxCampaignChannelPlatform: index().on(table.campaignId, table.channel, table.platform, table.createdAt),
+  };
+});
+
+// Content ratings for user and AI evaluations
+export const cookaingContentRatings = pgTable("cookaing_content_ratings", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id").notNull().references(() => cookaingContentVersions.id, { onDelete: 'cascade' }),
+  userScore: integer("user_score"), // 1–100 manual rating
+  aiVirality: integer("ai_virality"), // 1–10
+  aiClarity: integer("ai_clarity"), // 1–10
+  aiPersuasiveness: integer("ai_persuasiveness"), // 1–10
+  aiCreativity: integer("ai_creativity"), // 1–10
+  thumb: text("thumb"), // 'up'|'down'|null (optional)
+  reasons: text("reasons").array(), // ['catchy','clear','on-brand','too-long',...]
+  notes: text("notes"),
+  isWinner: boolean("is_winner").notNull().default(false),
+  createdBy: text("created_by"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    idxVersionCreated: index().on(table.versionId, table.createdAt),
+    idxIsWinner: index().on(table.isWinner),
+  };
+});
+
+// Content links for connecting versions to artifacts and jobs
+export const contentLinks = pgTable("content_links", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id").notNull().references(() => cookaingContentVersions.id, { onDelete: 'cascade' }),
+  artifactId: integer("artifact_id"), // link campaign_artifacts if attached
+  jobId: integer("job_id"), // link content_jobs if generated
+  type: text("type").notNull(), // 'artifact'|'job'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// Content exports for tracking export history
+export const contentExports = pgTable("content_exports", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id").notNull().references(() => cookaingContentVersions.id, { onDelete: 'cascade' }),
+  format: text("format").notNull(), // 'json'|'csv'|'markdown'
+  payload: text("payload").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Insert schemas
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
@@ -1768,6 +1838,25 @@ export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: tru
 export const insertContentBlueprintSchema = createInsertSchema(contentBlueprints).omit({ id: true, createdAt: true });
 export const insertContentJobSchema = createInsertSchema(contentJobs).omit({ id: true, createdAt: true, updatedAt: true });
 
+// CookAIng Content History & Rating insert schemas
+export const insertCookaingContentVersionSchema = createInsertSchema(cookaingContentVersions).omit({ 
+  id: true, 
+  createdAt: true,
+  version: true  // Auto-incremented within scope
+});
+export const insertCookaingContentRatingSchema = createInsertSchema(cookaingContentRatings).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export const insertContentLinkSchema = createInsertSchema(contentLinks).omit({ 
+  id: true, 
+  createdAt: true 
+});
+export const insertContentExportSchema = createInsertSchema(contentExports).omit({ 
+  id: true, 
+  createdAt: true 
+});
+
 // Type exports
 export type Organization = typeof organizations.$inferSelect;
 export type InsertOrganization = z.infer<typeof insertOrganizationSchema>;
@@ -1837,3 +1926,16 @@ export type InsertContentBlueprint = z.infer<typeof insertContentBlueprintSchema
 
 export type ContentJob = typeof contentJobs.$inferSelect;
 export type InsertContentJob = z.infer<typeof insertContentJobSchema>;
+
+// CookAIng Content History & Rating types
+export type CookaingContentVersion = typeof cookaingContentVersions.$inferSelect;
+export type InsertCookaingContentVersion = z.infer<typeof insertCookaingContentVersionSchema>;
+
+export type CookaingContentRating = typeof cookaingContentRatings.$inferSelect;
+export type InsertCookaingContentRating = z.infer<typeof insertCookaingContentRatingSchema>;
+
+export type ContentLink = typeof contentLinks.$inferSelect;
+export type InsertContentLink = z.infer<typeof insertContentLinkSchema>;
+
+export type ContentExport = typeof contentExports.$inferSelect;
+export type InsertContentExport = z.infer<typeof insertContentExportSchema>;
