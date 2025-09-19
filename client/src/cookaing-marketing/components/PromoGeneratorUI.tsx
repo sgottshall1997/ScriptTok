@@ -17,7 +17,7 @@ import { apiRequest } from '@/lib/queryClient';
 import { Loader2, Plus, X, Copy, Download, Sparkles, Zap } from 'lucide-react';
 
 // Import shared schemas and types to prevent drift
-import { PromoInputSchema, PromoFormData, PromoOutput, CHANNEL_LABELS, OBJECTIVE_LABELS, TONE_LABELS } from '../../../packages/cookaing-promo/schemas';
+import { PromoInputSchema, PromoFormData, PromoOutput, CHANNEL_LABELS, OBJECTIVE_LABELS, TONE_LABELS } from '../../../../packages/cookaing-promo/schemas';
 
 // Use shared schema without appName (added server-side)
 const promoFormSchema = PromoInputSchema.omit({ appName: true });
@@ -473,9 +473,27 @@ export default function PromoGeneratorUI() {
                         </div>
                       )}
                       
-                      <div className="flex items-center justify-between text-xs text-muted-foreground border-t pt-2 mt-3">
-                        <span>UTM tracked CTA: {content.cta.text}</span>
-                        <span>{new Date(content.timestamp).toLocaleString()}</span>
+                      <div className="border-t pt-3 mt-3">
+                        <div className="flex items-center justify-between text-xs text-muted-foreground mb-2">
+                          <span>Call-to-Action</span>
+                          <span>{new Date(content.timestamp).toLocaleString()}</span>
+                        </div>
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{content.cta.text}</span>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => copyToClipboard(content.cta.utmUrl, 'UTM-tracked URL')}
+                              data-testid={`button-copy-url-${index}`}
+                            >
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            <span className="font-mono bg-muted px-1 py-0.5 rounded">{content.cta.utmUrl}</span>
+                          </div>
+                        </div>
                       </div>
                     </Card>
                   ))}
