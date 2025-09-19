@@ -399,6 +399,46 @@ router.get('/hashtags/trending', async (req, res) => {
   }
 });
 
+router.get('/optimal-times/analyze/:platform', async (req, res) => {
+  try {
+    const { platform } = req.params;
+    const { days } = req.query;
+    
+    if (!platform) {
+      return res.status(400).json({
+        success: false,
+        error: 'Platform is required'
+      });
+    }
+
+    const mockAnalysis = {
+      bestTimes: ['9:00 AM', '1:00 PM', '7:00 PM'],
+      weeklyPattern: [
+        { day: 'Monday', score: 85 },
+        { day: 'Tuesday', score: 78 },
+        { day: 'Wednesday', score: 92 },
+        { day: 'Thursday', score: 88 },
+        { day: 'Friday', score: 76 },
+        { day: 'Saturday', score: 94 },
+        { day: 'Sunday', score: 81 }
+      ],
+      platform,
+      analyzed_days: days ? parseInt(days as string) : 30
+    };
+
+    res.json({
+      success: true,
+      data: mockAnalysis,
+      mode: 'mock'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to analyze optimal times'
+    });
+  }
+});
+
 router.post('/hashtags/optimize', async (req, res) => {
   try {
     const { tags, platform } = req.body;
@@ -684,6 +724,76 @@ router.get('/kpis', async (req, res) => {
     res.status(500).json({
       success: false,
       error: error instanceof Error ? error.message : 'Failed to get KPIs'
+    });
+  }
+});
+
+// Stats endpoint for frontend dashboard
+router.get('/stats', async (req, res) => {
+  try {
+    const mockStats = {
+      published: 142,
+      queued: 23,
+      engagements: 1847,
+      reach: 2400000
+    };
+
+    res.json({
+      success: true,
+      data: mockStats,
+      mode: 'mock'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to get stats'
+    });
+  }
+});
+
+// Mock Data Routes for Frontend
+router.get('/recent-posts', async (req, res) => {
+  try {
+    const mockPosts = [
+      { id: '1', platform: 'instagram', caption: 'Amazing food content!', status: 'published', publishedAt: '2 hours ago' },
+      { id: '2', platform: 'twitter', caption: 'Check out this recipe...', status: 'queued', publishedAt: '1 hour ago' },
+      { id: '3', platform: 'youtube', caption: 'New cooking video is live!', status: 'processing', publishedAt: '30 minutes ago' },
+      { id: '4', platform: 'facebook', caption: 'Weekend meal prep ideas', status: 'published', publishedAt: '3 hours ago' },
+      { id: '5', platform: 'instagram', caption: 'Behind the scenes cooking', status: 'failed', publishedAt: '4 hours ago' }
+    ];
+
+    res.json({
+      success: true,
+      data: mockPosts,
+      mode: 'mock'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to get recent posts'
+    });
+  }
+});
+
+router.get('/engagement-history', async (req, res) => {
+  try {
+    const mockHistory = [
+      { id: '1', platform: 'instagram', type: 'like', quantity: 25, status: 'completed', createdAt: '30 minutes ago' },
+      { id: '2', platform: 'twitter', type: 'comment', quantity: 10, status: 'completed', createdAt: '1 hour ago' },
+      { id: '3', platform: 'youtube', type: 'follow', quantity: 5, status: 'in-progress', createdAt: '2 hours ago' },
+      { id: '4', platform: 'facebook', type: 'share', quantity: 3, status: 'completed', createdAt: '3 hours ago' },
+      { id: '5', platform: 'instagram', type: 'like', quantity: 50, status: 'failed', createdAt: '4 hours ago' }
+    ];
+
+    res.json({
+      success: true,
+      data: mockHistory,
+      mode: 'mock'
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to get engagement history'
     });
   }
 });
