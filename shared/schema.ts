@@ -2230,10 +2230,39 @@ export const plagiarismReports = pgTable("plagiarism_reports", {
   };
 });
 
+// Unified content records table for both GlowBot and CookAIng
+export const contentRecords = pgTable("content_records", {
+  id: varchar("id").primaryKey(), // Unified ID from both apps
+  sourceApp: text("source_app").notNull(), // 'glowbot' or 'cookAIng'
+  contentType: text("content_type").notNull(), // Type specific to each app
+  title: text("title"),
+  body: text("body"), // Main content text
+  blocks: jsonb("blocks"), // Flexible content structure as JSON
+  metadata: jsonb("metadata").notNull(), // App-specific metadata
+  rating: integer("rating"), // 1-5 user rating
+  isFavorite: boolean("is_favorite").default(false),
+  dedupeHash: varchar("dedupe_hash", { length: 32 }), // For content deduplication
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    sourceIdx: index("content_records_source_idx").on(table.sourceApp),
+    typeIdx: index("content_records_type_idx").on(table.contentType),
+    createdIdx: index("content_records_created_idx").on(table.createdAt),
+    ratingIdx: index("content_records_rating_idx").on(table.rating),
+    favoriteIdx: index("content_records_favorite_idx").on(table.isFavorite),
+    dedupeIdx: index("content_records_dedupe_idx").on(table.dedupeHash),
+    // Composite indexes for common queries
+    appTypeIdx: index("content_records_app_type_idx").on(table.sourceApp, table.contentType),
+    appCreatedIdx: index("content_records_app_created_idx").on(table.sourceApp, table.createdAt),
+  };
+});
+
 // ================================================================
 // Zod schemas for the new tables
 // ================================================================
 
+export const insertContentRecordSchema = createInsertSchema(contentRecords);
 export const insertMediaAssetSchema = createInsertSchema(mediaAssets);
 export const insertContentEnhancementSchema = createInsertSchema(contentEnhancements);
 export const insertCompetitorPostSchema = createInsertSchema(competitorPosts);
@@ -2255,6 +2284,9 @@ export const insertPlagiarismReportSchema = createInsertSchema(plagiarismReports
 // ================================================================
 // Type exports for the new tables
 // ================================================================
+
+export type ContentRecord = typeof contentRecords.$inferSelect;
+export type InsertContentRecord = z.infer<typeof insertContentRecordSchema>;
 
 export type MediaAsset = typeof mediaAssets.$inferSelect;
 export type InsertMediaAsset = z.infer<typeof insertMediaAssetSchema>;
