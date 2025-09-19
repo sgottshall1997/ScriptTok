@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Zap, Layers, CheckCircle, TrendingUp, Package, PlayCircle } from 'lucide-react';
+import { Zap, Layers, CheckCircle, TrendingUp, Package, PlayCircle, Wand2, Volume2, Image, Video, Type } from 'lucide-react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import GeneratedContentCard from './GeneratedContentCard';
@@ -136,7 +136,7 @@ const UnifiedContentGenerator: React.FC = () => {
         // Scroll to top when changing tabs
         window.scrollTo(0, 0);
       }}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="automated" className="flex items-center gap-2">
             <TrendingUp className="h-4 w-4" />
             🚀 Automated
@@ -148,6 +148,10 @@ const UnifiedContentGenerator: React.FC = () => {
           <TabsTrigger value="jobs" className="flex items-center gap-2">
             <Layers className="h-4 w-4" />
             Jobs ({totalJobs})
+          </TabsTrigger>
+          <TabsTrigger value="enhance" className="flex items-center gap-2" data-testid="tab-enhance">
+            <Wand2 className="h-4 w-4" />
+            ✨ Enhance
           </TabsTrigger>
         </TabsList>
 
@@ -201,6 +205,173 @@ const UnifiedContentGenerator: React.FC = () => {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="enhance" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wand2 className="h-5 w-5" />
+                Content Enhancement
+              </CardTitle>
+              <CardDescription>Enhance your content with AI-powered rewriting, voice generation, images, and videos</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Rewrite Enhancement Card */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-rewrite">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <Type className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Content Rewrite</CardTitle>
+                        <CardDescription className="text-sm">Rewrite and improve your content with AI</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • Professional tone conversion<br/>
+                        • Grammar and style improvements<br/>
+                        • Multiple rewrite variations
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-rewrite-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "Content rewriting enhancement is being implemented."
+                          });
+                        }}
+                      >
+                        <Type className="h-4 w-4 mr-2" />
+                        Enhance Text
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* TTS Enhancement Card */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-tts">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-green-100 rounded-lg">
+                        <Volume2 className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Text-to-Speech</CardTitle>
+                        <CardDescription className="text-sm">Convert text to high-quality audio</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • Multiple voice options<br/>
+                        • Adjustable speech rate<br/>
+                        • Professional audio quality
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-tts-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "Text-to-speech enhancement is being implemented."
+                          });
+                        }}
+                      >
+                        <Volume2 className="h-4 w-4 mr-2" />
+                        Generate Audio
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Image Enhancement Card */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-image">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-purple-100 rounded-lg">
+                        <Image className="h-5 w-5 text-purple-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">AI Image Generation</CardTitle>
+                        <CardDescription className="text-sm">Create stunning visuals from text prompts</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • Custom image styles<br/>
+                        • High resolution output<br/>
+                        • Product and lifestyle images
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-image-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "AI image generation is being implemented."
+                          });
+                        }}
+                      >
+                        <Image className="h-4 w-4 mr-2" />
+                        Generate Images
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Video Enhancement Card */}
+                <Card className="hover:shadow-md transition-shadow cursor-pointer" data-testid="card-enhance-video">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-orange-100 rounded-lg">
+                        <Video className="h-5 w-5 text-orange-600" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-lg">Video Generation</CardTitle>
+                        <CardDescription className="text-sm">Create engaging videos from templates</CardDescription>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent className="pt-0">
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-600">
+                        • Template-based creation<br/>
+                        • Custom branding options<br/>
+                        • Multiple video formats
+                      </div>
+                      <Button 
+                        className="w-full" 
+                        variant="outline"
+                        data-testid="button-video-enhance"
+                        onClick={() => {
+                          toast({
+                            title: "Coming Soon",
+                            description: "Video generation enhancement is being implemented."
+                          });
+                        }}
+                      >
+                        <Video className="h-4 w-4 mr-2" />
+                        Create Video
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
 
