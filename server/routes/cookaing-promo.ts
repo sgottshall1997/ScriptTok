@@ -48,41 +48,58 @@ router.post('/generate', async (req: Request, res: Response) => {
   } catch (error) {
     console.error('❌ CookAIng promo generation error:', error);
     
-    res.status(500).json({
+    // Log full error details server-side but don't expose to client
+    if (error instanceof Error) {
+      console.error('Error stack:', error.stack);
+    }
+    
+    // Check for specific error types and provide helpful messages
+    let userMessage = 'Failed to generate promo content';
+    let statusCode = 500;
+    
+    if (error instanceof Error) {
+      if (error.message.includes('API key') || error.message.includes('authentication')) {
+        userMessage = 'AI service configuration error. Please try again later.';
+        statusCode = 503;
+      } else if (error.message.includes('rate limit') || error.message.includes('quota')) {
+        userMessage = 'AI service temporarily unavailable. Please try again in a few minutes.';
+        statusCode = 429;
+      } else if (error.message.includes('timeout')) {
+        userMessage = 'Request timed out. Please try again with simpler parameters.';
+        statusCode = 408;
+      }
+    }
+    
+    res.status(statusCode).json({
       success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-      details: error instanceof Error ? error.stack : undefined
+      error: userMessage,
+      // Only include error details in development
+      ...(process.env.NODE_ENV === 'development' && {
+        details: error instanceof Error ? error.message : 'Unknown error'
+      })
     });
   }
 });
 
 /**
  * GET /api/cookaing-promo/templates
- * Get available templates for objectives and channels
+ * Get available templates for objectives and channels (derived from TEMPLATE_REGISTRY)
  */
 router.get('/templates', async (req: Request, res: Response) => {
   try {
-    const { getTemplate } = await import('../../packages/cookaing-promo/templateRegistry');
+    const { TEMPLATE_REGISTRY } = await import('../../packages/cookaing-promo/templateRegistry');
     
-    // Return available objectives and channels
-    const objectives = [
-      "feature_highlight", "how_to_demo", "user_scenario", "before_after",
-      "launch_announcement", "new_feature_alert", "newsletter", "winback",
-      "seo_article", "deep_dive", "comparison", "testimonial_script",
-      "explainer_script", "ad_copy", "challenge", "quiz_poll", "ugc_prompt"
-    ];
-
-    const channels = [
-      "tiktok_reel", "instagram_reel", "x_thread", "linkedin_post",
-      "email", "blog", "ads_google", "ads_meta", "ads_tiktok"
-    ];
+    // Derive objectives and channels dynamically from registry to prevent drift
+    const objectives = Object.keys(TEMPLATE_REGISTRY);
+    const channels = Object.keys(TEMPLATE_REGISTRY[objectives[0] as keyof typeof TEMPLATE_REGISTRY]);
 
     res.json({
       success: true,
       data: {
         objectives,
         channels,
-        combinations: objectives.length * channels.length
+        combinations: objectives.length * channels.length,
+        registry: TEMPLATE_REGISTRY // Optional: include full registry for UI to use
       }
     });
   } catch (error) {

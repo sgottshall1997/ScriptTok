@@ -1,7 +1,6 @@
 import { useState, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -17,90 +16,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { Loader2, Plus, X, Copy, Download, Sparkles, Zap } from 'lucide-react';
 
-// Define the form schema based on CookAIng promo requirements
-const promoFormSchema = z.object({
-  audiencePersona: z.string().min(1, "Audience persona is required"),
-  offer: z.string().optional(),
-  keyBenefits: z.array(z.string()).min(1, "At least one key benefit is required"),
-  features: z.array(z.string()).min(1, "At least one feature is required"),
-  proofPoints: z.array(z.string()).optional(),
-  seedTopic: z.string().optional(),
-  tone: z.enum(["friendly", "expert", "punchy", "playful", "urgent"]).default("friendly"),
-  channels: z.array(z.enum([
-    "tiktok_reel", "instagram_reel", "x_thread", "linkedin_post", 
-    "email", "blog", "ads_google", "ads_meta", "ads_tiktok"
-  ])).min(1, "At least one channel is required"),
-  objective: z.enum([
-    "feature_highlight", "how_to_demo", "user_scenario", "before_after",
-    "launch_announcement", "new_feature_alert", "newsletter", "winback",
-    "seo_article", "deep_dive", "comparison", "testimonial_script",
-    "explainer_script", "ad_copy", "challenge", "quiz_poll", "ugc_prompt"
-  ]),
-  ctaUrl: z.string().url("Valid CTA URL is required"),
-  campaign: z.string().min(1, "Campaign name is required"),
-  source: z.string().optional(),
-  medium: z.string().optional(),
-  brandGuidelines: z.string().optional(),
-  wordCountHint: z.number().positive().optional()
-});
+// Import shared schemas and types to prevent drift
+import { PromoInputSchema, PromoFormData, PromoOutput, CHANNEL_LABELS, OBJECTIVE_LABELS, TONE_LABELS } from '../../../packages/cookaing-promo/schemas';
 
-type PromoFormData = z.infer<typeof promoFormSchema>;
+// Use shared schema without appName (added server-side)
+const promoFormSchema = PromoInputSchema.omit({ appName: true });
 
-interface PromoOutput {
-  id: string;
-  timestamp: string;
-  appName: "CookAIng";
-  objective: string;
-  channel: string;
-  title?: string;
-  hook?: string;
-  body: string;
-  captions?: string[];
-  hashtags?: string[];
-  cta: { text: string; url: string; utmUrl: string };
-  variants?: { label: string; body: string }[];
-  metadata: {
-    persona: string;
-    tone: string;
-    seedTopic?: string;
-    featuresUsed: string[];
-    benefitsUsed: string[];
-    proofPointsUsed?: string[];
-    wordCount?: number;
-  };
-}
-
-const channelLabels = {
-  "tiktok_reel": "TikTok Reel",
-  "instagram_reel": "Instagram Reel",
-  "x_thread": "X Thread",
-  "linkedin_post": "LinkedIn Post",
-  "email": "Email",
-  "blog": "Blog Post",
-  "ads_google": "Google Ads",
-  "ads_meta": "Meta Ads",
-  "ads_tiktok": "TikTok Ads"
-} as const;
-
-const objectiveLabels = {
-  "feature_highlight": "Feature Highlight",
-  "how_to_demo": "How-To Demo",
-  "user_scenario": "User Scenario",
-  "before_after": "Before/After",
-  "launch_announcement": "Launch Announcement",
-  "new_feature_alert": "New Feature Alert",
-  "newsletter": "Newsletter",
-  "winback": "Win-back",
-  "seo_article": "SEO Article",
-  "deep_dive": "Deep Dive",
-  "comparison": "Comparison",
-  "testimonial_script": "Testimonial Script",
-  "explainer_script": "Explainer Script",
-  "ad_copy": "Ad Copy",
-  "challenge": "Challenge",
-  "quiz_poll": "Quiz/Poll",
-  "ugc_prompt": "UGC Prompt"
-} as const;
+// Use shared label constants to prevent drift
+const channelLabels = CHANNEL_LABELS;
+const objectiveLabels = OBJECTIVE_LABELS;
 
 export default function PromoGeneratorUI() {
   const [generatedContent, setGeneratedContent] = useState<PromoOutput[]>([]);

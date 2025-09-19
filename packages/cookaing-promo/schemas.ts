@@ -151,3 +151,44 @@ export const BulkPromoInputSchema = z.object({
 export type BulkPromoInput = z.infer<typeof BulkPromoInputSchema>;
 export type PromoInputType = z.infer<typeof PromoInputSchema>;
 export type PromoOutputType = z.infer<typeof PromoOutputSchema>;
+
+// Label constants to prevent UI drift
+export const CHANNEL_LABELS = {
+  "tiktok_reel": "TikTok Reel",
+  "instagram_reel": "Instagram Reel",
+  "x_thread": "X Thread",
+  "linkedin_post": "LinkedIn Post",
+  "email": "Email",
+  "blog": "Blog Post",
+  "ads_google": "Google Ads",
+  "ads_meta": "Meta Ads",
+  "ads_tiktok": "TikTok Ads"
+} as const;
+
+export const OBJECTIVE_LABELS = {
+  "feature_highlight": "Feature Highlight",
+  "how_to_demo": "How-To Demo",
+  "user_scenario": "User Scenario",
+  "before_after": "Before/After",
+  "launch_announcement": "Launch Announcement",
+  "new_feature_alert": "New Feature Alert",
+  "newsletter": "Newsletter",
+  "winback": "Win-back",
+  "seo_article": "SEO Article",
+  "deep_dive": "Deep Dive",
+  "comparison": "Comparison",
+  "testimonial_script": "Testimonial Script",
+  "explainer_script": "Explainer Script",
+  "ad_copy": "Ad Copy",
+  "challenge": "Challenge",
+  "quiz_poll": "Quiz/Poll",
+  "ugc_prompt": "UGC Prompt"
+} as const;
+
+export const TONE_LABELS = {
+  "friendly": "Friendly",
+  "expert": "Expert",
+  "punchy": "Punchy",
+  "playful": "Playful",
+  "urgent": "Urgent"
+} as const;
