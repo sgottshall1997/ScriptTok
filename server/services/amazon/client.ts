@@ -197,46 +197,85 @@ export class AmazonPAAPIClient {
   }
 
   /**
-   * Make signed request to Amazon PA-API
+   * Make signed request to Amazon PA-API with exponential backoff retry
    */
-  private async makeRequest(endpoint: string, payload: any): Promise<any> {
-    try {
-      const requestBody = JSON.stringify(payload);
-      
-      const signedRequest = this.signer.signRequest({
-        method: 'POST',
-        path: `/paapi5${endpoint}`,
-        body: requestBody
-      });
+  private async makeRequest(endpoint: string, payload: any, retries: number = 3): Promise<any> {
+    let lastError: Error | null = null;
 
-      const response = await fetch(signedRequest.url, {
-        method: signedRequest.method,
-        headers: signedRequest.headers,
-        body: signedRequest.body
-      });
+    for (let attempt = 0; attempt <= retries; attempt++) {
+      try {
+        const requestBody = JSON.stringify(payload);
+        
+        const signedRequest = this.signer.signRequest({
+          method: 'POST',
+          path: `/paapi5${endpoint}`,
+          body: requestBody
+        });
 
-      const responseText = await response.text();
-      
-      if (!response.ok) {
-        throw new AmazonAPIError(
-          `Amazon API request failed: ${response.status} ${response.statusText}`,
-          response.status,
-          responseText
-        );
+        const response = await fetch(signedRequest.url, {
+          method: signedRequest.method,
+          headers: signedRequest.headers,
+          body: signedRequest.body
+        });
+
+        const responseText = await response.text();
+        
+        if (!response.ok) {
+          // Check if this is a retryable error (500s or InternalFailure)
+          const isRetryable = response.status >= 500 || 
+            responseText.includes('InternalFailure') ||
+            responseText.includes('TooManyRequests');
+            
+          if (isRetryable && attempt < retries) {
+            // Exponential backoff with jitter: (2^attempt * 1000ms) + random(0-1000ms)
+            const baseDelay = Math.pow(2, attempt) * 1000;
+            const jitter = Math.random() * 1000;
+            const delay = baseDelay + jitter;
+            
+            console.log(`🔄 Amazon API retry ${attempt + 1}/${retries} after ${Math.round(delay)}ms (${response.status})`);
+            await new Promise(resolve => setTimeout(resolve, delay));
+            continue;
+          }
+          
+          throw new AmazonAPIError(
+            `Amazon API request failed: ${response.status} ${response.statusText}`,
+            response.status,
+            responseText
+          );
+        }
+
+        return JSON.parse(responseText);
+      } catch (error) {
+        lastError = error instanceof Error ? error : new Error('Unknown error');
+        
+        if (error instanceof AmazonAPIError) {
+          // Don't retry non-retryable Amazon API errors
+          if (error.statusCode < 500 && !error.responseBody?.includes('InternalFailure')) {
+            throw error;
+          }
+        }
+        
+        // If this is the last attempt, throw the error
+        if (attempt === retries) {
+          break;
+        }
+        
+        // Exponential backoff for other errors too
+        const baseDelay = Math.pow(2, attempt) * 1000;
+        const jitter = Math.random() * 1000;
+        const delay = baseDelay + jitter;
+        
+        console.log(`🔄 Amazon API retry ${attempt + 1}/${retries} after ${Math.round(delay)}ms (error: ${lastError.message})`);
+        await new Promise(resolve => setTimeout(resolve, delay));
       }
-
-      return JSON.parse(responseText);
-    } catch (error) {
-      if (error instanceof AmazonAPIError) {
-        throw error;
-      }
-      
-      throw new AmazonAPIError(
-        `Request failed: ${error instanceof Error ? error.message : 'Unknown error'}`,
-        500,
-        error instanceof Error ? error.stack : undefined
-      );
     }
+    
+    // If we get here, all retries failed
+    throw new AmazonAPIError(
+      `Request failed after ${retries + 1} attempts: ${lastError?.message || 'Unknown error'}`,
+      500,
+      lastError?.stack
+    );
   }
 
   /**

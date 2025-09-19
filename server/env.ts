@@ -10,8 +10,8 @@ const envSchema = z.object({
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   
   // Amazon PA-API Configuration
-  AMAZON_ACCESS_KEY: z.string().optional(),
-  AMAZON_SECRET_KEY: z.string().optional(),
+  AMAZON_ACCESS_KEY_ID: z.string().optional(),
+  AMAZON_SECRET_ACCESS_KEY: z.string().optional(),
   AMAZON_PARTNER_TAG: z.string().optional(),
   AMAZON_REGION: z.string().default('us-east-1'),
   AMAZON_API_HOST: z.string().default('webservices.amazon.com'),
@@ -57,8 +57,8 @@ export const getEnv = () => env;
 // Amazon PA-API configuration checker
 export const getAmazonConfig = () => {
   const amazonConfig = {
-    accessKey: env.AMAZON_ACCESS_KEY,
-    secretKey: env.AMAZON_SECRET_KEY,
+    accessKey: env.AMAZON_ACCESS_KEY_ID,
+    secretKey: env.AMAZON_SECRET_ACCESS_KEY,
     partnerTag: env.AMAZON_PARTNER_TAG,
     region: env.AMAZON_REGION,
     apiHost: env.AMAZON_API_HOST,
@@ -121,8 +121,8 @@ export const logIntegrationStatus = () => {
     console.log(`      Region: ${amazon.region}`);
   } else if (amazon.isPartiallyConfigured) {
     console.log('   ⚠️  Amazon PA-API: Partially configured (missing credentials)');
-    if (!amazon.accessKey) console.log('      Missing: AMAZON_ACCESS_KEY');
-    if (!amazon.secretKey) console.log('      Missing: AMAZON_SECRET_KEY');
+    if (!amazon.accessKey) console.log('      Missing: AMAZON_ACCESS_KEY_ID');
+    if (!amazon.secretKey) console.log('      Missing: AMAZON_SECRET_ACCESS_KEY');
     if (!amazon.partnerTag) console.log('      Missing: AMAZON_PARTNER_TAG');
   } else {
     console.log('   ❌ Amazon PA-API: Not configured (monetization disabled)');

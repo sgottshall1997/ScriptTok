@@ -81,17 +81,19 @@ export class AmazonSigner {
    * Creates Amazon PA-API specific target header based on operation
    */
   private getTargetHeader(path: string): string {
-    // Map API paths to PA-API targets
-    if (path.includes('SearchItems')) {
+    // Map API paths to PA-API targets (case-insensitive matching)
+    const lowercasePath = path.toLowerCase();
+    
+    if (lowercasePath.includes('searchitems')) {
       return 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.SearchItems';
     }
-    if (path.includes('GetItems')) {
+    if (lowercasePath.includes('getitems')) {
       return 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.GetItems';
     }
-    if (path.includes('GetBrowseNodes')) {
+    if (lowercasePath.includes('getbrowsenodes')) {
       return 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.GetBrowseNodes';
     }
-    if (path.includes('GetVariations')) {
+    if (lowercasePath.includes('getvariations')) {
       return 'com.amazon.paapi5.v1.ProductAdvertisingAPIv1.GetVariations';
     }
     
