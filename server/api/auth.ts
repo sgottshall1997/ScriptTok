@@ -12,6 +12,46 @@ const passwordSchema = z.object({
  * POST /api/auth/verify-password
  * Verifies the application password
  */
+// Login schema for enhanced authentication testing
+const loginSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  password: z.string().min(1, 'Password is required')
+});
+
+/**
+ * POST /api/auth/login
+ * Enhanced login endpoint for authentication testing
+ */
+router.post('/login', (req, res) => {
+  try {
+    // Validate request body
+    const result = loginSchema.safeParse(req.body);
+    
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid request format',
+        details: result.error.errors
+      });
+    }
+
+    // For testing purposes, this is a mock login that always returns unauthorized
+    // Real authentication would integrate with user database
+    return res.status(401).json({
+      success: false,
+      error: 'Authentication failed',
+      message: 'Invalid username or password'
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Internal server error',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
 router.post('/verify-password', (req, res) => {
   try {
     const result = passwordSchema.safeParse(req.body);

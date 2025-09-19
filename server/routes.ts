@@ -27,6 +27,7 @@ import { rewriteCaption } from "./api/post/rewrite-caption";
 import { generateDailyBatch } from "./api/daily-batch";
 
 import { amazonLinksRouter } from "./api/amazonLinks";
+import { amazonRouter } from "./routes/amazon";
 
 import { cookingPipeline } from "./services/cookingContentPipeline";
 import redirectRouter from "./api/redirect";
@@ -105,6 +106,35 @@ import glowbotAdminRouter from "./api/admin";
 export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.use('/api/auth', authRouter);
+  
+  // Protected endpoint for authentication testing
+  app.get('/api/protected-endpoint', (req, res) => {
+    // Check for Authorization header
+    const authHeader = req.headers.authorization;
+    
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        error: 'Authorization header required',
+        message: 'Please provide Authorization header with Bearer token'
+      });
+    }
+    
+    if (!authHeader.startsWith('Bearer ')) {
+      return res.status(401).json({
+        success: false,
+        error: 'Invalid authorization format',
+        message: 'Authorization header must use Bearer token format'
+      });
+    }
+    
+    // For testing, any bearer token is considered invalid
+    return res.status(403).json({
+      success: false,
+      error: 'Access denied',
+      message: 'Invalid or expired token'
+    });
+  });
   
   // GlowBot Admin routes (for comprehensive testing)
   app.use('/api/glowbot/admin', glowbotAdminRouter);
@@ -270,6 +300,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/post/send-batch', sendBatchRouter);
 
   app.use('/api/amazon-links', amazonLinksRouter);
+  
+  // Amazon PA-API monetization routes
+  app.use('/api/amazon', amazonRouter);
+  
   // Direct webhook test route
   app.get('/api/post/test-make-webhook', async (req, res) => {
     try {
@@ -887,6 +921,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: error.message || 'Health check failed'
       });
     }
+  });
+
+  // API 404 handler - catches all unmatched /api/* routes and returns proper JSON errors
+  app.use('/api/*', (req, res) => {
+    res.status(404).json({
+      success: false,
+      error: 'API endpoint not found',
+      message: `The endpoint ${req.method} ${req.path} does not exist`,
+      timestamp: new Date().toISOString()
+    });
   });
 
   const httpServer = createServer(app);
