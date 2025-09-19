@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
 import { Switch, Route, Redirect } from "wouter";
@@ -7,6 +7,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { GlobalComplianceHeader } from "@/components/GlobalComplianceHeader";
+import PasswordGate from "@/components/PasswordGate";
 import NotFound from "@/pages/not-found";
 import Home from "@/pages/home";
 
@@ -177,8 +178,14 @@ function MainAppRouter() {
 }
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
   // Initialize Google Analytics and scraper console when app loads
   useEffect(() => {
+    // Check if user is already authenticated from sessionStorage
+    const authStatus = sessionStorage.getItem('app_authenticated');
+    setIsAuthenticated(authStatus === 'true');
+
     // Verify required environment variable is present for GA
     if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
       console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
@@ -191,6 +198,39 @@ function App() {
     initScraperConsole();
   }, []);
 
+  const handleAuthenticated = () => {
+    setIsAuthenticated(true);
+  };
+
+  // Show loading state while checking authentication
+  if (isAuthenticated === null) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <div className="min-h-screen flex items-center justify-center">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+              <p className="mt-2 text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
+
+  // Show password gate if not authenticated
+  if (!isAuthenticated) {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <PasswordGate onAuthenticated={handleAuthenticated} />
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
+
+  // Show main application if authenticated
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>

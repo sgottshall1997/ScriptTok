@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { authRouter } from "./api/auth";
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
 import { analyticsRouter } from "./api/analytics";
@@ -102,6 +103,9 @@ import phase5Router from "./api/cookaing-marketing";
 import glowbotAdminRouter from "./api/admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Authentication routes
+  app.use('/api/auth', authRouter);
+  
   // GlowBot Admin routes (for comprehensive testing)
   app.use('/api/glowbot/admin', glowbotAdminRouter);
   
