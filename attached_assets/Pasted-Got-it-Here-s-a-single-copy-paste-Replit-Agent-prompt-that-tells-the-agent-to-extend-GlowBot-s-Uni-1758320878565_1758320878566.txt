@@ -1,0 +1,189 @@
+Got it. Here’s a single, copy-paste Replit Agent prompt that tells the agent to extend GlowBot’s Unified Generator and Content History to CookAIng, while keeping CookAIng’s content types but making everything else behave exactly like GlowBot (UI, data model, persistence, filters, rating, dedupe, etc.). It also includes naming cleanup, migrations, and end-to-end tests.
+
+⸻
+
+Replit Agent Prompt — “Clone GlowBot Generator + History into CookAIng (keep CookAIng content types)”
+
+Objective
+Make CookAIng’s generator and content history work exactly like GlowBot’s Unified Generator and Content History, but retain CookAIng’s existing content types. Reuse GlowBot’s proven patterns (data model, UI flows, pagination, filters, rating, copy/download, Make webhook handoff if present) so both sections behave identically. Do this without breaking current GlowBot or CookAIng functionality.
+
+High-Level Requirements
+	1.	Parity with GlowBot:
+	•	Replicate GlowBot’s Unified Generator UX flow, form schema, validation, submission pipeline, response parsing, and error handling into CookAIng.
+	•	Replicate GlowBot’s Content History features: pagination, date filters, search, ratings, “Copy All,” per-item actions (copy/download/delete), favorites, and dedupe logic.
+	2.	Keep CookAIng Content Types:
+	•	Do not replace CookAIng’s content types. Instead, map CookAIng’s content types into the same structured response contract used by GlowBot so the UI/DB/history logic can be identical.
+	3.	One canonical schema:
+	•	Create a shared ContentRecord (TypeScript interface + DB table) used by both apps.
+	•	Add a source_app field ("glowbot" | "cookAIng") and content_type (CookAIng’s existing enum/union) so components stay generic.
+	4.	Non-destructive migrations:
+	•	Write idempotent DB migrations to add any missing fields/indexes and to backfill existing records with source_app and normalized keys. No data loss.
+	5.	Naming + structure cleanup:
+	•	Align file and component names to the tool/feature they serve (e.g., CookAIngUnifiedGenerator.tsx, glowbot/UnifiedGenerator.tsx → shared/UnifiedGenerator if extracting shared).
+	•	Move dead or legacy variants into a /archive folder (keep imports updated, add clear TODO headers).
+	6.	Shared components where it makes sense:
+	•	Extract shared modules (schemas, adapters, list item components, rating widget, copy/download helpers) to /shared and import from both GlowBot and CookAIng.
+	7.	Sidebar + routes:
+	•	Ensure CookAIng sidebar shows Unified Generator and Content History entries grouped like GlowBot.
+	•	Keep CookAIng’s other pages; order sections logically (e.g., “Create,” “Manage,” “Settings”).
+	8.	Quality gates:
+	•	Add unit tests for parsers/adapters, integration tests for generate → save → history flow, and UI tests for filters/pagination/rating.
+	•	Include a regression test suite to guarantee GlowBot still works.
+
+⸻
+
+Concrete Tasks (Do in order)
+
+1) Inventory & Read-Only Diff
+	•	Locate GlowBot’s Unified Generator + Content History code: routes, pages, React components, hooks, zod/TS schemas, API handlers, DB models, and utility functions.
+	•	Locate CookAIng’s current generator(s) and content types, plus any history/storage code.
+	•	Produce a short internal log (stdout) listing:
+	•	Paths for GlowBot generator/history files.
+	•	Paths for CookAIng generator/history files.
+	•	Current DB tables and columns related to content storage.
+
+2) Define Unified Data Contract
+	•	Create /shared/types/content.ts with:
+
+export type SourceApp = 'glowbot' | 'cookAIng';
+
+export interface ContentRecord {
+  id: string;
+  source_app: SourceApp;
+  content_type: string; // CookAIng keeps its types; GlowBot keeps its types too
+  title?: string;
+  body?: string;
+  blocks?: Array<{ kind: string; text: string }>;
+  metadata: {
+    topic?: string;
+    tone?: string;
+    tags?: string[];
+    // add any existing GlowBot keys
+    [k: string]: any;
+  };
+  rating?: number;          // 1–5
+  is_favorite?: boolean;
+  dedupe_hash?: string;     // for idempotency/deduping
+  created_at: string;       // ISO
+  updated_at: string;       // ISO
+}
+
+
+	•	Add a zod schema for validation (ContentRecordSchema) and export it.
+
+3) Adapters (CookAIng → ContentRecord, GlowBot → ContentRecord)
+	•	Create /shared/adapters/contentAdapters.ts:
+	•	fromGlowBotPayload(payload): ContentRecord
+	•	fromCookAIngPayload(payload, cookAIngContentType): ContentRecord
+	•	toDB(record: ContentRecord): DBInsertShape
+	•	Ensure both adapters fill source_app, content_type, dedupe_hash, timestamps, and normalize fields used by history UI (title/body/blocks/metadata).
+
+4) DB Migrations (Non-destructive)
+	•	Add table (or alter) content_records used by both apps with fields from the interface above.
+	•	Indexes:
+	•	source_app, content_type, created_at DESC (compound)
+	•	dedupe_hash (unique, nullable)
+	•	rating, is_favorite
+	•	Backfill migration:
+	•	For existing GlowBot rows, set source_app='glowbot'.
+	•	For any CookAIng rows, set source_app='cookAIng' and map fields into new columns.
+	•	Make migrations idempotent; re-running should not throw.
+
+5) Server Routes & Services
+	•	Create shared service: /shared/services/contentService.ts
+	•	saveContent(record: ContentRecord) → insert with upsert on dedupe_hash.
+	•	listContent(params: { source_app?: SourceApp; types?: string[]; q?: string; dateFrom?: string; dateTo?: string; page?: number; pageSize?: number; favoritesOnly?: boolean; }): Promise<Paginated<ContentRecord>>
+	•	rateContent(id: string, rating: number)
+	•	toggleFavorite(id: string, set?: boolean)
+	•	deleteContent(id: string)
+	•	Expose REST endpoints for CookAIng mirroring GlowBot’s routes:
+	•	POST /api/cooking/generate (parity with glowbot’s generate) → uses fromCookAIngPayload → saveContent
+	•	GET /api/cooking/history (filters, pagination)
+	•	POST /api/cooking/history/:id/rate
+	•	POST /api/cooking/history/:id/favorite
+	•	DELETE /api/cooking/history/:id
+	•	If GlowBot already has /api/glowbot/..., do not change them; just reuse shared service.
+
+6) CookAIng Unified Generator (UI)
+	•	Duplicate GlowBot’s Unified Generator UI as a new page in CookAIng (e.g., apps/cookAIng/pages/UnifiedGenerator.tsx), but:
+	•	Replace the “Content Type” control with CookAIng’s existing content types (enum/union from CookAIng).
+	•	Keep the same “tone,” “topic,” “length,” and any other shared controls from GlowBot, unless CookAIng already has equivalents—then map to the unified schema.
+	•	Reuse shared form schema where possible; add a thin mapper for any CookAIng-specific fields before POST /api/cooking/generate.
+	•	Preserve GlowBot niceties: loading states, retry, error toasts, validation messages.
+
+7) CookAIng Content History (UI)
+	•	Duplicate GlowBot’s Content History UI to apps/cookAIng/pages/ContentHistory.tsx:
+	•	Filters: date range, search, favorites, rating, content type (CookAIng types), and quick “My Recent 30.”
+	•	Table/list items with per-row actions: Copy All, Download (.txt/.json), Favorite, Rate (1–5), Delete.
+	•	Empty states, paginated footer, sticky filters (persist in URL/query string).
+	•	Ensure the list queries GET /api/cooking/history with the exact same param names used by GlowBot’s page.
+
+8) Sidebar & Routing
+	•	Ensure CookAIng shows:
+	•	Create
+	•	Unified Generator
+	•	Manage
+	•	Content History
+	•	Maintain all prior CookAIng pages; sort sensibly. Do not hide tabs. Add route protection as needed.
+
+9) Dedupe & Idempotency
+	•	On generate, compute dedupe_hash from {source_app, content_type, topic, tone, sanitizedBodyHash} and upsert to prevent duplicate saves when the user retries.
+
+10) Utilities & UX Parity
+	•	Reuse GlowBot’s copyAllToClipboard, downloadAs(type), rating widget, toast system.
+	•	Make dark/light mode match GlowBot behavior.
+	•	If GlowBot pushes to Make.com/webhooks after save, add a parallel CookAIng handoff step behind a feature flag MAKE_HANDOFF_COOKAING=true.
+
+11) Tests (must pass locally)
+	•	Unit: adapters, schema validation, dedupe hash, service methods.
+	•	Integration:
+	•	CookAIng: generate → save → list → rate → favorite → delete.
+	•	Cross-app: ensure listing with source_app=cookAIng returns only CookAIng.
+	•	UI (Playwright):
+	•	Forms validate, generate button disabled/enabled correctly.
+	•	History filters work (date, type, rating, favorites, search).
+	•	Copy/Download/Ratings/Favorites act as expected and persist on refresh.
+	•	Regression: run GlowBot’s existing generator/history tests to confirm no breakage.
+
+12) Naming & Cleanup
+	•	Ensure file names match features. Examples:
+	•	apps/cookAIng/pages/UnifiedGenerator.tsx
+	•	apps/cookAIng/pages/ContentHistory.tsx
+	•	shared/components/content/HistoryList.tsx
+	•	shared/types/content.ts
+	•	shared/adapters/contentAdapters.ts
+	•	shared/services/contentService.ts
+	•	Move unused/legacy variants to /archive with a header comment explaining why they were archived and what replaced them. Update all imports.
+
+13) Developer Ergonomics
+	•	Add top-level npm scripts:
+	•	test:all, test:unit, test:ui, db:migrate, db:seed, lint:fix, typecheck.
+	•	Add a seed script to insert a few sample CookAIng records so the history page isn’t empty for first run.
+
+14) Deliverables Checklist (print to console at the end)
+	•	✅ Shared types & adapters created
+	•	✅ DB migrations applied (with backfill)
+	•	✅ CookAIng Unified Generator page live & posting to /api/cooking/generate
+	•	✅ CookAIng Content History page live & identical UX to GlowBot
+	•	✅ Sidebar updated and visible
+	•	✅ Tests (unit/integration/UI) all green
+	•	✅ Naming aligned; legacy code archived safely
+	•	✅ GlowBot unaffected (regression tests pass)
+
+⸻
+
+Acceptance Tests (run now)
+	1.	CookAIng Generate Flow: Select 3 different CookAIng content types, submit, confirm records appear in history with correct source_app='cookAIng', correct type, rating default null/0.
+	2.	History Filters: Search by keyword, filter by date, filter by rating≥4, toggle favorites—verify counts and contents.
+	3.	Actions: Copy All produces a non-empty clipboard; Download JSON/TXT matches the displayed content; Rating persists across reload; Favorite toggles and persists.
+	4.	Dedupe: Submit same payload twice → only one record exists (upsert via dedupe_hash).
+	5.	Parity: Visually compare CookAIng pages to GlowBot’s generator/history; components and behavior should match.
+	6.	Regression: Re-run GlowBot generator → history → rating; ensure nothing broke.
+
+Constraints
+	•	No removal of CookAIng content types.
+	•	No breaking changes to GlowBot routes or DB usage.
+	•	Migrations must be non-destructive and idempotent.
+	•	Keep code organized, typed, and documented with brief JSDoc where helpful.
+
+Now implement all of the above.
