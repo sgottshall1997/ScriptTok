@@ -74,6 +74,7 @@ import claudeAiSuggestionsRouter from "./api/claudeAiSuggestions";
 import { perplexityAutomationRouter } from "./api/perplexity-automation";
 import safeguardMonitorRouter from "./api/safeguard-monitor";
 import amazonRouter from "./api/amazon";
+import amazonTrendsRouter from "./api/amazon-trends";
 import hybridTrendsRouter from "./api/hybridTrends";
 
 // CookAIng Marketing Engine routers
@@ -269,6 +270,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.use('/api/amazon-links', amazonLinksRouter);
   app.use('/api/amazon', amazonRouter);
+  app.use('/api/amazon-trends', amazonTrendsRouter);
   app.use('/api/hybrid-trends', hybridTrendsRouter);
   // Direct webhook test route
   app.get('/api/post/test-make-webhook', async (req, res) => {
@@ -503,7 +505,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // PART 2: Perplexity Trend Fetcher API Route - Now using niche-specific modules
+  // PART 2: Amazon Trend Fetcher API Route
+  app.post('/api/pull-amazon-trends', async (req, res) => {
+    try {
+      console.log('🔄 Manual Amazon trends fetch triggered');
+      const { default: amazonTrendsRouter } = await import('./api/amazon-trends');
+      const amazonTrendsService = require('./api/amazon-trends');
+      
+      // Call the refresh-all endpoint
+      const mockRequest = { method: 'POST', url: '/refresh-all' };
+      const mockResponse = {
+        json: (data: any) => data,
+        status: (code: number) => ({
+          json: (data: any) => ({ ...data, statusCode: code })
+        })
+      };
+      
+      // Simulated API call to refresh all Amazon trends
+      const result = await fetch('http://localhost:5000/api/amazon-trends/refresh-all', {
+        method: 'POST'
+      });
+      
+      const data = await result.json();
+      
+      res.json({
+        success: true,
+        message: `Amazon fetch completed. Added ${data.totalProducts || 0} products`,
+        productsAdded: data.totalProducts || 0,
+        source: 'amazon',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('❌ Error in Amazon trends fetch:', error);
+      res.status(500).json({
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        timestamp: new Date().toISOString()
+      });
+    }
+  });
+
+  // PART 3: Perplexity Trend Fetcher API Route - Now using niche-specific modules
   app.post('/api/pull-perplexity-trends', async (req, res) => {
     try {
       console.log('🔄 Manual Perplexity trends fetch triggered - using new niche-specific modules');
