@@ -39,7 +39,12 @@ import {
   AlertCircle,
   ChevronDown,
   ChevronRight,
-  BarChart3
+  BarChart3,
+  Wand2,
+  Type,
+  Volume2,
+  Image,
+  Video
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { insertCampaignSchema, campaigns, organizations } from "@shared/schema";
@@ -87,6 +92,9 @@ const CampaignsPage = () => {
   
   // A/B Testing states
   const [expandedAbTestCampaigns, setExpandedAbTestCampaigns] = useState<Set<number>>(new Set());
+  
+  // Enhancement states
+  const [expandedEnhancementCampaigns, setExpandedEnhancementCampaigns] = useState<Set<number>>(new Set());
 
   // Fetch campaigns
   const { data: campaigns, isLoading } = useQuery<Campaign[]>({
@@ -460,6 +468,18 @@ const CampaignsPage = () => {
       return newSet;
     });
   };
+  
+  const toggleEnhancementPanel = (campaignId: number) => {
+    setExpandedEnhancementCampaigns(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(campaignId)) {
+        newSet.delete(campaignId);
+      } else {
+        newSet.add(campaignId);
+      }
+      return newSet;
+    });
+  };
 
   const getTotalRecipients = () => {
     if (selectedSegments.length === 0) return 0;
@@ -811,6 +831,143 @@ const CampaignsPage = () => {
                       )}
                       Send Push
                     </Button>
+                  </div>
+
+                  {/* Enhancements Section */}
+                  <Separator className="my-3" />
+                  <div className="space-y-3">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => toggleEnhancementPanel(campaign.id)}
+                      className="w-full justify-between"
+                      data-testid={`button-toggle-enhancements-${campaign.id}`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <Wand2 className="h-4 w-4" />
+                        Enhancements
+                      </div>
+                      {expandedEnhancementCampaigns.has(campaign.id) ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </Button>
+
+                    {expandedEnhancementCampaigns.has(campaign.id) && (
+                      <div className="mt-3 space-y-3">
+                        <div className="grid grid-cols-2 gap-2">
+                          {/* Content Rewrite Enhancement */}
+                          <div className="p-3 border rounded-lg bg-blue-50 dark:bg-blue-900/20">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Type className="h-4 w-4 text-blue-600" />
+                              <span className="text-sm font-medium text-blue-900 dark:text-blue-100">Content Rewrite</span>
+                            </div>
+                            <p className="text-xs text-blue-700 dark:text-blue-200 mb-2">No rewritten content</p>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="w-full text-xs"
+                              data-testid={`button-enhance-rewrite-${campaign.id}`}
+                              onClick={() => {
+                                toast({
+                                  title: "Coming Soon",
+                                  description: "Content rewriting for campaigns is being implemented."
+                                });
+                              }}
+                            >
+                              Add Rewrite
+                            </Button>
+                          </div>
+
+                          {/* TTS Enhancement */}
+                          <div className="p-3 border rounded-lg bg-green-50 dark:bg-green-900/20">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Volume2 className="h-4 w-4 text-green-600" />
+                              <span className="text-sm font-medium text-green-900 dark:text-green-100">Text-to-Speech</span>
+                            </div>
+                            <p className="text-xs text-green-700 dark:text-green-200 mb-2">No audio content</p>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="w-full text-xs"
+                              data-testid={`button-enhance-tts-${campaign.id}`}
+                              onClick={() => {
+                                toast({
+                                  title: "Coming Soon",
+                                  description: "Text-to-speech for campaigns is being implemented."
+                                });
+                              }}
+                            >
+                              Add Audio
+                            </Button>
+                          </div>
+
+                          {/* Image Enhancement */}
+                          <div className="p-3 border rounded-lg bg-purple-50 dark:bg-purple-900/20">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Image className="h-4 w-4 text-purple-600" />
+                              <span className="text-sm font-medium text-purple-900 dark:text-purple-100">AI Images</span>
+                            </div>
+                            <p className="text-xs text-purple-700 dark:text-purple-200 mb-2">No generated images</p>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="w-full text-xs"
+                              data-testid={`button-enhance-image-${campaign.id}`}
+                              onClick={() => {
+                                toast({
+                                  title: "Coming Soon",
+                                  description: "AI image generation for campaigns is being implemented."
+                                });
+                              }}
+                            >
+                              Add Images
+                            </Button>
+                          </div>
+
+                          {/* Video Enhancement */}
+                          <div className="p-3 border rounded-lg bg-orange-50 dark:bg-orange-900/20">
+                            <div className="flex items-center gap-2 mb-2">
+                              <Video className="h-4 w-4 text-orange-600" />
+                              <span className="text-sm font-medium text-orange-900 dark:text-orange-100">Video Content</span>
+                            </div>
+                            <p className="text-xs text-orange-700 dark:text-orange-200 mb-2">No video content</p>
+                            <Button 
+                              size="sm" 
+                              variant="outline" 
+                              className="w-full text-xs"
+                              data-testid={`button-enhance-video-${campaign.id}`}
+                              onClick={() => {
+                                toast({
+                                  title: "Coming Soon",
+                                  description: "Video generation for campaigns is being implemented."
+                                });
+                              }}
+                            >
+                              Add Video
+                            </Button>
+                          </div>
+                        </div>
+                        
+                        <div className="text-center">
+                          <Button 
+                            size="sm" 
+                            className="w-full"
+                            data-testid={`button-view-all-enhancements-${campaign.id}`}
+                            onClick={() => {
+                              toast({
+                                title: "Coming Soon",
+                                description: "Full enhancement management is being implemented."
+                              });
+                            }}
+                          >
+                            <Wand2 className="h-4 w-4 mr-2" />
+                            View All Enhancements
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* A/B Testing Section */}
