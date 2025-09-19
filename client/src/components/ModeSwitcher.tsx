@@ -29,7 +29,7 @@ const modes: Mode[] = [
   {
     name: 'CookAIng',
     value: 'cookaing',
-    href: '/cookaing',
+    href: '/cookaing-marketing',
     icon: ChefHat,
     description: 'Marketing automation and analytics'
   }
@@ -40,7 +40,7 @@ const ModeSwitcher: React.FC = () => {
   
   // Determine current mode based on location
   const getCurrentMode = () => {
-    if (location.startsWith('/cookaing')) {
+    if (location.startsWith('/cookaing-marketing')) {
       return modes.find(m => m.value === 'cookaing') || modes[0];
     }
     return modes[0]; // Default to main app
