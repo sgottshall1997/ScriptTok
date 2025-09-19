@@ -1,14 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { authRouter, verifyAuth, requireRole } from "./api/auth";
-
-// Import TEST_USERS for admin endpoint
-const TEST_USERS = [
-  { id: 1, username: 'admin', password: 'admin123', role: 'admin' },
-  { id: 2, username: 'user', password: 'user123', role: 'user' },
-  { id: 3, username: 'viewer', password: 'viewer123', role: 'viewer' }
-];
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
 import { analyticsRouter } from "./api/analytics";
@@ -34,7 +26,6 @@ import { rewriteCaption } from "./api/post/rewrite-caption";
 import { generateDailyBatch } from "./api/daily-batch";
 
 import { amazonLinksRouter } from "./api/amazonLinks";
-import { amazonRouter } from "./routes/amazon";
 
 import { cookingPipeline } from "./services/cookingContentPipeline";
 import redirectRouter from "./api/redirect";
@@ -111,59 +102,6 @@ import phase5Router from "./api/cookaing-marketing";
 import glowbotAdminRouter from "./api/admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Authentication routes
-  app.use('/api/auth', authRouter);
-  
-  // Protected endpoint for authentication testing - requires valid token
-  app.get('/api/protected-endpoint', verifyAuth, (req: any, res) => {
-    return res.json({
-      success: true,
-      message: 'Access granted to protected resource',
-      user: {
-        id: req.user.userId,
-        username: req.user.username,
-        role: req.user.role
-      },
-      timestamp: new Date().toISOString()
-    });
-  });
-
-  // Admin-only endpoint for RBAC testing
-  app.get('/api/admin-only', verifyAuth, requireRole(['admin']), (req: any, res) => {
-    return res.json({
-      success: true,
-      message: 'Access granted to admin resource',
-      user: req.user,
-      adminData: {
-        systemStatus: 'healthy',
-        userCount: TEST_USERS.length,
-        permissions: ['read', 'write', 'delete', 'admin']
-      }
-    });
-  });
-
-  // User or admin endpoint for multi-role testing
-  app.get('/api/user-resource', verifyAuth, requireRole(['user', 'admin']), (req: any, res) => {
-    return res.json({
-      success: true,
-      message: 'Access granted to user resource',
-      user: req.user,
-      userData: {
-        profile: 'User profile data',
-        permissions: req.user.role === 'admin' ? ['read', 'write', 'admin'] : ['read']
-      }
-    });
-  });
-
-  // Public endpoint for testing (no auth required)
-  app.get('/api/public-endpoint', (req, res) => {
-    return res.json({
-      success: true,
-      message: 'Public endpoint - no authentication required',
-      timestamp: new Date().toISOString()
-    });
-  });
-  
   // GlowBot Admin routes (for comprehensive testing)
   app.use('/api/glowbot/admin', glowbotAdminRouter);
   
@@ -328,10 +266,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/post/send-batch', sendBatchRouter);
 
   app.use('/api/amazon-links', amazonLinksRouter);
-  
-  // Amazon PA-API monetization routes
-  app.use('/api/amazon', amazonRouter);
-  
   // Direct webhook test route
   app.get('/api/post/test-make-webhook', async (req, res) => {
     try {
@@ -949,16 +883,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: error.message || 'Health check failed'
       });
     }
-  });
-
-  // API 404 handler - catches all unmatched /api/* routes and returns proper JSON errors
-  app.use('/api/*', (req, res) => {
-    res.status(404).json({
-      success: false,
-      error: 'API endpoint not found',
-      message: `The endpoint ${req.method} ${req.path} does not exist`,
-      timestamp: new Date().toISOString()
-    });
   });
 
   const httpServer = createServer(app);

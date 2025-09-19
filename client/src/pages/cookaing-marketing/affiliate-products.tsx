@@ -7,7 +7,6 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -22,15 +21,12 @@ import {
   ExternalLink,
   DollarSign,
   Tag,
-  Image,
-  Package,
-  Zap
+  Image
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { insertAffiliateProductSchema, affiliateProducts, organizations } from "@shared/schema";
 import { apiRequest } from "@/lib/queryClient";
 import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
-import { AmazonProductSearch } from "@/components/amazon/AmazonProductSearch";
 
 type AffiliateProduct = typeof affiliateProducts.$inferSelect;
 type Organization = typeof organizations.$inferSelect;
@@ -209,7 +205,7 @@ const AffiliateProductsPage = () => {
             Affiliate Products
           </h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage affiliate product catalog with Amazon integration
+            Manage affiliate product catalog
           </p>
         </div>
         
@@ -394,22 +390,8 @@ const AffiliateProductsPage = () => {
         </Dialog>
       </div>
 
-      {/* Tabs for Product Management */}
-      <Tabs defaultValue="manual" className="space-y-6">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="manual" className="flex items-center space-x-2">
-            <ShoppingCart className="h-4 w-4" />
-            <span>Manual Products</span>
-          </TabsTrigger>
-          <TabsTrigger value="amazon" className="flex items-center space-x-2">
-            <Package className="h-4 w-4" />
-            <span>Amazon Search</span>
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="manual" className="space-y-6">
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4">
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
           <Input
@@ -531,64 +513,39 @@ const AffiliateProductsPage = () => {
         </div>
       )}
 
-          {filteredProducts.length === 0 && !isLoading && (
-            <Card>
-              <CardContent className="text-center py-8">
-                <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  No affiliate products found
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {searchTerm || selectedOrgFilter !== 'all' || selectedSourceFilter !== 'all'
-                    ? 'No products match your filters.' 
-                    : 'Get started by adding your first affiliate product.'}
-                </p>
-                {!searchTerm && selectedOrgFilter === 'all' && selectedSourceFilter === 'all' && (
-                  <Button onClick={() => setIsCreateDialogOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Product
-                  </Button>
-                )}
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-
-        <TabsContent value="amazon" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <Package className="h-5 w-5" />
-                <span>Amazon Product Discovery</span>
-                <Badge variant="secondary" className="ml-2">
-                  <Zap className="h-3 w-3 mr-1" />
-                  PA-API
-                </Badge>
-              </CardTitle>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                Search Amazon's vast catalog using the Product Advertising API. Find high-converting products with real-time data including ratings, reviews, pricing, and Prime eligibility.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <AmazonProductSearch />
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
+      {filteredProducts.length === 0 && !isLoading && (
+        <Card>
+          <CardContent className="text-center py-8">
+            <ShoppingCart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+              No affiliate products found
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 mb-4">
+              {searchTerm || selectedOrgFilter !== 'all' || selectedSourceFilter !== 'all'
+                ? 'No products match your filters.' 
+                : 'Get started by adding your first affiliate product.'}
+            </p>
+            {!searchTerm && selectedOrgFilter === 'all' && selectedSourceFilter === 'all' && (
+              <Button onClick={() => setIsCreateDialogOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Product
+              </Button>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Instruction Footer */}
       <InstructionFooter
         title="Affiliate Products"
-        whatIsIt="Comprehensive product database with manual entry and Amazon PA-API integration for affiliate marketing campaigns."
+        whatIsIt="Product database with affiliate links for auto-insertion into campaigns."
         setupSteps={[
-          "Manual: Add products manually with affiliate links and metadata.",
-          "Amazon: Configure PA-API credentials for real-time product discovery.",
-          "Integration: Use Auto-Insert buttons in campaigns for seamless product placement."
+          "Add products manually or integrate with affiliate networks.",
+          "Include name, price, image URL, source, and affiliate link."
         ]}
         usageSteps={[
-          "Browse existing products or search Amazon's catalog in real-time.",
-          "Products automatically integrate with campaigns based on niche and keywords.",
-          "Copy affiliate URLs or export product data for external use."
+          "Browse products; use Auto-Insert Affiliate button in campaigns.",
+          "Products are automatically inserted based on niche and keywords."
         ]}
       />
     </div>
