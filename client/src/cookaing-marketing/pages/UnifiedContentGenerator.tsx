@@ -52,18 +52,16 @@ export default function UnifiedContentGenerator() {
 
   const generateMutation = useMutation({
     mutationFn: async (data: FormData) => {
-      return apiRequest('/api/generate-unified', {
-        method: 'POST',
-        body: JSON.stringify({
-          mode: 'manual',
-          productName: 'Content Request',
-          niche: data.targetAudience || 'general',
-          template: data.contentType,
-          tone: data.tone,
-          platforms: ['general'],
-          customHook: data.description
-        })
+      const response = await apiRequest('POST', '/api/generate-unified', {
+        mode: 'manual',
+        productName: 'Content Request',
+        niche: data.targetAudience || 'general',
+        template: data.contentType,
+        tone: data.tone,
+        platforms: ['general'],
+        customHook: data.description
       });
+      return await response.json();
     },
     onSuccess: (result) => {
       setGeneratedContent(result);
