@@ -1,0 +1,231 @@
+Here’s a single, copy-paste Replit Agent Prompt tailored only for CookAIng. It starts by building the Manual Generator, Bulk Automated Generator, and Jobs Management, and it must use the exact same “Spartan format” style as the GlowBot generator uses (read the GlowBot generator to mirror its schema/structure/voice, but don’t touch GlowBot code paths).
+
+⸻
+
+Replit Agent Prompt (paste this exactly):
+
+You are the senior engineer on the CookAIng app. Implement a production-ready Promo Content Generator stack only for CookAIng, with three pillars in this order:
+	1.	Manual Generator (single-run UI + output)
+	2.	Bulk Automated Generator (batch inputs, schedule-able)
+	3.	Jobs Management (queue, status, retries, logs)
+
+Additionally, all prompts and outputs must use the same exact “Spartan format” style that the GlowBot generator uses. Discover the GlowBot generator’s Spartan format schema and tone by reading that code, and replicate the formatting 1:1 for CookAIng (including JSON field names/order, minimal prose, terse headings, and variant labeling). Do not merge codepaths; just mirror the format.
+
+Objectives
+	•	Build a CookAIng-only promo generator that outputs channel-specific marketing content to promote CookAIng.
+	•	Include a template registry + promptFactory and a renderer set (per channel).
+	•	Integrate with a Content History layer for saving/querying outputs.
+	•	Add Bulk Automated generation with CSV/JSON ingestion and schedule triggers.
+	•	Add Jobs Management (queueing, prioritization, retry, dead-letter, logs, simple dashboard).
+	•	Keep file/folder names consistent with feature names (no drift).
+	•	Preserve any existing code by moving unused tabs to an /_Archive with an ARCHIVE.md.
+
+Architecture (CookAIng only)
+
+Create or update the following. Use TypeScript where applicable.
+	•	/apps/cookaing/features/PromoGenerator/
+	•	PromoGeneratorUI.tsx (Manual Generator UI)
+	•	usePromoGenerator.ts (hook: build request, call API, manage state)
+	•	BulkGeneratorUI.tsx (Bulk Automated Generator UI: upload CSV/JSON, pick schedule, run now)
+	•	JobsDashboard.tsx (Jobs Management: list, filters, retries, view logs)
+	•	index.ts (feature barrel)
+	•	/apps/cookaing/server/api/promo/ (HTTP endpoints)
+	•	generate.post.ts (manual run → calls shared generator)
+	•	bulk-generate.post.ts (accepts CSV/JSON list → enqueues jobs)
+	•	jobs.get.ts (list/query jobs)
+	•	jobs.patch.ts (retry/cancel)
+	•	webhook.run.post.ts (optional trigger endpoint for external schedulers)
+	•	/apps/cookaing/services/jobs/
+	•	queue.ts (in-memory or lightweight persistent queue; priority; max concurrency)
+	•	runner.ts (worker that drains queue; exponential backoff; max retries; DLQ)
+	•	store.ts (persist job state + logs; use existing DB layer if present; otherwise lightweight sqlite/file-based adapter)
+	•	types.ts (Job, JobStatus, LogEntry)
+	•	/packages/cookaing-promo/ (shared within repo but scoped to CookAIng)
+	•	index.ts (exported API: generatePromo(input): Promise<PromoOutput[]>)
+	•	schemas.ts (types + Zod)
+	•	templateRegistry.ts (objective × channel templates)
+	•	promptFactory.ts (channel + objective aware prompt builder)
+	•	renderers/
+	•	tiktokReel.ts, instagramReel.ts, xThread.ts, linkedinPost.ts, emailCampaign.ts, blogPost.ts, ads.ts
+	•	utils/utm.ts (utm builder)
+	•	utils/normalize.ts (input normalization)
+	•	tests/* (vitest)
+
+If a global /packages/content-history/ already exists, reuse it. Otherwise create:
+
+	•	/packages/content-history/
+	•	client.ts (saveEntry, queryEntries, getById)
+	•	schemas.ts
+	•	tests/*
+
+Spartan Format (match GlowBot exactly)
+	•	Inspect GlowBot’s generator to learn the exact Spartan output schema, field order, headings, brevity rules, and variant labeling.
+	•	Implement a SpartanRenderer that outputs identical structure for CookAIng (fields, ordering, terse style).
+	•	Keep channel-specific constraints (e.g., reels length, thread count) but render in Spartan format.
+
+Data Contracts (CookAIng)
+
+In /packages/cookaing-promo/schemas.ts:
+
+export type PromoObjective =
+  | "feature_highlight"
+  | "how_to_demo"
+  | "user_scenario"
+  | "before_after"
+  | "launch_announcement"
+  | "new_feature_alert"
+  | "newsletter"
+  | "winback"
+  | "seo_article"
+  | "deep_dive"
+  | "comparison"
+  | "testimonial_script"
+  | "explainer_script"
+  | "ad_copy"
+  | "challenge"
+  | "quiz_poll"
+  | "ugc_prompt";
+
+export type Channel =
+  | "tiktok_reel"
+  | "instagram_reel"
+  | "x_thread"
+  | "linkedin_post"
+  | "email"
+  | "blog"
+  | "ads_google"
+  | "ads_meta"
+  | "ads_tiktok";
+
+export interface PromoInput {
+  appName: "CookAIng";
+  audiencePersona: string;
+  offer?: string;
+  keyBenefits: string[];
+  features: string[];
+  proofPoints?: string[];
+  seedTopic?: string;
+  tone?: "friendly" | "expert" | "punchy" | "playful" | "urgent";
+  channels: Channel[];
+  objective: PromoObjective;
+  ctaUrl: string;
+  campaign: string;
+  source?: string;
+  medium?: string;
+  brandGuidelines?: string;
+  wordCountHint?: number;
+}
+
+export interface PromoOutput {
+  id: string;
+  timestamp: string;
+  appName: "CookAIng";
+  objective: PromoObjective;
+  channel: Channel;
+  title?: string;
+  hook?: string;
+  body: string;
+  captions?: string[];
+  hashtags?: string[];
+  cta: { text: string; url: string; utmUrl: string };
+  variants?: { label: string; body: string }[];
+  metadata: {
+    persona: string;
+    tone: string;
+    seedTopic?: string;
+    featuresUsed: string[];
+    benefitsUsed: string[];
+    proofPointsUsed?: string[];
+    wordCount?: number;
+  };
+}
+
+Template Registry & Prompt Factory
+	•	templateRegistry.ts: map objective × channel → concise structured template (hooks ×2–3, CTA ×2, proof slots, compliance note).
+	•	promptFactory.ts rules:
+	•	Reels: 20–40s, first 1–2s hook, on-screen beats, VO, end card CTA.
+	•	X thread: 6–10 tweets, punchy, final CTA.
+	•	LinkedIn: value-first, light emojis, question CTA.
+	•	Email: subject (5–7 words), preview (35–50 chars), skimmable body, single primary CTA.
+	•	Blog: H1, intro, H2/H3, bullets, conclusion, CTA (respect wordCountHint).
+	•	Ads: 10 headlines, 4 descriptions, 3 long primaries; keyword buckets for Google.
+	•	Generate A/B variants across channels using alternate hooks/CTAs.
+	•	UTM: utm_source, utm_medium, utm_campaign, utm_content=<channel>-<objective>-<variant>.
+
+Manual Generator (UI & API)
+	•	PromoGeneratorUI.tsx:
+	•	Inputs: Persona, Offer, Benefits, Features, Proof, Tone, CTA URL, Campaign, Source, Medium, WordCountHint, BrandGuidelines.
+	•	Controls: Multi-select Channels, select Objective, toggle Create A/B Variants.
+	•	Buttons: Generate, Save to History, Copy (per channel tab).
+	•	Results: Tabs per channel in Spartan format.
+	•	generate.post.ts: validates input (Zod), invokes cookaing-promo.generatePromo, returns Spartan outputs.
+
+Bulk Automated Generator
+	•	BulkGeneratorUI.tsx:
+	•	Upload CSV/JSON with rows/items of PromoInput fields (except appName which is always CookAIng).
+	•	Options: Run now or Schedule (cron string dropdown presets).
+	•	On submit → bulk-generate.post.ts enqueues one job per row.
+	•	CSV/JSON parser with row validation; show per-row errors inline.
+
+Jobs Management
+	•	queue.ts: FIFO with priority; configure max concurrency and max retries.
+	•	runner.ts: worker loop; exponential backoff; writes per-attempt log with timestamps and error snapshots.
+	•	store.ts: persist jobs (id, status, payload, attempts, logs, startedAt, finishedAt, duration, error).
+	•	JobsDashboard.tsx: table view (status filters, search by campaign/objective), actions (retry, cancel), job details (payload + logs), link to related Content History entries.
+
+Content History Integration
+	•	Save fields:
+
+id, timestamp, appName("CookAIng"), objective, channel,
+title, hook, body, captions, hashtags,
+cta_text, cta_url, cta_utm_url,
+persona, tone, seedTopic, featuresUsed, benefitsUsed, proofPointsUsed,
+wordCount, variants(json), campaign, source, medium
+
+	•	Provide saveEntry, queryEntries, getById.
+	•	Add a lightweight History tab link from generator results.
+
+Naming Consistency & Archiving
+	•	Use exact names: /PromoGenerator/, PromoGeneratorUI.tsx, BulkGeneratorUI.tsx, JobsDashboard.tsx.
+	•	Search for mismatched/duplicated names; consolidate and fix imports.
+	•	Move unused/legacy tabs to /_Archive and create ARCHIVE.md listing original paths + reason; no deletions.
+
+Tests (vitest + RTL)
+	•	/packages/cookaing-promo/tests/promptFactory.test.ts
+	•	All channels/objectives produce output; UTM correct; email/blog respect word count.
+	•	/packages/cookaing-promo/tests/registry.test.ts
+	•	Coverage for every objective × channel mapping.
+	•	/packages/content-history/tests/history.test.ts
+	•	Save/query/getById round-trip.
+	•	/apps/cookaing/services/jobs/tests/queue.test.ts
+	•	Enqueue, priority, retry/backoff, DLQ behavior.
+
+DX & Scripts
+	•	Root package.json scripts:
+	•	"test:cookaing-promo": "vitest run packages/cookaing-promo --run"
+	•	"test:history": "vitest run packages/content-history --run"
+	•	"test:jobs": "vitest run apps/cookaing/services/jobs --run"
+	•	Add ESLint/Prettier fix scripts scoped to changed files.
+
+Sidebar & Sections
+	•	Ensure CookAIng sidebar shows:
+	•	Marketing
+	•	Promo Generator
+	•	Bulk Generator
+	•	Jobs
+	•	Content History (if separate)
+	•	If anything missing/hidden, add and group under Marketing.
+
+Acceptance Criteria
+	•	I can open Promo Generator (Manual), generate multi-channel Spartan outputs, save to history, copy variants.
+	•	I can upload a CSV of 10+ rows in Bulk Generator, run now or schedule, and monitor each job in Jobs with logs/retries.
+	•	UTM links are present and correct.
+	•	All tests pass: pnpm test:cookaing-promo && pnpm test:history && pnpm test:jobs.
+	•	No imports break; unused tabs archived with ARCHIVE.md.
+
+Final Deliverables
+	1.	Changelog of files created/modified/moved.
+	2.	Manual QA checklist (10 steps covering Manual, Bulk, Jobs, History, UTMs, Spartan formatting).
+	3.	Confirmation that Spartan format matches GlowBot’s exactly (list what you mirrored: field names, order, headings, brevity rules, variant labels).
+
+If repo layout details are ambiguous, infer sensible defaults and proceed.
