@@ -119,7 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/integrations/health', integrationsHealthRouter);
   app.use('/api/cookaing-marketing/content', contentRouter);
   app.use('/api/cookaing-marketing/content-enhancement', contentEnhancementRouter);
-  app.use('/api/cookaing-marketing/intelligence', intelligenceRouter);
+  app.use('/api/cookaing-marketing/intel', intelligenceRouter);
   app.use('/api/cookaing-marketing/social-automation', socialAutomationRouter);
   app.use('/api/cookaing-marketing/compliance', complianceRouter);
   app.use('/api/cookaing-marketing/enhance', enhanceRouter);
