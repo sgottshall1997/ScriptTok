@@ -10,6 +10,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, CheckCircle, DollarSign, Settings, Tag, Globe, Zap } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { apiRequest } from '@/lib/queryClient';
 
 interface MonetizationSettings {
   enabled: boolean;
@@ -100,7 +101,13 @@ export function AmazonMonetizationSettings() {
     try {
       setSaving(true);
       
-      // Save to localStorage for now (would be API call in production)
+      // Save to backend API
+      await apiRequest('/api/affiliate-networks', {
+        method: 'POST',
+        body: JSON.stringify(settings)
+      });
+      
+      // Also save to localStorage as backup
       localStorage.setItem('amazon-monetization-settings', JSON.stringify(settings));
       
       toast({
@@ -125,7 +132,7 @@ export function AmazonMonetizationSettings() {
       const data = await response.json();
       setStatus(data);
       
-      if (data.apiStatus?.connected) {
+      if (data.connected) {
         toast({
           title: 'Connection successful',
           description: 'Amazon PA-API is working correctly'
@@ -133,7 +140,7 @@ export function AmazonMonetizationSettings() {
       } else {
         toast({
           title: 'Connection failed',
-          description: data.apiStatus?.error || 'Unable to connect to Amazon PA-API',
+          description: data.error || 'Unable to connect to Amazon PA-API',
           variant: 'destructive'
         });
       }

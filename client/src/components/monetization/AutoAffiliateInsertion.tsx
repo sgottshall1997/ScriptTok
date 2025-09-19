@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { apiRequest } from '@/lib/queryClient';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -61,30 +62,41 @@ export function AutoAffiliateInsertion({
   const [previewMode, setPreviewMode] = useState(false);
   const { toast } = useToast();
 
-  // Fetch enhanced content preview
-  const { data: preview, isLoading: previewLoading, refetch: generatePreview } = useQuery({
-    queryKey: ['/api/content/enhance-affiliate-links', { 
-      content, 
-      niche, 
-      settings 
-    }],
-    enabled: false // Manual trigger only
-  });
-
-  const handleEnhanceContent = async () => {
-    try {
-      await generatePreview();
-      setPreviewMode(true);
-    } catch (error) {
+  // Content enhancement mutation
+  const enhanceContentMutation = useMutation({
+    mutationFn: async ({ content, niche, settings }: { content: string; niche: string; settings: AutoInsertionSettings }) => {
+      return await apiRequest('/api/cookaing-marketing/affiliate-auto-insert', {
+        method: 'POST',
+        body: JSON.stringify({ content, niche, settings })
+      });
+    },
+    onError: (error) => {
       toast({
         title: 'Enhancement failed',
         description: 'Unable to enhance content with affiliate links',
         variant: 'destructive'
       });
     }
+  });
+
+  const handleEnhanceContent = async () => {
+    if (!content.trim()) {
+      toast({
+        title: 'No content',
+        description: 'Please provide content to enhance',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    const result = await enhanceContentMutation.mutateAsync({ content, niche, settings });
+    if (result) {
+      setPreviewMode(true);
+    }
   };
 
   const handleApplyEnhancements = () => {
+    const preview = enhanceContentMutation.data;
     if (preview?.enhanced && onContentUpdate) {
       onContentUpdate(preview.enhanced);
       toast({
@@ -265,10 +277,10 @@ export function AutoAffiliateInsertion({
             <div className="flex items-center gap-2">
               <Button
                 onClick={handleEnhanceContent}
-                disabled={!settings.enabled || previewLoading}
+                disabled={!settings.enabled || enhanceContentMutation.isPending}
                 data-testid="enhance-content-button"
               >
-                {previewLoading ? (
+                {enhanceContentMutation.isPending ? (
                   <>Enhancing...</>
                 ) : (
                   <>
@@ -278,7 +290,7 @@ export function AutoAffiliateInsertion({
                 )}
               </Button>
               
-              {preview && previewMode && (
+              {enhanceContentMutation.data && previewMode && (
                 <Button
                   onClick={handleApplyEnhancements}
                   variant="default"
@@ -291,21 +303,21 @@ export function AutoAffiliateInsertion({
             </div>
 
             {/* Enhancement Stats */}
-            {preview && previewMode && (
+            {enhanceContentMutation.data && previewMode && (
               <div className="p-3 bg-muted rounded-lg">
                 <div className="flex items-center gap-4 mb-2">
                   <div className="flex items-center gap-1">
                     <Link className="h-4 w-4 text-blue-500" />
-                    <span className="text-sm font-medium">{preview.linksAdded} Links Added</span>
+                    <span className="text-sm font-medium">{enhanceContentMutation.data.linksAdded} Links Added</span>
                   </div>
                   <div className="flex items-center gap-1">
                     <ShoppingCart className="h-4 w-4 text-green-500" />
-                    <span className="text-sm font-medium">{preview.products.length} Products</span>
+                    <span className="text-sm font-medium">{enhanceContentMutation.data.products.length} Products</span>
                   </div>
                 </div>
                 
                 <div className="space-y-1">
-                  {preview.products.map((product, index) => (
+                  {enhanceContentMutation.data.products.map((product, index) => (
                     <div key={index} className="flex items-center justify-between text-xs">
                       <span className="truncate max-w-[200px]">{product.title}</span>
                       <div className="flex items-center gap-2">
@@ -321,16 +333,16 @@ export function AutoAffiliateInsertion({
             )}
 
             {/* Content Preview */}
-            {preview && previewMode && (
+            {enhanceContentMutation.data && previewMode && (
               <div className="border rounded-lg p-3">
                 <div className="flex items-center gap-2 mb-2">
                   <h4 className="text-sm font-medium">Enhanced Content Preview</h4>
                   <Badge variant="outline" className="text-xs">
-                    +{preview.linksAdded} affiliate links
+                    +{enhanceContentMutation.data.linksAdded} affiliate links
                   </Badge>
                 </div>
                 <div className="text-sm text-muted-foreground max-h-32 overflow-y-auto">
-                  {preview.enhanced.substring(0, 300)}...
+                  {enhanceContentMutation.data.enhanced.substring(0, 300)}...
                 </div>
               </div>
             )}

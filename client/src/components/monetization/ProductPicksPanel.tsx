@@ -83,14 +83,14 @@ export function ProductPicksPanel({ onProductSelect, selectedNiche }: ProductPic
       minPrice: priceRange.includes('-') ? priceRange.split('-')[0] : undefined,
       maxPrice: priceRange.includes('-') ? priceRange.split('-')[1] : undefined,
       minRating: minRating > 0 ? minRating : undefined,
-      prime: primeOnly
+      primeOnly: primeOnly
     }],
     enabled: source === 'amazon' || source === 'hybrid'
   });
 
   // Fetch hybrid trending products
   const { data: hybridProducts, isLoading: hybridLoading, refetch: refetchHybrid } = useQuery({
-    queryKey: ['/api/hybrid-trends/products', {
+    queryKey: ['/api/hybridTrends', {
       niche,
       limit: 20,
       minRating: minRating > 0 ? minRating : undefined,
@@ -102,8 +102,16 @@ export function ProductPicksPanel({ onProductSelect, selectedNiche }: ProductPic
   // Copy affiliate link mutation
   const copyLinkMutation = useMutation({
     mutationFn: async (product: AmazonProduct) => {
-      // This would generate the affiliate link with proper tracking
-      return product.url; // Simplified for now
+      // Generate proper affiliate link with attribution
+      const response = await apiRequest('/api/amazonLinks', {
+        method: 'POST',
+        body: JSON.stringify({
+          productUrl: product.url,
+          asin: product.asin,
+          niche: niche
+        })
+      });
+      return response.affiliateUrl;
     },
     onSuccess: (link) => {
       navigator.clipboard.writeText(link);
