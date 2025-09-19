@@ -64,6 +64,7 @@ class ObservabilityService extends EventEmitter {
   private errors: ErrorEntry[] = [];
   private alerts: AlertRule[] = [];
   private performanceMetrics: Map<string, number[]> = new Map();
+  private isRecordingError = false; // Flag to prevent infinite recursion
   
   // Configuration
   private config = {
@@ -117,8 +118,8 @@ class ObservabilityService extends EventEmitter {
     // Emit event for real-time monitoring
     this.emit('log', entry);
 
-    // Auto-detect errors and create error entries
-    if (level === 'error' || level === 'critical') {
+    // Auto-detect errors and create error entries (prevent infinite recursion)
+    if ((level === 'error' || level === 'critical') && !this.isRecordingError) {
       this.recordError({
         timestamp: entry.timestamp,
         errorId: this.generateErrorId(),
@@ -171,6 +172,8 @@ class ObservabilityService extends EventEmitter {
    * Error Tracking and Management
    */
   recordError(error: Omit<ErrorEntry, 'timestamp' | 'errorId'> & { timestamp?: string; errorId?: string }) {
+    this.isRecordingError = true; // Set flag to prevent recursion
+    
     const entry: ErrorEntry = {
       timestamp: error.timestamp || new Date().toISOString(),
       errorId: error.errorId || this.generateErrorId(),
@@ -197,6 +200,7 @@ class ObservabilityService extends EventEmitter {
     // Emit for real-time monitoring
     this.emit('error', entry);
 
+    this.isRecordingError = false; // Reset flag
     return entry.errorId;
   }
 
