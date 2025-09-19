@@ -2,7 +2,7 @@
  * Calendar Service - Content calendar management and scheduling
  */
 
-import { db } from '../../storage.ts';
+import { db } from '../../db';
 import { contentCalendar, analyticsEvents } from '../../../shared/schema.ts';
 import { eq, and, between, desc } from 'drizzle-orm';
 
@@ -47,7 +47,7 @@ class CalendarService {
       )
       .orderBy(contentCalendar.startAt);
 
-    return items.map(item => ({
+    return items.map((item: any) => ({
       id: item.id,
       title: item.title,
       startAt: item.startAt,
@@ -273,15 +273,15 @@ class CalendarService {
     
     const stats = {
       total: allItems.length,
-      scheduled: allItems.filter(item => item.status === 'scheduled').length,
-      published: allItems.filter(item => item.status === 'published').length,
-      cancelled: allItems.filter(item => item.status === 'cancelled').length,
+      scheduled: allItems.filter((item: any) => item.status === 'scheduled').length,
+      published: allItems.filter((item: any) => item.status === 'published').length,
+      cancelled: allItems.filter((item: any) => item.status === 'cancelled').length,
       byChannel: {} as Record<string, number>,
-      upcoming: allItems.filter(item => item.startAt > now && item.status === 'scheduled').length
+      upcoming: allItems.filter((item: any) => item.startAt > now && item.status === 'scheduled').length
     };
 
     // Count by channel
-    allItems.forEach(item => {
+    allItems.forEach((item: any) => {
       stats.byChannel[item.channel] = (stats.byChannel[item.channel] || 0) + 1;
     });
 
@@ -298,7 +298,7 @@ class CalendarService {
       .where(eq(contentCalendar.channel, channel))
       .orderBy(contentCalendar.startAt);
 
-    return items.map(item => ({
+    return items.map((item: any) => ({
       id: item.id,
       title: item.title,
       startAt: item.startAt,

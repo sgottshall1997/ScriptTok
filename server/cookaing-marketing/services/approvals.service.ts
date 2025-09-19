@@ -2,7 +2,7 @@
  * Approvals Service - Manage approval workflows and lifecycle
  */
 
-import { db } from '../../storage.ts';
+import { db } from '../../db';
 import { approvals, analyticsEvents } from '../../../shared/schema.ts';
 import { eq, and, desc } from 'drizzle-orm';
 
@@ -170,7 +170,7 @@ class ApprovalsService {
       .where(eq(approvals.status, status))
       .orderBy(desc(approvals.createdAt));
 
-    return approvalList.map(approval => ({
+    return approvalList.map((approval: any) => ({
       id: approval.id,
       entityType: approval.entityType,
       entityId: approval.entityId,
@@ -191,7 +191,7 @@ class ApprovalsService {
       .where(eq(approvals.assignee, assignee))
       .orderBy(desc(approvals.createdAt));
 
-    return approvalList.map(approval => ({
+    return approvalList.map((approval: any) => ({
       id: approval.id,
       entityType: approval.entityType,
       entityId: approval.entityId,
@@ -233,14 +233,14 @@ class ApprovalsService {
     
     const stats = {
       total: allApprovals.length,
-      pending: allApprovals.filter(a => a.status === 'review').length,
-      approved: allApprovals.filter(a => a.status === 'approved').length,
-      rejected: allApprovals.filter(a => a.status === 'rejected').length,
+      pending: allApprovals.filter((a: any) => a.status === 'review').length,
+      approved: allApprovals.filter((a: any) => a.status === 'approved').length,
+      rejected: allApprovals.filter((a: any) => a.status === 'rejected').length,
       byEntityType: {} as Record<string, number>
     };
 
     // Count by entity type
-    allApprovals.forEach(approval => {
+    allApprovals.forEach((approval: any) => {
       stats.byEntityType[approval.entityType] = (stats.byEntityType[approval.entityType] || 0) + 1;
     });
 
@@ -294,7 +294,7 @@ class ApprovalsService {
       )
       .orderBy(desc(approvals.createdAt));
 
-    return workflowHistory.map(approval => ({
+    return workflowHistory.map((approval: any) => ({
       id: approval.id,
       entityType: approval.entityType,
       entityId: approval.entityId,

@@ -2,7 +2,7 @@
  * RBAC Service - Role-Based Access Control
  */
 
-import { db } from '../../storage.ts';
+import { db } from '../../db';
 import { collaborationRoles } from '../../../shared/schema.ts';
 import { eq } from 'drizzle-orm';
 
@@ -189,7 +189,7 @@ class RBACService {
       .select()
       .from(collaborationRoles);
 
-    return roles.map(role => ({
+    return roles.map((role: any) => ({
       user: role.user,
       role: role.role as 'admin' | 'editor' | 'viewer' | 'client',
       scopes: role.scopesJson as RoleScope
@@ -205,7 +205,7 @@ class RBACService {
       .from(collaborationRoles)
       .where(eq(collaborationRoles.role, role));
 
-    return roles.map(r => ({
+    return roles.map((r: any) => ({
       user: r.user,
       role: r.role as 'admin' | 'editor' | 'viewer' | 'client',
       scopes: r.scopesJson as RoleScope

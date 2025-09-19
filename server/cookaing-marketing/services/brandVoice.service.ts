@@ -2,7 +2,7 @@
  * Brand Voice Service - Manage brand voice profiles and application
  */
 
-import { db } from '../../storage.ts';
+import { db } from '../../db';
 import { brandVoiceProfiles, cookaingContentVersions, contentEnhancements, analyticsEvents } from '../../../shared/schema.ts';
 import { eq, desc } from 'drizzle-orm';
 import { brandVoiceProvider } from './providers/brandVoice.provider.ts';
@@ -147,7 +147,7 @@ class BrandVoiceService {
       .from(brandVoiceProfiles)
       .where(eq(brandVoiceProfiles.id, profileId));
 
-    const brandVoiceProfile = (fullProfile.corpusJson as any)?.analysis;
+    const brandVoiceProfile = (fullProfile!.corpusJson as any)?.analysis;
     
     // Apply brand voice using provider
     const result = await brandVoiceProvider.applyVoice(originalContent, brandVoiceProfile);

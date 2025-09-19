@@ -2,7 +2,7 @@
  * Personalization Service - Dynamic content adaptation and audience targeting
  */
 
-import { db } from '../../storage.ts';
+import { db } from '../../db';
 import { cookaingContentVersions, contentEnhancements, analyticsEvents, contacts } from '../../../shared/schema.ts';
 import { eq } from 'drizzle-orm';
 import { personalizationProvider } from './providers/personalization.provider.ts';

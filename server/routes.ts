@@ -97,6 +97,7 @@ import socialAutomationRouter from "./api/cookaing-marketing/social-automation";
 import complianceRouter from "./api/cookaing-marketing/compliance";
 import enhanceRouter from "./api/cookaing-marketing/enhance";
 import { seedDataRouter } from "./api/seed-data";
+import phase5Router from "./api/cookaing-marketing";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // CookAIng Marketing Engine routes
@@ -123,6 +124,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/social-automation', socialAutomationRouter);
   app.use('/api/cookaing-marketing/compliance', complianceRouter);
   app.use('/api/cookaing-marketing/enhance', enhanceRouter);
+  
+  // Phase 5: Advanced Personalization and Collaboration
+  app.use('/api/cookaing-marketing', phase5Router);
   app.use('/api/cookaing-marketing/trends', trendsRouter);
   app.use('/api/cookaing-marketing/affiliate-auto-insert', affiliateAutoInsertRouter);
   app.use('/api/cookaing-marketing/seed-data', seedDataRouter);
