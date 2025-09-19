@@ -30,7 +30,18 @@ import {
   Link as LinkIcon,
   Loader2,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Star,
+  Filter,
+  Search,
+  Trophy,
+  Download,
+  ThumbsUp,
+  ThumbsDown,
+  BarChart3,
+  Target,
+  Zap,
+  Brain
 } from "lucide-react";
 import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
@@ -64,6 +75,520 @@ interface Campaign {
   status: string;
   description?: string;
 }
+
+// CookAIng Content History & Rating interfaces
+interface ContentVersion {
+  id: number;
+  campaignId?: number;
+  recipeId?: number;
+  sourceJobId?: number;
+  channel: string;
+  platform?: string;
+  title?: string;
+  summary?: string;
+  niche?: string;
+  template?: string;
+  model?: string;
+  metadataJson: any;
+  payloadJson: any;
+  createdBy?: string;
+  createdAt: string;
+  version: number;
+}
+
+interface ContentRating {
+  id: number;
+  versionId: number;
+  userScore?: number; // 1-100
+  aiVirality?: number; // 1-10
+  aiClarity?: number; // 1-10
+  aiPersuasiveness?: number; // 1-10
+  aiCreativity?: number; // 1-10
+  thumb?: 'up' | 'down';
+  reasons?: string[];
+  notes?: string;
+  isWinner: boolean;
+  createdBy?: string;
+  createdAt: string;
+}
+
+interface ContentVersionWithRating extends ContentVersion {
+  ratings?: ContentRating[];
+  avgUserScore?: number;
+  ratingCount?: number;
+}
+
+// Content History & Rating Panel Component
+const ContentHistoryPanel = () => {
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
+  // State for filters
+  const [nicheFilter, setNicheFilter] = useState("");
+  const [templateFilter, setTemplateFilter] = useState("");
+  const [platformFilter, setPlatformFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showOnlyWinners, setShowOnlyWinners] = useState(false);
+  
+  // State for rating modal
+  const [selectedVersion, setSelectedVersion] = useState<ContentVersion | null>(null);
+  const [ratingModalOpen, setRatingModalOpen] = useState(false);
+  const [userScore, setUserScore] = useState<number>(80);
+  const [ratingNotes, setRatingNotes] = useState("");
+  
+  // Fetch content versions with filters
+  const { data: contentVersions, isLoading: versionsLoading } = useQuery({
+    queryKey: ["content-versions", { niche: nicheFilter, template: templateFilter, platform: platformFilter, winners: showOnlyWinners, search: searchQuery }],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (nicheFilter && nicheFilter !== "all") params.append("niche", nicheFilter);
+      if (templateFilter && templateFilter !== "all") params.append("template", templateFilter);
+      if (platformFilter && platformFilter !== "all") params.append("platform", platformFilter);
+      if (showOnlyWinners) params.append("winners", "true");
+      if (searchQuery.trim()) params.append("search", searchQuery.trim());
+      params.append("limit", "50");
+      
+      const response = await fetch(`/api/cookaing-marketing/content/versions?${params}`);
+      if (!response.ok) throw new Error("Failed to fetch content versions");
+      return response.json();
+    }
+  });
+  
+  // Fetch top-rated content
+  const { data: topRatedContent } = useQuery({
+    queryKey: ["top-rated-content", { limit: 10 }],
+    queryFn: async () => {
+      const response = await fetch("/api/cookaing-marketing/content/top-rated?limit=10");
+      if (!response.ok) throw new Error("Failed to fetch top-rated content");
+      return response.json();
+    }
+  });
+  
+  // Create content rating mutation
+  const createRatingMutation = useMutation({
+    mutationFn: async (ratingData: any) => {
+      return apiRequest("/api/cookaing-marketing/content/ratings", {
+        method: "POST",
+        body: JSON.stringify(ratingData)
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["content-versions"] });
+      queryClient.invalidateQueries({ queryKey: ["top-rated-content"] });
+      toast({
+        title: "Rating Saved",
+        description: "Your content rating has been saved successfully"
+      });
+      setRatingModalOpen(false);
+      setSelectedVersion(null);
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: "Failed to save rating: " + (error.message || "Unknown error"),
+        variant: "destructive"
+      });
+    }
+  });
+  
+  // Handle rating submission
+  const handleSubmitRating = () => {
+    if (!selectedVersion) return;
+    
+    const ratingData = {
+      versionId: selectedVersion.id,
+      userScore,
+      notes: ratingNotes || undefined,
+      isWinner: userScore >= 90,
+      createdBy: "user"
+    };
+    
+    createRatingMutation.mutate(ratingData);
+  };
+  
+  // Handle export
+  const handleExport = async (format: 'json' | 'csv' | 'markdown') => {
+    try {
+      const versionIds = contentVersions?.contentVersions?.map((v: ContentVersion) => v.id) || [];
+      
+      const response = await apiRequest("/api/cookaing-marketing/content/bulk-export", {
+        method: "POST",
+        body: JSON.stringify({ versionIds, format })
+      });
+      
+      // Create and download file
+      const blob = new Blob([response.exportData], { 
+        type: format === 'json' ? 'application/json' : 'text/plain' 
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `content-history.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast({
+        title: "Export Complete",
+        description: `Content exported as ${format.toUpperCase()}`
+      });
+    } catch (error: any) {
+      toast({
+        title: "Export Failed", 
+        description: error.message || "Unknown error",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  return (
+    <div className="space-y-6">
+      {/* Filters & Search */}
+      <Card data-testid="card-content-filters">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Filter className="w-5 h-5" />
+            Content History & Rating System
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
+            <div>
+              <Label htmlFor="niche-filter">Niche</Label>
+              <Select value={nicheFilter} onValueChange={setNicheFilter}>
+                <SelectTrigger data-testid="select-niche-filter">
+                  <SelectValue placeholder="All niches" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All niches</SelectItem>
+                  <SelectItem value="fitness">Fitness</SelectItem>
+                  <SelectItem value="beauty">Beauty</SelectItem>
+                  <SelectItem value="tech">Tech</SelectItem>
+                  <SelectItem value="food">Food</SelectItem>
+                  <SelectItem value="travel">Travel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="template-filter">Template</Label>
+              <Select value={templateFilter} onValueChange={setTemplateFilter}>
+                <SelectTrigger data-testid="select-template-filter">
+                  <SelectValue placeholder="All templates" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All templates</SelectItem>
+                  <SelectItem value="tiktok_script">TikTok Script</SelectItem>
+                  <SelectItem value="instagram_post">Instagram Post</SelectItem>
+                  <SelectItem value="youtube_script">YouTube Script</SelectItem>
+                  <SelectItem value="blog_post">Blog Post</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div>
+              <Label htmlFor="platform-filter">Platform</Label>
+              <Select value={platformFilter} onValueChange={setPlatformFilter}>
+                <SelectTrigger data-testid="select-platform-filter">
+                  <SelectValue placeholder="All platforms" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All platforms</SelectItem>
+                  <SelectItem value="tiktok">TikTok</SelectItem>
+                  <SelectItem value="instagram">Instagram</SelectItem>
+                  <SelectItem value="youtube">YouTube</SelectItem>
+                  <SelectItem value="twitter">Twitter</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex items-end gap-2">
+              <Button
+                variant="outline"
+                onClick={() => handleExport('json')}
+                className="flex-1"
+                data-testid="button-export-json"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Export JSON
+              </Button>
+            </div>
+          </div>
+          
+          <div className="flex items-center gap-4">
+            <div className="flex-1">
+              <Label htmlFor="search-query">Search Content</Label>
+              <Input
+                id="search-query"
+                placeholder="Search by title, content, or niche..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                data-testid="input-search-query"
+              />
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="show-winners"
+                checked={showOnlyWinners}
+                onCheckedChange={(checked) => setShowOnlyWinners(!!checked)}
+                data-testid="checkbox-show-winners"
+              />
+              <Label htmlFor="show-winners" className="flex items-center gap-2">
+                <Trophy className="w-4 h-4 text-yellow-500" />
+                Show only winners
+              </Label>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+      
+      {/* Content Versions List */}
+      <Card data-testid="card-content-versions">
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span className="flex items-center gap-2">
+              <FileText className="w-5 h-5" />
+              Content Versions
+            </span>
+            <Badge variant="secondary">
+              {contentVersions?.count || 0} versions
+            </Badge>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {versionsLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <span className="ml-2">Loading content history...</span>
+            </div>
+          ) : contentVersions?.contentVersions?.length > 0 ? (
+            <div className="space-y-4">
+              {contentVersions.contentVersions.map((version: ContentVersionWithRating) => (
+                <div
+                  key={version.id}
+                  className="border rounded-lg p-4 hover:bg-gray-50 transition-colors"
+                  data-testid={`content-version-${version.id}`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="font-medium">{version.title || `${version.channel} Content`}</h3>
+                        {version.avgUserScore && version.avgUserScore >= 90 && (
+                          <Trophy className="w-4 h-4 text-yellow-500" />
+                        )}
+                        <Badge variant="outline">v{version.version}</Badge>
+                        {version.platform && (
+                          <Badge variant="secondary">{version.platform}</Badge>
+                        )}
+                      </div>
+                      
+                      <div className="text-sm text-gray-600 mb-2">
+                        <span className="font-medium">Channel:</span> {version.channel}
+                        {version.niche && (
+                          <>
+                            {' • '}
+                            <span className="font-medium">Niche:</span> {version.niche}
+                          </>
+                        )}
+                        {version.template && (
+                          <>
+                            {' • '}
+                            <span className="font-medium">Template:</span> {version.template}
+                          </>
+                        )}
+                      </div>
+                      
+                      <div className="text-xs text-gray-500">
+                        Created: {new Date(version.createdAt).toLocaleDateString()} • 
+                        Model: {version.model || 'Unknown'}
+                      </div>
+                      
+                      {/* Rating Summary */}
+                      {version.avgUserScore && (
+                        <div className="flex items-center gap-4 mt-3 p-2 bg-blue-50 rounded-lg">
+                          <div className="flex items-center gap-1">
+                            <Star className="w-4 h-4 text-yellow-500" />
+                            <span className="font-medium">{version.avgUserScore}/100</span>
+                          </div>
+                          <span className="text-sm text-gray-600">
+                            {version.ratingCount} rating{version.ratingCount !== 1 ? 's' : ''}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          setSelectedVersion(version);
+                          setRatingModalOpen(true);
+                        }}
+                        data-testid={`button-rate-${version.id}`}
+                      >
+                        <Star className="w-4 h-4 mr-1" />
+                        Rate
+                      </Button>
+                      
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          const content = JSON.stringify(version.payloadJson, null, 2);
+                          navigator.clipboard.writeText(content);
+                          toast({
+                            title: "Copied",
+                            description: "Content copied to clipboard"
+                          });
+                        }}
+                        data-testid={`button-copy-${version.id}`}
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-gray-500">
+              <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <p>No content versions found</p>
+              <p className="text-sm">Generate some content to see it here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      
+      {/* Top Rated Content */}
+      {topRatedContent?.topRatedContent?.length > 0 && (
+        <Card data-testid="card-top-rated">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-yellow-500" />
+              Top Rated Content
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {topRatedContent.topRatedContent.slice(0, 4).map((content: any) => (
+                <div
+                  key={content.id}
+                  className="p-3 border rounded-lg bg-gradient-to-br from-yellow-50 to-orange-50"
+                  data-testid={`top-rated-${content.id}`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h4 className="font-medium text-sm">{content.title || content.channel}</h4>
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                      <span className="font-bold text-sm">{content.avgUserScore}</span>
+                    </div>
+                  </div>
+                  <div className="text-xs text-gray-600">
+                    {content.niche} • {content.platform} • {content.ratingCount} ratings
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+      
+      {/* Rating Modal */}
+      {ratingModalOpen && selectedVersion && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold">Rate Content</h3>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setRatingModalOpen(false)}
+                data-testid="button-close-rating-modal"
+              >
+                <XCircle className="w-4 h-4" />
+              </Button>
+            </div>
+            
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="user-score">User Score (1-100)</Label>
+                <div className="flex items-center gap-2 mt-1">
+                  <input
+                    type="range"
+                    id="user-score"
+                    min="1"
+                    max="100"
+                    value={userScore}
+                    onChange={(e) => setUserScore(parseInt(e.target.value))}
+                    className="flex-1"
+                    data-testid="slider-user-score"
+                  />
+                  <span className="font-bold text-lg min-w-[3rem]">{userScore}</span>
+                </div>
+              </div>
+              
+              <div>
+                <Label htmlFor="rating-notes">Notes (Optional)</Label>
+                <Textarea
+                  id="rating-notes"
+                  placeholder="Add any notes about this content..."
+                  value={ratingNotes}
+                  onChange={(e) => setRatingNotes(e.target.value)}
+                  className="mt-1"
+                  data-testid="textarea-rating-notes"
+                />
+              </div>
+              
+              {/* AI Evaluation Preview */}
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <h4 className="font-medium text-sm mb-2 flex items-center gap-2">
+                  <Brain className="w-4 h-4" />
+                  AI Evaluation (Auto-generated on save)
+                </h4>
+                <div className="text-xs text-gray-600">
+                  AI will automatically evaluate this content for virality, clarity, persuasiveness, and creativity when you save your rating.
+                </div>
+              </div>
+              
+              <div className="flex items-center gap-2 pt-2">
+                <Button
+                  onClick={handleSubmitRating}
+                  disabled={createRatingMutation.isPending}
+                  className="flex-1"
+                  data-testid="button-submit-rating"
+                >
+                  {createRatingMutation.isPending ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    <>
+                      <Star className="w-4 h-4 mr-2" />
+                      Save Rating
+                    </>
+                  )}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={() => setRatingModalOpen(false)}
+                  data-testid="button-cancel-rating"
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const CookAIngContentGenerator = () => {
   const { toast } = useToast();
@@ -590,74 +1115,7 @@ const CookAIngContentGenerator = () => {
         </TabsContent>
 
         <TabsContent value="history" className="space-y-6">
-          <Card data-testid="card-job-history">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="w-5 h-5" />
-                Content Generation History
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {jobsLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                </div>
-              ) : jobs && jobs.length > 0 ? (
-                <div className="space-y-4">
-                  {jobs.map((job) => (
-                    <div
-                      key={job.id}
-                      className="flex items-center justify-between p-4 border rounded-lg"
-                      data-testid={`job-${job.id}`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <div className="flex items-center gap-2">
-                          {getStatusIcon(job.status)}
-                          <Badge variant={getStatusBadgeVariant(job.status)}>
-                            {job.status}
-                          </Badge>
-                        </div>
-                        <div>
-                          <div className="font-medium">
-                            {job.blueprintName || `Blueprint ${job.blueprintId}`}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {job.sourceType === 'recipe' ? `Recipe #${job.recipeId}` : 'Freeform content'}
-                            {' • '}
-                            {new Date(job.createdAt).toLocaleDateString()}
-                          </div>
-                        </div>
-                      </div>
-                      {job.status === 'completed' && job.outputsJson && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => {
-                            const content = typeof job.outputsJson === 'string' 
-                              ? job.outputsJson 
-                              : JSON.stringify(job.outputsJson, null, 2);
-                            navigator.clipboard.writeText(content);
-                            toast({
-                              title: "Copied",
-                              description: "Content copied to clipboard",
-                            });
-                          }}
-                          data-testid={`button-copy-job-${job.id}`}
-                        >
-                          <Copy className="w-4 h-4" />
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500">
-                  <AlertCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>No content generation jobs yet</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          <ContentHistoryPanel />
         </TabsContent>
       </Tabs>
 
