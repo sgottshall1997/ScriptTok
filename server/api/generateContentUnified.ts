@@ -40,7 +40,7 @@ const contentGenerationLimiter = rateLimit({
   legacyHeaders: false,
   skipSuccessfulRequests: false,
   keyGenerator: (req) => {
-    return req.user?.id?.toString() || req.ip || 'unknown';
+    return req.ip || 'unknown';
   }
 });
 
@@ -84,8 +84,21 @@ const unifiedGenerationSchema = z.object({
   
   // Webhook fields
   webhookUrl: z.string().nullable().optional(),
-  sendToMakeWebhook: z.boolean().default(false)
+  sendToMakeWebhook: z.boolean().default(false),
+  
+  // User identification
+  userId: z.number().nullable().optional()
 });
+
+// Sanitize Unicode characters helper function
+function sanitizeUnicode(text: string): string {
+  if (!text) return '';
+  return text
+    .replace(/[\uD800-\uDFFF]/g, '') // Remove lone surrogates
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
+    .replace(/\uFEFF/g, '') // Remove BOM
+    .trim();
+}
 
 // Type definitions for content generation
 interface GenerationConfig {
@@ -99,10 +112,11 @@ interface GenerationConfig {
   affiliateUrl?: string;
   topRatedStyleUsed?: boolean;
   useSpartanFormat?: boolean;
-  aiModel: string;
+  aiModel: 'claude';
   mode: 'manual' | 'automated';
   jobId?: string;
   userId?: number;
+  useSmartStyle?: boolean;
 }
 
 // Enhanced validation function for generated content
@@ -162,7 +176,7 @@ function validateGeneratedContent(content: any, config: GenerationConfig): { isV
     }
 
     // Check for emojis in Spartan format
-    const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]/gu;
+    const emojiPattern = /[\ud83c-\ud83e][\udc00-\udfff]|[\u2600-\u26ff]|[\u2700-\u27bf]/g;
     if (emojiPattern.test(script)) {
       warnings.push('Spartan format violation: Contains emojis');
     }
@@ -267,17 +281,8 @@ async function generateSingleContent(config: GenerationConfig): Promise<any> {
 
     // Estimate video duration
     const videoDuration = config.contentType === "video" ? 
-      estimateVideoDuration(mainContent, config.videoDuration) : undefined;
+      estimateVideoDuration(mainContent) : undefined;
 
-    // Sanitize Unicode characters
-    function sanitizeUnicode(text: string): string {
-      if (!text) return '';
-      return text
-        .replace(/[\uD800-\uDFFF]/g, '') // Remove lone surrogates
-        .replace(/[\u0000-\u001F\u007F-\u009F]/g, '') // Remove control characters
-        .replace(/\uFEFF/g, '') // Remove BOM
-        .trim();
-    }
 
     // Use mainContent directly as it's already validated
     let script = sanitizeUnicode(mainContent);
@@ -488,7 +493,7 @@ function enforceSpartanFormat(text: string): string {
   cleanedText = cleanedText.replace(/\s+/g, ' ').trim();
   
   // Remove emojis
-  const emojiPattern = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1FA00}-\u{1FA6F}]/gu;
+  const emojiPattern = /[\ud83c-\ud83e][\udc00-\udfff]|[\u2600-\u26ff]|[\u2700-\u27bf]/g;
   cleanedText = cleanedText.replace(emojiPattern, '');
   
   return cleanedText.trim();
@@ -575,7 +580,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
             affiliateUrl: data.affiliateUrl,
             topRatedStyleUsed: data.topRatedStyleUsed,
             useSpartanFormat: data.useSpartanFormat,
-            aiModel: selectedAiModel,
+            aiModel: 'claude' as const,
             mode: 'manual',
             jobId,
             userId: data.userId || 1
@@ -612,10 +617,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
       const templates = data.templates || ['Short-Form Video Script'];
       
       // Claude enforcement for automated mode
-      let selectedAiModel = data.aiModel || 'claude';
-      if (data.aiModels && data.aiModels.length > 0) {
-        selectedAiModel = data.aiModels[0];
-      }
+      const selectedAiModel = 'claude'; // Enforce Claude for all generations
       
       console.log(`🎯 AUTOMATED MODE: Using AI model "${selectedAiModel}"`);
       
@@ -636,7 +638,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
           affiliateUrl: product.affiliateUrl,
           topRatedStyleUsed: data.topRatedStyleUsed,
           useSpartanFormat: data.useSpartanFormat,
-          aiModel: selectedAiModel,
+          aiModel: 'claude' as const,
           mode: 'automated',
           jobId,
           userId: data.userId || 1
@@ -667,7 +669,7 @@ router.post("/", contentGenerationLimiter, async (req: Request, res: Response) =
         console.log(`✅ Completed ${i + 1}/${configs.length}: ${config.productName}`);
         
       } catch (error) {
-        const errorMsg = `Failed to generate content for ${config.productName}: ${error.message}`;
+        const errorMsg = `Failed to generate content for ${config.productName}: ${error instanceof Error ? error.message : String(error)}`;
         errors.push(errorMsg);
         console.error(`❌ ${errorMsg}`);
       }
