@@ -29,6 +29,11 @@ import {
   ABAssignment, InsertABAssignment,
   ABConversion, InsertABConversion,
   Cost, InsertCost,
+  // CookAIng Content History & Rating types
+  CookaingContentVersion, InsertCookaingContentVersion,
+  CookaingContentRating, InsertCookaingContentRating,
+  ContentLink, InsertContentLink,
+  ContentExport, InsertContentExport,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
@@ -36,7 +41,9 @@ import {
   contentHistory,
   // CookAIng Marketing Engine tables
   organizations, contacts, campaigns, workflows, forms, formSubmissions, affiliateProducts,
-  analyticsEvents, abTests, abAssignments, abConversions, costs
+  analyticsEvents, abTests, abAssignments, abConversions, costs,
+  // CookAIng Content History & Rating tables
+  cookaingContentVersions, cookaingContentRatings, contentLinks, contentExports
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -266,6 +273,39 @@ export interface IStorage {
   getABConversionsByVariant(testId: number, variant: string): Promise<ABConversion[]>;
   
   updateContactAttribution(contactId: number, utmData: any, touchType: 'first' | 'last'): Promise<Contact | undefined>;
+  
+  // CookAIng Content History & Rating operations
+  saveCookaingContentVersion(version: InsertCookaingContentVersion): Promise<CookaingContentVersion>;
+  getCookaingContentVersions(filter?: { 
+    niche?: string; 
+    template?: string; 
+    platform?: string; 
+    channel?: string;
+    campaignId?: number;
+    limit?: number 
+  }): Promise<CookaingContentVersion[]>;
+  getCookaingContentVersionById(id: number): Promise<CookaingContentVersion | undefined>;
+  deleteCookaingContentVersion(id: number): Promise<boolean>;
+  
+  // Rating operations
+  saveCookaingContentRating(rating: InsertCookaingContentRating): Promise<CookaingContentRating>;
+  getCookaingContentRatingsByVersion(versionId: number): Promise<CookaingContentRating[]>;
+  getTopRatedCookaingContent(filter?: { 
+    niche?: string; 
+    minRating?: number; 
+    limit?: number 
+  }): Promise<(CookaingContentVersion & { avgUserScore: number; ratingCount: number })[]>;
+  
+  // Content linking operations
+  saveContentLink(link: InsertContentLink): Promise<ContentLink>;
+  getContentLinksBySource(sourceId: number, sourceType: string): Promise<ContentLink[]>;
+  getContentLinksByTarget(targetId: number, targetType: string): Promise<ContentLink[]>;
+  deleteContentLink(id: number): Promise<boolean>;
+  
+  // Export operations
+  saveContentExport(exportData: InsertContentExport): Promise<ContentExport>;
+  getContentExports(filter?: { versionId?: number; format?: string; limit?: number }): Promise<ContentExport[]>;
+  getContentExportById(id: number): Promise<ContentExport | undefined>;
 }
 
 // In-memory storage implementation (not actively used - DatabaseStorage is the active implementation)
@@ -2611,6 +2651,227 @@ export class DatabaseStorage implements IStorage {
       .select()
       .from(trendingEmojisHashtags)
       .orderBy(desc(trendingEmojisHashtags.lastUpdated));
+  }
+  
+  // CookAIng Content History & Rating operations
+  async saveCookaingContentVersion(version: InsertCookaingContentVersion): Promise<CookaingContentVersion> {
+    // Auto-increment version within the same campaign/channel/platform scope
+    // Use database transaction for atomicity
+    return await db.transaction(async (tx) => {
+      const latestVersion = await tx
+        .select({ version: cookaingContentVersions.version })
+        .from(cookaingContentVersions)
+        .where(and(
+          eq(cookaingContentVersions.campaignId, version.campaignId || null),
+          eq(cookaingContentVersions.channel, version.channel),
+          eq(cookaingContentVersions.platform, version.platform || null)
+        ))
+        .orderBy(desc(cookaingContentVersions.version))
+        .limit(1);
+      
+      const nextVersion = latestVersion.length > 0 ? latestVersion[0].version + 1 : 1;
+      
+      const [result] = await tx
+        .insert(cookaingContentVersions)
+        .values({ ...version, version: nextVersion })
+        .returning();
+      
+      return result;
+    });
+  }
+  
+  async getCookaingContentVersions(filter?: { 
+    niche?: string; 
+    template?: string; 
+    platform?: string; 
+    channel?: string;
+    campaignId?: number;
+    limit?: number 
+  }): Promise<CookaingContentVersion[]> {
+    let query = db.select().from(cookaingContentVersions);
+    
+    const conditions = [];
+    if (filter?.niche) {
+      conditions.push(eq(cookaingContentVersions.niche, filter.niche));
+    }
+    if (filter?.template) {
+      conditions.push(eq(cookaingContentVersions.template, filter.template));
+    }
+    if (filter?.platform) {
+      conditions.push(eq(cookaingContentVersions.platform, filter.platform));
+    }
+    if (filter?.channel) {
+      conditions.push(eq(cookaingContentVersions.channel, filter.channel));
+    }
+    if (filter?.campaignId) {
+      conditions.push(eq(cookaingContentVersions.campaignId, filter.campaignId));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(cookaingContentVersions.createdAt));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+  
+  async getCookaingContentVersionById(id: number): Promise<CookaingContentVersion | undefined> {
+    const [result] = await db
+      .select()
+      .from(cookaingContentVersions)
+      .where(eq(cookaingContentVersions.id, id));
+    
+    return result;
+  }
+  
+  async deleteCookaingContentVersion(id: number): Promise<boolean> {
+    const result = await db
+      .delete(cookaingContentVersions)
+      .where(eq(cookaingContentVersions.id, id));
+    
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+  
+  // Rating operations
+  async saveCookaingContentRating(rating: InsertCookaingContentRating): Promise<CookaingContentRating> {
+    const [result] = await db
+      .insert(cookaingContentRatings)
+      .values(rating)
+      .returning();
+    
+    return result;
+  }
+  
+  async getCookaingContentRatingsByVersion(versionId: number): Promise<CookaingContentRating[]> {
+    return await db
+      .select()
+      .from(cookaingContentRatings)
+      .where(eq(cookaingContentRatings.versionId, versionId))
+      .orderBy(desc(cookaingContentRatings.createdAt));
+  }
+  
+  async getTopRatedCookaingContent(filter?: { 
+    niche?: string; 
+    minRating?: number; 
+    limit?: number 
+  }): Promise<(CookaingContentVersion & { avgUserScore: number; ratingCount: number })[]> {
+    let query = db
+      .select({
+        ...cookaingContentVersions,
+        avgUserScore: sql<number>`COALESCE(AVG(${cookaingContentRatings.userScore}::float), 0)`.as('avgUserScore'),
+        ratingCount: sql<number>`COUNT(${cookaingContentRatings.id})`.as('ratingCount')
+      })
+      .from(cookaingContentVersions)
+      .leftJoin(cookaingContentRatings, eq(cookaingContentVersions.id, cookaingContentRatings.versionId))
+      .groupBy(cookaingContentVersions.id);
+    
+    const conditions = [];
+    if (filter?.niche) {
+      conditions.push(eq(cookaingContentVersions.niche, filter.niche));
+    }
+    if (filter?.minRating) {
+      conditions.push(sql`AVG(${cookaingContentRatings.userScore}::float) >= ${filter.minRating}`);
+    }
+    
+    if (conditions.length > 0) {
+      query = query.having(and(...conditions));
+    }
+    
+    query = query.orderBy(sql`AVG(${cookaingContentRatings.userScore}::float) DESC NULLS LAST`);
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+  
+  // Content linking operations
+  async saveContentLink(link: InsertContentLink): Promise<ContentLink> {
+    const [result] = await db
+      .insert(contentLinks)
+      .values(link)
+      .returning();
+    
+    return result;
+  }
+  
+  async getContentLinksBySource(sourceId: number, sourceType: string): Promise<ContentLink[]> {
+    return await db
+      .select()
+      .from(contentLinks)
+      .where(and(
+        eq(contentLinks.sourceId, sourceId),
+        eq(contentLinks.sourceType, sourceType)
+      ))
+      .orderBy(desc(contentLinks.createdAt));
+  }
+  
+  async getContentLinksByTarget(targetId: number, targetType: string): Promise<ContentLink[]> {
+    return await db
+      .select()
+      .from(contentLinks)
+      .where(and(
+        eq(contentLinks.targetId, targetId),
+        eq(contentLinks.targetType, targetType)
+      ))
+      .orderBy(desc(contentLinks.createdAt));
+  }
+  
+  async deleteContentLink(id: number): Promise<boolean> {
+    const result = await db
+      .delete(contentLinks)
+      .where(eq(contentLinks.id, id));
+    
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+  
+  // Export operations
+  async saveContentExport(exportData: InsertContentExport): Promise<ContentExport> {
+    const [result] = await db
+      .insert(contentExports)
+      .values(exportData)
+      .returning();
+    
+    return result;
+  }
+  
+  async getContentExports(filter?: { versionId?: number; format?: string; limit?: number }): Promise<ContentExport[]> {
+    let query = db.select().from(contentExports);
+    
+    const conditions = [];
+    if (filter?.versionId) {
+      conditions.push(eq(contentExports.versionId, filter.versionId));
+    }
+    if (filter?.format) {
+      conditions.push(eq(contentExports.format, filter.format));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(contentExports.createdAt));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+  
+  async getContentExportById(id: number): Promise<ContentExport | undefined> {
+    const [result] = await db
+      .select()
+      .from(contentExports)
+      .where(eq(contentExports.id, id));
+    
+    return result;
   }
 }
 
