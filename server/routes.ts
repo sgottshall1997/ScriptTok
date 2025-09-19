@@ -74,6 +74,7 @@ import claudeAiSuggestionsRouter from "./api/claudeAiSuggestions";
 import { perplexityAutomationRouter } from "./api/perplexity-automation";
 import safeguardMonitorRouter from "./api/safeguard-monitor";
 import amazonRouter from "./api/amazon";
+import hybridTrendsRouter from "./api/hybridTrends";
 
 // CookAIng Marketing Engine routers
 import organizationsRouter from "./api/organizations";
@@ -268,6 +269,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.use('/api/amazon-links', amazonLinksRouter);
   app.use('/api/amazon', amazonRouter);
+  app.use('/api/hybrid-trends', hybridTrendsRouter);
   // Direct webhook test route
   app.get('/api/post/test-make-webhook', async (req, res) => {
     try {
