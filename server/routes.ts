@@ -90,6 +90,7 @@ import abRouter from "./api/cookaing-marketing/ab";
 import conversionsRouter from "./api/cookaing-marketing/conversions";
 import reportsRouter from "./api/cookaing-marketing/reports";
 import integrationsHealthRouter from "./api/cookaing-marketing/integrations/health";
+import observabilityRouter from "./api/cookaing-marketing/observability";
 import contentRouter from "./api/cookaing-marketing/content";
 import contentEnhancementRouter from "./api/cookaing-marketing/content-enhancement";
 import intelligenceRouter from "./api/cookaing-marketing/intelligence";
@@ -118,6 +119,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/conversions', conversionsRouter);
   app.use('/api/cookaing-marketing/reports', reportsRouter);
   app.use('/api/cookaing-marketing/integrations/health', integrationsHealthRouter);
+  app.use('/api/cookaing-marketing/observability', observabilityRouter);
   app.use('/api/cookaing-marketing/content', contentRouter);
   app.use('/api/cookaing-marketing/content-enhancement', contentEnhancementRouter);
   app.use('/api/cookaing-marketing/intel', intelligenceRouter);

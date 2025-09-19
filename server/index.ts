@@ -4,12 +4,21 @@ dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { requestTrackingMiddleware, errorTrackingMiddleware, performanceMonitoringMiddleware } from "./middleware/observability.middleware";
 import cron from "node-cron";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+// Wire observability middleware globally
+app.use(requestTrackingMiddleware('api'));
+app.use(performanceMonitoringMiddleware({ 
+  trackDetailedMetrics: true, 
+  slowRequestThreshold: 2000, 
+  service: 'api' 
+}));
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -43,6 +52,9 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+
+  // Wire error tracking middleware
+  app.use(errorTrackingMiddleware('api'));
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
     const status = err.status || err.statusCode || 500;
