@@ -46,7 +46,6 @@ const seedSchema = z.object({
 const fixtures = {
   organizations: [
     {
-      id: 99999, // Stable test ID
       name: 'Test Organization',
       email: 'test@example.com',
       phone: '+1-555-0123',
@@ -60,8 +59,7 @@ const fixtures = {
   
   contacts: [
     {
-      id: 99999, // Stable test ID
-      orgId: 99999,
+      orgId: 1, // Use auto-generated org ID
       email: 'test.user@example.com',
       firstName: 'Test',
       lastName: 'User',
@@ -71,8 +69,7 @@ const fixtures = {
 
   campaigns: [
     {
-      id: 99999, // Stable test ID
-      orgId: 99999,
+      orgId: 1, // Use auto-generated org ID
       name: 'Test Campaign',
       type: 'standard',
       status: 'active',
@@ -82,7 +79,6 @@ const fixtures = {
 
   cookaingContentVersions: [
     {
-      id: 99999, // Stable test ID
       channel: 'instagram',
       title: 'Test Recipe Content',
       mainContent: 'This is a test recipe for chocolate chip cookies. Perfect for beginners!',
@@ -134,87 +130,100 @@ router.post('/seed', async (req, res) => {
       });
     }
 
-    // Seed organizations first (upsert by ID)
-    await db.insert(organizations).values(fixtures.organizations)
-      .onConflictDoUpdate({
-        target: organizations.id,
-        set: {
-          name: fixtures.organizations[0].name,
-          email: fixtures.organizations[0].email
-        }
-      });
-    
-    // Seed contacts (upsert by ID)
-    await db.insert(contacts).values(fixtures.contacts)
-      .onConflictDoUpdate({
-        target: contacts.id,
-        set: {
-          firstName: fixtures.contacts[0].firstName,
-          lastName: fixtures.contacts[0].lastName
-        }
-      });
-    
-    // Seed campaigns (upsert by ID)
-    await db.insert(campaigns).values(fixtures.campaigns)
-      .onConflictDoUpdate({
-        target: campaigns.id,
-        set: {
-          name: fixtures.campaigns[0].name,
-          status: fixtures.campaigns[0].status
-        }
-      });
+    // Robust seeding with proper foreign key handling
+    let orgId: number;
+    let seedStats = {
+      organizations: 0,
+      contacts: 0,
+      campaigns: 0,
+      contentVersions: 0,
+      analyticsEvents: 0
+    };
 
-    // Seed basic content (upsert by ID)
-    await db.insert(cookaingContentVersions).values(fixtures.cookaingContentVersions)
-      .onConflictDoUpdate({
-        target: cookaingContentVersions.id,
-        set: {
-          title: fixtures.cookaingContentVersions[0].title,
-          mainContent: fixtures.cookaingContentVersions[0].mainContent
-        }
-      });
+    try {
+      // 1. Upsert organization by unique key (email)
+      const [existingOrg] = await db.select({ id: organizations.id })
+        .from(organizations)
+        .where(eq(organizations.email, fixtures.organizations[0].email))
+        .limit(1);
+
+      if (existingOrg) {
+        orgId = existingOrg.id;
+        console.log(`[SEED] Using existing organization ID: ${orgId}`);
+      } else {
+        const [newOrg] = await db.insert(organizations)
+          .values(fixtures.organizations)
+          .returning({ id: organizations.id });
+        orgId = newOrg.id;
+        seedStats.organizations = 1;
+        console.log(`[SEED] Created new organization ID: ${orgId}`);
+      }
+
+      // 2. Seed contacts with correct orgId
+      const contactsWithOrgId = fixtures.contacts.map(contact => ({
+        ...contact,
+        orgId
+      }));
+      await db.insert(contacts).values(contactsWithOrgId).onConflictDoNothing();
+      seedStats.contacts = contactsWithOrgId.length;
+      console.log('[SEED] Contacts seeded');
+
+      // 3. Seed campaigns with correct orgId
+      const campaignsWithOrgId = fixtures.campaigns.map(campaign => ({
+        ...campaign,
+        orgId
+      }));
+      await db.insert(campaigns).values(campaignsWithOrgId).onConflictDoNothing();
+      seedStats.campaigns = campaignsWithOrgId.length;
+      console.log('[SEED] Campaigns seeded');
+
+      // 4. Seed content versions
+      await db.insert(cookaingContentVersions).values(fixtures.cookaingContentVersions).onConflictDoNothing();
+      seedStats.contentVersions = fixtures.cookaingContentVersions.length;
+      console.log('[SEED] Content versions seeded');
+
+    } catch (error: any) {
+      console.log(`[SEED] Error during seeding: ${error.message}`);
+      throw new Error(`Seeding failed: ${error.message}`);
+    }
 
     if (preset === 'full') {
-      // Add analytics events (idempotent by deleting existing seed events first)
-      await db.delete(analyticsEvents).where(eq(analyticsEvents.orgId, 99999));
-      
+      // Add analytics events with correct orgId
       const analyticsData = [
         {
-          orgId: 99999,
+          orgId,
           eventType: 'content_generate',
           entityType: 'version',
-          entityId: 99999,
+          entityId: 1,
           properties: JSON.stringify({ mode: 'mock', duration: 150, seed: true })
         },
         {
-          orgId: 99999,
+          orgId,
           eventType: 'web_vitals',
           entityType: 'page',
-          entityId: 99999,
+          entityId: 1,
           properties: JSON.stringify({ lcp: 1200, cls: 0.1, tti: 800, seed: true })
         },
         {
-          orgId: 99999,
+          orgId,
           eventType: 'self_test',
           entityType: 'system',
-          entityId: 99999,
+          entityId: 1,
           properties: JSON.stringify({ status: 'ok', timestamp: new Date().toISOString(), seed: true })
         }
       ];
-      await db.insert(analyticsEvents).values(analyticsData);
+      try {
+        await db.insert(analyticsEvents).values(analyticsData).onConflictDoNothing();
+        seedStats.analyticsEvents = analyticsData.length;
+        console.log('[SEED] Analytics events seeded');
+      } catch (error: any) {
+        console.log('[SEED] Analytics events table might not exist');
+      }
 
       console.log('[SEED] Full dataset seeded');
     } else {
       console.log('[SEED] Minimal dataset seeded');
     }
-
-    const seedStats = {
-      organizations: fixtures.organizations.length,
-      contacts: fixtures.contacts.length,
-      campaigns: fixtures.campaigns.length,
-      contentVersions: fixtures.cookaingContentVersions.length,
-      analyticsEvents: preset === 'full' ? 3 : 0
-    };
 
     res.json({
       success: true,

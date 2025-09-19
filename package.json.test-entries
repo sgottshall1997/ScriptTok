@@ -1,0 +1,17 @@
+# Package.json test script entries for Phase 6
+
+Add these scripts to package.json:
+
+{
+  "scripts": {
+    "test": "vitest",
+    "test:unit": "vitest tests/unit/",
+    "test:integration": "vitest tests/integration/",
+    "test:watch": "vitest --watch",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage",
+    "test:admin": "curl -s http://localhost:5000/api/cookaing-marketing/admin/self-test | jq",
+    "test:seed": "curl -s -X POST http://localhost:5000/api/cookaing-marketing/admin/seed -H 'Content-Type: application/json' -d '{\"preset\":\"minimal\"}' | jq",
+    "test:reset": "curl -s -X POST http://localhost:5000/api/cookaing-marketing/admin/reset-mocks -H 'Content-Type: application/json' | jq"
+  }
+}
