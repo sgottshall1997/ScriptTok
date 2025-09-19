@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import ModeSwitcher from '@/components/ModeSwitcher';
 
 interface SidebarItem {
   name: string;
@@ -165,7 +166,7 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       )}>
         <div className="flex flex-col h-full">
-          {/* Header with Exit CookAIng button */}
+          {/* Header with Mode Switcher */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
@@ -313,9 +314,9 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
               </nav>
             </div>
 
-            {/* Header actions could go here */}
+            {/* Header actions */}
             <div className="flex items-center space-x-4">
-              {/* Future: user menu, notifications, etc. */}
+              <ModeSwitcher />
             </div>
           </div>
         </header>

@@ -1,0 +1,124 @@
+OBJECTIVE
+Run a comprehensive test battery across BOTH app sections—CookAIng and GlowBot—and report pass/fail with actionable diffs. If any required tests or seeds are missing, create them first (additive-only) and re-run.
+
+CONSTRAINTS
+- ADDITIVE ONLY; do not refactor or remove existing code.
+- Respect existing test frameworks (Vitest + Playwright).
+- All new helpers/tests must live under the existing patterns:
+  - Unit/Integration: /src/**/__tests__/
+  - E2E: /e2e/**  (separate cookaing/ and glowbot/ folders)
+- Support EMPTY .env (mock mode) and optionally detect live keys to run a second pass in live-sanity mode (skip any destructive ops).
+
+================================================================
+A) PREP & SEEDING
+================================================================
+1) Ensure these scripts exist in package.json (create if missing):
+   "test": "vitest run --coverage",
+   "test:watch": "vitest --watch",
+   "e2e": "playwright test",
+   "e2e:ui": "playwright test --ui",
+   "a11y": "playwright test e2e/**/a11y.spec.ts",
+   "perf:api": "node ./scripts/perf-api.mjs",
+   "report": "node ./scripts/summarize-results.mjs"
+
+2) Add admin/test endpoints if missing (additive; CookAIng already has these; mirror for GlowBot if needed):
+   - POST /api/**/admin/seed {preset:'full'}      → idempotent seeds
+   - POST /api/**/admin/reset-mocks               → clear mock queues/state
+   - GET  /api/**/self-test                       → DB + provider-mock reachability + flags summary
+
+3) Run seeds in MOCK mode for both sections:
+   - POST /api/cookaing-marketing/admin/seed {"preset":"full"}
+   - POST /api/glowbot/admin/seed {"preset":"full"}  // If not present, create a mirrored seed and call it.
+
+================================================================
+B) HEALTH & SELF-TESTS (BOTH SECTIONS)
+================================================================
+4) Call GET /api/cookaing-marketing/integrations/health and GET /api/glowbot/integrations/health → assert all adapters show 'ok' or 'mock_mode'; fail if 'error'.
+
+5) Call GET /api/cookaing-marketing/self-test and GET /api/glowbot/self-test → capture summaries for the report.
+
+================================================================
+C) UNIT & INTEGRATION TESTS (Vitest)
+================================================================
+6) Run Vitest; if gaps are detected, generate missing suites before re-run:
+   - Services: content gen/enhancements, history/ratings (including AI eval mocks), intelligence (competitor/sentiment/viral/fatigue), social automation, personalization/voice, approvals/RBAC, calendar, email/webhooks, attribution/costs/ROAS.
+   - Routes: all /api/cookaing-marketing/** and GlowBot’s equivalent routes, including error paths and RBAC guards.
+   - Shared: link-signing, schema validation, analytics_events append, A/B winner decision logic, CSV import parser.
+   Then: pnpm test
+
+================================================================
+D) E2E TESTS (Playwright)
+================================================================
+7) Ensure specs exist for BOTH sections; create/extend if missing:
+
+CookAIng (e2e/cookaing):
+  00_mode-and-routing.spec.ts      → nav loads, sidebar items present & ordered, disabled items render greyed
+  01_dashboard-and-health.spec.ts  → KPIs + Health chips
+  02_generator-and-enhance.spec.ts → preview → enhance (rewrite/TTS/image/video) → attach → artifact visible
+  03_intelligence.spec.ts          → competitor scan, sentiment snapshot, viral score, fatigue compute
+  04_social.spec.ts                → queue post, engagement, hashtags, optimal times
+  05_personalization.spec.ts       → audience rules preview/apply, preview as contact, brand voice learn/apply
+  06_collab-approvals-portal.spec.ts → roles, submit/approve, client portal read-only
+  07_calendar.spec.ts              → create/move, ICS export
+  08_history-ratings.spec.ts       → Save & Rate (user 1–100), AI eval (1–10), winner swap, clone to campaign
+  09_reports.spec.ts               → performance, ROAS, sentiment/viral/fatigue, competitor sections
+  10_docs-about.spec.ts            → About + Docs footers present
+
+GlowBot (e2e/glowbot):
+  gb_00_routing-sidebar.spec.ts    → sidebar completeness & order
+  gb_01_generator-unified.spec.ts  → unified generator happy path
+  gb_02_history-ratings.spec.ts    → content history & ratings
+  gb_03_integrations-health.spec.ts→ adapters health in mock
+  gb_04_reports.spec.ts            → key analytics pages render
+  (Add more if repository has other pillars—mirror CookAIng flows where appropriate.)
+
+Then run: pnpm e2e
+
+================================================================
+E) ACCESSIBILITY (axe-core) & PERFORMANCE
+================================================================
+8) Accessibility (axe) on key pages in both sections (Dashboard, Generator, Intelligence, Social, Personalization/Voice, Collaboration/Portal, Calendar, History, Reports, Docs). Fail on serious violations; output artifacts to /artifacts/a11y.
+   - Command: pnpm a11y
+
+9) Performance smoke for top APIs (CookAIng + GlowBot): reports/performance, content/preview, social/publish (mock), ab/decide, email/send (mock). Use autocannon in ./scripts/perf-api.mjs; output to /artifacts/perf with thresholds (p95 < 500ms mock).
+   - Command: pnpm perf:api
+
+================================================================
+F) LIVE-SANITY (OPTIONAL)
+================================================================
+10) If any live keys are present, run a **non-destructive** sanity:
+   - Email: dry-run render + log-only send
+   - Social: post to test/sandbox or use API “validate” endpoints
+   - Blog/Push: create hidden draft, do not publicly publish
+   Record live vs mock statuses in the final report. Skip if no keys.
+
+================================================================
+G) REGRESSION & NAV INTEGRITY
+================================================================
+11) Verify there are no route collisions between CookAIng and GlowBot; confirm both sidebars render full item sets and active highlights are correct. Create a small nav integrity test if missing.
+
+================================================================
+H) REPORT & ARTIFACTS
+================================================================
+12) Generate a consolidated summary to /artifacts/test-report.md including:
+   - Health/self-test summaries (both sections)
+   - Vitest coverage table (lines/branches)
+   - Playwright pass/fail with links to traces/videos
+   - A11y violations (if any) and pages affected
+   - Perf results vs thresholds
+   - Live-sanity status per integration (or “mock only”)
+   Implement ./scripts/summarize-results.mjs if missing, then run: pnpm report
+
+================================================================
+I) EXIT CRITERIA
+================================================================
+13) Fail the job if ANY of the following occurs:
+   - Health returns 'error' for any critical adapter
+   - Vitest failures OR coverage < lines 80% / branches 70%
+   - Playwright failures on required specs
+   - A11y serious violations remain
+   - Perf p95 thresholds exceeded in mock mode
+   Print the failing areas with next-step suggestions.
+
+RUN ORDER
+- Seeds → Health/Self-Test → Vitest → Playwright → A11y → Perf → (optional Live-Sanity) → Report
