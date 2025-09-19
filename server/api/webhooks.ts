@@ -105,4 +105,75 @@ router.delete('/config', (req, res) => {
   }
 });
 
+/**
+ * POST /api/webhooks/test
+ * Sends a test webhook notification using current configuration
+ */
+router.post('/test', async (req, res) => {
+  try {
+    const config = getWebhookConfig();
+    
+    if (!config.enabled || !config.url) {
+      return res.status(400).json({
+        success: false,
+        message: 'Webhook not configured or disabled'
+      });
+    }
+    
+    // Check for mock mode
+    const isMockMode = process.env.NODE_ENV === 'development' || process.env.MOCK_MODE === 'true';
+    
+    if (isMockMode) {
+      console.log('🧪 MOCK MODE: Test webhook would be sent to:', config.url);
+      console.log('🧪 Test payload:', {
+        event_type: 'webhook_test',
+        timestamp: new Date().toISOString(),
+        message: 'Test notification from CookAIng Content System',
+        mode: 'test'
+      });
+      
+      // Simulate successful webhook test in mock mode
+      return res.json({
+        success: true,
+        message: 'Test webhook sent successfully (mock mode)',
+        mockMode: true
+      });
+    }
+    
+    // Send actual test webhook
+    const testPayload = {
+      event_type: 'webhook_test',
+      timestamp: new Date().toISOString(),
+      message: 'Test notification from CookAIng Content System',
+      source: 'manual_test'
+    };
+    
+    const axios = require('axios');
+    const response = await axios.post(config.url, testPayload, {
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'CookAIng-WebhookTester/1.0'
+      },
+      timeout: 10000
+    });
+    
+    console.log('✅ Test webhook sent successfully:', response.status);
+    
+    res.json({
+      success: true,
+      message: 'Test webhook sent successfully',
+      status: response.status,
+      mockMode: false
+    });
+    
+  } catch (error: any) {
+    console.error('❌ Test webhook error:', error.message);
+    res.status(500).json({
+      success: false,
+      message: `Failed to send test webhook: ${error.message}`,
+      mockMode: false
+    });
+  }
+});
+
 export { router as webhooksRouter };

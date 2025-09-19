@@ -4,6 +4,7 @@ import { db } from "../db";
 import { contentHistory, contentRatings } from "@shared/schema";
 import crypto from 'crypto';
 import axios from 'axios';
+import { getWebhookConfig } from '../services/webhookService';
 
 const router = Router();
 
@@ -118,8 +119,17 @@ router.post('/', async (req, res) => {
       };
     });
 
-    // Send sync payload to Make.com webhook
-    const webhookUrl = 'https://hook.us2.make.com/j404wlveh2s5mii7az1rl6279xjaddnf';
+    // Get webhook configuration
+    const webhookConfig = getWebhookConfig();
+    
+    if (!webhookConfig.enabled || !webhookConfig.url) {
+      return res.status(400).json({
+        success: false,
+        message: 'Webhook not configured or disabled. Please configure webhook settings first.',
+        syncedCount: 0,
+        unmatchedCount: ratedContentItems.length
+      });
+    }
     
     const syncPayload = {
       event_type: 'sync_ratings_to_sheet',
@@ -137,13 +147,33 @@ router.post('/', async (req, res) => {
       }
     };
 
+    // Check for mock mode
+    const isMockMode = process.env.NODE_ENV === 'development' || process.env.MOCK_MODE === 'true';
+    
+    if (isMockMode) {
+      console.log('🧪 MOCK MODE: Ratings sync would be sent to:', webhookConfig.url);
+      console.log('🧪 Sync payload:', JSON.stringify(syncPayload, null, 2));
+      
+      // Simulate successful sync in mock mode
+      return res.json({
+        success: true,
+        message: `Successfully synced ${ratedContentItems.length} rated items to Google Sheet (mock mode)`,
+        syncedCount: ratedContentItems.length,
+        unmatchedCount: 0,
+        unmatchedItems: [],
+        mockMode: true,
+        payload: syncPayload
+      });
+    }
+
     console.log('📤 Sending ratings sync payload to Make.com...');
     console.log(`🔢 Syncing ${ratedContentItems.length} rated items`);
 
     try {
-      const webhookResponse = await axios.post(webhookUrl, syncPayload, {
+      const webhookResponse = await axios.post(webhookConfig.url, syncPayload, {
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'User-Agent': 'CookAIng-RatingsSync/1.0'
         },
         timeout: 30000 // 30 second timeout
       });
@@ -157,6 +187,7 @@ router.post('/', async (req, res) => {
         unmatchedCount: 0, // Make.com will handle matching logic
         unmatchedItems: [],
         webhookStatus: webhookResponse.status,
+        mockMode: false,
         payload: syncPayload
       });
 
@@ -169,6 +200,7 @@ router.post('/', async (req, res) => {
         message: webhookError.message,
         syncedCount: 0,
         unmatchedCount: ratedContentItems.length,
+        mockMode: false,
         unmatchedItems: ratedContentItems.map(item => ({
           product: item.product,
           timestamp: item.timestamp,

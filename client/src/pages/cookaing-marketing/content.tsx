@@ -41,9 +41,13 @@ import {
   BarChart3,
   Target,
   Zap,
-  Brain
+  Brain,
+  Cloud,
+  Settings,
+  Webhook
 } from "lucide-react";
 import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
+import SyncRatingsButton from '@/components/SyncRatingsButton';
 
 interface ContentBlueprint {
   id: number;
@@ -496,6 +500,59 @@ const ContentHistoryPanel = () => {
           </CardContent>
         </Card>
       )}
+      
+      {/* Integration & Sync Section */}
+      <Card className="mb-6" data-testid="card-integration-sync">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Cloud className="w-5 h-5" />
+            Integration & Sync
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <Webhook className="w-4 h-4" />
+              Google Sheets Sync
+            </h4>
+            <p className="text-sm text-gray-600 mb-3">
+              Sync your content ratings and history to Google Sheets for external analysis and reporting.
+            </p>
+            {import.meta.env.MODE === 'development' && (
+              <div className="mb-3 p-2 bg-blue-50 border border-blue-200 rounded text-xs text-blue-700">
+                <strong>Mock Mode:</strong> Running in development mode with mock external integrations.
+              </div>
+            )}
+            <SyncRatingsButton />
+          </div>
+          
+          <Separator />
+          
+          <div>
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <Settings className="w-4 h-4" />
+              Webhook Configuration
+            </h4>
+            <p className="text-sm text-gray-600 mb-3">
+              Configure Make.com webhooks to receive real-time content generation events.
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => window.open('/webhook-settings', '_blank')}
+                data-testid="button-webhook-settings"
+              >
+                <Settings className="w-4 h-4 mr-2" />
+                Configure Webhooks
+              </Button>
+              <Badge variant="secondary" className="text-xs">
+                External Configuration
+              </Badge>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       
       {/* Rating Modal */}
       {ratingModalOpen && selectedVersion && (

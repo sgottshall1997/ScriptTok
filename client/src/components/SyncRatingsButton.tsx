@@ -100,14 +100,9 @@ const SyncRatingsButton: React.FC<SyncRatingsButtonProps> = ({ className = '' })
     try {
       console.log('🔄 Starting ratings sync to Google Sheet...');
       
-      const response = await apiRequest('/api/sync-ratings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const result = response as SyncResult;
+      const response = await apiRequest('POST', '/api/sync-ratings', {});
+      
+      const result = await response.json() as SyncResult;
       setLastSyncResult(result);
 
       if (result.success) {

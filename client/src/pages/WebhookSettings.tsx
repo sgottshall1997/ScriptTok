@@ -59,7 +59,7 @@ const WebhookSettings = () => {
 
   // Update form when data is loaded
   React.useEffect(() => {
-    if (data?.config) {
+    if (data && 'config' in data && data.config) {
       form.reset({
         url: data.config.url || '',
         enabled: data.config.enabled ?? true,
