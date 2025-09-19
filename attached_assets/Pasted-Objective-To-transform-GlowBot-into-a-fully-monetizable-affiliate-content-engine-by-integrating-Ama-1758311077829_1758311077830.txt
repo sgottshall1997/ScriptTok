@@ -1,0 +1,278 @@
+Objective: To transform GlowBot into a fully monetizable affiliate content engine by integrating Amazon’s PA-API directly into your app, while keeping your existing “trending topic” discovery workflow
+
+0) Project Context & Non-Negotiables
+	•	Frontend: Vite + TypeScript + Tailwind + .tsx.
+	•	Backend: Node + Express (TypeScript).
+	•	Current features: promptFactory, template registry, content generation, Make.com webhooks at 5AM for 7 niches, Google Sheets/Docs logging.
+	•	Goal: Replace Perplexity “trending products” lookups with a Hybrid model (trend topics via Perplexity/Reddit/TikTok → product picks via Amazon PA-API 5.0), and support Amazon-Only mode. Always auto-inject my Amazon Partner Tag and support ascsubtag attribution.
+
+Install & Scripts (add/update):
+	•	Add deps: npm i undici zod express-rate-limit cors morgan crypto-js aws4-type-safe
+Dev deps: npm i -D tsx vitest @types/node @types/express
+	•	Scripts:
+"setup:secrets": "tsx tools/setup-secrets.ts",
+"dev": "tsx server/index.ts",
+"test": "vitest run"
+
+⸻
+
+1) Secrets & Config — Prompt, Save .env, Validate
+
+Ask me in the Console (interactive). If left blank, skip gracefully and log a TODO.
+
+Amazon PA-API (required for Amazon features):
+	•	AMAZON_ACCESS_KEY (PA-API key)
+	•	AMAZON_SECRET_KEY
+	•	AMAZON_PARTNER_TAG (e.g., everettstreet-20)
+	•	AMAZON_REGION (default: us-east-1)
+	•	AMAZON_API_HOST (default: webservices.amazon.com) ← PA-API host
+	•	AMAZON_STORE_DOMAIN (default: www.amazon.com) ← link domain for users
+
+
+
+Tasks
+	•	Create/update /server/env.ts and .env.example with typed safe getters (use zod) and friendly errors.
+	•	CLI: /tools/setup-secrets.ts that prompts and writes .env.
+	•	On server start, log which integrations are enabled/disabled.
+
+⸻
+
+2) Backend — Amazon PA-API Wrapper (signed, 24h cache)
+
+Create a robust, typed wrapper and routes.
+
+Files
+	•	/server/amazon/signing.ts — AWS V4 signing for PA-API using AMAZON_API_HOST + AMAZON_REGION.
+	•	/server/amazon/client.ts — searchItems(), getItems(), getVariations() using undici.
+	•	/server/amazon/normalize.ts → map PA-API response to:
+
+export type NormalizedItem = {
+  asin: string;
+  title: string;
+  image: string | null;
+  rating: number | null;
+  reviewCount: number | null;
+  price: string | null; // display amount
+  isPrime: boolean | null;
+  url: string; // must include partner tag + ascsubtag
+};
+
+	•	/server/cache/index.ts — Redis if REDIS_URL, else JSON file cache under /server/.cache. TTL=24h.
+	•	/server/routes/amazon.ts
+	•	GET /api/amazon/search?keywords=...&category=...&minRating=4.2&minReviews=300&primeOnly=false&sortBy=Featured&store=www.amazon.com
+	•	GET /api/amazon/items?asins=ASIN1,ASIN2&store=www.amazon.com
+
+Implementation
+	•	Always pass PartnerType=Associates, PartnerTag=AMAZON_PARTNER_TAG.
+	•	Request Resources:
+Images.Primary.Large, ItemInfo.Title, CustomerReviews.Count, CustomerReviews.StarRating, Offers.Listings.Price, Offers.Listings.DeliveryInfo.IsPrimeEligible
+	•	Apply server-side filters; return NormalizedItem[].
+	•	Backoff for 429/5xx. If PA-API fails:
+	1.	serve cache ≤24h; else
+	2.	200 with { items: [], notice: "Amazon temporarily unavailable; try again." }
+	•	Add Cache-Control: max-age=300.
+	•	Log query, filters, elapsed ms.
+
+⸻
+
+3) Backend — Hybrid Topics → Amazon Mapping
+
+Files
+	•	/server/trends/sources/perplexity.ts — if PERPLEXITY_API_KEY, return 3–7 short topics per niche. Prompt:
+“Return the top 5 current consumer product topics/terms in {NICHE} seeing traction on social in the last 2–4 weeks (e.g., ‘slugging’, ‘peptide serum’, ‘ice roller’). Return a JSON array of short terms.”
+	•	/server/trends/sources/reddit.ts — optional; read-only scan of recent titles in niche subs, extract frequent nouns.
+	•	/server/trends/index.ts — discoverTopics(niche: string): string[] with priority Perplexity → Reddit → static fallback list (ship a tiny curated fallback per niche).
+	•	/server/routes/trends.ts
+	•	GET /api/trends?source=hybrid|amazonOnly&niche=beauty&limit=5
+	•	hybrid: call discoverTopics, for each topic call /api/amazon/search with filters (minRating=4.2, minReviews=300, sort=Featured), pick top SKUs per topic
+	•	amazonOnly: treat provided keywords as a single topic
+
+export type TopicPick = {
+  topic: string;
+  items: NormalizedItem[];
+};
+
+
+⸻
+
+4) Frontend — Monetization Settings
+
+Add a full settings screen.
+
+Files
+	•	/frontend/components/MonetizationSettings.tsx
+	•	/frontend/state/monetization.ts (zustand or context)
+	•	/server/routes/settings.ts (GET/PATCH; persist to JSON file /server/data/settings.json)
+
+Features
+	•	Inputs with validation + localStorage + server persistence:
+	•	Default Partner Tag (prefill from VITE_DEFAULT_PARTNER_TAG or server env)
+	•	Per-niche overrides
+	•	ascsubtag prefix (default MONETIZATION_ASC_SUBTAG_PREFIX or VITE_ASC_PREFIX or glowbot_)
+	•	OneLink/International tag mapping (UI only for now)
+	•	Save → PATCH /api/settings/monetization
+	•	All product links must include tag= and ascsubtag=:
+	•	ascsubtag = <prefix><niche>_<YYYY-MM-DD>_<platform>
+
+⸻
+
+5) Frontend — Content UI: “Source” Toggle + Picks Panel
+
+Files
+	•	/frontend/components/ProductPicksPanel.tsx
+	•	/frontend/lib/api.ts (fetch helpers)
+
+Features
+	•	Toggle: Source: [Trending Topics (Hybrid)] | [Amazon Only] (persist per generation)
+	•	Controls: keywords (Amazon Only), minRating, minReviews, sort, price, Prime only, store selector
+	•	Buttons:
+	•	Fetch Picks → /api/trends (Hybrid) or /api/amazon/search (Amazon Only)
+	•	Insert Top 3 → insert block:
+	•	Name — 1-line benefit (link)
+	•	★ rating, reviews, price (with freshness note)
+	•	Disclosure below:
+“As an Amazon Associate, I earn from qualifying purchases. Price and availability may change.”
+	•	Insert Comparison Table (3) → columns: Name | Key Benefit | Link
+
+⸻
+
+6) Auto-Link Insertion Everywhere
+
+Wherever content is generated (captions, scripts, blogs), append:
+	•	Shop: Product A · Product B · Product C (links include tag + ascsubtag)
+
+⸻
+
+7) Make.com Handoff (Docs + Endpoints)
+
+Add:
+	•	Inbound webhook: POST /api/pipeline/daily-niches
+Body: { dateISO, niches: string[], platformHint?: "tiktok"|"instagram"|"youtube"|"generic", source: "hybrid"|"amazonOnly" }
+	•	For each niche, resolve topics/items per chosen source.
+	•	Return: { results: Array<{ niche, topics: TopicPick[], ascsubtagBase }> }
+	•	Docs: /docs/make-integration.md with example JSON showing:
+	•	“script” containing a Top Amazon Picks block
+	•	flat list of chosen ASINs, titles, tagged URLs
+
+⸻
+
+8) Reporting & Attribution
+
+Storage: prefer JSON file under /server/data/monetization_clicks.json.
+Optionally support SQLite (better-sqlite3) only if install succeeds; otherwise keep JSON (log which is active).
+	•	Table/Schema (conceptual):
+id, createdAt, asin, url, tag, ascsubtag, niche, platform, contentId?, sourceMode
+	•	Endpoint: POST /api/track/click (called when user clicks a product link in preview)
+	•	Admin page: /frontend/pages/AdminMonetization.tsx
+	•	Filters: date/niche/platform
+	•	Metrics: total clicks, unique links, top ASINs, estimated EPC (manual earnings entry)
+
+⸻
+
+9) Compliance & Guardrails (enforced)
+	•	Always render affiliate disclosure near product links.
+	•	Never display price/availability older than 24h; show a freshness note.
+	•	Do not scrape Amazon pages; only PA-API.
+	•	If no partner tag, block publishing with toast: “Add a Partner Tag in Monetization settings.”
+
+⸻
+
+10) Rate Limits, Errors, Fallbacks
+	•	Exponential backoff for PA-API; cache successes 24h.
+	•	If Hybrid discovery fails, use cached topics or static fallbacks.
+	•	Surface friendly, non-blocking UI messages.
+
+⸻
+
+11) File/Folder Plan (Create/Modify)
+
+/server
+  /amazon
+    signing.ts
+    client.ts
+    normalize.ts
+  /trends
+    /sources
+      perplexity.ts
+      reddit.ts
+    index.ts
+  /routes
+    amazon.ts
+    trends.ts
+    pipeline.ts
+    settings.ts
+    track.ts
+  /cache
+    index.ts
+  /data
+    settings.json
+    monetization_clicks.json
+  env.ts
+  index.ts         // wire routes, CORS, rate limit, logging (morgan)
+  types.ts
+/tools
+  setup-secrets.ts
+/docs
+  make-integration.md
+  samples.http
+/frontend
+  /components
+    ProductPicksPanel.tsx
+    MonetizationSettings.tsx
+  /pages
+    AdminMonetization.tsx
+  /lib
+    api.ts
+  state/monetization.ts
+  vite.config.ts    // add dev proxy to /api
+
+Vite Dev Proxy: in vite.config.ts, proxy /api → server port to avoid CORS in dev.
+
+⸻
+
+12) Acceptance Criteria
+	1.	npm run setup:secrets prompts for secrets, writes .env, server logs enabled features.
+	2.	Amazon endpoints:
+GET /api/amazon/search?... returns NormalizedItem[] with URLs including tag= and ascsubtag=; filters work.
+	3.	Hybrid:
+GET /api/trends?source=hybrid&niche=beauty returns 3–7 TopicPick entries; without Perplexity uses Reddit/static fallback.
+	4.	UI toggle persists and switches endpoints.
+	5.	Insert buttons create correctly formatted blocks with disclosure.
+	6.	Make handoff: /api/pipeline/daily-niches returns ready payloads with tagged links.
+	7.	Caching: identical searches ≤24h hit cache (verify via logs/latency).
+	8.	Compliance: publishing blocked if no AMAZON_PARTNER_TAG.
+	9.	Tracking: clicking a link in preview posts a row to storage.
+	10.	Docs: /docs/make-integration.md + /docs/samples.http present and accurate.
+
+⸻
+
+13) Developer Notes / Tests
+	•	Use TypeScript everywhere; export shared types in /server/types.ts and /frontend/lib/types.ts.
+	•	Small functions + vitest unit tests for:
+	•	normalizer
+	•	ascsubtag builder (<prefix><niche>_<YYYY-MM-DD>_<platform>)
+	•	server-side filter pipeline
+	•	Add concise beginner comments (signing, TTL, compliance).
+	•	Provide .http samples for all new endpoints in /docs/samples.http.
+
+⸻
+
+14) Quick Tests (Automate where possible)
+	•	With no PERPLEXITY_API_KEY, Hybrid still returns topics via static fallback.
+	•	With no REDIS_URL, file-cache persists across requests.
+	•	Search “vitamin c serum” (Amazon Only): ≥3 items, rating ≥4.2, reviews ≥300, URL has tag + ascsubtag.
+	•	Hybrid “beauty”: topics like “peptide serum / ice roller”, each with items.
+	•	Insert picks into dummy script and confirm disclosure.
+	•	Clicking a preview link → row appears in monetization storage.
+
+⸻
+
+Deliverables (print as CHANGELOG at end)
+	•	Files added/changed
+	•	Routes added
+	•	ENV keys required/optional
+	•	How to run:
+npm run setup:secrets && npm run dev
+	•	If any secret is missing, print a one-liner: what to add and which feature it unlocks.
+
+Start by running /tools/setup-secrets.ts, then implement everything above.
