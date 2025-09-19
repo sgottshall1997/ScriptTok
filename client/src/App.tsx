@@ -65,6 +65,7 @@ import CookAIngAttribution from "@/pages/cookaing-marketing/attribution";
 import CookAIngWebhooks from "@/pages/cookaing-marketing/webhooks";
 import CookAIngEmailTest from "@/pages/cookaing-marketing/email-test";
 import CookAIngDevTools from "@/pages/cookaing-marketing/devtools";
+import CookAIngIntelligence from "@/pages/cookaing-marketing/intelligence";
 import PublicForm from "@/pages/public-form";
 
 // CookAIng Mode components
@@ -163,6 +164,7 @@ function MainAppRouter() {
       <Route path="/cookaing-marketing/email-test" component={() => <Redirect to="/cookaing/email-test" />} />
       <Route path="/cookaing-marketing/devtools" component={() => <Redirect to="/cookaing/devtools" />} />
       <Route path="/cookaing-marketing/content" component={() => <Redirect to="/cookaing/content" />} />
+      <Route path="/cookaing-marketing/intelligence" component={() => <Redirect to="/cookaing/intelligence" />} />
       <Route path="/cookaing-marketing/docs" component={() => <Redirect to="/cookaing/docs" />} />
       
       {/* Public form route */}

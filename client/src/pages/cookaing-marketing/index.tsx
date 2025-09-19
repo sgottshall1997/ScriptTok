@@ -86,6 +86,14 @@ const CookAIngMarketingDashboard = () => {
       path: "/cookaing-marketing/content",
       color: "bg-teal-500",
       testId: "link-content"
+    },
+    {
+      title: "Intelligence Center",
+      description: "AI-powered competitor analysis, sentiment & viral prediction",
+      icon: BarChart3,
+      path: "/cookaing-marketing/intelligence",
+      color: "bg-purple-600",
+      testId: "link-intelligence"
     }
   ];
 
