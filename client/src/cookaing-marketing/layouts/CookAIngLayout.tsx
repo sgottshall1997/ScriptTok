@@ -28,6 +28,7 @@ import {
   ArrowLeft,
   History,
   Sparkles,
+  Zap,
   FileText,
   Activity,
   HelpCircle,
@@ -83,7 +84,8 @@ const cookAIngNavigation: SidebarSection[] = [
     items: [
       { name: "Trends & Seasonal", href: "/cookaing-marketing/trends", icon: TrendingUp },
       { name: "Content History", href: "/cookaing-marketing/content-history", icon: History },
-      { name: "Unified Content Generator", href: "/cookaing-marketing/content-generator", icon: Sparkles }
+      { name: "Unified Content Generator", href: "/cookaing-marketing/content-generator", icon: Sparkles },
+      { name: "Promo Generator", href: "/cookaing-marketing/promo-generator", icon: Zap }
     ]
   },
   {

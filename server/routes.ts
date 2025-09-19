@@ -44,6 +44,7 @@ import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId 
 import { createScheduledBulkJob, getScheduledBulkJobs, deleteScheduledBulkJob, initializeScheduledJobs } from "./api/simple-scheduler";
 import trendsRouter from "./api/cookaing-marketing/trends";
 import affiliateAutoInsertRouter from "./api/cookaing-marketing/affiliate-auto-insert";
+import cookAIngPromoRouter from "./routes/cookaing-promo";
 // Old scheduled-bulk-generation system removed - using simplified automated-bulk scheduling
 
 import { cronStatusRouter } from "./api/cron-status";
@@ -140,6 +141,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing', phase5Router);
   app.use('/api/cookaing-marketing/trends', trendsRouter);
   app.use('/api/cookaing-marketing/affiliate-auto-insert', affiliateAutoInsertRouter);
+  app.use('/api/cookaing-promo', cookAIngPromoRouter);
   app.use('/api/cookaing-marketing/seed-data', seedDataRouter);
   
   // CookAIng Marketing Engine authentication
