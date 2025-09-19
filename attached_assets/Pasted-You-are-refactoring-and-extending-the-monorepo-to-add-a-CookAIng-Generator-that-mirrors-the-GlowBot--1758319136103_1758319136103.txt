@@ -1,0 +1,233 @@
+You are refactoring and extending the monorepo to add a CookAIng Generator that mirrors the GlowBot Generator one-for-one in UX, state, API, telemetry, caching, automation, and tests—except: keep CookAIng’s existing content types exactly as they are (types, enums, templates, validation). Everything else must match GlowBot.
+
+Ground Rules
+
+Do not alter, remove, or rename any existing CookAIng content types or their schema. Preserve their IDs, enums, and JSON contracts.
+
+All other generator behavior (UI flow, promptFactory architecture, template registry layout, caching, logging, error handling, webhooks, Make.com handoff, report/export, test harness) must be cloned from GlowBot.
+
+Match naming to tool/feature for every file. No drift. If a file powers CookAIng Generator, its path and filename must include cookAIng.
+
+Zero regressions in GlowBot.
+
+Inventory & Plan
+
+Map GlowBot Generator
+
+Trace UI components, state machines, hooks, routing, query/mutation keys, promptFactory, template registry, backend routes/handlers, schema validation, cache keys, logging, and Make.com/webhook payloads.
+
+Produce an internal plan (in-code // PLAN: blocks) listing each GlowBot module and its CookAIng counterpart.
+
+Create CookAIng Generator Feature
+
+Client (mirror GlowBot structure):
+
+/client/src/features/cookAIngGenerator/
+
+index.ts, routes.tsx
+
+CookAIngGeneratorPage.tsx
+
+components/ (clone from GlowBot equivalents; keep CookAIng content types)
+
+hooks/ (state + API hooks)
+
+lib/promptFactory/ (copy architecture; load CookAIng content types)
+
+lib/templateRegistry/ (registry loader wired to CookAIng templates only)
+
+lib/validation/ (JSON schema for CookAIng outputs)
+
+tests/ (unit + component + integration)
+
+Server:
+
+/server/routes/cookAIng/generator.ts
+
+/server/services/cookAIng/generator/
+
+promptFactory.ts (mirrors GlowBot factory; consumes CookAIng types)
+
+templateRegistry.ts
+
+generate.ts (orchestrator)
+
+validate.ts (Ajv/Zod schema validation)
+
+cache.ts (LRU/Redis parity with GlowBot)
+
+telemetry.ts (match GlowBot logging/events)
+
+webhook.ts (Make.com dispatch; same contract names, CookAIng topic)
+
+Shared:
+
+/shared/schemas/cookAIng/ (output schemas; keep content-type models)
+
+/shared/types/cookAIng/ (TS types for generator I/O, enums preserved)
+
+/shared/constants/cookAIng/ (cache keys, event names)
+
+Routes & Nav:
+
+Add a left-nav entry CookAIng → Generator.
+
+Ensure feature flag features.cookAIngGenerator=true.
+
+Source Toggle:
+
+Implement the same “Source” toggle as GlowBot (e.g., Trending Topics (hybrid) vs Platform Only) but wire the platform-only source to CookAIng’s data sources (not GlowBot’s). Keep toggle state and persistence identical.
+
+Parity with GlowBot
+
+UI parity: page layout, inputs, advanced options, run button, queue/loader UI, results list, copy/export buttons, retry & regenerate flows.
+
+Prompt pipeline: promptFactory → provider adapter → post-processor → validator → formatter → deliverer.
+
+Caching: identical cache keys (prefixed cookAIng:), same TTLs and busting rules.
+
+Error handling: same error shapes, user-facing toasts, and retries/backoff.
+
+Telemetry: same event names with cookAIng namespace, include timing and token stats.
+
+Make.com: clone GlowBot handoff; add CookAIng scenario tag/route; keep payload fields and ordering; add app="cookAIng".
+
+Keep CookAIng Content Types
+
+Load only CookAIng’s existing content types into the new generator’s template registry.
+
+For each type, implement a GlowBot-style template object with: id, title, fields, promptSpec, postProcess, validateOutputSchema, exportFormats.
+
+Do not import GlowBot beauty/skincare types.
+
+File/Name Hygiene
+
+Enforce strict naming: feature and file names must include cookAIng when the code is CookAIng-specific.
+
+Add a linter rule/check that rejects mismatched filenames vs feature ownership.
+
+Migrate stray/misaligned files; delete dead duplicates; keep a tools/migrations/rename-log.md with old→new paths.
+
+Secrets & Config
+
+Reuse provider keys through existing secrets manager pattern; add COOKAING_MAKE_WEBHOOK_URL and any DSN/endpoint required.
+
+No plaintext keys in source.
+
+Tests—Build Comprehensive Coverage
+
+Create and run the following test batteries. Fail the job on any error.
+
+A) Unit (server & client)
+
+Prompt factory unit tests per CookAIng content type: snapshot expected prompts given fixed inputs.
+
+Post-processor tests: deterministic transforms.
+
+Validator tests: positive/negative cases against JSON schemas.
+
+Cache tests: hit/miss/bust and key scoping (cookAIng:).
+
+B) API Integration
+
+Route tests for /api/cookAIng/generate:
+
+200 happy path, 4xx validation errors, 429 (rate limit), 5xx provider errors with retry/backoff.
+
+Golden-file tests: given seeds, assert exact JSON output contract per content type.
+
+C) End-to-End (Playwright)
+
+Load CookAIng Generator page, toggle sources, select each content type, generate, verify UI state transitions, copy/export buttons, and persisted settings.
+
+Network interception to stub provider responses.
+
+Visual snapshots for the results panel and error banners.
+
+D) Contract & Webhook
+
+Validate Make.com payloads: field presence, types, order, and app="cookAIng".
+
+Round-trip test: simulate 202/200 responses and retry on >=500.
+
+E) Performance & Concurrency
+
+Concurrency test: N=10 parallel generations, assert queueing/backpressure identical to GlowBot.
+
+Response time budget parity with GlowBot p95.
+
+F) Security & Resilience
+
+Ensure no secrets in logs; redaction tests.
+
+Input size limits; HTML/script injection sanitized; markdown safe-render tests.
+
+G) Navigation & Permissions
+
+Sidebar registration test: Generator appears under CookAIng; link works; feature flag toggles visibility.
+
+Implementation Steps
+
+Scan GlowBot generator modules and produce a mapping comment block in a new file: /client/src/features/cookAIngGenerator/MAP.md and /server/services/cookAIng/generator/MAP.md.
+
+Scaffold CookAIng feature folders/files listed above.
+
+Copy/adapt GlowBot generator code to CookAIng, replacing:
+
+Content type imports → CookAIng types.
+
+Namespaces, cache keys, telemetry event names → cookAIng.
+
+Webhook routes → CookAIng scenario.
+
+Wire routes, nav, and feature flag; add link to the sidebar.
+
+Implement the Source toggle with identical state shape and persistence key.
+
+Add JSON schemas for outputs per CookAIng content type; wire validation.
+
+Add tests A–G. Use same patterns as GlowBot tests; mirror structure under client/.../tests and server/.../tests.
+
+Add scripts:
+
+test:cookAIng:unit
+
+test:cookAIng:api
+
+test:cookAIng:e2e
+
+test:cookAIng:all → runs A–G
+
+Create CI entries to run test:cookAIng:all on PRs touching cookAIng*.
+
+Run full suite. Fix all failures. Repeat until green.
+
+Definition of Done
+
+CookAIng Generator feature delivers identical UX/flow/behavior to GlowBot, with CookAIng content types only.
+
+All tests A–G pass locally and in CI.
+
+Sidebar shows “CookAIng → Generator”; feature flag respected.
+
+Make.com payloads validated and reaching the correct scenario.
+
+No naming drift; migration log committed.
+
+No regressions in GlowBot generator tests.
+
+Commands for You to Execute
+
+Create necessary directories and files as specified.
+
+Copy and adapt GlowBot generator modules to CookAIng equivalents.
+
+Implement schemas, validators, and post-processors for every CookAIng content type.
+
+Register routes, navigation, and feature flags.
+
+Write and run the test batteries A–G.
+
+Print a final summary including: files created/changed, schema list per content type, test pass/fail counts, and any TODOs blocked by missing secrets.
+
+If anything is ambiguous, infer from the GlowBot implementation and enforce parity.
