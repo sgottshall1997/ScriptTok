@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -44,7 +45,8 @@ import {
   Type,
   Volume2,
   Image,
-  Video
+  Video,
+  Eye
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { insertCampaignSchema, campaigns, organizations } from "@shared/schema";
@@ -887,6 +889,15 @@ const CampaignsPage = () => {
                   {/* Action Buttons Row */}
                   <div className="flex justify-between">
                     <div className="flex space-x-1">
+                      <Link href={`/campaigns/${campaign.id}`}>
+                        <Button 
+                          size="sm" 
+                          variant="outline"
+                          data-testid={`button-view-${campaign.id}`}
+                        >
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
                       <Button 
                         size="sm" 
                         variant="outline"

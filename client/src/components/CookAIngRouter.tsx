@@ -27,6 +27,8 @@ import CookAIngEmailTest from "@/pages/cookaing-marketing/email-test";
 import CookAIngDevTools from "@/pages/cookaing-marketing/devtools";
 import CookAIngContent from "@/pages/cookaing-marketing/content";
 import CookAIngIntelligence from "@/pages/cookaing-marketing/intelligence";
+import CookAIngCampaignDetail from "@/pages/cookaing-marketing/campaign-detail";
+import CookAIngSocialAutomation from "@/pages/cookaing-marketing/social-automation";
 
 const CookAIngRouter: React.FC = () => {
   return (
@@ -45,6 +47,8 @@ const CookAIngRouter: React.FC = () => {
         <Route path="/contacts" component={CookAIngContacts} />
         <Route path="/segments" component={CookAIngSegments} />
         <Route path="/campaigns" component={CookAIngCampaigns} />
+        <Route path="/campaigns/:id" component={CookAIngCampaignDetail} />
+        <Route path="/social-automation" component={CookAIngSocialAutomation} />
         <Route path="/experiments" component={CookAIngExperiments} />
         <Route path="/workflows" component={CookAIngWorkflows} />
         <Route path="/personalization" component={CookAIngPersonalization} />
