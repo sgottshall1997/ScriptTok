@@ -1,7 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { authRouter } from "./api/auth";
+import { authRouter, verifyAuth, requireRole } from "./api/auth";
+
+// Import TEST_USERS for admin endpoint
+const TEST_USERS = [
+  { id: 1, username: 'admin', password: 'admin123', role: 'admin' },
+  { id: 2, username: 'user', password: 'user123', role: 'user' },
+  { id: 3, username: 'viewer', password: 'viewer123', role: 'viewer' }
+];
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
 import { analyticsRouter } from "./api/analytics";
@@ -107,32 +114,53 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Authentication routes
   app.use('/api/auth', authRouter);
   
-  // Protected endpoint for authentication testing
-  app.get('/api/protected-endpoint', (req, res) => {
-    // Check for Authorization header
-    const authHeader = req.headers.authorization;
-    
-    if (!authHeader) {
-      return res.status(401).json({
-        success: false,
-        error: 'Authorization header required',
-        message: 'Please provide Authorization header with Bearer token'
-      });
-    }
-    
-    if (!authHeader.startsWith('Bearer ')) {
-      return res.status(401).json({
-        success: false,
-        error: 'Invalid authorization format',
-        message: 'Authorization header must use Bearer token format'
-      });
-    }
-    
-    // For testing, any bearer token is considered invalid
-    return res.status(403).json({
-      success: false,
-      error: 'Access denied',
-      message: 'Invalid or expired token'
+  // Protected endpoint for authentication testing - requires valid token
+  app.get('/api/protected-endpoint', verifyAuth, (req: any, res) => {
+    return res.json({
+      success: true,
+      message: 'Access granted to protected resource',
+      user: {
+        id: req.user.userId,
+        username: req.user.username,
+        role: req.user.role
+      },
+      timestamp: new Date().toISOString()
+    });
+  });
+
+  // Admin-only endpoint for RBAC testing
+  app.get('/api/admin-only', verifyAuth, requireRole(['admin']), (req: any, res) => {
+    return res.json({
+      success: true,
+      message: 'Access granted to admin resource',
+      user: req.user,
+      adminData: {
+        systemStatus: 'healthy',
+        userCount: TEST_USERS.length,
+        permissions: ['read', 'write', 'delete', 'admin']
+      }
+    });
+  });
+
+  // User or admin endpoint for multi-role testing
+  app.get('/api/user-resource', verifyAuth, requireRole(['user', 'admin']), (req: any, res) => {
+    return res.json({
+      success: true,
+      message: 'Access granted to user resource',
+      user: req.user,
+      userData: {
+        profile: 'User profile data',
+        permissions: req.user.role === 'admin' ? ['read', 'write', 'admin'] : ['read']
+      }
+    });
+  });
+
+  // Public endpoint for testing (no auth required)
+  app.get('/api/public-endpoint', (req, res) => {
+    return res.json({
+      success: true,
+      message: 'Public endpoint - no authentication required',
+      timestamp: new Date().toISOString()
     });
   });
   
