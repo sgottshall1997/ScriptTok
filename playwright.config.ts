@@ -101,7 +101,7 @@ export default defineConfig({
   ],
 
   /* Global setup for testing environment */
-  globalSetup: require.resolve('./tests/e2e/global-setup.ts'),
+  globalSetup: './tests/e2e/global-setup.ts',
   
   /* Run your local dev server before starting the tests */
   webServer: {
