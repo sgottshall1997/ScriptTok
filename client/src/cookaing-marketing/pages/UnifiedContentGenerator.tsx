@@ -64,7 +64,9 @@ export default function UnifiedContentGenerator() {
       return await response.json();
     },
     onSuccess: (result) => {
-      setGeneratedContent(result);
+      // Extract the actual generated content from the API response
+      const content = result?.data?.results?.[0] || null;
+      setGeneratedContent(content);
       toast({
         title: 'Content Generated Successfully',
         description: 'Your content has been generated and is ready to use.'
