@@ -13,7 +13,8 @@ import {
   Building2,
   ArrowRight,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Sparkles
 } from "lucide-react";
 import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
@@ -77,6 +78,14 @@ const CookAIngMarketingDashboard = () => {
       path: "/cookaing-marketing/affiliate-products",
       color: "bg-rose-500",
       testId: "link-affiliate-products"
+    },
+    {
+      title: "Content Generator",
+      description: "Transform recipes into engaging multi-platform content",
+      icon: Sparkles,
+      path: "/cookaing-marketing/content",
+      color: "bg-teal-500",
+      testId: "link-content"
     }
   ];
 

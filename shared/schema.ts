@@ -723,6 +723,32 @@ export const bulkGeneratedContent = pgTable("bulk_generated_content", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// CookAIng Content Blueprints - Templates for recipe-based content generation
+export const contentBlueprints = pgTable("content_blueprints", {
+  id: serial("id").primaryKey(),
+  name: varchar("name", { length: 255 }).notNull(),
+  kind: varchar("kind", { length: 100 }).notNull(), // e.g., "video_script_short", "blog_recipe", etc.
+  description: text("description").notNull(),
+  inputSchemaJson: jsonb("input_schema_json").notNull(), // JSON schema for inputs
+  outputSchemaJson: jsonb("output_schema_json").notNull(), // JSON schema for outputs  
+  defaultsJson: jsonb("defaults_json").notNull(), // Default values for inputs
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// CookAIng Content Jobs - Individual content generation jobs
+export const contentJobs = pgTable("content_jobs", {
+  id: serial("id").primaryKey(),
+  recipeId: integer("recipe_id"), // Optional reference to recipe
+  sourceType: varchar("source_type", { length: 50 }).notNull().default("recipe"), // "recipe" or "freeform"
+  blueprintId: integer("blueprint_id").notNull().references(() => contentBlueprints.id, { onDelete: 'cascade' }),
+  status: varchar("status", { length: 50 }).notNull().default("draft"), // "draft", "queued", "generated", "failed"
+  inputsJson: jsonb("inputs_json").notNull(), // User inputs for generation
+  outputsJson: jsonb("outputs_json"), // Generated outputs
+  errorsJson: jsonb("errors_json"), // Any errors that occurred
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
 // ROI Analytics and Performance Tracking
 export const performanceAnalytics = pgTable("performance_analytics", {
   id: serial("id").primaryKey(),
@@ -1739,6 +1765,8 @@ export const insertABAssignmentSchema = createInsertSchema(abAssignments).omit({
 export const insertABConversionSchema = createInsertSchema(abConversions).omit({ id: true, createdAt: true });
 export const insertCostSchema = createInsertSchema(costs).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAuditLogSchema = createInsertSchema(auditLogs).omit({ id: true, createdAt: true });
+export const insertContentBlueprintSchema = createInsertSchema(contentBlueprints).omit({ id: true, createdAt: true });
+export const insertContentJobSchema = createInsertSchema(contentJobs).omit({ id: true, createdAt: true, updatedAt: true });
 
 // Type exports
 export type Organization = typeof organizations.$inferSelect;
@@ -1803,3 +1831,9 @@ export type InsertCost = z.infer<typeof insertCostSchema>;
 
 export type AuditLog = typeof auditLogs.$inferSelect;
 export type InsertAuditLog = z.infer<typeof insertAuditLogSchema>;
+
+export type ContentBlueprint = typeof contentBlueprints.$inferSelect;
+export type InsertContentBlueprint = z.infer<typeof insertContentBlueprintSchema>;
+
+export type ContentJob = typeof contentJobs.$inferSelect;
+export type InsertContentJob = z.infer<typeof insertContentJobSchema>;

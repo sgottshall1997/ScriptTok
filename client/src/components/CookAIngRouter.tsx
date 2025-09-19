@@ -25,6 +25,7 @@ import CookAIngAttribution from "@/pages/cookaing-marketing/attribution";
 import CookAIngWebhooks from "@/pages/cookaing-marketing/webhooks";
 import CookAIngEmailTest from "@/pages/cookaing-marketing/email-test";
 import CookAIngDevTools from "@/pages/cookaing-marketing/devtools";
+import CookAIngContent from "@/pages/cookaing-marketing/content";
 
 const CookAIngRouter: React.FC = () => {
   return (
@@ -57,6 +58,7 @@ const CookAIngRouter: React.FC = () => {
         <Route path="/webhooks" component={CookAIngWebhooks} />
         <Route path="/email-test" component={CookAIngEmailTest} />
         <Route path="/devtools" component={CookAIngDevTools} />
+        <Route path="/content" component={CookAIngContent} />
         <Route path="/docs" component={CookAIngMarketingDocs} />
       </Switch>
     </CookAIngLayout>
