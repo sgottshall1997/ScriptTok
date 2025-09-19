@@ -3,6 +3,9 @@
 ## Overview
 This project is a comprehensive content generation platform designed to create social media content across various niches and platforms using multiple AI models. It features a full-stack TypeScript architecture with a React frontend, Express backend, and PostgreSQL database with Drizzle ORM. The platform aims to provide a robust solution for automated and optimized content creation, with a business vision to achieve significant engagement and conversion improvements for users.
 
+## Recent Changes
+**September 19, 2025**: Successfully implemented unified trending picks interface that groups Amazon and Perplexity data sources together with toggle functionality. Fixed critical TypeScript syntax errors in Dashboard.tsx and updated type definitions to match actual data structure. The interface now features a single trending picks section with a dropdown to switch between 🤖 Perplexity and 🛒 Amazon data sources, with conditional status cards and appropriate product icons for each source.
+
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 

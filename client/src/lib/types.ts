@@ -6,17 +6,24 @@ export interface TrendingProduct {
   mentions?: number;
   sourceUrl?: string;
   createdAt?: string;
-  niche?: string;
+  niche: string;
   isAIGenerated?: boolean;
   errorReason?: string;
+  // Amazon-specific fields
+  dataSource?: 'perplexity' | 'amazon';
+  reason?: string;
+  price?: string;
+  rating?: string;
+  asin?: string;
 }
 
 // Dashboard trending products response
 export interface DashboardTrendingResponse {
-  byNiche: Record<string, TrendingProduct[]>;
+  success: boolean;
+  data: Record<string, TrendingProduct[]>;
   count: number;
-  lastRefresh: string;
-  nextScheduledRefresh: string;
+  lastRefresh?: string;
+  nextScheduledRefresh?: string;
 }
 
 // Source platform colors for trending products

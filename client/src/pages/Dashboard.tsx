@@ -20,12 +20,12 @@ import {
   Eye,
   Zap,
   Target,
-  RotateCcw
+  RotateCcw,
+  ShoppingBag
 } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
-import AmazonTrendingPicksWidget from "@/components/AmazonTrendingPicksWidget";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -33,13 +33,19 @@ const Dashboard = () => {
   const [location, setLocation] = useLocation();
   const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
+  const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
 
-  // Fetch trending products for all niches
+  // Fetch trending products for all niches (Perplexity organized by niche)
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
     retry: false,
     staleTime: 0, // Always consider data stale
-    cacheTime: 0, // Don't cache the data
+    gcTime: 0, // Don't cache the data (updated from cacheTime)
+  });
+
+  // Fetch all trending products (includes Amazon products)
+  const { data: allTrendingProducts = [], isLoading: allTrendingLoading } = useQuery<TrendingProduct[]>({
+    queryKey: ['/api/trending/products'],
   });
 
   // Fetch Perplexity status for last run display
@@ -64,6 +70,27 @@ const Dashboard = () => {
   }>({
     queryKey: ['/api/perplexity-automation/status'],
     refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // Fetch Amazon status for integration display
+  const { data: amazonStatus } = useQuery<{
+    configured: boolean;
+    partnerTag: string;
+    region: string;
+    apiHost: string;
+    apiStatus: {
+      connected: boolean;
+      error: string | null;
+    };
+    cache: {
+      type: string;
+      keyCount: number;
+      isHealthy: boolean;
+    };
+    timestamp: string;
+  }>({
+    queryKey: ['/api/amazon/status'],
+    refetchInterval: 60000, // Refresh every minute
   });
 
   // Toggle Perplexity automation mutation
@@ -135,6 +162,40 @@ const Dashboard = () => {
     },
   });
 
+  // Amazon fetch mutation
+  const amazonMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/pull-amazon-trends', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "✅ Amazon Fetch Complete",
+        description: data.message || "Fresh trending products loaded from Amazon PA-API!",
+      });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending'] });
+    },
+    onError: (error) => {
+      console.error('Amazon fetch error:', error);
+      toast({
+        title: "❌ Fetch Failed",
+        description: "Could not fetch new trends from Amazon. Please try again.",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Get Perplexity products (exactly 3 per niche, balanced representation)
   const getPerplexityProducts = () => {
     if (!trendingProducts?.data) return [];
@@ -175,19 +236,33 @@ const Dashboard = () => {
     return perplexityProducts; // Return all products (up to 21)
   };
 
-  // Filter products based on selected niche
-  const getFilteredPerplexityProducts = () => {
-    const allProducts = getPerplexityProducts();
-    if (selectedNicheFilter === 'all') {
-      return allProducts;
+  // Get Amazon products from the unified products list
+  const getAmazonProducts = () => {
+    return allTrendingProducts.filter(product => product.dataSource === 'amazon');
+  };
+
+  // Get current products based on selected data source
+  const getCurrentProducts = () => {
+    if (selectedDataSource === 'perplexity') {
+      return getPerplexityProducts();
+    } else {
+      return getAmazonProducts();
     }
-    return allProducts.filter(product => product.niche === selectedNicheFilter);
+  };
+
+  // Filter products based on selected niche and data source
+  const getFilteredProducts = () => {
+    const products = getCurrentProducts();
+    if (selectedNicheFilter === 'all') {
+      return products;
+    }
+    return products.filter(product => product.niche === selectedNicheFilter);
   };
 
   // Get available niches for dropdown
   const getAvailableNiches = () => {
-    const allProducts = getPerplexityProducts();
-    const niches = [...new Set(allProducts.map(product => product.niche))];
+    const products = getCurrentProducts();
+    const niches = [...new Set(products.map(product => product.niche).filter(Boolean))];
     return niches.sort();
   };
 
@@ -224,7 +299,6 @@ const Dashboard = () => {
     }
   };
 
-  const perplexityProducts = getPerplexityProducts();
   const totalProducts = trendingProducts?.count || 0;
   const activeNiches = trendingProducts?.data ? Object.keys(trendingProducts.data).length : 0;
 
@@ -237,13 +311,13 @@ const Dashboard = () => {
       'fitness': 'bg-green-100 text-green-800',
       'food': 'bg-orange-100 text-orange-800',
       'travel': 'bg-cyan-100 text-cyan-800',
-      'pet': 'bg-yellow-100 text-yellow-800',
+      'pets': 'bg-yellow-100 text-yellow-800',
     };
     return colors[niche] || 'bg-gray-100 text-gray-800';
   };
 
   return (
-      <div className="space-y-6">
+    <div className="space-y-6">
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
@@ -298,14 +372,30 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* 2️⃣ AI-Powered Trending Picks (Perplexity) */}
-      <Card>
+      {/* 2️⃣ AI-Powered Trending Picks (Unified) */}
+      <Card data-testid="card-unified-trending-picks">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
             <CardTitle className="text-xl">🔥 AI-Powered Trending Picks</CardTitle>
-            <p className="text-sm text-muted-foreground">Hottest products discovered by Perplexity AI</p>
+            <p className="text-sm text-muted-foreground">
+              {selectedDataSource === 'perplexity' 
+                ? 'Hottest products discovered by Perplexity AI' 
+                : 'Real-time product discovery via Amazon PA-API'
+              }
+            </p>
           </div>
           <div className="flex items-center gap-3">
+            {/* Data Source Toggle */}
+            <Select value={selectedDataSource} onValueChange={(value: 'perplexity' | 'amazon') => setSelectedDataSource(value)}>
+              <SelectTrigger className="w-[150px]" data-testid="select-data-source">
+                <SelectValue placeholder="Data source" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="perplexity">🤖 Perplexity</SelectItem>
+                <SelectItem value="amazon">🛒 Amazon</SelectItem>
+              </SelectContent>
+            </Select>
+            
             <Select value={selectedNicheFilter} onValueChange={setSelectedNicheFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by niche" />
@@ -320,87 +410,136 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <div className="flex flex-col items-center">
-              <p className="text-red-600 font-semibold text-xs mb-1">
-                (PLEASE DO NOT PRESS)
-              </p>
+              {selectedDataSource === 'perplexity' && (
+                <p className="text-red-600 font-semibold text-xs mb-1">
+                  (PLEASE DO NOT PRESS)
+                </p>
+              )}
               <Button 
-                onClick={handlePerplexityFetch}
-                disabled={isPerplexityLoading}
+                onClick={selectedDataSource === 'perplexity' ? handlePerplexityFetch : () => amazonMutation.mutate()}
+                disabled={selectedDataSource === 'perplexity' ? isPerplexityLoading : amazonMutation.isPending}
                 variant="outline"
                 size="sm"
+                className={selectedDataSource === 'amazon' ? "bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 hover:from-orange-100 hover:to-yellow-100" : ""}
+                data-testid={selectedDataSource === 'perplexity' ? "button-fetch-perplexity" : "button-fetch-amazon"}
               >
-                {isPerplexityLoading ? (
+                {(selectedDataSource === 'perplexity' ? isPerplexityLoading : amazonMutation.isPending) ? (
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : selectedDataSource === 'amazon' ? (
+                  <ShoppingBag className="h-4 w-4 mr-2" />
                 ) : (
                   <RefreshCw className="h-4 w-4 mr-2" />
                 )}
-                Run Perplexity Fetch
+                {selectedDataSource === 'perplexity' ? 'Run Perplexity Fetch' : '🔄 Run Amazon Fetch'}
               </Button>
             </div>
           </div>
         </CardHeader>
         
-        {/* Perplexity Last Run Status */}
+        {/* Status Section - Conditional Based on Data Source */}
         <CardContent className="pt-0 pb-4">
-          <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
-                <Clock className="h-5 w-5 text-blue-600" />
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-blue-900">Last Perplexity Run</span>
-                    {perplexityStatus ? (
-                      <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                        {perplexityStatus.timeSince}
-                      </Badge>
-                    ) : (
-                      <Badge variant="secondary" className="bg-gray-100 text-gray-600">
-                        Loading...
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="text-sm text-blue-700 mt-1">
-                    {perplexityStatus ? (
-                      <>
-                        <div><strong>Time:</strong> {perplexityStatus.lastRun}</div>
-                        <div><strong>Next:</strong> {perplexityStatus.nextScheduled}</div>
-                        <div><strong>Products:</strong> {perplexityStatus.totalProducts} total in database</div>
-                      </>
-                    ) : (
-                      <div>Loading status...</div>
-                    )}
-                  </div>
-                  
-                  {/* Automation Toggle Switch */}
-                  <div className="flex items-center justify-between mt-3 pt-3 border-t border-blue-200">
-                    <div className="flex flex-col">
-                      <span className="text-sm font-medium text-blue-900">Daily 5:00 AM Automation</span>
-                      <span className="text-xs text-blue-600">
-                        {automationStatus?.enabled ? "Automatic trend fetching enabled" : "Manual fetching only"}
-                      </span>
+          {selectedDataSource === 'perplexity' ? (
+            <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-blue-600" />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-blue-900">Last Perplexity Run</span>
+                      {perplexityStatus ? (
+                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
+                          {perplexityStatus.timeSince}
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                          Loading...
+                        </Badge>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-blue-600">
-                        {automationStatus?.enabled ? "ON" : "OFF"}
-                      </span>
-                      <Switch
-                        checked={automationStatus?.enabled || false}
-                        onCheckedChange={(enabled) => {
-                          toggleAutomationMutation.mutate(enabled);
-                        }}
-                        disabled={toggleAutomationMutation.isPending}
-                        className="data-[state=checked]:bg-blue-600"
-                      />
+                    <div className="text-sm text-blue-700 mt-1">
+                      {perplexityStatus ? (
+                        <>
+                          <div><strong>Time:</strong> {perplexityStatus.lastRun}</div>
+                          <div><strong>Next:</strong> {perplexityStatus.nextScheduled}</div>
+                          <div><strong>Products:</strong> {perplexityStatus.totalProducts} total in database</div>
+                        </>
+                      ) : (
+                        <div>Loading status...</div>
+                      )}
+                    </div>
+                  
+                    {/* Automation Toggle Switch */}
+                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-blue-200">
+                      <div className="flex flex-col">
+                        <span className="text-sm font-medium text-blue-900">Daily 5:00 AM Automation</span>
+                        <span className="text-xs text-blue-600">
+                          {automationStatus?.enabled ? "Automatic trend fetching enabled" : "Manual fetching only"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-blue-600">
+                          {automationStatus?.enabled ? "ON" : "OFF"}
+                        </span>
+                        <Switch
+                          checked={automationStatus?.enabled || false}
+                          onCheckedChange={(enabled) => {
+                            toggleAutomationMutation.mutate(enabled);
+                          }}
+                          disabled={toggleAutomationMutation.isPending}
+                          className="data-[state=checked]:bg-blue-600"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200" data-testid="card-amazon-status">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <ShoppingBag className="h-5 w-5 text-orange-600" />
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-medium text-orange-900">Amazon PA-API Status</span>
+                      {amazonStatus ? (
+                        <Badge 
+                          variant="secondary" 
+                          className={amazonStatus.apiStatus.connected ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}
+                          data-testid="badge-api-status"
+                        >
+                          {amazonStatus.apiStatus.connected ? 'Connected' : 'Disconnected'}
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary" className="bg-gray-100 text-gray-600">
+                          Loading...
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-sm text-orange-700 mt-1">
+                      {amazonStatus ? (
+                        <>
+                          <div><strong>Partner Tag:</strong> {amazonStatus.partnerTag}</div>
+                          <div><strong>Region:</strong> {amazonStatus.region}</div>
+                          <div><strong>Cache:</strong> {amazonStatus.cache.keyCount} items ({amazonStatus.cache.isHealthy ? 'healthy' : 'unhealthy'})</div>
+                          {amazonStatus.apiStatus.error && (
+                            <div className="text-red-600"><strong>Error:</strong> {amazonStatus.apiStatus.error}</div>
+                          )}
+                        </>
+                      ) : (
+                        <div>Loading Amazon status...</div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </CardContent>
         
+        {/* Products Display Section */}
         <CardContent>
-          {trendingLoading ? (
+          {(selectedDataSource === 'perplexity' ? trendingLoading : allTrendingLoading) ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array(6).fill(0).map((_, i) => (
                 <Card key={i} className="p-4">
@@ -412,32 +551,48 @@ const Dashboard = () => {
                 </Card>
               ))}
             </div>
-          ) : getFilteredPerplexityProducts().length > 0 ? (
+          ) : getFilteredProducts().length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {getFilteredPerplexityProducts().map((product) => (
+              {getFilteredProducts().map((product) => (
                 <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
                     <div className="space-y-4">
                       {/* Product Title */}
                       <div className="flex items-start justify-between gap-3">
                         <h3 className="font-semibold text-base leading-tight text-gray-900">
-                          {product.title}
+                          {selectedDataSource === 'amazon' ? '🛒' : '🤖'} {product.title}
                         </h3>
                         <Badge className={getNicheColor(product.niche)} variant="secondary">
                           {product.niche}
                         </Badge>
                       </div>
                       
-                      {/* Mentions - Hidden for cleaner look */}
-                      {/* <div className="flex items-center gap-1 text-sm text-orange-600">
-                        🔥 {product.mentions?.toLocaleString() || '15,000'} mentions
-                      </div> */}
-                      
                       {/* Why it's hot */}
                       <div className="text-sm text-gray-600">
                         <span className="text-yellow-600">✨ Why it's hot:</span>
                         <span className="ml-1">{product.reason || 'Trending across social platforms'}</span>
                       </div>
+
+                      {/* Amazon-specific data */}
+                      {selectedDataSource === 'amazon' && (
+                        <>
+                          {product.price && (
+                            <div className="text-xs text-green-600 font-medium">
+                              💰 Price: {product.price}
+                            </div>
+                          )}
+                          {product.rating && (
+                            <div className="text-xs text-yellow-600">
+                              ⭐ Rating: {product.rating}/5
+                            </div>
+                          )}
+                          {product.asin && (
+                            <div className="text-xs text-blue-600">
+                              📦 ASIN: {product.asin}
+                            </div>
+                          )}
+                        </>
+                      )}
                       
                       {/* Action Buttons */}
                       <div className="flex gap-2 pt-2">
@@ -456,20 +611,22 @@ const Dashboard = () => {
                           <Zap className="h-3 w-3 mr-1" />
                           Generate Content
                         </Button>
-                        <Button 
-                          size="sm" 
-                          variant="outline" 
-                          className="border-gray-300"
-                          onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
-                          disabled={refreshIndividualMutation.isPending}
-                        >
-                          {refreshIndividualMutation.isPending ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                          ) : (
-                            <RotateCcw className="h-3 w-3 mr-1" />
-                          )}
-                          Refresh
-                        </Button>
+                        {selectedDataSource === 'perplexity' && (
+                          <Button 
+                            size="sm" 
+                            variant="outline" 
+                            className="border-gray-300"
+                            onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
+                            disabled={refreshIndividualMutation.isPending}
+                          >
+                            {refreshIndividualMutation.isPending ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <RotateCcw className="h-3 w-3 mr-1" />
+                            )}
+                            Refresh
+                          </Button>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -479,95 +636,96 @@ const Dashboard = () => {
           ) : (
             <div className="text-center py-8 text-muted-foreground">
               <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No Perplexity trends available. Click "Run Perplexity Fetch" to get started!</p>
+              <p>
+                {selectedDataSource === 'perplexity' 
+                  ? 'No Perplexity trends available. Click "Run Perplexity Fetch" to get started!'
+                  : 'No Amazon products available. Click "Run Amazon Fetch" to discover trending products!'
+                }
+              </p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* 3️⃣ Amazon-Powered Trending Picks */}
-      <Card data-testid="card-amazon-trending-picks">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <div>
-            <CardTitle className="text-xl">🛒 Amazon-Powered Trending Picks</CardTitle>
-            <p className="text-sm text-muted-foreground">Real-time product discovery via Amazon PA-API</p>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <AmazonTrendingPicksWidget showFetchButton={true} maxItems={9} />
-        </CardContent>
-      </Card>
-
-      {/* 4️⃣ Fast-Action Buttons Panel */}
+      {/* 3️⃣ Fast-Action Buttons Panel */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="p-6 text-center">
-              <Wand2 className="h-8 w-8 mx-auto mb-3 text-blue-600" />
-              <h3 className="font-semibold text-blue-900">🪄 Generate Content Now</h3>
-              <p className="text-sm text-blue-700 mt-1">Create viral content in seconds</p>
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Wand2 className="h-6 w-6 text-blue-600" />
+              </div>
+              <h3 className="font-semibold text-blue-900 mb-2">🎯 Unified Content Generator</h3>
+              <p className="text-sm text-blue-700 mb-4">One-click content generation for all platforms</p>
+              <div className="flex items-center justify-center text-blue-600">
+                <span className="text-sm font-medium">Generate Now</span>
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </div>
             </CardContent>
           </Card>
         </Link>
 
-        <Link href="/templates">
+        <Link href="/bulk-content-generation" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
             <CardContent className="p-6 text-center">
-              <Layers className="h-8 w-8 mx-auto mb-3 text-purple-600" />
-              <h3 className="font-semibold text-purple-900">🧩 Manage Templates</h3>
-              <p className="text-sm text-purple-700 mt-1">Browse and customize templates</p>
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Layers className="h-6 w-6 text-purple-600" />
+              </div>
+              <h3 className="font-semibold text-purple-900 mb-2">🚀 Bulk Content Generator</h3>
+              <p className="text-sm text-purple-700 mb-4">Generate content at scale with automation</p>
+              <div className="flex items-center justify-center text-purple-600">
+                <span className="text-sm font-medium">Bulk Generate</span>
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </div>
             </CardContent>
           </Card>
         </Link>
 
-        <Link href="/content-history">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+        <Link href="/content-history" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
+          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200">
             <CardContent className="p-6 text-center">
-              <Eye className="h-8 w-8 mx-auto mb-3 text-green-600" />
-              <h3 className="font-semibold text-green-900">📚 Content History</h3>
-              <p className="text-sm text-green-700 mt-1">View and manage your content</p>
+              <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <BarChart3 className="h-6 w-6 text-emerald-600" />
+              </div>
+              <h3 className="font-semibold text-emerald-900 mb-2">📊 Content History & Analytics</h3>
+              <p className="text-sm text-emerald-700 mb-4">Track performance and manage your content</p>
+              <div className="flex items-center justify-center text-emerald-600">
+                <span className="text-sm font-medium">View Analytics</span>
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </div>
             </CardContent>
           </Card>
         </Link>
       </div>
 
-
-
-      {/* 5️⃣ Daily Content Showcase */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-lg">🧠 Daily Content Showcase</CardTitle>
-          <p className="text-sm text-muted-foreground">Latest high-performing AI-generated content</p>
-        </CardHeader>
-        <CardContent>
-          <div className="text-center py-8 text-muted-foreground">
-            <Sparkles className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>No showcase content yet today. Start by generating from a trending pick above!</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 6️⃣ Future Automation Preview */}
-      <Card className="bg-gradient-to-r from-gray-50 to-slate-50 border-dashed">
-        <CardContent className="p-8 text-center">
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-800">🧠 Automation Pipeline Preview</h3>
-            <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
-              <span>Perplexity</span>
-              <ArrowRight className="h-4 w-4" />
-              <span>Content</span>
-              <ArrowRight className="h-4 w-4" />
-              <span>Make.com</span>
-              <ArrowRight className="h-4 w-4" />
-              <span>Performance Loop</span>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Coming Soon: Full automation pipeline for hands-free content marketing
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      {/* 4️⃣ Platform Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-blue-600">{totalProducts}</div>
+            <div className="text-sm text-muted-foreground">Total Products</div>
+          </CardContent>
+        </Card>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-green-600">{activeNiches}</div>
+            <div className="text-sm text-muted-foreground">Active Niches</div>
+          </CardContent>
+        </Card>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-purple-600">∞</div>
+            <div className="text-sm text-muted-foreground">Content Generated</div>
+          </CardContent>
+        </Card>
+        <Card className="text-center">
+          <CardContent className="p-4">
+            <div className="text-2xl font-bold text-orange-600">24/7</div>
+            <div className="text-sm text-muted-foreground">AI Monitoring</div>
+          </CardContent>
+        </Card>
       </div>
+    </div>
   );
 };
 
