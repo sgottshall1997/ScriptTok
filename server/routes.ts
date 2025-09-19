@@ -96,6 +96,7 @@ import integrationsHealthRouter from "./api/cookaing-marketing/integrations/heal
 import observabilityRouter from "./api/cookaing-marketing/observability";
 import contentRouter from "./api/cookaing-marketing/content";
 import contentEnhancementRouter from "./api/cookaing-marketing/content-enhancement";
+import unifiedContentRouter from "./api/cookaing-marketing/unified-content";
 import intelligenceRouter from "./api/cookaing-marketing/intelligence";
 import socialAutomationRouter from "./api/cookaing-marketing/social-automation";
 import complianceRouter from "./api/cookaing-marketing/compliance";
@@ -129,6 +130,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/observability', observabilityRouter);
   app.use('/api/cookaing-marketing/content', contentRouter);
   app.use('/api/cookaing-marketing/content-enhancement', contentEnhancementRouter);
+  app.use('/api/cookaing-marketing/unified-content', unifiedContentRouter);
   app.use('/api/cookaing-marketing/intel', intelligenceRouter);
   app.use('/api/cookaing-marketing/social-automation', socialAutomationRouter);
   app.use('/api/cookaing-marketing/compliance', complianceRouter);
