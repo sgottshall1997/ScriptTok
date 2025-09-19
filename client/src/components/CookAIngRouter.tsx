@@ -12,6 +12,8 @@ import CookAIngWorkflows from "@/pages/cookaing-marketing/workflows";
 import CookAIngForms from "@/pages/cookaing-marketing/forms";
 import CookAIngAffiliateProducts from "@/pages/cookaing-marketing/affiliate-products";
 import CookAIngMarketingDocs from "@/pages/cookaing-marketing/docs";
+import ContentHistory from "@/cookaing-marketing/pages/ContentHistory";
+import UnifiedContentGenerator from "@/cookaing-marketing/pages/UnifiedContentGenerator";
 import CookAIngAbout from "@/pages/cookaing-marketing/about";
 import CookAIngIntegrationsHealth from "@/pages/cookaing-marketing/integrations-health";
 import CookAIngSegments from "@/pages/cookaing-marketing/segments";
@@ -40,32 +42,34 @@ const CookAIngRouter: React.FC = () => {
           <Redirect to="/cookaing-marketing" />
         </Route>
         
-        {/* CookAIng Marketing Engine routes - all mounted under /cookaing */}
+        {/* CookAIng Marketing Engine routes - all mounted under /cookaing-marketing */}
         <Route path="/cookaing-marketing" component={CookAIngMarketingDashboard} />
-        <Route path="/about" component={CookAIngAbout} />
-        <Route path="/organizations" component={CookAIngOrganizations} />
-        <Route path="/contacts" component={CookAIngContacts} />
-        <Route path="/segments" component={CookAIngSegments} />
-        <Route path="/campaigns" component={CookAIngCampaigns} />
-        <Route path="/campaigns/:id" component={CookAIngCampaignDetail} />
-        <Route path="/social-automation" component={CookAIngSocialAutomation} />
-        <Route path="/experiments" component={CookAIngExperiments} />
-        <Route path="/workflows" component={CookAIngWorkflows} />
-        <Route path="/personalization" component={CookAIngPersonalization} />
-        <Route path="/forms" component={CookAIngForms} />
-        <Route path="/submissions" component={CookAIngSubmissions} />
-        <Route path="/affiliate-products" component={CookAIngAffiliateProducts} />
-        <Route path="/trends" component={CookAIngTrends} />
-        <Route path="/reports" component={CookAIngReports} />
-        <Route path="/costs" component={CookAIngCosts} />
-        <Route path="/attribution" component={CookAIngAttribution} />
-        <Route path="/integrations-health" component={CookAIngIntegrationsHealth} />
-        <Route path="/webhooks" component={CookAIngWebhooks} />
-        <Route path="/email-test" component={CookAIngEmailTest} />
-        <Route path="/devtools" component={CookAIngDevTools} />
-        <Route path="/content" component={CookAIngContent} />
-        <Route path="/intelligence" component={CookAIngIntelligence} />
-        <Route path="/docs" component={CookAIngMarketingDocs} />
+        <Route path="/cookaing-marketing/about" component={CookAIngAbout} />
+        <Route path="/cookaing-marketing/organizations" component={CookAIngOrganizations} />
+        <Route path="/cookaing-marketing/contacts" component={CookAIngContacts} />
+        <Route path="/cookaing-marketing/segments" component={CookAIngSegments} />
+        <Route path="/cookaing-marketing/campaigns" component={CookAIngCampaigns} />
+        <Route path="/cookaing-marketing/campaigns/:id" component={CookAIngCampaignDetail} />
+        <Route path="/cookaing-marketing/social-automation" component={CookAIngSocialAutomation} />
+        <Route path="/cookaing-marketing/experiments" component={CookAIngExperiments} />
+        <Route path="/cookaing-marketing/workflows" component={CookAIngWorkflows} />
+        <Route path="/cookaing-marketing/personalization" component={CookAIngPersonalization} />
+        <Route path="/cookaing-marketing/forms" component={CookAIngForms} />
+        <Route path="/cookaing-marketing/submissions" component={CookAIngSubmissions} />
+        <Route path="/cookaing-marketing/affiliate-products" component={CookAIngAffiliateProducts} />
+        <Route path="/cookaing-marketing/trends" component={CookAIngTrends} />
+        <Route path="/cookaing-marketing/reports" component={CookAIngReports} />
+        <Route path="/cookaing-marketing/costs" component={CookAIngCosts} />
+        <Route path="/cookaing-marketing/attribution" component={CookAIngAttribution} />
+        <Route path="/cookaing-marketing/integrations-health" component={CookAIngIntegrationsHealth} />
+        <Route path="/cookaing-marketing/webhooks" component={CookAIngWebhooks} />
+        <Route path="/cookaing-marketing/email-test" component={CookAIngEmailTest} />
+        <Route path="/cookaing-marketing/devtools" component={CookAIngDevTools} />
+        <Route path="/cookaing-marketing/content" component={CookAIngContent} />
+        <Route path="/cookaing-marketing/content-history" component={ContentHistory} />
+        <Route path="/cookaing-marketing/content-generator" component={UnifiedContentGenerator} />
+        <Route path="/cookaing-marketing/intelligence" component={CookAIngIntelligence} />
+        <Route path="/cookaing-marketing/docs" component={CookAIngMarketingDocs} />
       </Switch>
     </CookAIngLayout>
     </CookAIngAuth>

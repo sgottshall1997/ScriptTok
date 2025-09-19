@@ -25,38 +25,90 @@ import {
   Info,
   Menu,
   X,
-  ArrowLeft
+  ArrowLeft,
+  History,
+  Sparkles,
+  FileText,
+  Activity,
+  HelpCircle,
+  LogOut
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface SidebarItem {
   name: string;
   href: string;
   icon: React.ComponentType<{ className?: string }>;
+  disabled?: boolean;
+  disabledReason?: string;
 }
 
-const cookAIngNavigation: SidebarItem[] = [
-  { name: "Marketing Dashboard", href: "/cookaing-marketing", icon: Home },
-  { name: "About", href: "/cookaing-marketing/about", icon: Info },
-  { name: "Organizations", href: "/cookaing-marketing/organizations", icon: Building },
-  { name: "Contacts", href: "/cookaing-marketing/contacts", icon: Users },
-  { name: "Segments", href: "/cookaing-marketing/segments", icon: Users2 },
-  { name: "Campaigns", href: "/cookaing-marketing/campaigns", icon: Target },
-  { name: "A/B Testing", href: "/cookaing-marketing/experiments", icon: FlaskConical },
-  { name: "Workflows", href: "/cookaing-marketing/workflows", icon: Workflow },
-  { name: "Personalization", href: "/cookaing-marketing/personalization", icon: PersonStanding },
-  { name: "Forms", href: "/cookaing-marketing/forms", icon: FormInput },
-  { name: "Form Submissions", href: "/cookaing-marketing/submissions", icon: FileSpreadsheet },
-  { name: "Affiliate Products", href: "/cookaing-marketing/affiliate-products", icon: ShoppingCart },
-  { name: "Trends & Seasonal", href: "/cookaing-marketing/trends", icon: TrendingUp },
-  { name: "Reports", href: "/cookaing-marketing/reports", icon: BarChart2 },
-  { name: "Costs & ROAS", href: "/cookaing-marketing/costs", icon: CreditCard },
-  { name: "Attribution Inspector", href: "/cookaing-marketing/attribution", icon: GitBranch },
-  { name: "Health", href: "/cookaing-marketing/integrations-health", icon: Monitor },
-  { name: "Webhooks Monitor", href: "/cookaing-marketing/webhooks", icon: Send },
-  { name: "Email Delivery Test", href: "/cookaing-marketing/email-test", icon: Mail },
-  { name: "Developer Tools", href: "/cookaing-marketing/devtools", icon: Wrench },
-  { name: "Docs", href: "/cookaing-marketing/docs", icon: BookOpen }
+interface SidebarSection {
+  name: string;
+  items: SidebarItem[];
+}
+
+const cookAIngNavigation: SidebarSection[] = [
+  {
+    name: "Overview",
+    items: [
+      { name: "Marketing Dashboard", href: "/cookaing-marketing", icon: Home },
+      { name: "About", href: "/cookaing-marketing/about", icon: Info }
+    ]
+  },
+  {
+    name: "Data",
+    items: [
+      { name: "Organizations", href: "/cookaing-marketing/organizations", icon: Building },
+      { name: "Contacts", href: "/cookaing-marketing/contacts", icon: Users },
+      { name: "Segments", href: "/cookaing-marketing/segments", icon: Users2 },
+      { name: "Forms", href: "/cookaing-marketing/forms", icon: FormInput },
+      { name: "Form Submissions", href: "/cookaing-marketing/submissions", icon: FileSpreadsheet },
+      { name: "Affiliate Products", href: "/cookaing-marketing/affiliate-products", icon: ShoppingCart }
+    ]
+  },
+  {
+    name: "Campaign Ops",
+    items: [
+      { name: "Campaigns", href: "/cookaing-marketing/campaigns", icon: Target },
+      { name: "A/B Testing", href: "/cookaing-marketing/experiments", icon: FlaskConical },
+      { name: "Workflows", href: "/cookaing-marketing/workflows", icon: Workflow },
+      { name: "Personalization", href: "/cookaing-marketing/personalization", icon: PersonStanding }
+    ]
+  },
+  {
+    name: "Intelligence & Content",
+    items: [
+      { name: "Trends & Seasonal", href: "/cookaing-marketing/trends", icon: TrendingUp },
+      { name: "Content History", href: "/cookaing-marketing/content-history", icon: History },
+      { name: "Unified Content Generator", href: "/cookaing-marketing/content-generator", icon: Sparkles }
+    ]
+  },
+  {
+    name: "Analytics",
+    items: [
+      { name: "Reports", href: "/cookaing-marketing/reports", icon: BarChart2 },
+      { name: "Costs & ROAS", href: "/cookaing-marketing/costs", icon: CreditCard },
+      { name: "Attribution Inspector", href: "/cookaing-marketing/attribution", icon: GitBranch }
+    ]
+  },
+  {
+    name: "System",
+    items: [
+      { name: "Health", href: "/cookaing-marketing/integrations-health", icon: Monitor },
+      { name: "Webhooks Monitor", href: "/cookaing-marketing/webhooks", icon: Send },
+      { name: "Email Delivery Test", href: "/cookaing-marketing/email-test", icon: Mail },
+      { name: "Developer Tools", href: "/cookaing-marketing/devtools", icon: Wrench }
+    ]
+  },
+  {
+    name: "Help",
+    items: [
+      { name: "Docs", href: "/cookaing-marketing/docs", icon: BookOpen },
+      { name: "Exit CookAIng", href: "/", icon: LogOut }
+    ]
+  }
 ];
 
 interface CookAIngLayoutProps {
@@ -74,7 +126,13 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
     const breadcrumbs = ['CookAIng'];
     
     if (pathSegments.length > 1) {
-      const currentItem = cookAIngNavigation.find(item => item.href === currentPath);
+      // Find current item across all sections
+      let currentItem = null;
+      for (const section of cookAIngNavigation) {
+        currentItem = section.items.find(item => item.href === currentPath);
+        if (currentItem) break;
+      }
+      
       if (currentItem) {
         breadcrumbs.push(currentItem.name);
       } else {
@@ -125,56 +183,98 @@ const CookAIngLayout: React.FC<CookAIngLayoutProps> = ({ children }) => {
             </button>
           </div>
 
-          {/* Exit CookAIng Button */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <Button
-              variant="outline"
-              className="w-full justify-start"
-              onClick={() => {
-                // Navigate to main app dashboard, avoiding the cookaing redirect
-                window.location.href = '/';
-              }}
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Exit CookAIng
-            </Button>
-          </div>
 
           {/* Navigation */}
           <nav className="flex-1 p-4 overflow-y-auto">
-            <div className="space-y-1">
-              {cookAIngNavigation.map((item) => {
-                const Icon = item.icon;
-                const isActive = currentPath === item.href || 
-                  (item.href === '/cookaing-marketing' && currentPath === '/cookaing-marketing');
-                
-                // Convert /cookaing-marketing/xxx to /xxx for proper routing under /cookaing namespace
-                const cleanHref = item.href === '/cookaing-marketing' 
-                  ? '/cookaing-marketing' 
-                  : item.href.replace('/cookaing-marketing', '');
-                
-                return (
-                  <Link
-                    key={item.name}
-                    href={cleanHref}
-                    className={cn(
-                      "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors group",
-                      isActive
-                        ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-100"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
-                    )}
-                  >
-                    <Icon className={cn(
-                      "mr-3 flex-shrink-0 h-4 w-4",
-                      isActive 
-                        ? "text-blue-500 dark:text-blue-400" 
-                        : "text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400"
-                    )} />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
+            <TooltipProvider>
+              <div className="space-y-6">
+                {cookAIngNavigation.map((section) => (
+                  <div key={section.name}>
+                    {/* Section Header */}
+                    <h3 className="px-3 mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      {section.name}
+                    </h3>
+                    
+                    {/* Section Items */}
+                    <div className="space-y-1">
+                      {section.items.map((item) => {
+                        const Icon = item.icon;
+                        const isActive = currentPath === item.href || 
+                          (item.href === '/cookaing-marketing' && currentPath === '/cookaing-marketing');
+                        
+                        // Handle Exit CookAIng special case
+                        if (item.name === "Exit CookAIng") {
+                          return (
+                            <button
+                              key={item.name}
+                              onClick={() => {
+                                window.location.href = '/';
+                              }}
+                              className={cn(
+                                "flex items-center w-full px-3 py-2 text-sm font-medium rounded-md transition-colors group text-left",
+                                "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
+                              )}
+                            >
+                              <Icon className="mr-3 flex-shrink-0 h-4 w-4 text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400" />
+                              {item.name}
+                            </button>
+                          );
+                        }
+
+                        // Use full href for proper routing  
+                        const cleanHref = item.href;
+
+                        const linkContent = (
+                          <Link
+                            key={item.name}
+                            href={item.disabled ? '#' : cleanHref}
+                            className={cn(
+                              "flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors group",
+                              item.disabled 
+                                ? "text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50"
+                                : isActive
+                                  ? "bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-100"
+                                  : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white"
+                            )}
+                            onClick={(e) => {
+                              if (item.disabled) {
+                                e.preventDefault();
+                              }
+                            }}
+                          >
+                            <Icon className={cn(
+                              "mr-3 flex-shrink-0 h-4 w-4",
+                              item.disabled
+                                ? "text-gray-400 dark:text-gray-600"
+                                : isActive 
+                                  ? "text-blue-500 dark:text-blue-400" 
+                                  : "text-gray-400 dark:text-gray-500 group-hover:text-gray-500 dark:group-hover:text-gray-400"
+                            )} />
+                            {item.name}
+                          </Link>
+                        );
+
+                        // Wrap disabled items with tooltip
+                        if (item.disabled && item.disabledReason) {
+                          return (
+                            <Tooltip key={item.name}>
+                              <TooltipTrigger asChild>
+                                {linkContent}
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{item.disabledReason}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          );
+                        }
+
+                        return linkContent;
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </TooltipProvider>
           </nav>
 
           {/* Footer */}
