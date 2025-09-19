@@ -1939,3 +1939,370 @@ export type InsertContentLink = z.infer<typeof insertContentLinkSchema>;
 
 export type ContentExport = typeof contentExports.$inferSelect;
 export type InsertContentExport = z.infer<typeof insertContentExportSchema>;
+
+// ================================================================
+// CookAIng Marketing Engine Extension Tables (Phase 1)
+// ================================================================
+
+// Media assets for content enhancements
+export const mediaAssets = pgTable("media_assets", {
+  id: serial("id").primaryKey(),
+  type: text("type").notNull(), // 'image' | 'video' | 'audio'
+  source: text("source").notNull().default("upload"), // 'gen' | 'upload'
+  url: text("url").notNull(),
+  thumbUrl: text("thumb_url"),
+  metadataJson: jsonb("metadata_json"),
+  status: text("status").notNull().default("active"), // 'active' | 'processing' | 'failed'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    typeIdx: index("media_assets_type_idx").on(table.type),
+    statusIdx: index("media_assets_status_idx").on(table.status),
+    createdIdx: index("media_assets_created_idx").on(table.createdAt),
+  };
+});
+
+// Content enhancements (AI-generated variations)
+export const contentEnhancements = pgTable("content_enhancements", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id"), // FK to existing content versions
+  enhancement: text("enhancement").notNull(), // 'rewrite' | 'spin' | 'tts' | 'image' | 'video'
+  inputsJson: jsonb("inputs_json").notNull(),
+  outputsJson: jsonb("outputs_json"),
+  provider: text("provider").notNull(), // 'openai' | 'anthropic' | 'elevenlabs' | etc
+  status: text("status").notNull().default("pending"), // 'pending' | 'completed' | 'failed'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    versionIdx: index("content_enhancements_version_idx").on(table.versionId),
+    enhancementIdx: index("content_enhancements_enhancement_idx").on(table.enhancement),
+    statusIdx: index("content_enhancements_status_idx").on(table.status),
+  };
+});
+
+// Competitor posts for analysis
+export const competitorPosts = pgTable("competitor_posts", {
+  id: serial("id").primaryKey(),
+  sourcePlatform: text("source_platform").notNull(),
+  author: text("author").notNull(),
+  url: text("url").notNull(),
+  capturedAt: timestamp("captured_at").defaultNow().notNull(),
+  text: text("text"),
+  metricsJson: jsonb("metrics_json"), // likes, shares, comments, etc
+  tags: text("tags").array(), // array of tags
+}, (table) => {
+  return {
+    platformIdx: index("competitor_posts_platform_idx").on(table.sourcePlatform),
+    capturedIdx: index("competitor_posts_captured_idx").on(table.capturedAt),
+    authorIdx: index("competitor_posts_author_idx").on(table.author),
+  };
+});
+
+// Sentiment analysis snapshots
+export const sentimentSnapshots = pgTable("sentiment_snapshots", {
+  id: serial("id").primaryKey(),
+  scope: text("scope").notNull(), // 'campaign' | 'post' | 'brand'
+  refId: integer("ref_id").notNull(),
+  score: decimal("score", { precision: 3, scale: 2 }).notNull(), // -1.00 to 1.00
+  magnitude: decimal("magnitude", { precision: 3, scale: 2 }).notNull(), // 0.00 to 1.00
+  labelsJson: jsonb("labels_json"), // detailed sentiment breakdown
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    scopeRefIdx: index("sentiment_snapshots_scope_ref_idx").on(table.scope, table.refId),
+    createdIdx: index("sentiment_snapshots_created_idx").on(table.createdAt),
+  };
+});
+
+// Viral potential scores
+export const viralScores = pgTable("viral_scores", {
+  id: serial("id").primaryKey(),
+  contentVersionId: integer("content_version_id").notNull(),
+  featuresJson: jsonb("features_json").notNull(), // engagement, trend, emotion, etc scores
+  score: decimal("score", { precision: 5, scale: 2 }).notNull(), // 0.00 to 100.00
+  model: text("model").notNull().default("baseline"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    versionIdx: index("viral_scores_version_idx").on(table.contentVersionId),
+    scoreIdx: index("viral_scores_score_idx").on(table.score),
+    createdIdx: index("viral_scores_created_idx").on(table.createdAt),
+  };
+});
+
+// Content fatigue signals
+export const fatigueSignals = pgTable("fatigue_signals", {
+  id: serial("id").primaryKey(),
+  segmentId: integer("segment_id"), // optional segment ID
+  topic: text("topic").notNull(),
+  slope: decimal("slope", { precision: 5, scale: 4 }).notNull(), // engagement trend slope
+  lastSeenAt: timestamp("last_seen_at").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    topicIdx: index("fatigue_signals_topic_idx").on(table.topic),
+    segmentIdx: index("fatigue_signals_segment_idx").on(table.segmentId),
+    lastSeenIdx: index("fatigue_signals_last_seen_idx").on(table.lastSeenAt),
+  };
+});
+
+// Social media publishing queue
+export const socialQueue = pgTable("social_queue", {
+  id: serial("id").primaryKey(),
+  platform: text("platform").notNull(), // 'instagram' | 'tiktok' | 'youtube' | 'twitter' | 'facebook'
+  accountId: text("account_id").notNull(),
+  scheduledAt: timestamp("scheduled_at"),
+  payloadJson: jsonb("payload_json").notNull(), // post content, media, hashtags, etc
+  status: text("status").notNull().default("queued"), // 'queued' | 'published' | 'failed' | 'cancelled'
+  resultJson: jsonb("result_json"), // API response, error details, etc
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    platformIdx: index("social_queue_platform_idx").on(table.platform),
+    statusIdx: index("social_queue_status_idx").on(table.status),
+    scheduledIdx: index("social_queue_scheduled_idx").on(table.scheduledAt),
+    createdIdx: index("social_queue_created_idx").on(table.createdAt),
+  };
+});
+
+// Hashtag suggestions for topics/platforms
+export const hashtagSuggestions = pgTable("hashtag_suggestions", {
+  id: serial("id").primaryKey(),
+  topic: text("topic").notNull(),
+  platform: text("platform").notNull(),
+  tags: text("tags").array().notNull(), // array of hashtag strings
+  metricsJson: jsonb("metrics_json"), // popularity, competition, relevance scores
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    topicPlatformIdx: index("hashtag_suggestions_topic_platform_idx").on(table.topic, table.platform),
+    createdIdx: index("hashtag_suggestions_created_idx").on(table.createdAt),
+  };
+});
+
+// Optimal posting times analysis
+export const optimalTimes = pgTable("optimal_times", {
+  id: serial("id").primaryKey(),
+  platform: text("platform").notNull(),
+  segmentId: integer("segment_id"), // optional audience segment
+  timesJson: jsonb("times_json").notNull(), // {monday: ['09:00', '12:00'], ...}
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    platformIdx: index("optimal_times_platform_idx").on(table.platform),
+    segmentIdx: index("optimal_times_segment_idx").on(table.segmentId),
+    createdIdx: index("optimal_times_created_idx").on(table.createdAt),
+  };
+});
+
+// Brand voice profiles for consistency
+export const brandVoiceProfiles = pgTable("brand_voice_profiles", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  corpusJson: jsonb("corpus_json").notNull(), // samples, characteristics, tone markers
+  embeddingVector: text("embedding_vector"), // serialized vector for similarity
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    nameIdx: index("brand_voice_profiles_name_idx").on(table.name),
+    createdIdx: index("brand_voice_profiles_created_idx").on(table.createdAt),
+  };
+});
+
+// Approval workflows
+export const approvals = pgTable("approvals", {
+  id: serial("id").primaryKey(),
+  entityType: text("entity_type").notNull(), // 'campaign' | 'artifact' | 'version'
+  entityId: integer("entity_id").notNull(),
+  status: text("status").notNull().default("draft"), // 'draft' | 'review' | 'approved' | 'rejected'
+  assignee: text("assignee"), // user email or ID
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    entityIdx: index("approvals_entity_idx").on(table.entityType, table.entityId),
+    statusIdx: index("approvals_status_idx").on(table.status),
+    assigneeIdx: index("approvals_assignee_idx").on(table.assignee),
+    createdIdx: index("approvals_created_idx").on(table.createdAt),
+  };
+});
+
+// Collaboration roles and permissions
+export const collaborationRoles = pgTable("collaboration_roles", {
+  id: serial("id").primaryKey(),
+  user: text("user").notNull(), // email or user ID
+  role: text("role").notNull(), // 'admin' | 'editor' | 'viewer' | 'client'
+  scopesJson: jsonb("scopes_json").notNull(), // permissions object
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    userIdx: index("collaboration_roles_user_idx").on(table.user),
+    roleIdx: index("collaboration_roles_role_idx").on(table.role),
+    createdIdx: index("collaboration_roles_created_idx").on(table.createdAt),
+  };
+});
+
+// Content calendar for scheduling
+export const contentCalendar = pgTable("content_calendar", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  startAt: timestamp("start_at").notNull(),
+  endAt: timestamp("end_at").notNull(),
+  channel: text("channel").notNull(), // platform or channel type
+  refId: integer("ref_id"), // reference to campaign, content, etc
+  status: text("status").notNull().default("scheduled"), // 'scheduled' | 'published' | 'cancelled'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    channelIdx: index("content_calendar_channel_idx").on(table.channel),
+    statusIdx: index("content_calendar_status_idx").on(table.status),
+    startIdx: index("content_calendar_start_idx").on(table.startAt),
+    refIdx: index("content_calendar_ref_idx").on(table.refId),
+  };
+});
+
+// E-commerce product catalog
+export const ecommerceProducts = pgTable("ecommerce_products", {
+  id: serial("id").primaryKey(),
+  source: text("source").notNull(), // 'shopify' | 'woocommerce' | 'manual'
+  externalId: text("external_id").notNull(),
+  title: text("title").notNull(),
+  price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+  url: text("url").notNull(),
+  image: text("image"),
+  inventoryJson: jsonb("inventory_json"), // stock, variants, etc
+  tags: text("tags").array(), // product tags
+}, (table) => {
+  return {
+    sourceIdx: index("ecommerce_products_source_idx").on(table.source),
+    externalIdIdx: index("ecommerce_products_external_id_idx").on(table.externalId),
+    titleIdx: index("ecommerce_products_title_idx").on(table.title),
+    priceIdx: index("ecommerce_products_price_idx").on(table.price),
+  };
+});
+
+// Advanced messaging sequences
+export const messagingSequences = pgTable("messaging_sequences", {
+  id: serial("id").primaryKey(),
+  channel: text("channel").notNull(), // 'email' | 'sms' | 'whatsapp'
+  name: text("name").notNull(),
+  stepsJson: jsonb("steps_json").notNull(), // array of sequence steps
+  triggersJson: jsonb("triggers_json").notNull(), // trigger conditions
+  status: text("status").notNull().default("draft"), // 'active' | 'paused' | 'draft'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    channelIdx: index("messaging_sequences_channel_idx").on(table.channel),
+    statusIdx: index("messaging_sequences_status_idx").on(table.status),
+    nameIdx: index("messaging_sequences_name_idx").on(table.name),
+    createdIdx: index("messaging_sequences_created_idx").on(table.createdAt),
+  };
+});
+
+// Content moderation reports
+export const moderationReports = pgTable("moderation_reports", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id").notNull(),
+  checksJson: jsonb("checks_json").notNull(), // toxicity, spam, inappropriate, etc
+  decisionsJson: jsonb("decisions_json").notNull(), // approved, blocked, manual_review
+  status: text("status").notNull().default("pending"), // 'passed' | 'flagged' | 'blocked'
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    versionIdx: index("moderation_reports_version_idx").on(table.versionId),
+    statusIdx: index("moderation_reports_status_idx").on(table.status),
+    createdIdx: index("moderation_reports_created_idx").on(table.createdAt),
+  };
+});
+
+// Plagiarism detection reports
+export const plagiarismReports = pgTable("plagiarism_reports", {
+  id: serial("id").primaryKey(),
+  versionId: integer("version_id").notNull(),
+  score: decimal("score", { precision: 5, scale: 2 }).notNull(), // 0.00 to 100.00
+  matchesJson: jsonb("matches_json").notNull(), // array of match objects
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    versionIdx: index("plagiarism_reports_version_idx").on(table.versionId),
+    scoreIdx: index("plagiarism_reports_score_idx").on(table.score),
+    createdIdx: index("plagiarism_reports_created_idx").on(table.createdAt),
+  };
+});
+
+// ================================================================
+// Zod schemas for the new tables
+// ================================================================
+
+export const insertMediaAssetSchema = createInsertSchema(mediaAssets);
+export const insertContentEnhancementSchema = createInsertSchema(contentEnhancements);
+export const insertCompetitorPostSchema = createInsertSchema(competitorPosts);
+export const insertSentimentSnapshotSchema = createInsertSchema(sentimentSnapshots);
+export const insertViralScoreSchema = createInsertSchema(viralScores);
+export const insertFatigueSignalSchema = createInsertSchema(fatigueSignals);
+export const insertSocialQueueSchema = createInsertSchema(socialQueue);
+export const insertHashtagSuggestionSchema = createInsertSchema(hashtagSuggestions);
+export const insertOptimalTimesSchema = createInsertSchema(optimalTimes);
+export const insertBrandVoiceProfileSchema = createInsertSchema(brandVoiceProfiles);
+export const insertApprovalSchema = createInsertSchema(approvals);
+export const insertCollaborationRoleSchema = createInsertSchema(collaborationRoles);
+export const insertContentCalendarSchema = createInsertSchema(contentCalendar);
+export const insertEcommerceProductSchema = createInsertSchema(ecommerceProducts);
+export const insertMessagingSequenceSchema = createInsertSchema(messagingSequences);
+export const insertModerationReportSchema = createInsertSchema(moderationReports);
+export const insertPlagiarismReportSchema = createInsertSchema(plagiarismReports);
+
+// ================================================================
+// Type exports for the new tables
+// ================================================================
+
+export type MediaAsset = typeof mediaAssets.$inferSelect;
+export type InsertMediaAsset = z.infer<typeof insertMediaAssetSchema>;
+
+export type ContentEnhancement = typeof contentEnhancements.$inferSelect;
+export type InsertContentEnhancement = z.infer<typeof insertContentEnhancementSchema>;
+
+export type CompetitorPost = typeof competitorPosts.$inferSelect;
+export type InsertCompetitorPost = z.infer<typeof insertCompetitorPostSchema>;
+
+export type SentimentSnapshot = typeof sentimentSnapshots.$inferSelect;
+export type InsertSentimentSnapshot = z.infer<typeof insertSentimentSnapshotSchema>;
+
+export type ViralScore = typeof viralScores.$inferSelect;
+export type InsertViralScore = z.infer<typeof insertViralScoreSchema>;
+
+export type FatigueSignal = typeof fatigueSignals.$inferSelect;
+export type InsertFatigueSignal = z.infer<typeof insertFatigueSignalSchema>;
+
+export type SocialQueue = typeof socialQueue.$inferSelect;
+export type InsertSocialQueue = z.infer<typeof insertSocialQueueSchema>;
+
+export type HashtagSuggestion = typeof hashtagSuggestions.$inferSelect;
+export type InsertHashtagSuggestion = z.infer<typeof insertHashtagSuggestionSchema>;
+
+export type OptimalTimes = typeof optimalTimes.$inferSelect;
+export type InsertOptimalTimes = z.infer<typeof insertOptimalTimesSchema>;
+
+export type BrandVoiceProfile = typeof brandVoiceProfiles.$inferSelect;
+export type InsertBrandVoiceProfile = z.infer<typeof insertBrandVoiceProfileSchema>;
+
+export type Approval = typeof approvals.$inferSelect;
+export type InsertApproval = z.infer<typeof insertApprovalSchema>;
+
+export type CollaborationRole = typeof collaborationRoles.$inferSelect;
+export type InsertCollaborationRole = z.infer<typeof insertCollaborationRoleSchema>;
+
+export type ContentCalendarItem = typeof contentCalendar.$inferSelect;
+export type InsertContentCalendar = z.infer<typeof insertContentCalendarSchema>;
+
+export type EcommerceProduct = typeof ecommerceProducts.$inferSelect;
+export type InsertEcommerceProduct = z.infer<typeof insertEcommerceProductSchema>;
+
+export type MessagingSequence = typeof messagingSequences.$inferSelect;
+export type InsertMessagingSequence = z.infer<typeof insertMessagingSequenceSchema>;
+
+export type ModerationReport = typeof moderationReports.$inferSelect;
+export type InsertModerationReport = z.infer<typeof insertModerationReportSchema>;
+
+export type PlagiarismReport = typeof plagiarismReports.$inferSelect;
+export type InsertPlagiarismReport = z.infer<typeof insertPlagiarismReportSchema>;
