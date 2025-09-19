@@ -25,6 +25,7 @@ import {
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
+import AmazonTrendingPicksWidget from "@/components/AmazonTrendingPicksWidget";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -484,7 +485,20 @@ const Dashboard = () => {
         </CardContent>
       </Card>
 
-      {/* 3️⃣ Fast-Action Buttons Panel */}
+      {/* 3️⃣ Amazon-Powered Trending Picks */}
+      <Card data-testid="card-amazon-trending-picks">
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+          <div>
+            <CardTitle className="text-xl">🛒 Amazon-Powered Trending Picks</CardTitle>
+            <p className="text-sm text-muted-foreground">Real-time product discovery via Amazon PA-API</p>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <AmazonTrendingPicksWidget showFetchButton={true} maxItems={9} />
+        </CardContent>
+      </Card>
+
+      {/* 4️⃣ Fast-Action Buttons Panel */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
