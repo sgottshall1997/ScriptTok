@@ -99,8 +99,12 @@ import complianceRouter from "./api/cookaing-marketing/compliance";
 import enhanceRouter from "./api/cookaing-marketing/enhance";
 import { seedDataRouter } from "./api/seed-data";
 import phase5Router from "./api/cookaing-marketing";
+import glowbotAdminRouter from "./api/admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // GlowBot Admin routes (for comprehensive testing)
+  app.use('/api/glowbot/admin', glowbotAdminRouter);
+  
   // CookAIng Marketing Engine routes
   app.use('/api/cookaing-marketing/organizations', organizationsRouter);
   app.use('/api/cookaing-marketing/contacts', contactsRouter);
