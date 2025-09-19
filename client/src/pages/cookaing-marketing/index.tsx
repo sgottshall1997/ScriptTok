@@ -14,7 +14,10 @@ import {
   ArrowRight,
   TrendingUp,
   BarChart3,
-  Sparkles
+  Sparkles,
+  Zap,
+  Heart,
+  AlertTriangle
 } from "lucide-react";
 import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
@@ -27,6 +30,13 @@ const CookAIngMarketingDashboard = () => {
     conversionRate: string;
   }>({
     queryKey: ['/api/cookaing-marketing/stats'],
+    retry: false,
+  });
+
+  // Fetch intelligence analytics stats
+  const { data: intelligenceStats, isLoading: intelligenceLoading } = useQuery({
+    queryKey: ['/api/cookaing-marketing/intel/status'],
+    staleTime: 300000, // 5 minutes
     retry: false,
   });
 
@@ -170,6 +180,74 @@ const CookAIngMarketingDashboard = () => {
             </p>
           </CardContent>
         </Card>
+      </div>
+
+      {/* Intelligence Analytics KPIs */}
+      <div>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
+          Intelligence Analytics
+        </h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card data-testid="card-intel-competitor">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Competitor Insights</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" data-testid="stat-intel-competitor">
+                {intelligenceLoading ? "-" : intelligenceStats?.competitor?.insights || 0}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Analysis reports generated
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-intel-sentiment">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Sentiment Score</CardTitle>
+              <Heart className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" data-testid="stat-intel-sentiment">
+                {intelligenceLoading ? "-" : (intelligenceStats?.sentiment?.averageScore || 0).toFixed(1)}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Average content sentiment
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-intel-viral">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Viral Predictions</CardTitle>
+              <Zap className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" data-testid="stat-intel-viral">
+                {intelligenceLoading ? "-" : intelligenceStats?.viral?.predicted || 0}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                High-potential content pieces
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card data-testid="card-intel-fatigue">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Fatigue Alerts</CardTitle>
+              <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold" data-testid="stat-intel-fatigue">
+                {intelligenceLoading ? "-" : intelligenceStats?.fatigue?.warnings || 0}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Content fatigue warnings
+              </p>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Quick Actions Grid */}
