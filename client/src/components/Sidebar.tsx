@@ -47,8 +47,7 @@ import {
   Send,
   Wrench,
   BookOpen,
-  Building,
-  ChefHat
+  Building
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -85,8 +84,6 @@ const sidebarData: SidebarCategory[] = [
     items: [
       { name: "Schedule Manager", href: "/schedule-manager", icon: Clock },
       { name: "Cross-Platform Scheduling", href: "/cross-platform-scheduling", icon: Calendar },
-      { name: "Bulk Content Generation", href: "/bulk-content-generation", icon: Layers },
-      { name: "CookAIng Generator", href: "/cookaing-generator", icon: ChefHat },
       { name: "Performance Analytics", href: "/performance-analytics", icon: DollarSign },
     ]
   },
