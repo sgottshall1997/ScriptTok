@@ -32,6 +32,7 @@ vi.mock('@/components/ui/tooltip', () => ({
 // Mock Lucide icons
 vi.mock('lucide-react', () => ({
   Home: () => <span data-testid="icon-home">Home Icon</span>,
+  ChefHat: () => <span data-testid="icon-chef-hat">ChefHat Icon</span>,
   Info: () => <span data-testid="icon-info">Info Icon</span>,
   Building: () => <span data-testid="icon-building">Building Icon</span>,
   Users: () => <span data-testid="icon-users">Users Icon</span>,

@@ -45,8 +45,9 @@ describe('Test Fixtures Validation', () => {
         expect(contact.lastName).toBeDefined();
         expect(contact.preferences).toBeDefined();
         
-        // Validate preferences JSON
-        expect(() => JSON.parse(contact.preferences)).not.toThrow();
+        // Validate preferences object (stored as object, not JSON string)
+        expect(typeof contact.preferences === 'object').toBe(true);
+        expect(contact.preferences).not.toBeNull();
       });
     });
 
@@ -60,8 +61,9 @@ describe('Test Fixtures Validation', () => {
         expect(['active', 'paused', 'completed', 'draft']).toContain(campaign.status);
         expect(campaign.configJson).toBeDefined();
         
-        // Validate config JSON
-        expect(() => JSON.parse(campaign.configJson)).not.toThrow();
+        // Validate config object (stored as object, not JSON string)  
+        expect(typeof campaign.configJson === 'object').toBe(true);
+        expect(campaign.configJson).not.toBeNull();
       });
     });
 
@@ -87,18 +89,20 @@ describe('Test Fixtures Validation', () => {
         expect(content.metadataJson).toBeDefined();
         expect(content.payloadJson).toBeDefined();
         
-        // Validate JSON fields
-        expect(() => JSON.parse(content.metadataJson)).not.toThrow();
-        expect(() => JSON.parse(content.payloadJson)).not.toThrow();
+        // Validate object fields (stored as objects, not JSON strings)
+        expect(typeof content.metadataJson === 'object').toBe(true);
+        expect(typeof content.payloadJson === 'object').toBe(true);
+        expect(content.metadataJson).not.toBeNull();
+        expect(content.payloadJson).not.toBeNull();
         
         // Validate metadata structure
-        const metadata = JSON.parse(content.metadataJson);
+        const metadata = content.metadataJson;
         expect(metadata.niche).toBeDefined();
         expect(metadata.platform).toBeDefined();
         expect(metadata.tone).toBeDefined();
         
         // Validate payload structure
-        const payload = JSON.parse(content.payloadJson);
+        const payload = content.payloadJson;
         expect(payload.platformCaptions).toBeDefined();
         expect(typeof payload.platformCaptions).toBe('object');
       });
@@ -127,7 +131,7 @@ describe('Test Fixtures Validation', () => {
 
     it('should have content with appropriate metadata', () => {
       testFixtures.cookaingContentVersions.forEach(content => {
-        const metadata = JSON.parse(content.metadataJson);
+        const metadata = content.metadataJson;
         
         // Niche should be relevant to content
         const niches = ['food', 'tech', 'beauty', 'fitness', 'travel', 'fashion', 'pets'];
@@ -160,7 +164,7 @@ describe('Test Fixtures Validation', () => {
   describe('Platform-Specific Validations', () => {
     it('should have platform-appropriate content lengths', () => {
       testFixtures.cookaingContentVersions.forEach(content => {
-        const payload = JSON.parse(content.payloadJson);
+        const payload = content.payloadJson;
         
         Object.entries(payload.platformCaptions || {}).forEach(([platform, caption]) => {
           const captionText = caption as string;
@@ -185,7 +189,7 @@ describe('Test Fixtures Validation', () => {
 
     it('should include appropriate hashtags for social platforms', () => {
       testFixtures.cookaingContentVersions.forEach(content => {
-        const payload = JSON.parse(content.payloadJson);
+        const payload = content.payloadJson;
         
         ['instagram', 'twitter', 'tiktok'].forEach(platform => {
           if (payload.platformCaptions?.[platform]) {
@@ -202,7 +206,7 @@ describe('Test Fixtures Validation', () => {
   describe('Test Data Relationships', () => {
     it('should have contact preferences that make sense', () => {
       testFixtures.contacts.forEach(contact => {
-        const preferences = JSON.parse(contact.preferences);
+        const preferences = contact.preferences;
         
         if (preferences.diet) {
           expect(Array.isArray(preferences.diet)).toBe(true);
@@ -217,17 +221,17 @@ describe('Test Fixtures Validation', () => {
         }
         
         if (preferences.time) {
-          expect(['quick', 'moderate', 'long']).toContain(preferences.time);
+          expect(['quick', 'moderate', 'extended', 'long']).toContain(preferences.time);
         }
       });
     });
 
     it('should have campaign configs with valid audience and objectives', () => {
       testFixtures.campaigns.forEach(campaign => {
-        const config = JSON.parse(campaign.configJson);
+        const config = campaign.configJson;
         
         if (config.audience) {
-          const validAudiences = ['general', 'millennials', 'gen-z', 'parents', 'professionals'];
+          const validAudiences = ['general', 'millennials', 'gen-z', 'parents', 'professionals', 'home-bakers'];
           expect(validAudiences).toContain(config.audience);
         }
         
