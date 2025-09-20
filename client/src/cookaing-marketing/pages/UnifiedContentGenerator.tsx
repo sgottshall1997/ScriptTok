@@ -8,6 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import CookaingBulkGenerationForm from '../components/CookaingBulkGenerationForm';
 import CookaingAutomatedGenerator from '../components/CookaingAutomatedGenerator';
 import CookaingJobsList from '../components/CookaingJobsList';
+import PromoGeneratorUI from '../components/PromoGeneratorUI';
 
 const CookaingUnifiedContentGenerator: React.FC = () => {
   const [activeTab, setActiveTab] = useState('automated');
@@ -187,20 +188,7 @@ const CookaingUnifiedContentGenerator: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="manual" className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <ChefHat className="h-5 w-5" />
-                Recipe Template Generation
-              </CardTitle>
-              <CardDescription>
-                Generate content from specific recipes using customizable templates and content formats
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <CookaingBulkGenerationForm onContentGenerated={handleContentGenerated} />
-            </CardContent>
-          </Card>
+          <PromoGeneratorUI />
 
           {/* Show generation results if any */}
           {generationResults.length > 0 && (

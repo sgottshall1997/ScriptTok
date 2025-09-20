@@ -11,26 +11,55 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
-import { Loader2, Plus, X, Copy, Download, Sparkles, Zap } from 'lucide-react';
+import { Loader2, Plus, X, Copy, Download, Sparkles, Zap, History, Star, Clock } from 'lucide-react';
 
 // Import shared schemas and types to prevent drift
-import { PromoInputSchema, PromoFormData, PromoOutput, CHANNEL_LABELS, OBJECTIVE_LABELS, TONE_LABELS } from '../../../../packages/cookaing-promo/schemas';
+import { PromoInputSchema, PromoInput, PromoOutput, CHANNEL_LABELS, OBJECTIVE_LABELS, TONE_LABELS } from '../../../../packages/cookaing-promo/schemas';
 
 // Use shared schema without appName (added server-side)
 const promoFormSchema = PromoInputSchema.omit({ appName: true });
+type PromoFormData = Omit<PromoInput, 'appName'>;
 
 // Use shared label constants to prevent drift
 const channelLabels = CHANNEL_LABELS;
 const objectiveLabels = OBJECTIVE_LABELS;
+
+interface HistoryContent {
+  id: number;
+  title: string;
+  channel: string;
+  metadataJson: {
+    niche?: string;
+    platform?: string;
+    tone?: string;
+  };
+  payloadJson: {
+    platformCaptions?: Record<string, string>;
+  };
+  createdAt: string;
+  topRatedStyleUsed: boolean;
+}
+
+interface RatingData {
+  userScore: number;
+  overallRating: number;
+  instagramRating: number;
+  tiktokRating: number;
+  youtubeRating: number;
+  twitterRating: number;
+}
 
 export default function PromoGeneratorUI() {
   const [generatedContent, setGeneratedContent] = useState<PromoOutput[]>([]);
   const [benefitsInput, setBenefitsInput] = useState('');
   const [featuresInput, setFeaturesInput] = useState('');
   const [proofsInput, setProofsInput] = useState('');
+  const [activeTab, setActiveTab] = useState('generate');
+  const [ratingContent, setRatingContent] = useState<{ [key: number]: RatingData }>({});
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -49,6 +78,13 @@ export default function PromoGeneratorUI() {
     }
   });
 
+  // Query for content history
+  const contentHistoryQuery = useQuery({
+    queryKey: ['/api/cookaing-promo/history'],
+    enabled: activeTab === 'history',
+    staleTime: 30000 // 30 seconds
+  });
+
   const generatePromoMutation = useMutation({
     mutationFn: async (data: PromoFormData) => {
       console.log('🚀 Sending promo generation request:', data);
@@ -63,6 +99,8 @@ export default function PromoGeneratorUI() {
     onSuccess: (data: PromoOutput[]) => {
       console.log('🎉 Generation successful:', data);
       setGeneratedContent(data);
+      // Invalidate history query to refresh after new content generation
+      queryClient.invalidateQueries({ queryKey: ['/api/cookaing-promo/history'] });
       toast({
         title: "✨ CookAIng Promo Generated!",
         description: `Successfully generated content for ${data.length} channel(s) using Spartan format.`
@@ -72,6 +110,33 @@ export default function PromoGeneratorUI() {
       toast({
         title: "❌ Generation Failed",
         description: error instanceof Error ? error.message : "Failed to generate promo content",
+        variant: "destructive"
+      });
+    }
+  });
+
+  // Rating submission mutation
+  const ratingMutation = useMutation({
+    mutationFn: async ({ versionId, ratingData }: { versionId: number; ratingData: RatingData }) => {
+      const response = await apiRequest('POST', `/api/cookaing-promo/rating`, {
+        versionId,
+        ratedBy: 'user',
+        ...ratingData
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      toast({
+        title: "⭐ Rating Saved!",
+        description: "Your rating has been successfully recorded"
+      });
+      // Invalidate history query to refresh ratings
+      queryClient.invalidateQueries({ queryKey: ['/api/cookaing-promo/history'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "❌ Rating Failed",
+        description: error instanceof Error ? error.message : "Failed to save rating",
         variant: "destructive"
       });
     }
@@ -112,6 +177,127 @@ export default function PromoGeneratorUI() {
     linkElement.click();
   };
 
+  const updateRating = (contentId: number, field: keyof RatingData, value: number) => {
+    setRatingContent(prev => ({
+      ...prev,
+      [contentId]: {
+        ...prev[contentId],
+        [field]: value
+      }
+    }));
+  };
+
+  const submitRating = (contentId: number) => {
+    const rating = ratingContent[contentId];
+    if (!rating) return;
+    
+    ratingMutation.mutate({ versionId: contentId, ratingData: rating });
+  };
+
+  const RatingComponent = ({ contentId }: { contentId: number }) => {
+    const rating = ratingContent[contentId] || {
+      userScore: 0,
+      overallRating: 0,
+      instagramRating: 0,
+      tiktokRating: 0,
+      youtubeRating: 0,
+      twitterRating: 0
+    };
+
+    return (
+      <div className="border-t pt-3 mt-3">
+        <h4 className="font-semibold text-sm text-muted-foreground mb-2">Rate this content:</h4>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div>
+            <label>Overall Score:</label>
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={rating.overallRating}
+              onChange={(e) => updateRating(contentId, 'overallRating', parseInt(e.target.value) || 0)}
+              className="h-6 text-xs"
+            />
+          </div>
+          <div>
+            <label>User Score:</label>
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={rating.userScore}
+              onChange={(e) => updateRating(contentId, 'userScore', parseInt(e.target.value) || 0)}
+              className="h-6 text-xs"
+            />
+          </div>
+          <div>
+            <label>Instagram:</label>
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={rating.instagramRating}
+              onChange={(e) => updateRating(contentId, 'instagramRating', parseInt(e.target.value) || 0)}
+              className="h-6 text-xs"
+            />
+          </div>
+          <div>
+            <label>TikTok:</label>
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={rating.tiktokRating}
+              onChange={(e) => updateRating(contentId, 'tiktokRating', parseInt(e.target.value) || 0)}
+              className="h-6 text-xs"
+            />
+          </div>
+          <div>
+            <label>YouTube:</label>
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={rating.youtubeRating}
+              onChange={(e) => updateRating(contentId, 'youtubeRating', parseInt(e.target.value) || 0)}
+              className="h-6 text-xs"
+            />
+          </div>
+          <div>
+            <label>Twitter:</label>
+            <Input
+              type="number"
+              min="0"
+              max="100"
+              value={rating.twitterRating}
+              onChange={(e) => updateRating(contentId, 'twitterRating', parseInt(e.target.value) || 0)}
+              className="h-6 text-xs"
+            />
+          </div>
+        </div>
+        <Button
+          size="sm"
+          className="mt-2"
+          onClick={() => submitRating(contentId)}
+          disabled={ratingMutation.isPending}
+          data-testid={`button-submit-rating-${contentId}`}
+        >
+          {ratingMutation.isPending ? (
+            <>
+              <Loader2 className="mr-1 h-3 w-3 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            <>
+              <Star className="mr-1 h-3 w-3" />
+              Save Rating
+            </>
+          )}
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <div className="space-y-6" data-testid="promo-generator">
       <div className="flex items-center gap-2">
@@ -125,7 +311,20 @@ export default function PromoGeneratorUI() {
         Create channel-specific content optimized for conversion and engagement.
       </p>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <Tabs value={activeTab} onValueChange={setActiveTab}>
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="generate" data-testid="tab-generate">
+            <Sparkles className="mr-2 h-4 w-4" />
+            Generate Content
+          </TabsTrigger>
+          <TabsTrigger value="history" data-testid="tab-history">
+            <History className="mr-2 h-4 w-4" />
+            Content History
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="generate" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -502,7 +701,107 @@ export default function PromoGeneratorUI() {
             )}
           </CardContent>
         </Card>
-      </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="history" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Clock className="h-5 w-5" />
+                Content History
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {contentHistoryQuery.isLoading ? (
+                <div className="flex items-center justify-center py-8">
+                  <Loader2 className="h-6 w-6 animate-spin mr-2" />
+                  Loading content history...
+                </div>
+              ) : contentHistoryQuery.error ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <p>Failed to load content history</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="mt-2"
+                    onClick={() => contentHistoryQuery.refetch()}
+                  >
+                    Retry
+                  </Button>
+                </div>
+              ) : !(contentHistoryQuery.data as any)?.data || (contentHistoryQuery.data as any)?.data?.length === 0 ? (
+                <div className="text-center py-8 text-muted-foreground">
+                  <History className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                  <p>No content generated yet</p>
+                  <p className="text-sm">Switch to the Generate tab to create your first content</p>
+                </div>
+              ) : (
+                <ScrollArea className="h-[600px]">
+                  <div className="space-y-4">
+                    {((contentHistoryQuery.data as any)?.data || []).map((content: HistoryContent) => (
+                      <Card key={content.id} className="p-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline">
+                              {content.channel}
+                            </Badge>
+                            {content.metadataJson?.niche && (
+                              <Badge variant="secondary">
+                                {content.metadataJson.niche}
+                              </Badge>
+                            )}
+                            {content.topRatedStyleUsed && (
+                              <Badge variant="default" className="bg-green-500">
+                                Top Rated Style
+                              </Badge>
+                            )}
+                            <span className="text-xs text-muted-foreground">
+                              {new Date(content.createdAt).toLocaleDateString()}
+                            </span>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              const captionText = Object.values(content.payloadJson?.platformCaptions || {}).join('\n\n');
+                              copyToClipboard(captionText, 'Content');
+                            }}
+                            data-testid={`button-copy-history-${content.id}`}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        
+                        <div className="mb-3">
+                          <h4 className="font-semibold text-sm text-muted-foreground mb-1">Title:</h4>
+                          <p className="font-medium">{content.title}</p>
+                        </div>
+                        
+                        {content.payloadJson?.platformCaptions && (
+                          <div className="mb-3">
+                            <h4 className="font-semibold text-sm text-muted-foreground mb-1">Platform Content:</h4>
+                            <div className="space-y-2">
+                              {Object.entries(content.payloadJson.platformCaptions).map(([platform, caption]) => (
+                                <div key={platform} className="border rounded p-2">
+                                  <Badge variant="outline" className="mb-1 text-xs">{platform}</Badge>
+                                  <p className="text-sm whitespace-pre-wrap">{caption}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        
+                        <RatingComponent contentId={content.id} />
+                      </Card>
+                    ))}
+                  </div>
+                </ScrollArea>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
