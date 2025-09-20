@@ -850,6 +850,8 @@ export const dailyScraperCache = pgTable("daily_scraper_cache", {
 // Content versions for immutable content snapshots and rating
 export const cookaingContentVersions = pgTable("cookaing_content_versions", {
   id: serial("id").primaryKey(),
+  
+  // CookAIng-specific fields
   campaignId: integer("campaign_id"), // Optional reference to campaign
   recipeId: integer("recipe_id"), // Optional reference to recipe
   sourceJobId: integer("source_job_id").references(() => contentJobs.id, { onDelete: 'set null' }), // Link to Unified Content Generator job if applicable
@@ -857,14 +859,34 @@ export const cookaingContentVersions = pgTable("cookaing_content_versions", {
   platform: text("platform"), // 'tiktok'|'instagram'|'yt-long'|'carousel'|...
   title: text("title"),
   summary: text("summary"),
-  niche: text("niche"), // e.g., pantry hacks, vegan, etc.
   template: text("template"), // blueprint/template name
-  model: text("model"), // ai model identifier used (mock/openai/claude)
   metadataJson: jsonb("metadata_json").notNull(), // persona/tone/duration/options
   payloadJson: jsonb("payload_json").notNull(), // immutable snapshot of the content
   createdBy: text("created_by"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
   version: integer("version").notNull().default(1),
+  
+  // GlowBot parity fields for exact compatibility
+  userId: integer("user_id").references(() => users.id, { onDelete: 'set null' }), // Optional user reference
+  sessionId: text("session_id"), // For preventing duplicates within sessions
+  niche: text("niche"), // e.g., pantry hacks, vegan, etc.
+  contentType: text("content_type"), // Maps to template/objective field
+  tone: text("tone").notNull(), // Content tone (friendly, expert, playful, urgent)
+  productName: text("product_name").notNull(), // Product/service being promoted
+  promptText: text("prompt_text").notNull(), // Original prompt used for generation
+  outputText: text("output_text").notNull(), // Final generated content text
+  platformsSelected: jsonb("platforms_selected"), // array of platforms like ["TikTok", "Instagram"]
+  generatedOutput: jsonb("generated_output"), // full JSON response from content generation
+  affiliateLink: text("affiliate_link"), // generated affiliate link if any
+  viralInspo: jsonb("viral_inspo"), // viral inspiration data if fetched
+  model: text("model"), // ai model identifier used (mock/openai/claude)
+  modelUsed: text("model_used").notNull(), // Duplicate for compatibility
+  tokenCount: integer("token_count").notNull(), // Token usage tracking
+  fallbackLevel: text("fallback_level"), // For tracking AI fallbacks
+  aiModel: text("ai_model"), // AI model used (ChatGPT, Claude, etc.)
+  contentFormat: text("content_format"), // Regular Format, Spartan Format, etc.
+  topRatedStyleUsed: boolean("top_rated_style_used").default(false), // Whether smart style was used
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => {
   return {
     unqCampaignVersion: unique().on(table.campaignId, table.channel, table.platform, table.version),
@@ -876,6 +898,8 @@ export const cookaingContentVersions = pgTable("cookaing_content_versions", {
 export const cookaingContentRatings = pgTable("cookaing_content_ratings", {
   id: serial("id").primaryKey(),
   versionId: integer("version_id").notNull().references(() => cookaingContentVersions.id, { onDelete: 'cascade' }),
+  
+  // CookAIng-specific advanced rating fields
   userScore: integer("user_score"), // 1–100 manual rating
   aiVirality: integer("ai_virality"), // 1–10
   aiClarity: integer("ai_clarity"), // 1–10
@@ -883,14 +907,26 @@ export const cookaingContentRatings = pgTable("cookaing_content_ratings", {
   aiCreativity: integer("ai_creativity"), // 1–10
   thumb: text("thumb"), // 'up'|'down'|null (optional)
   reasons: text("reasons").array(), // ['catchy','clear','on-brand','too-long',...]
-  notes: text("notes"),
   isWinner: boolean("is_winner").notNull().default(false),
   createdBy: text("created_by"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
+  
+  // GlowBot parity fields for exact compatibility
+  userId: integer("user_id").references(() => users.id, { onDelete: 'set null' }), // User who rated
+  overallRating: integer("overall_rating"), // General content quality (1-100)
+  instagramRating: integer("instagram_rating"), // Instagram caption quality (1-100)
+  tiktokRating: integer("tiktok_rating"), // TikTok caption quality (1-100)
+  youtubeRating: integer("youtube_rating"), // YouTube Shorts caption quality (1-100)
+  twitterRating: integer("twitter_rating"), // X (Twitter) caption quality (1-100)
+  
+  // Notes and timestamps
+  notes: text("notes"), // User notes about the rating
+  ratedAt: timestamp("rated_at").defaultNow().notNull(), // GlowBot compatibility
+  createdAt: timestamp("created_at").defaultNow().notNull(), // CookAIng compatibility
 }, (table) => {
   return {
     idxVersionCreated: index().on(table.versionId, table.createdAt),
     idxIsWinner: index().on(table.isWinner),
+    unqVersionUser: unique().on(table.versionId, table.userId), // Prevent duplicate ratings per user
   };
 });
 
@@ -1846,7 +1882,8 @@ export const insertCookaingContentVersionSchema = createInsertSchema(cookaingCon
 });
 export const insertCookaingContentRatingSchema = createInsertSchema(cookaingContentRatings).omit({ 
   id: true, 
-  createdAt: true 
+  createdAt: true,
+  ratedAt: true  // Auto-generated timestamp
 });
 export const insertContentLinkSchema = createInsertSchema(contentLinks).omit({ 
   id: true, 
