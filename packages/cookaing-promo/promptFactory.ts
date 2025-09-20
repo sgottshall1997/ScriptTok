@@ -15,7 +15,7 @@ This Spartan format enforces:
 - No metaphors, cliches, fluff, and filler
 - NO emojis, asterisks, setup phrases, or exaggerated language
 
-Strictly avoid these words:
+Banned words to avoid:
 "can, may, just, that, very, really, literally, actually, certainly, probably, basically, could, maybe, delve, embark, enlightening, esteemed, imagine, game-changer, unlock, discover, skyrocket, revolutionize, disruptive, utilize, tapestry, illuminate, unveil, pivotal, enrich, intricate, elucidate, hence, furthermore, however, harness, exciting, groundbreaking, remarkable, navigating, powerful, inquiries, ever-evolving"
 
 # STYLE GUIDELINES
@@ -165,7 +165,7 @@ CONSTRAINTS:
 - Tone: ${input.tone || 'friendly'}
 - Audience: ${input.audiencePersona}
 
-COOKAING INFO:
+CookAIng INFO:
 - App: CookAIng (smart cooking and meal planning)
 - Key Benefits: ${input.keyBenefits.join(', ')}
 - Features: ${input.features.join(', ')}
@@ -183,10 +183,11 @@ ${channelInstructions}
 
 ${input.brandGuidelines ? `BRAND GUIDELINES:\n${input.brandGuidelines}\n` : ''}
 
-OUTPUT REQUIREMENTS:
-- Follow Spartan format strictly
-- Use active voice only
+SPARTAN FORMAT REQUIREMENTS:
+- Follow Spartan format strictly  
+- Use active voice only and direct, simple language
 - No emojis or casual text speak
+- Banned and forbidden words to avoid: can, may, just, very, really, basically, amazing, incredible, revolutionize, utilize, groundbreaking, absolutely, game-changing
 - Use provided structure
 - Include UTM-tracked CTA URL
 - Stay within word limit

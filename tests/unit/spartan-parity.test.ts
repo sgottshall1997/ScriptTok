@@ -154,9 +154,12 @@ describe('Spartan Format Parity with GlowBot', () => {
       
       // Should always reference CookAIng correctly
       expect(prompt).toContain('CookAIng');
-      expect(prompt).not.toContain('cookaing');
-      expect(prompt).not.toContain('CookAing');
-      expect(prompt).not.toContain('Cook AIng');
+      
+      // Remove URLs before checking brand consistency (domain names are allowed)
+      const promptWithoutUrls = prompt.replace(/https?:\/\/[^\s]+/g, '');
+      expect(promptWithoutUrls).not.toContain('cookaing');
+      expect(promptWithoutUrls).not.toContain('CookAing');
+      expect(promptWithoutUrls).not.toContain('Cook AIng');
     });
   });
 
@@ -306,7 +309,7 @@ describe('Spartan Format Parity with GlowBot', () => {
           expectedCharacteristics: ['active voice', 'simple language', 'no setup phrases']
         },
         {
-          input: '🚀 This groundbreaking app is absolutely game-changing for busy families! ⭐',
+          input: '🚀 CookAIng is a groundbreaking app that is absolutely game-changing for busy families! ⭐',
           expectedCharacteristics: ['no emojis', 'no exaggeration', 'factual only']
         }
       ];
