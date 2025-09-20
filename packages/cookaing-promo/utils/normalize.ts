@@ -40,7 +40,8 @@ export function normalizeSpartanText(text: string): string {
     'skyrocket', 'revolutionize', 'disruptive', 'utilize', 'tapestry', 'illuminate',
     'unveil', 'pivotal', 'enrich', 'intricate', 'elucidate', 'hence', 'furthermore',
     'however', 'harness', 'exciting', 'groundbreaking', 'remarkable', 'navigating',
-    'powerful', 'inquiries', 'ever-evolving'
+    'powerful', 'inquiries', 'ever-evolving', 'amazing', 'incredible', 'absolutely',
+    'game-changing'
   ];
 
   let normalized = text;

@@ -96,6 +96,7 @@
     "recharts": "^2.15.3",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
+    "supertest": "^7.1.4",
     "tailwind-merge": "^2.6.0",
     "tailwindcss-animate": "^1.0.7",
     "tw-animate-css": "^1.2.5",

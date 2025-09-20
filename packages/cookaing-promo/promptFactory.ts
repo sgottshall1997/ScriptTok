@@ -185,6 +185,8 @@ ${input.brandGuidelines ? `BRAND GUIDELINES:\n${input.brandGuidelines}\n` : ''}
 
 OUTPUT REQUIREMENTS:
 - Follow Spartan format strictly
+- Use active voice only
+- No emojis or casual text speak
 - Use provided structure
 - Include UTM-tracked CTA URL
 - Stay within word limit

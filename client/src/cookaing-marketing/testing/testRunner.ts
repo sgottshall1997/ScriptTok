@@ -398,6 +398,57 @@ export class CookAIngTestRunner {
       results: this.results
     };
   }
+
+  /**
+   * Run specific test suite (for integration tests compatibility)
+   */
+  async runTestSuite(suiteName: string): Promise<{
+    suiteName: string;
+    totalTests: number;
+    results: TestResult[];
+    summary: {
+      total: number;
+      passed: number;
+      failed: number;
+      skipped: number;
+    };
+  }> {
+    let results: TestResult[] = [];
+
+    switch (suiteName) {
+      case 'unit':
+        results = await this.runUnitTests();
+        break;
+      case 'integration':
+        results = await this.runIntegrationTests();
+        break;
+      case 'performance':
+        results = await this.runPerformanceTests();
+        break;
+      case 'accessibility':
+        results = await this.runAccessibilityTests();
+        break;
+      default:
+        throw new Error(`Unknown test suite: ${suiteName}`);
+    }
+
+    const totalDuration = results.reduce((sum, r) => sum + (r.duration || 0), 0);
+    const summary = {
+      total: results.length,
+      passed: results.filter(r => r.status === 'passed').length,
+      failed: results.filter(r => r.status === 'failed').length,
+      skipped: results.filter(r => r.status === 'skipped').length
+    };
+
+    return {
+      suiteName,
+      totalTests: results.length,
+      results,
+      summary,
+      duration: totalDuration,
+      status: summary.failed === 0 ? 'passed' : 'failed'
+    };
+  }
 }
 
 // Export singleton instance

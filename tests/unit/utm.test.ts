@@ -67,9 +67,9 @@ describe('CookAIng UTM Utilities', () => {
       
       const result = buildUtmUrl(baseUrl, utmParams);
       
-      expect(result).toContain('utm_source=google%20ads');
-      expect(result).toContain('utm_campaign=summer%20launch%202024');
-      expect(result).toContain('utm_content=cooking%20app%2Fmeal%20planning');
+      expect(result).toContain('utm_source=google+ads');
+      expect(result).toContain('utm_campaign=summer+launch+2024');
+      expect(result).toContain('utm_content=cooking+app%2Fmeal+planning');
     });
 
     it('should handle empty string parameters by skipping them', () => {
@@ -295,7 +295,7 @@ describe('CookAIng UTM Utilities', () => {
       
       expect(url).toContain('utm_source=google');
       expect(url).toContain('utm_medium=cpc');
-      expect(url).toContain('utm_term=cooking%20app');
+      expect(url).toContain('utm_term=cooking+app');
     });
   });
 });

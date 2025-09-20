@@ -191,7 +191,9 @@ describe('CookAIng Template Registry', () => {
       const allHooks = template.hooks.join(' ').toLowerCase();
       
       for (const bannedWord of bannedWords) {
-        expect(allHooks).not.toContain(bannedWord);
+        // Use word boundary matching to avoid false positives like "very" in "everything"
+        const wordRegex = new RegExp(`\\b${bannedWord}\\b`, 'i');
+        expect(allHooks).not.toMatch(wordRegex);
       }
     });
 

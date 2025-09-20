@@ -30,9 +30,7 @@ beforeEach(async () => {
 async function setupTestEnvironment() {
   try {
     // Check if server is running first
-    const healthResponse = await fetch('http://localhost:5000/api/cookaing-marketing/admin/self-test', {
-      timeout: 5000
-    });
+    const healthResponse = await fetch('http://localhost:5000/api/cookaing-marketing/admin/self-test');
     if (!healthResponse.ok) {
       console.warn('⚠️ CookAIng server health check failed, proceeding with available data');
     } else {
@@ -40,9 +38,7 @@ async function setupTestEnvironment() {
     }
     
     // Check GlowBot health  
-    const glowbotHealth = await fetch('http://localhost:5000/api/glowbot/admin/self-test', {
-      timeout: 5000
-    });
+    const glowbotHealth = await fetch('http://localhost:5000/api/glowbot/admin/self-test');
     if (!glowbotHealth.ok) {
       console.warn('⚠️ GlowBot server health check failed');
     } else {
@@ -60,17 +56,15 @@ async function setupTestEnvironment() {
 
 async function resetMockProviders() {
   try {
-    // Reset both GlowBot and CookAIng mocks with timeout
+    // Reset both GlowBot and CookAIng mocks
     const glowbotReset = fetch('http://localhost:5000/api/glowbot/admin/reset-mocks', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      timeout: 3000
+      headers: { 'Content-Type': 'application/json' }
     }).catch(() => null);
     
     const cookAIngReset = fetch('http://localhost:5000/api/cookaing-marketing/admin/reset-mocks', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      timeout: 3000
+      headers: { 'Content-Type': 'application/json' }
     }).catch(() => null);
     
     const [glowResult, cookResult] = await Promise.allSettled([glowbotReset, cookAIngReset]);

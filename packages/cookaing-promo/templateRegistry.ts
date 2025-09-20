@@ -19,7 +19,7 @@ export const TEMPLATE_REGISTRY: Record<PromoObjective, Record<Channel, PromoTemp
       hooks: [
         "New CookAIng feature changes everything",
         "This CookAIng update saves hours",
-        "CookAIng just got this game-changing feature"
+        "CookAIng adds this meal-planning feature"
       ],
       structure: [
         "Hook: Feature announcement",
@@ -47,7 +47,7 @@ export const TEMPLATE_REGISTRY: Record<PromoObjective, Record<Channel, PromoTemp
     },
     x_thread: {
       hooks: [
-        "CookAIng just launched a feature that changes meal prep",
+        "CookAIng launched a feature that changes meal prep",
         "New CookAIng feature thread:",
         "This CookAIng update solves a major cooking problem"
       ],
@@ -63,7 +63,7 @@ export const TEMPLATE_REGISTRY: Record<PromoObjective, Record<Channel, PromoTemp
     linkedin_post: {
       hooks: [
         "CookAIng's latest feature addresses a common kitchen challenge",
-        "Meal planning just got easier with this CookAIng update",
+        "Meal planning becomes easier with this CookAIng update",
         "Here's how CookAIng's new feature saves time"
       ],
       structure: [
@@ -139,9 +139,9 @@ export const TEMPLATE_REGISTRY: Record<PromoObjective, Record<Channel, PromoTemp
     },
     ads_tiktok: {
       hooks: [
-        "This CookAIng feature is incredible",
+        "This CookAIng feature transforms cooking",
         "New cooking app feature trending",
-        "CookAIng just dropped this feature"
+        "CookAIng released this feature"
       ],
       structure: [
         "Native video hook",
