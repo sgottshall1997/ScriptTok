@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Link } from "wouter";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   Users, 
   Mail, 
@@ -17,11 +18,15 @@ import {
   Sparkles,
   Zap,
   Heart,
-  AlertTriangle
+  AlertTriangle,
+  ChevronDown,
+  HelpCircle
 } from "lucide-react";
 import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 const CookAIngMarketingDashboard = () => {
+  const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
+  
   // Fetch overview stats
   const { data: stats, isLoading } = useQuery<{
     organizations: number;
@@ -109,6 +114,75 @@ const CookAIngMarketingDashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* Dashboard Overview Dropdown */}
+      <Collapsible open={isDashboardInfoOpen} onOpenChange={setIsDashboardInfoOpen} className="w-full">
+        <CollapsibleTrigger asChild>
+          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-orange-200 bg-orange-50 dark:bg-orange-950" data-testid="button-dashboard-info">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="h-5 w-5 text-orange-600" />
+                  <CardTitle className="text-lg text-orange-900 dark:text-orange-100">
+                    🍳 What is CookAIng Marketing Engine? Click to learn about each section
+                  </CardTitle>
+                </div>
+                <ChevronDown 
+                  className={`h-4 w-4 text-orange-600 transition-transform duration-200 ${
+                    isDashboardInfoOpen ? 'rotate-180' : ''
+                  }`} 
+                />
+              </div>
+            </CardHeader>
+          </Card>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <Card className="border-orange-200 bg-orange-50 dark:bg-orange-950 border-t-0 rounded-t-none">
+            <CardContent className="pt-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-orange-900 dark:text-orange-100 mb-2">
+                    🍳 CookAIng Marketing Engine Overview
+                  </h3>
+                  <p className="text-orange-800 dark:text-orange-200 text-sm leading-relaxed">
+                    CookAIng Marketing Engine is a comprehensive recipe-focused marketing automation platform that transforms culinary content into engaging multi-channel marketing campaigns. Built for food bloggers, recipe developers, and culinary businesses, it combines AI-powered content generation with advanced marketing automation tools.
+                  </p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-orange-900 dark:text-orange-100 text-sm">🏢 Organizations & Contact Management</h4>
+                    <p className="text-xs text-orange-700 dark:text-orange-300">Manage client organizations, customer databases, and lead segmentation. Track engagement across multiple food-focused customer segments with detailed contact profiles and interaction histories.</p>
+                    
+                    <h4 className="font-semibold text-orange-900 dark:text-orange-100 text-sm">📧 Campaign & Workflow Automation</h4>
+                    <p className="text-xs text-orange-700 dark:text-orange-300">Create and manage automated email campaigns, recipe newsletters, and seasonal marketing workflows. Set up drip campaigns for recipe collections and automated follow-ups for cooking enthusiasts.</p>
+                    
+                    <h4 className="font-semibold text-orange-900 dark:text-orange-100 text-sm">📝 Forms & Lead Capture</h4>
+                    <p className="text-xs text-orange-700 dark:text-orange-300">Build custom lead capture forms for recipe downloads, cooking class signups, and newsletter subscriptions. Track form submissions and conversion rates with detailed analytics.</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-orange-900 dark:text-orange-100 text-sm">🛍️ Affiliate Product Management</h4>
+                    <p className="text-xs text-orange-700 dark:text-orange-300">Manage cooking equipment, ingredient suppliers, and kitchen tool affiliate partnerships. Track revenue from recipe-related product recommendations and optimize affiliate performance.</p>
+                    
+                    <h4 className="font-semibold text-orange-900 dark:text-orange-100 text-sm">✨ AI Content Generation & Intelligence</h4>
+                    <p className="text-xs text-orange-700 dark:text-orange-300">Transform recipes into engaging social media content, blog posts, and marketing materials. AI-powered competitor analysis, sentiment tracking, and viral content prediction specifically for food content.</p>
+                    
+                    <h4 className="font-semibold text-orange-900 dark:text-orange-100 text-sm">📊 Marketing Analytics & Attribution</h4>
+                    <p className="text-xs text-orange-700 dark:text-orange-300">Track campaign performance, cost analysis, and ROI across all marketing channels. Advanced attribution modeling for recipe engagement, conversion tracking, and customer lifetime value.</p>
+                  </div>
+                </div>
+                
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-orange-200 dark:border-orange-800 mt-4">
+                  <p className="text-xs text-orange-600 dark:text-orange-400 font-medium">
+                    💡 <strong>Quick Start:</strong> Begin by setting up your organization, import your recipe database, then create targeted campaigns using AI-generated content. Monitor performance and optimize using intelligence insights.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </CollapsibleContent>
+      </Collapsible>
+
       {/* Header */}
       <div>
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
