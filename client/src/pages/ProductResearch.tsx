@@ -40,6 +40,8 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import { getGlowBotSectionByPath } from '@/lib/glowbot-sections';
+import AboutThisPage from '@/components/AboutThisPage';
 
 interface ProductOpportunity {
   id: number;
@@ -989,6 +991,21 @@ const ProductResearch = () => {
           )}
         </CardContent>
       </Card>
+      
+      {/* About This Page Component */}
+      {(() => {
+        const sectionData = getGlowBotSectionByPath('/product-research');
+        return sectionData ? (
+          <AboutThisPage 
+            title={sectionData.name}
+            whatItDoes={sectionData.whatItDoes}
+            setupRequirements={sectionData.setupRequirements}
+            usageInstructions={sectionData.usageInstructions}
+            relatedLinks={sectionData.relatedLinks}
+            notes={sectionData.notes}
+          />
+        ) : null;
+      })()} 
     </div>
   );
 };

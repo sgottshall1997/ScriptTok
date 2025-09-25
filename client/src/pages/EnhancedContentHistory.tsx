@@ -37,6 +37,8 @@ import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
 import SyncRatingsButton from '@/components/SyncRatingsButton';
 import { ContentEvaluationPanel } from '@/components/ContentEvaluationPanel';
+import { getGlowBotSectionByPath } from '@/lib/glowbot-sections';
+import AboutThisPage from '@/components/AboutThisPage';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -1239,6 +1241,21 @@ const EnhancedContentHistory = () => {
           </Card>
         ))}
       </div>
+      
+      {/* About This Page Component */}
+      {(() => {
+        const sectionData = getGlowBotSectionByPath('/content-history');
+        return sectionData ? (
+          <AboutThisPage 
+            title={sectionData.name}
+            whatItDoes={sectionData.whatItDoes}
+            setupRequirements={sectionData.setupRequirements}
+            usageInstructions={sectionData.usageInstructions}
+            relatedLinks={sectionData.relatedLinks}
+            notes={sectionData.notes}
+          />
+        ) : null;
+      })()} 
     </div>
   );
 };

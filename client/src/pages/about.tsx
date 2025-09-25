@@ -23,7 +23,8 @@ import {
   ArrowRight,
   Lightbulb
 } from 'lucide-react';
-import { glowBotSections, getGlowBotSectionsByCategory, getGlowBotSectionsByKeyword } from '@/lib/glowbot-sections';
+import { glowBotSections, getGlowBotSectionsByCategory, getGlowBotSectionsByKeyword, getGlowBotSectionByPath } from '@/lib/glowbot-sections';
+import AboutThisPage from '@/components/AboutThisPage';
 
 const AboutPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -422,6 +423,21 @@ const AboutPage: React.FC = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* About This Page Component */}
+      {(() => {
+        const sectionData = getGlowBotSectionByPath('/about');
+        return sectionData ? (
+          <AboutThisPage 
+            title={sectionData.name}
+            whatItDoes={sectionData.whatItDoes}
+            setupRequirements={sectionData.setupRequirements}
+            usageInstructions={sectionData.usageInstructions}
+            relatedLinks={sectionData.relatedLinks}
+            notes={sectionData.notes}
+          />
+        ) : null;
+      })()}
     </div>
   );
 };

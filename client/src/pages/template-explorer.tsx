@@ -25,6 +25,8 @@ import NicheGrid from '@/components/NicheGrid';
 import { TemplateGrid } from '@/components/TemplatePreview';
 import { useLocation } from 'wouter';
 import { trackEvent } from '@/lib/analytics';
+import { getGlowBotSectionByPath } from '@/lib/glowbot-sections';
+import AboutThisPage from '@/components/AboutThisPage';
 
 interface NicheInfo {
   name: string;
@@ -320,6 +322,21 @@ const TemplateExplorerPage: React.FC = () => {
           </CardContent>
         </Card>
       )}
+      
+      {/* About This Page Component */}
+      {(() => {
+        const sectionData = getGlowBotSectionByPath('/templates');
+        return sectionData ? (
+          <AboutThisPage 
+            title={sectionData.name}
+            whatItDoes={sectionData.whatItDoes}
+            setupRequirements={sectionData.setupRequirements}
+            usageInstructions={sectionData.usageInstructions}
+            relatedLinks={sectionData.relatedLinks}
+            notes={sectionData.notes}
+          />
+        ) : null;
+      })()}
     </div>
   );
 };
