@@ -149,10 +149,12 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     const result = generateContentSchema.safeParse(req.body);
     
     if (!result.success) {
+      console.error('Validation failed:', result.error.issues);
       return res.status(400).json({
         success: false,
         data: null,
-        error: "Invalid request parameters"
+        error: "Invalid request parameters",
+        details: result.error.issues
       });
     }
     
