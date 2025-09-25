@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -219,7 +219,7 @@ export function TrendForecaster({ niche }: TrendForecasterProps) {
             ))}
           </TabsList>
           
-          {Object.entries(trends).map(([type, trendList]) => (
+          {Object.entries(trends).map(([type, trendList]: [string, TrendData[]]) => (
             <TabsContent key={type} value={type} className="mt-4">
               <div className="space-y-1 mb-4">
                 <h3 className="text-lg font-semibold flex items-center gap-2">

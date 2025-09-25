@@ -32,6 +32,7 @@ import { trackEvent } from "@/lib/analytics";
 import AboutThisPage from "@/components/AboutThisPage";
 import { getGlowBotSectionByPath } from "@/lib/glowbot-sections";
 import { isAmazonEnabled } from '@shared/constants';
+import { TrendForecaster } from "@/components/TrendForecaster";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -453,7 +454,10 @@ const Dashboard = () => {
         </Card>
       )}
 
-      {/* 2️⃣ AI-Powered Trending Picks (Unified) */}
+      {/* 2️⃣ Trend Forecaster */}
+      <TrendForecaster niche="beauty" />
+
+      {/* 3️⃣ AI-Powered Trending Picks (Unified) */}
       <Card data-testid="card-unified-trending-picks">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
