@@ -2817,6 +2817,18 @@ export const productPriceHistory = pgTable("product_price_history", {
   };
 });
 
+// Product opportunities from research
+export const productOpportunities = pgTable("product_opportunities", {
+  id: serial("id").primaryKey(),
+  category: text("category").notNull(),
+  problem: text("problem").notNull(),
+  targetCustomer: text("target_customer").notNull(),
+  demandSignal: text("demand_signal").notNull(),
+  marginPotential: text("margin_potential").notNull(),
+  query: text("query").notNull(), // The original query used
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Zod schemas for Amazon monetization tables
 export const insertAmazonProductSchema = createInsertSchema(amazonProducts).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit({ id: true, createdAt: true, updatedAt: true });
@@ -2825,6 +2837,7 @@ export const insertProductPerformanceSchema = createInsertSchema(productPerforma
 export const insertProductRecommendationSchema = createInsertSchema(productRecommendations).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertComplianceDisclosureSchema = createInsertSchema(complianceDisclosures).omit({ id: true, createdAt: true, updatedAt: true });
 export const insertProductPriceHistorySchema = createInsertSchema(productPriceHistory).omit({ id: true, createdAt: true });
+export const insertProductOpportunitySchema = createInsertSchema(productOpportunities).omit({ id: true, createdAt: true });
 
 // TypeScript types for Amazon monetization
 export type AmazonProduct = typeof amazonProducts.$inferSelect;
@@ -2847,3 +2860,6 @@ export type InsertComplianceDisclosure = z.infer<typeof insertComplianceDisclosu
 
 export type ProductPriceHistory = typeof productPriceHistory.$inferSelect;
 export type InsertProductPriceHistory = z.infer<typeof insertProductPriceHistorySchema>;
+
+export type ProductOpportunity = typeof productOpportunities.$inferSelect;
+export type InsertProductOpportunity = z.infer<typeof insertProductOpportunitySchema>;
