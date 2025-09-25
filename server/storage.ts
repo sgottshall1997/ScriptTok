@@ -1,4 +1,4 @@
-import type { 
+import type {
   User, InsertUser,
   ContentGeneration, InsertContentGeneration,
   TrendingProduct, InsertTrendingProduct,
@@ -10,8 +10,8 @@ import type {
   AIModelConfig, InsertAIModelConfig,
 } from "@shared/schema";
 
-import { 
-  users, sessions, contentGenerations, trendingProducts, 
+import {
+  users, sessions, contentGenerations, trendingProducts,
   contentHistory, amazonProducts, affiliateLinks,
   scraperStatus, apiUsage, aiModelConfigs
 } from "@shared/schema";
@@ -28,42 +28,42 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
   updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
   deleteUser(id: number): Promise<boolean>;
-  
+
   // Content generation operations
   saveContentGeneration(generation: InsertContentGeneration): Promise<ContentGeneration>;
   getContentGenerations(limit?: number): Promise<ContentGeneration[]>;
   getUserContentGenerations(userId: number, limit?: number): Promise<ContentGeneration[]>;
-  
+
   // Content history operations
   saveContentHistory(history: InsertContentHistory): Promise<ContentHistory>;
   getContentHistory(limit?: number): Promise<ContentHistory[]>;
   getAllContentHistory(limit?: number, offset?: number): Promise<ContentHistory[]>;
   getUserContentHistory(userId: number, limit?: number): Promise<ContentHistory[]>;
   getContentHistoryById(id: number): Promise<ContentHistory | undefined>;
-  
+
   // Trending products operations
   saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct>;
   getTrendingProducts(limit?: number): Promise<TrendingProduct[]>;
   getTrendingProductsByNiche(niche: string, limit?: number): Promise<TrendingProduct[]>;
   clearTrendingProducts(): Promise<void>;
-  
+
   // Amazon products and affiliate links
   saveAmazonProduct(product: InsertAmazonProduct): Promise<AmazonProduct>;
   getAmazonProducts(limit?: number): Promise<AmazonProduct[]>;
   saveAffiliateLink(link: InsertAffiliateLink): Promise<AffiliateLink>;
   getAffiliateLinks(limit?: number): Promise<AffiliateLink[]>;
-  
+
   // API usage tracking
   incrementApiUsage(templateType: string, tone: string, niche: string, userId?: number): Promise<void>;
   getApiUsageStats(): Promise<ApiUsage[]>;
   getTodayApiUsage(): Promise<number>;
   getWeeklyApiUsage(): Promise<number>;
   getMonthlyApiUsage(): Promise<number>;
-  
+
   // Scraper status operations
   updateScraperStatus(platform: ScraperPlatform, status: ScraperStatusType): Promise<void>;
   getScraperStatus(): Promise<ScraperStatus[]>;
-  
+
   // AI model config operations
   getAIModelConfigs(): Promise<AIModelConfig[]>;
   updateAIModelConfig(id: number, config: Partial<InsertAIModelConfig>): Promise<AIModelConfig | undefined>;
@@ -80,7 +80,7 @@ export class MemStorage implements IStorage {
   private apiUsageData: ApiUsage[] = [];
   private scraperStatusData: ScraperStatus[] = [];
   private aiModelConfigs: AIModelConfig[] = [];
-  
+
   private nextUserId = 1;
   private nextContentId = 1;
   private nextHistoryId = 1;
@@ -112,7 +112,7 @@ export class MemStorage implements IStorage {
   async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
     const userIndex = this.users.findIndex(u => u.id === id);
     if (userIndex === -1) return undefined;
-    
+
     this.users[userIndex] = {
       ...this.users[userIndex],
       ...updates,
@@ -257,7 +257,7 @@ export class MemStorage implements IStorage {
   async getTodayApiUsage(): Promise<number> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    return this.apiUsageData.filter(usage => 
+    return this.apiUsageData.filter(usage =>
       usage.createdAt >= today
     ).reduce((sum, usage) => sum + usage.usageCount, 0);
   }
@@ -265,7 +265,7 @@ export class MemStorage implements IStorage {
   async getWeeklyApiUsage(): Promise<number> {
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    return this.apiUsageData.filter(usage => 
+    return this.apiUsageData.filter(usage =>
       usage.createdAt >= weekAgo
     ).reduce((sum, usage) => sum + usage.usageCount, 0);
   }
@@ -273,7 +273,7 @@ export class MemStorage implements IStorage {
   async getMonthlyApiUsage(): Promise<number> {
     const monthAgo = new Date();
     monthAgo.setMonth(monthAgo.getMonth() - 1);
-    return this.apiUsageData.filter(usage => 
+    return this.apiUsageData.filter(usage =>
       usage.createdAt >= monthAgo
     ).reduce((sum, usage) => sum + usage.usageCount, 0);
   }
@@ -310,7 +310,7 @@ export class MemStorage implements IStorage {
   async updateAIModelConfig(id: number, config: Partial<InsertAIModelConfig>): Promise<AIModelConfig | undefined> {
     const configIndex = this.aiModelConfigs.findIndex(c => c.id === id);
     if (configIndex === -1) return undefined;
-    
+
     this.aiModelConfigs[configIndex] = {
       ...this.aiModelConfigs[configIndex],
       ...config,
@@ -498,7 +498,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getScraperStatus(): Promise<ScraperStatus[]> {
-    return await db.select().from(scraperStatus).orderBy(desc(scraperStatus.lastUpdated));
+    const scraperStatuses = await db
+      .select()
+      .from(scraperStatus)
+      .orderBy(scraperStatus.lastRun)
+      .limit(100);
+    return scraperStatuses;
   }
 
   // AI model config operations
