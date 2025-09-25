@@ -1,9 +1,97 @@
 import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, Copy, DollarSign, TrendingUp } from 'lucide-react';
+import { ExternalLink, Copy, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Badge } from '@/components/ui/badge';
+import { isAmazonEnabled, getDisabledFeatureMessage } from '@shared/constants';
 
 export default function AffiliateLinks() {
+  // DISABLED: Show disabled state when Amazon features are turned off
+  if (!isAmazonEnabled()) {
+    const disabledMessage = getDisabledFeatureMessage('Affiliate Links');
+    
+    return (
+      <div className="space-y-6" data-testid="affiliate-links-disabled">
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight flex items-center gap-3">
+              Affiliate Links
+              <Badge variant="secondary" className="bg-orange-100 text-orange-800">Disabled</Badge>
+            </h1>
+            <p className="text-muted-foreground">
+              Affiliate link management is temporarily disabled
+            </p>
+          </div>
+        </div>
+
+        <Alert className="border-orange-200 bg-orange-50">
+          <AlertCircle className="h-4 w-4 text-orange-600" />
+          <AlertDescription className="text-orange-800">
+            <strong className="font-medium">Affiliate Links Temporarily Disabled</strong>
+            <p className="mt-1 text-sm">
+              {disabledMessage.message}. {disabledMessage.canReEnable}
+            </p>
+          </AlertDescription>
+        </Alert>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 opacity-50">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Links</CardTitle>
+              <ExternalLink className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-400">--</div>
+              <p className="text-xs text-muted-foreground">
+                Feature disabled
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Revenue</CardTitle>
+              <DollarSign className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-400">--</div>
+              <p className="text-xs text-muted-foreground">
+                Feature disabled
+              </p>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Click Rate</CardTitle>
+              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-gray-400">--</div>
+              <p className="text-xs text-muted-foreground">
+                Feature disabled
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        <Card className="opacity-50">
+          <CardHeader>
+            <CardTitle>Recent Affiliate Links</CardTitle>
+            <CardDescription>
+              Affiliate link management is currently disabled
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="text-center py-8 text-gray-500">
+              <p>No affiliate links available while feature is disabled</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
