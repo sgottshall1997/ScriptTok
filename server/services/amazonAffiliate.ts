@@ -3,6 +3,9 @@
  * Generates Amazon affiliate links for products with proper tracking
  */
 
+// DISABLED: Amazon Associates functionality temporarily disabled
+import { isAmazonEnabled, getDisabledFeatureMessage } from '@shared/constants';
+
 export interface AffiliateConfig {
   affiliateId: string;
   domain?: string;
@@ -17,6 +20,12 @@ export function generateAmazonAffiliateLink(
   affiliateId: string = 'sgottshall107-20',
   domain: string = 'amazon.com'
 ): string {
+  // DISABLED: Check if Amazon features are enabled
+  if (!isAmazonEnabled()) {
+    console.log('🚫 Amazon affiliate link generation disabled via feature flag');
+    return `https://example.com/disabled?product=${encodeURIComponent(productName)}`;
+  }
+
   try {
     // Clean product name for URL
     const cleanProductName = productName
@@ -52,6 +61,12 @@ export function generateProductAffiliateLink(
   asin?: string,
   affiliateId: string = 'sgottshall107-20'
 ): string {
+  // DISABLED: Check if Amazon features are enabled
+  if (!isAmazonEnabled()) {
+    console.log('🚫 Amazon product affiliate link generation disabled via feature flag');
+    return `https://example.com/disabled?product=${encodeURIComponent(productName)}`;
+  }
+
   try {
     if (asin) {
       // Direct product link if ASIN is available
@@ -70,6 +85,12 @@ export function generateProductAffiliateLink(
  * VALIDATE AFFILIATE ID FORMAT
  */
 export function validateAffiliateId(affiliateId: string): boolean {
+  // DISABLED: Check if Amazon features are enabled
+  if (!isAmazonEnabled()) {
+    console.log('🚫 Amazon affiliate ID validation disabled via feature flag');
+    return false;
+  }
+
   // Amazon affiliate IDs typically follow the pattern: name-number
   const affiliatePattern = /^[a-zA-Z0-9\-]{1,20}$/;
   return affiliatePattern.test(affiliateId);
@@ -111,6 +132,12 @@ export function trackAffiliateClick(
   productName: string,
   source: string = 'content_generator'
 ): void {
+  // DISABLED: Check if Amazon features are enabled
+  if (!isAmazonEnabled()) {
+    console.log('🚫 Amazon affiliate click tracking disabled via feature flag');
+    return;
+  }
+
   // This could be enhanced to send analytics to external services
   console.log(`📊 Affiliate click tracked: ${productName} from ${source}`);
   console.log(`🔗 Link: ${affiliateLink}`);

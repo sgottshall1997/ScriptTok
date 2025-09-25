@@ -2,6 +2,9 @@ import { fetch } from 'undici';
 import { createAmazonSigner, AmazonSigner } from './signing.js';
 import { getAmazonConfig } from '../../env.js';
 
+// DISABLED: Amazon PA-API functionality temporarily disabled
+import { isAmazonEnabled, getDisabledFeatureMessage } from '@shared/constants';
+
 // Amazon PA-API 5.0 client for product search and discovery
 
 interface AmazonCredentials {
@@ -129,8 +132,18 @@ export class AmazonPAAPIClient {
 
   /**
    * Search for products using keywords, categories, or browse nodes
+   * DISABLED: Amazon PA-API functionality temporarily disabled
    */
   async searchItems(request: SearchItemsRequest): Promise<any> {
+    // DISABLED: Check if Amazon features are enabled
+    if (!isAmazonEnabled()) {
+      console.log('🚫 Amazon PA-API searchItems disabled via feature flag');
+      return {
+        ...getDisabledFeatureMessage('Amazon PA-API Search'),
+        SearchResult: { Items: [] }
+      };
+    }
+
     const payload = {
       PartnerTag: this.credentials.partnerTag,
       PartnerType: 'Associates',
@@ -151,8 +164,18 @@ export class AmazonPAAPIClient {
 
   /**
    * Get detailed information for specific products by ASIN
+   * DISABLED: Amazon PA-API functionality temporarily disabled
    */
   async getItems(request: GetItemsRequest): Promise<any> {
+    // DISABLED: Check if Amazon features are enabled
+    if (!isAmazonEnabled()) {
+      console.log('🚫 Amazon PA-API getItems disabled via feature flag');
+      return {
+        ...getDisabledFeatureMessage('Amazon PA-API Get Items'),
+        ItemsResult: { Items: [] }
+      };
+    }
+
     const payload = {
       PartnerTag: this.credentials.partnerTag,
       PartnerType: 'Associates',
@@ -174,8 +197,18 @@ export class AmazonPAAPIClient {
 
   /**
    * Get browse node information for category navigation
+   * DISABLED: Amazon PA-API functionality temporarily disabled
    */
   async getBrowseNodes(request: BrowseNodesRequest): Promise<any> {
+    // DISABLED: Check if Amazon features are enabled
+    if (!isAmazonEnabled()) {
+      console.log('🚫 Amazon PA-API getBrowseNodes disabled via feature flag');
+      return {
+        ...getDisabledFeatureMessage('Amazon PA-API Browse Nodes'),
+        BrowseNodesResult: { BrowseNodes: [] }
+      };
+    }
+
     const payload = {
       PartnerTag: this.credentials.partnerTag,
       PartnerType: 'Associates',

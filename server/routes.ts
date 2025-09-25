@@ -31,11 +31,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Perplexity trends for viral research
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   
-  // DISABLED: Amazon-related routes temporarily disabled
+  // DISABLED: Amazon-related routes temporarily disabled - returning 503 responses
+  const amazonDisabledResponse = {
+    disabled: true,
+    message: 'Amazon Associates functionality is temporarily disabled',
+    reason: 'Feature flag ENABLE_AMAZON_FEATURES is set to false',
+    canReEnable: 'Set ENABLE_AMAZON_FEATURES=true to re-enable this feature',
+    statusCode: 503
+  };
+
+  app.use('/api/amazon', (req, res) => {
+    res.status(503).json(amazonDisabledResponse);
+  });
+  
+  app.use('/api/amazon-links', (req, res) => {
+    res.status(503).json({
+      ...amazonDisabledResponse,
+      message: 'Amazon affiliate link generation is temporarily disabled'
+    });
+  });
+  
+  app.use('/api/affiliate', (req, res) => {
+    res.status(503).json({
+      ...amazonDisabledResponse,
+      message: 'Affiliate link functionality is temporarily disabled'
+    });
+  });
+
   // app.use('/api/ai-model-config', aiModelConfigRouter);
-  // app.use('/api/amazon-links', amazonLinksRouter);
-  // app.use('/api/amazon', amazonRouter);
-  // app.use('/api/affiliate', affiliateRouter);
   // app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
   // app.use('/api/product-research', productResearchRouter);
 
