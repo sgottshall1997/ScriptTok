@@ -1,0 +1,39 @@
+Each routed page should end with a standardized “About this page” block containing:
+	•	What this is (1–2 sentence overview)
+	•	Setup (numbered steps)
+	•	How to use (checkbox list of quick wins)
+	•	Related pages (pill links)
+	•	Footer breadcrumb (e.g., Marketing Dashboard • Part of the CookAIng Marketing Engine • For Spence’s Reference)
+
+Goal
+
+For every page listed below, verify that this block exists, is rendered, and is helpful to a brand-new user. If missing, add it. If outdated or low-quality, rewrite it with clear, beginner-friendly guidance. Keep tone concise and actionable.
+
+Pages to process
+
+Overview: Marketing Dashboard, About
+Data: Organizations, Contacts, Segments, Forms, Form Submissions, Affiliate Products
+Campaign Ops: Campaigns, Campaign Detail, A/B Testing, Workflows, Personalization, Social Automation
+Intelligence & Content: Content Hub, Intelligence Analysis, Promo Generator, Trends & Seasonal
+Analytics: Reports, Costs & ROAS, Attribution Inspector
+System: Health, Webhooks Monitor, Email Delivery Test, Developer Tools
+Help: Customer Support, Docs, Exit CookAIng
+
+Constraints & conventions
+	•	Do not change business logic or routes. UI copy only, plus rendering of the About block.
+	•	Use the existing reusable component if present (e.g., AboutThisPage). If absent, create it once and reuse.
+	•	Centralize copy in a registry (e.g., src/about/aboutRegistry.ts) keyed by route/page to keep content maintainable.
+	•	Keep each section short:
+	•	“What this is”: max ~40 words.
+	•	“Setup”: 2–5 steps, numbered.
+	•	“How to use”: 3–5 practical actions a new user can perform immediately.
+	•	“Related pages”: 1–4 links that actually exist.
+	•	Validate that each “Related” link resolves to a real route.
+	•	Preserve Tailwind look consistent with the provided screenshot (light card, rounded corners, subtle borders).
+
+What to do (step-by-step)
+	1.	Inventory & locate pages
+	•	Scan src/ for route config and page components that match the list above (e.g., through react-router or Next/Vite file-based routing).
+	•	Produce a table mapping page name → component file → route path → current About status (present/missing).
+	2.	Standardize the component (if needed)
+	•	If AboutThisPage exists, reuse it. If not, create src/components/AboutThisPage.tsx with props:
