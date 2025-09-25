@@ -1,0 +1,100 @@
+You are working with the existing GlowBot application to build a comprehensive Brand Builder section that pivots from affiliate content automation to physical product brand development and validation.
+
+OBJECTIVE: Create the core Brand Builder infrastructure with Product Discovery, Demand Validation, and foundational brand development tools.
+
+PHASE 1 REQUIREMENTS:
+
+1. Update Navigation Structure
+
+Add a new "Brand Builder" section to the existing Sidebar.tsx
+Include these navigation items:
+Product Discovery (main discovery page)
+Demand Validation (market testing tools)
+Pre-Launch Testing (validation workflows)
+Brand Content Creation (content for owned brands)
+Competitor Intelligence (market analysis)
+Financial Projections (business planning)
+Use appropriate Lucide icons for each section
+Maintain existing navigation structure and styling
+2. Create Product Discovery Page
+
+Build /client/src/pages/brand-builder/ProductDiscovery.tsx
+Include market gap analysis using existing Perplexity integration
+Add product opportunity finder with search functionality
+Create demand assessment tools that analyze market size
+Build trending product categories dashboard
+Include geographic demand mapping
+Add competitor landscape overview
+Implement market saturation indicators
+3. Create Demand Validation Page
+
+Build /client/src/pages/brand-builder/DemandValidation.tsx
+Add pre-launch demand testing tools
+Create landing page validation system
+Build survey deployment and analysis
+Add social media engagement prediction
+Include pricing sensitivity analysis
+Create target audience profiling tools
+Add validation confidence scoring
+4. Build Supporting API Infrastructure
+
+Create /server/api/brand-builder/ directory structure
+Add product-discovery.ts endpoint for market analysis
+Add demand-validation.ts endpoint for validation tools
+Create market-intelligence.ts for competitor data
+Build database schemas for brand builder data
+Integrate with existing Perplexity API for market research
+Add caching for market research data
+5. Database Schema Updates
+
+Extend existing schema.ts with brand builder tables:
+brandProjects (track brand development projects)
+marketResearch (store research findings)
+demandValidation (validation test results)
+competitorAnalysis (competitor tracking)
+productOpportunities (discovered opportunities)
+Maintain compatibility with existing database structure
+6. UI Components
+
+Create reusable components in /client/src/components/brand-builder/:
+MarketGapAnalyzer.tsx (find market opportunities)
+DemandScoreCard.tsx (show validation metrics)
+CompetitorCard.tsx (competitor analysis display)
+OpportunityFinder.tsx (product opportunity search)
+ValidationDashboard.tsx (testing results overview)
+Use existing design system and component library
+Maintain consistency with GlowBot styling
+7. Integration Requirements
+
+Use existing Perplexity API for market research
+Leverage existing analytics infrastructure
+Integrate with current user authentication
+Maintain existing error handling patterns
+Use established caching mechanisms
+TECHNICAL CONSTRAINTS:
+
+Build additively - do not modify existing GlowBot functionality
+Use existing TypeScript, React, Express, PostgreSQL stack
+Maintain existing file structure and conventions
+Preserve all current API endpoints and functionality
+Use existing UI component library and styling
+Leverage existing Perplexity integration for research
+SUCCESS CRITERIA:
+
+New Brand Builder navigation section appears in sidebar
+Product Discovery page loads with market analysis tools
+Demand Validation page provides testing workflows
+API endpoints successfully return market research data
+Database stores brand builder data without conflicts
+All existing GlowBot functionality remains intact
+Pages are responsive and follow existing design patterns
+EXPECTED DELIVERABLES:
+
+Updated Sidebar.tsx with Brand Builder section
+ProductDiscovery.tsx page with market analysis tools
+DemandValidation.tsx page with validation workflows
+API endpoints for brand builder functionality
+Database schema updates for brand data
+Reusable UI components for brand builder features
+Integration with existing Perplexity API for research
+Focus on creating a solid foundation that can be expanded in future phases. Ensure all new functionality is self-contained and doesn't interfere with existing GlowBot operations.

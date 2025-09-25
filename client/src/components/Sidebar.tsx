@@ -47,7 +47,13 @@ import {
   Send,
   Wrench,
   BookOpen,
-  Building
+  Building,
+  Search,
+  TestTube2,
+  Rocket,
+  PenTool,
+  TrendingDown,
+  Calculator
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -119,6 +125,17 @@ const sidebarData: SidebarCategory[] = [
       { name: "Webhook Settings", href: "/webhook-settings", icon: Webhook },
       { name: "API Integration Hub", href: "/api-integration-hub", icon: Zap },
       { name: "Automation Checklist", href: "/btb-status", icon: Activity },
+    ]
+  },
+  {
+    name: "Brand Builder",
+    items: [
+      { name: "Product Discovery", href: "/brand-builder/product-discovery", icon: Search },
+      { name: "Demand Validation", href: "/brand-builder/demand-validation", icon: TestTube2 },
+      { name: "Pre-Launch Testing", href: "/brand-builder/pre-launch-testing", icon: Rocket },
+      { name: "Brand Content Creation", href: "/brand-builder/brand-content", icon: PenTool },
+      { name: "Competitor Intelligence", href: "/brand-builder/competitor-intelligence", icon: TrendingDown },
+      { name: "Financial Projections", href: "/brand-builder/financial-projections", icon: Calculator },
     ]
   },
   {
