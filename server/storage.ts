@@ -320,5 +320,197 @@ export class MemStorage implements IStorage {
   }
 }
 
-// Create storage instance
-export const storage = new MemStorage();
+// PostgreSQL storage implementation using Drizzle ORM
+export class DatabaseStorage implements IStorage {
+  // User operations
+  async getUser(id: number): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.id, id));
+    return result[0];
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.username, username));
+    return result[0];
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const result = await db.insert(users).values(user).returning();
+    return result[0];
+  }
+
+  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
+    const result = await db.update(users).set(updates).where(eq(users.id, id)).returning();
+    return result[0];
+  }
+
+  async deleteUser(id: number): Promise<boolean> {
+    const result = await db.delete(users).where(eq(users.id, id));
+    return result.rowCount > 0;
+  }
+
+  // Content generation operations
+  async saveContentGeneration(generation: InsertContentGeneration): Promise<ContentGeneration> {
+    const result = await db.insert(contentGenerations).values(generation).returning();
+    return result[0];
+  }
+
+  async getContentGenerations(limit = 50): Promise<ContentGeneration[]> {
+    return await db.select().from(contentGenerations).orderBy(desc(contentGenerations.createdAt)).limit(limit);
+  }
+
+  async getUserContentGenerations(userId: number, limit = 50): Promise<ContentGeneration[]> {
+    return await db.select().from(contentGenerations)
+      .where(eq(contentGenerations.userId, userId))
+      .orderBy(desc(contentGenerations.createdAt))
+      .limit(limit);
+  }
+
+  // Content history operations
+  async saveContentHistory(history: InsertContentHistory): Promise<ContentHistory> {
+    const result = await db.insert(contentHistory).values(history).returning();
+    return result[0];
+  }
+
+  async getContentHistory(limit = 50): Promise<ContentHistory[]> {
+    return await db.select().from(contentHistory).orderBy(desc(contentHistory.createdAt)).limit(limit);
+  }
+
+  async getAllContentHistory(limit = 50, offset = 0): Promise<ContentHistory[]> {
+    return await db.select().from(contentHistory)
+      .orderBy(desc(contentHistory.createdAt))
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async getUserContentHistory(userId: number, limit = 50): Promise<ContentHistory[]> {
+    return await db.select().from(contentHistory)
+      .where(eq(contentHistory.userId, userId))
+      .orderBy(desc(contentHistory.createdAt))
+      .limit(limit);
+  }
+
+  async getContentHistoryById(id: number): Promise<ContentHistory | undefined> {
+    const result = await db.select().from(contentHistory).where(eq(contentHistory.id, id));
+    return result[0];
+  }
+
+  // Trending products operations
+  async saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct> {
+    const result = await db.insert(trendingProducts).values(product).returning();
+    return result[0];
+  }
+
+  async getTrendingProducts(limit = 50): Promise<TrendingProduct[]> {
+    return await db.select().from(trendingProducts).orderBy(desc(trendingProducts.createdAt)).limit(limit);
+  }
+
+  async getTrendingProductsByNiche(niche: string, limit = 3): Promise<TrendingProduct[]> {
+    return await db.select().from(trendingProducts)
+      .where(eq(trendingProducts.niche, niche))
+      .orderBy(desc(trendingProducts.createdAt))
+      .limit(limit);
+  }
+
+  async clearTrendingProducts(): Promise<void> {
+    await db.delete(trendingProducts);
+  }
+
+  // Amazon products and affiliate links
+  async saveAmazonProduct(product: InsertAmazonProduct): Promise<AmazonProduct> {
+    const result = await db.insert(amazonProducts).values(product).returning();
+    return result[0];
+  }
+
+  async getAmazonProducts(limit = 50): Promise<AmazonProduct[]> {
+    return await db.select().from(amazonProducts).orderBy(desc(amazonProducts.createdAt)).limit(limit);
+  }
+
+  async saveAffiliateLink(link: InsertAffiliateLink): Promise<AffiliateLink> {
+    const result = await db.insert(affiliateLinks).values(link).returning();
+    return result[0];
+  }
+
+  async getAffiliateLinks(limit = 50): Promise<AffiliateLink[]> {
+    return await db.select().from(affiliateLinks).orderBy(desc(affiliateLinks.createdAt)).limit(limit);
+  }
+
+  // API usage tracking
+  async incrementApiUsage(templateType: string, tone: string, niche: string, userId?: number): Promise<void> {
+    await db.insert(apiUsage).values({
+      templateType,
+      tone,
+      niche,
+      userId,
+      usageCount: 1,
+      createdAt: new Date()
+    });
+  }
+
+  async getApiUsageStats(): Promise<ApiUsage[]> {
+    return await db.select().from(apiUsage).orderBy(desc(apiUsage.createdAt));
+  }
+
+  async getTodayApiUsage(): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const result = await db.select({ total: sql<number>`sum(${apiUsage.usageCount})` })
+      .from(apiUsage)
+      .where(gte(apiUsage.createdAt, today));
+    return result[0]?.total || 0;
+  }
+
+  async getWeeklyApiUsage(): Promise<number> {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    const result = await db.select({ total: sql<number>`sum(${apiUsage.usageCount})` })
+      .from(apiUsage)
+      .where(gte(apiUsage.createdAt, weekAgo));
+    return result[0]?.total || 0;
+  }
+
+  async getMonthlyApiUsage(): Promise<number> {
+    const monthAgo = new Date();
+    monthAgo.setMonth(monthAgo.getMonth() - 1);
+    const result = await db.select({ total: sql<number>`sum(${apiUsage.usageCount})` })
+      .from(apiUsage)
+      .where(gte(apiUsage.createdAt, monthAgo));
+    return result[0]?.total || 0;
+  }
+
+  // Scraper status operations
+  async updateScraperStatus(platform: ScraperPlatform, status: ScraperStatusType): Promise<void> {
+    const existingStatus = await db.select()
+      .from(scraperStatus)
+      .where(eq(scraperStatus.platform, platform));
+
+    if (existingStatus.length > 0) {
+      await db.update(scraperStatus)
+        .set({ status, lastUpdated: new Date() })
+        .where(eq(scraperStatus.platform, platform));
+    } else {
+      await db.insert(scraperStatus).values({
+        platform,
+        status,
+        lastUpdated: new Date(),
+        createdAt: new Date()
+      });
+    }
+  }
+
+  async getScraperStatus(): Promise<ScraperStatus[]> {
+    return await db.select().from(scraperStatus).orderBy(desc(scraperStatus.lastUpdated));
+  }
+
+  // AI model config operations
+  async getAIModelConfigs(): Promise<AIModelConfig[]> {
+    return await db.select().from(aiModelConfigs);
+  }
+
+  async updateAIModelConfig(id: number, config: Partial<InsertAIModelConfig>): Promise<AIModelConfig | undefined> {
+    const result = await db.update(aiModelConfigs).set(config).where(eq(aiModelConfigs.id, id)).returning();
+    return result[0];
+  }
+}
+
+// Create storage instance - Use PostgreSQL database storage
+export const storage = new DatabaseStorage();
