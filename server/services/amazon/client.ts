@@ -112,6 +112,8 @@ export class AmazonPAAPIClient {
   private signer: AmazonSigner;
   private credentials: AmazonCredentials;
   private apiUrl: string;
+  private lastRequestTime: number = 0;
+  private readonly MIN_REQUEST_INTERVAL = 1100; // 1.1 seconds to be safe (PA-API limit: 1 TPS)
 
   constructor(credentials: AmazonCredentials) {
     this.credentials = credentials;
@@ -197,9 +199,20 @@ export class AmazonPAAPIClient {
   }
 
   /**
-   * Make signed request to Amazon PA-API with exponential backoff retry
+   * Make signed request to Amazon PA-API with exponential backoff retry and rate limiting
    */
   private async makeRequest(endpoint: string, payload: any, retries: number = 3): Promise<any> {
+    // Rate limiting: ensure minimum interval between requests
+    const now = Date.now();
+    const timeSinceLastRequest = now - this.lastRequestTime;
+    
+    if (timeSinceLastRequest < this.MIN_REQUEST_INTERVAL) {
+      const waitTime = this.MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+      console.log(`⏱️ Rate limiting: waiting ${waitTime}ms before Amazon API request`);
+      await new Promise(resolve => setTimeout(resolve, waitTime));
+    }
+    
+    this.lastRequestTime = Date.now();
     let lastError: Error | null = null;
 
     for (let attempt = 0; attempt <= retries; attempt++) {
@@ -221,10 +234,16 @@ export class AmazonPAAPIClient {
         const responseText = await response.text();
         
         if (!response.ok) {
-          // Check if this is a retryable error (500s or InternalFailure)
+          // 404 InternalFailure is often rate limiting or account restrictions
+          if (response.status === 404 && responseText.includes('InternalFailure')) {
+            console.log(`⚠️ Amazon API 404 InternalFailure - likely rate limiting or account restriction`);
+          }
+          
+          // Check if this is a retryable error (500s, InternalFailure, or TooManyRequests)
           const isRetryable = response.status >= 500 || 
             responseText.includes('InternalFailure') ||
-            responseText.includes('TooManyRequests');
+            responseText.includes('TooManyRequests') ||
+            response.status === 404; // Retry 404s as they're often temporary
             
           if (isRetryable && attempt < retries) {
             // Exponential backoff with jitter: (2^attempt * 1000ms) + random(0-1000ms)
