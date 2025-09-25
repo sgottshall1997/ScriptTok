@@ -25,7 +25,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { UsageStatistics } from "@/components/UsageStatistics";
-import { type TemplateType, TONE_OPTIONS } from '@shared/constants';
+import { type TemplateType, TIKTOK_TONE_OPTIONS } from '@shared/constants';
 
 // Video duration interface
 interface VideoDuration {
@@ -1032,11 +1032,11 @@ ${config.hashtags.join(' ')}`;
                 <div>
                   <h4 className="text-sm font-medium text-blue-800">Total Variations</h4>
                   <p className="text-xs text-blue-600">
-                    {selectedTemplates.length} template{selectedTemplates.length !== 1 ? 's' : ''} × {TONE_OPTIONS.length} tones × {aiModel === 'both' ? '2' : '1'} AI model{aiModel === 'both' ? 's' : ''}
+                    {selectedTemplates.length} template{selectedTemplates.length !== 1 ? 's' : ''} × {TIKTOK_TONE_OPTIONS.length} tones × {aiModel === 'both' ? '2' : '1'} AI model{aiModel === 'both' ? 's' : ''}
                   </p>
                 </div>
                 <div className="text-2xl font-bold text-blue-800">
-                  {selectedTemplates.length * TONE_OPTIONS.length * (aiModel === 'both' ? 2 : 1)}
+                  {selectedTemplates.length * TIKTOK_TONE_OPTIONS.length * (aiModel === 'both' ? 2 : 1)}
                 </div>
               </div>
             </div>

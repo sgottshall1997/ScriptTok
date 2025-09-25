@@ -83,6 +83,17 @@ export const TONE_OPTIONS = [
 
 export type ToneOption = typeof TONE_OPTIONS[number];
 
+// TikTok-optimized tone options (subset of TONE_OPTIONS)
+export const TIKTOK_TONE_OPTIONS = [
+  "casual",        // Casual & conversational (most popular for TikTok)
+  "enthusiastic",  // Enthusiastic & excited
+  "humorous",      // Light-hearted & fun  
+  "trendy",        // Trend-conscious & current
+  "friendly"       // Friendly & approachable
+] as const;
+
+export type TikTokToneOption = typeof TIKTOK_TONE_OPTIONS[number];
+
 // Scraper names and platforms
 export const SCRAPER_PLATFORMS = [
   "tiktok",
