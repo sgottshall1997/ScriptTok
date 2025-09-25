@@ -9,26 +9,47 @@ import { storage } from '../storage';
 
 const router = Router();
 
-// Request schema for product research
+// Request schema for constraint-based product research
 const productResearchSchema = z.object({
-  category: z.string().min(1, 'Category is required'),
+  constraints: z.object({
+    problem: z.string().min(1, 'Problem/pain point is required'),
+    targetCustomer: z.string().min(1, 'Target customer is required'),
+    maxCost: z.string().min(1, 'Maximum cost is required'),
+    targetPrice: z.string().min(1, 'Target price is required'),
+    validationBudget: z.string().min(1, 'Validation budget is required'),
+    contentCapability: z.array(z.string()).min(1, 'At least one content capability is required'),
+    timeline: z.string().min(1, 'Timeline is required'),
+    competitorReference: z.string().optional(),
+  })
 });
 
 /**
- * Research product opportunities for a given category using Perplexity
+ * Research product opportunities based on specific constraints using Perplexity
  */
 router.post('/', async (req, res) => {
   try {
-    const { category } = productResearchSchema.parse(req.body);
+    const { constraints } = productResearchSchema.parse(req.body);
     
-    console.log(`🔍 Product Research: Analyzing opportunities in ${category} category`);
+    console.log(`🔍 Product Research: Analyzing opportunities for problem "${constraints.problem}" with budget $${constraints.maxCost}-$${constraints.targetPrice}`);
     
-    // Construct the actionable research query - no generic summaries allowed
-    const query = `For the ${category} category, identify 3 specific product opportunities. For each product, provide concrete data points (NO VAGUE LANGUAGE):
+    // Construct constraint-based research query - force specific, actionable matches
+    const query = `Find 3 specific product opportunities that match these exact constraints:
+
+**CONSTRAINTS:**
+- Solves problem: ${constraints.problem}
+- Target customer: ${constraints.targetCustomer}
+- Manufacturing cost under: $${constraints.maxCost}
+- Can sell for: $${constraints.targetPrice}
+- Testable with: ${constraints.validationBudget}
+- Content creation capability: ${constraints.contentCapability.join(', ')}
+- Timeline: ${constraints.timeline}
+${constraints.competitorReference ? `- Similar to: ${constraints.competitorReference}` : ''}
+
+For each opportunity provide concrete data points (NO VAGUE LANGUAGE):
 
 REQUIRED DATA FOR EACH PRODUCT:
 
-1. SPECIFIC PRODUCT: Exact product description with specific features (not "${category} devices" but "LED red light therapy wand for at-home face treatments")
+1. SPECIFIC PRODUCT: Exact product description with specific features that solves the problem "${constraints.problem}" for ${constraints.targetCustomer}
 
 2. DEMAND PROOF: 
    - Monthly Google search volume for this exact product type
@@ -102,14 +123,15 @@ Return structured data with concrete numbers. If data isn't available, say "Data
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content || '';
     
-    // Parse the response to extract product opportunities
-    const opportunities = parseProductOpportunities(content, category, query);
+    // Parse the response to extract product opportunities matching constraints
+    const opportunities = parseProductOpportunities(content, constraints, query);
     
-    console.log(`✅ Product Research: Found ${opportunities.length} opportunities for ${category}`);
+    console.log(`✅ Product Research: Found ${opportunities.length} constraint-matched opportunities`);
     
     res.json({
       success: true,
-      category,
+      category: `${constraints.problem} - ${constraints.targetCustomer}`,
+      constraints,
       query,
       opportunities,
       rawContent: content,
@@ -244,7 +266,7 @@ router.delete('/opportunities/:id', async (req, res) => {
 /**
  * Parse Perplexity response into structured, actionable product opportunities
  */
-function parseProductOpportunities(content: string, category: string, query: string) {
+function parseProductOpportunities(content: string, constraints: any, query: string) {
   const opportunities: Array<{
     // Legacy fields for backward compatibility
     opportunity: string;
@@ -285,7 +307,7 @@ function parseProductOpportunities(content: string, category: string, query: str
     for (const section of sections) {
       if (!section.trim() || section.length < 50) continue;
       
-      const opportunity = parseProductSection(section, category);
+      const opportunity = parseProductSection(section, constraints);
       if (opportunity) {
         opportunities.push(opportunity);
       }
@@ -293,14 +315,14 @@ function parseProductOpportunities(content: string, category: string, query: str
     
     // If structured parsing failed, try fallback parsing
     if (opportunities.length === 0) {
-      const fallbackOpportunity = createFallbackOpportunity(content, category);
+      const fallbackOpportunity = createFallbackOpportunity(content, constraints);
       opportunities.push(fallbackOpportunity);
     }
     
   } catch (error) {
     console.error('❌ Parsing error:', error);
     // Create fallback opportunity
-    const fallbackOpportunity = createFallbackOpportunity(content, category);
+    const fallbackOpportunity = createFallbackOpportunity(content, constraints);
     opportunities.push(fallbackOpportunity);
   }
   
@@ -310,7 +332,7 @@ function parseProductOpportunities(content: string, category: string, query: str
 /**
  * Parse individual product section from AI response
  */
-function parseProductSection(section: string, category: string) {
+function parseProductSection(section: string, constraints: any) {
   try {
     const lines = section.split('\n').map(line => line.trim()).filter(Boolean);
     
@@ -470,16 +492,16 @@ function calculateScore(margin?: number | null, searchVolume?: number | null, sa
 /**
  * Create fallback opportunity when parsing fails
  */
-function createFallbackOpportunity(content: string, category: string) {
+function createFallbackOpportunity(content: string, constraints: any) {
   return {
-    opportunity: `Product opportunity analysis for ${category}`,
+    opportunity: `Product opportunity for: ${constraints.problem}`,
     reasoning: "AI analysis completed - review full response for details",
-    specificProduct: `Specific ${category} product opportunity`,
-    whyThisProduct: "Market analysis indicates potential",
+    specificProduct: `Product that solves: ${constraints.problem}`,
+    whyThisProduct: `Addresses the problem: ${constraints.problem}`,
     marketSaturation: "MEDIUM",
     saturationReasoning: "Standard market competition",
-    targetDemographic: "Target customer analysis needed",
-    customerPainPoint: "Customer problem to be solved",
+    targetDemographic: constraints.targetCustomer,
+    customerPainPoint: constraints.problem,
     testDifficulty: "MEDIUM",
     testDifficultyReasoning: "Standard testing approach",
     recommendation: "MAYBE",
