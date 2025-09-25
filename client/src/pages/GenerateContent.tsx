@@ -25,7 +25,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { UsageStatistics } from "@/components/UsageStatistics";
-import { type TemplateType } from '@shared/constants';
+import { type TemplateType, TONE_OPTIONS } from '@shared/constants';
 
 // Video duration interface
 interface VideoDuration {
@@ -352,26 +352,26 @@ ${config.hashtags.join(' ')}`;
 
   // Handle content generation
   // Auto-suggest template based on viral inspiration format
-  const autoSuggestTemplate = (viralFormat: string): string => {
+  const autoSuggestTemplate = (viralFormat: string): TemplateType => {
     const format = viralFormat.toLowerCase();
     
-    // Map viral formats to available template types
-    if (format.includes('demo') || format.includes('demonstration')) return 'demo_script';
-    if (format.includes('voiceover') && format.includes('story')) return 'pov_story';
-    if (format.includes('skit') || format.includes('dialogue')) return 'skit_dialogue';
-    if (format.includes('reaction') || format.includes('react')) return 'reaction_video';
-    if (format.includes('tutorial') || format.includes('how-to')) return 'tutorial_guide';
-    if (format.includes('unboxing') || format.includes('unbox')) return 'unboxing_reveal';
-    if (format.includes('review') || format.includes('testing')) return 'product_review';
-    if (format.includes('comparison') || format.includes('vs')) return 'comparison_test';
-    if (format.includes('testimonial') || format.includes('before_after')) return 'testimonial';
-    if (format.includes('lifestyle') || format.includes('day_in_life')) return 'lifestyle_integration';
+    // Map viral formats to available template types (using valid TemplateType values)
+    if (format.includes('demo') || format.includes('demonstration')) return 'short_video';
+    if (format.includes('voiceover') && format.includes('story')) return 'influencer_caption';
+    if (format.includes('skit') || format.includes('dialogue')) return 'short_video';
+    if (format.includes('reaction') || format.includes('react')) return 'influencer_caption';
+    if (format.includes('tutorial') || format.includes('how-to')) return 'routine_kit';
+    if (format.includes('unboxing') || format.includes('unbox')) return 'short_video';
+    if (format.includes('review') || format.includes('testing')) return 'product_comparison';
+    if (format.includes('comparison') || format.includes('vs')) return 'product_comparison';
+    if (format.includes('testimonial') || format.includes('before_after')) return 'influencer_caption';
+    if (format.includes('lifestyle') || format.includes('day_in_life')) return 'influencer_caption';
     
     // Default fallbacks based on common patterns
-    if (format.includes('quick') || format.includes('60_second')) return 'quick_review';
-    if (format.includes('hook') || format.includes('attention')) return 'viral_hook';
+    if (format.includes('quick') || format.includes('60_second')) return 'short_video';
+    if (format.includes('hook') || format.includes('attention')) return 'influencer_caption';
     
-    return 'surprise_me'; // fallback to let AI choose
+    return 'short_video'; // fallback to short video for TikTok
   };
 
   const handleGenerateContent = async () => {
@@ -1024,6 +1024,21 @@ ${config.hashtags.join(' ')}`;
                 checked={useSmartStyle}
                 onCheckedChange={setUseSmartStyle}
               />
+            </div>
+
+            {/* Total Variations Counter */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="text-sm font-medium text-blue-800">Total Variations</h4>
+                  <p className="text-xs text-blue-600">
+                    {selectedTemplates.length} template{selectedTemplates.length !== 1 ? 's' : ''} × {TONE_OPTIONS.length} tones × {aiModel === 'both' ? '2' : '1'} AI model{aiModel === 'both' ? 's' : ''}
+                  </p>
+                </div>
+                <div className="text-2xl font-bold text-blue-800">
+                  {selectedTemplates.length * TONE_OPTIONS.length * (aiModel === 'both' ? 2 : 1)}
+                </div>
+              </div>
             </div>
 
             {/* Generate Button */}

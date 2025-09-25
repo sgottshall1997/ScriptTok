@@ -1,0 +1,132 @@
+Please thoroughly debug, test, fix, and enhance the TikTok Content Generator functionality by following these comprehensive test scenarios:
+**CORE FUNCTIONALITY TESTING:**
+1. **Multi-Template Selection Testing:**
+   - Navigate to /generate-content
+   - Test single template selection (influencer_caption)
+   - Test multi-template selection (select 2-3 templates like influencer_caption + short_video + product_comparison)
+   - Verify the template selector highlights selected templates properly
+   - Ensure the "Total Variations" counter at bottom shows correct count (templates × tones × AI models)
+   - Test "Select All" and "Clear All" buttons
+   - Verify error handling when no templates are selected
+2. **AI Model Selection Testing:**
+   - Test ChatGPT-only generation with product "CeraVe Hydrating Cleanser" in beauty niche
+   - Test Claude-only generation with same product
+   - Test "Both" option to generate side-by-side ChatGPT vs Claude results
+   - Verify comparison results display properly with both AI outputs
+   - Test switching between single results and comparison view
+   - Ensure AI model selection persists between generations
+3. **Content Generation Flow:**
+   - Fill form: Product "Fenty Beauty Gloss Bomb", Niche "beauty", Template "influencer_caption", Tone "enthusiastic", AI Model "both"
+   - Click generate and verify loading states work
+   - Confirm content generates successfully for both AI models
+   - Test regeneration functionality
+   - Verify video duration estimation appears
+   - Test copy-to-clipboard functionality
+4. **Content History Integration:**
+   - After each successful generation, verify content is automatically saved to content history
+   - Navigate to content history page and confirm all generated content appears
+   - Verify content history includes:
+     - Product name
+     - Selected templates
+     - AI model used
+     - Generated timestamp
+     - Full content output
+     - Platform captions (TikTok)
+   - Test content history filtering by niche, template, and date
+   - Verify content history persistence across browser sessions
+5. **Rating System Testing:**
+   - For each generated content piece, test the rating functionality:
+     - Click "Rate Content" button on content history items
+     - Test overall rating (1-100 scale)
+     - Test platform-specific ratings (Instagram, TikTok, YouTube, Twitter)
+     - Add notes to ratings
+     - Save ratings and verify they persist
+     - Test rating display on content history list
+     - Verify average rating calculations
+6. **Usage Statistics Verification:**
+   - Confirm usage statistics at top of page update after each generation
+   - Test: Total Generations, This Month, Today counters
+   - Verify Top Template and Top Niche tracking
+   - Check Current Streak functionality
+7. **Advanced Features Testing:**
+   - Test "Use my best-rated style" toggle with existing rated content
+   - Verify viral inspiration integration (if available)
+   - Test custom hook generator functionality
+   - Verify TikTok caption generation with hashtags and CTAs
+**ERROR HANDLING & EDGE CASES:**
+8. **Input Validation:**
+   - Test empty product name handling
+   - Test special characters in product names
+   - Test very long product names (100+ characters)
+   - Test generation with no templates selected
+   - Verify proper error messages display
+9. **API Failure Handling:**
+   - Test behavior when AI generation fails
+   - Verify fallback content generation works
+   - Test network timeout scenarios
+   - Ensure proper error messages are shown to user
+10. **Performance Testing:**
+    - Test multiple rapid generations
+    - Verify caching works for repeated identical requests
+    - Test with large content history (generate 10+ items)
+    - Check memory usage during extended use
+**COMPREHENSIVE TEST SEQUENCE:**
+Execute this complete test sequence:
+Test 1: Single Template + Single AI Model
+
+Product: "Ordinary Niacinamide Serum"
+Niche: "beauty"
+Template: "influencer_caption"
+Tone: "enthusiastic"
+AI Model: "claude"
+Verify: Content generates, saves to history, rating system works
+Test 2: Multi-Template + Single AI Model
+
+Product: "Nike Air Force 1"
+Niche: "fashion"
+Templates: "influencer_caption" + "short_video"
+Tone: "casual"
+AI Model: "chatgpt"
+Verify: Multiple outputs generate, history saves all variants
+Test 3: Single Template + Both AI Models
+
+Product: "Protein Powder Vanilla"
+Niche: "fitness"
+Template: "product_comparison"
+Tone: "professional"
+AI Model: "both"
+Verify: Side-by-side comparison works, both save to history
+Test 4: Multi-Template + Both AI Models
+
+Product: "iPhone 15 Pro"
+Niche: "tech"
+Templates: "influencer_caption" + "product_comparison"
+Tone: "enthusiastic"
+AI Model: "both"
+Verify: Complex generation matrix works (2 templates × 2 AI models = 4 outputs)
+Test 5: Rating System Comprehensive Test
+
+Rate all generated content from Tests 1-4
+Use different rating scales (20, 50, 80, 95)
+Add detailed notes to each rating
+Verify ratings display in content history
+Test rating-based smart style recommendations
+**FIXES REQUIRED:**
+If any functionality is broken, please fix:
+- Template selection UI issues
+- AI model routing problems  
+- Content history saving failures
+- Rating system database integration
+- Usage statistics calculation errors
+- Error handling and user feedback
+- Performance optimization needs
+**VERIFICATION STEPS:**
+After all fixes:
+1. Run through the complete test sequence above
+2. Verify all content appears in content history with proper metadata
+3. Confirm rating system works end-to-end
+4. Test content generation with various combinations
+5. Ensure proper error handling for all edge cases
+6. Verify usage statistics update correctly
+7. Test the "Total Variations" counter shows accurate counts
+Please provide detailed logs of each test result and fix any issues discovered during testing.
