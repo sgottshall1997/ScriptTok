@@ -81,12 +81,8 @@ const GenerateContent = () => {
       // console.log('🔍 Setting niche from URL:', nicheParam);
     }
   }, [location, window.location.search]);
-  const [productUrl, setProductUrl] = useState('');
-  const [affiliateNetwork, setAffiliateNetwork] = useState('amazon');
-  const [affiliateId, setAffiliateId] = useState('sgottshall107-20');
-  const [smartRedirectUrl, setSmartRedirectUrl] = useState('');
-  const [selectedPlatforms, setSelectedPlatforms] = useState<string[]>(['tiktok']);
-  const [scheduleTime, setScheduleTime] = useState('now');
+  // Hardcoded to TikTok only for simplified generator
+  const selectedPlatforms = ['tiktok'];
   const [templateType, setTemplateType] = useState(templateFromUrl || 'social_media_post');
   const [tone, setTone] = useState('enthusiastic');
   const [isHookGeneratorOpen, setIsHookGeneratorOpen] = useState(false);
@@ -117,53 +113,6 @@ const GenerateContent = () => {
 
 
 
-  // Generate smart redirect URL
-  const generateRedirectUrl = async () => {
-    if (!productUrl || !affiliateId) {
-      toast({
-        title: "Missing Information",
-        description: "Please enter both Product URL and Affiliate ID",
-        variant: "destructive",
-      });
-      return;
-    }
-    
-    try {
-      // Create the redirect mapping on the server
-      const response = await fetch('/api/create-redirect', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          productUrl,
-          affiliateId,
-          affiliateNetwork,
-          productName: selectedProduct,
-          niche: selectedNiche
-        }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to create redirect');
-      }
-      
-      const data = await response.json();
-      setSmartRedirectUrl(data.redirectUrl);
-      
-      toast({
-        title: "Smart Redirect Created",
-        description: "Your trackable affiliate link is ready!",
-      });
-    } catch (error) {
-      console.error('Error creating redirect:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create smart redirect. Please try again.",
-        variant: "destructive",
-      });
-    }
-  };
 
   // Fetch viral inspiration using Perplexity API for real trending insights
   const fetchViralInspirationForProduct = async (productName: string) => {
@@ -180,38 +129,11 @@ const GenerateContent = () => {
     
     try {
       // DISABLED: Viral video inspiration functionality temporarily disabled
-      // const { 
-      //   fetchViralVideoInspo, 
-      //   fetchOptimalViralResearch 
-      // } = await import('@/lib/fetchViralVideoInspo');
-      
-      // DISABLED: Legacy viral research disabled, using basic content generation
-      // const optimalResult = await fetchOptimalViralResearch(productName, selectedNiche, true);
-      
-      if (optimalResult.type === 'enhanced' && optimalResult.data) {
-        console.log('✅ Enhanced viral research found:', optimalResult.data);
-        setEnhancedViralResearch(optimalResult.data);
-        
-        // Extract basic inspiration from enhanced data for backward compatibility
-        const firstExample = optimalResult.data.viralExamples?.[0];
-        if (firstExample) {
-          setViralInspo({
-            hook: firstExample.hook,
-            format: firstExample.format,
-            caption: firstExample.contentStructure?.demonstration || 'Enhanced viral content demo',
-            hashtags: firstExample.hashtags || []
-          });
-        }
-      } else if (optimalResult.type === 'legacy' && optimalResult.data) {
-        console.log('✅ Legacy viral inspiration found:', optimalResult.data);
-        setViralInspo(optimalResult.data as any);
-        setEnhancedViralResearch(null);
-      } else {
-        // If no data found, clear state
-        setViralInspo(null);
-        setEnhancedViralResearch(null);
-        console.warn('No viral examples found for', productName);
-      }
+      // Viral research functionality is currently disabled
+      // Clear viral inspiration state for now
+      setViralInspo(null);
+      setEnhancedViralResearch(null);
+      console.log('Viral research is currently disabled');
     } catch (error) {
       console.error('Error fetching viral inspiration:', error);
       setViralInspo(null);
@@ -281,37 +203,22 @@ const GenerateContent = () => {
     });
   };
 
-  // Generate platform-specific captions for displaying in UI (uses current state)
+  // Generate TikTok-optimized caption
   const generatePlatformCaption = (platform: string): string => {
     if (!generatedContent || !selectedProduct) return '';
 
     const productName = selectedProduct;
     const mainContent = generatedContent.content;
-    const linkUrl = smartRedirectUrl || productUrl || '#';
     
     // Extract first sentence or create a short description
     const shortDesc = mainContent.split('.')[0] + (mainContent.split('.').length > 1 ? '.' : '');
     
-    const platformConfigs = {
-      tiktok: {
-        cta: "Tap the link to grab it now! 👆",
-        hashtags: ["#fyp", "#viral", `#${selectedNiche}`, "#trending"],
-        maxLength: 150
-      },
-      instagram: {
-        cta: "Link in bio to get yours! ✨",
-        hashtags: [`#${selectedNiche}`, "#aesthetic", "#musthave", "#lifestyle"],
-        maxLength: 200
-      },
-      youtube: {
-        cta: "Check the description for the link! 📝",
-        hashtags: [`#${selectedNiche}`, "#review", "#recommendation", "#shopping"],
-        maxLength: 250
-      }
+    // TikTok configuration only
+    const config = {
+      cta: "Tap the link to grab it now! 👆",
+      hashtags: ["#fyp", "#viral", `#${selectedNiche}`, "#trending"],
+      maxLength: 150
     };
-
-    const config = platformConfigs[platform as keyof typeof platformConfigs];
-    if (!config) return '';
 
     // Create caption components
     const hook = generatedContent.hook || generateDynamicHook(productName, selectedNiche);
@@ -323,8 +230,6 @@ const GenerateContent = () => {
 ${description}
 
 ${config.cta}
-
-${linkUrl}
 
 ${config.hashtags.join(' ')}`;
 
@@ -413,31 +318,12 @@ ${config.hashtags.join(' ')}`;
     // Extract first sentence or create a short description
     const shortDesc = mainContent.split('.')[0] + (mainContent.split('.').length > 1 ? '.' : '');
     
-    const platformConfigs = {
-      tiktok: {
-        cta: "Tap the link to grab it now! 👆",
-        hashtags: ["#fyp", "#viral", `#${niche}`, "#trending"],
-        maxLength: 150
-      },
-      instagram: {
-        cta: "Link in bio to get yours! ✨",
-        hashtags: [`#${niche}`, "#aesthetic", "#musthave", "#lifestyle"],
-        maxLength: 200
-      },
-      youtube: {
-        cta: "Check the description for the link! 📝",
-        hashtags: [`#${niche}`, "#review", "#recommendation", "#shopping"],
-        maxLength: 250
-      },
-      twitter: {
-        cta: "Check the link! 🔗",
-        hashtags: [`#${niche}`, "#trending", "#musthave"],
-        maxLength: 200
-      }
+    // TikTok configuration only
+    const config = {
+      cta: "Tap the link to grab it now! 👆",
+      hashtags: ["#fyp", "#viral", `#${niche}`, "#trending"],
+      maxLength: 150
     };
-
-    const config = platformConfigs[platform as keyof typeof platformConfigs];
-    if (!config) return '';
 
     // Create caption components
     const hook = contentData.hook || generateDynamicHook(productName, niche);
@@ -449,8 +335,6 @@ ${config.hashtags.join(' ')}`;
 ${description}
 
 ${config.cta}
-
-${linkUrl}
 
 ${config.hashtags.join(' ')}`;
 
@@ -520,11 +404,11 @@ ${config.hashtags.join(' ')}`;
         body: JSON.stringify({
           product: selectedProduct,
           niche: selectedNiche,
-          platforms: selectedPlatforms,
+          platforms: ['tiktok'], // TikTok-only generator
           templateType: finalTemplateType,
           tone,
           customHook,
-          affiliateUrl: smartRedirectUrl || productUrl,
+          // No affiliate URL needed for TikTok-only generator
           viralInspiration: viralInspo, // Include viral inspiration data
           templateSource, // Track how template was selected
           useSmartStyle, // Enable smart style recommendations
@@ -541,46 +425,31 @@ ${config.hashtags.join(' ')}`;
           const contentData: GeneratedContent = {
             content: result.data.content,
             hook: result.data.customHook || '',
-            platform: selectedPlatforms[0] || 'tiktok',
+            platform: 'tiktok',
             niche: selectedNiche,
           };
           
           setGeneratedContent(contentData);
           
-          // Generate platform-specific captions for saving to history
-          const platformCaptions: any = {};
-          selectedPlatforms.forEach(platform => {
-            const caption = generatePlatformCaptionForSaving(platform, contentData, selectedProduct, smartRedirectUrl || productUrl, selectedNiche);
-            switch(platform) {
-              case 'tiktok':
-                platformCaptions.tiktokCaption = caption;
-                break;
-              case 'instagram':
-                platformCaptions.instagramCaption = caption;
-                break;
-              case 'youtube':
-                platformCaptions.youtubeCaption = caption;
-                break;
-              case 'twitter':
-                platformCaptions.twitterCaption = caption;
-                break;
-            }
-          });
+          // Generate TikTok caption for saving to history
+          const tiktokCaption = generatePlatformCaptionForSaving('tiktok', contentData, selectedProduct, '', selectedNiche);
+          const platformCaptions = {
+            tiktokCaption
+          };
 
           // Save to content generation history
-          const directAffiliateLink = productUrl && affiliateId ? 
-            `${productUrl}${productUrl.includes('?') ? '&' : '?'}tag=${affiliateId}` : '';
+          const directAffiliateLink = ''; // No affiliate links for TikTok-only generator
           
           ContentHistoryManager.saveEntry({
             productName: selectedProduct,
             niche: selectedNiche,
-            platformsSelected: selectedPlatforms,
+            platformsSelected: ['tiktok'], // TikTok-only
             templateUsed: templateType,
             tone: tone,
             generatedOutput: {
               content: result.data.content,
               hook: result.data.customHook || '',
-              platform: selectedPlatforms[0] || 'tiktok',
+              platform: 'tiktok',
               niche: selectedNiche,
               hashtags: result.data.hashtags || [],
               affiliateLink: directAffiliateLink,
@@ -624,14 +493,6 @@ ${config.hashtags.join(' ')}`;
     }
   };
 
-  // Platform toggle
-  const togglePlatform = (platform: string) => {
-    setSelectedPlatforms(prev => 
-      prev.includes(platform) 
-        ? prev.filter(p => p !== platform)
-        : [...prev, platform]
-    );
-  };
 
   // Niche data
   const niches = [
@@ -644,22 +505,15 @@ ${config.hashtags.join(' ')}`;
     { id: 'pets', name: 'Pets', color: 'bg-yellow-100 text-yellow-800' },
   ];
 
-  const platforms = [
-    { id: 'tiktok', name: 'TikTok', color: 'bg-black text-white' },
-    { id: 'instagram', name: 'Instagram', color: 'bg-gradient-to-r from-purple-400 to-pink-400 text-white' },
-    { id: 'youtube', name: 'YouTube', color: 'bg-red-500 text-white' },
-    { id: 'twitter', name: 'Twitter', color: 'bg-blue-400 text-white' },
-    { id: 'other', name: 'Other', color: 'bg-gray-500 text-white' },
-  ];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900">⚡ Viral Content Factory</h1>
+          <h1 className="text-3xl font-bold text-gray-900">🎵 TikTok Content Generator</h1>
           <p className="text-lg text-muted-foreground">
-            From trending product to viral content in under 60 seconds
+            Generate viral TikTok content in under 60 seconds
           </p>
         </div>
 
@@ -667,12 +521,12 @@ ${config.hashtags.join(' ')}`;
 
         {/* Content Generation Module - Vertical Stack Layout */}
         <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
-          {/* Product & Affiliate Setup */}
+          {/* Product Setup */}
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-blue-500" />
-                📄 Product & Affiliate Setup
+                📄 Product Setup
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -704,67 +558,6 @@ ${config.hashtags.join(' ')}`;
               </Select>
             </div>
 
-            {/* Affiliate Link Generator */}
-            <div className="border rounded-lg p-4 space-y-3 bg-gray-50">
-              <h4 className="font-medium text-sm">🔗 Affiliate Link Generator</h4>
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <Label htmlFor="network" className="text-xs">Network</Label>
-                  <Select value={affiliateNetwork} onValueChange={setAffiliateNetwork}>
-                    <SelectTrigger className="h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="amazon">Amazon</SelectItem>
-                      <SelectItem value="shareasale">ShareASale</SelectItem>
-                      <SelectItem value="cj">Commission Junction</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                
-                <div>
-                  <Label htmlFor="affiliate-id" className="text-xs">Affiliate ID</Label>
-                  <Input
-                    id="affiliate-id"
-                    className="h-8"
-                    value={affiliateId}
-                    onChange={(e) => setAffiliateId(e.target.value)}
-                    placeholder="Your ID..."
-                  />
-                </div>
-              </div>
-
-              <div>
-                <Label htmlFor="product-url" className="text-xs">Product URL</Label>
-                <Input
-                  id="product-url"
-                  className="h-8"
-                  value={productUrl}
-                  onChange={(e) => setProductUrl(e.target.value)}
-                  placeholder="https://..."
-                />
-              </div>
-
-              {productUrl && affiliateId && (
-                <div className="text-xs bg-blue-50 p-3 rounded border border-blue-200">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-blue-700 font-medium">✅ Amazon Affiliate Link</span>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => copyToClipboard(`${productUrl}${productUrl.includes('?') ? '&' : '?'}tag=${affiliateId}`, 'Amazon affiliate link')}
-                      className="h-6 px-2 text-xs"
-                    >
-                      <Copy className="h-3 w-3 mr-1" />
-                      Copy
-                    </Button>
-                  </div>
-                  <code className="block text-blue-800 bg-white p-2 rounded border text-xs">{`${productUrl}${productUrl.includes('?') ? '&' : '?'}tag=${affiliateId}`}</code>
-                  <p className="text-blue-600 text-xs mt-2">Direct Amazon link with your associate tag for proper tracking.</p>
-                </div>
-              )}
-            </div>
           </CardContent>
         </Card>
 
@@ -960,38 +753,6 @@ ${config.hashtags.join(' ')}`;
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            {/* Platform Selector */}
-            <div>
-              <Label className="text-sm font-medium">Platforms</Label>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {platforms.map((platform) => (
-                  <Button
-                    key={platform.id}
-                    size="sm"
-                    variant={selectedPlatforms.includes(platform.id) ? "default" : "outline"}
-                    className={selectedPlatforms.includes(platform.id) ? platform.color : ""}
-                    onClick={() => togglePlatform(platform.id)}
-                  >
-                    {platform.name}
-                  </Button>
-                ))}
-              </div>
-            </div>
-
-            {/* Schedule */}
-            <div>
-              <Label htmlFor="schedule">Schedule</Label>
-              <Select value={scheduleTime} onValueChange={setScheduleTime}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="now">Post Now</SelectItem>
-                  <SelectItem value="1hour">1 Hour Later</SelectItem>
-                  <SelectItem value="custom">Schedule Later</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
 
             {/* Template Type */}
             <div>
@@ -1082,7 +843,7 @@ ${config.hashtags.join(' ')}`;
               ) : (
                 <>
                   <Zap className="h-5 w-5 mr-2" />
-                  🚀 Generate Viral Content (60s)
+                  🚀 Generate TikTok Content
                 </>
               )}
             </Button>
@@ -1129,7 +890,7 @@ ${config.hashtags.join(' ')}`;
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-green-500" />
-                ✨ Generated Content
+                ✨ Generated TikTok Content
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -1172,7 +933,7 @@ ${config.hashtags.join(' ')}`;
                 <div className="space-y-4 border-t pt-6">
                   <div className="flex items-center justify-between">
                     <h4 className="font-semibold text-lg flex items-center gap-2">
-                      🎯 Platform-Specific Captions
+                      🎯 TikTok Caption
                     </h4>
                     <div className="flex items-center gap-2">
                       <Switch 
@@ -1186,7 +947,7 @@ ${config.hashtags.join(' ')}`;
                   
                   {!showPlatformCaptions && (
                     <p className="text-sm text-muted-foreground">
-                      Toggle to show platform-optimized captions with hashtags and CTAs
+                      Toggle to show TikTok-optimized caption with hashtags and CTAs
                     </p>
                   )}
                   
@@ -1213,47 +974,6 @@ ${config.hashtags.join(' ')}`;
                         </div>
                       </div>
 
-                      {/* Instagram Caption */}
-                      <div className="bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white p-4 rounded-lg border">
-                        <div className="flex items-center justify-between mb-3">
-                          <h5 className="font-semibold flex items-center gap-2 text-white">
-                            📸 Instagram Caption
-                          </h5>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => copyToClipboard(generatePlatformCaption('instagram'), 'Instagram caption')}
-                            className="text-xs bg-white text-purple-600 hover:bg-gray-100"
-                          >
-                            <Copy className="h-3 w-3 mr-1" />
-                            Copy
-                          </Button>
-                        </div>
-                        <div className="bg-black bg-opacity-30 backdrop-blur-sm p-4 rounded border border-white/20 text-sm font-mono whitespace-pre-wrap text-white leading-relaxed max-h-40 overflow-y-auto">
-                          {generatePlatformCaption('instagram')}
-                        </div>
-                      </div>
-
-                      {/* YouTube Caption */}
-                      <div className="bg-red-600 text-white p-4 rounded-lg border">
-                        <div className="flex items-center justify-between mb-3">
-                          <h5 className="font-semibold flex items-center gap-2 text-white">
-                            ▶️ YouTube Caption
-                          </h5>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => copyToClipboard(generatePlatformCaption('youtube'), 'YouTube caption')}
-                            className="text-xs bg-white text-red-600 hover:bg-gray-100"
-                          >
-                            <Copy className="h-3 w-3 mr-1" />
-                            Copy
-                          </Button>
-                        </div>
-                        <div className="bg-red-800 p-4 rounded border border-red-700 text-sm font-mono whitespace-pre-wrap text-red-100 leading-relaxed max-h-40 overflow-y-auto">
-                          {generatePlatformCaption('youtube')}
-                        </div>
-                      </div>
                     </div>
                   )}
                 </div>
@@ -1293,35 +1013,32 @@ ${config.hashtags.join(' ')}`;
         )}
 
         <AboutThisPage 
-          title="Niche Content Generator"
-          whatItDoes="Advanced multi-niche content generation system with template-based creation. Supports all major niches (skincare, fitness, cooking, tech, etc.) with platform-specific optimization for Instagram, TikTok, YouTube, Twitter, and Facebook. Features smart hooks, trending product integration, and video duration calculation."
+          title="TikTok Content Generator"
+          whatItDoes="Streamlined TikTok content generation system with template-based creation. Supports all major niches (skincare, fitness, cooking, tech, etc.) optimized specifically for TikTok. Features viral hooks, trending product integration, and video duration calculation for maximum engagement."
           setupRequirements={[
             "Navigate via niche URL (/niche/skincare) or select niche from dropdown",
-            "Choose content type (Instagram Reel, TikTok Video, YouTube Short, etc.)",
-            "Select or customize content template for your specific niche",
+            "Choose from TikTok-optimized content templates",
             "Add trending product names or topics for personalization"
           ]}
           usageInstructions={[
             "Select your target niche from the available options",
-            "Pick content format and platform for optimal sizing and style",
-            "Choose from curated templates or create custom prompts",
+            "Choose from curated TikTok templates for viral content",
             "Add specific product names to leverage trending items",
-            "Generate content and review the complete package (script, captions, hashtags)",
-            "Copy individual sections or save to content history for future use",
-            "Use video duration feedback to optimize content length"
+            "Generate content and review the TikTok-optimized caption with hashtags",
+            "Copy the content or save to content history for future use",
+            "Use video duration feedback to optimize content length for TikTok"
           ]}
           relatedLinks={[
             {name: "Template Explorer", path: "/template-explorer"},
             {name: "Trending AI Picks", path: "/trending-ai-picks"},
-            {name: "Content History", path: "/content-history"},
-            {name: "Unified Content Generator", path: "/unified-content-generation"}
+            {name: "Content History", path: "/content-history"}
           ]}
           notes={[
             "URL parameters auto-populate niche and template selections for quick access",
-            "Video duration calculations help optimize content for platform algorithms",
-            "Generated content includes platform-specific character limits and formatting",
+            "Video duration calculations help optimize content for TikTok algorithms",
+            "Generated content includes TikTok-specific character limits and hashtag formatting",
             "Content history automatically saves all generated items for future reference",
-            "Works best with specific, trending product names for maximum engagement"
+            "Works best with specific, trending product names for maximum TikTok engagement"
           ]}
         />
       </div>

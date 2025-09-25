@@ -1,0 +1,43 @@
+You are tasked with simplifying the TikTok Generator page in the GlowBot application. Please make these specific changes to streamline it as a TikTok-only content generator:
+TASK 1: Remove Affiliate Link Generator Section
+- In GenerateContent.tsx, remove the entire "Affiliate Link Generator" section from the Product & Affiliate Setup card
+- Remove all affiliate-related state variables: productUrl, affiliateNetwork, affiliateId, smartRedirectUrl
+- Remove the generateRedirectUrl function and all affiliate link generation logic
+- Remove affiliate-related UI components including network selector, affiliate ID input, and product URL input
+- Remove the affiliate link preview display section
+- Keep only the Product Name and Niche fields in the Product & Affiliate Setup card
+TASK 2: Remove Platform Selection (TikTok Only)
+- Remove the platform selector UI from the Content Setup card
+- Remove selectedPlatforms state and hardcode it to ['tiktok'] only
+- Remove the togglePlatform function and platforms array
+- Remove all platform-specific caption generation except TikTok
+- In the generated content output, show only the TikTok caption, remove Instagram, YouTube, and other platform captions
+- Update the showPlatformCaptions section to only display TikTok content
+- Remove the platform-specific styling and buttons for other platforms
+TASK 3: Remove Scheduler Section
+- Remove the Schedule field and scheduleTime state from the Content Setup card
+- Remove all scheduling-related UI components and dropdowns
+- Remove any schedule-related logic in the handleGenerateContent function
+- This should be a simple generator that creates content immediately, not a scheduler
+TASK 4: Update UI Labels and Descriptions
+- Change page title from "Viral Content Factory" to "TikTok Content Generator"
+- Update the description to "Generate viral TikTok content in under 60 seconds"
+- Update button text from "Generate Viral Content (60s)" to "Generate TikTok Content"
+- Remove any references to "multi-platform" or "cross-platform" in the UI
+- Update the generated content card title to "Generated TikTok Content"
+TASK 5: Clean Up Related Functions
+- Simplify generatePlatformCaption to only handle TikTok
+- Remove platform-specific logic from generatePlatformCaptionForSaving
+- Update ContentHistoryManager.saveEntry to only save TikTok-specific data
+- Remove unused platform constants and configurations
+EXPECTED RESULT:
+The GenerateContent page should be a clean, focused TikTok content generator with:
+- Product name and niche selection only
+- Template type and tone selection
+- TikTok-specific content generation
+- Single TikTok caption output
+- No affiliate link generation
+- No platform selection
+- No scheduling options
+- Immediate content generation only
+Please ensure all removed functionality is cleanly eliminated without breaking the core TikTok content generation workflow.
