@@ -34,6 +34,14 @@ import {
   CookaingContentRating, InsertCookaingContentRating,
   ContentLink, InsertContentLink,
   ContentExport, InsertContentExport,
+  // Customer Support Center types
+  SupportCategory, InsertSupportCategory,
+  SupportTicket, InsertSupportTicket,
+  SupportResponse, InsertSupportResponse,
+  KnowledgeBaseArticle, InsertKnowledgeBaseArticle,
+  LiveChatSession, InsertLiveChatSession,
+  LiveChatMessage, InsertLiveChatMessage,
+  SupportMetric, InsertSupportMetric,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
@@ -43,7 +51,10 @@ import {
   organizations, contacts, campaigns, workflows, forms, formSubmissions, affiliateProducts,
   analyticsEvents, abTests, abAssignments, abConversions, costs,
   // CookAIng Content History & Rating tables
-  cookaingContentVersions, cookaingContentRatings, contentLinks, contentExports
+  cookaingContentVersions, cookaingContentRatings, contentLinks, contentExports,
+  // Customer Support Center tables
+  supportCategories, supportTickets, supportResponses, knowledgeBaseArticles,
+  liveChatSessions, liveChatMessages, supportMetrics
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -306,6 +317,65 @@ export interface IStorage {
   saveContentExport(exportData: InsertContentExport): Promise<ContentExport>;
   getContentExports(filter?: { versionId?: number; format?: string; limit?: number }): Promise<ContentExport[]>;
   getContentExportById(id: number): Promise<ContentExport | undefined>;
+
+  // Customer Support Center operations
+  // Support Category operations
+  createSupportCategory(category: InsertSupportCategory): Promise<SupportCategory>;
+  getSupportCategories(): Promise<SupportCategory[]>;
+  getSupportCategory(id: number): Promise<SupportCategory | undefined>;
+  updateSupportCategory(id: number, updates: Partial<InsertSupportCategory>): Promise<SupportCategory | undefined>;
+  deleteSupportCategory(id: number): Promise<boolean>;
+
+  // Support Ticket operations
+  createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket>;
+  getSupportTickets(filter?: { status?: string; priority?: string; categoryId?: number; limit?: number }): Promise<SupportTicket[]>;
+  getSupportTicket(id: number): Promise<SupportTicket | undefined>;
+  updateSupportTicket(id: number, updates: Partial<InsertSupportTicket>): Promise<SupportTicket | undefined>;
+  deleteSupportTicket(id: number): Promise<boolean>;
+  getSupportTicketsByCustomer(customerEmail: string): Promise<SupportTicket[]>;
+
+  // Support Response operations
+  createSupportResponse(response: InsertSupportResponse): Promise<SupportResponse>;
+  getSupportResponsesByTicket(ticketId: number): Promise<SupportResponse[]>;
+  getSupportResponse(id: number): Promise<SupportResponse | undefined>;
+  updateSupportResponse(id: number, updates: Partial<InsertSupportResponse>): Promise<SupportResponse | undefined>;
+  deleteSupportResponse(id: number): Promise<boolean>;
+
+  // Knowledge Base operations
+  createKnowledgeBaseArticle(article: InsertKnowledgeBaseArticle): Promise<KnowledgeBaseArticle>;
+  getKnowledgeBaseArticles(filter?: { categoryId?: number; status?: string; limit?: number }): Promise<KnowledgeBaseArticle[]>;
+  getKnowledgeBaseArticle(id: number): Promise<KnowledgeBaseArticle | undefined>;
+  getKnowledgeBaseArticleBySlug(slug: string): Promise<KnowledgeBaseArticle | undefined>;
+  updateKnowledgeBaseArticle(id: number, updates: Partial<InsertKnowledgeBaseArticle>): Promise<KnowledgeBaseArticle | undefined>;
+  deleteKnowledgeBaseArticle(id: number): Promise<boolean>;
+  incrementArticleViewCount(id: number): Promise<void>;
+  incrementArticleHelpfulCount(id: number): Promise<void>;
+  incrementArticleNotHelpfulCount(id: number): Promise<void>;
+
+  // Live Chat operations
+  createLiveChatSession(session: InsertLiveChatSession): Promise<LiveChatSession>;
+  getLiveChatSessions(filter?: { status?: string; assignedToUserId?: number; limit?: number }): Promise<LiveChatSession[]>;
+  getLiveChatSession(id: number): Promise<LiveChatSession | undefined>;
+  getLiveChatSessionBySessionId(sessionId: string): Promise<LiveChatSession | undefined>;
+  updateLiveChatSession(id: number, updates: Partial<InsertLiveChatSession>): Promise<LiveChatSession | undefined>;
+  endLiveChatSession(id: number): Promise<boolean>;
+
+  // Live Chat Message operations
+  createLiveChatMessage(message: InsertLiveChatMessage): Promise<LiveChatMessage>;
+  getLiveChatMessages(sessionId: number): Promise<LiveChatMessage[]>;
+  getLiveChatMessage(id: number): Promise<LiveChatMessage | undefined>;
+
+  // Support Metrics operations
+  createSupportMetric(metric: InsertSupportMetric): Promise<SupportMetric>;
+  getSupportMetrics(filter?: { ticketId?: number; sessionId?: number; metricType?: string }): Promise<SupportMetric[]>;
+  getSupportStats(): Promise<{
+    totalTickets: number;
+    openTickets: number;
+    resolvedTickets: number;
+    avgResponseTime: number;
+    avgResolutionTime: number;
+    satisfactionScore: number;
+  }>;
 }
 
 // In-memory storage implementation (not actively used - DatabaseStorage is the active implementation)
