@@ -111,7 +111,32 @@ export const API_LIMITS = {
   MONTHLY_REQUESTS: 500
 };
 
-// FEATURE FLAGS - Amazon Associates Integration Control
+// =================================================================
+// AMAZON FEATURES - TEMPORARILY DISABLED VIA FEATURE FLAGS
+// =================================================================
+// DISABLED: Amazon Associates functionality is temporarily disabled 
+// 
+// **STRATEGIC DECISION**: Transform GlowBot from Amazon-focused platform
+// to standalone TikTok Viral Product Generator while preserving all 
+// Amazon code infrastructure for potential future re-enablement.
+// 
+// **TO RE-ENABLE AMAZON FEATURES**:
+// 1. Set environment variable: ENABLE_AMAZON_FEATURES=true
+// 2. Set frontend environment variable: VITE_ENABLE_AMAZON_FEATURES=true  
+// 3. Configure Amazon API credentials in environment
+// 4. Restart the application
+// 
+// **CURRENT BEHAVIOR WHEN DISABLED**:
+// - All Amazon API endpoints return 503 Service Unavailable
+// - Amazon UI components show disabled state with explanatory messages
+// - Amazon navigation items are hidden from sidebar
+// - Amazon-related services return early without processing
+// 
+// **CODE PRESERVATION APPROACH**: All Amazon code remains intact with
+// conditional feature flag guards rather than deletion. This maintains
+// the complete infrastructure for future activation if needed.
+// =================================================================
+
 // Environment-based feature flag evaluation for Amazon functionality
 export const isAmazonEnabled = (): boolean => {
   if (typeof process !== 'undefined' && process.env) {

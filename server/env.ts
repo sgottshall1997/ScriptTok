@@ -9,7 +9,8 @@ const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   
-  // Feature Flags
+  // Feature Flags - Amazon Associates Integration Control
+  // DISABLED: Amazon features are disabled by default (set to 'true' to re-enable)
   ENABLE_AMAZON_FEATURES: z.string().transform(val => val === 'true').default('false'),
   VITE_ENABLE_AMAZON_FEATURES: z.string().transform(val => val === 'true').default('false'),
   
@@ -58,7 +59,8 @@ try {
 // Type-safe environment getters
 export const getEnv = () => env;
 
-// Feature flag configuration checker
+// DISABLED: Feature flag configuration checker for Amazon functionality
+// Returns current state of Amazon feature flags (currently disabled)
 export const getFeatureFlags = () => {
   return {
     enableAmazonFeatures: env.ENABLE_AMAZON_FEATURES,
@@ -66,7 +68,8 @@ export const getFeatureFlags = () => {
   };
 };
 
-// Amazon PA-API configuration checker
+// DISABLED: Amazon PA-API configuration checker
+// Returns Amazon API configuration (currently disabled via feature flags)
 export const getAmazonConfig = () => {
   const amazonConfig = {
     accessKey: env.AMAZON_ACCESS_KEY_ID,
