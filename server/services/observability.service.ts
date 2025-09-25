@@ -64,6 +64,7 @@ class ObservabilityService extends EventEmitter {
   private errors: ErrorEntry[] = [];
   private alerts: AlertRule[] = [];
   private performanceMetrics: Map<string, number[]> = new Map();
+  private isRecordingError = false; // Recursion guard
   
   // Configuration
   private config = {
@@ -117,8 +118,8 @@ class ObservabilityService extends EventEmitter {
     // Emit event for real-time monitoring
     this.emit('log', entry);
 
-    // Auto-detect errors and create error entries
-    if (level === 'error' || level === 'critical') {
+    // Auto-detect errors and create error entries (prevent recursion)
+    if ((level === 'error' || level === 'critical') && !this.isRecordingError) {
       this.recordError({
         timestamp: entry.timestamp,
         errorId: this.generateErrorId(),
@@ -171,33 +172,41 @@ class ObservabilityService extends EventEmitter {
    * Error Tracking and Management
    */
   recordError(error: Omit<ErrorEntry, 'timestamp' | 'errorId'> & { timestamp?: string; errorId?: string }) {
-    const entry: ErrorEntry = {
-      timestamp: error.timestamp || new Date().toISOString(),
-      errorId: error.errorId || this.generateErrorId(),
-      severity: error.severity,
-      service: error.service,
-      component: error.component,
-      message: error.message,
-      stack: error.stack,
-      context: error.context,
-      userId: error.userId,
-      resolved: false
-    };
+    // Set recursion guard
+    this.isRecordingError = true;
+    
+    try {
+      const entry: ErrorEntry = {
+        timestamp: error.timestamp || new Date().toISOString(),
+        errorId: error.errorId || this.generateErrorId(),
+        severity: error.severity,
+        service: error.service,
+        component: error.component,
+        message: error.message,
+        stack: error.stack,
+        context: error.context,
+        userId: error.userId,
+        resolved: false
+      };
 
-    this.errors.push(entry);
-    this.trimErrors();
+      this.errors.push(entry);
+      this.trimErrors();
 
-    // Log as structured log entry
-    this.log('error', entry.service, entry.component, `[${entry.errorId}] ${entry.message}`, {
-      errorId: entry.errorId,
-      severity: entry.severity,
-      context: entry.context
-    });
+      // Log as structured log entry (won't trigger auto-error detection due to guard)
+      this.log('error', entry.service, entry.component, `[${entry.errorId}] ${entry.message}`, {
+        errorId: entry.errorId,
+        severity: entry.severity,
+        context: entry.context
+      });
 
-    // Emit for real-time monitoring
-    this.emit('error', entry);
+      // Emit for real-time monitoring
+      this.emit('error', entry);
 
-    return entry.errorId;
+      return entry.errorId;
+    } finally {
+      // Always unset recursion guard
+      this.isRecordingError = false;
+    }
   }
 
   /**
