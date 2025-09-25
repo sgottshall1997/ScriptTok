@@ -513,8 +513,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/pull-amazon-trends', async (req, res) => {
     try {
       console.log('🔄 Manual Amazon trends fetch triggered');
-      const { default: amazonTrendsRouter } = await import('./api/amazon-trends');
-      const amazonTrendsService = require('./api/amazon-trends');
+      // Import Amazon trends service
       
       // Call the refresh-all endpoint
       const mockRequest = { method: 'POST', url: '/refresh-all' };

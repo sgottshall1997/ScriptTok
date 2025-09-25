@@ -199,8 +199,10 @@ class ObservabilityService extends EventEmitter {
         context: entry.context
       });
 
-      // Emit for real-time monitoring
-      this.emit('error', entry);
+      // Emit for real-time monitoring (safe emit)
+      process.nextTick(() => {
+        this.emit('observability:error', entry);
+      });
 
       return entry.errorId;
     } finally {
