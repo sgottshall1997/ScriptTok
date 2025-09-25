@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { 
   Card, 
   CardContent, 
@@ -441,6 +442,37 @@ const WebhookSettings = () => {
             </div>
           </CardFooter>
         </Card>
+
+        <AboutThisPage 
+          title="Webhook Settings"
+          whatItDoes="Advanced webhook configuration system for external integrations and automation. Send generated content data to external platforms like Make.com, Zapier, or custom APIs. Includes comprehensive payload structure with all content metadata, AI evaluations, and viral analysis."
+          setupRequirements={[
+            "Valid webhook URL from external service (Make.com, Zapier, etc.)",
+            "Optional webhook secret for secure authentication",
+            "Understanding of JSON payload structure for integration setup"
+          ]}
+          usageInstructions={[
+            "Enter your webhook URL from external automation platform",
+            "Toggle webhook enabled/disabled as needed",
+            "Add optional secret key for secure webhook authentication",
+            "Test webhook connection using the test functionality",
+            "Review sample payload structure to configure external workflows",
+            "Save settings and monitor webhook delivery status",
+            "Use webhook data in external automation and analytics tools"
+          ]}
+          relatedLinks={[
+            {name: "Performance Analytics", path: "/performance-analytics"},
+            {name: "Content History", path: "/content-history"},
+            {name: "Generate Content", path: "/niche/all"}
+          ]}
+          notes={[
+            "Webhook payload includes all content metadata and AI evaluation scores",
+            "Secure authentication via optional secret key prevents unauthorized access",
+            "Test functionality validates webhook URL and connection before saving",
+            "Content data is sent in real-time as content is generated",
+            "External platforms can use webhook data for advanced automation workflows"
+          ]}
+        />
       </div>
     </div>
   );

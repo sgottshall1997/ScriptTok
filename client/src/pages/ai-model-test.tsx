@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { NICHES, TONE_OPTIONS, TEMPLATE_TYPES } from '@shared/constants';
+import AboutThisPage from '@/components/AboutThisPage';
 
 import {
   Card,
@@ -328,6 +329,37 @@ function AIModelTestPage() {
             </CardContent>
           </Card>
         )}
+
+        <AboutThisPage 
+          title="AI Model Test"
+          whatItDoes="Comprehensive AI model testing and comparison tool. Test different AI models with various parameters, compare performance across niches and tones, and validate configuration changes before applying them globally. Features side-by-side comparison, video duration analysis, and detailed generation metrics."
+          setupRequirements={[
+            "Access to multiple AI models (OpenAI, Claude, etc.)",
+            "Test product names and content scenarios prepared",
+            "Understanding of different niche and tone requirements"
+          ]}
+          usageInstructions={[
+            "Enter a product name and select niche for testing",
+            "Choose template type and tone to evaluate",
+            "Select AI models to test and compare",
+            "Generate content and review quality differences",
+            "Analyze video duration metrics and content length",
+            "Compare model performance side-by-side",
+            "Use insights to optimize AI model configuration settings"
+          ]}
+          relatedLinks={[
+            {name: "AI Model Configuration", path: "/ai-model-config"},
+            {name: "Performance Analytics", path: "/performance-analytics"},
+            {name: "Generate Content", path: "/niche/all"}
+          ]}
+          notes={[
+            "Side-by-side testing helps identify the best model for specific use cases",
+            "Video duration analysis ensures content meets platform requirements",
+            "Model comparison data informs configuration optimization decisions",
+            "Testing with real product names produces more accurate results",
+            "Regular testing helps maintain content quality as models evolve"
+          ]}
+        />
       </div>
     </div>
   );
