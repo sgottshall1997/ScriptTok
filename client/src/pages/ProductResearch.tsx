@@ -26,6 +26,20 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Checkbox } from "@/components/ui/checkbox";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { ChevronDown, HelpCircle } from "lucide-react";
 
 interface ProductOpportunity {
   id: number;
@@ -308,12 +322,35 @@ const ActionableOpportunityCard: React.FC<ActionableOpportunityCardProps> = ({
   );
 };
 
+interface SearchConstraints {
+  problem: string;
+  targetCustomer: string;
+  maxCost: string;
+  targetPrice: string;
+  validationBudget: string;
+  contentCapability: string[];
+  timeline: string;
+  competitorReference: string;
+}
+
 const ProductResearch = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const [category, setCategory] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResults, setSearchResults] = useState<ResearchResult | null>(null);
+  const [showWhyQuestions, setShowWhyQuestions] = useState(false);
+  
+  // Form state for constraints
+  const [constraints, setConstraints] = useState<SearchConstraints>({
+    problem: '',
+    targetCustomer: '',
+    maxCost: '',
+    targetPrice: '',
+    validationBudget: '',
+    contentCapability: [],
+    timeline: '',
+    competitorReference: ''
+  });
 
   // Fetch saved opportunities
   const { data: savedOpportunities = [], isLoading: savedLoading } = useQuery<ProductOpportunity[]>({
@@ -322,9 +359,9 @@ const ProductResearch = () => {
 
   // Search for product opportunities
   const searchMutation = useMutation({
-    mutationFn: async (searchCategory: string) => {
+    mutationFn: async (searchConstraints: SearchConstraints) => {
       setIsSearching(true);
-      const response = await apiRequest('POST', '/api/product-research', { category: searchCategory });
+      const response = await apiRequest('POST', '/api/product-research', { constraints: searchConstraints });
       return await response.json();
     },
     onSuccess: (data) => {
@@ -332,7 +369,7 @@ const ProductResearch = () => {
       setIsSearching(false);
       toast({
         title: "Research Complete",
-        description: `Found ${data.opportunities.length} product opportunities for ${data.category}`,
+        description: `Found ${data.opportunities.length} targeted product opportunities`,
       });
     },
     onError: (error) => {
@@ -389,23 +426,80 @@ const ProductResearch = () => {
     },
   });
 
+  // Form validation
+  const validateForm = (): string | null => {
+    if (!constraints.problem.trim()) return "Problem/pain point is required";
+    if (!constraints.targetCustomer.trim()) return "Target customer is required";
+    if (!constraints.maxCost || parseFloat(constraints.maxCost) <= 0) return "Valid manufacturing cost is required";
+    if (!constraints.targetPrice || parseFloat(constraints.targetPrice) <= 0) return "Valid target price is required";
+    if (!constraints.validationBudget) return "Validation budget is required";
+    if (constraints.contentCapability.length === 0) return "Select at least one content capability";
+    if (!constraints.timeline) return "Timeline is required";
+    
+    const maxCost = parseFloat(constraints.maxCost);
+    const targetPrice = parseFloat(constraints.targetPrice);
+    
+    // Check margin feasibility (50% minimum)
+    if (maxCost >= targetPrice * 0.5) {
+      return "Manufacturing cost must be at least 50% below retail price for viable margins";
+    }
+    
+    // Check price range warnings
+    if (targetPrice < 15) {
+      return "Target price under $15 may not generate sufficient margins for testing";
+    }
+    if (targetPrice > 100) {
+      return "Target price over $100 typically requires longer consideration periods";
+    }
+    
+    return null;
+  };
+  
   const handleSearch = () => {
-    if (!category.trim()) {
+    const validationError = validateForm();
+    if (validationError) {
       toast({
-        title: "Category Required",
-        description: "Please enter a product category to research",
+        title: "Validation Error",
+        description: validationError,
         variant: "destructive",
       });
       return;
     }
-    searchMutation.mutate(category.trim());
+    
+    // Show warning for low validation budget
+    if (constraints.validationBudget === "$200-300 (minimal test)") {
+      toast({
+        title: "Budget Warning",
+        description: "Results may be inconclusive with minimal testing budget",
+        variant: "default",
+      });
+    }
+    
+    searchMutation.mutate(constraints);
+  };
+  
+  const handleContentCapabilityChange = (capability: string, checked: boolean) => {
+    setConstraints(prev => ({
+      ...prev,
+      contentCapability: checked 
+        ? [...prev.contentCapability, capability]
+        : prev.contentCapability.filter(c => c !== capability)
+    }));
+  };
+  
+  const getConstraintSummary = () => {
+    if (!constraints.problem || !constraints.targetCustomer || !constraints.maxCost || !constraints.targetPrice) {
+      return null;
+    }
+    
+    return `Searching for products under $${constraints.maxCost} cost that solve "${constraints.problem}" for ${constraints.targetCustomer} at $${constraints.targetPrice} price point`;
   };
 
   const handleSaveOpportunity = (opportunityData: ActionableOpportunity) => {
     if (!searchResults) return;
     
     saveOpportunityMutation.mutate({
-      category: searchResults.category,
+      category: `${constraints.problem} - ${constraints.targetCustomer}`,
       ...opportunityData,
     });
   };
@@ -437,35 +531,202 @@ const ProductResearch = () => {
             Research Product Opportunities
           </CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="category">Product Category</Label>
-            <div className="flex gap-2">
-              <Input
-                id="category"
-                placeholder="e.g., fitness equipment, home decor, tech gadgets..."
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                data-testid="input-category"
-              />
-              <Button 
-                onClick={handleSearch} 
-                disabled={isSearching || !category.trim()}
-                data-testid="button-search"
-              >
-                {isSearching ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Search className="h-4 w-4" />
-                )}
-                Search
+        <CardContent className="space-y-6">
+          {/* Why these questions? section */}
+          <Collapsible open={showWhyQuestions} onOpenChange={setShowWhyQuestions}>
+            <CollapsibleTrigger asChild>
+              <Button variant="ghost" className="w-full justify-between p-0 h-auto">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="h-4 w-4" />
+                  <span className="text-sm font-medium">Why these questions?</span>
+                </div>
+                <ChevronDown className={`h-4 w-4 transition-transform ${showWhyQuestions ? 'rotate-180' : ''}`} />
               </Button>
+            </CollapsibleTrigger>
+            <CollapsibleContent className="mt-3">
+              <div className="text-sm text-muted-foreground bg-muted/50 p-4 rounded-lg">
+                <p className="mb-2 font-medium">These constraints eliminate fantasy products you can't afford to test or manufacture.</p>
+                <p>Instead of getting "luxury fragrances" that cost $50k to formulate when you search "beauty", you'll get actionable opportunities that match your actual budget, timeline, and capabilities.</p>
+              </div>
+            </CollapsibleContent>
+          </Collapsible>
+          
+          {/* Constraint Summary */}
+          {getConstraintSummary() && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+              <p className="text-sm font-medium text-blue-900 dark:text-blue-100">
+                Search Preview: {getConstraintSummary()}
+              </p>
+            </div>
+          )}
+          
+          {/* 1. Problem/Pain Point */}
+          <div className="space-y-2">
+            <Label htmlFor="problem">What specific problem are you solving? *</Label>
+            <Textarea
+              id="problem"
+              placeholder="Women spending $100+ on salon nails every 2 weeks"
+              value={constraints.problem}
+              onChange={(e) => setConstraints(prev => ({ ...prev, problem: e.target.value }))}
+              data-testid="textarea-problem"
+              rows={3}
+            />
+            <p className="text-sm text-muted-foreground">
+              Be specific. 'Beauty' is not a problem. 'Expensive salon visits' is a problem.
+            </p>
+          </div>
+          
+          {/* 2. Target Customer */}
+          <div className="space-y-2">
+            <Label htmlFor="targetCustomer">Who specifically has this problem? *</Label>
+            <Input
+              id="targetCustomer"
+              placeholder="Working professionals 25-40 in NYC/LA/Miami"
+              value={constraints.targetCustomer}
+              onChange={(e) => setConstraints(prev => ({ ...prev, targetCustomer: e.target.value }))}
+              data-testid="input-target-customer"
+            />
+            <p className="text-sm text-muted-foreground">
+              Not 'everyone' - who feels this pain most acutely?
+            </p>
+          </div>
+          
+          {/* 3 & 4. Cost and Price - Side by side */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="maxCost">Maximum manufacturing cost per unit *</Label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="maxCost"
+                  type="number"
+                  placeholder="10"
+                  value={constraints.maxCost}
+                  onChange={(e) => setConstraints(prev => ({ ...prev, maxCost: e.target.value }))}
+                  data-testid="input-max-cost"
+                  className="pl-9"
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                What's realistic for your budget to produce at scale?
+              </p>
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="targetPrice">Target retail price *</Label>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="targetPrice"
+                  type="number"
+                  placeholder="35"
+                  value={constraints.targetPrice}
+                  onChange={(e) => setConstraints(prev => ({ ...prev, targetPrice: e.target.value }))}
+                  data-testid="input-target-price"
+                  className="pl-9"
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">
+                What would they actually pay without hesitation?
+              </p>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground">
-            Enter a product category to discover trending opportunities and market gaps
-          </p>
+          
+          {/* 5. Validation Budget */}
+          <div className="space-y-2">
+            <Label htmlFor="validationBudget">How much can you spend testing demand? *</Label>
+            <Select value={constraints.validationBudget} onValueChange={(value) => setConstraints(prev => ({ ...prev, validationBudget: value }))}>
+              <SelectTrigger data-testid="select-validation-budget">
+                <SelectValue placeholder="Select your testing budget" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="$200-300 (minimal test)">$200-300 (minimal test)</SelectItem>
+                <SelectItem value="$500-800 (standard validation)">$500-800 (standard validation)</SelectItem>
+                <SelectItem value="$1000-1500 (thorough test)">$1000-1500 (thorough test)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* 6. Content Capability */}
+          <div className="space-y-3">
+            <Label>What content can you realistically create? *</Label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {[
+                'Professional product photography',
+                'Simple product videos (phone)',
+                'Demonstration/tutorial videos',
+                'User testimonial content',
+                'Text/graphics only'
+              ].map((capability) => (
+                <div key={capability} className="flex items-center space-x-2">
+                  <Checkbox
+                    id={`content-${capability}`}
+                    checked={constraints.contentCapability.includes(capability)}
+                    onCheckedChange={(checked) => handleContentCapabilityChange(capability, checked as boolean)}
+                    data-testid={`checkbox-${capability.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                  />
+                  <Label htmlFor={`content-${capability}`} className="text-sm font-normal">
+                    {capability}
+                  </Label>
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Be honest - what can you actually produce?
+            </p>
+          </div>
+          
+          {/* 7. Timeline */}
+          <div className="space-y-2">
+            <Label htmlFor="timeline">When do you want to launch? *</Label>
+            <Select value={constraints.timeline} onValueChange={(value) => setConstraints(prev => ({ ...prev, timeline: value }))}>
+              <SelectTrigger data-testid="select-timeline">
+                <SelectValue placeholder="Select your timeline" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="4-6 weeks (fast test)">4-6 weeks (fast test)</SelectItem>
+                <SelectItem value="2-3 months (standard)">2-3 months (standard)</SelectItem>
+                <SelectItem value="6+ months (research phase)">6+ months (research phase)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          
+          {/* 8. Competitor Reference (Optional) */}
+          <div className="space-y-2">
+            <Label htmlFor="competitorReference">Any successful brand doing something similar? (Optional)</Label>
+            <Input
+              id="competitorReference"
+              placeholder="Tyler Glamorous Wash, Dedcool, etc."
+              value={constraints.competitorReference}
+              onChange={(e) => setConstraints(prev => ({ ...prev, competitorReference: e.target.value }))}
+              data-testid="input-competitor-reference"
+            />
+            <p className="text-sm text-muted-foreground">
+              Leave blank if exploring new territory
+            </p>
+          </div>
+          
+          {/* Search Button */}
+          <div className="pt-4">
+            <Button 
+              onClick={handleSearch} 
+              disabled={isSearching}
+              className="w-full"
+              data-testid="button-search"
+            >
+              {isSearching ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  Analyzing Your Constraints...
+                </>
+              ) : (
+                <>
+                  <Search className="h-4 w-4 mr-2" />
+                  Find Actionable Product Opportunities
+                </>
+              )}
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
