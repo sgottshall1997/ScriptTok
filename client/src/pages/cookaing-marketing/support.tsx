@@ -155,6 +155,7 @@ export default function SupportCenterPage() {
       title: '',
       description: '',
       priority: 'medium',
+      categoryId: undefined,
       customerEmail: '',
       customerName: '',
     }
@@ -166,6 +167,7 @@ export default function SupportCenterPage() {
       title: '',
       content: '',
       excerpt: '',
+      categoryId: undefined,
       tags: '',
     }
   });
