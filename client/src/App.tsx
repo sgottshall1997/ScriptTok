@@ -45,6 +45,7 @@ import CompliancePage from "@/pages/CompliancePage";
 import SpartanContentPage from "@/pages/SpartanContentPage";
 import ScheduleManager from "@/pages/schedule-manager";
 import SupportPage from "@/pages/SupportPage";
+import ProductResearch from "@/pages/ProductResearch";
 
 // CookAIng Marketing Engine pages
 import CookAIngMarketingDashboard from "@/pages/cookaing-marketing/index";
@@ -137,6 +138,7 @@ function MainAppRouter() {
       <Route path="/click-tracking" component={ClickTracking} />
       <Route path="/btb-status" component={BTBStatus} />
       <Route path="/trending-ai-picks" component={TrendingAIPicks} />
+      <Route path="/product-research" component={ProductResearch} />
       
       {/* BTB Framework Pages */}
       <Route path="/schedule-manager" component={ScheduleManager} />
