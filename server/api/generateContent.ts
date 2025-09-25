@@ -40,6 +40,9 @@ const contentGenerationLimiter = rateLimit({
 import { TONES } from '../prompts/tones';
 import { loadPromptTemplates } from '../prompts/templates';
 import { ViralInspiration } from '../services/contentGenerator';
+import { evaluateContentWithBothModels, createContentEvaluationData } from '../services/aiEvaluationService';
+import { contentEvaluations } from '@shared/schema';
+import { db } from '../db';
 
 // Viral inspiration schema
 const viralInspirationSchema = z.object({
@@ -542,6 +545,9 @@ Experience the difference today! #${niche} #trending`;
         });
       }
     }
+
+    // 🤖 AUTOMATIC AI EVALUATION - Add evaluation trigger placeholder
+    // Note: This will be implemented after content history is saved to avoid duplicates
 
     // Return success response with clean JSON structure including platform content
     res.json({
