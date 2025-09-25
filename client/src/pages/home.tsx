@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { useLocation } from 'wouter';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trackEvent } from '@/lib/analytics';
@@ -222,6 +223,37 @@ export default function HomePage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <AboutThisPage 
+        title="GlowBot AI Homepage"
+        whatItDoes="Central hub and starting point for the multi-niche AI content generation platform. Provides niche selection, feature overview, and quick access to all major platform capabilities. Serves as the primary navigation center for content creation workflows."
+        setupRequirements={[
+          "No setup required - immediately ready for niche selection",
+          "Basic understanding of your target market and audience",
+          "Content goals and platform strategies for optimization"
+        ]}
+        usageInstructions={[
+          "Select your target niche from the grid in the Niche Selection tab",
+          "Explore platform features and capabilities in the Features tab",
+          "Follow the Getting Started guide for step-by-step onboarding",
+          "Use quick navigation buttons to access dashboard and trends",
+          "Track events are automatically logged for analytics and optimization",
+          "Bookmark specific niches and features for faster future access"
+        ]}
+        relatedLinks={[
+          {name: "Generate Content", path: "/"},
+          {name: "How It Works", path: "/how-it-works"},
+          {name: "Template Explorer", path: "/template-explorer"},
+          {name: "Trending AI Picks", path: "/trending-ai-picks"}
+        ]}
+        notes={[
+          "Niche selection influences all AI-generated content optimization",
+          "Platform features are designed for scalable multi-niche content creation",
+          "Getting started guide provides comprehensive onboarding for new users",
+          "Analytics tracking helps optimize platform experience based on usage patterns",
+          "Central navigation design ensures efficient access to all platform capabilities"
+        ]}
+      />
     </div>
   );
 }

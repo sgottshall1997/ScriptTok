@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiRequest } from '@/lib/queryClient';
 import { useToast } from '@/hooks/use-toast';
@@ -444,6 +445,39 @@ const ScheduleManager: React.FC = () => {
             ))}
           </div>
         )}
+
+        <AboutThisPage 
+          title="Schedule Manager"
+          whatItDoes="Comprehensive management interface for automated bulk content generation jobs. Monitors, controls, and schedules recurring content creation tasks with configurable parameters for niche targeting, content types, and posting frequency across multiple platforms."
+          setupRequirements={[
+            "Understanding of bulk content generation workflows",
+            "Knowledge of niche-specific content requirements",
+            "Familiarity with automated job scheduling concepts",
+            "Platform integrations configured for content distribution"
+          ]}
+          usageInstructions={[
+            "Review active scheduled jobs with their status and configurations",
+            "Toggle jobs on/off using the active status switches",
+            "Use 'Run Now' buttons to trigger immediate job execution",
+            "Delete completed or unwanted jobs using the delete action",
+            "Monitor job performance and success rates over time",
+            "Create new scheduled jobs through the bulk generation interface"
+          ]}
+          relatedLinks={[
+            {name: "Generate Content", path: "/"},
+            {name: "Cross-Platform Scheduling", path: "/cross-platform-scheduling"},
+            {name: "Performance Analytics", path: "/performance-analytics"},
+            {name: "Webhook Settings", path: "/webhook-settings"}
+          ]}
+          notes={[
+            "Jobs persist across server restarts through database storage",
+            "Automatic resumption ensures interrupted jobs continue properly",
+            "Job deletion immediately stops and removes scheduled tasks",
+            "Performance metrics help optimize bulk generation strategies",
+            "Integration with scheduling system enables seamless content distribution"
+          ]}
+        />
+
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { useRoute } from "wouter";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -252,6 +253,36 @@ export default function PublicForm() {
           </Form>
         </CardContent>
       </Card>
+
+      <AboutThisPage 
+        title="Public Form Submission"
+        whatItDoes="Dynamic public form system that allows external users to submit information through custom forms created by organizations. Supports flexible field configurations, validation rules, and secure data collection with automated processing and notification workflows."
+        setupRequirements={[
+          "Valid form URL provided by the organization",
+          "Required form fields completed accurately",
+          "Understanding of form purpose and data usage policies"
+        ]}
+        usageInstructions={[
+          "Access the form through the provided link or QR code",
+          "Fill in all required fields with accurate information",
+          "Review your submission before clicking Submit Form",
+          "Wait for confirmation message after successful submission",
+          "Save submission confirmation for your records",
+          "Contact the organization if you experience submission issues"
+        ]}
+        relatedLinks={[
+          {name: "Contact Support", path: "/contact"},
+          {name: "Privacy Policy", path: "/privacy"},
+          {name: "Terms & Conditions", path: "/terms"}
+        ]}
+        notes={[
+          "Forms are securely processed and data is protected according to privacy policies",
+          "Required fields must be completed for successful submission",
+          "Submission confirmation provides verification of successful form processing",
+          "Organizations may contact you based on the information provided",
+          "Technical issues should be reported to the organization or platform support"
+        ]}
+      />
     </div>
   );
 }

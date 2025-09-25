@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -402,6 +403,38 @@ export default function BTBStatus() {
             </div>
           </CardContent>
         </Card>
+
+        <AboutThisPage 
+          title="BTB Status Dashboard"
+          whatItDoes="Comprehensive technical status dashboard displaying the implementation status of all Build-to-Buy (BTB) automation features. Tracks progress across smart link generation, click tracking, multi-platform content distribution, AI optimization, and affiliate monetization systems."
+          setupRequirements={[
+            "Development access to view implementation details",
+            "Understanding of technical feature requirements",
+            "Knowledge of platform architecture and integrations"
+          ]}
+          usageInstructions={[
+            "Review feature status indicators: Complete (green), Partial (yellow), Pending (gray), Optional (blue)",
+            "Check implementation details for each feature component",
+            "Monitor integration status across different platform systems",
+            "Use for technical audits and development planning",
+            "Reference when troubleshooting platform functionality",
+            "Track progress during feature development cycles"
+          ]}
+          relatedLinks={[
+            {name: "Performance Analytics", path: "/performance-analytics"},
+            {name: "Click Tracking", path: "/click-tracking"},
+            {name: "Cross-Platform Scheduling", path: "/cross-platform-scheduling"},
+            {name: "API Integration Hub", path: "/api-integration-hub"}
+          ]}
+          notes={[
+            "Technical dashboard primarily for developers and system administrators",
+            "Feature status reflects current implementation state across the platform",
+            "Implementation details show specific files and components involved",
+            "Regular monitoring helps ensure all automation features function properly",
+            "Status changes may indicate system updates or required maintenance"
+          ]}
+        />
+
       </div>
     </div>
   );

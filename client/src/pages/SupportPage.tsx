@@ -1,4 +1,5 @@
 import React from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -351,6 +352,37 @@ const SupportPage: React.FC = () => {
             </div>
           </CardContent>
         </Card>
+
+        <AboutThisPage 
+          title="Support & Help Center"
+          whatItDoes="Comprehensive support center providing 24/7 AI-powered assistance, system status monitoring, troubleshooting guides, and direct access to help resources. Centralizes all support tools and information for quick issue resolution and platform guidance."
+          setupRequirements={[
+            "No setup required - support resources are immediately available",
+            "Account access for personalized troubleshooting assistance",
+            "Clear description of issues for efficient support routing"
+          ]}
+          usageInstructions={[
+            "Browse quick help sections for common issues and solutions",
+            "Check system status and performance metrics for platform health",
+            "Use integrated contact forms for direct support team communication",
+            "Access troubleshooting guides organized by feature category",
+            "Monitor system uptime and generation performance statistics",
+            "Follow step-by-step guides for complex feature configurations"
+          ]}
+          relatedLinks={[
+            {name: "Contact Us", path: "/contact"},
+            {name: "FAQ", path: "/faq"},
+            {name: "How It Works", path: "/how-it-works"},
+            {name: "Generate Content", path: "/"}
+          ]}
+          notes={[
+            "24/7 AI-powered support provides immediate assistance for common issues",
+            "Real-time system monitoring ensures transparency about platform performance",
+            "Integrated troubleshooting reduces resolution time for technical problems",
+            "Performance metrics help identify optimal usage patterns",
+            "Direct support channels ensure complex issues receive personal attention"
+          ]}
+        />
 
       </div>
     </div>

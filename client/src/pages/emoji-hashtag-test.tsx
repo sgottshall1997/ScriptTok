@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Helmet } from 'react-helmet';
 import { 
   Card, 
@@ -200,6 +201,38 @@ const EmojiHashtagTest = () => {
           </div>
         </TabsContent>
       </Tabs>
+
+      <AboutThisPage 
+        title="Emoji & Hashtag Test Laboratory"
+        whatItDoes="Advanced testing environment for experimenting with AI-powered emoji and hashtag suggestions. Provides intelligent recommendations based on niche, content type, and platform optimization strategies. Perfect for testing content enhancement before publishing."
+        setupRequirements={[
+          "Select target niche from available options",
+          "Choose template type for content optimization",
+          "Input sample or actual content for testing",
+          "Understanding of hashtag and emoji best practices"
+        ]}
+        usageInstructions={[
+          "Configure niche and template type in the Configuration tab",
+          "Enter your content or use sample content for testing",
+          "Switch to Suggestions tab to view AI-generated recommendations",
+          "Test different content variations to see suggestion changes",
+          "Use results to optimize your actual content before publishing",
+          "Experiment with different niches to understand optimization patterns"
+        ]}
+        relatedLinks={[
+          {name: "Generate Content", path: "/"},
+          {name: "Claude Generator", path: "/claude-generator"},
+          {name: "Template Explorer", path: "/template-explorer"},
+          {name: "How It Works", path: "/how-it-works"}
+        ]}
+        notes={[
+          "AI suggestions adapt to your selected niche for maximum relevance",
+          "Template type influences the style and format of suggestions",
+          "Testing environment allows safe experimentation without affecting published content",
+          "Results help optimize engagement through strategic emoji and hashtag placement",
+          "Different content types may produce varying suggestion strategies"
+        ]}
+      />
     </div>
   );
 };

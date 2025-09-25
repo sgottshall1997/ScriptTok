@@ -220,7 +220,7 @@ const TermsPage: React.FC = () => {
           "Affiliate marketing guidelines ensure compliance with regulations",
           "Termination conditions protect both users and platform",
           "Regular reviews recommended as terms may be updated"
-        ]}}
+        ]}
       />
     </div>
   );

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -258,6 +259,38 @@ export default function CrossPlatformScheduling() {
           </Card>
         </TabsContent>
       </Tabs>
+
+      <AboutThisPage 
+        title="Cross-Platform Scheduling"
+        whatItDoes="Advanced scheduling system for managing content distribution across multiple social media platforms. Enables timed posting, batch scheduling, and automated content delivery with platform-specific optimization and real-time status monitoring."
+        setupRequirements={[
+          "Connected social media accounts through API Integration Hub",
+          "Generated content ready for scheduling",
+          "Understanding of optimal posting times for each platform",
+          "Webhook configuration for automation (optional)"
+        ]}
+        usageInstructions={[
+          "Use Schedule tab to create new scheduled posts with content and timing",
+          "Select target platforms and customize content for each platform",
+          "Set posting dates and times based on audience engagement patterns",
+          "Monitor scheduled posts in the Overview tab with status tracking",
+          "Use Manual Processing to trigger immediate posting of scheduled content",
+          "Configure webhook automation with Make.com for hands-free publishing"
+        ]}
+        relatedLinks={[
+          {name: "Schedule Manager", path: "/schedule-manager"},
+          {name: "API Integration Hub", path: "/api-integration-hub"},
+          {name: "Webhook Settings", path: "/webhook-settings"},
+          {name: "Performance Analytics", path: "/performance-analytics"}
+        ]}
+        notes={[
+          "Platform-specific optimization ensures content fits each platform's requirements",
+          "Batch scheduling saves time when planning content campaigns",
+          "Real-time status monitoring helps track posting success and failures",
+          "Webhook automation enables completely hands-free content distribution",
+          "Manual processing provides backup option for immediate content delivery"
+        ]}
+      />
     </div>
   );
 }
