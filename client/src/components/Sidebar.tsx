@@ -65,6 +65,12 @@ interface SidebarCategory {
 
 const sidebarData: SidebarCategory[] = [
   {
+    name: "Overview",
+    items: [
+      { name: "About GlowBot", href: "/about", icon: Info },
+    ]
+  },
+  {
     name: "Core",
     items: [
       { name: "Dashboard", href: "/", icon: Home },
@@ -134,7 +140,6 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "Support",
     items: [
-      { name: "About", href: "/about", icon: Info },
       { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
       { name: "FAQ", href: "/faq", icon: MessageCircle },
       { name: "Contact", href: "/contact", icon: MessageCircle },
