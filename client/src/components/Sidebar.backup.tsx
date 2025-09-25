@@ -63,47 +63,86 @@ interface SidebarCategory {
   items: SidebarItem[];
 }
 
-// SIMPLIFIED NAVIGATION STRUCTURE - TikTok Viral Product Generator
 const sidebarData: SidebarCategory[] = [
   {
-    name: "OVERVIEW",
+    name: "Overview",
     items: [
       { name: "About GlowBot", href: "/about", icon: Info },
     ]
   },
   {
-    name: "CORE",
+    name: "Core",
     items: [
       { name: "Dashboard", href: "/", icon: Home },
-      { name: "TikTok Generator", href: "/generate", icon: Sparkles },
+      { name: "Unified Generator", href: "/unified-generator", icon: Sparkles },
+      { name: "Template Explorer", href: "/templates", icon: Layers },
+      { name: "Product Ideas", href: "/product-research", icon: Lightbulb },
     ]
   },
   {
-    name: "CONTENT",
+    name: "Content Management",
     items: [
-      { name: "Script History", href: "/content-history", icon: History },
-      { name: "Affiliate Links", href: "/affiliate-links", icon: ShoppingCart },
+      { name: "Content History", href: "/content-history", icon: History },
+      { name: "Analytics Dashboard", href: "/analytics", icon: BarChart3 },
+      { name: "Content Calendar", href: "/content-calendar", icon: Calendar },
     ]
   },
   {
-    name: "AI TOOLS",
+    name: "Framework",
     items: [
-      { name: "Trending Products", href: "/trending-ai-picks", icon: TrendingUp },
+      { name: "Schedule Manager", href: "/schedule-manager", icon: Clock },
+      { name: "Cross-Platform Scheduling", href: "/cross-platform-scheduling", icon: Calendar },
+      { name: "Performance Analytics", href: "/performance-analytics", icon: DollarSign },
     ]
   },
   {
-    name: "SETTINGS",
+    name: "AI Tools",
     items: [
-      { name: "FTC Disclosures", href: "/compliance", icon: Shield },
-      { name: "Account", href: "/account", icon: Users },
+      { name: "AI Trending Picks", href: "/trending-ai-picks", icon: TrendingUp },
+      { name: "Spartan Generator", href: "/spartan-generator", icon: Zap },
+      { name: "AI Model Testing", href: "/ai-model-test", icon: TestTube },
+      { name: "Claude Generator", href: "/claude-generator", icon: Bot },
+      { name: "Model Configuration", href: "/ai-model-config", icon: Settings },
     ]
   },
   {
-    name: "SUPPORT",
+    name: "Advanced Tools",
+    items: [
+
+      { name: "Emoji & Hashtag Test", href: "/emoji-hashtag-test", icon: Hash },
+      { name: "Competitive Analysis", href: "/competitive-analysis", icon: Target },
+    ]
+  },
+  {
+    name: "Analytics & Tracking",
+    items: [
+
+      { name: "Click Tracking", href: "/click-tracking", icon: MousePointer },
+      { name: "Export/Import", href: "/export-import", icon: Download },
+    ]
+  },
+  {
+    name: "Integration",
+    items: [
+      { name: "Webhook Settings", href: "/webhook-settings", icon: Webhook },
+      { name: "API Integration Hub", href: "/api-integration-hub", icon: Zap },
+      { name: "Automation Checklist", href: "/btb-status", icon: Activity },
+    ]
+  },
+  {
+    name: "Legal & Compliance",
+    items: [
+      { name: "Compliance Center", href: "/compliance", icon: Shield },
+      { name: "Privacy Policy", href: "/privacy", icon: Shield },
+      { name: "Terms of Service", href: "/terms", icon: FileCheck },
+    ]
+  },
+  {
+    name: "Support",
     items: [
       { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
       { name: "FAQ", href: "/faq", icon: MessageCircle },
-      { name: "Contact", href: "/contact", icon: Mail },
+      { name: "Contact", href: "/contact", icon: MessageCircle },
     ]
   }
 ];

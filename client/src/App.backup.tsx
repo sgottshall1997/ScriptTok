@@ -17,11 +17,8 @@ import PrivacyPolicyPage from "@/pages/privacy";
 import TermsPage from "@/pages/terms";
 import ContactPage from "@/pages/contact";
 import GenerateContent from "@/pages/GenerateContent";
+import ProductResearch from "@/pages/ProductResearch";
 import TrendingAIPicks from "@/pages/TrendingAIPicks";
-import AffiliateLinks from "@/pages/AffiliateLinks";
-import Account from "@/pages/Account";
-import CompliancePage from "@/pages/CompliancePage";
-import HowItWorksPage from "@/pages/how-it-works";
 
 import Layout from "@/components/Layout";
 import { initScraperConsole } from "./lib/scraperConsole";
@@ -47,23 +44,18 @@ function MainAppRouter() {
       {/* Core content generation functionality */}
       <Route path="/generate" component={GenerateContent} />
       <Route path="/niche/:niche" component={GenerateContent} />
+      <Route path="/product-research" component={ProductResearch} />
       <Route path="/trending-ai-picks" component={TrendingAIPicks} />
       
-      {/* Content management */}
+      {/* Content history */}
       <Route path="/content-history" component={EnhancedContentHistory} />
-      <Route path="/affiliate-links" component={AffiliateLinks} />
       
-      {/* Settings */}
-      <Route path="/compliance" component={CompliancePage} />
-      <Route path="/account" component={Account} />
-      
-      {/* Support pages */}
-      <Route path="/how-it-works" component={HowItWorksPage} />
+      {/* Essential static pages */}
       <Route path="/about" component={AboutPage} />
       <Route path="/faq" component={FAQPage} />
-      <Route path="/contact" component={ContactPage} />
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />
+      <Route path="/contact" component={ContactPage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />
