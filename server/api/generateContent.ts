@@ -506,6 +506,29 @@ Experience the difference today! #${niche} #trending`;
       content
     });
     
+    // Prepare webhook-ready platform data for Make.com automation
+    const webhookData = [];
+    if (platformContent && platformContent.socialCaptions) {
+      for (const [platform, content] of Object.entries(platformContent.socialCaptions)) {
+        webhookData.push({
+          platform,
+          contentType,
+          caption: content.caption,
+          postInstructions: content.postInstructions,
+          videoScript: platformContent.videoScript || null,
+          photoDescription: platformContent.photoDescription || null,
+          product,
+          niche,
+          tone,
+          templateType,
+          hashtags: extractHashtags(content.caption),
+          mediaUrl: null, // Ready for user to add media URL
+          scheduledTime: null, // Ready for scheduling
+          makeWebhookReady: true
+        });
+      }
+    }
+    
     // Save detailed content history record with all metadata including hook and platform content
     const contentHistoryEntry = await storage.saveContentHistory({
       userId: req.user?.id, // If user is authenticated
@@ -549,29 +572,6 @@ Experience the difference today! #${niche} #trending`;
     } catch (feedbackError) {
       // Log error but don't block the response
       console.error('Error logging feedback to database:', feedbackError);
-    }
-    
-    // Prepare webhook-ready platform data for Make.com automation
-    const webhookData = [];
-    if (platformContent && platformContent.socialCaptions) {
-      for (const [platform, content] of Object.entries(platformContent.socialCaptions)) {
-        webhookData.push({
-          platform,
-          contentType,
-          caption: content.caption,
-          postInstructions: content.postInstructions,
-          videoScript: platformContent.videoScript || null,
-          photoDescription: platformContent.photoDescription || null,
-          product,
-          niche,
-          tone,
-          templateType,
-          hashtags: extractHashtags(content.caption),
-          mediaUrl: null, // Ready for user to add media URL
-          scheduledTime: null, // Ready for scheduling
-          makeWebhookReady: true
-        });
-      }
     }
 
     // 🤖 AUTOMATIC AI EVALUATION - Add evaluation trigger placeholder
