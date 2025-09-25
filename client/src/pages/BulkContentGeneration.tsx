@@ -13,6 +13,8 @@ import AutomatedBulkGenerator from '@/components/AutomatedBulkGenerator';
 import AutomatedBulkJobsList from '@/components/AutomatedBulkJobsList';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
+import AboutThisPage from '@/components/AboutThisPage';
+import { getGlowBotSectionByPath } from '@/lib/glowbot-sections';
 
 export default function BulkContentGeneration() {
   const [activeTab, setActiveTab] = useState('automated');
@@ -24,6 +26,9 @@ export default function BulkContentGeneration() {
   }>({});
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  
+  // Get section metadata for this page
+  const sectionData = getGlowBotSectionByPath('/bulk-content-generation');
 
   // Parse URL parameters for auto-population
   useEffect(() => {
@@ -304,6 +309,18 @@ export default function BulkContentGeneration() {
           </Card>
         </TabsContent>
       </Tabs>
+      
+      {/* About This Page */}
+      {sectionData && (
+        <AboutThisPage
+          title={sectionData.name}
+          whatItDoes={sectionData.whatItDoes}
+          setupRequirements={sectionData.setupRequirements}
+          usageInstructions={sectionData.usageInstructions}
+          relatedLinks={sectionData.relatedLinks}
+          notes={sectionData.notes}
+        />
+      )}
     </div>
   );
 }

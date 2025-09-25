@@ -26,8 +26,7 @@ import {
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
-import PageDescription from "@/components/PageDescription";
-import InstructionFooter from "@/components/InstructionFooter";
+import AboutThisPage from "@/components/AboutThisPage";
 import { getGlowBotSectionByPath } from "@/lib/glowbot-sections";
 
 const Dashboard = () => {
@@ -324,18 +323,6 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Description */}
-      {sectionData && (
-        <PageDescription
-          title={sectionData.name}
-          description={sectionData.description}
-          category={sectionData.category}
-          keyFeatures={sectionData.keyFeatures.slice(0, 5)}
-          relatedLinks={sectionData.relatedLinks}
-          variant="compact"
-        />
-      )}
-      
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
@@ -744,9 +731,11 @@ const Dashboard = () => {
         </Card>
       </div>
       
-      {/* Instruction Footer */}
+      {/* About This Page */}
       {sectionData && (
-        <InstructionFooter
+        <AboutThisPage
+          title={sectionData.name}
+          whatItDoes={sectionData.whatItDoes}
           setupRequirements={sectionData.setupRequirements}
           usageInstructions={sectionData.usageInstructions}
           relatedLinks={sectionData.relatedLinks}

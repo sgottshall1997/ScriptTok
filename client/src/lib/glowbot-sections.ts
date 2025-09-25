@@ -22,7 +22,8 @@ import {
   Shield,
   FileCheck,
   HelpCircle,
-  MessageCircle
+  MessageCircle,
+  Package
 } from 'lucide-react';
 
 export interface GlowBotSection {
@@ -147,6 +148,34 @@ export const glowBotSections: GlowBotSection[] = [
       "Research criteria can be saved and reused"
     ],
     keyFeatures: ["Constraint-based research", "Margin calculations", "Demand analysis", "Competition metrics", "Save/load criteria"]
+  },
+  {
+    name: "Bulk Content Generation",
+    description: "Automated bulk content creation system for scaling content production across multiple niches and platforms.",
+    icon: Package,
+    path: "/bulk-content-generation",
+    category: "Core",
+    whatItDoes: "Automates the creation of multiple content variations simultaneously using advanced AI models. Supports scheduled generation, batch processing, and multi-niche content production with comprehensive job management and tracking.",
+    setupRequirements: ["AI API keys configured", "Select target niches and platforms", "Configure generation parameters"],
+    usageInstructions: [
+      "Choose between automated scheduling or manual bulk generation",
+      "Set up generation parameters (niche, platform, count, style)",
+      "Configure scheduling options for automated content creation",
+      "Monitor job progress and status in real-time",
+      "Review and manage generated content batches",
+      "Export or distribute completed content"
+    ],
+    relatedLinks: [
+      { name: "Unified Generator", path: "/unified-generator" },
+      { name: "Content History", path: "/content-history" },
+      { name: "Schedule Manager", path: "/schedule-manager" }
+    ],
+    notes: [
+      "Automated jobs persist across server restarts",
+      "Content generation is rate-limited to prevent API overuse",
+      "Failed generations are automatically retried with exponential backoff"
+    ],
+    keyFeatures: ["Automated scheduling", "Batch processing", "Multi-niche support", "Job monitoring", "Retry logic"]
   },
 
   // Content Management
