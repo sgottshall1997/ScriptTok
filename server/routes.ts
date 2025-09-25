@@ -143,7 +143,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get API usage endpoint
   app.get('/api/usage', async (req, res) => {
     try {
-      const apiUsage = await storage.getApiUsage();
+      const apiUsage = await storage.getApiUsageStats();
       const today = await storage.getTodayApiUsage();
       const weeklyUsage = await storage.getWeeklyApiUsage();
       const monthlyUsage = await storage.getMonthlyApiUsage();

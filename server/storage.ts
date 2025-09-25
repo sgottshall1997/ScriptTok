@@ -37,6 +37,7 @@ export interface IStorage {
   // Content history operations
   saveContentHistory(history: InsertContentHistory): Promise<ContentHistory>;
   getContentHistory(limit?: number): Promise<ContentHistory[]>;
+  getAllContentHistory(limit?: number, offset?: number): Promise<ContentHistory[]>;
   getUserContentHistory(userId: number, limit?: number): Promise<ContentHistory[]>;
   getContentHistoryById(id: number): Promise<ContentHistory | undefined>;
   
@@ -55,6 +56,9 @@ export interface IStorage {
   // API usage tracking
   incrementApiUsage(templateType: string, tone: string, niche: string, userId?: number): Promise<void>;
   getApiUsageStats(): Promise<ApiUsage[]>;
+  getTodayApiUsage(): Promise<number>;
+  getWeeklyApiUsage(): Promise<number>;
+  getMonthlyApiUsage(): Promise<number>;
   
   // Scraper status operations
   updateScraperStatus(platform: ScraperPlatform, status: ScraperStatusType): Promise<void>;
@@ -171,6 +175,12 @@ export class MemStorage implements IStorage {
     return this.contentHistoryData.find(h => h.id === id);
   }
 
+  async getAllContentHistory(limit = 50, offset = 0): Promise<ContentHistory[]> {
+    // First reverse to get newest-first order, then apply offset and limit
+    const reversed = this.contentHistoryData.slice().reverse();
+    return reversed.slice(offset, offset + limit);
+  }
+
   // Trending products operations
   async saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct> {
     const newProduct: TrendingProduct = {
@@ -242,6 +252,30 @@ export class MemStorage implements IStorage {
 
   async getApiUsageStats(): Promise<ApiUsage[]> {
     return this.apiUsageData;
+  }
+
+  async getTodayApiUsage(): Promise<number> {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return this.apiUsageData.filter(usage => 
+      usage.createdAt >= today
+    ).reduce((sum, usage) => sum + usage.usageCount, 0);
+  }
+
+  async getWeeklyApiUsage(): Promise<number> {
+    const weekAgo = new Date();
+    weekAgo.setDate(weekAgo.getDate() - 7);
+    return this.apiUsageData.filter(usage => 
+      usage.createdAt >= weekAgo
+    ).reduce((sum, usage) => sum + usage.usageCount, 0);
+  }
+
+  async getMonthlyApiUsage(): Promise<number> {
+    const monthAgo = new Date();
+    monthAgo.setMonth(monthAgo.getMonth() - 1);
+    return this.apiUsageData.filter(usage => 
+      usage.createdAt >= monthAgo
+    ).reduce((sum, usage) => sum + usage.usageCount, 0);
   }
 
   // Scraper status operations
