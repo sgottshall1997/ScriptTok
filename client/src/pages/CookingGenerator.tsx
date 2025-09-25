@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Sparkles, Copy, Check, ChefHat, Clock, Users, Calendar } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import AboutThisPage from '@/components/AboutThisPage';
 
 interface RecipePayload {
   niche: string;
@@ -784,6 +785,35 @@ const CookingGenerator = () => {
             </div>
           </div>
         )}
+
+        <AboutThisPage 
+          title="Cooking Content Generator"
+          whatItDoes="Specialized AI-powered content generator for cooking and recipe content. Creates engaging recipe videos, cooking tutorials, ingredient spotlights, and food content optimized for social media platforms. Generates scripts, captions, hashtags, and promotional materials for food content creators."
+          setupRequirements={[
+            "Select trending ingredients from the dropdown menu or enter custom ingredients",
+            "Choose cooking method (grilling, baking, sautéing, air frying, etc.)",
+            "Pick content type (recipe tutorial, ingredient spotlight, cooking tips)"
+          ]}
+          usageInstructions={[
+            "Choose a trending ingredient or enter a custom one in the search field",
+            "Select your preferred cooking method from the dropdown",
+            "Click 'Generate Recipe Content' to create comprehensive content package",
+            "Review generated script, captions, and hashtags for each platform",
+            "Copy individual sections or download the complete content package",
+            "Use the batch generation feature for multiple recipes at once"
+          ]}
+          relatedLinks={[
+            {name: "CookAIng Unified Generator", path: "/cookaing-generator"},
+            {name: "Content Calendar", path: "/content-calendar"},
+            {name: "Template Explorer", path: "/template-explorer"}
+          ]}
+          notes={[
+            "Trending ingredients are ranked by popularity and seasonal relevance",
+            "Generated content includes nutritional highlights and cooking tips",
+            "All content is optimized for food photography and video demonstration",
+            "Batch generation allows creating multiple recipe variations efficiently"
+          ]}
+        />
       </div>
     </div>
   );

@@ -3,6 +3,7 @@ import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ContentHistoryManager } from '@shared/contentHistoryUtils';
+import AboutThisPage from '@/components/AboutThisPage';
 
 
 import { Input } from "@/components/ui/input";
@@ -1290,6 +1291,39 @@ ${config.hashtags.join(' ')}`;
             </CardContent>
           </Card>
         )}
+
+        <AboutThisPage 
+          title="Niche Content Generator"
+          whatItDoes="Advanced multi-niche content generation system with template-based creation. Supports all major niches (skincare, fitness, cooking, tech, etc.) with platform-specific optimization for Instagram, TikTok, YouTube, Twitter, and Facebook. Features smart hooks, trending product integration, and video duration calculation."
+          setupRequirements={[
+            "Navigate via niche URL (/niche/skincare) or select niche from dropdown",
+            "Choose content type (Instagram Reel, TikTok Video, YouTube Short, etc.)",
+            "Select or customize content template for your specific niche",
+            "Add trending product names or topics for personalization"
+          ]}
+          usageInstructions={[
+            "Select your target niche from the available options",
+            "Pick content format and platform for optimal sizing and style",
+            "Choose from curated templates or create custom prompts",
+            "Add specific product names to leverage trending items",
+            "Generate content and review the complete package (script, captions, hashtags)",
+            "Copy individual sections or save to content history for future use",
+            "Use video duration feedback to optimize content length"
+          ]}
+          relatedLinks={[
+            {name: "Template Explorer", path: "/template-explorer"},
+            {name: "Trending AI Picks", path: "/trending-ai-picks"},
+            {name: "Content History", path: "/content-history"},
+            {name: "Unified Content Generator", path: "/unified-content-generation"}
+          ]}
+          notes={[
+            "URL parameters auto-populate niche and template selections for quick access",
+            "Video duration calculations help optimize content for platform algorithms",
+            "Generated content includes platform-specific character limits and formatting",
+            "Content history automatically saves all generated items for future reference",
+            "Works best with specific, trending product names for maximum engagement"
+          ]}
+        />
       </div>
     </div>
   );
