@@ -47,6 +47,8 @@ import {
   AffiliateLink, InsertAffiliateLink,
   RevenueTracking, InsertRevenueTracking,
   ProductPerformance, InsertProductPerformance,
+  // Product Opportunities types
+  ProductOpportunity, InsertProductOpportunity,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
@@ -61,7 +63,9 @@ import {
   supportCategories, supportTickets, supportResponses, knowledgeBaseArticles,
   liveChatSessions, liveChatMessages, supportMetrics,
   // Amazon Monetization tables
-  amazonProducts, affiliateLinks, revenueTracking, productPerformance
+  amazonProducts, affiliateLinks, revenueTracking, productPerformance,
+  // Product Opportunities tables
+  productOpportunities
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -421,6 +425,12 @@ export interface IStorage {
   getProductPerformanceByTimeframe(timeframe: string, startDate: Date, endDate: Date): Promise<ProductPerformance[]>;
   updateProductPerformance(id: number, updates: Partial<InsertProductPerformance>): Promise<ProductPerformance | undefined>;
   getPerformanceAnalytics(filter?: { productId?: number; timeframe?: string; limit?: number }): Promise<ProductPerformance[]>;
+
+  // Product Opportunities operations
+  saveProductOpportunity(opportunity: InsertProductOpportunity): Promise<ProductOpportunity>;
+  getProductOpportunities(limit?: number): Promise<ProductOpportunity[]>;
+  getProductOpportunity(id: number): Promise<ProductOpportunity | undefined>;
+  deleteProductOpportunity(id: number): Promise<boolean>;
 }
 
 // In-memory storage implementation (not actively used - DatabaseStorage is the active implementation)
@@ -3778,6 +3788,43 @@ export class DatabaseStorage implements IStorage {
     }
     
     return await query;
+  }
+
+  // Product Opportunities operations
+  async saveProductOpportunity(opportunity: InsertProductOpportunity): Promise<ProductOpportunity> {
+    const [result] = await db
+      .insert(productOpportunities)
+      .values(opportunity)
+      .returning();
+    return result;
+  }
+
+  async getProductOpportunities(limit?: number): Promise<ProductOpportunity[]> {
+    let query = db
+      .select()
+      .from(productOpportunities)
+      .orderBy(desc(productOpportunities.createdAt));
+    
+    if (limit) {
+      query = query.limit(limit);
+    }
+    
+    return await query;
+  }
+
+  async getProductOpportunity(id: number): Promise<ProductOpportunity | undefined> {
+    const [result] = await db
+      .select()
+      .from(productOpportunities)
+      .where(eq(productOpportunities.id, id));
+    return result;
+  }
+
+  async deleteProductOpportunity(id: number): Promise<boolean> {
+    const result = await db
+      .delete(productOpportunities)
+      .where(eq(productOpportunities.id, id));
+    return result.rowCount! > 0;
   }
 }
 
