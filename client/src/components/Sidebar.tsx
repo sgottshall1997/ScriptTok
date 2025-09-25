@@ -47,7 +47,8 @@ import {
   Send,
   Wrench,
   BookOpen,
-  Building
+  Building,
+  Lightbulb
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -91,6 +92,7 @@ const sidebarData: SidebarCategory[] = [
     name: "AI Tools",
     items: [
       { name: "AI Trending Picks", href: "/trending-ai-picks", icon: TrendingUp },
+      { name: "Product Ideas", href: "/product-research", icon: Lightbulb },
       { name: "Spartan Generator", href: "/spartan-generator", icon: Zap },
       { name: "AI Model Testing", href: "/ai-model-test", icon: TestTube },
       { name: "Claude Generator", href: "/claude-generator", icon: Bot },
