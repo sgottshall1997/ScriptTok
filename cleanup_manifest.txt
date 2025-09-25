@@ -1,0 +1,113 @@
+=== CLEANUP MANIFEST FOR TIKTOK VIRAL PRODUCT GENERATOR ===
+
+=== FILES TO BE REMOVED ===
+PAGES TO DELETE:
+✅ ai-model-config.tsx - Remove (AI model configuration)
+✅ ai-model-test.tsx - Remove (AI model testing)  
+✅ BTBStatus.tsx - Remove (automation checklist)
+✅ claude-generator.tsx - Remove (Claude generator)
+✅ ClickTracking.tsx - Remove (click tracking)
+✅ content-calendar.tsx - Remove (content calendar)
+✅ CookingGenerator.tsx - Remove (cooking content - already streamlined out)
+✅ emoji-hashtag-test.tsx - Remove (emoji/hashtag testing)
+✅ home.tsx - Remove (duplicate of dashboard)
+✅ public-form.tsx - Remove (not needed)
+✅ SpartanContentPage.tsx - Remove (spartan generator)
+✅ UnifiedContentGeneration.tsx - Remove (duplicate of GenerateContent)
+
+MAYBE KEEP:
+🤔 ProductResearch.tsx - Could be useful for "Product Ideas" feature
+
+ANALYSIS: We have many actual page files that need to be deleted!
+
+=== FILES TO BE RENAMED ===
+1. ROUTE: "/unified-generator" → "/generate" (already exists in App.tsx)
+2. NAVIGATION: "Unified Generator" → "TikTok Generator" 
+3. NAVIGATION: "Content History" → "Script History"
+4. NAVIGATION: "AI Trending Picks" → "Trending Products" 
+5. PAGE: ProductResearch.tsx → can stay as "Product Research" or rename to something else
+
+=== NAVIGATION ITEMS TO UPDATE ===
+CURRENT STRUCTURE (29 items across 10 categories):
+✅ Overview (1) - Keep: About GlowBot
+❌ Core (4) - Remove: Template Explorer, keep: Dashboard, TikTok Generator, Product Ideas  
+❌ Content Management (3) - Remove: Analytics Dashboard, Content Calendar, keep: Script History
+❌ Framework (3) - Remove entire section
+❌ AI Tools (5) - Remove: Spartan Generator, AI Model Testing, Claude Generator, Model Configuration, keep: Trending Products
+❌ Advanced Tools (2) - Remove entire section  
+❌ Analytics & Tracking (2) - Remove entire section
+❌ Integration (3) - Remove entire section
+❌ Legal & Compliance (3) - Streamline to: FTC Disclosures, move Privacy/Terms to Support
+✅ Support (3) - Keep: How It Works, FAQ, Contact + add Privacy/Terms
+
+TARGET STRUCTURE (11 items across 6 categories):
+✅ OVERVIEW (1 item)
+  - About GlowBot
+
+✅ CORE (2 items)  
+  - Dashboard
+  - TikTok Generator
+
+✅ CONTENT (2 items)
+  - Script History  
+  - Affiliate Links (need to create/find this)
+
+✅ AI TOOLS (1 item)
+  - Trending Products
+
+✅ SETTINGS (2 items)
+  - FTC Disclosures
+  - Account (need to create/find this)
+
+✅ SUPPORT (3 items)
+  - How It Works  
+  - FAQ
+  - Contact
+
+=== ROUTES TO REMOVE ===
+The following routes exist in App.tsx and sidebar but may need cleanup:
+- All sidebar items that don't have corresponding routes
+- Routes that point to non-essential features
+
+=== MISSING PAGES TO CREATE ===
+1. Affiliate Links page (referenced in target structure)
+2. Account page (referenced in target structure)  
+
+=== EXISTING PAGES TO KEEP ===
+✅ Dashboard.tsx
+✅ GenerateContent.tsx (TikTok Generator)
+✅ EnhancedContentHistory.tsx (Script History)
+✅ TrendingAIPicks.tsx (Trending Products)
+✅ about.tsx
+✅ faq.tsx  
+✅ contact.tsx
+✅ how-it-works.tsx
+✅ CompliancePage.tsx (FTC Disclosures)
+✅ privacy.tsx (move to Support section)
+✅ terms.tsx (move to Support section)
+
+=== FILES TO MODIFY ===
+1. client/src/components/Sidebar.tsx - Complete navigation restructure
+2. client/src/App.tsx - Update routes to match new navigation
+3. Create missing page files as needed
+
+=== CURRENT WORKING ROUTES (VERIFIED) ===
+✅ / (Dashboard)
+✅ /dashboard (Dashboard)  
+✅ /generate (GenerateContent)
+✅ /product-research (ProductResearch)
+✅ /trending-ai-picks (TrendingAIPicks) 
+✅ /content-history (EnhancedContentHistory)
+✅ /about (AboutPage)
+✅ /faq (FAQPage)
+✅ /privacy (PrivacyPolicyPage)
+✅ /terms (TermsPage)
+✅ /contact (ContactPage)
+
+=== CLEANUP PRIORITY ===
+1. 🔥 HIGH: Update Sidebar.tsx navigation structure
+2. 🔥 HIGH: Create missing pages (Affiliate Links, Account, FTC Disclosures, How It Works)
+3. 🟡 MEDIUM: Update App.tsx routes if needed
+4. 🟢 LOW: Clean up any unused imports
+
+This is a NAVIGATION-FOCUSED cleanup since most features exist only as sidebar items without actual pages.
