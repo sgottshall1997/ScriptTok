@@ -351,6 +351,9 @@ const ProductResearch = () => {
     timeline: '',
     competitorReference: ''
   });
+  const [savedCriteria, setSavedCriteria] = useState<Array<{name: string, constraints: SearchConstraints}>>([]);
+  const [criteriaName, setCriteriaName] = useState('');
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
 
   // Fetch saved opportunities
   const { data: savedOpportunities = [], isLoading: savedLoading } = useQuery<ProductOpportunity[]>({
@@ -493,6 +496,75 @@ const ProductResearch = () => {
     }
     
     return `Searching for products under $${constraints.maxCost} cost that solve "${constraints.problem}" for ${constraints.targetCustomer} at $${constraints.targetPrice} price point`;
+  };
+  
+  // Load saved criteria on component mount
+  React.useEffect(() => {
+    const saved = localStorage.getItem('productResearchCriteria');
+    if (saved) {
+      try {
+        setSavedCriteria(JSON.parse(saved));
+      } catch (error) {
+        console.error('Error loading saved criteria:', error);
+      }
+    }
+  }, []);
+  
+  const saveCriteria = () => {
+    if (!criteriaName.trim()) {
+      toast({
+        title: "Name Required",
+        description: "Please enter a name for your search criteria",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const validationError = validateForm();
+    if (validationError) {
+      toast({
+        title: "Invalid Criteria",
+        description: "Please complete all required fields before saving",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    const newCriteria = {
+      name: criteriaName.trim(),
+      constraints: { ...constraints }
+    };
+    
+    const updated = [...savedCriteria.filter(c => c.name !== criteriaName.trim()), newCriteria];
+    setSavedCriteria(updated);
+    localStorage.setItem('productResearchCriteria', JSON.stringify(updated));
+    
+    setShowSaveDialog(false);
+    setCriteriaName('');
+    
+    toast({
+      title: "Criteria Saved",
+      description: `Search criteria "${criteriaName.trim()}" has been saved`,
+    });
+  };
+  
+  const loadCriteria = (savedConstraints: SearchConstraints) => {
+    setConstraints(savedConstraints);
+    toast({
+      title: "Criteria Loaded",
+      description: "Search criteria has been loaded into the form",
+    });
+  };
+  
+  const deleteCriteria = (nameToDelete: string) => {
+    const updated = savedCriteria.filter(c => c.name !== nameToDelete);
+    setSavedCriteria(updated);
+    localStorage.setItem('productResearchCriteria', JSON.stringify(updated));
+    
+    toast({
+      title: "Criteria Deleted",
+      description: `Search criteria "${nameToDelete}" has been deleted`,
+    });
   };
 
   const handleSaveOpportunity = (opportunityData: ActionableOpportunity) => {
@@ -706,8 +778,8 @@ const ProductResearch = () => {
             </p>
           </div>
           
-          {/* Search Button */}
-          <div className="pt-4">
+          {/* Search and Save Buttons */}
+          <div className="pt-4 space-y-3">
             <Button 
               onClick={handleSearch} 
               disabled={isSearching}
@@ -726,7 +798,112 @@ const ProductResearch = () => {
                 </>
               )}
             </Button>
+            
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                onClick={() => setShowSaveDialog(true)}
+                disabled={!constraints.problem || !constraints.targetCustomer}
+                className="flex-1"
+                data-testid="button-save-criteria"
+              >
+                <BookmarkPlus className="h-4 w-4 mr-2" />
+                Save Search Criteria
+              </Button>
+              
+              {savedCriteria.length > 0 && (
+                <Select onValueChange={(value) => {
+                  const selected = savedCriteria.find(c => c.name === value);
+                  if (selected) loadCriteria(selected.constraints);
+                }}>
+                  <SelectTrigger className="flex-1" data-testid="select-load-criteria">
+                    <SelectValue placeholder="Load Saved Criteria" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {savedCriteria.map((criteria) => (
+                      <SelectItem key={criteria.name} value={criteria.name}>
+                        {criteria.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
           </div>
+          
+          {/* Save Criteria Dialog */}
+          {showSaveDialog && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+              <div className="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
+                <h3 className="text-lg font-semibold mb-4">Save Search Criteria</h3>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="criteriaName">Criteria Name</Label>
+                    <Input
+                      id="criteriaName"
+                      placeholder="e.g., Beauty Products for Busy Moms"
+                      value={criteriaName}
+                      onChange={(e) => setCriteriaName(e.target.value)}
+                      data-testid="input-criteria-name"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button onClick={saveCriteria} className="flex-1" data-testid="button-confirm-save">
+                      Save
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => {
+                        setShowSaveDialog(false);
+                        setCriteriaName('');
+                      }}
+                      className="flex-1"
+                      data-testid="button-cancel-save"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* Saved Criteria List */}
+          {savedCriteria.length > 0 && (
+            <div className="pt-4 border-t">
+              <h4 className="text-sm font-medium mb-3 text-muted-foreground">Saved Search Criteria ({savedCriteria.length})</h4>
+              <div className="space-y-2">
+                {savedCriteria.map((criteria) => (
+                  <div key={criteria.name} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="font-medium text-sm">{criteria.name}</div>
+                      <div className="text-xs text-muted-foreground truncate">
+                        {criteria.constraints.problem} • ${criteria.constraints.maxCost}-${criteria.constraints.targetPrice}
+                      </div>
+                    </div>
+                    <div className="flex gap-1">
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => loadCriteria(criteria.constraints)}
+                        data-testid={`button-load-${criteria.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                      >
+                        Load
+                      </Button>
+                      <Button 
+                        size="sm" 
+                        variant="ghost" 
+                        onClick={() => deleteCriteria(criteria.name)}
+                        data-testid={`button-delete-${criteria.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}`}
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
