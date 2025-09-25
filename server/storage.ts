@@ -44,6 +44,7 @@ export interface IStorage {
   saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct>;
   getTrendingProducts(limit?: number): Promise<TrendingProduct[]>;
   getTrendingProductsByNiche(niche: string, limit?: number): Promise<TrendingProduct[]>;
+  clearTrendingProducts(): Promise<void>;
   
   // Amazon products and affiliate links
   saveAmazonProduct(product: InsertAmazonProduct): Promise<AmazonProduct>;
@@ -190,6 +191,10 @@ export class MemStorage implements IStorage {
       .filter(p => p.niche === niche)
       .slice(-limit)
       .reverse();
+  }
+
+  async clearTrendingProducts(): Promise<void> {
+    this.trendingProducts = [];
   }
 
   // Amazon products and affiliate links

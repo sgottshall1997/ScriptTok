@@ -122,6 +122,22 @@ export const contentHistory = pgTable("content_history", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// Daily scraper cache for trending products
+export const dailyScraperCache = pgTable("daily_scraper_cache", {
+  id: serial("id").primaryKey(),
+  source: text("source").notNull(), // 'all_trending', etc.
+  date: text("date").notNull(), // YYYY-MM-DD format
+  data: jsonb("data"), // Cached trending products array
+  success: boolean("success").notNull().default(false),
+  error: text("error"), // Error message if cache failed
+  lastUpdated: timestamp("last_updated").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    sourceDate: unique().on(table.source, table.date), // Unique per source per day
+  };
+});
+
 // Amazon products for affiliate monetization
 export const amazonProducts = pgTable("amazon_products", {
   id: serial("id").primaryKey(),
