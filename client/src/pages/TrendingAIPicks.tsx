@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -715,6 +716,37 @@ export default function TrendingAIPicks() {
             </Tabs>
           </div>
         </div>
+
+        <AboutThisPage 
+          title="Trending AI Picks"
+          whatItDoes="AI-powered trending product discovery engine that identifies viral products across multiple niches. Automatically fetches trending items from Amazon and Perplexity, analyzes engagement patterns, and provides viral keywords and content suggestions. Features advanced filtering, favorites system, and direct integration with content generators."
+          setupRequirements={[
+            "Perplexity API integration for real-time trend discovery",
+            "Amazon API access for product data enrichment",
+            "Automated daily trend fetching via scheduled jobs"
+          ]}
+          usageInstructions={[
+            "Browse trending products across all niches or filter by specific categories",
+            "Use engagement threshold slider to find products with optimal viral potential",
+            "Pin favorite products to save them for future content creation",
+            "Click product titles to auto-populate content generators with trending items",
+            "Review viral keywords and hashtags for maximum reach optimization",
+            "Switch between 'All Products' and 'Favorites' tabs for better organization"
+          ]}
+          relatedLinks={[
+            {name: "Generate Content", path: "/niche/all"},
+            {name: "Unified Content Generator", path: "/unified-content-generation"},
+            {name: "Product Research", path: "/product-research"},
+            {name: "Content History", path: "/content-history"}
+          ]}
+          notes={[
+            "Product data refreshes daily to ensure trending relevance",
+            "Engagement metrics are calculated from multiple social media platforms",
+            "Viral keywords are AI-analyzed for maximum content optimization",
+            "Direct integration allows one-click content generation from trending products",
+            "Historical trending data helps identify seasonal and cyclical patterns"
+          ]}
+        />
       </div>
     </div>
   );

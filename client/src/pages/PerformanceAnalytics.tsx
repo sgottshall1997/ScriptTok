@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -834,6 +835,39 @@ export default function PerformanceAnalytics() {
           )}
         </TabsContent>
       </Tabs>
+
+      <AboutThisPage 
+        title="Performance Analytics"
+        whatItDoes="Comprehensive content performance tracking and analytics dashboard. Monitor engagement metrics, revenue attribution, and content effectiveness across all platforms. Features manual data input, automated tracking, AI model performance analysis, and detailed reporting with charts and trends."
+        setupRequirements={[
+          "Connect analytics platforms (Google Analytics, social media APIs)",
+          "Configure revenue tracking for affiliate and sponsored content",
+          "Set up content tagging system for proper attribution",
+          "Enable automated data collection from content platforms"
+        ]}
+        usageInstructions={[
+          "Select time range and niche filters for targeted analysis",
+          "Review dashboard overview with key performance indicators",
+          "Analyze engagement trends and identify top-performing content",
+          "Input manual metrics data for platforms without API integration",
+          "Compare AI model performance to optimize content generation",
+          "Export reports and schedule automated analytics emails",
+          "Use ROI insights to guide content strategy and budgeting"
+        ]}
+        relatedLinks={[
+          {name: "Click Tracking", path: "/click-tracking"},
+          {name: "Content History", path: "/content-history"},
+          {name: "Trending AI Picks", path: "/trending-ai-picks"},
+          {name: "Webhook Settings", path: "/webhook-settings"}
+        ]}
+        notes={[
+          "Manual data entry allows tracking of any platform or metric",
+          "AI model performance data helps optimize generation settings",
+          "Revenue attribution connects content performance to actual earnings",
+          "Historical data enables trend analysis and seasonal planning",
+          "Export functionality supports external reporting and analysis tools"
+        ]}
+      />
     </div>
   );
 }
