@@ -33,6 +33,7 @@ import {
   Copy,
   Settings
 } from "lucide-react";
+import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
 // Import types from schema
 interface Campaign {
@@ -687,6 +688,35 @@ const CampaignDetailPage = () => {
           </Tabs>
         </CardContent>
       </Card>
+
+      {/* Instruction Footer */}
+      <InstructionFooter
+        title="Campaign Detail View"
+        whatIsIt="Comprehensive campaign management interface providing detailed oversight of individual campaigns with artifact management, performance tracking, and real-time optimization capabilities."
+        setupSteps={[
+          "Access through campaign links in the main Campaigns view.",
+          "No additional setup required - inherits campaign configuration.",
+          "Ensure campaign has artifacts generated for full functionality."
+        ]}
+        usageSteps={[
+          "Review campaign overview and status in the main details section.",
+          "Monitor performance metrics including open rates, click rates, and engagement.",
+          "Manage campaign artifacts across different channels (email, social, blog, push).",
+          "View and edit campaign metadata and configuration.",
+          "Track real-time performance and adjust targeting as needed.",
+          "Use artifact previews to validate content before deployment."
+        ]}
+        relatedLinks={[
+          {label: "Campaigns", href: "/cookaing-marketing/campaigns"},
+          {label: "A/B Testing", href: "/cookaing-marketing/experiments"},
+          {label: "Reports", href: "/cookaing-marketing/reports"}
+        ]}
+        notes={[
+          "This page provides detailed management for individual campaigns created in the main Campaigns section.",
+          "Performance metrics are updated in real-time as campaign data is collected.",
+          "Artifact management allows you to preview and modify content before or during campaign execution."
+        ]}
+      />
     </div>
   );
 };

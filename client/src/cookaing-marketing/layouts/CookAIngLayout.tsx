@@ -74,18 +74,20 @@ const cookAIngNavigation: SidebarSection[] = [
     name: "Campaign Ops",
     items: [
       { name: "Campaigns", href: "/cookaing-marketing/campaigns", icon: Target },
+      { name: "Campaign Detail", href: "/cookaing-marketing/campaign-detail", icon: Target },
       { name: "A/B Testing", href: "/cookaing-marketing/experiments", icon: FlaskConical },
       { name: "Workflows", href: "/cookaing-marketing/workflows", icon: Workflow },
-      { name: "Personalization", href: "/cookaing-marketing/personalization", icon: PersonStanding }
+      { name: "Personalization", href: "/cookaing-marketing/personalization", icon: PersonStanding },
+      { name: "Social Automation", href: "/cookaing-marketing/social-automation", icon: Send }
     ]
   },
   {
     name: "Intelligence & Content",
     items: [
-      { name: "Trends & Seasonal", href: "/cookaing-marketing/trends", icon: TrendingUp },
-      { name: "Content History", href: "/cookaing-marketing/content-history", icon: History },
-      { name: "Unified Content Generator", href: "/cookaing-marketing/content-generator", icon: Sparkles },
-      { name: "Promo Generator", href: "/cookaing-marketing/promo-generator", icon: Zap }
+      { name: "Content Hub", href: "/cookaing-marketing/content", icon: Sparkles },
+      { name: "Intelligence Analysis", href: "/cookaing-marketing/intelligence", icon: Activity },
+      { name: "Promo Generator", href: "/cookaing-marketing/promo-generator", icon: Zap },
+      { name: "Trends & Seasonal", href: "/cookaing-marketing/trends", icon: TrendingUp }
     ]
   },
   {

@@ -30,7 +30,10 @@ import {
   Zap,
   Globe,
   Database,
-  Settings
+  Settings,
+  Sparkles,
+  Brain,
+  HeadphonesIcon
 } from 'lucide-react';
 import InstructionFooter from '@/cookaing-marketing/components/InstructionFooter';
 
@@ -257,6 +260,72 @@ const sections: CookAIngSection[] = [
     usage: 'Run database seeds, execute end-to-end smoke tests, and toggle ENABLE_* flags to test feature gating.'
   },
   {
+    id: 'social-automation',
+    name: 'Social Automation',
+    icon: Send,
+    path: '/cookaing-marketing/social-automation',
+    category: 'automation',
+    description: 'Multi-platform social media publishing and engagement automation',
+    whatItDoes: 'Automates social media posting, engagement, and audience growth across Instagram, Twitter, YouTube, and Facebook with smart scheduling and interaction features.',
+    setup: 'Connect social media accounts, configure posting schedules, and set automation rules for engagement.',
+    usage: 'Schedule posts, monitor engagement metrics, auto-respond to comments, and track follower growth across platforms.'
+  },
+  {
+    id: 'content',
+    name: 'Content Generation Hub',
+    icon: Sparkles,
+    path: '/cookaing-marketing/content',
+    category: 'core',
+    description: 'Advanced content creation and management with AI intelligence integration',
+    whatItDoes: 'Generates and manages content across multiple channels with AI suggestions, viral prediction, sentiment analysis, and intelligent optimization.',
+    setup: 'Configure AI models, set content preferences, and connect intelligence APIs for enhanced generation.',
+    usage: 'Create multi-platform content, review AI suggestions, monitor performance predictions, and optimize based on intelligence insights.'
+  },
+  {
+    id: 'intelligence',
+    name: 'Intelligence Analysis',
+    icon: Brain,
+    path: '/cookaing-marketing/intelligence',
+    category: 'analytics',
+    description: 'AI-powered competitor analysis, sentiment tracking, and viral prediction system',
+    whatItDoes: 'Analyzes competitors, predicts viral potential, tracks sentiment, and detects content fatigue across platforms.',
+    setup: 'Add competitor profiles, configure sentiment tracking, and enable viral prediction algorithms.',
+    usage: 'Monitor competitor strategies, analyze sentiment trends, predict content performance, and avoid audience fatigue.'
+  },
+  {
+    id: 'promo-generator',
+    name: 'Promo Generator',
+    icon: Zap,
+    path: '/cookaing-marketing/promo-generator',
+    category: 'core',
+    description: 'Spartan format promotional content generator optimized for conversion',
+    whatItDoes: 'Creates professional promotional content using proven Spartan format templates optimized for high conversion across all channels.',
+    setup: 'Select target channels, configure brand messaging, and customize Spartan format templates.',
+    usage: 'Generate channel-specific promo content, customize messaging, and deploy across marketing channels.'
+  },
+  {
+    id: 'campaign-detail',
+    name: 'Campaign Detail View',
+    icon: Target,
+    path: '/cookaing-marketing/campaign-detail',
+    category: 'core',
+    description: 'Detailed campaign management and performance tracking interface',
+    whatItDoes: 'Provides comprehensive campaign oversight with artifact management, performance metrics, and real-time optimization.',
+    setup: 'Access through campaign links in main campaigns view; no additional setup required.',
+    usage: 'Monitor individual campaign performance, manage artifacts, adjust targeting, and optimize based on real-time data.'
+  },
+  {
+    id: 'support',
+    name: 'Customer Support Center',
+    icon: HeadphonesIcon,
+    path: '/cookaing-marketing/support',
+    category: 'admin',
+    description: 'Complete customer support management with tickets, knowledge base, and live chat',
+    whatItDoes: 'Manages customer support operations including ticket handling, knowledge base articles, live chat sessions, and support analytics.',
+    setup: 'Configure support categories, create knowledge base articles, and set up chat integration.',
+    usage: 'Handle customer tickets, provide live chat support, manage knowledge base content, and track support metrics.'
+  },
+  {
     id: 'docs',
     name: 'Documentation',
     icon: BookOpen,
@@ -322,7 +391,8 @@ const AboutCookAIng = () => {
         <CardContent className="space-y-4">
           <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
             The CookAIng Marketing Engine is built as a complete marketing stack with {sections.length} integrated modules. 
-            It handles everything from lead capture and segmentation to automated campaigns and performance analytics. 
+            It handles everything from lead capture and segmentation to automated campaigns, social media automation, 
+            AI-powered content generation, intelligence analysis, and comprehensive performance analytics. 
             The system is designed to scale from individual creators to multi-brand organizations.
           </p>
           
