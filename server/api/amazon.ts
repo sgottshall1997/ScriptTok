@@ -368,6 +368,86 @@ router.get('/browse-nodes', async (req, res) => {
 });
 
 /**
+ * GET /api/amazon/test
+ * Simple test with minimal API call to verify credentials
+ */
+router.get('/test', async (req, res) => {
+  try {
+    const amazonConfig = getAmazonConfig();
+    
+    if (!amazonConfig.isConfigured) {
+      return res.json({
+        success: false,
+        configured: false,
+        message: 'Amazon PA-API credentials not configured'
+      });
+    }
+
+    const amazonClient = createAmazonClient();
+    if (!amazonClient) {
+      return res.json({
+        success: false,
+        configured: true,
+        message: 'Amazon client initialization failed'
+      });
+    }
+
+    // Make a single, minimal test request
+    try {
+      console.log('🧪 Making minimal Amazon API test request...');
+      const testResponse = await amazonClient.getItems({
+        ItemIds: ['B08N5WRWNW'], // Known ASIN for testing
+        Resources: ['ItemInfo.Title'] // Minimal resource request
+      });
+      
+      return res.json({
+        success: true,
+        configured: true,
+        message: 'PA-API access confirmed',
+        testResponse: testResponse ? 'Product data received' : 'No data returned'
+      });
+      
+    } catch (error) {
+      console.log('🔍 Amazon API test error:', error instanceof Error ? error.message : 'Unknown error');
+      
+      if (error instanceof AmazonAPIError) {
+        // Check for specific error types
+        if (error.message.includes('TooManyRequests')) {
+          return res.json({
+            success: true, // TooManyRequests means credentials work!
+            configured: true,
+            message: 'PA-API access confirmed (rate limited)',
+            note: 'TooManyRequests error confirms valid credentials'
+          });
+        }
+        
+        return res.json({
+          success: false,
+          configured: true,
+          message: `Amazon API error: ${error.message}`,
+          statusCode: error.statusCode
+        });
+      }
+      
+      return res.json({
+        success: false,
+        configured: true,
+        message: 'API test failed',
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+
+  } catch (error) {
+    console.error('Amazon test error:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Test failed',
+      message: error instanceof Error ? error.message : 'Unknown error'
+    });
+  }
+});
+
+/**
  * GET /api/amazon/status
  * Check Amazon API connectivity and configuration
  */

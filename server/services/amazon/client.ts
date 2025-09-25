@@ -113,7 +113,7 @@ export class AmazonPAAPIClient {
   private credentials: AmazonCredentials;
   private apiUrl: string;
   private lastRequestTime: number = 0;
-  private readonly MIN_REQUEST_INTERVAL = 1100; // 1.1 seconds to be safe (PA-API limit: 1 TPS)
+  private readonly MIN_REQUEST_INTERVAL = 1500; // 1.5 seconds to be very safe (PA-API limit: 1 TPS)
 
   constructor(credentials: AmazonCredentials) {
     this.credentials = credentials;
