@@ -983,27 +983,36 @@ const EnhancedContentHistory = () => {
                     </div>
                   </div>
 
-                  {/* Hook */}
-                  {entry.generatedOutput.hook && (
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center">
-                        <h4 className="font-medium">Hook:</h4>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => copyToClipboard(entry.generatedOutput.hook!, 'Hook', `hook-${entry.id}`)}
-                        >
-                          <Copy className="h-4 w-4 mr-2" />
-                          {copiedItems[`hook-${entry.id}`] ? 'Copied!' : 'Copy'}
-                        </Button>
+                  {/* Generated Caption */}
+                  {(() => {
+                    // Get the TikTok caption or fallback to main content
+                    const platformCaptions = entry.generatedOutput.platformCaptions || {};
+                    const tiktokCaption = platformCaptions.tiktok || entry.generatedOutput.tiktokCaption;
+                    const caption = tiktokCaption || entry.generatedOutput.content;
+                    
+                    if (!caption) return null;
+                    
+                    return (
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-medium">Generated Caption:</h4>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => copyToClipboard(caption, 'Generated Caption', `caption-${entry.id}`)}
+                          >
+                            <Copy className="h-4 w-4 mr-2" />
+                            {copiedItems[`caption-${entry.id}`] ? 'Copied!' : 'Copy'}
+                          </Button>
+                        </div>
+                        <div className="bg-white p-3 rounded border text-sm">
+                          {typeof caption === 'string' 
+                            ? caption 
+                            : JSON.stringify(caption, null, 2)}
+                        </div>
                       </div>
-                      <div className="bg-white p-3 rounded border text-sm">
-                        {typeof entry.generatedOutput.hook === 'string' 
-                          ? entry.generatedOutput.hook 
-                          : JSON.stringify(entry.generatedOutput.hook, null, 2)}
-                      </div>
-                    </div>
-                  )}
+                    );
+                  })()}
 
                   {/* Hashtags */}
                   {entry.generatedOutput.hashtags && entry.generatedOutput.hashtags.length > 0 && (
