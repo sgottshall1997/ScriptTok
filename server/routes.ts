@@ -102,6 +102,7 @@ import intelligenceRouter from "./api/cookaing-marketing/intelligence";
 import socialAutomationRouter from "./api/cookaing-marketing/social-automation";
 import complianceRouter from "./api/cookaing-marketing/compliance";
 import enhanceRouter from "./api/cookaing-marketing/enhance";
+import supportRouter from "./api/cookaing-marketing/support";
 import { seedDataRouter } from "./api/seed-data";
 import phase5Router from "./api/cookaing-marketing";
 import glowbotAdminRouter from "./api/admin";
@@ -136,6 +137,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/cookaing-marketing/social-automation', socialAutomationRouter);
   app.use('/api/cookaing-marketing/compliance', complianceRouter);
   app.use('/api/cookaing-marketing/enhance', enhanceRouter);
+  app.use('/api/cookaing-marketing/support', supportRouter);
   
   // Phase 5: Advanced Personalization and Collaboration
   app.use('/api/cookaing-marketing', phase5Router);
