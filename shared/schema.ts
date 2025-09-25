@@ -2304,7 +2304,7 @@ export const supportCategories = pgTable("support_categories", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
   description: text("description"),
-  parentId: integer("parent_id").references(() => supportCategories.id),
+  parentId: integer("parent_id"),
   isActive: boolean("is_active").notNull().default(true),
   sortOrder: integer("sort_order").default(0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
@@ -2314,6 +2314,10 @@ export const supportCategories = pgTable("support_categories", {
     nameIdx: index("support_categories_name_idx").on(table.name),
     activeIdx: index("support_categories_active_idx").on(table.isActive),
     parentIdx: index("support_categories_parent_idx").on(table.parentId),
+    parentFk: foreignKey({
+      columns: [table.parentId],
+      foreignColumns: [table.id],
+    }),
   };
 });
 
@@ -2575,3 +2579,271 @@ export type InsertLiveChatMessage = z.infer<typeof insertLiveChatMessageSchema>;
 
 export type SupportMetric = typeof supportMetrics.$inferSelect;
 export type InsertSupportMetric = z.infer<typeof insertSupportMetricSchema>;
+
+// ================================================================
+// Enhanced Amazon Monetization Tables
+// ================================================================
+
+// Enhanced Amazon product information with automatic matching
+export const amazonProducts = pgTable("amazon_products", {
+  id: serial("id").primaryKey(),
+  asin: text("asin").notNull().unique(),
+  title: text("title").notNull(),
+  description: text("description"),
+  category: text("category"),
+  subcategory: text("subcategory"),
+  brand: text("brand"),
+  currentPrice: decimal("current_price"),
+  originalPrice: decimal("original_price"),
+  discountPercent: integer("discount_percent").default(0),
+  availability: text("availability").notNull().default("in_stock"), // in_stock, out_of_stock, limited, pre_order
+  rating: decimal("rating"),
+  reviewCount: integer("review_count").default(0),
+  imageUrls: text("image_urls").array().default([]),
+  features: text("features").array().default([]),
+  dimensions: jsonb("dimensions"), // size, weight, etc.
+  isEligibleForAssociates: boolean("is_eligible_for_associates").notNull().default(true),
+  lastPriceCheck: timestamp("last_price_check"),
+  lastAvailabilityCheck: timestamp("last_availability_check"),
+  niche: text("niche"), // beauty, tech, fitness, etc.
+  keywords: text("keywords").array().default([]), // for matching with content
+  salesRank: integer("sales_rank"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    asinIdx: index("amazon_products_asin_idx").on(table.asin),
+    categoryIdx: index("amazon_products_category_idx").on(table.category),
+    nicheIdx: index("amazon_products_niche_idx").on(table.niche),
+    priceIdx: index("amazon_products_price_idx").on(table.currentPrice),
+    ratingIdx: index("amazon_products_rating_idx").on(table.rating),
+    availabilityIdx: index("amazon_products_availability_idx").on(table.availability),
+    updatedIdx: index("amazon_products_updated_idx").on(table.updatedAt),
+  };
+});
+
+// Comprehensive affiliate link tracking and management
+export const affiliateLinks = pgTable("affiliate_links", {
+  id: serial("id").primaryKey(),
+  originalUrl: text("original_url").notNull(),
+  affiliateUrl: text("affiliate_url").notNull(),
+  shortUrl: text("short_url"), // generated short URL for social media
+  trackingId: text("tracking_id").notNull(), // unique tracking identifier
+  amazonProductId: integer("amazon_product_id").references(() => amazonProducts.id),
+  productAsin: text("product_asin"), // direct ASIN reference
+  contentId: integer("content_id"), // reference to content where link appears
+  contentType: text("content_type"), // social_post, blog_article, email, video_description
+  platform: text("platform"), // tiktok, instagram, youtube, blog, email
+  campaignId: text("campaign_id"), // for campaign attribution
+  userId: integer("user_id").references(() => users.id),
+  clickCount: integer("click_count").default(0),
+  conversionCount: integer("conversion_count").default(0),
+  totalEarnings: decimal("total_earnings").default("0.00"),
+  lastClickAt: timestamp("last_click_at"),
+  isActive: boolean("is_active").notNull().default(true),
+  hasAutoDisclosure: boolean("has_auto_disclosure").notNull().default(false),
+  ftcDisclosureText: text("ftc_disclosure_text"), // custom disclosure if needed
+  metadata: jsonb("metadata"), // additional tracking data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    trackingIdx: index("affiliate_links_tracking_idx").on(table.trackingId),
+    productIdx: index("affiliate_links_product_idx").on(table.amazonProductId),
+    asinIdx: index("affiliate_links_asin_idx").on(table.productAsin),
+    contentIdx: index("affiliate_links_content_idx").on(table.contentId),
+    platformIdx: index("affiliate_links_platform_idx").on(table.platform),
+    activeIdx: index("affiliate_links_active_idx").on(table.isActive),
+    earningsIdx: index("affiliate_links_earnings_idx").on(table.totalEarnings),
+    createdIdx: index("affiliate_links_created_idx").on(table.createdAt),
+  };
+});
+
+// Detailed revenue tracking and attribution
+export const revenueTracking = pgTable("revenue_tracking", {
+  id: serial("id").primaryKey(),
+  affiliateLinkId: integer("affiliate_link_id").notNull().references(() => affiliateLinks.id, { onDelete: 'cascade' }),
+  amazonProductId: integer("amazon_product_id").references(() => amazonProducts.id),
+  transactionId: text("transaction_id"), // Amazon transaction ID if available
+  orderDate: timestamp("order_date").notNull(),
+  productPrice: decimal("product_price").notNull(),
+  commissionRate: decimal("commission_rate").notNull(), // percentage
+  commissionAmount: decimal("commission_amount").notNull(),
+  currency: text("currency").notNull().default("USD"),
+  quantity: integer("quantity").default(1),
+  isReturned: boolean("is_returned").default(false),
+  returnDate: timestamp("return_date"),
+  customerState: text("customer_state"), // for geographic analytics
+  deviceType: text("device_type"), // mobile, desktop, tablet
+  referrerSource: text("referrer_source"), // organic, paid, social, direct
+  conversionTimeHours: integer("conversion_time_hours"), // time from click to purchase
+  metadata: jsonb("metadata"), // additional transaction data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    linkIdx: index("revenue_tracking_link_idx").on(table.affiliateLinkId),
+    productIdx: index("revenue_tracking_product_idx").on(table.amazonProductId),
+    orderDateIdx: index("revenue_tracking_order_date_idx").on(table.orderDate),
+    commissionIdx: index("revenue_tracking_commission_idx").on(table.commissionAmount),
+    deviceIdx: index("revenue_tracking_device_idx").on(table.deviceType),
+    sourceIdx: index("revenue_tracking_source_idx").on(table.referrerSource),
+    returnedIdx: index("revenue_tracking_returned_idx").on(table.isReturned),
+  };
+});
+
+// Product performance analytics for optimization
+export const productPerformance = pgTable("product_performance", {
+  id: serial("id").primaryKey(),
+  amazonProductId: integer("amazon_product_id").notNull().references(() => amazonProducts.id, { onDelete: 'cascade' }),
+  affiliateLinkId: integer("affiliate_link_id").references(() => affiliateLinks.id),
+  timeframe: text("timeframe").notNull(), // daily, weekly, monthly
+  startDate: timestamp("start_date").notNull(),
+  endDate: timestamp("end_date").notNull(),
+  impressions: integer("impressions").default(0),
+  clicks: integer("clicks").default(0),
+  conversions: integer("conversions").default(0),
+  revenue: decimal("revenue").default("0.00"),
+  clickThroughRate: decimal("click_through_rate").default("0.00"), // calculated percentage
+  conversionRate: decimal("conversion_rate").default("0.00"), // calculated percentage
+  averageOrderValue: decimal("average_order_value").default("0.00"),
+  returnRate: decimal("return_rate").default("0.00"), // percentage of returns
+  platformBreakdown: jsonb("platform_breakdown"), // performance by platform
+  audienceInsights: jsonb("audience_insights"), // demographics and behavior
+  competitorComparison: jsonb("competitor_comparison"), // market positioning data
+  seasonalTrends: jsonb("seasonal_trends"), // seasonal performance patterns
+  contentAssociation: jsonb("content_association"), // which content types drive sales
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    productIdx: index("product_performance_product_idx").on(table.amazonProductId),
+    linkIdx: index("product_performance_link_idx").on(table.affiliateLinkId),
+    timeframeIdx: index("product_performance_timeframe_idx").on(table.timeframe),
+    periodIdx: index("product_performance_period_idx").on(table.startDate, table.endDate),
+    revenueIdx: index("product_performance_revenue_idx").on(table.revenue),
+    conversionIdx: index("product_performance_conversion_idx").on(table.conversionRate),
+    ctrIdx: index("product_performance_ctr_idx").on(table.clickThroughRate),
+  };
+});
+
+// Product recommendation engine data
+export const productRecommendations = pgTable("product_recommendations", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").notNull(), // ID of content being analyzed
+  contentType: text("content_type").notNull(), // social_post, blog_article, video_script
+  contentText: text("content_text").notNull(), // actual content for analysis
+  recommendedProductIds: integer("recommended_product_ids").array().default([]), // Amazon product IDs
+  confidenceScores: decimal("confidence_scores").array().default([]), // matching confidence for each product
+  keywords: text("keywords").array().default([]), // extracted keywords
+  niche: text("niche"), // detected niche
+  sentiment: text("sentiment"), // positive, neutral, negative
+  audience: text("audience"), // target audience analysis
+  seasonality: text("seasonality"), // seasonal relevance
+  priceRange: text("price_range"), // budget, mid_range, premium
+  recommendationReason: jsonb("recommendation_reason"), // AI explanation for recommendations
+  isApproved: boolean("is_approved").default(false), // manual approval flag
+  approvedBy: integer("approved_by").references(() => users.id),
+  approvedAt: timestamp("approved_at"),
+  performanceScore: decimal("performance_score"), // how well recommendations perform
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    contentIdx: index("product_recommendations_content_idx").on(table.contentId),
+    typeIdx: index("product_recommendations_type_idx").on(table.contentType),
+    nicheIdx: index("product_recommendations_niche_idx").on(table.niche),
+    approvedIdx: index("product_recommendations_approved_idx").on(table.isApproved),
+    performanceIdx: index("product_recommendations_performance_idx").on(table.performanceScore),
+    createdIdx: index("product_recommendations_created_idx").on(table.createdAt),
+  };
+});
+
+// FTC compliance and disclosure management
+export const complianceDisclosures = pgTable("compliance_disclosures", {
+  id: serial("id").primaryKey(),
+  contentId: integer("content_id").notNull(), // reference to content
+  contentType: text("content_type").notNull(), // social_post, blog_article, email, video
+  platform: text("platform"), // tiktok, instagram, youtube, blog
+  disclosureType: text("disclosure_type").notNull(), // affiliate, sponsored, gifted, partnership
+  disclosureText: text("disclosure_text").notNull(),
+  placement: text("placement").notNull(), // beginning, end, hashtags, description
+  isVisible: boolean("is_visible").notNull().default(true),
+  isCompliant: boolean("is_compliant").notNull().default(true),
+  lastAuditDate: timestamp("last_audit_date"),
+  auditedBy: integer("audited_by").references(() => users.id),
+  auditNotes: text("audit_notes"),
+  regulatoryGuidelines: text("regulatory_guidelines").array().default([]), // FTC, ASA, etc.
+  language: text("language").notNull().default("en"),
+  countryCode: text("country_code").notNull().default("US"),
+  metadata: jsonb("metadata"), // additional compliance data
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    contentIdx: index("compliance_disclosures_content_idx").on(table.contentId),
+    typeIdx: index("compliance_disclosures_type_idx").on(table.contentType),
+    platformIdx: index("compliance_disclosures_platform_idx").on(table.platform),
+    compliantIdx: index("compliance_disclosures_compliant_idx").on(table.isCompliant),
+    auditIdx: index("compliance_disclosures_audit_idx").on(table.lastAuditDate),
+    countryIdx: index("compliance_disclosures_country_idx").on(table.countryCode),
+  };
+});
+
+// Amazon product price history for trend analysis
+export const productPriceHistory = pgTable("product_price_history", {
+  id: serial("id").primaryKey(),
+  amazonProductId: integer("amazon_product_id").notNull().references(() => amazonProducts.id, { onDelete: 'cascade' }),
+  price: decimal("price").notNull(),
+  availability: text("availability").notNull(),
+  discount: integer("discount").default(0), // percentage
+  source: text("source").notNull().default("amazon_api"), // amazon_api, scraper, manual
+  priceChange: decimal("price_change"), // difference from previous price
+  changePercentage: decimal("change_percentage"), // percentage change
+  isLowestPrice: boolean("is_lowest_price").default(false),
+  isHighestPrice: boolean("is_highest_price").default(false),
+  competitorPrices: jsonb("competitor_prices"), // prices from other retailers
+  seasonalContext: text("seasonal_context"), // holiday, black_friday, back_to_school
+  checkDate: timestamp("check_date").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    productIdx: index("product_price_history_product_idx").on(table.amazonProductId),
+    checkDateIdx: index("product_price_history_check_date_idx").on(table.checkDate),
+    priceIdx: index("product_price_history_price_idx").on(table.price),
+    changeIdx: index("product_price_history_change_idx").on(table.priceChange),
+    lowestIdx: index("product_price_history_lowest_idx").on(table.isLowestPrice),
+    seasonalIdx: index("product_price_history_seasonal_idx").on(table.seasonalContext),
+  };
+});
+
+// Zod schemas for Amazon monetization tables
+export const insertAmazonProductSchema = createInsertSchema(amazonProducts).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertRevenueTrackingSchema = createInsertSchema(revenueTracking).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertProductPerformanceSchema = createInsertSchema(productPerformance).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertProductRecommendationSchema = createInsertSchema(productRecommendations).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertComplianceDisclosureSchema = createInsertSchema(complianceDisclosures).omit({ id: true, createdAt: true, updatedAt: true });
+export const insertProductPriceHistorySchema = createInsertSchema(productPriceHistory).omit({ id: true, createdAt: true });
+
+// TypeScript types for Amazon monetization
+export type AmazonProduct = typeof amazonProducts.$inferSelect;
+export type InsertAmazonProduct = z.infer<typeof insertAmazonProductSchema>;
+
+export type AffiliateLink = typeof affiliateLinks.$inferSelect;
+export type InsertAffiliateLink = z.infer<typeof insertAffiliateLinkSchema>;
+
+export type RevenueTracking = typeof revenueTracking.$inferSelect;
+export type InsertRevenueTracking = z.infer<typeof insertRevenueTrackingSchema>;
+
+export type ProductPerformance = typeof productPerformance.$inferSelect;
+export type InsertProductPerformance = z.infer<typeof insertProductPerformanceSchema>;
+
+export type ProductRecommendation = typeof productRecommendations.$inferSelect;
+export type InsertProductRecommendation = z.infer<typeof insertProductRecommendationSchema>;
+
+export type ComplianceDisclosure = typeof complianceDisclosures.$inferSelect;
+export type InsertComplianceDisclosure = z.infer<typeof insertComplianceDisclosureSchema>;
+
+export type ProductPriceHistory = typeof productPriceHistory.$inferSelect;
+export type InsertProductPriceHistory = z.infer<typeof insertProductPriceHistorySchema>;
