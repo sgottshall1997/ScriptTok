@@ -2943,6 +2943,424 @@ export class DatabaseStorage implements IStorage {
     
     return result;
   }
+
+  // Customer Support Center operations
+  // Support Category operations
+  async createSupportCategory(category: InsertSupportCategory): Promise<SupportCategory> {
+    const [result] = await db
+      .insert(supportCategories)
+      .values(category)
+      .returning();
+    return result;
+  }
+
+  async getSupportCategories(): Promise<SupportCategory[]> {
+    return await db
+      .select()
+      .from(supportCategories)
+      .where(eq(supportCategories.isActive, true))
+      .orderBy(asc(supportCategories.sortOrder));
+  }
+
+  async getSupportCategory(id: number): Promise<SupportCategory | undefined> {
+    const [result] = await db
+      .select()
+      .from(supportCategories)
+      .where(eq(supportCategories.id, id));
+    return result;
+  }
+
+  async updateSupportCategory(id: number, updates: Partial<InsertSupportCategory>): Promise<SupportCategory | undefined> {
+    const [result] = await db
+      .update(supportCategories)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(supportCategories.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteSupportCategory(id: number): Promise<boolean> {
+    const result = await db
+      .delete(supportCategories)
+      .where(eq(supportCategories.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // Support Ticket operations
+  async createSupportTicket(ticket: InsertSupportTicket): Promise<SupportTicket> {
+    const [result] = await db
+      .insert(supportTickets)
+      .values(ticket)
+      .returning();
+    return result;
+  }
+
+  async getSupportTickets(filter?: { status?: string; priority?: string; categoryId?: number; limit?: number }): Promise<SupportTicket[]> {
+    let query = db.select().from(supportTickets);
+    
+    const conditions = [];
+    if (filter?.status) {
+      conditions.push(eq(supportTickets.status, filter.status));
+    }
+    if (filter?.priority) {
+      conditions.push(eq(supportTickets.priority, filter.priority));
+    }
+    if (filter?.categoryId) {
+      conditions.push(eq(supportTickets.categoryId, filter.categoryId));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(supportTickets.createdAt));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+
+  async getSupportTicket(id: number): Promise<SupportTicket | undefined> {
+    const [result] = await db
+      .select()
+      .from(supportTickets)
+      .where(eq(supportTickets.id, id));
+    return result;
+  }
+
+  async updateSupportTicket(id: number, updates: Partial<InsertSupportTicket>): Promise<SupportTicket | undefined> {
+    const [result] = await db
+      .update(supportTickets)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(supportTickets.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteSupportTicket(id: number): Promise<boolean> {
+    const result = await db
+      .delete(supportTickets)
+      .where(eq(supportTickets.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  async getSupportTicketsByCustomer(customerEmail: string): Promise<SupportTicket[]> {
+    return await db
+      .select()
+      .from(supportTickets)
+      .where(eq(supportTickets.customerEmail, customerEmail))
+      .orderBy(desc(supportTickets.createdAt));
+  }
+
+  // Support Response operations
+  async createSupportResponse(response: InsertSupportResponse): Promise<SupportResponse> {
+    const [result] = await db
+      .insert(supportResponses)
+      .values(response)
+      .returning();
+    return result;
+  }
+
+  async getSupportResponsesByTicket(ticketId: number): Promise<SupportResponse[]> {
+    return await db
+      .select()
+      .from(supportResponses)
+      .where(eq(supportResponses.ticketId, ticketId))
+      .orderBy(asc(supportResponses.createdAt));
+  }
+
+  async getSupportResponse(id: number): Promise<SupportResponse | undefined> {
+    const [result] = await db
+      .select()
+      .from(supportResponses)
+      .where(eq(supportResponses.id, id));
+    return result;
+  }
+
+  async updateSupportResponse(id: number, updates: Partial<InsertSupportResponse>): Promise<SupportResponse | undefined> {
+    const [result] = await db
+      .update(supportResponses)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(supportResponses.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteSupportResponse(id: number): Promise<boolean> {
+    const result = await db
+      .delete(supportResponses)
+      .where(eq(supportResponses.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // Knowledge Base operations
+  async createKnowledgeBaseArticle(article: InsertKnowledgeBaseArticle): Promise<KnowledgeBaseArticle> {
+    const [result] = await db
+      .insert(knowledgeBaseArticles)
+      .values(article)
+      .returning();
+    return result;
+  }
+
+  async getKnowledgeBaseArticles(filter?: { categoryId?: number; status?: string; limit?: number }): Promise<KnowledgeBaseArticle[]> {
+    let query = db.select().from(knowledgeBaseArticles);
+    
+    const conditions = [];
+    if (filter?.categoryId) {
+      conditions.push(eq(knowledgeBaseArticles.categoryId, filter.categoryId));
+    }
+    if (filter?.status) {
+      conditions.push(eq(knowledgeBaseArticles.status, filter.status));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(knowledgeBaseArticles.createdAt));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+
+  async getKnowledgeBaseArticle(id: number): Promise<KnowledgeBaseArticle | undefined> {
+    const [result] = await db
+      .select()
+      .from(knowledgeBaseArticles)
+      .where(eq(knowledgeBaseArticles.id, id));
+    return result;
+  }
+
+  async getKnowledgeBaseArticleBySlug(slug: string): Promise<KnowledgeBaseArticle | undefined> {
+    const [result] = await db
+      .select()
+      .from(knowledgeBaseArticles)
+      .where(eq(knowledgeBaseArticles.slug, slug));
+    return result;
+  }
+
+  async updateKnowledgeBaseArticle(id: number, updates: Partial<InsertKnowledgeBaseArticle>): Promise<KnowledgeBaseArticle | undefined> {
+    const [result] = await db
+      .update(knowledgeBaseArticles)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(knowledgeBaseArticles.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteKnowledgeBaseArticle(id: number): Promise<boolean> {
+    const result = await db
+      .delete(knowledgeBaseArticles)
+      .where(eq(knowledgeBaseArticles.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  async incrementArticleViewCount(id: number): Promise<void> {
+    await db
+      .update(knowledgeBaseArticles)
+      .set({ 
+        viewCount: sql`${knowledgeBaseArticles.viewCount} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(knowledgeBaseArticles.id, id));
+  }
+
+  async incrementArticleHelpfulCount(id: number): Promise<void> {
+    await db
+      .update(knowledgeBaseArticles)
+      .set({ 
+        helpfulCount: sql`${knowledgeBaseArticles.helpfulCount} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(knowledgeBaseArticles.id, id));
+  }
+
+  async incrementArticleNotHelpfulCount(id: number): Promise<void> {
+    await db
+      .update(knowledgeBaseArticles)
+      .set({ 
+        notHelpfulCount: sql`${knowledgeBaseArticles.notHelpfulCount} + 1`,
+        updatedAt: new Date()
+      })
+      .where(eq(knowledgeBaseArticles.id, id));
+  }
+
+  // Live Chat operations
+  async createLiveChatSession(session: InsertLiveChatSession): Promise<LiveChatSession> {
+    const [result] = await db
+      .insert(liveChatSessions)
+      .values(session)
+      .returning();
+    return result;
+  }
+
+  async getLiveChatSessions(filter?: { status?: string; assignedToUserId?: number; limit?: number }): Promise<LiveChatSession[]> {
+    let query = db.select().from(liveChatSessions);
+    
+    const conditions = [];
+    if (filter?.status) {
+      conditions.push(eq(liveChatSessions.status, filter.status));
+    }
+    if (filter?.assignedToUserId) {
+      conditions.push(eq(liveChatSessions.assignedToUserId, filter.assignedToUserId));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(liveChatSessions.startedAt));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+
+  async getLiveChatSession(id: number): Promise<LiveChatSession | undefined> {
+    const [result] = await db
+      .select()
+      .from(liveChatSessions)
+      .where(eq(liveChatSessions.id, id));
+    return result;
+  }
+
+  async getLiveChatSessionBySessionId(sessionId: string): Promise<LiveChatSession | undefined> {
+    const [result] = await db
+      .select()
+      .from(liveChatSessions)
+      .where(eq(liveChatSessions.sessionId, sessionId));
+    return result;
+  }
+
+  async updateLiveChatSession(id: number, updates: Partial<InsertLiveChatSession>): Promise<LiveChatSession | undefined> {
+    const [result] = await db
+      .update(liveChatSessions)
+      .set(updates)
+      .where(eq(liveChatSessions.id, id))
+      .returning();
+    return result;
+  }
+
+  async endLiveChatSession(id: number): Promise<boolean> {
+    const result = await db
+      .update(liveChatSessions)
+      .set({ 
+        status: 'ended',
+        endedAt: new Date()
+      })
+      .where(eq(liveChatSessions.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  // Live Chat Message operations
+  async createLiveChatMessage(message: InsertLiveChatMessage): Promise<LiveChatMessage> {
+    const [result] = await db
+      .insert(liveChatMessages)
+      .values(message)
+      .returning();
+    return result;
+  }
+
+  async getLiveChatMessages(sessionId: number): Promise<LiveChatMessage[]> {
+    return await db
+      .select()
+      .from(liveChatMessages)
+      .where(eq(liveChatMessages.sessionId, sessionId))
+      .orderBy(asc(liveChatMessages.createdAt));
+  }
+
+  async getLiveChatMessage(id: number): Promise<LiveChatMessage | undefined> {
+    const [result] = await db
+      .select()
+      .from(liveChatMessages)
+      .where(eq(liveChatMessages.id, id));
+    return result;
+  }
+
+  // Support Metrics operations
+  async createSupportMetric(metric: InsertSupportMetric): Promise<SupportMetric> {
+    const [result] = await db
+      .insert(supportMetrics)
+      .values(metric)
+      .returning();
+    return result;
+  }
+
+  async getSupportMetrics(filter?: { ticketId?: number; sessionId?: number; metricType?: string }): Promise<SupportMetric[]> {
+    let query = db.select().from(supportMetrics);
+    
+    const conditions = [];
+    if (filter?.ticketId) {
+      conditions.push(eq(supportMetrics.ticketId, filter.ticketId));
+    }
+    if (filter?.sessionId) {
+      conditions.push(eq(supportMetrics.sessionId, filter.sessionId));
+    }
+    if (filter?.metricType) {
+      conditions.push(eq(supportMetrics.metricType, filter.metricType));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    return await query.orderBy(desc(supportMetrics.recordedAt));
+  }
+
+  async getSupportStats(): Promise<{
+    totalTickets: number;
+    openTickets: number;
+    resolvedTickets: number;
+    avgResponseTime: number;
+    avgResolutionTime: number;
+    satisfactionScore: number;
+  }> {
+    const [totalTicketsResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(supportTickets);
+
+    const [openTicketsResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(supportTickets)
+      .where(eq(supportTickets.status, 'open'));
+
+    const [resolvedTicketsResult] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(supportTickets)
+      .where(eq(supportTickets.status, 'resolved'));
+
+    // Calculate average response time (in hours)
+    const [avgResponseResult] = await db
+      .select({ 
+        avgHours: sql<number>`AVG(EXTRACT(EPOCH FROM (first_response_at - created_at)) / 3600)` 
+      })
+      .from(supportTickets)
+      .where(sql`first_response_at IS NOT NULL`);
+
+    // Calculate average resolution time (in hours)
+    const [avgResolutionResult] = await db
+      .select({ 
+        avgHours: sql<number>`AVG(EXTRACT(EPOCH FROM (resolved_at - created_at)) / 3600)` 
+      })
+      .from(supportTickets)
+      .where(sql`resolved_at IS NOT NULL`);
+
+    return {
+      totalTickets: totalTicketsResult?.count || 0,
+      openTickets: openTicketsResult?.count || 0,
+      resolvedTickets: resolvedTicketsResult?.count || 0,
+      avgResponseTime: Math.round(avgResponseResult?.avgHours || 0),
+      avgResolutionTime: Math.round(avgResolutionResult?.avgHours || 0),
+      satisfactionScore: 95 // Mock satisfaction score - would come from actual ratings
+    };
+  }
 }
 
 // Switch to database storage
