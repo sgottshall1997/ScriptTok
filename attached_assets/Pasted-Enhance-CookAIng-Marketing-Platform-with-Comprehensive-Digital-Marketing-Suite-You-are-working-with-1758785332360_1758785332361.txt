@@ -1,0 +1,130 @@
+Enhance CookAIng Marketing Platform with Comprehensive Digital Marketing Suite
+
+You are working with a React Vite + Express + PostgreSQL + Drizzle TypeScript application. The current CookAIng marketing tools are excellent for analytics and optimization but need expansion into full-service marketing operations.
+
+OBJECTIVE: Transform CookAIng from a "monitoring and optimization" platform into a "full-service marketing operations" platform by adding the missing 70% of marketing functionality identified in the gap analysis.
+
+PRIORITY 1: Social Media Management Dashboard (0% current coverage)
+Create a comprehensive social media management system:
+
+Multi-platform post scheduling (Facebook, Instagram, TikTok, Twitter, LinkedIn)
+Visual content calendar with drag-and-drop functionality
+Bulk post creation and scheduling (12-20 posts/month capability)
+Social media analytics and engagement tracking
+Community engagement tools with response management
+Social listening dashboard for brand mentions
+Multi-account management for agencies
+Post performance analytics with engagement metrics
+Hashtag research and optimization tools
+Social media ad campaign creation and management
+PRIORITY 2: CRM Integration Module (10% current coverage)
+Build a complete customer relationship management system:
+
+Lead capture forms with customizable fields
+Contact database with advanced search and filtering
+Lead scoring and qualification system
+Sales pipeline with stage tracking
+Contact interaction history and timeline
+Automated lead assignment and routing
+Customer segmentation beyond current basic segments
+Lead source attribution tracking
+Contact import/export functionality
+Integration with existing attribution system
+PRIORITY 3: Marketing Automation Hub (20% current coverage)
+Develop comprehensive automation workflows:
+
+Email campaign builder with drag-and-drop editor
+Automated email sequences (welcome, nurture, abandoned cart)
+Chatbot integration and conversation flow builder
+ManyChat/Facebook Messenger automation setup
+Trigger-based automation (behavior, time, event-based)
+A/B testing for automated sequences
+Automated social media responses
+Lead nurturing workflows
+Customer onboarding automation
+Re-engagement campaigns for inactive leads
+PRIORITY 4: Customer Support Center (0% current coverage)
+Create a complete customer support management system:
+
+Live chat widget integration
+Support ticket management system
+Knowledge base builder with search functionality
+FAQ automation and chatbot responses
+Response time tracking and SLA monitoring
+Customer satisfaction surveys and scoring
+Support team assignment and escalation rules
+Canned responses and templates
+Integration with CRM for support history
+Customer portal for ticket tracking
+PRIORITY 5: Enhanced Content Management (30% current coverage)
+Expand beyond current promo generator:
+
+Comprehensive content calendar with planning tools
+Multi-format content templates (posts, stories, reels, emails)
+Asset library with tagging and organization
+Content collaboration tools with approval workflows
+Brand asset management and consistency tools
+Content performance tracking across platforms
+Template library expansion
+Content recycling and repurposing suggestions
+Editorial calendar with publishing schedules
+Content ROI tracking and optimization
+TECHNICAL IMPLEMENTATION REQUIREMENTS:
+
+Maintain existing database schema and extend with new tables
+Preserve all current CookAIng functionality (analytics, reports, attribution, etc.)
+Use consistent UI/UX patterns from existing components
+Implement proper user permissions and role-based access
+Ensure scalability for agency use (multi-client management)
+Add comprehensive API endpoints for each new module
+Integrate with existing webhook system for automation triggers
+Maintain existing Amazon affiliate integration
+Preserve current compliance and FTC disclosure systems
+DATABASE SCHEMA ADDITIONS:
+Create tables for: social_media_accounts, social_posts, crm_contacts, crm_deals, email_campaigns, automation_workflows, support_tickets, knowledge_base_articles, content_assets, content_calendar_events
+
+UI/UX REQUIREMENTS:
+
+Add new sidebar sections: "Social Media", "CRM", "Automation", "Support", "Content Hub"
+Create dashboard widgets for each new module
+Maintain existing analytics integration across all new features
+Implement unified search across all modules
+Add bulk actions for efficiency
+Create mobile-responsive interfaces for all new tools
+INTEGRATION REQUIREMENTS:
+
+Facebook/Instagram Graph API integration
+TikTok Business API integration
+Email service provider APIs (SendGrid, Mailchimp compatibility)
+Chatbot platform APIs (ManyChat, Chatfuel)
+Live chat service integration
+Social listening API integration
+Calendar application integrations
+COMPLIANCE & SECURITY:
+
+Maintain existing FTC compliance systems
+Add GDPR compliance for CRM data
+Implement data retention policies
+Add audit trails for all customer interactions
+Maintain existing attribution tracking compliance
+Add social media advertising compliance tools
+TESTING & VALIDATION:
+
+Create comprehensive test suites for all new functionality
+Implement integration tests for external API connections
+Add performance testing for bulk operations
+Create user acceptance testing scenarios
+Implement monitoring and alerting for all new services
+DELIVERABLES:
+
+Five new major modules fully integrated into existing CookAIng platform
+Enhanced database schema with migration scripts
+Complete API documentation for new endpoints
+Updated UI with new navigation and workflows
+Integration testing suite
+User documentation for all new features
+Agency/multi-client management capabilities
+Mobile-responsive interfaces for all tools
+This enhancement will transform CookAIng from covering 30% of the marketing proposal scope to 95%+ coverage, making it a comprehensive digital marketing operations platform suitable for agencies, businesses, and marketing professionals.
+
+Build all new functionality as additive enhancements to the existing codebase without breaking current features. Prioritize the modules in the order listed above, ensuring each module integrates seamlessly with existing analytics and reporting capabilities.
