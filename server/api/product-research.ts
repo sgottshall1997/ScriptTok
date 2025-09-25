@@ -133,13 +133,42 @@ router.post('/save', async (req, res) => {
       category: z.string().min(1),
       opportunity: z.string().min(1),
       reasoning: z.string().min(1),
+      
+      // New required fields for actionable data
+      specificProduct: z.string().min(1),
+      whyThisProduct: z.string().min(1),
+      marketSaturation: z.string().min(1),
+      saturationReasoning: z.string().min(1),
+      targetDemographic: z.string().min(1),
+      customerPainPoint: z.string().min(1),
+      testDifficulty: z.string().min(1),
+      testDifficultyReasoning: z.string().min(1),
+      recommendation: z.string().min(1),
+      
+      // Optional fields
+      productFeatures: z.string().optional(),
+      monthlySearchVolume: z.number().optional(),
+      tiktokVideoCount: z.number().optional(),
+      redditMentions: z.number().optional(),
+      demandEvidence: z.string().optional(),
+      competitorBrands: z.array(z.any()).optional(),
+      manufacturingCost: z.string().optional(), // Database uses decimal (string)
+      typicalRetailPrice: z.string().optional(), // Database uses decimal (string)
+      grossMarginPercent: z.string().optional(), // Database uses decimal (string)
+      marginCalculation: z.string().optional(),
+      whereTheySpend: z.string().optional(),
+      redFlags: z.string().optional(),
+      successfulBrands: z.array(z.any()).optional(),
+      whatMadeThemWork: z.string().optional(),
+      goNoGoScore: z.number().optional(),
+      goNoGoIndicators: z.array(z.any()).optional(),
     });
 
-    const { category, opportunity, reasoning } = opportunitySchema.parse(req.body);
+    const opportunityData = opportunitySchema.parse(req.body);
     
-    console.log(`💾 Saving product opportunity: ${opportunity.substring(0, 50)}...`);
+    console.log(`💾 Saving product opportunity: ${opportunityData.specificProduct.substring(0, 50)}...`);
     
-    const saved = await storage.saveProductOpportunity({ category, opportunity, reasoning });
+    const saved = await storage.saveProductOpportunity(opportunityData);
     
     res.json({
       success: true,
@@ -232,9 +261,9 @@ function parseProductOpportunities(content: string, category: string, query: str
     competitorBrands?: any[];
     marketSaturation: string;
     saturationReasoning: string;
-    manufacturingCost?: number;
-    typicalRetailPrice?: number;
-    grossMarginPercent?: number;
+    manufacturingCost?: string;
+    typicalRetailPrice?: string;
+    grossMarginPercent?: string;
     marginCalculation?: string;
     targetDemographic: string;
     customerPainPoint: string;
@@ -338,21 +367,21 @@ function parseProductSection(section: string, category: string) {
       // New actionable fields
       specificProduct,
       whyThisProduct: painPoint,
-      monthlySearchVolume: searchVolume,
-      tiktokVideoCount: tiktokCount,
-      redditMentions: redditMentions,
+      monthlySearchVolume: searchVolume || undefined,
+      tiktokVideoCount: tiktokCount || undefined,
+      redditMentions: redditMentions || undefined,
       competitorBrands,
       marketSaturation,
       saturationReasoning,
-      manufacturingCost,
-      typicalRetailPrice: retailPrice,
-      grossMarginPercent: marginPercent,
+      manufacturingCost: manufacturingCost ? manufacturingCost.toString() : undefined,
+      typicalRetailPrice: retailPrice ? retailPrice.toString() : undefined,
+      grossMarginPercent: marginPercent ? marginPercent.toString() : undefined,
       marginCalculation,
       targetDemographic: targetDemo,
       customerPainPoint: painPoint,
       testDifficulty,
       testDifficultyReasoning: testReasoning,
-      goNoGoScore: score,
+      goNoGoScore: score || undefined,
       recommendation,
     };
     
