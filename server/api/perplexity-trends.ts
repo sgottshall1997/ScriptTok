@@ -6,6 +6,7 @@
 import { Router } from 'express';
 import { fetchTrendingProductsFromPerplexity, fetchAllNicheTrendsFromPerplexity } from '../services/perplexityTrends';
 import { fetchViralInspiration } from './viral-inspiration';
+import { getTikTokViralResearch, getViralTemplate, getViralResearchStatus, clearViralResearchCache } from './perplexity-trends/viral-research';
 import { storage } from '../storage';
 
 const router = Router();
@@ -119,8 +120,16 @@ router.get('/test', async (req, res) => {
 });
 
 /**
- * Fetch viral video inspiration for a specific product
+ * Fetch viral video inspiration for a specific product (legacy)
  */
 router.post('/viral-inspiration', fetchViralInspiration);
+
+/**
+ * Enhanced TikTok viral content research endpoints
+ */
+router.post('/viral-research', getTikTokViralResearch);
+router.post('/viral-template', getViralTemplate);
+router.get('/viral-status', getViralResearchStatus);
+router.post('/viral-cache/clear', clearViralResearchCache);
 
 export default router;

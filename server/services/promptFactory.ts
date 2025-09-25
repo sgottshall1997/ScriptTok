@@ -5,6 +5,26 @@
 
 import { TrendingProduct } from '../../shared/schema';
 
+// Enhanced viral template interfaces
+interface ViralTemplateData {
+  viralHook?: string;
+  viralFormat?: string;
+  viralStyle?: string;
+  viralStructure?: {
+    opening: string;
+    demonstration: string;
+    callToAction: string;
+  };
+  recommendedHashtags?: string[];
+  templateConfidence?: number;
+  engagementPatterns?: string[];
+  bestPractices?: {
+    hookTemplate: string;
+    contentFormat: string;
+    videoStructure: string;
+  };
+}
+
 export interface PromptConfig {
   niche: string;
   templateType: string;
@@ -13,7 +33,8 @@ export interface PromptConfig {
   platforms?: string[];
   contentFormat?: 'standard' | 'spartan';
   trendingProducts?: TrendingProduct[];
-  viralInspiration?: any;
+  viralInspiration?: any; // Legacy viral inspiration (basic)
+  viralTemplate?: ViralTemplateData; // Enhanced viral template data
   smartStyleRecommendations?: any;
 }
 
@@ -29,13 +50,70 @@ export interface GeneratedPrompt {
 }
 
 /**
+ * Helper function to integrate viral template data into prompts
+ */
+function enhancePromptWithViralTemplate(
+  basePrompt: string, 
+  config: PromptConfig
+): string {
+  if (!config.viralTemplate) {
+    return basePrompt;
+  }
+
+  const viral = config.viralTemplate;
+  let enhancedPrompt = basePrompt;
+
+  // Add viral-specific instructions
+  let viralInstructions = '\n\n🎯 **VIRAL CONTENT INTEGRATION:**\n';
+  
+  if (viral.viralHook) {
+    viralInstructions += `- Use this proven viral hook pattern: "${viral.viralHook}"\n`;
+  }
+  
+  if (viral.viralFormat) {
+    viralInstructions += `- Follow this successful format: ${viral.viralFormat}\n`;
+  }
+  
+  if (viral.viralStructure) {
+    viralInstructions += `- Structure your content like this successful viral video:\n`;
+    viralInstructions += `  • Opening: ${viral.viralStructure.opening}\n`;
+    viralInstructions += `  • Main Content: ${viral.viralStructure.demonstration}\n`;
+    viralInstructions += `  • Call-to-Action: ${viral.viralStructure.callToAction}\n`;
+  }
+  
+  if (viral.engagementPatterns && viral.engagementPatterns.length > 0) {
+    viralInstructions += `- Apply these engagement drivers: ${viral.engagementPatterns.join(', ')}\n`;
+  }
+  
+  if (viral.bestPractices?.hookTemplate) {
+    viralInstructions += `- Hook template to follow: "${viral.bestPractices.hookTemplate}"\n`;
+  }
+  
+  if (viral.recommendedHashtags && viral.recommendedHashtags.length > 0) {
+    viralInstructions += `- Prioritize these proven hashtags: ${viral.recommendedHashtags.join(' ')}\n`;
+  }
+  
+  if (viral.templateConfidence) {
+    viralInstructions += `- This template has ${viral.templateConfidence}% proven success rate\n`;
+  }
+
+  // Insert viral instructions before the writing guidelines section
+  if (enhancedPrompt.includes('Writing Guidelines:')) {
+    enhancedPrompt = enhancedPrompt.replace('Writing Guidelines:', viralInstructions + '\nWriting Guidelines:');
+  } else {
+    enhancedPrompt += viralInstructions;
+  }
+
+  return enhancedPrompt;
+}
+
+/**
  * NEW GLOWBOT PROMPT TEMPLATES FROM PDF - COMPLETE OVERHAUL
  */
 export const TEMPLATE_PROMPTS = {
   // NICHE-SPECIFIC TEMPLATES
-  'fashion': (config: PromptConfig): GeneratedPrompt => ({
-    systemPrompt: `You are an expert fashion content creator specializing in jewelry and fashion product reviews for social media.`,
-    userPrompt: `Write a direct, impactful review script for the jewelry item "${config.productName}", intended for a 30–60 second social media video.
+  'fashion': (config: PromptConfig): GeneratedPrompt => {
+    const basePrompt = `Write a direct, impactful review script for the jewelry item "${config.productName}", intended for a 30–60 second social media video.
 
 Your task is to make viewers understand exactly why this piece of jewelry deserves attention, by presenting clear, specific information about its material, craftsmanship, versatility, and value, while avoiding vague language and filler.
 
@@ -98,14 +176,19 @@ Length & Structure:
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 
-Your goal is to give viewers clear, actionable reasons to consider buying ${config.productName}, help them picture when and how to wear it, and end with an engaging question that prompts them to act.`,
-    templateMetadata: {
-      templateType: config.templateType,
-      niche: config.niche,
-      tone: config.tone,
-      contentFormat: config.contentFormat || 'regular'
-    }
-  }),
+Your goal is to give viewers clear, actionable reasons to consider buying ${config.productName}, help them picture when and how to wear it, and end with an engaging question that prompts them to act.`;
+
+    return {
+      systemPrompt: `You are an expert fashion content creator specializing in jewelry and fashion product reviews for social media.`,
+      userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
+      templateMetadata: {
+        templateType: config.templateType,
+        niche: config.niche,
+        tone: config.tone,
+        contentFormat: config.contentFormat || 'regular'
+      }
+    };
+  },
 
   'fitness': (config: PromptConfig): GeneratedPrompt => ({
     systemPrompt: `You are an expert fitness content creator specializing in product reviews for workouts and wellness.`,

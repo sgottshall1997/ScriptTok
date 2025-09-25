@@ -108,6 +108,11 @@ const GenerateContent = () => {
     hashtags: string[];
   } | null>(null);
   const [viralInspoLoading, setViralInspoLoading] = useState(false);
+  
+  // Enhanced viral research data
+  const [enhancedViralResearch, setEnhancedViralResearch] = useState<any>(null);
+  const [viralResearchLoading, setViralResearchLoading] = useState(false);
+  const [selectedViralTemplate, setSelectedViralTemplate] = useState<any>(null);
 
 
 
@@ -163,30 +168,56 @@ const GenerateContent = () => {
   const fetchViralInspirationForProduct = async (productName: string) => {
     if (!productName.trim()) {
       setViralInspo(null);
+      setEnhancedViralResearch(null);
       setViralInspoLoading(false);
+      setViralResearchLoading(false);
       return;
     }
 
     setViralInspoLoading(true);
+    setViralResearchLoading(true);
     
     try {
-      // Import and use the utility function
-      const { fetchViralVideoInspo } = await import('@/lib/fetchViralVideoInspo');
-      const inspiration = await fetchViralVideoInspo(productName, selectedNiche);
+      // Import and use the utility functions
+      const { 
+        fetchViralVideoInspo, 
+        fetchOptimalViralResearch 
+      } = await import('@/lib/fetchViralVideoInspo');
       
-      if (inspiration) {
-        console.log('✅ Setting viral inspiration:', inspiration);
-        setViralInspo(inspiration);
+      // Fetch both legacy and enhanced viral research
+      const optimalResult = await fetchOptimalViralResearch(productName, selectedNiche, true);
+      
+      if (optimalResult.type === 'enhanced' && optimalResult.data) {
+        console.log('✅ Enhanced viral research found:', optimalResult.data);
+        setEnhancedViralResearch(optimalResult.data);
+        
+        // Extract basic inspiration from enhanced data for backward compatibility
+        const firstExample = optimalResult.data.viralExamples?.[0];
+        if (firstExample) {
+          setViralInspo({
+            hook: firstExample.hook,
+            format: firstExample.format,
+            caption: firstExample.contentStructure?.demonstration || 'Enhanced viral content demo',
+            hashtags: firstExample.hashtags || []
+          });
+        }
+      } else if (optimalResult.type === 'legacy' && optimalResult.data) {
+        console.log('✅ Legacy viral inspiration found:', optimalResult.data);
+        setViralInspo(optimalResult.data as any);
+        setEnhancedViralResearch(null);
       } else {
-        // If no real data found, clear state
+        // If no data found, clear state
         setViralInspo(null);
-        console.warn('No recent viral examples found for', productName);
+        setEnhancedViralResearch(null);
+        console.warn('No viral examples found for', productName);
       }
     } catch (error) {
       console.error('Error fetching viral inspiration:', error);
       setViralInspo(null);
+      setEnhancedViralResearch(null);
     } finally {
       setViralInspoLoading(false);
+      setViralResearchLoading(false);
     }
   };
 
@@ -736,25 +767,174 @@ ${config.hashtags.join(' ')}`;
           </CardContent>
         </Card>
 
-        {/* Viral Inspiration Preview */}
-        {selectedProduct && (viralInspoLoading || viralInspo) && (
+        {/* Enhanced Viral Research Preview */}
+        {selectedProduct && (viralResearchLoading || enhancedViralResearch || viralInspo) && (
           <Card className="shadow-lg bg-[#fff9f0] border border-orange-300">
             <CardHeader className="pb-3">
               <CardTitle className="text-orange-700 flex items-center gap-2">
-                {viralInspoLoading ? (
+                {viralResearchLoading ? (
                   <>
                     <RefreshCw className="h-4 w-4 animate-spin" />
-                    Analyzing Viral Trends...
+                    Analyzing Viral Content Patterns...
                   </>
+                ) : enhancedViralResearch ? (
+                  <>🚀 Enhanced Viral Research Found</>
                 ) : (
                   <>🎯 Viral Inspiration Found</>
                 )}
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {viralInspoLoading ? (
+            <CardContent className="space-y-4">
+              {viralResearchLoading ? (
                 <div className="space-y-2">
                   <p className="text-sm text-orange-600">Searching TikTok and Instagram for viral content patterns...</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              ) : enhancedViralResearch ? (
+                <div className="space-y-4">
+                  {/* Research Summary */}
+                  <div className="bg-white p-3 rounded-lg border">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-semibold text-orange-800">Research Summary</h4>
+                      <span className="text-xs bg-orange-100 px-2 py-1 rounded text-orange-700">
+                        {enhancedViralResearch.totalExamplesFound} examples • {enhancedViralResearch.templateRecommendations.confidenceScore}% confidence
+                      </span>
+                    </div>
+                    <p className="text-sm text-gray-600">
+                      Found {enhancedViralResearch.totalExamplesFound} viral videos for {enhancedViralResearch.product}
+                    </p>
+                  </div>
+
+                  {/* Top Viral Examples */}
+                  {enhancedViralResearch.viralExamples?.length > 0 && (
+                    <div className="space-y-3">
+                      <h4 className="font-semibold text-orange-800 flex items-center gap-2">
+                        <Sparkles className="h-4 w-4" />
+                        Top Viral Examples
+                      </h4>
+                      {enhancedViralResearch.viralExamples.slice(0, 2).map((example: any, index: number) => (
+                        <Collapsible key={index}>
+                          <CollapsibleTrigger asChild>
+                            <div className="bg-white p-3 rounded-lg border cursor-pointer hover:bg-orange-50 transition-colors">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <p className="font-medium text-sm">{example.title}</p>
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    {example.engagementMetrics.views} views • {example.confidence}% viral confidence
+                                  </p>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="h-7 text-xs"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedViralTemplate(example);
+                                      toast({
+                                        title: "Template Selected!",
+                                        description: `Using viral structure: ${example.format}`,
+                                      });
+                                    }}
+                                  >
+                                    Use Template
+                                  </Button>
+                                  <ChevronDown className="h-4 w-4" />
+                                </div>
+                              </div>
+                            </div>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className="mt-2">
+                            <div className="bg-gray-50 p-3 rounded-lg space-y-2 text-sm">
+                              <div><strong>Hook:</strong> "{example.hook}"</div>
+                              <div><strong>Format:</strong> {example.format}</div>
+                              <div><strong>Style:</strong> {example.style}</div>
+                              <div className="grid grid-cols-3 gap-2 text-xs">
+                                <span className="bg-white p-1 rounded">👁 {example.engagementMetrics.views}</span>
+                                <span className="bg-white p-1 rounded">❤️ {example.engagementMetrics.likes}</span>
+                                <span className="bg-white p-1 rounded">💬 {example.engagementMetrics.comments}</span>
+                              </div>
+                              <div>
+                                <strong>Structure:</strong>
+                                <div className="ml-2 mt-1 space-y-1">
+                                  <div>• Opening: {example.contentStructure?.opening}</div>
+                                  <div>• Demo: {example.contentStructure?.demonstration}</div>
+                                  <div>• CTA: {example.contentStructure?.callToAction}</div>
+                                </div>
+                              </div>
+                              <div><strong>Hashtags:</strong> {example.hashtags?.join(" ")}</div>
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Template Recommendations */}
+                  {enhancedViralResearch.templateRecommendations && (
+                    <div className="bg-gradient-to-r from-orange-50 to-yellow-50 p-3 rounded-lg border border-orange-200">
+                      <h4 className="font-semibold text-orange-800 mb-2">📈 AI Template Recommendations</h4>
+                      <div className="space-y-2 text-sm">
+                        <div><strong>Best Hook Pattern:</strong> {enhancedViralResearch.templateRecommendations.bestHookTemplate}</div>
+                        <div><strong>Recommended Format:</strong> {enhancedViralResearch.templateRecommendations.recommendedFormat}</div>
+                        <div><strong>Suggested Structure:</strong> {enhancedViralResearch.templateRecommendations.suggestedStructure}</div>
+                      </div>
+                      <Button
+                        size="sm"
+                        className="mt-3 bg-orange-600 hover:bg-orange-700"
+                        onClick={() => {
+                          setSelectedViralTemplate(enhancedViralResearch.templateRecommendations);
+                          toast({
+                            title: "AI Recommendations Applied!",
+                            description: `Using optimized viral patterns with ${enhancedViralResearch.templateRecommendations.confidenceScore}% success rate`,
+                          });
+                        }}
+                      >
+                        Apply AI Recommendations
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Common Patterns */}
+                  {enhancedViralResearch.commonPatterns && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-orange-800 mb-2">🔍 Viral Pattern Analysis</h4>
+                      <div className="grid grid-cols-2 gap-3 text-sm">
+                        <div>
+                          <strong>Top Hooks:</strong>
+                          <ul className="mt-1 space-y-1">
+                            {enhancedViralResearch.commonPatterns.topHooks?.slice(0, 2).map((hook: string, i: number) => (
+                              <li key={i} className="text-xs bg-gray-100 p-1 rounded">"{hook}"</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <strong>Engagement Drivers:</strong>
+                          <ul className="mt-1 space-y-1">
+                            {enhancedViralResearch.commonPatterns.engagementDrivers?.slice(0, 3).map((driver: string, i: number) => (
+                              <li key={i} className="text-xs bg-gray-100 p-1 rounded">{driver}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedViralTemplate && (
+                    <div className="bg-green-50 p-3 rounded-lg border border-green-200">
+                      <div className="flex items-center gap-2 text-green-800">
+                        <Zap className="h-4 w-4" />
+                        <span className="font-semibold">Viral Template Active</span>
+                      </div>
+                      <p className="text-sm text-green-700 mt-1">
+                        Content generation will use proven viral patterns for maximum engagement.
+                      </p>
+                    </div>
+                  )}
                 </div>
               ) : viralInspo ? (
                 <>
