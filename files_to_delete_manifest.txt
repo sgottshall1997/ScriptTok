@@ -1,0 +1,162 @@
+🗑️ COMPREHENSIVE FILE DELETION MANIFEST
+=====================================
+
+🚨 DIRECTORIES TO DELETE ENTIRELY:
+==================================
+
+1. CookAIng Marketing Engine (Client):
+   /client/src/cookaing-marketing/
+   ├── components/
+   ├── config/
+   ├── fixtures/
+   ├── layouts/
+   ├── pages/
+   ├── services/
+   ├── testing/
+   ├── types/
+   └── utils/
+
+2. CookAIng Marketing Engine (Server):
+   /server/api/cookaing-marketing/
+   ├── ab.ts
+   ├── admin.ts
+   ├── affiliate-auto-insert.ts
+   ├── approvals.ts
+   ├── blog.ts
+   ├── calendar.ts
+   ├── collaboration.ts
+   ├── compliance.ts
+   ├── content/
+   ├── content-enhancement.ts
+   ├── conversions.ts
+   ├── email.ts
+   ├── enhance.ts
+   ├── index.ts
+   ├── integrations/
+   ├── intelligence.ts
+   ├── observability.ts
+   ├── personalization.ts
+   ├── portal.ts
+   ├── push.ts
+   ├── reports.ts
+   ├── social-automation.ts
+   ├── social.ts
+   ├── support.ts
+   ├── trends.ts
+   ├── unified-content.ts
+   └── voice.ts
+
+3. CookAIng Promo Package:
+   /packages/cookaing-promo/
+   ├── utils/
+   │   ├── utm.ts
+   │   └── normalize.ts
+   ├── index.ts
+   ├── schemas.ts
+   ├── templateRegistry.ts
+   └── promptFactory.ts
+
+📄 INDIVIDUAL FILES TO DELETE:
+==============================
+
+BULK GENERATION & AUTOMATION:
+- ./server/api/scheduled-bulk-jobs-db.ts
+- ./server/api/bulk-content-generation.ts
+- ./server/api/automated-bulk-generation.ts
+- ./client/src/pages/schedule-manager.tsx
+- ./server/api/simple-scheduler.ts
+- ./server/services/scheduler.ts
+- ./server/api/perplexity-automation.ts
+- ./tests/e2e/bulk-generation.spec.ts
+
+ADMIN & MANAGEMENT:
+- ./server/api/admin.ts
+- ./tests/integration/adminEndpoints.test.ts
+- ./tests/e2e/admin-tools.spec.ts
+
+WEBHOOKS & INTEGRATIONS:
+- ./server/api/webhooks.ts
+- ./server/services/webhookDispatcher.ts
+- ./server/services/webhookService.ts
+
+ADVANCED ANALYTICS:
+- ./server/api/analytics.ts
+- ./server/api/ai-analytics.ts
+- ./server/api/ai-analytics-fixed.ts
+- ./server/analytics.ts
+
+COMPETITIVE ANALYSIS:
+- ./client/src/pages/competitive-analysis.tsx
+
+A/B TESTING & EXPERIMENTS:
+- ./client/src/lib/ab-testing.ts
+
+COMPLIANCE & MODERATION:
+- ./server/api/compliance.ts
+- ./server/services/complianceEnhancer.ts
+- ./server/cookaing-marketing/services/complianceService.ts
+
+CookAIng MARKETING PAGES:
+- ./client/src/pages/cookaing-marketing/organizations.tsx
+- ./client/src/pages/cookaing-marketing/segments.tsx
+- ./client/src/pages/cookaing-marketing/workflows.tsx
+- ./client/src/pages/cookaing-marketing/forms.tsx
+- ./client/src/pages/cookaing-marketing/costs.tsx
+- ./client/src/pages/cookaing-marketing/trends.tsx
+- ./client/src/pages/cookaing-marketing/webhooks.tsx
+- ./client/src/pages/cookaing-marketing/email-test.tsx
+- ./client/src/pages/cookaing-marketing/experiments.tsx
+- ./client/src/pages/cookaing-marketing/attribution.tsx
+- ./client/src/pages/cookaing-marketing/integrations-health.tsx
+- ./client/src/pages/cookaing-marketing/docs.tsx
+- ./client/src/pages/cookaing-marketing/devtools.tsx
+- ./client/src/pages/cookaing-marketing/personalization.tsx
+- ./client/src/pages/cookaing-marketing/intelligence.tsx
+- ./client/src/pages/cookaing-marketing/reports.tsx
+- ./client/src/pages/cookaing-marketing/content.tsx
+- ./client/src/pages/cookaing-marketing/campaigns.tsx
+- ./client/src/pages/cookaing-marketing/affiliate-products.tsx
+- ./client/src/pages/cookaing-marketing/social-automation.tsx
+
+OTHER PROMO ROUTES:
+- ./server/routes/cookaing-promo.ts
+
+🛡️ CRITICAL FILES TO PRESERVE:
+==============================
+
+✅ Essential Services:
+- /server/services/perplexityTrends.ts
+- /server/services/tiktokViralResearch.ts
+- /server/services/contentGenerator.ts
+- /server/services/amazonAffiliate.ts
+- /server/services/multiPlatformContentGenerator.ts
+
+✅ Essential Components:
+- /client/src/components/ContentGenerator.tsx
+- /client/src/components/TrendingProductsList.tsx
+- /client/src/components/AmazonAffiliateDropdown.tsx
+- /client/src/components/VideoScriptGenerator.tsx
+
+✅ Essential Pages:
+- /client/src/pages/Dashboard.tsx
+- /client/src/pages/GenerateContent.tsx
+- /client/src/pages/EnhancedContentHistory.tsx
+- /client/src/pages/about.tsx
+
+✅ Core Infrastructure:
+- Database connection files
+- Environment configuration
+- Server entry point (index.ts)
+- Client entry point (main.tsx)
+- Vite configuration
+- Package.json
+
+📊 ESTIMATED DELETION SUMMARY:
+=============================
+- 3 entire directories (cookaing-marketing, cookaing-promo)
+- ~50+ individual files (bulk, admin, webhooks, analytics)
+- ~25+ CookAIng marketing pages
+- Multiple test files and related components
+
+⚠️ CONFIRMATION REQUIRED BEFORE PROCEEDING
+==========================================
