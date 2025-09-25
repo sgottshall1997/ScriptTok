@@ -2817,12 +2817,56 @@ export const productPriceHistory = pgTable("product_price_history", {
   };
 });
 
-// Product opportunities from research
+// Product opportunities from research - Enhanced with actionable data
 export const productOpportunities = pgTable("product_opportunities", {
   id: serial("id").primaryKey(),
   category: text("category").notNull(),
-  opportunity: text("opportunity").notNull(),
-  reasoning: text("reasoning").notNull(),
+  
+  // 1. Specific Product Details
+  specificProduct: text("specific_product").notNull(), // Exact product description
+  productFeatures: text("product_features"), // Specific features that differentiate
+  whyThisProduct: text("why_this_product").notNull(), // Reasoning for this specific product
+  
+  // 2. Proof of Demand
+  monthlySearchVolume: integer("monthly_search_volume"), // Search volume numbers
+  tiktokVideoCount: integer("tiktok_video_count"), // TikTok videos in past 30 days
+  redditMentions: integer("reddit_mentions"), // Reddit mentions/complaints in past 90 days
+  demandEvidence: text("demand_evidence"), // Additional evidence description
+  
+  // 3. Competition Analysis
+  competitorBrands: jsonb("competitor_brands"), // Array of {name, pricePoint} objects
+  marketSaturation: text("market_saturation").notNull(), // LOW/MEDIUM/HIGH
+  saturationReasoning: text("saturation_reasoning").notNull(), // Why this saturation level
+  
+  // 4. Margin Potential
+  manufacturingCost: decimal("manufacturing_cost"), // Estimated cost in dollars
+  typicalRetailPrice: decimal("typical_retail_price"), // Market retail price
+  grossMarginPercent: decimal("gross_margin_percent"), // Calculated margin percentage
+  marginCalculation: text("margin_calculation"), // Example: "$8 cost → $35 retail = 77%"
+  
+  // 5. Target Customer
+  targetDemographic: text("target_demographic").notNull(), // Specific demo details
+  customerPainPoint: text("customer_pain_point").notNull(), // Specific problem solved
+  whereTheySpend: text("where_they_spend"), // Online platforms they use
+  
+  // 6. Validation Difficulty
+  testDifficulty: text("test_difficulty").notNull(), // EASY/MEDIUM/HARD
+  testDifficultyReasoning: text("test_difficulty_reasoning").notNull(), // Why this difficulty
+  redFlags: text("red_flags"), // Potential issues (returns, education needed, etc)
+  
+  // 7. Successful Examples
+  successfulBrands: jsonb("successful_brands"), // Array of {name, whySuccessful, topContent}
+  whatMadeThemWork: text("what_made_them_work"), // Content strategy details
+  
+  // 8. Go/No-Go Indicators
+  goNoGoScore: integer("go_no_go_score"), // Overall score 1-100
+  goNoGoIndicators: jsonb("go_no_go_indicators"), // Array of {indicator, status, reasoning}
+  recommendation: text("recommendation").notNull(), // WORTH_TESTING/SKIP/MAYBE
+  
+  // Legacy fields (keeping for backward compatibility)
+  opportunity: text("opportunity").notNull(), // Now becomes the specific product name
+  reasoning: text("reasoning").notNull(), // Now becomes overall summary
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
