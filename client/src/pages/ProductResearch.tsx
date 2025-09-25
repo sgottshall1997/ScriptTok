@@ -52,11 +52,8 @@ const ProductResearch = () => {
   const searchMutation = useMutation({
     mutationFn: async (searchCategory: string) => {
       setIsSearching(true);
-      const response = await apiRequest('/api/product-research', {
-        method: 'POST',
-        body: { category: searchCategory },
-      });
-      return response;
+      const response = await apiRequest('POST', '/api/product-research', { category: searchCategory });
+      return await response.json();
     },
     onSuccess: (data) => {
       setSearchResults(data);
@@ -79,10 +76,8 @@ const ProductResearch = () => {
   // Save opportunity mutation
   const saveOpportunityMutation = useMutation({
     mutationFn: async (opportunity: { category: string; opportunity: string; reasoning: string }) => {
-      return await apiRequest('/api/product-research/save', {
-        method: 'POST',
-        body: opportunity,
-      });
+      const response = await apiRequest('POST', '/api/product-research/save', opportunity);
+      return await response.json();
     },
     onSuccess: () => {
       toast({
@@ -103,9 +98,8 @@ const ProductResearch = () => {
   // Delete opportunity mutation
   const deleteOpportunityMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/product-research/opportunities/${id}`, {
-        method: 'DELETE',
-      });
+      const response = await apiRequest('DELETE', `/api/product-research/opportunities/${id}`);
+      return await response.json();
     },
     onSuccess: () => {
       toast({

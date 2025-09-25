@@ -17,7 +17,7 @@ const productResearchSchema = z.object({
 /**
  * Research product opportunities for a given category using Perplexity
  */
-router.post('/research', async (req, res) => {
+router.post('/', async (req, res) => {
   try {
     const { category } = productResearchSchema.parse(req.body);
     
@@ -91,18 +91,15 @@ router.post('/save', async (req, res) => {
   try {
     const opportunitySchema = z.object({
       category: z.string().min(1),
-      problem: z.string().min(1),
-      targetCustomer: z.string().min(1),
-      demandSignal: z.string().min(1),
-      marginPotential: z.string().min(1),
-      query: z.string().min(1),
+      opportunity: z.string().min(1),
+      reasoning: z.string().min(1),
     });
 
-    const opportunity = opportunitySchema.parse(req.body);
+    const { category, opportunity, reasoning } = opportunitySchema.parse(req.body);
     
-    console.log(`💾 Saving product opportunity: ${opportunity.problem.substring(0, 50)}...`);
+    console.log(`💾 Saving product opportunity: ${opportunity.substring(0, 50)}...`);
     
-    const saved = await storage.saveProductOpportunity(opportunity);
+    const saved = await storage.saveProductOpportunity({ category, opportunity, reasoning });
     
     res.json({
       success: true,
@@ -122,15 +119,11 @@ router.post('/save', async (req, res) => {
 /**
  * Get all saved product opportunities
  */
-router.get('/saved', async (req, res) => {
+router.get('/opportunities', async (req, res) => {
   try {
     const opportunities = await storage.getProductOpportunities();
     
-    res.json({
-      success: true,
-      opportunities,
-      count: opportunities.length,
-    });
+    res.json(opportunities);
 
   } catch (error) {
     console.error('❌ Get opportunities error:', error);
@@ -142,14 +135,50 @@ router.get('/saved', async (req, res) => {
 });
 
 /**
+ * Delete a saved product opportunity
+ */
+router.delete('/opportunities/:id', async (req, res) => {
+  try {
+    const id = parseInt(req.params.id);
+    if (isNaN(id)) {
+      return res.status(400).json({
+        success: false,
+        error: 'Invalid opportunity ID'
+      });
+    }
+    
+    console.log(`🗑️ Deleting product opportunity: ${id}`);
+    
+    const deleted = await storage.deleteProductOpportunity(id);
+    
+    if (!deleted) {
+      return res.status(404).json({
+        success: false,
+        error: 'Product opportunity not found'
+      });
+    }
+    
+    res.json({
+      success: true,
+      message: 'Product opportunity deleted successfully'
+    });
+
+  } catch (error) {
+    console.error('❌ Delete opportunity error:', error);
+    res.status(500).json({
+      success: false,
+      error: error instanceof Error ? error.message : 'Failed to delete product opportunity'
+    });
+  }
+});
+
+/**
  * Parse Perplexity response into structured product opportunities
  */
 function parseProductOpportunities(content: string, category: string, query: string) {
   const opportunities: Array<{
-    problem: string;
-    targetCustomer: string;
-    demandSignal: string;
-    marginPotential: string;
+    opportunity: string;
+    reasoning: string;
   }> = [];
 
   // Split content into sections and try to extract structured data
@@ -157,6 +186,7 @@ function parseProductOpportunities(content: string, category: string, query: str
   
   let currentOpportunity: any = {};
   let isCapturingOpportunity = false;
+  let reasoningParts: string[] = [];
   
   for (const line of lines) {
     const trimmedLine = line.trim();
@@ -164,58 +194,40 @@ function parseProductOpportunities(content: string, category: string, query: str
     // Look for numbered opportunities (1., 2., etc.)
     if (/^\d+\./.test(trimmedLine)) {
       // Save previous opportunity if it's complete
-      if (isCapturingOpportunity && currentOpportunity.problem) {
+      if (isCapturingOpportunity && currentOpportunity.opportunity) {
         opportunities.push({
-          problem: currentOpportunity.problem || 'Product opportunity identified',
-          targetCustomer: currentOpportunity.targetCustomer || 'Target market analysis needed',
-          demandSignal: currentOpportunity.demandSignal || 'Market demand research needed', 
-          marginPotential: currentOpportunity.marginPotential || 'Margin analysis needed',
+          opportunity: currentOpportunity.opportunity,
+          reasoning: reasoningParts.length > 0 ? reasoningParts.join(' ') : 'Market analysis shows strong potential for this product opportunity.',
         });
       }
       
       // Start new opportunity
       currentOpportunity = {
-        problem: trimmedLine.replace(/^\d+\.\s*/, '').trim(),
+        opportunity: trimmedLine.replace(/^\d+\.\s*/, '').trim(),
       };
+      reasoningParts = [];
       isCapturingOpportunity = true;
     }
     
-    // Look for key phrases to categorize information
-    else if (isCapturingOpportunity) {
-      const lowerLine = trimmedLine.toLowerCase();
-      
-      if (lowerLine.includes('problem') || lowerLine.includes('solves') || lowerLine.includes('addresses')) {
-        currentOpportunity.problem = currentOpportunity.problem || trimmedLine;
-      }
-      else if (lowerLine.includes('target') || lowerLine.includes('customer') || lowerLine.includes('audience')) {
-        currentOpportunity.targetCustomer = trimmedLine;
-      }
-      else if (lowerLine.includes('demand') || lowerLine.includes('market') || lowerLine.includes('trending')) {
-        currentOpportunity.demandSignal = trimmedLine;
-      }
-      else if (lowerLine.includes('margin') || lowerLine.includes('profit') || lowerLine.includes('revenue')) {
-        currentOpportunity.marginPotential = trimmedLine;
-      }
+    // Collect reasoning information
+    else if (isCapturingOpportunity && trimmedLine.length > 0) {
+      reasoningParts.push(trimmedLine);
     }
   }
   
   // Don't forget the last opportunity
-  if (isCapturingOpportunity && currentOpportunity.problem) {
+  if (isCapturingOpportunity && currentOpportunity.opportunity) {
     opportunities.push({
-      problem: currentOpportunity.problem || 'Product opportunity identified',
-      targetCustomer: currentOpportunity.targetCustomer || 'Target market analysis needed',
-      demandSignal: currentOpportunity.demandSignal || 'Market demand research needed',
-      marginPotential: currentOpportunity.marginPotential || 'Margin analysis needed',
+      opportunity: currentOpportunity.opportunity,
+      reasoning: reasoningParts.length > 0 ? reasoningParts.join(' ') : 'Market analysis shows strong potential for this product opportunity.',
     });
   }
   
   // If parsing failed, create a single generic opportunity from the content
   if (opportunities.length === 0 && content.trim()) {
     opportunities.push({
-      problem: `Product opportunities in ${category} category`,
-      targetCustomer: 'Market analysis needed',
-      demandSignal: 'Research shows market potential',
-      marginPotential: 'Profit potential to be determined',
+      opportunity: `Product opportunities in ${category} category`,
+      reasoning: 'Market analysis shows potential based on current trends and consumer demands. Further research recommended to validate specific opportunities.',
     });
   }
   

@@ -2821,11 +2821,8 @@ export const productPriceHistory = pgTable("product_price_history", {
 export const productOpportunities = pgTable("product_opportunities", {
   id: serial("id").primaryKey(),
   category: text("category").notNull(),
-  problem: text("problem").notNull(),
-  targetCustomer: text("target_customer").notNull(),
-  demandSignal: text("demand_signal").notNull(),
-  marginPotential: text("margin_potential").notNull(),
-  query: text("query").notNull(), // The original query used
+  opportunity: text("opportunity").notNull(),
+  reasoning: text("reasoning").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
