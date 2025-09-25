@@ -42,6 +42,11 @@ import {
   LiveChatSession, InsertLiveChatSession,
   LiveChatMessage, InsertLiveChatMessage,
   SupportMetric, InsertSupportMetric,
+  // Amazon Monetization types
+  AmazonProduct, InsertAmazonProduct,
+  AffiliateLink, InsertAffiliateLink,
+  RevenueTracking, InsertRevenueTracking,
+  ProductPerformance, InsertProductPerformance,
   users, contentGenerations, trendingProducts, scraperStatus, apiUsage,
   aiModelConfigs, teams, teamMembers, contentOptimizations, 
   contentPerformance, contentVersions, apiIntegrations, trendingEmojisHashtags,
@@ -54,7 +59,9 @@ import {
   cookaingContentVersions, cookaingContentRatings, contentLinks, contentExports,
   // Customer Support Center tables
   supportCategories, supportTickets, supportResponses, knowledgeBaseArticles,
-  liveChatSessions, liveChatMessages, supportMetrics
+  liveChatSessions, liveChatMessages, supportMetrics,
+  // Amazon Monetization tables
+  amazonProducts, affiliateLinks, revenueTracking, productPerformance
 } from "@shared/schema";
 import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
@@ -376,6 +383,44 @@ export interface IStorage {
     avgResolutionTime: number;
     satisfactionScore: number;
   }>;
+
+  // Amazon Monetization operations
+  // Amazon Product operations
+  createAmazonProduct(product: InsertAmazonProduct): Promise<AmazonProduct>;
+  getAmazonProduct(id: number): Promise<AmazonProduct | undefined>;
+  getAmazonProductByAsin(asin: string): Promise<AmazonProduct | undefined>;
+  getAmazonProducts(filter?: { niche?: string; category?: string; limit?: number }): Promise<AmazonProduct[]>;
+  updateAmazonProduct(id: number, updates: Partial<InsertAmazonProduct>): Promise<AmazonProduct | undefined>;
+  deleteAmazonProduct(id: number): Promise<boolean>;
+  searchAmazonProductsByKeywords(keywords: string[]): Promise<AmazonProduct[]>;
+  getTopPerformingAmazonProducts(limit?: number): Promise<AmazonProduct[]>;
+
+  // Affiliate Link operations
+  createAffiliateLink(link: InsertAffiliateLink): Promise<AffiliateLink>;
+  getAffiliateLink(id: number): Promise<AffiliateLink | undefined>;
+  getAffiliateLinkByTrackingId(trackingId: string): Promise<AffiliateLink | undefined>;
+  getAffiliateLinks(filter?: { userId?: number; platform?: string; isActive?: boolean; limit?: number }): Promise<AffiliateLink[]>;
+  updateAffiliateLink(id: number, updates: Partial<InsertAffiliateLink>): Promise<AffiliateLink | undefined>;
+  deleteAffiliateLink(id: number): Promise<boolean>;
+  getAffiliateLinksByContent(contentId: number, contentType: string): Promise<AffiliateLink[]>;
+  incrementAffiliateLinkClicks(trackingId: string): Promise<void>;
+
+  // Revenue Tracking operations
+  createRevenueTracking(revenue: InsertRevenueTracking): Promise<RevenueTracking>;
+  getRevenueTracking(id: number): Promise<RevenueTracking | undefined>;
+  getRevenueTrackingByLink(affiliateLinkId: number): Promise<RevenueTracking[]>;
+  getRevenueTrackingByDateRange(startDate: Date, endDate: Date): Promise<RevenueTracking[]>;
+  getTotalRevenue(userId?: number): Promise<number>;
+  getMonthlyRevenue(year: number, month: number, userId?: number): Promise<number>;
+  getTopEarningProducts(limit?: number): Promise<Array<{product: AmazonProduct, totalEarnings: number}>>;
+
+  // Product Performance operations
+  createProductPerformance(performance: InsertProductPerformance): Promise<ProductPerformance>;
+  getProductPerformance(id: number): Promise<ProductPerformance | undefined>;
+  getProductPerformanceByProduct(amazonProductId: number): Promise<ProductPerformance[]>;
+  getProductPerformanceByTimeframe(timeframe: string, startDate: Date, endDate: Date): Promise<ProductPerformance[]>;
+  updateProductPerformance(id: number, updates: Partial<InsertProductPerformance>): Promise<ProductPerformance | undefined>;
+  getPerformanceAnalytics(filter?: { productId?: number; timeframe?: string; limit?: number }): Promise<ProductPerformance[]>;
 }
 
 // In-memory storage implementation (not actively used - DatabaseStorage is the active implementation)
@@ -3360,6 +3405,379 @@ export class DatabaseStorage implements IStorage {
       avgResolutionTime: Math.round(avgResolutionResult?.avgHours || 0),
       satisfactionScore: 95 // Mock satisfaction score - would come from actual ratings
     };
+  }
+
+  // ================================================================
+  // Amazon Monetization implementation
+  // ================================================================
+
+  // Amazon Product operations
+  async createAmazonProduct(product: InsertAmazonProduct): Promise<AmazonProduct> {
+    const [result] = await db
+      .insert(amazonProducts)
+      .values(product)
+      .returning();
+    return result;
+  }
+
+  async getAmazonProduct(id: number): Promise<AmazonProduct | undefined> {
+    const [result] = await db
+      .select()
+      .from(amazonProducts)
+      .where(eq(amazonProducts.id, id));
+    return result;
+  }
+
+  async getAmazonProductByAsin(asin: string): Promise<AmazonProduct | undefined> {
+    const [result] = await db
+      .select()
+      .from(amazonProducts)
+      .where(eq(amazonProducts.asin, asin));
+    return result;
+  }
+
+  async getAmazonProducts(filter?: { niche?: string; category?: string; limit?: number }): Promise<AmazonProduct[]> {
+    let query = db.select().from(amazonProducts);
+    
+    const conditions = [];
+    if (filter?.niche) {
+      conditions.push(eq(amazonProducts.niche, filter.niche));
+    }
+    if (filter?.category) {
+      conditions.push(eq(amazonProducts.category, filter.category));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(amazonProducts.createdAt));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+
+  async updateAmazonProduct(id: number, updates: Partial<InsertAmazonProduct>): Promise<AmazonProduct | undefined> {
+    const [result] = await db
+      .update(amazonProducts)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(amazonProducts.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteAmazonProduct(id: number): Promise<boolean> {
+    const result = await db
+      .delete(amazonProducts)
+      .where(eq(amazonProducts.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  async searchAmazonProductsByKeywords(keywords: string[]): Promise<AmazonProduct[]> {
+    if (keywords.length === 0) return [];
+    
+    // Search in title, description, and keywords array
+    const conditions = keywords.map(keyword => 
+      sql`(${amazonProducts.title} ILIKE ${`%${keyword}%`} OR 
+           ${amazonProducts.description} ILIKE ${`%${keyword}%`} OR 
+           ${keyword} = ANY(${amazonProducts.keywords}))`
+    );
+    
+    return await db
+      .select()
+      .from(amazonProducts)
+      .where(sql`(${sql.join(conditions, sql` OR `)})`)
+      .orderBy(desc(amazonProducts.rating), desc(amazonProducts.reviewCount));
+  }
+
+  async getTopPerformingAmazonProducts(limit = 10): Promise<AmazonProduct[]> {
+    // Join with affiliate links to get products with actual performance data
+    return await db
+      .select({
+        ...amazonProducts
+      })
+      .from(amazonProducts)
+      .innerJoin(affiliateLinks, eq(amazonProducts.id, affiliateLinks.amazonProductId))
+      .where(eq(affiliateLinks.isActive, true))
+      .orderBy(desc(affiliateLinks.totalEarnings), desc(affiliateLinks.conversionCount))
+      .limit(limit);
+  }
+
+  // Affiliate Link operations
+  async createAffiliateLink(link: InsertAffiliateLink): Promise<AffiliateLink> {
+    const [result] = await db
+      .insert(affiliateLinks)
+      .values(link)
+      .returning();
+    return result;
+  }
+
+  async getAffiliateLink(id: number): Promise<AffiliateLink | undefined> {
+    const [result] = await db
+      .select()
+      .from(affiliateLinks)
+      .where(eq(affiliateLinks.id, id));
+    return result;
+  }
+
+  async getAffiliateLinkByTrackingId(trackingId: string): Promise<AffiliateLink | undefined> {
+    const [result] = await db
+      .select()
+      .from(affiliateLinks)
+      .where(eq(affiliateLinks.trackingId, trackingId));
+    return result;
+  }
+
+  async getAffiliateLinks(filter?: { userId?: number; platform?: string; isActive?: boolean; limit?: number }): Promise<AffiliateLink[]> {
+    let query = db.select().from(affiliateLinks);
+    
+    const conditions = [];
+    if (filter?.userId) {
+      conditions.push(eq(affiliateLinks.userId, filter.userId));
+    }
+    if (filter?.platform) {
+      conditions.push(eq(affiliateLinks.platform, filter.platform));
+    }
+    if (filter?.isActive !== undefined) {
+      conditions.push(eq(affiliateLinks.isActive, filter.isActive));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(affiliateLinks.createdAt));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
+  }
+
+  async updateAffiliateLink(id: number, updates: Partial<InsertAffiliateLink>): Promise<AffiliateLink | undefined> {
+    const [result] = await db
+      .update(affiliateLinks)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(affiliateLinks.id, id))
+      .returning();
+    return result;
+  }
+
+  async deleteAffiliateLink(id: number): Promise<boolean> {
+    const result = await db
+      .delete(affiliateLinks)
+      .where(eq(affiliateLinks.id, id));
+    return result.rowCount !== null && result.rowCount > 0;
+  }
+
+  async getAffiliateLinksByContent(contentId: number, contentType: string): Promise<AffiliateLink[]> {
+    return await db
+      .select()
+      .from(affiliateLinks)
+      .where(
+        and(
+          eq(affiliateLinks.contentId, contentId),
+          eq(affiliateLinks.contentType, contentType)
+        )
+      )
+      .orderBy(desc(affiliateLinks.createdAt));
+  }
+
+  async incrementAffiliateLinkClicks(trackingId: string): Promise<void> {
+    await db
+      .update(affiliateLinks)
+      .set({ 
+        clickCount: sql`${affiliateLinks.clickCount} + 1`,
+        lastClickAt: new Date(),
+        updatedAt: new Date()
+      })
+      .where(eq(affiliateLinks.trackingId, trackingId));
+  }
+
+  // Revenue Tracking operations
+  async createRevenueTracking(revenue: InsertRevenueTracking): Promise<RevenueTracking> {
+    const [result] = await db
+      .insert(revenueTracking)
+      .values(revenue)
+      .returning();
+    return result;
+  }
+
+  async getRevenueTracking(id: number): Promise<RevenueTracking | undefined> {
+    const [result] = await db
+      .select()
+      .from(revenueTracking)
+      .where(eq(revenueTracking.id, id));
+    return result;
+  }
+
+  async getRevenueTrackingByLink(affiliateLinkId: number): Promise<RevenueTracking[]> {
+    return await db
+      .select()
+      .from(revenueTracking)
+      .where(eq(revenueTracking.affiliateLinkId, affiliateLinkId))
+      .orderBy(desc(revenueTracking.orderDate));
+  }
+
+  async getRevenueTrackingByDateRange(startDate: Date, endDate: Date): Promise<RevenueTracking[]> {
+    return await db
+      .select()
+      .from(revenueTracking)
+      .where(
+        and(
+          gte(revenueTracking.orderDate, startDate),
+          lte(revenueTracking.orderDate, endDate)
+        )
+      )
+      .orderBy(desc(revenueTracking.orderDate));
+  }
+
+  async getTotalRevenue(userId?: number): Promise<number> {
+    let query = db
+      .select({ total: sql<number>`SUM(${revenueTracking.commissionAmount})` })
+      .from(revenueTracking)
+      .where(eq(revenueTracking.isReturned, false));
+    
+    if (userId) {
+      query = query
+        .innerJoin(affiliateLinks, eq(revenueTracking.affiliateLinkId, affiliateLinks.id))
+        .where(
+          and(
+            eq(revenueTracking.isReturned, false),
+            eq(affiliateLinks.userId, userId)
+          )
+        );
+    }
+    
+    const [result] = await query;
+    return result?.total || 0;
+  }
+
+  async getMonthlyRevenue(year: number, month: number, userId?: number): Promise<number> {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0, 23, 59, 59);
+    
+    let query = db
+      .select({ total: sql<number>`SUM(${revenueTracking.commissionAmount})` })
+      .from(revenueTracking)
+      .where(
+        and(
+          gte(revenueTracking.orderDate, startDate),
+          lte(revenueTracking.orderDate, endDate),
+          eq(revenueTracking.isReturned, false)
+        )
+      );
+    
+    if (userId) {
+      query = query
+        .innerJoin(affiliateLinks, eq(revenueTracking.affiliateLinkId, affiliateLinks.id))
+        .where(
+          and(
+            gte(revenueTracking.orderDate, startDate),
+            lte(revenueTracking.orderDate, endDate),
+            eq(revenueTracking.isReturned, false),
+            eq(affiliateLinks.userId, userId)
+          )
+        );
+    }
+    
+    const [result] = await query;
+    return result?.total || 0;
+  }
+
+  async getTopEarningProducts(limit = 10): Promise<Array<{product: AmazonProduct, totalEarnings: number}>> {
+    const results = await db
+      .select({
+        product: amazonProducts,
+        totalEarnings: sql<number>`SUM(${revenueTracking.commissionAmount})`
+      })
+      .from(revenueTracking)
+      .innerJoin(amazonProducts, eq(revenueTracking.amazonProductId, amazonProducts.id))
+      .where(eq(revenueTracking.isReturned, false))
+      .groupBy(amazonProducts.id)
+      .orderBy(sql`SUM(${revenueTracking.commissionAmount}) DESC`)
+      .limit(limit);
+    
+    return results.map(r => ({
+      product: r.product,
+      totalEarnings: r.totalEarnings
+    }));
+  }
+
+  // Product Performance operations
+  async createProductPerformance(performance: InsertProductPerformance): Promise<ProductPerformance> {
+    const [result] = await db
+      .insert(productPerformance)
+      .values(performance)
+      .returning();
+    return result;
+  }
+
+  async getProductPerformance(id: number): Promise<ProductPerformance | undefined> {
+    const [result] = await db
+      .select()
+      .from(productPerformance)
+      .where(eq(productPerformance.id, id));
+    return result;
+  }
+
+  async getProductPerformanceByProduct(amazonProductId: number): Promise<ProductPerformance[]> {
+    return await db
+      .select()
+      .from(productPerformance)
+      .where(eq(productPerformance.amazonProductId, amazonProductId))
+      .orderBy(desc(productPerformance.startDate));
+  }
+
+  async getProductPerformanceByTimeframe(timeframe: string, startDate: Date, endDate: Date): Promise<ProductPerformance[]> {
+    return await db
+      .select()
+      .from(productPerformance)
+      .where(
+        and(
+          eq(productPerformance.timeframe, timeframe),
+          gte(productPerformance.startDate, startDate),
+          lte(productPerformance.endDate, endDate)
+        )
+      )
+      .orderBy(desc(productPerformance.revenue));
+  }
+
+  async updateProductPerformance(id: number, updates: Partial<InsertProductPerformance>): Promise<ProductPerformance | undefined> {
+    const [result] = await db
+      .update(productPerformance)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(productPerformance.id, id))
+      .returning();
+    return result;
+  }
+
+  async getPerformanceAnalytics(filter?: { productId?: number; timeframe?: string; limit?: number }): Promise<ProductPerformance[]> {
+    let query = db.select().from(productPerformance);
+    
+    const conditions = [];
+    if (filter?.productId) {
+      conditions.push(eq(productPerformance.amazonProductId, filter.productId));
+    }
+    if (filter?.timeframe) {
+      conditions.push(eq(productPerformance.timeframe, filter.timeframe));
+    }
+    
+    if (conditions.length > 0) {
+      query = query.where(and(...conditions));
+    }
+    
+    query = query.orderBy(desc(productPerformance.revenue), desc(productPerformance.conversionRate));
+    
+    if (filter?.limit) {
+      query = query.limit(filter.limit);
+    }
+    
+    return await query;
   }
 }
 
