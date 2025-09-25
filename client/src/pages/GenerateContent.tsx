@@ -1181,7 +1181,7 @@ ${config.hashtags.join(' ')}`;
                             Copy
                           </Button>
                         </div>
-                        <div className="bg-gray-900 p-4 rounded border border-gray-700 text-sm font-mono whitespace-pre-wrap text-gray-100 leading-relaxed max-h-40 overflow-y-auto">
+                        <div className="bg-white p-4 rounded border border-gray-300 text-sm whitespace-pre-wrap text-gray-800 leading-relaxed max-h-40 overflow-y-auto">
                           {generatePlatformCaption('tiktok')}
                         </div>
                       </div>
@@ -1353,7 +1353,7 @@ ${config.hashtags.join(' ')}`;
                               Copy
                             </Button>
                           </div>
-                          <div className="bg-gray-900 p-4 rounded border border-gray-700 text-sm font-mono whitespace-pre-wrap text-gray-100 leading-relaxed max-h-40 overflow-y-auto">
+                          <div className="bg-white p-4 rounded border border-gray-300 text-sm whitespace-pre-wrap text-gray-800 leading-relaxed max-h-40 overflow-y-auto">
                             {generatePlatformCaption('tiktok')}
                           </div>
                         </div>
@@ -1400,7 +1400,7 @@ ${config.hashtags.join(' ')}`;
                               Copy
                             </Button>
                           </div>
-                          <div className="bg-gray-900 p-4 rounded border border-gray-700 text-sm font-mono whitespace-pre-wrap text-gray-100 leading-relaxed max-h-40 overflow-y-auto">
+                          <div className="bg-white p-4 rounded border border-gray-300 text-sm whitespace-pre-wrap text-gray-800 leading-relaxed max-h-40 overflow-y-auto">
                             {generatePlatformCaption('tiktok')}
                           </div>
                         </div>
