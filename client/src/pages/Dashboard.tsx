@@ -26,6 +26,9 @@ import {
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
+import PageDescription from "@/components/PageDescription";
+import InstructionFooter from "@/components/InstructionFooter";
+import { getGlowBotSectionByPath } from "@/lib/glowbot-sections";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -34,6 +37,9 @@ const Dashboard = () => {
   const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
+  
+  // Get section metadata for this page
+  const sectionData = getGlowBotSectionByPath('/');
 
   // Fetch trending products for all niches (Perplexity organized by niche)
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
@@ -262,7 +268,7 @@ const Dashboard = () => {
   // Get available niches for dropdown
   const getAvailableNiches = () => {
     const products = getCurrentProducts();
-    const niches = [...new Set(products.map(product => product.niche).filter(Boolean))];
+    const niches = Array.from(new Set(products.map(product => product.niche).filter(Boolean)));
     return niches.sort();
   };
 
@@ -318,6 +324,18 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* Page Description */}
+      {sectionData && (
+        <PageDescription
+          title={sectionData.name}
+          description={sectionData.description}
+          category={sectionData.category}
+          keyFeatures={sectionData.keyFeatures.slice(0, 5)}
+          relatedLinks={sectionData.relatedLinks}
+          variant="compact"
+        />
+      )}
+      
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
@@ -725,6 +743,16 @@ const Dashboard = () => {
           </CardContent>
         </Card>
       </div>
+      
+      {/* Instruction Footer */}
+      {sectionData && (
+        <InstructionFooter
+          setupRequirements={sectionData.setupRequirements}
+          usageInstructions={sectionData.usageInstructions}
+          relatedLinks={sectionData.relatedLinks}
+          notes={sectionData.notes}
+        />
+      )}
     </div>
   );
 };
