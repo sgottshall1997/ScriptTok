@@ -85,7 +85,7 @@ function Router() {
   return (
     <Switch>
       {/* CookAIng Mode - Separate routing namespace (no main layout) */}
-      <Route path="/cookaing" nest>
+      <Route path="/cookaing-marketing" nest>
         <CookAIngRouter />
       </Route>
       

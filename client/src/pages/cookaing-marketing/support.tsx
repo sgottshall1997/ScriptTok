@@ -196,7 +196,7 @@ export default function SupportCenterPage() {
   // Mutations
   const createTicketMutation = useMutation({
     mutationFn: async (data: TicketForm) => {
-      return apiRequest('/api/cookaing-marketing/support/tickets', 'POST', data);
+      return apiRequest('POST', '/api/cookaing-marketing/support/tickets', data);
     },
     onSuccess: () => {
       toast({
@@ -219,7 +219,7 @@ export default function SupportCenterPage() {
 
   const createArticleMutation = useMutation({
     mutationFn: async (data: ArticleForm) => {
-      return apiRequest('/api/cookaing-marketing/support/knowledge-base', 'POST', {
+      return apiRequest('POST', '/api/cookaing-marketing/support/knowledge-base', {
         ...data,
         tags: data.tags ? data.tags.split(',').map(tag => tag.trim()) : [],
         slug: data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')

@@ -108,6 +108,7 @@ const cookAIngNavigation: SidebarSection[] = [
   {
     name: "Help",
     items: [
+      { name: "Customer Support", href: "/cookaing-marketing/support", icon: HelpCircle },
       { name: "Docs", href: "/cookaing-marketing/docs", icon: BookOpen },
       { name: "Exit CookAIng", href: "/", icon: LogOut }
     ]
