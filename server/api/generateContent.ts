@@ -61,7 +61,7 @@ const generateContentSchema = z.object({
   videoDuration: z.enum(["30", "45", "60"]).optional(),
   customHook: z.string().optional(),
   affiliateUrl: z.string().optional(),
-  aiModel: z.enum(["chatgpt", "claude"]).optional().default("claude"), // AI model selection
+  aiModel: z.enum(["chatgpt", "claude", "both"]).optional().default("claude"), // AI model selection
   viralInspiration: viralInspirationSchema,
   templateSource: z.string().optional(),
   useSmartStyle: z.boolean().optional().default(false),
