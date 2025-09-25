@@ -37,6 +37,7 @@ import metricsRouter from "./api/metrics";
 import affiliateNetworksRouter from "./api/affiliate-networks";
 import perplexityTrendsRouter from "./api/perplexity-trends";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
+import productResearchRouter from "./api/product-research";
 import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
 import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/spartan-content";
 import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
@@ -188,6 +189,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Perplexity trends
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
+  
+  // Product research
+  app.use('/api/product-research', productResearchRouter);
   
   // Cron job status monitoring
   app.use('/api/cron-status', cronStatusRouter);
