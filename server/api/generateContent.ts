@@ -61,6 +61,7 @@ const generateContentSchema = z.object({
   videoDuration: z.enum(["30", "45", "60"]).optional(),
   customHook: z.string().optional(),
   affiliateUrl: z.string().optional(),
+  aiModel: z.enum(["chatgpt", "claude"]).optional().default("claude"), // AI model selection
   viralInspiration: viralInspirationSchema,
   templateSource: z.string().optional(),
   useSmartStyle: z.boolean().optional().default(false),
@@ -340,13 +341,27 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         console.log('🎯 Template source:', validatedData.templateSource);
       }
       
+      // Map user-friendly AI model names to actual model IDs
+      const getActualModelId = (userModel: string) => {
+        switch (userModel) {
+          case 'chatgpt':
+            return 'gpt-4o';
+          case 'claude':
+            return 'claude-3-5-sonnet';
+          default:
+            return 'claude-3-5-sonnet'; // Default fallback
+        }
+      };
+
+      const actualModelId = getActualModelId(validatedData.aiModel);
+      
       const result = await generateContent(
         product, 
         templateType, 
         tone, 
         trendingProducts, 
         niche, 
-        'gpt-4o', // model
+        actualModelId, // Use mapped AI model ID
         validatedData.viralInspiration, // Pass viral inspiration
         smartStyleRecommendations // Pass smart style recommendations
       );
@@ -371,13 +386,16 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         
         try {
           // Retry with GPT-3.5-turbo, including viral inspiration
+          // Use proper fallback model based on user's selection
+          const fallbackModelId = validatedData.aiModel === 'claude' ? 'claude-3-haiku' : 'gpt-3.5-turbo';
+          
           const fallbackResult = await generateContent(
             product, 
             templateType, 
             tone, 
             trendingProducts, 
             niche, 
-            'gpt-3.5-turbo',
+            fallbackModelId, // Use proper fallback model ID
             validatedData.viralInspiration
           );
           content = fallbackResult.content;

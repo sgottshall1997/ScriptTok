@@ -88,9 +88,14 @@ const GenerateContent = () => {
   const [isHookGeneratorOpen, setIsHookGeneratorOpen] = useState(false);
   const [customHook, setCustomHook] = useState('');
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
+  const [comparisonResults, setComparisonResults] = useState<{
+    claude: GeneratedContent | null;
+    chatgpt: GeneratedContent | null;
+  } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
   const [useSmartStyle, setUseSmartStyle] = useState(false);
+  const [aiModel, setAiModel] = useState<'chatgpt' | 'claude' | 'both'>('claude'); // AI model selection
   const [currentPromptStructure, setCurrentPromptStructure] = useState<{
     systemPrompt: string;
     userPrompt: string;
@@ -397,6 +402,90 @@ ${config.hashtags.join(' ')}`;
     console.log("Selected template:", finalTemplateType);
 
     setIsGenerating(true);
+    
+    // Handle "Both" models case
+    if (aiModel === 'both') {
+      try {
+        const requestBody = {
+          product: selectedProduct,
+          niche: selectedNiche,
+          platforms: ['tiktok'], // TikTok-only generator
+          templateType: finalTemplateType,
+          tone,
+          customHook,
+          // No affiliate URL needed for TikTok-only generator
+          viralInspiration: viralInspo, // Include viral inspiration data
+          templateSource, // Track how template was selected
+          useSmartStyle, // Enable smart style recommendations
+          userId: 1 // Demo user ID for rating system
+        };
+
+        // Make parallel requests to both AI models
+        const [claudeResponse, chatgptResponse] = await Promise.all([
+          fetch('/api/generate-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...requestBody, aiModel: 'claude' }),
+          }),
+          fetch('/api/generate-content', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ...requestBody, aiModel: 'chatgpt' }),
+          })
+        ]);
+
+        if (claudeResponse.ok && chatgptResponse.ok) {
+          const [claudeResult, chatgptResult] = await Promise.all([
+            claudeResponse.json(),
+            chatgptResponse.json()
+          ]);
+
+          if (claudeResult.success && chatgptResult.success) {
+            const claudeContent: GeneratedContent = {
+              content: claudeResult.data.content,
+              hook: claudeResult.data.customHook || '',
+              platform: 'tiktok',
+              niche: selectedNiche,
+            };
+            
+            const chatgptContent: GeneratedContent = {
+              content: chatgptResult.data.content,
+              hook: chatgptResult.data.customHook || '',
+              platform: 'tiktok',
+              niche: selectedNiche,
+            };
+
+            setComparisonResults({
+              claude: claudeContent,
+              chatgpt: chatgptContent
+            });
+            setGeneratedContent(null); // Clear single result when showing comparison
+
+            toast({
+              title: "Both Models Generated!",
+              description: "Compare results from Claude and ChatGPT side-by-side",
+            });
+          } else {
+            throw new Error('One or both AI models failed to generate content');
+          }
+        } else {
+          throw new Error('Failed to generate content with both models');
+        }
+      } catch (error) {
+        console.error('Both models generation error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        toast({
+          title: "Generation Failed",
+          description: errorMessage,
+          variant: "destructive",
+        });
+      } finally {
+        setIsGenerating(false);
+      }
+      return; // Exit early for "both" case
+    }
+
+    // Handle single model case
     try {
       const response = await fetch('/api/generate-content', {
         method: 'POST',
@@ -408,6 +497,7 @@ ${config.hashtags.join(' ')}`;
           templateType: finalTemplateType,
           tone,
           customHook,
+          aiModel: aiModel, // Use selected single model
           // No affiliate URL needed for TikTok-only generator
           viralInspiration: viralInspo, // Include viral inspiration data
           templateSource, // Track how template was selected
@@ -430,6 +520,7 @@ ${config.hashtags.join(' ')}`;
           };
           
           setGeneratedContent(contentData);
+          setComparisonResults(null); // Clear comparison results when showing single result
           
           // Generate TikTok caption for saving to history
           const tiktokCaption = generatePlatformCaptionForSaving('tiktok', contentData, selectedProduct, '', selectedNiche);
@@ -812,6 +903,29 @@ ${config.hashtags.join(' ')}`;
               </Select>
             </div>
 
+            {/* AI Model Selection */}
+            <div>
+              <Label htmlFor="ai-model">AI Model</Label>
+              <Select value={aiModel} onValueChange={(value: 'chatgpt' | 'claude' | 'both') => setAiModel(value)}>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="chatgpt">🤖 ChatGPT - Use OpenAI's GPT model only</SelectItem>
+                  <SelectItem value="claude">🧠 Claude - Use Anthropic's Claude model only</SelectItem>
+                  <SelectItem value="both">⚡ Both - Generate with both models for comparison</SelectItem>
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-muted-foreground mt-1">
+                {aiModel === 'both' 
+                  ? 'Generate content using both AI models and compare results side-by-side'
+                  : aiModel === 'claude'
+                  ? 'Generate content using Anthropic\'s Claude AI model'
+                  : 'Generate content using OpenAI\'s ChatGPT model'
+                }
+              </p>
+            </div>
+
             {/* Smart Style Toggle */}
             <div className="flex items-center justify-between p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
               <div className="flex-1">
@@ -1008,6 +1122,167 @@ ${config.hashtags.join(' ')}`;
                 </Button>
               </div>
             </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* AI Models Comparison Results */}
+        {comparisonResults && (
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-purple-500" />
+                ⚡ AI Models Comparison Results
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Compare results from Claude and ChatGPT side-by-side
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Claude Results */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+                    <h3 className="font-semibold text-lg">🧠 Claude AI</h3>
+                  </div>
+                  {comparisonResults.claude && (
+                    <div className="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500">
+                      <div className="text-sm text-gray-600 mb-4 flex gap-2 flex-wrap">
+                        <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                        <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
+                        <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
+                      </div>
+                      <div className="prose prose-sm max-w-none">
+                        <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">{comparisonResults.claude.content}</p>
+                      </div>
+                      {comparisonResults.claude.hook && (
+                        <div className="bg-orange-100 p-3 rounded-lg border-l-4 border-orange-400 mt-4">
+                          <h4 className="font-semibold mb-2">Hook:</h4>
+                          <p className="text-orange-900 font-medium">{comparisonResults.claude.hook}</p>
+                        </div>
+                      )}
+                      <div className="mt-4">
+                        <div className="bg-orange-100 p-4 rounded border border-orange-200">
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="font-semibold flex items-center gap-2 text-orange-800">
+                              📱 TikTok Caption
+                            </h5>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok'), 'Claude TikTok caption')}
+                              className="text-xs bg-white text-orange-600 hover:bg-gray-100"
+                            >
+                              <Copy className="h-3 w-3 mr-1" />
+                              Copy
+                            </Button>
+                          </div>
+                          <div className="bg-gray-900 p-4 rounded border border-gray-700 text-sm font-mono whitespace-pre-wrap text-gray-100 leading-relaxed max-h-40 overflow-y-auto">
+                            {generatePlatformCaption('tiktok')}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* ChatGPT Results */}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                    <h3 className="font-semibold text-lg">🤖 ChatGPT</h3>
+                  </div>
+                  {comparisonResults.chatgpt && (
+                    <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
+                      <div className="text-sm text-gray-600 mb-4 flex gap-2 flex-wrap">
+                        <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                        <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
+                        <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
+                      </div>
+                      <div className="prose prose-sm max-w-none">
+                        <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">{comparisonResults.chatgpt.content}</p>
+                      </div>
+                      {comparisonResults.chatgpt.hook && (
+                        <div className="bg-green-100 p-3 rounded-lg border-l-4 border-green-400 mt-4">
+                          <h4 className="font-semibold mb-2">Hook:</h4>
+                          <p className="text-green-900 font-medium">{comparisonResults.chatgpt.hook}</p>
+                        </div>
+                      )}
+                      <div className="mt-4">
+                        <div className="bg-green-100 p-4 rounded border border-green-200">
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="font-semibold flex items-center gap-2 text-green-800">
+                              📱 TikTok Caption
+                            </h5>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok'), 'ChatGPT TikTok caption')}
+                              className="text-xs bg-white text-green-600 hover:bg-gray-100"
+                            >
+                              <Copy className="h-3 w-3 mr-1" />
+                              Copy
+                            </Button>
+                          </div>
+                          <div className="bg-gray-900 p-4 rounded border border-gray-700 text-sm font-mono whitespace-pre-wrap text-gray-100 leading-relaxed max-h-40 overflow-y-auto">
+                            {generatePlatformCaption('tiktok')}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Comparison Actions */}
+              <div className="flex gap-2 mt-6 pt-4 border-t">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    if (comparisonResults?.claude) {
+                      setGeneratedContent(comparisonResults.claude);
+                      setComparisonResults(null);
+                      setAiModel('claude');
+                      toast({
+                        title: "Claude Result Selected",
+                        description: "Switched to Claude result for further editing",
+                      });
+                    }
+                  }}
+                  className="bg-orange-50 text-orange-700 hover:bg-orange-100"
+                >
+                  Use Claude Result
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    if (comparisonResults?.chatgpt) {
+                      setGeneratedContent(comparisonResults.chatgpt);
+                      setComparisonResults(null);
+                      setAiModel('chatgpt');
+                      toast({
+                        title: "ChatGPT Result Selected",
+                        description: "Switched to ChatGPT result for further editing",
+                      });
+                    }
+                  }}
+                  className="bg-green-50 text-green-700 hover:bg-green-100"
+                >
+                  Use ChatGPT Result
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={handleGenerateContent}
+                  disabled={isGenerating}
+                >
+                  <RefreshCw className={`h-4 w-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
+                  {isGenerating ? 'Regenerating...' : 'Regenerate Both'}
+                </Button>
+              </div>
             </CardContent>
           </Card>
         )}
