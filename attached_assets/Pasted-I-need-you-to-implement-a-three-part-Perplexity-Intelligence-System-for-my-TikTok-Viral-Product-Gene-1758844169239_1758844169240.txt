@@ -1,0 +1,213 @@
+I need you to implement a three-part Perplexity Intelligence System for my TikTok Viral Product Generator app. This adds powerful competitive research features.
+🎯 WHAT TO BUILD:
+
+Trend Forecaster - Shows on Dashboard (existing page)
+Product Research - Auto-triggers on Generate Content page (existing page)
+Competitor Intel - Expandable section on Generate Content page (existing page)
+
+DO NOT create new sidebar tabs - integrate into existing Dashboard and GenerateContent pages.
+📍 WHERE TO ADD FEATURES:
+Dashboard Page (client/src/pages/Dashboard.tsx):
+
+Add <TrendForecaster /> component AFTER line 180 (after Dashboard Overview section)
+Place it BEFORE the "AI-Powered Trending Picks" section
+
+Generate Content Page (client/src/pages/GenerateContent.tsx):
+
+Add Product Research card AFTER "Product & Affiliate Setup" card (around line 180)
+Add Competitor Intel section that expands when user clicks "View Competitors"
+Add Viral Score display AFTER generated content (around line 850)
+
+🏗️ FILES TO CREATE:
+Backend Services:
+
+server/services/perplexity/trendForecaster.ts - Forecasts trends by niche
+server/services/perplexity/productResearch.ts - Deep product analysis
+server/services/perplexity/competitorIntel.ts - Finds viral competitor videos
+server/services/viralScoreCalculator.ts - Scores viral potential
+
+API Routes:
+
+server/api/trend-forecast.ts - GET endpoint for trends
+Update server/api/product-research.ts - Add POST /research and POST /competitors endpoints
+
+Frontend Components:
+
+client/src/components/TrendForecaster.tsx - Trend cards with tabs (Hot/Rising/Upcoming/Declining)
+
+🔧 FILES TO UPDATE:
+
+server/routes.ts - Register app.use('/api/trend-forecast', trendForecastRouter);
+server/api/generateContent.ts - Import and use calculateViralScore(), add viralScore to response
+server/services/contentGenerator.ts - Enhance system prompts with productResearch and competitorStyle data when available
+client/src/pages/Dashboard.tsx - Import and add <TrendForecaster niche="beauty" /> after line 180
+client/src/pages/GenerateContent.tsx - Add:
+
+Product Research auto-trigger on product selection
+Competitor Intel expandable section
+Viral Score display after generated content
+Pass research data to API on generation
+
+
+
+🎨 UI/UX REQUIREMENTS:
+Trend Forecaster on Dashboard:
+
+Card with 4 tabs: Hot Now (red), Rising (green), Upcoming (blue), Declining (gray)
+Each trend shows: name, volume/growth, why it's trending
+"Generate →" button navigates to /generate?product={name}&niche={niche}
+
+Product Research on Generate Content:
+
+Auto-triggers when user types product name (500ms debounce)
+Shows loading state: "🔍 Analyzing {product} on TikTok..."
+Card displays: Viral Hooks, Target Audience, Trending Angles, Best Time to Post
+"View Competitor Videos →" button at bottom
+
+Competitor Intel (expandable):
+
+Loads top 5 viral videos when button clicked
+Each video shows: Creator, Hook, Structure, Views, What Worked
+"⚡ Use This Style" button pre-fills generator with that video's structure
+Green confirmation when style applied
+
+Viral Score:
+
+Display after content generation
+Show overall score (0-100) with color coding (green 80+, yellow 60-79, red <60)
+Breakdown bars for: Hook Strength, Engagement, Clarity, Length, Trending
+Suggestions list if score < 70
+"🔄 Try Again (Aim for 70+)" button if score < 70
+
+🔌 PERPLEXITY API INTEGRATION:
+All three services use this pattern:
+typescriptconst response = await fetch("https://api.perplexity.ai/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "sonar-pro",
+    messages: [
+      { role: "system", content: "Return ONLY valid JSON, no markdown." },
+      { role: "user", content: prompt }
+    ],
+    temperature: 0.2,
+    max_tokens: 1500,
+    search_domain_filter: ["tiktok.com"],
+    search_recency_filter: "week"
+  })
+});
+
+const data = await response.json();
+const content = data.choices[0]?.message?.content || "{}";
+const cleanContent = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+return JSON.parse(cleanContent);
+📊 DATA FLOW:
+
+Dashboard → Generate:
+
+User clicks trend → Navigate to /generate?product={name}&niche={niche}
+GenerateContent page reads URL params, pre-fills product
+
+
+Product Research Auto-trigger:
+
+useEffect watches selectedProduct state
+500ms debounce, then POST to /api/product-research/research
+Display research card with results
+
+
+Competitor Intel on Demand:
+
+User clicks "View Competitors"
+POST to /api/product-research/competitors
+Display top 5 videos, allow style selection
+
+
+Enhanced Generation:
+
+User clicks "Generate Viral Content"
+POST to /api/generate-content with: productResearch + competitorStyle in body
+Backend enhances AI prompts with research insights
+Return content + viral score
+
+
+Viral Score Display:
+
+Calculate score in backend using viralScoreCalculator.ts
+Return in API response
+Display with breakdown + suggestions
+
+
+
+⚠️ CRITICAL REQUIREMENTS:
+
+NO NEW SIDEBAR ITEMS - integrate into existing pages only
+Perplexity API Key - Already exists as process.env.PERPLEXITY_API_KEY
+Error Handling - Wrap all Perplexity calls in try-catch, show user-friendly errors
+Loading States - Always show loading indicators during API calls
+Mobile Responsive - Cards should stack vertically on mobile
+Clean JSON parsing - Strip markdown code blocks from Perplexity responses
+
+🧪 TESTING CHECKLIST:
+After implementation, verify:
+
+ Trend Forecaster appears on Dashboard with 4 tabs
+ Clicking trend navigates to Generate page with pre-filled product
+ Product Research auto-loads when typing product name
+ Competitor Intel loads top 5 videos when button clicked
+ "Use This Style" pre-fills hook and updates generation
+ Viral Score displays after content generation
+ All API endpoints return proper JSON
+ Mobile responsive layout works
+
+📝 PROMPT EXAMPLES FOR PERPLEXITY:
+Trend Forecaster:
+Analyze TikTok beauty trends for January 2025. Return JSON with:
+{
+  "hot": [{"name": "Retinol serums", "volume": "52K videos this week", "why": "Viral skincare trend"}],
+  "rising": [{"name": "Skin cycling", "growth": "+350%", "opportunity": "Early trend opportunity"}],
+  "declining": [{"name": "10-step routines", "reason": "Too time consuming"}],
+  "upcoming": [{"name": "Summer SPF", "when": "Peaks in May", "prepNow": "Content now ranks later"}]
+}
+Product Research:
+Research "CeraVe Cleanser" for TikTok beauty creators. Return JSON:
+{
+  "viralHooks": ["Stop wasting money on cleansers", "Dermatologists recommend this"],
+  "painPoints": ["Gentle on sensitive skin", "Affordable"],
+  "targetAudience": "Women 25-40, skincare enthusiasts",
+  "socialProof": {"totalVideos": 15000, "topCreators": ["@beautyguru", "@skincarebydani"]},
+  "trendingAngles": ["Before/after", "Dermatologist reaction"]
+}
+Competitor Intel:
+Find top 5 viral TikTok videos about "CeraVe Cleanser". Return JSON array:
+[
+  {
+    "creator": "@beautyguru",
+    "hook": "Stop buying expensive cleansers",
+    "structure": "Problem→Solution→Proof",
+    "views": "2.3M",
+    "engagement": "150K likes",
+    "whatWorked": "Showed dramatic before/after results"
+  }
+]
+🎯 SUCCESS CRITERIA:
+When complete, users should be able to:
+
+See trending products on Dashboard by category (Hot/Rising/Upcoming)
+Click any trend and get taken to generator with product pre-filled
+See automatic product research appear with viral hooks and audience insights
+View top 5 competitor videos and apply their proven structure
+Generate content using research + competitor insights
+See viral score with actionable improvement suggestions
+
+
+✅ CONFIRM BEFORE STARTING:
+
+You will NOT create new sidebar tabs
+You will integrate into existing Dashboard and GenerateContent pages
+You will follow the exact file structure and naming conventions provided
+You will use the existing Perplexity API integration pattern
+You will add proper TypeScript types and error handling
