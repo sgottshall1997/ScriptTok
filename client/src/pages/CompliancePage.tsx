@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import { ArrowLeft, CheckCircle, AlertTriangle, ExternalLink, FileText, Scale, Shield } from 'lucide-react';
-import { AmazonAssociatesDisclosure } from '@/components/AmazonAssociatesDisclosure';
+// import { AmazonAssociatesDisclosure } from '@/components/AmazonAssociatesDisclosure'; // DISABLED: Amazon Associates functionality disabled
 
 const CompliancePage: React.FC = () => {
   return (
@@ -73,7 +73,7 @@ const CompliancePage: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <AmazonAssociatesDisclosure />
+            {/* <AmazonAssociatesDisclosure /> */} {/* DISABLED: Amazon Associates functionality disabled */}
           </CardContent>
         </Card>
 

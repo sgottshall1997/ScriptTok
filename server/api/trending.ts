@@ -1,13 +1,13 @@
 import { Router } from "express";
 import { storage } from "../storage";
-import { getAllTrendingProducts } from "../scrapers";
+// import { getAllTrendingProducts } from "../scrapers"; // TODO: Implement scrapers
 import { ScraperPlatform, SCRAPER_PLATFORMS } from "../../shared/constants";
-import { getAmazonTrending } from "../scrapers/amazon";
-import { getTikTokTrending } from "../scrapers/tiktok";
-import { getYouTubeTrending } from "../scrapers/youtube";
-import { getInstagramTrending } from "../scrapers/instagram";
-import { getRedditTrending } from "../scrapers/reddit";
-import { getGoogleTrendingProducts } from "../scrapers/googleTrends";
+// import { getAmazonTrending } from "../scrapers/amazon"; // TODO: Implement amazon scraper
+// import { getTikTokTrending } from "../scrapers/tiktok"; // TODO: Implement tiktok scraper
+// import { getYouTubeTrending } from "../scrapers/youtube"; // TODO: Implement youtube scraper
+// import { getInstagramTrending } from "../scrapers/instagram"; // TODO: Implement instagram scraper
+// import { getRedditTrending } from "../scrapers/reddit"; // TODO: Implement reddit scraper
+// import { getGoogleTrendingProducts } from "../scrapers/googleTrends"; // TODO: Implement google trends scraper
 import { 
   getTrendingData, 
   refreshTrendingCache 

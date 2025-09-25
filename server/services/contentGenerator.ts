@@ -4,7 +4,7 @@ import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption, Niche } from '@shared/constants';
 import * as GptTemplates from './gpt-templates';
 import { generatePrompt, PromptParams } from '../prompts';
-import { getModelConfig, getTokenLimit } from './aiModelSelector';
+// import { getModelConfig, getTokenLimit } from './aiModelSelector'; // TODO: Implement AI model selector
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
 import { enhanceContentCompliance, ComplianceOptions } from './complianceEnhancer';

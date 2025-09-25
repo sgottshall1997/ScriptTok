@@ -4,7 +4,7 @@ import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { generateVideoContent } from "../services/videoContentGenerator";
-import { generatePlatformSpecificContent } from "../services/platformContentGenerator";
+// import { generatePlatformSpecificContent } from "../services/platformContentGenerator"; // TODO: Implement platform content generator
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
@@ -469,24 +469,25 @@ Experience the difference today! #${niche} #trending`;
     
     // Generate platform-specific content if platforms are specified
     let platformContent = null;
-    if (platforms && platforms.length > 0) {
-      try {
-        console.log(`Generating platform-specific content for: ${platforms.join(", ")}`);
-        platformContent = await generatePlatformSpecificContent({
-          product,
-          niche,
-          platforms,
-          contentType,
-          templateType,
-          tone,
-          videoDuration: videoLength,
-          trendingData: trendingProducts
-        });
-      } catch (error) {
-        console.error("Platform content generation failed:", error);
-        // Continue without platform content if it fails
-      }
-    }
+    // TODO: Implement platform content generator
+    // if (platforms && platforms.length > 0) {
+    //   try {
+    //     console.log(`Generating platform-specific content for: ${platforms.join(", ")}`);
+    //     platformContent = await generatePlatformSpecificContent({
+    //       product,
+    //       niche,
+    //       platforms,
+    //       contentType,
+    //       templateType,
+    //       tone,
+    //       videoDuration: videoLength,
+    //       trendingData: trendingProducts
+    //     });
+    //   } catch (error) {
+    //     console.error("Platform content generation failed:", error);
+    //     // Continue without platform content if it fails
+    //   }
+    // }
     
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 

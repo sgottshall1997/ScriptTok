@@ -18,7 +18,7 @@ import TermsPage from "@/pages/terms";
 import ContactPage from "@/pages/contact";
 import GenerateContent from "@/pages/GenerateContent";
 import TrendingAIPicks from "@/pages/TrendingAIPicks";
-import AffiliateLinks from "@/pages/AffiliateLinks";
+// import AffiliateLinks from "@/pages/AffiliateLinks"; // DISABLED: Amazon Associates functionality disabled
 import Account from "@/pages/Account";
 import CompliancePage from "@/pages/CompliancePage";
 import HowItWorksPage from "@/pages/how-it-works";
@@ -51,7 +51,7 @@ function MainAppRouter() {
       
       {/* Content management */}
       <Route path="/content-history" component={EnhancedContentHistory} />
-      <Route path="/affiliate-links" component={AffiliateLinks} />
+      {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}
       
       {/* Settings */}
       <Route path="/compliance" component={CompliancePage} />
