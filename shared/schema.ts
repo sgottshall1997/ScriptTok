@@ -366,6 +366,23 @@ export const apiIntegrations = pgTable("api_integrations", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// AI Content Evaluation System
+export const contentEvaluations = pgTable("content_evaluations", {
+  id: serial("id").primaryKey(),
+  contentHistoryId: integer("content_history_id").notNull().references(() => contentHistory.id, { onDelete: 'cascade' }),
+  evaluatorModel: varchar("evaluator_model", { length: 50 }).notNull(), // 'chatgpt', 'claude', etc.
+  overallScore: varchar("overall_score", { length: 10 }), // Store as string for precision
+  viralityScore: integer("virality_score").notNull().default(0),
+  clarityScore: integer("clarity_score").notNull().default(0),
+  persuasivenessScore: integer("persuasiveness_score").notNull().default(0),
+  creativityScore: integer("creativity_score").notNull().default(0),
+  strengths: text("strengths"),
+  improvements: text("improvements"),
+  needsRevision: boolean("needs_revision").notNull().default(false),
+  evaluationSummary: text("evaluation_summary"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Advanced content rating and learning features
 export const contentRatings = pgTable("content_ratings", {
   id: serial("id").primaryKey(),

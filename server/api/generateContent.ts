@@ -18,6 +18,19 @@ function extractHashtags(text: string): string[] {
   return matches ? matches.map(tag => tag.substring(1)) : [];
 }
 
+// Helper function to extract hook from generated content
+function extractHook(content: string): string {
+  // Look for common hook patterns in the content
+  const lines = content.split('\n').filter(line => line.trim());
+  if (lines.length > 0) {
+    // Return the first meaningful line as the hook
+    const firstLine = lines[0].trim();
+    // Remove common prefixes and return clean hook
+    return firstLine.replace(/^(Hook:|Intro:|Opening:)\s*/i, '').trim();
+  }
+  return 'Generated content';
+}
+
 const router = Router();
 
 // Create a rate limiter middleware that limits to 5 requests per minute
@@ -493,17 +506,32 @@ Experience the difference today! #${niche} #trending`;
       content
     });
     
-    // Save detailed content history record with all metadata
+    // Save detailed content history record with all metadata including hook and platform content
     const contentHistoryEntry = await storage.saveContentHistory({
       userId: req.user?.id, // If user is authenticated
+      sessionId: `session_${Date.now()}`,
       niche,
       contentType: templateType,
       tone,
       productName: product,
       promptText: prompt || `Generate ${templateType} content for ${product} with ${tone} tone in ${niche} niche`,
       outputText: content,
+      platformsSelected: platforms || ['tiktok'],
+      generatedOutput: {
+        content,
+        hook: extractHook(content), // Extract hook from content
+        platform: 'tiktok',
+        platformContent: platformContent,
+        webhookData: webhookData
+      },
+      affiliateLink: validatedData.affiliateUrl || null,
+      viralInspo: viralInspiration || null,
       modelUsed: model || "gpt-4o",
-      tokenCount: tokens || 0
+      tokenCount: tokens || 0,
+      fallbackLevel: fallbackLevel || null,
+      aiModel: model || "gpt-4o",
+      contentFormat: "Regular Format",
+      topRatedStyleUsed: validatedData.useSmartStyle || false
     });
     
     // Increment API usage counter with template and tone tracking
