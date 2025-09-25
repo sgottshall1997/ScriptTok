@@ -5,7 +5,8 @@
 
 import { Router } from 'express';
 import { fetchTrendingProductsFromPerplexity, fetchAllNicheTrendsFromPerplexity } from '../services/perplexityTrends';
-import { fetchViralInspiration } from './viral-inspiration';
+// DISABLED: Viral inspiration functionality temporarily disabled
+// import { fetchViralInspiration } from './viral-inspiration';
 import { getTikTokViralResearch, getViralTemplate, getViralResearchStatus, clearViralResearchCache } from './perplexity-trends/viral-research';
 import { storage } from '../storage';
 
@@ -122,7 +123,8 @@ router.get('/test', async (req, res) => {
 /**
  * Fetch viral video inspiration for a specific product (legacy)
  */
-router.post('/viral-inspiration', fetchViralInspiration);
+// DISABLED: Viral inspiration endpoint temporarily disabled
+// router.post('/viral-inspiration', fetchViralInspiration);
 
 /**
  * Enhanced TikTok viral content research endpoints

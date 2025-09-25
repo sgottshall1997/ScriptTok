@@ -110,3 +110,45 @@ export type ScraperStatusType = typeof SCRAPER_STATUS_TYPES[number];
 export const API_LIMITS = {
   MONTHLY_REQUESTS: 500
 };
+
+// FEATURE FLAGS - Amazon Associates Integration Control
+// Environment-based feature flag evaluation for Amazon functionality
+export const isAmazonEnabled = (): boolean => {
+  if (typeof process !== 'undefined' && process.env) {
+    // Server-side check
+    return process.env.ENABLE_AMAZON_FEATURES === 'true';
+  }
+  
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    // Client-side check (Vite)
+    return import.meta.env.VITE_ENABLE_AMAZON_FEATURES === 'true';
+  }
+  
+  // Default to disabled if environment variables are not available
+  return false;
+};
+
+// Helper to get disabled feature message
+export const getDisabledFeatureMessage = (featureName: string = 'Amazon Associates') => ({
+  disabled: true,
+  message: `${featureName} functionality is temporarily disabled`,
+  reason: 'Feature flag ENABLE_AMAZON_FEATURES is set to false',
+  canReEnable: 'Set ENABLE_AMAZON_FEATURES=true to re-enable this feature'
+});
+
+// Check if Amazon features are enabled with fallback
+export const checkAmazonFeatures = () => {
+  const isEnabled = isAmazonEnabled();
+  
+  if (!isEnabled) {
+    return {
+      enabled: false,
+      ...getDisabledFeatureMessage('Amazon Associates')
+    };
+  }
+  
+  return {
+    enabled: true,
+    message: 'Amazon Associates features are enabled'
+  };
+};

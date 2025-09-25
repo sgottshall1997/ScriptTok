@@ -179,14 +179,14 @@ const GenerateContent = () => {
     setViralResearchLoading(true);
     
     try {
-      // Import and use the utility functions
-      const { 
-        fetchViralVideoInspo, 
-        fetchOptimalViralResearch 
-      } = await import('@/lib/fetchViralVideoInspo');
+      // DISABLED: Viral video inspiration functionality temporarily disabled
+      // const { 
+      //   fetchViralVideoInspo, 
+      //   fetchOptimalViralResearch 
+      // } = await import('@/lib/fetchViralVideoInspo');
       
-      // Fetch both legacy and enhanced viral research
-      const optimalResult = await fetchOptimalViralResearch(productName, selectedNiche, true);
+      // DISABLED: Legacy viral research disabled, using basic content generation
+      // const optimalResult = await fetchOptimalViralResearch(productName, selectedNiche, true);
       
       if (optimalResult.type === 'enhanced' && optimalResult.data) {
         console.log('✅ Enhanced viral research found:', optimalResult.data);

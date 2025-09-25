@@ -6,16 +6,16 @@ import { storage } from "./storage";
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
 import { scraperStatusRouter } from "./api/scraperStatus";
-import { aiModelConfigRouter } from "./api/aiModelConfig";
 import { historyRouter } from "./api/history";
-import { amazonLinksRouter } from "./api/amazonLinks";
-import amazonRouter from "./api/amazon";
 import perplexityTrendsRouter from "./api/perplexity-trends";
-import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
-import productResearchRouter from "./api/product-research";
 
-// Basic affiliate functionality
-import affiliateRouter from "./api/affiliate";
+// DISABLED: Amazon-related imports temporarily disabled
+// import { aiModelConfigRouter } from "./api/aiModelConfig";
+// import { amazonLinksRouter } from "./api/amazonLinks";
+// import amazonRouter from "./api/amazon";
+// import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
+// import productResearchRouter from "./api/product-research";
+// import affiliateRouter from "./api/affiliate";
 
 // Database imports
 import { eq } from "drizzle-orm";
@@ -26,20 +26,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);
   app.use('/api/scraper-status', scraperStatusRouter);
-  app.use('/api/ai-model-config', aiModelConfigRouter);
   app.use('/api/history', historyRouter);
-  
-  // Amazon affiliate functionality
-  app.use('/api/amazon-links', amazonLinksRouter);
-  app.use('/api/amazon', amazonRouter);
-  app.use('/api/affiliate', affiliateRouter);
   
   // Perplexity trends for viral research
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
-  app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
   
-  // Product research
-  app.use('/api/product-research', productResearchRouter);
+  // DISABLED: Amazon-related routes temporarily disabled
+  // app.use('/api/ai-model-config', aiModelConfigRouter);
+  // app.use('/api/amazon-links', amazonLinksRouter);
+  // app.use('/api/amazon', amazonRouter);
+  // app.use('/api/affiliate', affiliateRouter);
+  // app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
+  // app.use('/api/product-research', productResearchRouter);
 
   
   // Content history alias endpoint

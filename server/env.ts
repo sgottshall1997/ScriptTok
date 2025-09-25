@@ -9,6 +9,10 @@ const envSchema = z.object({
   // Database
   DATABASE_URL: z.string().min(1, 'DATABASE_URL is required'),
   
+  // Feature Flags
+  ENABLE_AMAZON_FEATURES: z.string().transform(val => val === 'true').default('false'),
+  VITE_ENABLE_AMAZON_FEATURES: z.string().transform(val => val === 'true').default('false'),
+  
   // Amazon PA-API Configuration
   AMAZON_ACCESS_KEY_ID: z.string().optional(),
   AMAZON_SECRET_ACCESS_KEY: z.string().optional(),
@@ -54,6 +58,14 @@ try {
 // Type-safe environment getters
 export const getEnv = () => env;
 
+// Feature flag configuration checker
+export const getFeatureFlags = () => {
+  return {
+    enableAmazonFeatures: env.ENABLE_AMAZON_FEATURES,
+    viteEnableAmazonFeatures: env.VITE_ENABLE_AMAZON_FEATURES
+  };
+};
+
 // Amazon PA-API configuration checker
 export const getAmazonConfig = () => {
   const amazonConfig = {
@@ -70,7 +82,9 @@ export const getAmazonConfig = () => {
   return {
     ...amazonConfig,
     isConfigured,
-    isPartiallyConfigured: !!(amazonConfig.accessKey || amazonConfig.secretKey || amazonConfig.partnerTag)
+    isPartiallyConfigured: !!(amazonConfig.accessKey || amazonConfig.secretKey || amazonConfig.partnerTag),
+    // DISABLED: Amazon features temporarily disabled via feature flag
+    isEnabled: env.ENABLE_AMAZON_FEATURES && isConfigured
   };
 };
 
@@ -114,8 +128,14 @@ export const getMonetizationConfig = () => {
 export const logIntegrationStatus = () => {
   console.log('\n🔧 Integration Status:');
   
+  const featureFlags = getFeatureFlags();
   const amazon = getAmazonConfig();
-  if (amazon.isConfigured) {
+  
+  // DISABLED: Amazon features can be temporarily disabled via feature flag
+  if (!featureFlags.enableAmazonFeatures) {
+    console.log('   🚫 Amazon PA-API: DISABLED via feature flag (ENABLE_AMAZON_FEATURES=false)');
+    console.log('      Set ENABLE_AMAZON_FEATURES=true to re-enable Amazon monetization');
+  } else if (amazon.isConfigured) {
     console.log('   ✅ Amazon PA-API: Fully configured (monetization enabled)');
     console.log(`      Partner Tag: ${amazon.partnerTag}`);
     console.log(`      Region: ${amazon.region}`);
