@@ -1,4 +1,5 @@
 import React from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const TermsPage: React.FC = () => {
@@ -191,6 +192,36 @@ const TermsPage: React.FC = () => {
           </section>
         </CardContent>
       </Card>
+
+      <AboutThisPage 
+        title="Terms and Conditions"
+        whatItDoes="Legal terms governing the use of GlowBot AI platform and services. Covers user responsibilities, service limitations, AI model usage, intellectual property, liability, and termination conditions. Essential legal framework for platform usage."
+        setupRequirements={[
+          "Agreement to terms is required for platform usage",
+          "Review all sections before using GlowBot services",
+          "Understanding of AI service limitations and responsibilities"
+        ]}
+        usageInstructions={[
+          "Read all terms completely before using any GlowBot services",
+          "Pay special attention to AI model usage and content rights sections",
+          "Understand your responsibilities regarding content usage",
+          "Review affiliate marketing and compliance requirements",
+          "Contact support for clarification on any terms",
+          "Check for updates as terms may change over time"
+        ]}
+        relatedLinks={[
+          {name: "Privacy Policy", path: "/privacy"},
+          {name: "Contact Us", path: "/contact"},
+          {name: "How It Works", path: "/how-it-works"}
+        ]}
+        notes={[
+          "Agreement to these terms is required for service access",
+          "AI model usage section covers content generation rights and responsibilities",
+          "Affiliate marketing guidelines ensure compliance with regulations",
+          "Termination conditions protect both users and platform",
+          "Regular reviews recommended as terms may be updated"
+        ]}}
+      />
     </div>
   );
 };

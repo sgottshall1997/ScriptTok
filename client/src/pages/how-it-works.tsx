@@ -1,4 +1,5 @@
 import React from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { 
   Accordion,
   AccordionContent,
@@ -268,6 +269,36 @@ const HowItWorksPage: React.FC = () => {
         </CardContent>
       </Card>
 
+      <AboutThisPage 
+        title="How GlowBot AI Works"
+        whatItDoes="Comprehensive guide explaining the complete process of using GlowBot AI for content generation. Covers niche selection, AI-powered content creation, platform optimization, and publishing workflows. Provides step-by-step instructions for maximizing content performance and engagement."
+        setupRequirements={[
+          "Basic understanding of your target niche and audience",
+          "Product or topic ideas for content creation",
+          "Social media accounts for content distribution"
+        ]}
+        usageInstructions={[
+          "Read through the complete process overview to understand the workflow",
+          "Follow the 3-step process: Select niche → Generate content → Optimize & share",
+          "Use the provided examples and best practices for each step",
+          "Refer back to specific sections when implementing each stage",
+          "Follow the recommended optimization tips for better performance",
+          "Use this guide as a reference while using other GlowBot features"
+        ]}
+        relatedLinks={[
+          {name: "Get Started Now", path: "/"},
+          {name: "Browse Templates", path: "/template-explorer"},
+          {name: "FAQ", path: "/faq"},
+          {name: "Contact Support", path: "/contact"}
+        ]}
+        notes={[
+          "This guide provides the foundational knowledge for using all GlowBot features",
+          "Best practices mentioned here apply across all content generation tools",
+          "Regular updates ensure the guide reflects the latest platform capabilities",
+          "Step-by-step approach makes it easy for beginners to get started",
+          "Advanced tips help experienced users optimize their content strategy"
+        ]}
+      />
 
     </div>
   );

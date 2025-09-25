@@ -1,4 +1,5 @@
 import React from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const PrivacyPolicyPage: React.FC = () => {
@@ -188,6 +189,35 @@ const PrivacyPolicyPage: React.FC = () => {
         </CardContent>
       </Card>
 
+      <AboutThisPage 
+        title="Privacy Policy"
+        whatItDoes="Comprehensive privacy policy outlining how GlowBot AI collects, uses, protects, and manages user data. Covers AI data processing, content storage, third-party integrations, and user rights. Ensures transparency and compliance with privacy regulations."
+        setupRequirements={[
+          "No action required - informational document",
+          "Review sections relevant to your usage patterns",
+          "Contact support for privacy-related questions"
+        ]}
+        usageInstructions={[
+          "Read the complete policy to understand data handling practices",
+          "Pay special attention to AI data processing section for content generation",
+          "Review third-party integrations and external service usage",
+          "Understand your rights regarding data access and deletion",
+          "Contact support for privacy questions or data requests",
+          "Check for policy updates as indicated by the last updated date"
+        ]}
+        relatedLinks={[
+          {name: "Terms & Conditions", path: "/terms"},
+          {name: "Contact Us", path: "/contact"},
+          {name: "FAQ", path: "/faq"}
+        ]}
+        notes={[
+          "Policy covers all GlowBot AI services and features",
+          "AI data processing section explains content generation privacy",
+          "Regular updates reflect changes in platform capabilities",
+          "Contact information provided for privacy-related inquiries",
+          "Complies with applicable privacy regulations and standards"
+        ]}
+      />
 
     </div>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AboutThisPage from '@/components/AboutThisPage';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -194,6 +195,37 @@ const ContactPage: React.FC = () => {
           </Card>
         </div>
       </div>
+
+      <AboutThisPage 
+        title="Contact Us"
+        whatItDoes="Direct communication channel with the GlowBot AI support team. Submit questions, feedback, bug reports, or feature requests through a streamlined contact form. Get personalized assistance for account issues, technical problems, or platform guidance."
+        setupRequirements={[
+          "Valid email address for response communication",
+          "Clear description of your question or issue",
+          "Relevant details about your account or use case"
+        ]}
+        usageInstructions={[
+          "Fill out all required fields: name, email, subject, and message",
+          "Select appropriate subject category for faster routing",
+          "Provide specific details about your question or issue",
+          "Include relevant account information if applicable",
+          "Submit the form and wait for email response",
+          "Check your spam folder if you don't receive a response within 24 hours"
+        ]}
+        relatedLinks={[
+          {name: "FAQ", path: "/faq"},
+          {name: "How It Works", path: "/how-it-works"},
+          {name: "Privacy Policy", path: "/privacy"},
+          {name: "Terms & Conditions", path: "/terms"}
+        ]}
+        notes={[
+          "Response time is typically 24-48 hours during business days",
+          "Include screenshots or error messages for technical issues",
+          "Check the FAQ first for answers to common questions",
+          "All contact form submissions are handled confidentially",
+          "Feature requests are reviewed and considered for future updates"
+        ]}
+      />
     </div>
   );
 };
