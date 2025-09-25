@@ -17,7 +17,7 @@ interface PerplexityResponse {
 interface ParsedProduct {
   name: string;
   benefit: string;
-  mentions: number;
+  mentions: number | string;
   price: string;
   source_url?: string;
 }
@@ -124,7 +124,7 @@ function generateStrictQuery(niche: string): string {
  */
 export async function fetchTrendingProductsFromPerplexity(niche: string): Promise<InsertTrendingProduct[]> {
   try {
-    if (!process.env.PERPLEXITY_API_KEY_KEY) {
+    if (!process.env.PERPLEXITY_API_KEY) {
       throw new Error('PERPLEXITY_API_KEY environment variable is not set');
     }
 
@@ -162,7 +162,7 @@ Respond with JSON array only:`;
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "sonar-pro", // Current Perplexity model - sonar-pro deprecated
+        model: "llama-3.1-sonar-large-128k-online", // Current Perplexity model
         messages: [
           {
             role: "system",
@@ -307,7 +307,7 @@ Example format: "Nike Air Force 1 '07 Sneakers" not "Nike shoes"`;
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        model: "sonar-pro", // Current Perplexity model - sonar-pro deprecated
+        model: "llama-3.1-sonar-large-128k-online", // Current Perplexity model
         messages: [
           {
             role: "user",

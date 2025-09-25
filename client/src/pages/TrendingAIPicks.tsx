@@ -63,7 +63,7 @@ interface FavoriteProduct {
 }
 
 type SortOption = 'newest' | 'mentions' | 'datePulled';
-type SourceFilter = 'all' | 'gpt' | 'perplexity';
+type SourceFilter = 'all' | 'perplexity';
 
 const getNicheColor = (niche: string) => {
   const colors = {
@@ -219,7 +219,7 @@ export default function TrendingAIPicks() {
 
   // Get unique niches for filter
   const availableNiches = useMemo(() => {
-    return [...new Set(products.map(p => p.niche))].sort();
+    return Array.from(new Set(products.map(p => p.niche))).sort();
   }, [products]);
 
   // Filter and sort products
@@ -586,7 +586,7 @@ export default function TrendingAIPicks() {
                 <div>
                   <h4 className="font-medium mb-3">Source</h4>
                   <div className="space-y-2">
-                    {(['all', 'perplexity', 'gpt'] as const).map((source) => (
+                    {(['all', 'perplexity'] as const).map((source) => (
                       <div key={source} className="flex items-center space-x-2">
                         <Switch
                           checked={sourceFilter === source}
