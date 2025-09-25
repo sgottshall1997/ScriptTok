@@ -86,13 +86,7 @@ app.use((req, res, next) => {
     // 🛑 DISABLED: Automatic scheduled job initialization to prevent unauthorized job creation
     console.log('🚫 DISABLED: Automatic scheduled job initialization disabled to prevent unauthorized job creation');
     
-    // ✅ Resume interrupted bulk jobs on server startup
-    try {
-      const { resumeInterruptedJobs } = await import('./api/automated-bulk-generation');
-      await resumeInterruptedJobs();
-    } catch (error) {
-      console.error('❌ Failed to resume interrupted jobs:', error);
-    }
+    // Bulk job functionality removed for streamlined TikTok Viral Product Generator
     
     // ✅ Initialize Perplexity automation cron job
     try {
