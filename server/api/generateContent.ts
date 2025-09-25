@@ -7,7 +7,6 @@ import { generateVideoContent } from "../services/videoContentGenerator";
 import { generatePlatformSpecificContent } from "../services/platformContentGenerator";
 import { CacheService } from "../services/cacheService";
 import { insertContentHistorySchema } from "@shared/schema";
-import { sendWebhookNotification } from "../services/webhookService";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
@@ -487,26 +486,7 @@ Experience the difference today! #${niche} #trending`;
     // Increment API usage counter with template and tone tracking
     await storage.incrementApiUsage(templateType, tone, niche, req.user?.id);
     
-    // Send webhook notification if available
-    if (contentHistoryEntry) {
-      try {
-        // Fire and forget - don't await to avoid holding up the response
-        sendWebhookNotification(contentHistoryEntry)
-          .then(result => {
-            if (result.success) {
-              console.log(`Webhook notification sent successfully for content #${contentHistoryEntry.id}`);
-            } else {
-              console.warn(`Webhook notification failed: ${result.message}`);
-            }
-          })
-          .catch(error => {
-            console.error('Error in webhook notification:', error);
-          });
-      } catch (error) {
-        // Log webhook errors but don't block the response
-        console.error('Error triggering webhook notification:', error);
-      }
-    }
+    // Webhook notifications removed for streamlined TikTok Viral Product Generator
     
     // Calculate video duration from the generated content
     const estimatedVideoDuration = estimateVideoDuration(content);

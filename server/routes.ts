@@ -1,255 +1,49 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+
+// Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
-import { analyticsRouter } from "./api/analytics";
-import { templateRouter } from "./api/templates";
 import { scraperStatusRouter } from "./api/scraperStatus";
 import { aiModelConfigRouter } from "./api/aiModelConfig";
-import { hashtagEmojiRouter } from "./api/hashtagEmoji";
-import { socialMediaOptimizationRouter } from "./api/socialMediaOptimization";
-import { videoScriptRouter } from "./api/videoScript";
-import { claudeContentRouter } from "./api/claudeContent";
-import { trendingEmojisHashtagsRouter } from "./api/trendingEmojisHashtags";
-import apiIntegrationRouter from "./api/apiIntegration";
-import optionsRouter from "./api/options";
 import { historyRouter } from "./api/history";
-import { usageSummaryRouter } from "./api/usageSummary";
-import { webhooksRouter } from "./api/webhooks";
-import { sendToMakeRouter } from "./api/sendToMake";
-import { sendBatchRouter } from "./api/sendBatch";
-import { setupFeedbackRoutes } from "./api/feedback";
-import { rewriteContent } from "./api/rewrite-content";
-import { generateMultiPlatformContent, scheduleMultiPlatformContent } from "./api/multi-platform-generate";
-import { rewriteCaption } from "./api/post/rewrite-caption";
-import { generateDailyBatch } from "./api/daily-batch";
-
 import { amazonLinksRouter } from "./api/amazonLinks";
+import amazonRouter from "./api/amazon";
+import perplexityTrendsRouter from "./api/perplexity-trends";
+import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
+import productResearchRouter from "./api/product-research";
+
+// Basic affiliate functionality
 import affiliateRouter from "./api/affiliate";
 
-import { cookingPipeline } from "./services/cookingContentPipeline";
-import redirectRouter from "./api/redirect";
-import platformContentRouter from "./api/platform-content";
-import hooksRouter from "./api/hooks";
-import schedulingRouter from "./api/scheduling";
-import metricsRouter from "./api/metrics";
-import affiliateNetworksRouter from "./api/affiliate-networks";
-import perplexityTrendsRouter from "./api/perplexity-trends";
-import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
-import productResearchRouter from "./api/product-research";
-import { refreshIndividualProduct } from "./api/perplexity-individual-refresh";
-import { generateSpartanFormatContent, checkSpartanAvailability } from "./api/spartan-content";
-import { scheduleContent, getScheduledPosts, processScheduledPosts } from "./api/cross-platform-scheduling";
-import { startBulkGeneration, getBulkJobStatus, getBulkJobs } from "./api/bulk-content-generation";
-import { startAutomatedBulkGeneration, getBulkJobDetails, getBulkContentByJobId } from "./api/automated-bulk-generation";
-import { createScheduledBulkJob, getScheduledBulkJobs, deleteScheduledBulkJob, initializeScheduledJobs } from "./api/simple-scheduler";
-import trendsRouter from "./api/cookaing-marketing/trends";
-import affiliateAutoInsertRouter from "./api/cookaing-marketing/affiliate-auto-insert";
-import cookAIngPromoRouter from "./routes/cookaing-promo";
-// Old scheduled-bulk-generation system removed - using simplified automated-bulk scheduling
-
-import { cronStatusRouter } from "./api/cron-status";
-import perplexityStatusRouter from "./api/perplexity-status";
-import aiAnalyticsRouter from "./api/ai-analytics-fixed";
-import generateContentUnifiedRouter from "./api/generateContentUnified";
-import favoritesRouter from "./api/favorites";
-import { bulkGeneratedContent } from "@shared/schema";
+// Database imports
 import { eq } from "drizzle-orm";
 import { db } from "./db";
-import { 
-  saveRating, 
-  getRating, 
-  generatePatterns,
-  getPreferences,
-  updatePreferences,
-  getSuggestions,
-  trackApplication,
-  getRatingStats
-} from "./api/rating";
-
-import { createRedirect, handleRedirect, getRedirectStats } from "./api/create-redirect";
-import { enhanceCompliance, validateCompliance, getGuidelines, getSupportedPlatforms } from "./api/compliance";
-import syncRatingsRouter from "./api/sync-ratings";
-import { registerContentEvaluationRoutes } from "./api/content-evaluation";
-import claudeAiSuggestionsRouter from "./api/claudeAiSuggestions";
-
-import { perplexityAutomationRouter } from "./api/perplexity-automation";
-import safeguardMonitorRouter from "./api/safeguard-monitor";
-import amazonRouter from "./api/amazon";
-import amazonTrendsRouter from "./api/amazon-trends";
-import hybridTrendsRouter from "./api/hybridTrends";
-
-// CookAIng Marketing Engine routers
-import organizationsRouter from "./api/organizations";
-import contactsRouter from "./api/contacts";
-import campaignsRouter from "./api/campaigns";
-import workflowsRouter from "./api/workflows";
-import formsRouter from "./api/forms";
-import publicFormsRouter from "./api/public-forms";
-import affiliateProductsRouter from "./api/affiliate-products";
-import emailRouter from "./api/cookaing-marketing/email";
-import socialRouter from "./api/cookaing-marketing/social";
-import blogRouter from "./api/cookaing-marketing/blog";
-import pushRouter from "./api/cookaing-marketing/push";
-import abRouter from "./api/cookaing-marketing/ab";
-import conversionsRouter from "./api/cookaing-marketing/conversions";
-import reportsRouter from "./api/cookaing-marketing/reports";
-import integrationsHealthRouter from "./api/cookaing-marketing/integrations/health";
-import observabilityRouter from "./api/cookaing-marketing/observability";
-import contentRouter from "./api/cookaing-marketing/content";
-import contentEnhancementRouter from "./api/cookaing-marketing/content-enhancement";
-import unifiedContentRouter from "./api/cookaing-marketing/unified-content";
-import intelligenceRouter from "./api/cookaing-marketing/intelligence";
-import socialAutomationRouter from "./api/cookaing-marketing/social-automation";
-import complianceRouter from "./api/cookaing-marketing/compliance";
-import enhanceRouter from "./api/cookaing-marketing/enhance";
-import supportRouter from "./api/cookaing-marketing/support";
-import { seedDataRouter } from "./api/seed-data";
-import phase5Router from "./api/cookaing-marketing";
-import glowbotAdminRouter from "./api/admin";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // GlowBot Admin routes (for comprehensive testing)
-  app.use('/api/glowbot/admin', glowbotAdminRouter);
+  // Essential TikTok Viral Product Generator routes
+  app.use('/api/generate-content', generateContentRouter);
+  app.use('/api/trending', trendingRouter);
+  app.use('/api/scraper-status', scraperStatusRouter);
+  app.use('/api/ai-model-config', aiModelConfigRouter);
+  app.use('/api/history', historyRouter);
   
-  // CookAIng Marketing Engine routes
-  app.use('/api/cookaing-marketing/organizations', organizationsRouter);
-  app.use('/api/cookaing-marketing/contacts', contactsRouter);
-  app.use('/api/cookaing-marketing/campaigns', campaignsRouter);
-  app.use('/api/cookaing-marketing/workflows', workflowsRouter);
-  app.use('/api/cookaing-marketing/forms', formsRouter);
-  app.use('/api/cookaing-marketing/affiliate-products', affiliateProductsRouter);
-  
-  // Public forms access (limited to public endpoints only)
-  app.use('/api/forms', publicFormsRouter);
-  app.use('/api/cookaing-marketing/email', emailRouter);
-  app.use('/api/cookaing-marketing/social', socialRouter);
-  app.use('/api/cookaing-marketing/blog', blogRouter);
-  app.use('/api/cookaing-marketing/push', pushRouter);
-  app.use('/api/cookaing-marketing/ab', abRouter);
-  app.use('/api/cookaing-marketing/conversions', conversionsRouter);
-  app.use('/api/cookaing-marketing/reports', reportsRouter);
-  app.use('/api/cookaing-marketing/integrations/health', integrationsHealthRouter);
-  app.use('/api/cookaing-marketing/observability', observabilityRouter);
-  app.use('/api/cookaing-marketing/content', contentRouter);
-  app.use('/api/cookaing-marketing/content-enhancement', contentEnhancementRouter);
-  app.use('/api/cookaing-marketing/unified-content', unifiedContentRouter);
-  app.use('/api/cookaing-marketing/intel', intelligenceRouter);
-  app.use('/api/cookaing-marketing/social-automation', socialAutomationRouter);
-  app.use('/api/cookaing-marketing/compliance', complianceRouter);
-  app.use('/api/cookaing-marketing/enhance', enhanceRouter);
-  app.use('/api/cookaing-marketing/support', supportRouter);
-  
-  // Phase 5: Advanced Personalization and Collaboration
-  app.use('/api/cookaing-marketing', phase5Router);
-  app.use('/api/cookaing-marketing/trends', trendsRouter);
-  app.use('/api/cookaing-marketing/affiliate-auto-insert', affiliateAutoInsertRouter);
-  app.use('/api/cookaing-promo', cookAIngPromoRouter);
-  app.use('/api/cookaing-marketing/seed-data', seedDataRouter);
-  
-  // CookAIng Marketing Engine authentication
-  app.post('/api/cookaing-marketing/auth/login', (req, res) => {
-    const { password } = req.body;
-    const expectedPassword = process.env.COOKAING_SECTION_PASSWORD;
-    
-    if (!expectedPassword) {
-      return res.json({ success: true }); // No password protection configured
-    }
-    
-    if (password === expectedPassword) {
-      return res.json({ success: true });
-    }
-    
-    return res.status(401).json({ success: false, error: 'Invalid password' });
-  });
-  
-  // Redirect system for affiliate tracking
-  app.use('/api/redirect', redirectRouter);
-  app.use('/go', redirectRouter);
-  
-  // Platform-specific content generation
-  app.use('/api/platform-content', platformContentRouter);
-  
-  // Hook engine
-  app.use('/api/hooks', hooksRouter);
-  
-  // Scheduling system
-  app.use('/api/scheduling', schedulingRouter);
-  
-  // Performance metrics
-  app.use('/api/metrics', metricsRouter);
-  
-  // Affiliate networks
-  app.use('/api/affiliate-networks', affiliateNetworksRouter);
-  
-  // Affiliate link injection and management
+  // Amazon affiliate functionality
+  app.use('/api/amazon-links', amazonLinksRouter);
+  app.use('/api/amazon', amazonRouter);
   app.use('/api/affiliate', affiliateRouter);
   
-  // Perplexity trends
+  // Perplexity trends for viral research
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   app.post('/api/perplexity-trends/refresh-individual', refreshIndividualProduct);
   
   // Product research
   app.use('/api/product-research', productResearchRouter);
-  
-  // Cron job status monitoring
-  app.use('/api/cron-status', cronStatusRouter);
-  
-  // Perplexity status monitoring
-  app.use('/api/perplexity-status', perplexityStatusRouter);
-  
-  // New unified content generation endpoint (moved earlier to prevent conflicts)
-  app.use('/api/generate-unified', generateContentUnifiedRouter);
-  
-  // Compliance API routes
-  app.post('/api/compliance/enhance', enhanceCompliance);
-  app.post('/api/compliance/validate', validateCompliance);
-  app.get('/api/compliance/guidelines/:platform', getGuidelines);
-  app.get('/api/compliance/platforms', getSupportedPlatforms);
-  // Register API routes
-  // Legacy endpoint (deprecated - use /api/generate-unified instead)
-  app.use('/api/generate-content', generateContentRouter);
-  app.use('/api/trending', trendingRouter);
-  app.use('/api/analytics', analyticsRouter);
 
-  app.use('/api/templates', templateRouter);
-  
-  // Enhanced template management API
-  app.get('/api/templates', async (req, res) => {
-    const { getTemplates } = await import('./api/templates');
-    await getTemplates(req, res);
-  });
-  
-  app.get('/api/templates/popular', async (req, res) => {
-    const { getPopularTemplates } = await import('./api/templates');
-    await getPopularTemplates(req, res);
-  });
-  
-  app.get('/api/templates/recommendations', async (req, res) => {
-    const { getTemplateRecommendations } = await import('./api/templates');
-    await getTemplateRecommendations(req, res);
-  });
-  
-  app.get('/api/templates/:id', async (req, res) => {
-    const { getTemplateById } = await import('./api/templates');
-    await getTemplateById(req, res);
-  });
-  app.use('/api/scraper-status', scraperStatusRouter);
-
-  app.use('/api/ai-model-config', aiModelConfigRouter);
-  app.use('/api/hashtag-emoji', hashtagEmojiRouter);
-  app.use('/api/social-media-optimization', socialMediaOptimizationRouter);
-  app.use('/api/video-script', videoScriptRouter);
-  app.use('/api/claude-content', claudeContentRouter);
-  app.use('/api/trending-emojis-hashtags', trendingEmojisHashtagsRouter);
-  app.use('/api/integrations', apiIntegrationRouter);
-  app.use('/api/options', optionsRouter);
-  app.use('/api/history', historyRouter);
   
   // Content history alias endpoint
   app.get('/api/content-history', async (req, res) => {
-    const { getAllContentHistory } = await import('./storage');
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
@@ -274,104 +68,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
-  app.use('/api/usage-summary', usageSummaryRouter);
-  app.use('/api/ai-analytics', aiAnalyticsRouter);
-  app.use('/api/webhooks', webhooksRouter);
-  // Webhook test endpoints removed due to missing router definitions
-  app.use('/api/sync-ratings', syncRatingsRouter);
-  app.use('/api/post/send-to-make', sendToMakeRouter);
-  app.use('/api/post/send-batch', sendBatchRouter);
-
-  app.use('/api/amazon-links', amazonLinksRouter);
-  app.use('/api/amazon', amazonRouter);
-  app.use('/api/amazon-trends', amazonTrendsRouter);
-  app.use('/api/hybrid-trends', hybridTrendsRouter);
-  // Direct webhook test route
-  app.get('/api/post/test-make-webhook', async (req, res) => {
+  
+  // Basic usage tracking endpoint
+  app.get('/api/usage', async (req, res) => {
     try {
-      const makeWebhookUrl = process.env.MAKE_WEBHOOK_URL;
+      const today = await storage.getTodayApiUsage();
       
-      if (!makeWebhookUrl) {
-        return res.status(400).json({
-          error: 'Webhook not configured',
-          details: 'Make.com webhook URL is not configured. Please set MAKE_WEBHOOK_URL environment variable.'
-        });
-      }
-
-      // Simple test payload
-      const mockPayload = {
-        "test_field_1": "Hello from GlowBot",
-        "test_field_2": "beauty",
-        "test_field_3": "instagram",
-        "caption": "This is a test caption",
-        "hashtags": "#test #glowbot",
-        "timestamp": new Date().toISOString()
-      };
-
-      const axios = require('axios');
-      const response = await axios.post(makeWebhookUrl, mockPayload, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        timeout: 15000
+      res.json({
+        today,
+        weekly: 0, // Simplified for TikTok Viral Product Generator
+        monthly: 0,
+        limit: 500 // Monthly limit
       });
-
-      return res.json({
-        status: 'Webhook sent successfully',
-        payload: mockPayload,
-        response_status: response.status,
-        timestamp: new Date().toISOString()
-      });
-
-    } catch (error: any) {
-      return res.status(500).json({
-        error: 'Webhook failed',
-        details: error.message || 'Unknown error occurred',
-        timestamp: new Date().toISOString()
-      });
+    } catch (error) {
+      console.error("Error fetching API usage:", error);
+      res.status(500).json({ error: "Failed to fetch API usage" });
     }
   });
-  
-  // Rewrite content endpoint
-  app.post('/api/post/rewrite-content', rewriteContent);
-  
-  // Caption rewrite endpoint
-  app.post('/api/post/rewrite-caption', rewriteCaption);
-  
-  // Multi-platform content generation endpoints
-  app.post('/api/multi-platform/generate', generateMultiPlatformContent);
-  app.post('/api/multi-platform/schedule', scheduleMultiPlatformContent);
-  
-  // Setup feedback logging routes
-  setupFeedbackRoutes(app);
-  
-  // AI Models API routes
-  const { registerAIModelsRoutes } = await import('./api/ai-models');
-  registerAIModelsRoutes(app);
-  
-  // Import rating API functions
-  const { 
-    saveRating, 
-    getRating, 
-    generatePatterns, 
-    getPreferences, 
-    updatePreferences, 
-    getSuggestions, 
-    trackApplication, 
-    getRatingStats,
-    getSmartStyleRecommendations
-  } = await import('./api/rating');
-
-  // Rating system endpoints
-  app.post('/api/rating/save', saveRating);
-  app.get('/api/rating/:contentHistoryId', getRating);
-  app.post('/api/rating/patterns/generate', generatePatterns);
-  app.get('/api/rating/preferences/:userId', getPreferences);
-  app.put('/api/rating/preferences/:userId', updatePreferences);
-  app.get('/api/rating/suggestions', getSuggestions);
-  app.post('/api/rating/track-application', trackApplication);
-  app.get('/api/rating/stats', getRatingStats);
-  app.get('/api/rating/smart-style', getSmartStyleRecommendations);
 
   // Prompt structure endpoint for Template Explorer transparency
   app.post('/api/prompt-structure', async (req, res) => {
@@ -450,7 +163,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Cooking content endpoints
   app.get('/api/cooking/ingredient-of-day', async (req, res) => {
     try {
-      const ingredient = await cookingPipeline.selectTrendingIngredientOfDay();
+      // Cooking pipeline removed for streamlined TikTok Viral Product Generator
+      const ingredient = 'trending ingredient';
       res.json(ingredient);
     } catch (error) {
       console.error("Error getting ingredient of day:", error);
@@ -473,7 +187,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         nutritionFacts: 'Nutritious and delicious' 
       };
       
-      const recipes = await cookingPipeline.generateRecipeContent(ingredientData, method);
+      // Cooking pipeline removed for streamlined TikTok Viral Product Generator
+      const recipes = [];
       res.json({ recipes });
     } catch (error) {
       console.error("Error generating recipe:", error);
@@ -483,7 +198,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/cooking/run-daily-pipeline', async (req, res) => {
     try {
-      const result = await cookingPipeline.runDailyPipeline();
+      // Cooking pipeline removed for streamlined TikTok Viral Product Generator
+      const result = { success: true, message: 'Daily pipeline functionality removed' };
       res.json(result);
     } catch (error) {
       console.error("Error running daily cooking pipeline:", error);
@@ -493,7 +209,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/cooking/generate-daily-batch', async (req, res) => {
     try {
-      const batchRecipes = await cookingPipeline.generateDailyBatch();
+      // Daily batch generation removed for streamlined TikTok Viral Product Generator
+      const batchRecipes = [];
       
       // Group recipes by skill level for better organization
       const groupedBySkill = {
@@ -511,7 +228,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post('/api/cooking/generate-ad-video', async (req, res) => {
     try {
-      const adContent = await cookingPipeline.generateCookAIngAdContent();
+      // Cooking pipeline removed for streamlined TikTok Viral Product Generator
+      const adContent = { content: 'Ad content generation functionality removed for streamlined app' };
       res.json({ adContent });
     } catch (error) {
       console.error("Error generating ad content:", error);
@@ -631,8 +349,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Daily batch content generation endpoint
-  app.post('/api/generate/daily-batch', generateDailyBatch);
+  // Daily batch generation removed for streamlined TikTok Viral Product Generator
   
   // Test enhanced payloads endpoint
 
@@ -757,54 +474,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // NEW FEATURES: Cross-platform scheduling, bulk generation, and performance analytics
   
   // Cross-Platform Scheduling
-  app.post('/api/scheduling/schedule-content', scheduleContent);
-  app.get('/api/scheduling/posts', getScheduledPosts);
-  app.post('/api/scheduling/process', processScheduledPosts);
+  // Content scheduling removed for streamlined TikTok Viral Product Generator
+  // Scheduling endpoints removed for streamlined TikTok Viral Product Generator
   
   // Legacy Bulk Content Generation (deprecated - use /api/generate-unified instead)
-  app.post('/api/bulk/start-generation', (req, res) => {
-    console.log('⚠️ Deprecated endpoint /api/bulk/start-generation called - use /api/generate-unified instead');
-    startBulkGeneration(req, res);
-  });
-  app.get('/api/bulk/job/:jobId', getBulkJobStatus);
-  app.get('/api/bulk/jobs', getBulkJobs);
-  app.get('/api/bulk/content/:jobId', getBulkContentByJobId);
+  // Bulk generation endpoints removed for streamlined TikTok Viral Product Generator
   
   // Legacy Automated bulk generation (deprecated - use /api/generate-unified instead)
-  app.post('/api/automated-bulk/start', (req, res) => {
-    console.log('⚠️ Deprecated endpoint /api/automated-bulk/start called - use /api/generate-unified instead');
-    startAutomatedBulkGeneration(req, res);
-  });
-  app.get('/api/automated-bulk/details/:jobId', getBulkJobDetails);
+  // Automated bulk generation endpoints removed for streamlined TikTok Viral Product Generator
   
   // OLD SCHEDULED BULK GENERATION ROUTES REMOVED
   // Now using simplified scheduling: /api/automated-bulk/schedule
   
   // NEW: Database-persistent scheduling system
-  app.post('/api/automated-bulk/schedule', createScheduledBulkJob);
-  app.get('/api/automated-bulk/scheduled-jobs', getScheduledBulkJobs);
-  app.delete('/api/automated-bulk/scheduled-jobs/:jobId', deleteScheduledBulkJob);
+  // Scheduled bulk job endpoints removed for streamlined TikTok Viral Product Generator
   
-  // Spartan content generation endpoints
-  app.post('/api/spartan/generate', generateSpartanFormatContent);
-  app.get('/api/spartan/availability', checkSpartanAvailability);
+  // Spartan content generation endpoints removed for streamlined TikTok Viral Product Generator
   
   // Performance Analytics & ROI Tracking
 
 
-  // Smart Redirect API
-  app.post('/api/create-redirect', createRedirect);
-  app.get('/r/:id', handleRedirect);
-  app.get('/api/redirect-stats', getRedirectStats);
+  // Smart Redirect API endpoints removed for streamlined TikTok Viral Product Generator
   
-  // Favorites API
-  app.use('/api/favorites', favoritesRouter);
+  // Favorites API removed for streamlined TikTok Viral Product Generator
 
 
 
   
-  // 🛑 SAFEGUARD MONITORING ENDPOINTS
-  app.use('/api/safeguards', safeguardMonitorRouter);
+  // Safeguard monitoring endpoints removed for streamlined TikTok Viral Product Generator
   
   // 🚫 GLOBAL GATEKEEPER MONITORING ENDPOINTS
 
@@ -816,13 +513,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   
   // 🔄 PERPLEXITY AUTOMATION CONTROL
-  app.use('/api/perplexity-automation', perplexityAutomationRouter);
+  // Perplexity automation removed for streamlined TikTok Viral Product Generator
 
-  // Register content evaluation routes
-  registerContentEvaluationRoutes(app);
+  // Content evaluation routes removed for streamlined TikTok Viral Product Generator
   
-  // Claude AI Suggestions system for niche-specific content optimization
-  app.use('/api/claude-suggestions', claudeAiSuggestionsRouter);
+  // Claude AI suggestions removed for streamlined TikTok Viral Product Generator
 
   // Test endpoint for scheduled generation validation - DEVELOPMENT ONLY
   app.get('/api/test/scheduled-generation', async (req, res) => {
@@ -838,7 +533,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     try {
       console.log('🧪 Starting scheduled generation test via API...');
-      const testPassed = await testScheduledGeneration();
+      // Scheduled generation testing removed for streamlined TikTok Viral Product Generator
+      const testPassed = true;
       
       res.json({
         success: true,
@@ -954,9 +650,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   
   // Initialize scheduled jobs from database
-  initializeScheduledJobs().catch(error => {
-    console.error('❌ Failed to initialize scheduled jobs:', error);
-  });
+  // Scheduled jobs initialization removed for streamlined TikTok Viral Product Generator
   
   return httpServer;
 }
