@@ -24,6 +24,8 @@ import {
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { TemplateSelector } from "@/components/TemplateSelector";
+import { UsageStatistics } from "@/components/UsageStatistics";
+import { type TemplateType } from '@shared/constants';
 
 // Video duration interface
 interface VideoDuration {
@@ -83,11 +85,13 @@ const GenerateContent = () => {
   }, [location, window.location.search]);
   // Hardcoded to TikTok only for simplified generator
   const selectedPlatforms = ['tiktok'];
-  const [templateType, setTemplateType] = useState(templateFromUrl || 'social_media_post');
+  const [templateType, setTemplateType] = useState(templateFromUrl || 'short_video');
+  const [selectedTemplates, setSelectedTemplates] = useState<TemplateType[]>([templateFromUrl || 'short_video'] as TemplateType[]);
   const [tone, setTone] = useState('enthusiastic');
   const [isHookGeneratorOpen, setIsHookGeneratorOpen] = useState(false);
   const [customHook, setCustomHook] = useState('');
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
+  const [multiTemplateResults, setMultiTemplateResults] = useState<Record<string, GeneratedContent>>({});
   const [comparisonResults, setComparisonResults] = useState<{
     claude: GeneratedContent | null;
     chatgpt: GeneratedContent | null;
@@ -157,7 +161,7 @@ const GenerateContent = () => {
 
   // Fetch prompt structure when template type, niche, or tone changes
   const fetchPromptStructure = async () => {
-    if (!templateType || !selectedNiche || !tone) {
+    if (selectedTemplates.length === 0 || !selectedNiche || !tone) {
       setCurrentPromptStructure(null);
       return;
     }
@@ -169,7 +173,7 @@ const GenerateContent = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          templateType,
+          templateType: selectedTemplates[0], // Use first selected template for prompt structure
           niche: selectedNiche,
           tone,
           productName: selectedProduct || 'Sample Product',
@@ -192,7 +196,7 @@ const GenerateContent = () => {
   // Watch for changes in template type, niche, or tone to update prompt structure
   useEffect(() => {
     fetchPromptStructure();
-  }, [templateType, selectedNiche, tone]);
+  }, [selectedTemplates, selectedNiche, tone]);
 
   // Debug: Log viralInspo state changes
   useEffect(() => {
@@ -380,16 +384,93 @@ ${config.hashtags.join(' ')}`;
       return;
     }
 
-    // Auto-suggest template if viral inspiration is available and user hasn't manually selected one
-    let finalTemplateType = templateType;
+    // Validate template selection for multi-select mode
+    if (selectedTemplates.length === 0) {
+      toast({
+        title: "No Templates Selected",
+        description: "Please select at least one template to generate content",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Handle multi-template generation
+    if (selectedTemplates.length > 1) {
+      setIsGenerating(true);
+      setMultiTemplateResults({});
+      
+      toast({
+        title: "🚀 Multi-Template Generation",
+        description: `Generating content for ${selectedTemplates.length} templates...`,
+        duration: 3000,
+      });
+
+      try {
+        const results: Record<string, GeneratedContent> = {};
+        
+        // Generate content for each selected template
+        for (const templateType of selectedTemplates) {
+          const response = await fetch('/api/generate-content', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              product: selectedProduct,
+              niche: selectedNiche,
+              platforms: ['tiktok'],
+              templateType: templateType,
+              tone,
+              customHook,
+              aiModel: aiModel === 'both' ? 'claude' : aiModel, // Use selected AI model
+            }),
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            if (result.success) {
+              results[templateType] = {
+                content: result.data.content,
+                hook: result.data.customHook || '',
+                platform: 'tiktok',
+                niche: selectedNiche,
+                videoDuration: result.data.videoDuration
+              };
+            }
+          }
+        }
+
+        setMultiTemplateResults(results);
+        
+        toast({
+          title: "✨ Multi-Template Generation Complete!",
+          description: `Generated content for ${Object.keys(results).length} templates`,
+        });
+
+      } catch (error) {
+        console.error('Multi-template generation failed:', error);
+        toast({
+          title: "Generation Failed",
+          description: "Failed to generate content for multiple templates",
+          variant: "destructive",
+        });
+      } finally {
+        setIsGenerating(false);
+      }
+      return;
+    }
+
+    // Single template generation (existing logic)
+    let finalTemplateType = selectedTemplates[0];
     let templateSource = 'manual';
     
-    if (viralInspo && (templateType === 'surprise-me' || !templateType || templateType === 'original')) {
+    // Auto-suggest template if viral inspiration is available and no templates selected yet
+    if (viralInspo && selectedTemplates.length === 1 && selectedTemplates[0] === 'short_video') {
       finalTemplateType = autoSuggestTemplate(viralInspo.format);
       templateSource = `auto-suggested from format: ${viralInspo.format}`;
       
-      // Update the UI to show the auto-suggested template
-      setTemplateType(finalTemplateType);
+      // Update the selected templates to include the auto-suggested template
+      setSelectedTemplates([finalTemplateType]);
       
       toast({
         title: "🎯 Auto-Template Selection",
@@ -535,7 +616,7 @@ ${config.hashtags.join(' ')}`;
             productName: selectedProduct,
             niche: selectedNiche,
             platformsSelected: ['tiktok'], // TikTok-only
-            templateUsed: templateType,
+            templateUsed: finalTemplateType,
             tone: tone,
             generatedOutput: {
               content: result.data.content,
@@ -552,7 +633,7 @@ ${config.hashtags.join(' ')}`;
           
           toast({
             title: "Content Generated!",
-            description: `Your ${templateType} content is ready`,
+            description: `Your ${finalTemplateType} content is ready`,
           });
           
           // Show Surprise Me reasoning if available
@@ -608,6 +689,8 @@ ${config.hashtags.join(' ')}`;
           </p>
         </div>
 
+        {/* Usage Statistics Section */}
+        <UsageStatistics />
 
 
         {/* Content Generation Module - Vertical Stack Layout */}
@@ -845,12 +928,12 @@ ${config.hashtags.join(' ')}`;
           </CardHeader>
           <CardContent className="space-y-4">
 
-            {/* Template Type */}
+            {/* Template Selection */}
             <div>
-              <Label htmlFor="template">Template Type</Label>
               <TemplateSelector 
-                value={templateType} 
-                onChange={setTemplateType}
+                multiSelect={true}
+                selectedTemplates={selectedTemplates}
+                onMultiChange={setSelectedTemplates}
                 selectedNiche={selectedNiche}
               />
             </div>
@@ -863,7 +946,7 @@ ${config.hashtags.join(' ')}`;
                     📋 Prompt Structure
                   </CardTitle>
                   <p className="text-xs text-blue-600">
-                    See exactly how AI prompts are structured for {selectedNiche} content with {templateType} template
+                    See exactly how AI prompts are structured for {selectedNiche} content with {selectedTemplates[0]} template
                   </p>
                 </CardHeader>
                 <CardContent className="space-y-3">
@@ -947,7 +1030,7 @@ ${config.hashtags.join(' ')}`;
             <Button 
               className="w-full h-12 text-lg font-semibold"
               onClick={handleGenerateContent}
-              disabled={isGenerating || !selectedProduct}
+              disabled={isGenerating || !selectedProduct || selectedTemplates.length === 0}
             >
               {isGenerating ? (
                 <>
@@ -1012,7 +1095,7 @@ ${config.hashtags.join(' ')}`;
                 <div className="bg-gray-50 p-6 rounded-lg border-l-4 border-green-500">
                   <h4 className="font-semibold mb-3 text-lg">Generated Content:</h4>
                   <div className="text-sm text-gray-600 mb-4 flex gap-4 flex-wrap">
-                    <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                    <span className="bg-white px-2 py-1 rounded">Templates: {selectedTemplates.join(', ')}</span>
                     <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
                     <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
                     {generatedContent.videoDuration && (
@@ -1126,6 +1209,83 @@ ${config.hashtags.join(' ')}`;
           </Card>
         )}
 
+        {/* Multi-Template Results */}
+        {Object.keys(multiTemplateResults).length > 0 && (
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Sparkles className="h-5 w-5 text-purple-500" />
+                🎯 Multi-Template Results
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                Generated content for {Object.keys(multiTemplateResults).length} different templates
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {Object.entries(multiTemplateResults).map(([templateType, content]) => (
+                  <div key={templateType} className="space-y-4">
+                    <div className="flex items-center gap-2 mb-4">
+                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <h3 className="font-semibold text-lg capitalize">
+                        📄 {templateType.replace('_', ' ')} Template
+                      </h3>
+                    </div>
+                    <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                      <div className="text-sm text-gray-600 mb-4 flex gap-2 flex-wrap">
+                        <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                        <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
+                        <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
+                        {content.videoDuration && (
+                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
+                            🎥 Duration: {content.videoDuration.readableTime}
+                          </span>
+                        )}
+                      </div>
+                      <div className="prose prose-sm max-w-none">
+                        <div className="whitespace-pre-wrap text-gray-800">
+                          {content.content}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Action buttons for each template result */}
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          navigator.clipboard.writeText(content.content);
+                          toast({
+                            title: "Content Copied!",
+                            description: `${templateType} content copied to clipboard`,
+                          });
+                        }}
+                      >
+                        <Copy className="h-4 w-4 mr-1" />
+                        Copy
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => {
+                          setGeneratedContent(content);
+                          setMultiTemplateResults({});
+                          toast({
+                            title: "Template Selected",
+                            description: `Using ${templateType} as your main content`,
+                          });
+                        }}
+                      >
+                        Use This Template
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* AI Models Comparison Results */}
         {comparisonResults && (
           <Card className="shadow-lg">
@@ -1149,7 +1309,7 @@ ${config.hashtags.join(' ')}`;
                   {comparisonResults.claude && (
                     <div className="bg-orange-50 p-6 rounded-lg border-l-4 border-orange-500">
                       <div className="text-sm text-gray-600 mb-4 flex gap-2 flex-wrap">
-                        <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                        <span className="bg-white px-2 py-1 rounded">Templates: {selectedTemplates.join(', ')}</span>
                         <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
                         <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
                       </div>
@@ -1196,7 +1356,7 @@ ${config.hashtags.join(' ')}`;
                   {comparisonResults.chatgpt && (
                     <div className="bg-green-50 p-6 rounded-lg border-l-4 border-green-500">
                       <div className="text-sm text-gray-600 mb-4 flex gap-2 flex-wrap">
-                        <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                        <span className="bg-white px-2 py-1 rounded">Templates: {selectedTemplates.join(', ')}</span>
                         <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
                         <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
                       </div>

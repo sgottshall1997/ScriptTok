@@ -8,6 +8,7 @@ import { trendingRouter } from "./api/trending";
 import { scraperStatusRouter } from "./api/scraperStatus";
 import { historyRouter } from "./api/history";
 import perplexityTrendsRouter from "./api/perplexity-trends";
+import statisticsApi from "./api/statistics";
 
 // DISABLED: Amazon-related imports temporarily disabled
 // import { aiModelConfigRouter } from "./api/aiModelConfig";
@@ -30,6 +31,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Perplexity trends for viral research
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
+  
+  // Usage statistics endpoint
+  app.use('/api/statistics', statisticsApi);
   
   // DISABLED: Amazon-related routes temporarily disabled - returning 503 responses
   const amazonDisabledResponse = {
