@@ -41,6 +41,35 @@ export interface GlowBotSection {
 }
 
 export const glowBotSections: GlowBotSection[] = [
+  // Overview
+  {
+    name: "About GlowBot",
+    description: "Comprehensive overview of the GlowBot AI platform, its capabilities, and how it transforms content creation.",
+    icon: HelpCircle,
+    path: "/about",
+    category: "Overview",
+    whatItDoes: "Provides a complete introduction to GlowBot's AI-powered content generation platform, explaining core features, supported platforms, and the comprehensive toolkit available for scaling content production.",
+    setupRequirements: ["No setup required", "Explore platform capabilities", "Review available tools and features"],
+    usageInstructions: [
+      "Read through platform overview and key features",
+      "Explore the comprehensive tools grid to understand capabilities",
+      "Visit individual tool pages for detailed functionality",
+      "Start with the Dashboard for your content creation journey",
+      "Access help resources and documentation as needed"
+    ],
+    relatedLinks: [
+      { name: "Dashboard", path: "/" },
+      { name: "Unified Generator", path: "/unified-generator" },
+      { name: "How It Works", path: "/how-it-works" }
+    ],
+    notes: [
+      "Central hub for understanding all platform capabilities",
+      "No AI keys required to explore platform features",
+      "Comprehensive tool grid shows all available functionality"
+    ],
+    keyFeatures: ["Platform overview", "Tools directory", "Getting started guide", "Feature explanations", "Navigation hub"]
+  },
+
   // Core
   {
     name: "Dashboard",
@@ -497,6 +526,33 @@ export const glowBotSections: GlowBotSection[] = [
     ],
     keyFeatures: ["Competitor tracking", "Performance benchmarking", "Gap analysis", "Strategy insights", "Market research"]
   },
+  {
+    name: "Emoji & Hashtag Test",
+    description: "Advanced testing tools for emoji effectiveness and hashtag performance optimization.",
+    icon: Hash,
+    path: "/emoji-hashtag-test",
+    category: "Advanced Tools",
+    whatItDoes: "Provides specialized testing capabilities for emoji usage patterns and hashtag performance analysis, helping optimize content engagement through data-driven emoji and hashtag selection.",
+    setupRequirements: ["Content samples for testing", "Platform-specific guidelines"],
+    usageInstructions: [
+      "Input content variations with different emoji combinations",
+      "Test hashtag effectiveness across platforms",
+      "Analyze engagement patterns for emoji usage",
+      "Compare performance metrics for different approaches",
+      "Generate optimized emoji and hashtag recommendations"
+    ],
+    relatedLinks: [
+      { name: "Unified Generator", path: "/unified-generator" },
+      { name: "Performance Analytics", path: "/performance-analytics" },
+      { name: "AI Model Testing", path: "/ai-model-test" }
+    ],
+    notes: [
+      "Emoji effectiveness varies significantly by platform",
+      "Hashtag performance depends on timing and audience",
+      "Regular testing improves engagement rates"
+    ],
+    keyFeatures: ["Emoji effectiveness testing", "Hashtag performance analysis", "Platform-specific optimization", "Engagement correlation", "Data-driven recommendations"]
+  },
 
   // Analytics & Tracking  
   {
@@ -658,6 +714,60 @@ export const glowBotSections: GlowBotSection[] = [
       "Documentation supports audit processes"
     ],
     keyFeatures: ["Compliance tracking", "Content review", "Legal documentation", "Audit support", "Regulatory management"]
+  },
+  {
+    name: "Privacy Policy",
+    description: "Comprehensive privacy policy covering data collection, usage, and protection practices.",
+    icon: Shield,
+    path: "/privacy",
+    category: "Legal & Compliance",
+    whatItDoes: "Details how user data is collected, stored, processed, and protected within the GlowBot platform, including third-party integrations, data retention policies, and user rights regarding personal information.",
+    setupRequirements: ["Review privacy practices", "Understand data handling"],
+    usageInstructions: [
+      "Read through data collection practices",
+      "Understand how personal information is used",
+      "Review third-party data sharing policies",
+      "Learn about data retention and deletion",
+      "Know your rights regarding personal data"
+    ],
+    relatedLinks: [
+      { name: "Terms of Service", path: "/terms" },
+      { name: "Compliance Center", path: "/compliance" },
+      { name: "Contact", path: "/contact" }
+    ],
+    notes: [
+      "Privacy policy is regularly updated",
+      "Users are notified of material changes",
+      "Contact support for privacy concerns"
+    ],
+    keyFeatures: ["Data protection", "Privacy rights", "Third-party policies", "Data retention", "User controls"]
+  },
+  {
+    name: "Terms of Service",
+    description: "Legal terms and conditions governing the use of the GlowBot platform and services.",
+    icon: FileCheck,
+    path: "/terms",
+    category: "Legal & Compliance",
+    whatItDoes: "Establishes the legal agreement between users and GlowBot, covering service usage, user responsibilities, limitations, intellectual property rights, and dispute resolution procedures.",
+    setupRequirements: ["Read and understand terms", "Accept agreement to use services"],
+    usageInstructions: [
+      "Read through service terms and conditions",
+      "Understand user responsibilities and restrictions",
+      "Review intellectual property provisions",
+      "Know service limitations and disclaimers",
+      "Understand dispute resolution procedures"
+    ],
+    relatedLinks: [
+      { name: "Privacy Policy", path: "/privacy" },
+      { name: "Compliance Center", path: "/compliance" },
+      { name: "Contact", path: "/contact" }
+    ],
+    notes: [
+      "Terms are binding upon service usage",
+      "Regular updates may occur with notification",
+      "Legal disputes subject to specified jurisdiction"
+    ],
+    keyFeatures: ["Service agreement", "User responsibilities", "Intellectual property", "Limitations", "Dispute resolution"]
   },
 
   // Support
