@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useLocation } from "wouter";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 import { 
   ArrowRight, 
@@ -21,7 +22,9 @@ import {
   Zap,
   Target,
   RotateCcw,
-  ShoppingBag
+  ShoppingBag,
+  ChevronDown,
+  HelpCircle
 } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -36,6 +39,7 @@ const Dashboard = () => {
   const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
+  const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
   
   // Get section metadata for this page
   const sectionData = getGlowBotSectionByPath('/');
@@ -323,6 +327,75 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* Dashboard Overview Dropdown */}
+      <Collapsible open={isDashboardInfoOpen} onOpenChange={setIsDashboardInfoOpen} className="w-full">
+        <CollapsibleTrigger asChild>
+          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-blue-200 bg-blue-50 dark:bg-blue-950" data-testid="button-dashboard-info">
+            <CardHeader className="pb-3">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <HelpCircle className="h-5 w-5 text-blue-600" />
+                  <CardTitle className="text-lg text-blue-900 dark:text-blue-100">
+                    📱 What is GlowBot? Click to learn about each section
+                  </CardTitle>
+                </div>
+                <ChevronDown 
+                  className={`h-4 w-4 text-blue-600 transition-transform duration-200 ${
+                    isDashboardInfoOpen ? 'rotate-180' : ''
+                  }`} 
+                />
+              </div>
+            </CardHeader>
+          </Card>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950 border-t-0 rounded-t-none">
+            <CardContent className="pt-4">
+              <div className="space-y-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                    🚀 GlowBot AI Overview
+                  </h3>
+                  <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed">
+                    GlowBot is your all-in-one AI content generation platform designed to transform trending products into viral social media content across multiple niches. Powered by advanced AI models including Claude, GPT, and Perplexity, GlowBot automates the entire content creation workflow from trend discovery to multi-platform publishing.
+                  </p>
+                </div>
+                
+                <div className="grid md:grid-cols-2 gap-4 mt-4">
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🔥 AI-Powered Trending Picks</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Discover viral products automatically using Perplexity AI or Amazon PA-API. Switch between data sources, filter by niche, and get real-time trending insights with automated daily fetching at 5:00 AM.</p>
+                    
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">📊 Content Analytics & Tracking</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Monitor your content performance with detailed analytics, click tracking, and engagement metrics. View historical content, top-rated posts, and comprehensive performance dashboards.</p>
+                    
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🎯 Multi-Platform Content Generation</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Generate optimized content for TikTok, Instagram, YouTube, Twitter, and Facebook simultaneously. Use trending product data to create engaging captions with affiliate links automatically integrated.</p>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">⚙️ AI Model Testing & Configuration</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Fine-tune AI models, test different configurations, and optimize content quality with Claude AI suggestions. Access advanced settings for model routing and response optimization.</p>
+                    
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🔗 Amazon Monetization & Affiliate Management</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Integrated Amazon Associates tracking with smart affiliate link injection, revenue analytics, and product performance monitoring. Streamlined monetization across all content.</p>
+                    
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">📅 Bulk Generation & Automation</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Schedule automated content generation, create bulk campaigns, and manage cross-platform publishing workflows. Set up recurring jobs and webhook integrations for seamless automation.</p>
+                  </div>
+                </div>
+                
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-200 dark:border-blue-800 mt-4">
+                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                    💡 <strong>Quick Start:</strong> Begin by exploring trending picks, then use the content generators to create platform-specific posts. Monitor performance through analytics and optimize using AI model configurations.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </CollapsibleContent>
+      </Collapsible>
+
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
