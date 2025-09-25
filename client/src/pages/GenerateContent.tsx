@@ -495,7 +495,7 @@ ${config.hashtags.join(' ')}`;
           tone,
           customHook,
           // No affiliate URL needed for TikTok-only generator
-          viralInspiration: viralInspo, // Include viral inspiration data
+          ...(viralInspo ? { viralInspiration: viralInspo } : {}), // Include viral inspiration data only if exists
           templateSource, // Track how template was selected
           useSmartStyle, // Enable smart style recommendations
           userId: 1 // Demo user ID for rating system
@@ -580,7 +580,7 @@ ${config.hashtags.join(' ')}`;
           customHook,
           aiModel: aiModel, // Use selected single model
           // No affiliate URL needed for TikTok-only generator
-          viralInspiration: viralInspo, // Include viral inspiration data
+          ...(viralInspo ? { viralInspiration: viralInspo } : {}), // Include viral inspiration data only if exists
           templateSource, // Track how template was selected
           useSmartStyle, // Enable smart style recommendations
           userId: 1 // Demo user ID for rating system
