@@ -51,6 +51,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { isAmazonEnabled } from '@shared/constants';
 
 interface SidebarItem {
   name: string;
@@ -158,21 +159,40 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 
         {/* Navigation - Scrollable */}
         <nav className="flex-1 px-4 py-6 space-y-8 overflow-y-auto">
-          {sidebarData.map((category) => (
-            <div key={category.name}>
-              <h3 className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                {category.name}
-              </h3>
-              <div className="space-y-1">
-                {category.items.map((item) => {
+          {sidebarData.map((category) => {
+            // DISABLED: Filter out Amazon-related sidebar items when Amazon features are disabled
+            const filteredItems = category.items.filter(item => {
+              // Hide Amazon-specific navigation items when features are disabled
+              if (!isAmazonEnabled() && (
+                item.href === '/affiliate-links' ||
+                item.href === '/amazon-settings' ||
+                item.href === '/monetization'
+              )) {
+                return false;
+              }
+              return true;
+            });
+
+            // Skip empty categories
+            if (filteredItems.length === 0) {
+              return null;
+            }
+
+            return (
+              <div key={category.name}>
+                <h3 className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                  {category.name}
+                </h3>
+                <div className="space-y-1">
+                  {filteredItems.map((item) => {
                   const Icon = item.icon;
                   const active = isActive(item.href);
                   
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn(
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className={cn(
                         "group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-150",
                         active
                           ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
@@ -188,11 +208,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
                       />
                       {item.name}
                     </Link>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </nav>
 
         {/* Footer */}

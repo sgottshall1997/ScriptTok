@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { AlertCircle, CheckCircle, DollarSign, Settings, Tag, Globe, Zap } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { apiRequest } from '@/lib/queryClient';
+import { isAmazonEnabled, getDisabledFeatureMessage } from '@shared/constants';
 
 interface MonetizationSettings {
   enabled: boolean;
@@ -43,6 +44,60 @@ const REGIONS = [
 ];
 
 export function AmazonMonetizationSettings() {
+  // DISABLED: Show disabled state when Amazon features are turned off
+  if (!isAmazonEnabled()) {
+    const disabledMessage = getDisabledFeatureMessage('Amazon Monetization');
+    
+    return (
+      <div className="space-y-6" data-testid="amazon-monetization-disabled">
+        <Alert className="border-orange-200 bg-orange-50">
+          <AlertCircle className="h-4 w-4 text-orange-600" />
+          <AlertDescription className="text-orange-800">
+            <strong className="font-medium">Amazon Monetization Temporarily Disabled</strong>
+            <p className="mt-1 text-sm">
+              {disabledMessage.message}. {disabledMessage.canReEnable}
+            </p>
+          </AlertDescription>
+        </Alert>
+        
+        <Card className="opacity-50">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5" />
+              Amazon Associates Settings
+              <Badge variant="secondary" className="bg-gray-200">Disabled</Badge>
+            </CardTitle>
+            <CardDescription>
+              Amazon Associates monetization configuration (currently disabled)
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="disabled-partner-tag">Partner Tag</Label>
+                <Input 
+                  id="disabled-partner-tag" 
+                  value="Feature disabled" 
+                  disabled 
+                  className="bg-gray-100"
+                />
+              </div>
+              <div>
+                <Label htmlFor="disabled-status">Status</Label>
+                <Input 
+                  id="disabled-status" 
+                  value="Disabled" 
+                  disabled 
+                  className="bg-gray-100"
+                />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   const [settings, setSettings] = useState<MonetizationSettings>({
     enabled: false,
     partnerTag: '',

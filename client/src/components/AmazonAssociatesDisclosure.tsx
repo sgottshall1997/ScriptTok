@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from 'lucide-react';
+import { isAmazonEnabled } from '@shared/constants';
 
 interface AmazonAssociatesDisclosureProps {
   variant?: 'compact' | 'detailed';
@@ -11,6 +12,10 @@ export const AmazonAssociatesDisclosure: React.FC<AmazonAssociatesDisclosureProp
   variant = 'compact', 
   className = "" 
 }) => {
+  // DISABLED: Hide Amazon Associates disclosure when Amazon features are disabled
+  if (!isAmazonEnabled()) {
+    return null;
+  }
   if (variant === 'detailed') {
     return (
       <Card className={`bg-blue-50 border-blue-200 ${className}`}>
