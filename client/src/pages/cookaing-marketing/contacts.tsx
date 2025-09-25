@@ -235,7 +235,8 @@ const ContactsPage = () => {
                         <Input 
                           placeholder="Contact name" 
                           data-testid="input-contact-name"
-                          {...field} 
+                          {...field}
+                          value={field.value || ""}
                         />
                       </FormControl>
                       <FormMessage />

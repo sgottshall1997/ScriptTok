@@ -596,7 +596,7 @@ export default function SocialAutomationPage() {
                               <p className="text-xs text-muted-foreground">{post.publishedAt}</p>
                             </div>
                           </div>
-                          <StatusBadge status={post.status} />
+                          <StatusBadge status={post.status as 'published' | 'queued' | 'failed' | 'processing'} />
                         </div>
                       )) || []}
                     </div>
