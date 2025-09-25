@@ -26,6 +26,7 @@ import { rewriteCaption } from "./api/post/rewrite-caption";
 import { generateDailyBatch } from "./api/daily-batch";
 
 import { amazonLinksRouter } from "./api/amazonLinks";
+import affiliateRouter from "./api/affiliate";
 
 import { cookingPipeline } from "./services/cookingContentPipeline";
 import redirectRouter from "./api/redirect";
@@ -180,6 +181,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Affiliate networks
   app.use('/api/affiliate-networks', affiliateNetworksRouter);
+  
+  // Affiliate link injection and management
+  app.use('/api/affiliate', affiliateRouter);
   
   // Perplexity trends
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
