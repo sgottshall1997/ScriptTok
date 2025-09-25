@@ -32,6 +32,7 @@ import CookAIngIntelligence from "@/pages/cookaing-marketing/intelligence";
 import CookAIngCampaignDetail from "@/pages/cookaing-marketing/campaign-detail";
 import CookAIngSocialAutomation from "@/pages/cookaing-marketing/social-automation";
 import CookAIngPromoGenerator from "@/pages/cookaing-marketing/promo-generator";
+import CookAIngSupport from "@/pages/cookaing-marketing/support";
 
 const CookAIngRouter: React.FC = () => {
   return (
@@ -70,6 +71,7 @@ const CookAIngRouter: React.FC = () => {
         <Route path="/cookaing-marketing/content-history" component={ContentHistory} />
         <Route path="/cookaing-marketing/content-generator" component={UnifiedContentGenerator} />
         <Route path="/cookaing-marketing/promo-generator" component={CookAIngPromoGenerator} />
+        <Route path="/cookaing-marketing/support" component={CookAIngSupport} />
         <Route path="/cookaing-marketing/intelligence" component={CookAIngIntelligence} />
         <Route path="/cookaing-marketing/docs" component={CookAIngMarketingDocs} />
       </Switch>

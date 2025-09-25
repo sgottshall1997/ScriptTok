@@ -2296,6 +2296,175 @@ export const contentRecords = pgTable("content_records", {
 });
 
 // ================================================================
+// Customer Support Center Tables
+// ================================================================
+
+// Support ticket categories
+export const supportCategories = pgTable("support_categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  parentId: integer("parent_id").references(() => supportCategories.id),
+  isActive: boolean("is_active").notNull().default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    nameIdx: index("support_categories_name_idx").on(table.name),
+    activeIdx: index("support_categories_active_idx").on(table.isActive),
+    parentIdx: index("support_categories_parent_idx").on(table.parentId),
+  };
+});
+
+// Support tickets
+export const supportTickets = pgTable("support_tickets", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  description: text("description").notNull(),
+  status: text("status").notNull().default("open"), // open, in_progress, resolved, closed
+  priority: text("priority").notNull().default("medium"), // low, medium, high, urgent
+  categoryId: integer("category_id").references(() => supportCategories.id),
+  assignedToUserId: integer("assigned_to_user_id").references(() => users.id),
+  createdByUserId: integer("created_by_user_id").references(() => users.id),
+  customerEmail: text("customer_email"),
+  customerName: text("customer_name"),
+  organizationId: integer("organization_id").references(() => organizations.id),
+  tags: text("tags").array().default([]),
+  attachments: jsonb("attachments"), // Array of file attachments
+  metadata: jsonb("metadata"), // Additional ticket metadata
+  resolvedAt: timestamp("resolved_at"),
+  firstResponseAt: timestamp("first_response_at"),
+  lastActivityAt: timestamp("last_activity_at").defaultNow(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    statusIdx: index("support_tickets_status_idx").on(table.status),
+    priorityIdx: index("support_tickets_priority_idx").on(table.priority),
+    categoryIdx: index("support_tickets_category_idx").on(table.categoryId),
+    assignedIdx: index("support_tickets_assigned_idx").on(table.assignedToUserId),
+    customerIdx: index("support_tickets_customer_idx").on(table.customerEmail),
+    orgIdx: index("support_tickets_org_idx").on(table.organizationId),
+    activityIdx: index("support_tickets_activity_idx").on(table.lastActivityAt),
+    createdIdx: index("support_tickets_created_idx").on(table.createdAt),
+  };
+});
+
+// Support ticket responses/comments
+export const supportResponses = pgTable("support_responses", {
+  id: serial("id").primaryKey(),
+  ticketId: integer("ticket_id").notNull().references(() => supportTickets.id, { onDelete: 'cascade' }),
+  userId: integer("user_id").references(() => users.id),
+  content: text("content").notNull(),
+  isInternal: boolean("is_internal").notNull().default(false), // Internal notes vs customer-facing
+  responseType: text("response_type").notNull().default("comment"), // comment, status_change, assignment_change
+  attachments: jsonb("attachments"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    ticketIdx: index("support_responses_ticket_idx").on(table.ticketId),
+    userIdx: index("support_responses_user_idx").on(table.userId),
+    typeIdx: index("support_responses_type_idx").on(table.responseType),
+    createdIdx: index("support_responses_created_idx").on(table.createdAt),
+  };
+});
+
+// Knowledge base articles
+export const knowledgeBaseArticles = pgTable("knowledge_base_articles", {
+  id: serial("id").primaryKey(),
+  title: text("title").notNull(),
+  slug: text("slug").notNull().unique(),
+  content: text("content").notNull(),
+  excerpt: text("excerpt"),
+  categoryId: integer("category_id").references(() => supportCategories.id),
+  authorId: integer("author_id").references(() => users.id),
+  status: text("status").notNull().default("draft"), // draft, published, archived
+  isPublic: boolean("is_public").notNull().default(true),
+  viewCount: integer("view_count").default(0),
+  helpfulCount: integer("helpful_count").default(0),
+  notHelpfulCount: integer("not_helpful_count").default(0),
+  tags: text("tags").array().default([]),
+  metadata: jsonb("metadata"),
+  publishedAt: timestamp("published_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    slugIdx: uniqueIndex("knowledge_base_articles_slug_idx").on(table.slug),
+    statusIdx: index("knowledge_base_articles_status_idx").on(table.status),
+    categoryIdx: index("knowledge_base_articles_category_idx").on(table.categoryId),
+    authorIdx: index("knowledge_base_articles_author_idx").on(table.authorId),
+    publicIdx: index("knowledge_base_articles_public_idx").on(table.isPublic),
+    publishedIdx: index("knowledge_base_articles_published_idx").on(table.publishedAt),
+  };
+});
+
+// Live chat sessions
+export const liveChatSessions = pgTable("live_chat_sessions", {
+  id: serial("id").primaryKey(),
+  sessionId: text("session_id").notNull().unique(),
+  customerEmail: text("customer_email"),
+  customerName: text("customer_name"),
+  assignedToUserId: integer("assigned_to_user_id").references(() => users.id),
+  status: text("status").notNull().default("active"), // active, waiting, ended
+  organizationId: integer("organization_id").references(() => organizations.id),
+  metadata: jsonb("metadata"),
+  startedAt: timestamp("started_at").defaultNow().notNull(),
+  endedAt: timestamp("ended_at"),
+  lastActivityAt: timestamp("last_activity_at").defaultNow(),
+}, (table) => {
+  return {
+    sessionIdx: uniqueIndex("live_chat_sessions_session_idx").on(table.sessionId),
+    statusIdx: index("live_chat_sessions_status_idx").on(table.status),
+    assignedIdx: index("live_chat_sessions_assigned_idx").on(table.assignedToUserId),
+    customerIdx: index("live_chat_sessions_customer_idx").on(table.customerEmail),
+    orgIdx: index("live_chat_sessions_org_idx").on(table.organizationId),
+    activityIdx: index("live_chat_sessions_activity_idx").on(table.lastActivityAt),
+  };
+});
+
+// Live chat messages
+export const liveChatMessages = pgTable("live_chat_messages", {
+  id: serial("id").primaryKey(),
+  sessionId: integer("session_id").notNull().references(() => liveChatSessions.id, { onDelete: 'cascade' }),
+  senderId: integer("sender_id").references(() => users.id),
+  senderType: text("sender_type").notNull(), // customer, agent, system
+  content: text("content").notNull(),
+  messageType: text("message_type").notNull().default("text"), // text, image, file, system
+  attachments: jsonb("attachments"),
+  metadata: jsonb("metadata"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    sessionIdx: index("live_chat_messages_session_idx").on(table.sessionId),
+    senderIdx: index("live_chat_messages_sender_idx").on(table.senderId),
+    typeIdx: index("live_chat_messages_type_idx").on(table.messageType),
+    createdIdx: index("live_chat_messages_created_idx").on(table.createdAt),
+  };
+});
+
+// Support metrics and SLA tracking
+export const supportMetrics = pgTable("support_metrics", {
+  id: serial("id").primaryKey(),
+  ticketId: integer("ticket_id").references(() => supportTickets.id, { onDelete: 'cascade' }),
+  sessionId: integer("session_id").references(() => liveChatSessions.id, { onDelete: 'cascade' }),
+  metricType: text("metric_type").notNull(), // first_response_time, resolution_time, satisfaction_score
+  value: decimal("value", { precision: 10, scale: 2 }).notNull(),
+  unit: text("unit").notNull(), // minutes, hours, days, score
+  recordedAt: timestamp("recorded_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    ticketIdx: index("support_metrics_ticket_idx").on(table.ticketId),
+    sessionIdx: index("support_metrics_session_idx").on(table.sessionId),
+    typeIdx: index("support_metrics_type_idx").on(table.metricType),
+    recordedIdx: index("support_metrics_recorded_idx").on(table.recordedAt),
+  };
+});
+
+// ================================================================
 // Zod schemas for the new tables
 // ================================================================
 
@@ -2317,6 +2486,15 @@ export const insertEcommerceProductSchema = createInsertSchema(ecommerceProducts
 export const insertMessagingSequenceSchema = createInsertSchema(messagingSequences);
 export const insertModerationReportSchema = createInsertSchema(moderationReports);
 export const insertPlagiarismReportSchema = createInsertSchema(plagiarismReports);
+
+// Customer Support Center schemas
+export const insertSupportCategorySchema = createInsertSchema(supportCategories);
+export const insertSupportTicketSchema = createInsertSchema(supportTickets);
+export const insertSupportResponseSchema = createInsertSchema(supportResponses);
+export const insertKnowledgeBaseArticleSchema = createInsertSchema(knowledgeBaseArticles);
+export const insertLiveChatSessionSchema = createInsertSchema(liveChatSessions);
+export const insertLiveChatMessageSchema = createInsertSchema(liveChatMessages);
+export const insertSupportMetricSchema = createInsertSchema(supportMetrics);
 
 // ================================================================
 // Type exports for the new tables
@@ -2375,3 +2553,25 @@ export type InsertModerationReport = z.infer<typeof insertModerationReportSchema
 
 export type PlagiarismReport = typeof plagiarismReports.$inferSelect;
 export type InsertPlagiarismReport = z.infer<typeof insertPlagiarismReportSchema>;
+
+// Customer Support Center types
+export type SupportCategory = typeof supportCategories.$inferSelect;
+export type InsertSupportCategory = z.infer<typeof insertSupportCategorySchema>;
+
+export type SupportTicket = typeof supportTickets.$inferSelect;
+export type InsertSupportTicket = z.infer<typeof insertSupportTicketSchema>;
+
+export type SupportResponse = typeof supportResponses.$inferSelect;
+export type InsertSupportResponse = z.infer<typeof insertSupportResponseSchema>;
+
+export type KnowledgeBaseArticle = typeof knowledgeBaseArticles.$inferSelect;
+export type InsertKnowledgeBaseArticle = z.infer<typeof insertKnowledgeBaseArticleSchema>;
+
+export type LiveChatSession = typeof liveChatSessions.$inferSelect;
+export type InsertLiveChatSession = z.infer<typeof insertLiveChatSessionSchema>;
+
+export type LiveChatMessage = typeof liveChatMessages.$inferSelect;
+export type InsertLiveChatMessage = z.infer<typeof insertLiveChatMessageSchema>;
+
+export type SupportMetric = typeof supportMetrics.$inferSelect;
+export type InsertSupportMetric = z.infer<typeof insertSupportMetricSchema>;
