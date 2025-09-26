@@ -332,9 +332,6 @@ const Dashboard = () => {
                     
                     <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🤖 Advanced AI Integration</h4>
                     <p className="text-xs text-blue-700 dark:text-blue-300">Leverage multiple AI models with intelligent routing and optimization. Access Claude AI suggestions, model testing capabilities, and advanced configuration options for superior content quality.</p>
-                    
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">💰 Monetization Ready</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Built-in Amazon Associates integration with smart affiliate link injection and revenue tracking. Transform trending discoveries into monetized content effortlessly.</p>
                   </div>
                 </div>
                 
@@ -428,7 +425,6 @@ const Dashboard = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="perplexity">🤖 Perplexity</SelectItem>
-                <SelectItem value="amazon">🛒 Amazon</SelectItem>
               </SelectContent>
             </Select>
             
