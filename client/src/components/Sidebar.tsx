@@ -73,7 +73,7 @@ const sidebarData: SidebarCategory[] = [
       { name: "TikTok Generator", href: "/generate", icon: Sparkles },
       { name: "Script History", href: "/content-history", icon: History },
       { name: "Account", href: "/account", icon: Users },
-      { name: "About GlowBot", href: "/about", icon: Info },
+      { name: "About ScriptTok", href: "/about", icon: Info },
       { name: "FTC Disclosures", href: "/compliance", icon: Shield },
       { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
       { name: "FAQ", href: "/faq", icon: MessageCircle },
@@ -120,7 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
             <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
               <Sparkles className="h-5 w-5 text-white" />
             </div>
-            <span className="text-xl font-bold text-gray-900">GlowBot</span>
+            <span className="text-xl font-bold text-gray-900">ScriptTok</span>
           </div>
           <button
             onClick={() => setIsCollapsed(true)}

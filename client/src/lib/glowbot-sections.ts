@@ -26,7 +26,7 @@ import {
   Package
 } from 'lucide-react';
 
-export interface GlowBotSection {
+export interface ScriptTokSection {
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -40,15 +40,15 @@ export interface GlowBotSection {
   keyFeatures: string[];
 }
 
-export const glowBotSections: GlowBotSection[] = [
+export const scriptTokSections: ScriptTokSection[] = [
   // Overview
   {
-    name: "About GlowBot",
-    description: "Comprehensive overview of the GlowBot AI platform, its capabilities, and how it transforms content creation.",
+    name: "About ScriptTok",
+    description: "Comprehensive overview of the ScriptTok AI platform, its capabilities, and how it transforms content creation.",
     icon: HelpCircle,
     path: "/about",
     category: "Overview",
-    whatItDoes: "Provides a complete introduction to GlowBot's AI-powered content generation platform, explaining core features, supported platforms, and the comprehensive toolkit available for scaling content production.",
+    whatItDoes: "Provides a complete introduction to ScriptTok's AI-powered content generation platform, explaining core features, supported platforms, and the comprehensive toolkit available for scaling content production.",
     setupRequirements: ["No setup required", "Explore platform capabilities", "Review available tools and features"],
     usageInstructions: [
       "Read through platform overview and key features",
@@ -722,7 +722,7 @@ export const glowBotSections: GlowBotSection[] = [
     icon: Shield,
     path: "/privacy",
     category: "Legal & Compliance",
-    whatItDoes: "Details how user data is collected, stored, processed, and protected within the GlowBot platform, including third-party integrations, data retention policies, and user rights regarding personal information.",
+    whatItDoes: "Details how user data is collected, stored, processed, and protected within the ScriptTok platform, including third-party integrations, data retention policies, and user rights regarding personal information.",
     setupRequirements: ["Review privacy practices", "Understand data handling"],
     usageInstructions: [
       "Read through data collection practices",
@@ -749,7 +749,7 @@ export const glowBotSections: GlowBotSection[] = [
     icon: FileCheck,
     path: "/terms",
     category: "Legal & Compliance",
-    whatItDoes: "Establishes the legal agreement between users and GlowBot, covering service usage, user responsibilities, limitations, intellectual property rights, and dispute resolution procedures.",
+    whatItDoes: "Establishes the legal agreement between users and ScriptTok, covering service usage, user responsibilities, limitations, intellectual property rights, and dispute resolution procedures.",
     setupRequirements: ["Read and understand terms", "Accept agreement to use services"],
     usageInstructions: [
       "Read through service terms and conditions",
@@ -778,7 +778,7 @@ export const glowBotSections: GlowBotSection[] = [
     icon: HelpCircle,
     path: "/how-it-works",
     category: "Support",
-    whatItDoes: "Provides detailed documentation on GlowBot functionality, step-by-step guides, workflow explanations, and best practice recommendations for optimal platform usage.",
+    whatItDoes: "Provides detailed documentation on ScriptTok functionality, step-by-step guides, workflow explanations, and best practice recommendations for optimal platform usage.",
     setupRequirements: ["No setup required"],
     usageInstructions: [
       "Browse feature documentation",
@@ -800,7 +800,7 @@ export const glowBotSections: GlowBotSection[] = [
   },
   {
     name: "FAQ",
-    description: "Frequently asked questions and answers about GlowBot features and usage.",
+    description: "Frequently asked questions and answers about ScriptTok features and usage.",
     icon: MessageCircle,
     path: "/faq",
     category: "Support",
@@ -826,7 +826,7 @@ export const glowBotSections: GlowBotSection[] = [
   },
   {
     name: "Contact",
-    description: "Get support, report issues, and connect with the GlowBot team for assistance.",
+    description: "Get support, report issues, and connect with the ScriptTok team for assistance.",
     icon: MessageCircle,
     path: "/contact",
     category: "Support",
@@ -852,10 +852,10 @@ export const glowBotSections: GlowBotSection[] = [
   }
 ];
 
-export const getGlowBotSectionsByCategory = () => {
-  const categories: { [key: string]: GlowBotSection[] } = {};
+export const getScriptTokSectionsByCategory = () => {
+  const categories: { [key: string]: ScriptTokSection[] } = {};
   
-  glowBotSections.forEach(section => {
+  scriptTokSections.forEach(section => {
     if (!categories[section.category]) {
       categories[section.category] = [];
     }
@@ -865,13 +865,13 @@ export const getGlowBotSectionsByCategory = () => {
   return categories;
 };
 
-export const getGlowBotSectionByPath = (path: string): GlowBotSection | undefined => {
-  return glowBotSections.find(section => section.path === path);
+export const getScriptTokSectionByPath = (path: string): ScriptTokSection | undefined => {
+  return scriptTokSections.find(section => section.path === path);
 };
 
-export const getGlowBotSectionsByKeyword = (keyword: string): GlowBotSection[] => {
+export const getScriptTokSectionsByKeyword = (keyword: string): ScriptTokSection[] => {
   const lowercaseKeyword = keyword.toLowerCase();
-  return glowBotSections.filter(section => 
+  return scriptTokSections.filter(section => 
     section.name.toLowerCase().includes(lowercaseKeyword) ||
     section.description.toLowerCase().includes(lowercaseKeyword) ||
     section.whatItDoes.toLowerCase().includes(lowercaseKeyword) ||

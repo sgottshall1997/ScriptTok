@@ -23,7 +23,7 @@ import {
   ArrowRight,
   Lightbulb
 } from 'lucide-react';
-import { glowBotSections, getGlowBotSectionsByCategory, getGlowBotSectionsByKeyword, getGlowBotSectionByPath } from '@/lib/glowbot-sections';
+import { scriptTokSections, getScriptTokSectionsByCategory, getScriptTokSectionsByKeyword, getScriptTokSectionByPath } from '@/lib/glowbot-sections';
 import AboutThisPage from '@/components/AboutThisPage';
 
 const AboutPage: React.FC = () => {
@@ -49,13 +49,13 @@ const AboutPage: React.FC = () => {
             <Sparkles className="h-8 w-8 text-white" />
           </div>
           <div className="text-left">
-            <h1 className="text-4xl font-bold text-gray-900">GlowBot AI</h1>
+            <h1 className="text-4xl font-bold text-gray-900">ScriptTok AI</h1>
             <p className="text-lg text-gray-600">Comprehensive Content Generation Platform</p>
           </div>
         </div>
         <p className="text-gray-700 max-w-3xl mx-auto text-lg leading-relaxed">
           Empower your content creation with AI-driven tools spanning from product research to cross-platform generation. 
-          GlowBot provides a complete ecosystem for content creators, marketers, and businesses to generate high-quality, 
+          ScriptTok provides a complete ecosystem for content creators, marketers, and businesses to generate high-quality, 
           trend-aware content at scale.
         </p>
       </div>

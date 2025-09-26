@@ -307,10 +307,10 @@ const Dashboard = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                    🚀 GlowBot TikTok Viral Product Generator
+                    🚀 ScriptTok TikTok Viral Product Generator
                   </h3>
                   <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed">
-                    GlowBot is your AI-powered command center for creating viral TikTok content from trending products. This streamlined dashboard gives you everything you need to discover trends, generate engaging content, and track performance - all powered by advanced AI models including Claude, GPT, and Perplexity.
+                    ScriptTok is your AI-powered command center for creating viral TikTok content from trending products. This streamlined dashboard gives you everything you need to discover trends, generate engaging content, and track performance - all powered by advanced AI models including Claude, GPT, and Perplexity.
                   </p>
                 </div>
                 
@@ -349,7 +349,7 @@ const Dashboard = () => {
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-bold text-gray-900">
-          🚀 GlowBot AI: Your Content Command Center
+          🚀 ScriptTok AI: Your Content Command Center
         </h1>
         <p className="text-lg text-muted-foreground">
           Trend-to-traffic in under 10 minutes. Powered by Perplexity + Claude + GPT.

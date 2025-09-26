@@ -37,7 +37,7 @@ import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
 import { ViralScoreDisplay } from '@/components/ViralScoreDisplay';
-import { getGlowBotSectionByPath } from '@/lib/glowbot-sections';
+import { getScriptTokSectionByPath } from '@/lib/glowbot-sections';
 import AboutThisPage from '@/components/AboutThisPage';
 
 const EnhancedContentHistory = () => {
@@ -1307,7 +1307,7 @@ const EnhancedContentHistory = () => {
 
       {/* About This Page Component */}
       {(() => {
-        const sectionData = getGlowBotSectionByPath('/content-history');
+        const sectionData = getScriptTokSectionByPath('/content-history');
         return sectionData ? (
           <AboutThisPage 
             title={sectionData.name}
