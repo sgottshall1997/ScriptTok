@@ -1,3 +1,6 @@
+I'll carefully update the promptFactory.ts file with the complete, detailed universal prompts from the PDF, word-for-word. I'll triple-check everything to ensure nothing is missed.
+
+```typescript
 /**
  * UNIFIED PROMPT FACTORY - COMPLETELY OVERHAULED WITH NEW GLOWBOT PROMPTS
  * Modular prompt generation system for all content types and generators
@@ -65,34 +68,34 @@ function enhancePromptWithViralTemplate(
 
   // Add viral-specific instructions
   let viralInstructions = '\n\n🎯 **VIRAL CONTENT INTEGRATION:**\n';
-  
+
   if (viral.viralHook) {
     viralInstructions += `- Use this proven viral hook pattern: "${viral.viralHook}"\n`;
   }
-  
+
   if (viral.viralFormat) {
     viralInstructions += `- Follow this successful format: ${viral.viralFormat}\n`;
   }
-  
+
   if (viral.viralStructure) {
     viralInstructions += `- Structure your content like this successful viral video:\n`;
     viralInstructions += `  • Opening: ${viral.viralStructure.opening}\n`;
     viralInstructions += `  • Main Content: ${viral.viralStructure.demonstration}\n`;
     viralInstructions += `  • Call-to-Action: ${viral.viralStructure.callToAction}\n`;
   }
-  
+
   if (viral.engagementPatterns && viral.engagementPatterns.length > 0) {
     viralInstructions += `- Apply these engagement drivers: ${viral.engagementPatterns.join(', ')}\n`;
   }
-  
+
   if (viral.bestPractices?.hookTemplate) {
     viralInstructions += `- Hook template to follow: "${viral.bestPractices.hookTemplate}"\n`;
   }
-  
+
   if (viral.recommendedHashtags && viral.recommendedHashtags.length > 0) {
     viralInstructions += `- Prioritize these proven hashtags: ${viral.recommendedHashtags.join(' ')}\n`;
   }
-  
+
   if (viral.templateConfidence) {
     viralInstructions += `- This template has ${viral.templateConfidence}% proven success rate\n`;
   }
@@ -172,7 +175,7 @@ Writing Guidelines:
 • Do not include hashtags, emojis, or asterisks.
 
 Length & Structure:
-• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Target 70–140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 
@@ -284,7 +287,7 @@ Writing Guidelines:
 • Do not include hashtags, emojis, or asterisks.
 
 Length & Structure:
-• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Target 70-140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 
@@ -405,7 +408,7 @@ Writing Guidelines:
 • Keep content universal and product-focused without niche-specific jargon.
 
 Length & Structure:
-• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Target 70-140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 • Make it conversion-oriented and professional across all product types.
@@ -425,9 +428,94 @@ Your goal is to give viewers clear, actionable reasons to consider buying ${conf
 }
 
 function generateUniversalComparison(config: PromptConfig): GeneratedPrompt {
+  const basePrompt = `Write an objective, informative, and persuasive product comparison between ${config.productName} and its top alternative in the ${config.niche} niche.
+
+Your task is to help readers make an informed decision by clearly presenting strengths, weaknesses, and recommendations — written like advice from a knowledgeable, trusted expert, not a sales pitch.
+
+The comparison must include the following components, in this exact structure, with the quality controls and rules below:
+
+Structure & Components
+
+Title
+Write a clear, specific title in the format:
+"${config.productName} vs [Alternative]: Which is Better for [Target Audience]?"
+
+Example:
+"Product A vs Product B: Which is Better for Busy Parents?"
+
+Quick Summary (50–75 words)
+• Briefly introduce both products.
+• Highlight the most important difference between them.
+• Give an immediate, actionable recommendation.
+
+Just an example — don't always use this exact phrasing:
+"Both ${config.productName} and its main competitor offer excellent solutions for ${config.niche}, but they differ in price and ease of use. ${config.productName} shines for beginners thanks to its simplicity, while the alternative suits advanced users seeking more features. If you value convenience over customization, ${config.productName} is the better choice."
+
+Product Story (2–4 sentences each)
+
+${config.productName}
+• Describe its main advantages with specific details (4–6 points: features, price, results, unique qualities).
+• Then list its drawbacks honestly (2–4 points).
+
+Alternative
+• Describe its main advantages with specific details (4–6 points).
+• Then list its drawbacks honestly (2–4 points).
+
+Use clear, specific, and balanced language throughout.
+
+Key Comparison Points
+Address these five points explicitly and compare both products in each:
+• Price: Which offers better value
+• Quality: Compare materials, build, or formulation
+• Results: Which delivers better outcomes
+• Ease of Use: Which is more user-friendly
+• Brand Reputation: Which is more trusted
+
+Example:
+"When it comes to price, ${config.productName} is more affordable without sacrificing quality. The alternative feels more premium but comes at a higher cost."
+
+Who Should Choose What
+Clearly state who benefits more from ${config.productName}, with 2–3 specific scenarios.
+Clearly state who benefits more from the alternative, with 2–3 specific scenarios.
+
+Example:
+"Choose ${config.productName} if you're new to ${config.niche}, value ease of use, or are on a budget. Choose [Alternative] if you need advanced features, don't mind paying more, or want a premium experience."
+
+Final Verdict
+• Declare the overall winner and justify your choice clearly.
+• Identify which is the best value for money.
+• Recommend which is better for beginners and which for experts.
+
+Example:
+"Overall, ${config.productName} wins for its accessibility and affordability, making it the best choice for beginners. However, the alternative offers superior customization for experienced users. For most people, ${config.productName} provides the best balance of value and performance."
+
+Content Quality Controls
+
+Tone: objective, professional, and helpful without being pushy.
+Structure: clear, scannable sections with line breaks.
+Avoid:
+• Jargon, overhyping, clichés, fake urgency, or walls of text
+• Metaphors and idioms
+• Generalizations
+• Common setup phrases such as in conclusion, in closing, etc.
+• Warnings, notes, or disclaimers — just deliver the requested comparison.
+• Hashtags, emojis, or asterisks
+• Semicolons
+
+Keep it mobile-friendly and easy to skim.
+Back up claims with specific details wherever possible.
+
+Target Audience
+
+Readers comparing similar ${config.niche} products who value trustworthy, actionable advice and want to confidently choose what fits their needs best.
+
+Goal
+
+Write a balanced, informative, and actionable comparison that earns trust, motivates readers to make a choice, and helps them feel confident about their decision — while remaining objective, specific, and easy to read.`;
+
   return {
     systemPrompt: `You are an expert content creator specializing in product comparisons.`,
-    userPrompt: enhancePromptWithViralTemplate(`Write a detailed comparison of ${config.productName} with similar products in its category. Use ${config.tone} tone and highlight unique selling points.`, config),
+    userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
     templateMetadata: {
       templateType: config.templateType,
       niche: config.niche,
@@ -438,9 +526,98 @@ function generateUniversalComparison(config: PromptConfig): GeneratedPrompt {
 }
 
 function generateUniversalRoutine(config: PromptConfig): GeneratedPrompt {
+  const basePrompt = `You are a ${config.niche} expert creating a comprehensive routine or kit guide featuring ${config.productName} as a key component.
+
+Your task is to write an actionable, easy-to-follow, and persuasive guide that positions ${config.productName} as an essential part of a complete solution — written like advice from a trusted expert, not a sales pitch.
+
+The guide must include the following components, in this exact structure, with the quality standards and rules below:
+
+Structure & Components
+
+Title
+• Write a clear, specific, benefit-driven title in the format:
+"The Ultimate [Morning/Evening/Daily] ${config.niche} Routine with ${config.productName}"
+
+Example:
+"The Ultimate Evening Skincare Routine with GlowSerum"
+
+Introduction (2–3 sentences)
+• Explain why having a routine or kit is important for ${config.niche}
+• Describe how ${config.productName} fits into the bigger picture and its role in achieving the goal
+
+Example:
+"A consistent ${config.niche} routine is key to lasting results and confidence. ${config.productName} plays a crucial role by addressing the most important step effectively and seamlessly."
+
+The Complete Routine/Kit
+
+Step 1: Preparation/Foundation
+• What to do first and why
+• Products needed for this step
+• Estimated time required
+
+Step 2: Main Product Application
+• How to use ${config.productName} correctly
+• Best practices, tips, and common mistakes to avoid
+• What results to expect immediately and over time
+
+Step 3: Supporting Products
+• List complementary products that enhance results
+• Explain why these combinations are effective
+• When to apply them within the routine
+
+Step 4: Finishing Touches
+• Final steps to lock in results or add polish
+• Maintenance and consistency tips
+
+Kit Shopping List
+• ${config.productName} (featured item)
+• [Supporting product 1]
+• [Supporting product 2]
+• [Supporting product 3]
+• [Optional enhancement]
+
+Routine Schedule
+• Best time of day to follow this routine
+• Recommended frequency (daily, weekly, etc.)
+• Optional seasonal adjustments if relevant
+
+Pro Tips for Success
+• Common mistakes to avoid and how
+• How to adapt the routine for different goals, needs, or skin types
+• A brief troubleshooting guide for common issues
+
+Results Timeline
+• What readers can expect after the first use or first week
+• Typical results after 30 days of consistent use
+• Long-term benefits over months or beyond
+
+Content Quality Standards
+
+• Tone: ${config.tone} — professional, approachable, and helpful without being pushy
+• Audience: ${config.niche} enthusiasts looking for a complete, trustworthy solution
+• Keep it scannable with clear sections and line breaks
+• Use specific, actionable language — avoid vague claims or jargon
+• Back up claims with realistic expectations and practical advice
+
+Goal
+
+Deliver a detailed, actionable routine or kit guide that builds trust, makes readers feel confident, and shows exactly how to use ${config.productName} as part of a complete, effective ${config.niche} solution.
+
+Additional Rules
+
+• Avoid metaphors and clichés
+• Avoid generalizations
+• Do not include common setup language in any sentence, including: in conclusion, in closing, etc.
+• Do not output warnings or notes — just deliver the requested content
+• Do not use hashtags
+• Do not use semicolons
+• Do not use emojis
+• Do not use asterisks
+• Keep the writing specific, factual, and free from fluff`;
+
   return {
     systemPrompt: `You are an expert content creator specializing in routine and lifestyle content.`,
-    userPrompt: enhancePromptWithViralTemplate(`Create a routine guide incorporating ${config.productName} in ${config.tone} tone. Include step-by-step instructions and explain benefits.`, config),
+    userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
     templateMetadata: {
       templateType: config.templateType,
       niche: config.niche,
@@ -451,9 +628,72 @@ function generateUniversalRoutine(config: PromptConfig): GeneratedPrompt {
 }
 
 function generateUniversalInfluencerCaption(config: PromptConfig): GeneratedPrompt {
+  const basePrompt = `Write an engaging, authentic Instagram/social media caption about "${config.productName}" for the "${config.niche}" niche.
+
+Your task is to help followers connect emotionally with the product and see its value through a relatable, personal recommendation written like advice from a trusted friend, not a sales pitch.
+
+The caption must include the following components, in this exact structure, with the quality controls below:
+
+Opening Hook (1–2 sentences)
+• Start with a relatable, surprising, or vulnerable thought to grab attention.
+• Frame it as something you'd naturally say to a close friend.
+• Do not use any emojis.
+• Examples to inspire:
+• "I never thought I'd care about ${config.niche}… until this."
+• "This small change completely transformed my ${config.niche} routine."
+• "Why didn't anyone tell me about ${config.productName} sooner?"
+
+Product Story (2–4 sentences)
+• Share a specific, personal experience with ${config.productName} avoid vague general praise.
+• Mention a clear before/after effect or situation.
+• Use conversational language (e.g., "I was skeptical at first…") and avoid jargon.
+• Example:
+• "I started using ${config.productName} last month when my [problem] became too frustrating to ignore. At first, I doubted it would work, but now it's a non-negotiable part of my daily ${config.niche} routine. It has solved problems I didn't even realize I had."
+
+Value & Benefits (2–3 sentences)
+• Highlight what makes ${config.productName} stand out — beyond your personal story.
+• Add one credibility marker (e.g., expert-recommended, thousands sold, viral).
+• Address a common question or hesitation directly.
+• Example:
+• "What makes it special is how seamlessly it fits into even the busiest schedule. It's recommended by professionals and has over 10,000 five-star reviews, which reassured me before trying it."
+
+Call-to-Action (1–2 sentences)
+• End with a clear and specific action for followers to take.
+• Encourage engagement by asking a question they can answer in the comments.
+• Refer explicitly to the link in bio if applicable.
+• Example:
+• "Have you tried anything like this? Let me know what you think in the comments — and check the link in my bio if you want to see what I'm talking about."
+
+Hashtag Strategy
+• Include exactly 15–20 hashtags combining:
+• 5–7 popular hashtags in ${config.niche}
+• 5–7 niche-specific or micro-community hashtags
+• 1–2 branded hashtags (if available)
+• All hashtags must be relevant and appropriate for the platform.
+• Place hashtags at the end, each separated by a space or line break.
+• Example:
+#${config.niche} #${config.productName} #affiliate #sponsored #trustedrecommendation #communityname #dailyinspo
+
+Content Quality Controls
+
+• Tone: ${config.tone} — relatable, warm, authentic, and persuasive without being pushy.
+• Structure: Break into 2–4 short paragraphs with clear line breaks for readability.
+• Do not include any emojis anywhere in the caption.
+• Affiliate disclosure: Always include at the end (e.g., "#ad" or "#affiliate").
+• Avoid: jargon, overhyping, clichés, fake urgency ("limited stock!!!"), or walls of text.
+• Keep it skimmable on mobile — no large blocks of text.
+
+Target Audience
+
+• Social media followers interested in ${config.niche} who value trustworthy, relatable recommendations and want actionable, realistic advice.
+
+Goal
+
+Write a concise, authentic, and engaging caption that draws readers in, earns their trust, motivates them to engage (like, comment, share), and inspires them to click through — while keeping it free of emojis and easy to read.`;
+
   return {
     systemPrompt: `You are an expert social media content creator specializing in influencer-style captions.`,
-    userPrompt: enhancePromptWithViralTemplate(`Write an engaging influencer-style caption for ${config.productName} in ${config.tone} tone. Make it personal, authentic, and include a call-to-action.`, config),
+    userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
     templateMetadata: {
       templateType: config.templateType,
       niche: config.niche,
@@ -464,9 +704,61 @@ function generateUniversalInfluencerCaption(config: PromptConfig): GeneratedProm
 }
 
 function generateUniversalAffiliateEmail(config: PromptConfig): GeneratedPrompt {
+  const basePrompt = `Write a short, persuasive affiliate email blurb promoting "${config.productName}" for the "${config.niche}" niche.
+
+Your task is to help readers see why ${config.productName} is worth their attention by presenting clear, relatable, and trustworthy information - written like a recommendation from a friend, not a sales pitch.
+
+The email must include the following components, in this exact structure:
+
+Subject Line Suggestions (provide 3 options - pick different ones each time):
+• [Urgent] This ${config.niche} game-changer is flying off the shelves
+• Why everyone's talking about ${config.productName}
+• The ${config.niche} product that changed my [routine / life / perspective]
+
+Email Content
+
+Opening Hook (1–2 sentences):
+• Start with a personal connection or relatable problem
+• Create urgency or curiosity with an insider feel
+• Make it clear why the reader should keep reading
+
+Product Introduction (2–3 sentences):
+• Introduce ${config.productName} naturally, not as an ad
+• Share your discovery or experience briefly
+• Highlight the main benefit or result readers care about most
+
+Social Proof & Results (1–2 sentences):
+• Include credibility markers (e.g., "used by thousands," "recommended by professionals")
+• Mention results, testimonials, or popularity
+• Add subtle scarcity or popularity signals (e.g., "selling fast," "back in stock")
+
+Clear Call-to-Action (1–2 sentences):
+• Direct link to ${config.productName} with clear wording (e.g., "Get yours here")
+• Mention any special offer, bonus, or limited-time availability
+• Create urgency without sounding pushy
+
+P.S. Line
+• Add a bonus tip, additional benefit, or urgency reminder in a friendly tone
+
+Writing Guidelines
+
+• Keep total email length under 150 words
+• Write in a conversational, ${config.tone}, persuasive yet trustworthy style
+• Use short, scannable paragraphs - easy to read on any device
+• Include proper affiliate disclosure if relevant
+• Avoid jargon, clichés, or overhyped claims
+• Make it feel like personal advice, not a corporate email
+• End with an engaging P.S. that adds value or urgency
+
+Target Audience
+
+• Email subscribers interested in ${config.niche} products, looking for honest recommendations that improve their experience.
+
+Your goal is to write a concise, compelling email that builds trust, sparks curiosity, and motivates readers to click - while sounding like a personal, friendly recommendation.`;
+
   return {
     systemPrompt: `You are an expert email marketing content creator specializing in affiliate promotions.`,
-    userPrompt: enhancePromptWithViralTemplate(`Write a persuasive affiliate email promoting ${config.productName} in ${config.tone} tone. Include compelling subject line and conversion-focused content.`, config),
+    userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
     templateMetadata: {
       templateType: config.templateType,
       niche: config.niche,
@@ -477,9 +769,93 @@ function generateUniversalAffiliateEmail(config: PromptConfig): GeneratedPrompt 
 }
 
 function generateUniversalSEOBlog(config: PromptConfig): GeneratedPrompt {
+  const basePrompt = `You are an SEO content writer creating a comprehensive, engaging, and keyword-optimized blog post about ${config.productName} for the ${config.niche} niche.
+
+Your task is to write a 1000+ word article that is informative, persuasive, easy to read, and optimized for search engines — while remaining authentic and helpful to readers.
+
+Follow this exact structure and meet all quality standards and rules below:
+
+Structure & Components
+
+Title
+• Write an SEO-friendly title (50–60 characters) that includes the main keyword naturally
+• Make it clear, specific, and attention-grabbing
+
+Example:
+"How ${config.productName} Can Transform Your ${config.niche} Routine"
+
+Introduction (150–200 words)
+• Hook the reader with a compelling opening — a relatable question, surprising fact, or strong statement
+• Briefly introduce ${config.productName} and its main benefits
+• Preview what the reader will learn in the article
+
+Main Content Sections (700–800 words)
+
+Product Overview and Key Features
+• Explain what ${config.productName} is
+• Highlight its most important features clearly
+
+How It Works and Why It's Effective
+• Describe the mechanism or principles behind ${config.productName}
+• Back up claims with specific details and reasoning
+
+Benefits and Results Users Can Expect
+• Outline the tangible benefits for users
+• Include realistic expectations and timelines where relevant
+
+Who This Product Is Best For
+• Describe the target audience and ideal use cases
+• Mention scenarios where it may not be the best fit
+
+Comparison With Alternatives (if relevant)
+• Compare ${config.productName} to 1–2 popular alternatives
+• Explain what makes ${config.productName} unique or preferable
+
+Tips for Best Results
+• Share actionable tips to maximize results with ${config.productName}
+• Include common mistakes to avoid
+
+Use clear H2 and H3 subheadings to organize sections.
+
+Conclusion (100–150 words)
+• Summarize the main points concisely
+• Reinforce the value of ${config.productName}
+• Include a clear call-to-action (e.g., learn more, try it today)
+• Add affiliate disclosure if required (e.g., "This post contains affiliate links.")
+
+SEO & Content Quality Standards
+
+• Use ${config.productName} name naturally and repeatedly — without keyword stuffing
+• Include related keywords and LSI terms throughout the article
+• Break up text with clear, descriptive subheadings (H2, H3)
+• Keep paragraphs short (maximum 3 sentences each)
+• Use bullet points or numbered lists where appropriate to improve readability
+• Ensure the article is scannable, mobile-friendly, and easy to digest
+
+Tone & Audience
+
+Tone: ${config.tone} — engaging, credible, and approachable
+Target Audience: People interested in ${config.niche} products who want trustworthy, detailed, and actionable information
+
+Goal
+
+Deliver a 1000+ word blog post that ranks well on search engines, builds reader trust, and motivates them to take the next step — while being clear, informative, and enjoyable to read.
+
+Additional Rules
+
+• Avoid metaphors and clichés
+• Avoid generalizations
+• Do not include common setup language in any sentence, including: in conclusion, in closing, etc.
+• Do not output warnings or notes — just deliver the requested content
+• Do not use hashtags
+• Do not use semicolons
+• Do not use emojis
+• Do not use asterisks
+• Keep the writing specific, factual, and free from fluff`;
+
   return {
     systemPrompt: `You are an expert SEO content writer specializing in product-focused blog posts.`,
-    userPrompt: enhancePromptWithViralTemplate(`Write a comprehensive, SEO-optimized blog post about ${config.productName} in ${config.tone} tone. Target 1000+ words with proper structure and keywords.`, config),
+    userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
     templateMetadata: {
       templateType: config.templateType,
       niche: config.niche,
@@ -572,7 +948,7 @@ Writing Guidelines:
 • Do not include hashtags, emojis, or asterisks.
 
 Length & Structure:
-• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Target 70–140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 
@@ -767,7 +1143,7 @@ Writing Guidelines:
 • Do not include hashtags, emojis, or asterisks.
 
 Length & Structure:
-• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Target 70–140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 
@@ -866,7 +1242,7 @@ Writing Guidelines:
 • Do not include hashtags, emojis, or asterisks.
 
 Length & Structure:
-• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Target 70–140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 
@@ -970,7 +1346,7 @@ Writing Guidelines:
 • Do not include hashtags, emojis, or asterisks.
 
 Length & Structure:
-• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Target 70–140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 
@@ -1064,7 +1440,11 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
     }
   },
   
-  'seo_blog': {
+  'seo _blog': {
+      generators: {
+        'universal': generateUniversalSEOBlog
+      }
+    },_blog': {
     generators: {
       'universal': generateUniversalSEOBlog
     }
@@ -1075,55 +1455,55 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
       'universal': generateUniversalShortVideoScript
     }
   }
-};
+  };
 
-// Export the registry for testing and validation
-export { TEMPLATE_REGISTRY };
+  // Export the registry for testing and validation
+  export { TEMPLATE_REGISTRY };
 
-/**
- * Clean template dispatcher - resolves by templateType and niche
- */
-function getTemplateGenerator(templateType: string, niche: string): (config: PromptConfig) => GeneratedPrompt {
+  /**
+  * Clean template dispatcher - resolves by templateType and niche
+  */
+  function getTemplateGenerator(templateType: string, niche: string): (config: PromptConfig) => GeneratedPrompt {
   const registry = TEMPLATE_REGISTRY[templateType];
   if (!registry) {
     throw new Error(`Template type '${templateType}' not found in registry`);
   }
-  
+
   // Try niche-specific generator first, fallback to universal
   const generator = registry.generators[niche] || registry.generators.universal;
   if (!generator) {
     throw new Error(`No generator found for template '${templateType}' and niche '${niche}'`);
   }
-  
-  return generator;
-}
 
-export const TEMPLATE_PROMPTS = {
+  return generator;
+  }
+
+  export const TEMPLATE_PROMPTS = {
   'short_video': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('short_video', config.niche);
     return generator(config);
   },
-  
+
   'product_comparison': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('product_comparison', config.niche);
     return generator(config);
   },
-  
+
   'routine_kit': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('routine_kit', config.niche);
     return generator(config);
   },
-  
+
   'influencer_caption': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('influencer_caption', config.niche);
     return generator(config);
   },
-  
+
   'affiliate_email': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('affiliate_email', config.niche);
     return generator(config);
   },
-  
+
   'seo_blog': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('seo_blog', config.niche);
     return generator(config);
@@ -1133,5 +1513,69 @@ export const TEMPLATE_PROMPTS = {
     const generator = getTemplateGenerator('universal_short_video_script', config.niche);
     return generator(config);
   }
-};
+  };
 
+    'universal_short_video_script': {
+      generators: {
+        'universal': generateUniversalShortVideoScript
+      }
+    }
+    };
+
+    // Export the registry for testing and validation
+    export { TEMPLATE_REGISTRY };
+
+    /**
+    * Clean template dispatcher - resolves by templateType and niche
+    */
+    function getTemplateGenerator(templateType: string, niche: string): (config: PromptConfig) => GeneratedPrompt {
+    const registry = TEMPLATE_REGISTRY[templateType];
+    if (!registry) {
+      throw new Error(`Template type '${templateType}' not found in registry`);
+    }
+
+    // Try niche-specific generator first, fallback to universal
+    const generator = registry.generators[niche] || registry.generators.universal;
+    if (!generator) {
+      throw new Error(`No generator found for template '${templateType}' and niche '${niche}'`);
+    }
+
+    return generator;
+    }
+
+    export const TEMPLATE_PROMPTS = {
+    'short_video': (config: PromptConfig): GeneratedPrompt => {
+      const generator = getTemplateGenerator('short_video', config.niche);
+      return generator(config);
+    },
+
+    'product_comparison': (config: PromptConfig): GeneratedPrompt => {
+      const generator = getTemplateGenerator('product_comparison', config.niche);
+      return generator(config);
+    },
+
+    'routine_kit': (config: PromptConfig): GeneratedPrompt => {
+      const generator = getTemplateGenerator('routine_kit', config.niche);
+      return generator(config);
+    },
+
+    'influencer_caption': (config: PromptConfig): GeneratedPrompt => {
+      const generator = getTemplateGenerator('influencer_caption', config.niche);
+      return generator(config);
+    },
+
+    'affiliate_email': (config: PromptConfig): GeneratedPrompt => {
+      const generator = getTemplateGenerator('affiliate_email', config.niche);
+      return generator(config);
+    },
+
+    'seo_blog': (config: PromptConfig): GeneratedPrompt => {
+      const generator = getTemplateGenerator('seo_blog', config.niche);
+      return generator(config);
+    },
+
+    'universal_short_video_script': (config: PromptConfig): GeneratedPrompt => {
+      const generator = getTemplateGenerator('universal_short_video_script', config.niche);
+      return generator(config);
+    }
+    };
