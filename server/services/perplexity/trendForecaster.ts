@@ -109,6 +109,15 @@ function getFallbackTrends(niche: Niche): TrendForecast {
             { name: "EltaMD UV Clear Sunscreen SPF 46", price: "$39", priceNumeric: 39.00, priceType: "one-time" },
             { name: "Supergoop! Unseen Sunscreen SPF 40", price: "$38", priceNumeric: 38.00, priceType: "one-time" }
           ]
+        },
+        { 
+          name: "Blue light protection", 
+          when: "September 2025", 
+          prepNow: "Back-to-school screen time increase",
+          products: [
+            { name: "Blue Light Blocking Glasses", price: "$25", priceNumeric: 25.00, priceType: "one-time" },
+            { name: "Screen Time Skincare Set", price: "$55", priceNumeric: 55.00, priceType: "estimated" }
+          ]
         }
       ],
       declining: [
@@ -117,6 +126,14 @@ function getFallbackTrends(niche: Niche): TrendForecast {
           reason: "Too time consuming for viewers",
           products: [
             { name: "Korean Skincare Set Bundle", price: "$89", priceNumeric: 89.00, priceType: "estimated" }
+          ]
+        },
+        { 
+          name: "Heavy contouring", 
+          reason: "Natural beauty trend taking over",
+          products: [
+            { name: "Heavy Contour Kit", price: "$45", priceNumeric: 45.00, priceType: "estimated" },
+            { name: "Full Coverage Foundation", price: "$38", priceNumeric: 38.00, priceType: "one-time" }
           ]
         }
       ]
