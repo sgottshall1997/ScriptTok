@@ -1568,20 +1568,6 @@ ${config.hashtags.join(' ')}`;
                       </div>
                     )}
 
-                    {/* Try Again Button for Low Scores */}
-                    {(viralScore?.overall || generatedContent?.viralScore?.overall || 0) < 70 && (
-                      <div className="bg-gray-50 p-4 rounded-lg">
-                        <Button 
-                          onClick={handleGenerateContent}
-                          disabled={isGenerating}
-                          variant="outline"
-                          className="w-full"
-                          data-testid="button-try-again"
-                        >
-                          🔄 Try Again (Aim for 70+)
-                        </Button>
-                      </div>
-                    )}
                   </div>
                 )}
 
