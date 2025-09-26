@@ -147,6 +147,8 @@ export default function TrendingAIPicks() {
   // Fetch all trending products
   const { data: products = [], isLoading } = useQuery<TrendingProduct[]>({
     queryKey: ['/api/trending/products'],
+    staleTime: 0, // Force fresh data
+    gcTime: 0,    // Don't cache
   });
 
   // Fetch user favorites
