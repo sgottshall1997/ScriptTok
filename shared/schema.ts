@@ -119,6 +119,15 @@ export const contentHistory = pgTable("content_history", {
   aiModel: text("ai_model"), // AI model used (ChatGPT, Claude, etc.)
   contentFormat: text("content_format"), // Regular Format, Spartan Format, etc.
   topRatedStyleUsed: boolean("top_rated_style_used").default(false), // Whether smart style was used
+  // User Rating and Comments System
+  userOverallRating: integer("user_overall_rating"), // 1-5 star rating from user
+  userTiktokRating: integer("user_tiktok_rating"), // Platform-specific user rating (1-5)
+  userInstagramRating: integer("user_instagram_rating"), // Platform-specific user rating (1-5)
+  userYoutubeRating: integer("user_youtube_rating"), // Platform-specific user rating (1-5)
+  userComments: text("user_comments"), // User feedback and comments
+  // Viral Score System
+  viralScore: jsonb("viral_score"), // Full viral score breakdown from calculateViralScore
+  viralScoreOverall: integer("viral_score_overall"), // Overall viral score (0-100) for easy querying
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
