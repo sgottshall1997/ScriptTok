@@ -319,7 +319,6 @@ export const generateHiddenFeaturesPrompt = createPromptFactory('tech');
 
 // Legacy template factories (for backward compatibility) - mapped to valid template types
 export const generateReviewPrompt = createPromptFactory('product_comparison');
-export const generateComparisonPrompt = createPromptFactory('product_comparison');
 export const generateCaptionPrompt = createPromptFactory('influencer_caption');
 export const generateProsConsPrompt = createPromptFactory('product_comparison');
 export const generateRoutinePrompt = createPromptFactory('routine_kit');
