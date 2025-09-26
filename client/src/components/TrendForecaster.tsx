@@ -26,6 +26,13 @@ export default function TrendForecaster() {
   
   const { data: forecast, isLoading, isFetching, dataUpdatedAt } = useQuery({
     queryKey: ['/api/trend-forecast', selectedNiche],
+    queryFn: async () => {
+      const response = await fetch(`/api/trend-forecast/${selectedNiche}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch trend forecast');
+      }
+      return response.json();
+    },
     staleTime: Infinity, // Never auto-refresh
     gcTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
     enabled: !!selectedNiche
