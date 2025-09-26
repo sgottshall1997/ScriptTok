@@ -20,7 +20,10 @@ router.get("/:niche", async (req, res) => {
 
     console.log(`🔍 Fetching trend forecast for niche: ${niche}`);
     
-    const trends = await getTrendForecast(niche as Niche);
+    const forecastResult = await getTrendForecast(niche as Niche);
+    
+    // Extract trends and dataSource metadata
+    const { dataSource, ...trends } = forecastResult;
     
     // Save trend forecast results to history
     try {
@@ -42,7 +45,7 @@ router.get("/:niche", async (req, res) => {
               trendDescription: trend.why || trend.reason || trend.opportunity || trend.prepNow || 'No description available',
               // Store products as JSON for forecaster trends (plain objects, not strings)
               productData: trend.products || null,
-              // Additional metadata as JSON (plain object, not string)
+                      // Additional metadata as JSON (plain object, not string)
               rawData: {
                 volume: trend.volume,
                 growth: trend.growth,
@@ -50,7 +53,9 @@ router.get("/:niche", async (req, res) => {
                 why: trend.why,
                 reason: trend.reason,
                 opportunity: trend.opportunity,
-                prepNow: trend.prepNow
+                prepNow: trend.prepNow,
+                // Include dataSource metadata for transparency
+                dataSource: dataSource || null
               }
             };
             
@@ -72,6 +77,7 @@ router.get("/:niche", async (req, res) => {
       data: {
         niche,
         trends,
+        dataSource: dataSource || null,
         timestamp: new Date().toISOString()
       }
     });

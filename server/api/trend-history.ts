@@ -241,6 +241,19 @@ router.get("/forecaster/:niche", async (req, res) => {
       declining: []
     };
 
+    // Extract dataSource metadata from the first entry's rawData
+    let dataSourceMetadata = null;
+    if (latestRunEntries.length > 0 && latestRunEntries[0].rawData) {
+      try {
+        const rawData = typeof latestRunEntries[0].rawData === 'string' 
+          ? JSON.parse(latestRunEntries[0].rawData) 
+          : latestRunEntries[0].rawData;
+        dataSourceMetadata = rawData.dataSource || null;
+      } catch (parseError) {
+        console.warn('Failed to parse rawData for dataSource metadata:', parseError);
+      }
+    }
+
     // Group trends by category from the latest run only
     latestRunEntries.forEach(item => {
       if (item.trendCategory && item.trendName) {
@@ -267,14 +280,15 @@ router.get("/forecaster/:niche", async (req, res) => {
       }
     });
 
-    // Return data in the same format as the original TrendForecaster API
+    // Return data in the same format as the original TrendForecaster API with dataSource metadata
     res.json({
       success: true,
       data: {
         trends: trendsByCategory,
         niche: niche,
         lastUpdated: mostRecentEntry.fetchedAt,
-        source: "database"
+        source: "database",
+        dataSource: dataSourceMetadata
       }
     });
 
