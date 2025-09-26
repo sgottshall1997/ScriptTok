@@ -32,7 +32,7 @@ import { trackEvent } from "@/lib/analytics";
 import AboutThisPage from "@/components/AboutThisPage";
 import { getGlowBotSectionByPath } from "@/lib/glowbot-sections";
 import { isAmazonEnabled } from '@shared/constants';
-import { TrendForecaster } from "@/components/TrendForecaster";
+import TrendForecaster from "@/components/TrendForecaster";
 
 const Dashboard = () => {
   const { toast } = useToast();
