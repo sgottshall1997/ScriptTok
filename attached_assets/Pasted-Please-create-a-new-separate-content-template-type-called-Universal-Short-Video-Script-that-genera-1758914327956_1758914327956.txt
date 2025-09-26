@@ -1,0 +1,59 @@
+Please create a new separate content template type called "Universal Short Video Script" that generates comprehensive video scripts. This should be completely separate from the existing "Short Video" template and appear as its own option in the UI.
+
+TASK REQUIREMENTS:
+
+Add New Template Type to Constants:
+
+Add 'universal_short_video_script' to the TEMPLATE_TYPES array in shared/constants.ts
+Ensure it appears as a separate option alongside existing templates
+Update TemplateSelector Component:
+
+Add the new template to the UI in client/src/components/TemplateSelector.tsx
+Give it appropriate icon (🎬) and description: "Comprehensive universal video scripts with detailed structure"
+Ensure it displays as a separate selectable option from "Short Video"
+Create New Template Generator Function:
+
+In server/services/promptFactory.ts, create a new function generateUniversalShortVideoScript(config: PromptConfig): GeneratedPrompt
+This should generate comprehensive, structured video scripts following the same detailed format as generateFashionShortVideo and generateFitnessShortVideo
+Template Registry Integration:
+
+Add 'universal_short_video_script' as a new entry in the TEMPLATE_REGISTRY with only a universal generator
+Update TEMPLATE_PROMPTS to include the new template type
+Video Script Structure Requirements:
+The new template should include:
+
+Attention-grabbing hook with multiple variations
+Key features and benefits section
+Problem-solving or value proposition
+Target audience identification
+Strong call-to-action with multiple options
+Proper 30-60 second timing (100-170 words)
+Template Content Guidelines:
+
+Follow same writing guidelines as niche-specific templates
+Include multiple hook examples that can be rotated
+Provide multiple CTA variations to avoid repetition
+Use clear, specific language without filler words
+Target 100-170 words for 30-60 second delivery
+Remove any markdown, hashtags, or formatting from output
+Make it Universal and Product-Focused:
+
+Make content generic enough to work for any product category
+Include specific sections for features, benefits, and use cases
+Provide clear structure for video narration
+Ensure smooth delivery for on-camera or voice-over use
+Make it conversion-oriented and professional
+Maintain System Compatibility:
+
+Ensure proper integration with existing viral template enhancement system
+Return proper GeneratedPrompt object with systemPrompt, userPrompt, and templateMetadata
+Keep consistent with existing template architecture
+EXPECTED OUTCOME:
+After implementation, users will see "Universal Short Video Script" as a completely separate template option in the UI. When selected, it will generate comprehensive, structured video scripts that work for any product type across all niches, providing the same professional quality as niche-specific templates but with universal applicability.
+
+IMPORTANT NOTES:
+
+This should be entirely separate from the existing "Short Video" template
+Do not modify the existing short video functionality
+The new template should appear in the template selector UI as its own distinct option
+Use the Fashion and Fitness templates as structural references but make content universally applicable

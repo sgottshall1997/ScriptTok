@@ -7,7 +7,8 @@ export const TEMPLATE_TYPES = [
   "product_comparison", // Product Comparison (comprehensive comparison guides)
   "routine_kit",        // Routine Kit (step-by-step routine guides)
   "seo_blog",           // SEO Blog Post (1000+ words, search optimized)
-  "short_video"         // Short-Form Video Script (TikTok, Reels, YT Shorts)
+  "short_video",        // Short-Form Video Script (TikTok, Reels, YT Shorts)
+  "universal_short_video_script" // Universal Short Video Script (comprehensive video scripts)
 ] as const;
 
 export type TemplateType = typeof TEMPLATE_TYPES[number];

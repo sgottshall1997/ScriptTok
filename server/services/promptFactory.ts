@@ -324,6 +324,106 @@ function generateUniversalShortVideo(config: PromptConfig): GeneratedPrompt {
   };
 }
 
+function generateUniversalShortVideoScript(config: PromptConfig): GeneratedPrompt {
+  const basePrompt = `Write a direct, impactful review script for the product "${config.productName}", designed for a 30–60 second social media video.
+
+Your task is to help viewers understand exactly why this product is worth considering, by presenting clear, specific information about its features, benefits, and value, while avoiding vague claims and filler.
+
+The script must include the following sections, in order:
+
+1. Attention-grabbing hook
+Start with a negative or surprising statement that mentions the product name and stops the viewer from scrolling.
+Choose a different hook each time you write a new script do not reuse the same one repeatedly.
+
+Examples:
+• "Still using alternatives to ${config.productName}? You're missing out."
+• "Most people overlook ${config.productName} — here's why they're wrong."
+• "Stop buying products before you know this about ${config.productName}."
+• "Wasting money on subpar options? Here's why ${config.productName} delivers."
+• "Think ${config.productName} is overhyped? Think again."
+• "Is ${config.productName} worth the investment? Let's find out."
+• "Not using ${config.productName} yet? You're making things harder than necessary."
+
+2. Key features and benefits
+Highlight 2-3 specific features that make this product stand out from alternatives.
+Focus on concrete benefits and measurable improvements.
+
+Examples:
+• "Advanced design that improves performance by X%"
+• "Durable construction built to last X years"
+• "User-friendly interface that saves X minutes daily"
+• "Innovative technology that reduces X by X%"
+• "Premium materials that enhance X significantly"
+• "Compact size that fits X while delivering X performance"
+
+3. Problem-solving and value proposition
+Explain what problem this product solves and why it's better than other solutions.
+Address common pain points and show clear value.
+
+Examples:
+• "Solves the frustrating problem of X that costs you time and money"
+• "Unlike cheaper alternatives, this actually delivers on X promise"
+• "Eliminates the need for multiple products by combining X, X, and X"
+• "Prevents X issue that affects X% of users with similar products"
+• "Provides professional-level results without the professional price tag"
+• "Streamlines X process that typically takes X time down to X"
+
+4. Target audience and use cases
+Identify who this product is perfect for and specific situations where it excels.
+Be specific about user types and scenarios.
+
+Examples:
+• "Perfect for busy professionals who need X without X hassle"
+• "Ideal for beginners looking to achieve X results quickly"
+• "Essential for anyone who regularly X and wants to improve X"
+• "Great for households that X and need reliable X"
+• "Best choice for enthusiasts who demand X quality and X performance"
+• "Suited for people who X daily and want to optimize their X"
+
+5. Motivational call-to-action
+End with a clear, compelling question or challenge addressed directly to the viewer.
+Always choose a different CTA each time do not reuse the same one repeatedly.
+
+Examples:
+• "Ready to upgrade your X game?"
+• "What's stopping you from trying this?"
+• "Think this could solve your X problem?"
+• "When's the last time you invested in quality X?"
+• "What would you do with the X you'd save?"
+• "Your move — are you ready to make the switch?"
+• "How much longer will you settle for less?"
+
+Writing Guidelines:
+• Use clear, simple, specific language that works across all product categories.
+• Write short, declarative sentences that are easy to speak and understand.
+• Use active voice only.
+• Avoid metaphors, clichés, and vague statements.
+• Do not use filler words such as: really, very, literally, actually, certainly, probably, basically, maybe.
+• Do not use generalizations or emotional exaggerations.
+• Do not include disclaimers, notes, or instructions in the output.
+• Do not include hashtags, emojis, or asterisks.
+• Keep content universal and product-focused without niche-specific jargon.
+
+Length & Structure:
+• Target 100–170 words, spoken naturally in 30–60 seconds.
+• Structured clearly for on-camera delivery or voice-over.
+• Smooth transitions between sections, but keep sentences crisp and impactful.
+• Make it conversion-oriented and professional across all product types.
+
+Your goal is to give viewers clear, actionable reasons to consider buying ${config.productName}, help them understand its value and fit for their needs, and end with a direct question that prompts them to take action.`;
+
+  return {
+    systemPrompt: `You are an expert content creator specializing in comprehensive product reviews for social media across all categories.`,
+    userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
+    templateMetadata: {
+      templateType: config.templateType,
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: config.contentFormat || 'regular'
+    }
+  };
+}
+
 function generateUniversalComparison(config: PromptConfig): GeneratedPrompt {
   return {
     systemPrompt: `You are an expert content creator specializing in product comparisons.`,
@@ -968,6 +1068,12 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
     generators: {
       'universal': generateUniversalSEOBlog
     }
+  },
+
+  'universal_short_video_script': {
+    generators: {
+      'universal': generateUniversalShortVideoScript
+    }
   }
 };
 
@@ -1020,6 +1126,11 @@ export const TEMPLATE_PROMPTS = {
   
   'seo_blog': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('seo_blog', config.niche);
+    return generator(config);
+  },
+
+  'universal_short_video_script': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('universal_short_video_script', config.niche);
     return generator(config);
   }
 };

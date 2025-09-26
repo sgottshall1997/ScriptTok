@@ -67,7 +67,8 @@ export function TemplateSelector({
     'product_comparison': 'Detailed comparison guides between products',
     'routine_kit': 'Step-by-step routine guides and tutorials',
     'seo_blog': 'Search-optimized blog posts (1000+ words)',
-    'short_video': 'TikTok, Reels, and YouTube Shorts scripts'
+    'short_video': 'TikTok, Reels, and YouTube Shorts scripts',
+    'universal_short_video_script': 'Comprehensive universal video scripts with detailed structure'
   };
 
   // Icons for each template type (universal templates)
@@ -77,7 +78,8 @@ export function TemplateSelector({
     'product_comparison': '⚖️',
     'routine_kit': '📋',
     'seo_blog': '📝',
-    'short_video': '🎥'
+    'short_video': '🎥',
+    'universal_short_video_script': '🎬'
   };
 
   if (multiSelect) {
