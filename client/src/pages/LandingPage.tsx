@@ -43,18 +43,10 @@ export default function LandingPage() {
   <br />in 60 seconds
 </h1>
 
-<p className="text-lg text-gray-500 dark:text-gray-400 mb-8 max-w-3xl mx-auto">
-  Built for TikTok creators first, with additional generators for blogs, affiliate content, and more.
-</p>
-
-<p className="text-xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-  Stop guessing what works. Discover trending products, analyze competitor patterns, and generate ready-to-post scripts.
-</p>
-
             <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl p-6 mb-8 max-w-4xl mx-auto">
               <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center justify-center gap-2">
                 <Brain className="h-6 w-6 text-purple-600" />
-                Our AI uses Perplexity to research trending products and viral video patterns, then generates scripts optimized for engagement.
+                Built for TikTok creators who want to turn trends into viral scripts fast. ScriptTok finds trending products, analyzes viral video patterns, and generates ready-to-post scripts in seconds. Other formats like blogs and affiliate content are coming next.
               </p>
             </div>
 
