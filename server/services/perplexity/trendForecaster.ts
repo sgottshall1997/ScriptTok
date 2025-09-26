@@ -41,9 +41,13 @@ export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
     const trendData = await getTrendForecastWithRetry(niche);
     
     // Final validation to ensure we return complete data
-    const validation = validateTrendCompleteness(trendData);
+    const validation = validateTrendCompleteness(trendData, niche);
     if (!validation.isComplete) {
-      console.log('🔧 Final supplement required for:', niche, validation);
+      console.log('🔧 Final supplement required for:', niche, {
+        missing: validation.missingCategories,
+        insufficient: validation.insufficientCategories,
+        invalid: validation.invalidTrends.length
+      });
       return supplementTrendData(trendData, niche);
     }
     
@@ -169,6 +173,15 @@ function getFallbackTrends(niche: Niche): TrendForecast {
             { name: "Blue Yeti USB Microphone", price: "$100", priceNumeric: 100.00, priceType: "one-time" },
             { name: "Elgato Key Light", price: "$200", priceNumeric: 200.00, priceType: "one-time" }
           ]
+        },
+        { 
+          name: "Smart wearables", 
+          growth: "+340%", 
+          opportunity: "Health tech integration",
+          products: [
+            { name: "Apple Watch Series 9", price: "$399", priceNumeric: 399.00, priceType: "one-time" },
+            { name: "Fitbit Charge 6", price: "$160", priceNumeric: 160.00, priceType: "one-time" }
+          ]
         }
       ],
       upcoming: [
@@ -180,6 +193,15 @@ function getFallbackTrends(niche: Niche): TrendForecast {
             { name: "Meta Quest 3 VR Headset", price: "$500", priceNumeric: 500.00, priceType: "one-time" },
             { name: "FitXR VR Fitness App", price: "$10/mo", priceNumeric: 10.00, priceType: "subscription" }
           ]
+        },
+        { 
+          name: "5G mobile experiences", 
+          when: "Late 2025", 
+          prepNow: "Network infrastructure expansion",
+          products: [
+            { name: "iPhone 16 Pro 5G", price: "$999", priceNumeric: 999.00, priceType: "one-time" },
+            { name: "Samsung Galaxy S25 5G", price: "$900", priceNumeric: 900.00, priceType: "one-time" }
+          ]
         }
       ],
       declining: [
@@ -188,6 +210,13 @@ function getFallbackTrends(niche: Niche): TrendForecast {
           reason: "Environmental concerns",
           products: [
             { name: "ASIC Bitcoin Miner", price: "$2500", priceNumeric: 2500.00, priceType: "estimated" }
+          ]
+        },
+        { 
+          name: "NFT collectibles", 
+          reason: "Market speculation cooled",
+          products: [
+            { name: "Digital Art NFT Collection", price: "$100", priceNumeric: 100.00, priceType: "estimated" }
           ]
         }
       ]
@@ -202,6 +231,15 @@ function getFallbackTrends(niche: Niche): TrendForecast {
             { name: "Everlane Cashmere Crew Sweater", price: "$100", priceNumeric: 100.00, priceType: "one-time" },
             { name: "Cuyana Structured Leather Tote", price: "$175", priceNumeric: 175.00, priceType: "one-time" }
           ]
+        },
+        { 
+          name: "Oversized blazers", 
+          volume: "92K videos this week", 
+          why: "Power dressing revival",
+          products: [
+            { name: "Zara Oversized Blazer", price: "$89", priceNumeric: 89.00, priceType: "one-time" },
+            { name: "& Other Stories Structured Blazer", price: "$129", priceNumeric: 129.00, priceType: "one-time" }
+          ]
         }
       ],
       rising: [
@@ -212,6 +250,15 @@ function getFallbackTrends(niche: Niche): TrendForecast {
           products: [
             { name: "Patagonia Organic Cotton T-Shirt", price: "$35", priceNumeric: 35.00, priceType: "one-time" },
             { name: "Allbirds Tree Runners", price: "$98", priceNumeric: 98.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Y2K revival", 
+          growth: "+420%", 
+          opportunity: "Nostalgic trend cycle",
+          products: [
+            { name: "Low-Rise Jeans", price: "$65", priceNumeric: 65.00, priceType: "one-time" },
+            { name: "Butterfly Hair Clips Set", price: "$12", priceNumeric: 12.00, priceType: "one-time" }
           ]
         }
       ],
@@ -224,6 +271,15 @@ function getFallbackTrends(niche: Niche): TrendForecast {
             { name: "Linen Button-Up Shirt Lavender", price: "$45", priceNumeric: 45.00, priceType: "one-time" },
             { name: "Soft Pink Midi Dress", price: "$78", priceNumeric: 78.00, priceType: "one-time" }
           ]
+        },
+        { 
+          name: "Summer maxi dresses", 
+          when: "June 2025", 
+          prepNow: "Warm weather prep",
+          products: [
+            { name: "Flowy Floral Maxi Dress", price: "$85", priceNumeric: 85.00, priceType: "one-time" },
+            { name: "Boho Sleeveless Maxi Dress", price: "$72", priceNumeric: 72.00, priceType: "one-time" }
+          ]
         }
       ],
       declining: [
@@ -232,6 +288,13 @@ function getFallbackTrends(niche: Niche): TrendForecast {
           reason: "Sustainability awareness",
           products: [
             { name: "Generic Fast Fashion Bundle", price: "$25", priceNumeric: 25.00, priceType: "estimated" }
+          ]
+        },
+        { 
+          name: "Ultra-tight skinny jeans", 
+          reason: "Comfort-focused fashion shift",
+          products: [
+            { name: "Super Skinny Jeans", price: "$45", priceNumeric: 45.00, priceType: "one-time" }
           ]
         }
       ]
@@ -604,46 +667,169 @@ function getFallbackTrends(niche: Niche): TrendForecast {
   return fallbackData[niche] || fallbackData.beauty;
 }
 
-// Validation function to check if trend data is complete
-function validateTrendCompleteness(trends: TrendForecast): {
+// Enhanced validation function with strict trend structure and content validation
+function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   isComplete: boolean;
   missingCategories: string[];
   insufficientCategories: string[];
+  invalidTrends: string[];
+  details: Record<string, any>;
 } {
   const requiredCategories = ['hot', 'rising', 'upcoming', 'declining'] as const;
   const minTrendsPerCategory = 2;
   
   const missingCategories: string[] = [];
   const insufficientCategories: string[] = [];
+  const invalidTrends: string[] = [];
+  const details: Record<string, any> = {};
 
   for (const category of requiredCategories) {
     const categoryData = trends[category];
+    details[category] = { count: 0, valid: 0, issues: [] };
     
     if (!categoryData || !Array.isArray(categoryData)) {
       missingCategories.push(category);
-    } else if (categoryData.length < minTrendsPerCategory) {
+      details[category].issues.push('Category missing or not an array');
+      continue;
+    }
+
+    details[category].count = categoryData.length;
+
+    // Validate each trend in the category
+    let validTrendsCount = 0;
+    for (let i = 0; i < categoryData.length; i++) {
+      const trend = categoryData[i];
+      const trendValidation = validateSingleTrend(trend, category);
+      
+      if (trendValidation.isValid) {
+        validTrendsCount++;
+      } else {
+        invalidTrends.push(`${category}[${i}]: ${trendValidation.issues.join(', ')}`);
+        details[category].issues.push(`Trend ${i}: ${trendValidation.issues.join(', ')}`);
+      }
+    }
+
+    details[category].valid = validTrendsCount;
+
+    // Check if we have enough valid trends
+    if (validTrendsCount < minTrendsPerCategory) {
       insufficientCategories.push(category);
     }
   }
 
-  const isComplete = missingCategories.length === 0 && insufficientCategories.length === 0;
+  const isComplete = missingCategories.length === 0 && 
+                    insufficientCategories.length === 0 && 
+                    invalidTrends.length === 0;
+
+  // Enhanced logging
+  if (!isComplete) {
+    console.log(`🔍 Validation failed for ${niche || 'unknown niche'}:`, {
+      missing: missingCategories,
+      insufficient: insufficientCategories,
+      invalid: invalidTrends.slice(0, 3), // Show first 3 issues
+      summary: Object.keys(details).map(cat => 
+        `${cat}: ${details[cat].valid}/${details[cat].count} valid`
+      ).join(', ')
+    });
+  } else {
+    console.log(`✅ Validation passed for ${niche || 'unknown niche'}: All categories complete`);
+  }
   
   return {
     isComplete,
     missingCategories,
-    insufficientCategories
+    insufficientCategories,
+    invalidTrends,
+    details
   };
 }
 
-// Smart supplement function that fills missing categories with fallback data
+// Validate individual trend structure and content
+function validateSingleTrend(trend: any, category: string): {
+  isValid: boolean;
+  issues: string[];
+} {
+  const issues: string[] = [];
+
+  // Basic structure validation
+  if (!trend || typeof trend !== 'object') {
+    issues.push('Not a valid object');
+    return { isValid: false, issues };
+  }
+
+  // Required name field
+  if (!trend.name || typeof trend.name !== 'string' || trend.name.trim().length < 3) {
+    issues.push('Invalid or missing name');
+  }
+
+  // Category-specific field validation
+  switch (category) {
+    case 'hot':
+      if (!trend.volume || !trend.why) {
+        issues.push('Missing volume or why fields for hot trend');
+      }
+      break;
+    case 'rising':
+      if (!trend.growth || !trend.opportunity) {
+        issues.push('Missing growth or opportunity fields for rising trend');
+      }
+      break;
+    case 'upcoming':
+      if (!trend.when || !trend.prepNow) {
+        issues.push('Missing when or prepNow fields for upcoming trend');
+      }
+      break;
+    case 'declining':
+      if (!trend.reason) {
+        issues.push('Missing reason field for declining trend');
+      }
+      break;
+  }
+
+  // Products validation
+  if (!trend.products || !Array.isArray(trend.products) || trend.products.length === 0) {
+    issues.push('Missing or empty products array');
+  } else {
+    // Validate each product
+    const validProducts = trend.products.filter((product: any) => 
+      product && 
+      typeof product.name === 'string' && 
+      product.name.length > 3 &&
+      typeof product.price === 'string' &&
+      product.price.includes('$') &&
+      typeof product.priceNumeric === 'number' &&
+      product.priceNumeric > 0
+    );
+
+    if (validProducts.length === 0) {
+      issues.push('No valid products found');
+    } else if (validProducts.length < trend.products.length) {
+      issues.push(`${trend.products.length - validProducts.length} invalid products`);
+    }
+  }
+
+  return {
+    isValid: issues.length === 0,
+    issues
+  };
+}
+
+// Enhanced smart supplement function with detailed validation and logging
 function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast {
   const fallback = getFallbackTrends(niche);
-  const validation = validateTrendCompleteness(trends);
+  const validation = validateTrendCompleteness(trends, niche);
 
   // If data is already complete, return as-is
   if (validation.isComplete) {
+    console.log(`✅ Data already complete for ${niche}, no supplementation needed`);
     return trends;
   }
+
+  console.log(`🔧 Supplementing ${niche} data:`, {
+    missing: validation.missingCategories,
+    insufficient: validation.insufficientCategories,
+    invalidCount: validation.invalidTrends.length
+  });
 
   const supplemented = { ...trends };
 
@@ -651,6 +837,7 @@ function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast
   for (const category of validation.missingCategories) {
     if (fallback[category as keyof TrendForecast]) {
       supplemented[category as keyof TrendForecast] = fallback[category as keyof TrendForecast];
+      console.log(`➕ Added complete ${category} category from fallback (${fallback[category as keyof TrendForecast]?.length} trends)`);
     }
   }
 
@@ -658,17 +845,34 @@ function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast
   for (const category of validation.insufficientCategories) {
     const existing = supplemented[category as keyof TrendForecast] || [];
     const fallbackCategory = fallback[category as keyof TrendForecast] || [];
-    const needed = 2 - existing.length;
+    const needed = Math.max(2 - existing.length, 0);
     
     if (needed > 0 && fallbackCategory.length > 0) {
-      // Add fallback trends that aren't already present (basic name matching)
-      const existingNames = existing.map((trend: any) => trend.name?.toLowerCase());
+      // Add fallback trends that aren't already present (smart name matching)
+      const existingNames = existing.map((trend: any) => trend.name?.toLowerCase().trim());
       const additionalTrends = fallbackCategory
-        .filter((trend: any) => !existingNames.includes(trend.name?.toLowerCase()))
+        .filter((trend: any) => !existingNames.includes(trend.name?.toLowerCase().trim()))
         .slice(0, needed);
       
-      supplemented[category as keyof TrendForecast] = [...existing, ...additionalTrends];
+      if (additionalTrends.length > 0) {
+        supplemented[category as keyof TrendForecast] = [...existing, ...additionalTrends];
+        console.log(`➕ Added ${additionalTrends.length} trends to ${category} category (now ${existing.length + additionalTrends.length} total)`);
+      }
     }
+  }
+
+  // Final validation after supplementation
+  const finalValidation = validateTrendCompleteness(supplemented, niche);
+  if (finalValidation.isComplete) {
+    console.log(`✅ Supplementation successful for ${niche}`);
+  } else {
+    console.warn(`⚠️ Supplementation incomplete for ${niche}:`, {
+      remaining: {
+        missing: finalValidation.missingCategories,
+        insufficient: finalValidation.insufficientCategories,
+        invalid: finalValidation.invalidTrends.length
+      }
+    });
   }
 
   return supplemented;
@@ -688,7 +892,7 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
       
       if (result && typeof result === 'object') {
         // Validate completeness
-        const validation = validateTrendCompleteness(result);
+        const validation = validateTrendCompleteness(result, niche);
         
         if (validation.isComplete) {
           console.log(`✅ Complete trend data received for ${niche}`);
@@ -774,7 +978,7 @@ ALL 4 CATEGORIES ARE MANDATORY. If you cannot fill a category, use relevant plac
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'llama-3.1-sonar-large-128k-online',
+        model: 'sonar-pro',
         messages: [
           {
             role: 'system',
@@ -785,8 +989,14 @@ ALL 4 CATEGORIES ARE MANDATORY. If you cannot fill a category, use relevant plac
             content: enhancedPrompt
           }
         ],
-        temperature: 0.3,
-        max_tokens: 4000
+        temperature: 0.1,
+        max_tokens: 2000,
+        top_p: 0.8,
+        search_domain_filter: ["tiktok.com", "instagram.com", "amazon.com"],
+        return_images: false,
+        return_related_questions: false,
+        search_recency_filter: 'week',
+        stream: false
       })
     });
 
