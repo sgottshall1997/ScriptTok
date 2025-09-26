@@ -83,7 +83,7 @@ export const TEMPLATE_METADATA: Record<TemplateType, TemplateMetadata> = {
   },
   'short_video': {
     id: 'short_video',
-    name: 'Short-Form Video Script',
+    name: 'Short Video (Niche Specific)',
     description: 'Viral-optimized scripts for TikTok, Reels, and YouTube Shorts',
     category: 'Universal',
     icon: '🎬',
@@ -184,6 +184,19 @@ export const TEMPLATE_METADATA: Record<TemplateType, TemplateMetadata> = {
     estimatedLength: '100-170 words',
     useCase: 'Pet product review and promotion',
     example: 'Features + pet benefits + owner convenience + value',
+    usesProduct: true,
+    contentType: 'product-focused'
+  },
+  'universal_short_video_script': {
+    id: 'universal_short_video_script',
+    name: 'Universal Short Video',
+    description: 'Comprehensive video scripts that work across all product categories',
+    category: 'Universal',
+    icon: '🎥',
+    platforms: ['TikTok', 'Instagram', 'YouTube'],
+    estimatedLength: '30-60 seconds',
+    useCase: 'Universal product promotion across all niches',
+    example: 'Hook + benefits + problem-solving + call-to-action',
     usesProduct: true,
     contentType: 'product-focused'
   }
