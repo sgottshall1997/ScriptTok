@@ -1479,6 +1479,55 @@ ${config.hashtags.join(' ')}`;
                   </div>
                 )}
 
+                {/* Platform-Specific Captions */}
+                <div className="space-y-4 border-t pt-6">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-semibold text-lg flex items-center gap-2">
+                      🎯 TikTok Caption
+                    </h4>
+                    <div className="flex items-center gap-2">
+                      <Switch 
+                        checked={showPlatformCaptions}
+                        onCheckedChange={setShowPlatformCaptions}
+                        id="platform-captions"
+                      />
+                      <Label htmlFor="platform-captions" className="text-sm font-medium">Show Captions</Label>
+                    </div>
+                  </div>
+                  
+                  {!showPlatformCaptions && (
+                    <p className="text-sm text-muted-foreground">
+                      Toggle to show TikTok-optimized caption with hashtags and CTAs
+                    </p>
+                  )}
+                  
+                  {showPlatformCaptions && (
+                    <div className="space-y-4">
+                      {/* TikTok Caption */}
+                      <div className="bg-black text-white p-4 rounded-lg border">
+                        <div className="flex items-center justify-between mb-3">
+                          <h5 className="font-semibold flex items-center gap-2 text-white">
+                            📱 TikTok Caption
+                          </h5>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => copyToClipboard(generatePlatformCaption('tiktok'), 'TikTok caption')}
+                            className="text-xs bg-white text-black hover:bg-gray-100"
+                          >
+                            <Copy className="h-3 w-3 mr-1" />
+                            Copy
+                          </Button>
+                        </div>
+                        <div className="bg-white p-4 rounded border border-gray-300 text-sm whitespace-pre-wrap text-gray-800 leading-relaxed max-h-40 overflow-y-auto">
+                          {generatePlatformCaption('tiktok')}
+                        </div>
+                      </div>
+
+                    </div>
+                  )}
+                </div>
+
                 {/* Viral Score Display */}
                 {(viralScore || generatedContent?.viralScore) && (
                   <div className="space-y-4">
@@ -1533,55 +1582,6 @@ ${config.hashtags.join(' ')}`;
                     )}
                   </div>
                 )}
-
-                {/* Platform-Specific Captions */}
-                <div className="space-y-4 border-t pt-6">
-                  <div className="flex items-center justify-between">
-                    <h4 className="font-semibold text-lg flex items-center gap-2">
-                      🎯 TikTok Caption
-                    </h4>
-                    <div className="flex items-center gap-2">
-                      <Switch 
-                        checked={showPlatformCaptions}
-                        onCheckedChange={setShowPlatformCaptions}
-                        id="platform-captions"
-                      />
-                      <Label htmlFor="platform-captions" className="text-sm font-medium">Show Captions</Label>
-                    </div>
-                  </div>
-                  
-                  {!showPlatformCaptions && (
-                    <p className="text-sm text-muted-foreground">
-                      Toggle to show TikTok-optimized caption with hashtags and CTAs
-                    </p>
-                  )}
-                  
-                  {showPlatformCaptions && (
-                    <div className="space-y-4">
-                      {/* TikTok Caption */}
-                      <div className="bg-black text-white p-4 rounded-lg border">
-                        <div className="flex items-center justify-between mb-3">
-                          <h5 className="font-semibold flex items-center gap-2 text-white">
-                            📱 TikTok Caption
-                          </h5>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => copyToClipboard(generatePlatformCaption('tiktok'), 'TikTok caption')}
-                            className="text-xs bg-white text-black hover:bg-gray-100"
-                          >
-                            <Copy className="h-3 w-3 mr-1" />
-                            Copy
-                          </Button>
-                        </div>
-                        <div className="bg-white p-4 rounded border border-gray-300 text-sm whitespace-pre-wrap text-gray-800 leading-relaxed max-h-40 overflow-y-auto">
-                          {generatePlatformCaption('tiktok')}
-                        </div>
-                      </div>
-
-                    </div>
-                  )}
-                </div>
 
               <div className="flex gap-2">
                 <Button 
