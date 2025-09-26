@@ -36,6 +36,29 @@ import {
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
+interface ProductData {
+  name: string;
+  price: string;
+  asin?: string;
+  priceNumeric?: number;
+  priceCurrency?: string;
+  priceType?: 'one-time' | 'subscription' | 'estimated';
+}
+
+interface CategorizedTrend {
+  trend: string;
+  reason: string;
+  volume: string;
+  products: ProductData[];
+}
+
+interface CategorizedTrendingData {
+  hot: CategorizedTrend[];
+  rising: CategorizedTrend[];
+  upcoming: CategorizedTrend[];
+  declining: CategorizedTrend[];
+}
+
 interface TrendingProduct {
   id: number;
   title: string;
@@ -102,7 +125,8 @@ const isWithin24Hours = (dateStr?: string) => {
 };
 
 export default function TrendingAIPicks() {
-  const [selectedTab, setSelectedTab] = useState<'all' | 'favorites'>('all');
+  const [selectedTab, setSelectedTab] = useState<'all' | 'favorites' | 'categorized'>('all');
+  const [selectedCategorizedNiche, setSelectedCategorizedNiche] = useState<string>('beauty');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all');
   const [selectedNiches, setSelectedNiches] = useState<string[]>([]);
@@ -123,6 +147,25 @@ export default function TrendingAIPicks() {
   const { data: favorites = [] } = useQuery<FavoriteProduct[]>({
     queryKey: ['/api/favorites/products'],
     retry: false,
+  });
+
+  // Fetch categorized trending data for selected niche
+  const { data: categorizedData, isLoading: categorizedLoading } = useQuery<{
+    success: boolean;
+    niche: string;
+    data: CategorizedTrendingData;
+    timestamp: string;
+    stats: any;
+  }>({
+    queryKey: ['/api/trending-categorized', selectedCategorizedNiche],
+    queryFn: async () => {
+      const response = await fetch(`/api/trending-categorized/${selectedCategorizedNiche}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch categorized trending data');
+      }
+      return response.json();
+    },
+    enabled: selectedTab === 'categorized',
   });
 
   // Perplexity Fetch Mutation
@@ -620,7 +663,7 @@ export default function TrendingAIPicks() {
           {/* Main Content */}
           <div className="lg:col-span-3">
             <Tabs value={selectedTab} onValueChange={(value) => {
-              setSelectedTab(value as 'all' | 'favorites');
+              setSelectedTab(value as 'all' | 'favorites' | 'categorized');
               window.scrollTo(0, 0);
             }}>
               <div className="flex items-center justify-between mb-6">
@@ -632,6 +675,10 @@ export default function TrendingAIPicks() {
                   <TabsTrigger value="favorites" className="flex items-center gap-2">
                     <Heart className="h-4 w-4" />
                     My Picks ({favoriteProducts.length})
+                  </TabsTrigger>
+                  <TabsTrigger value="categorized" className="flex items-center gap-2">
+                    <Flame className="h-4 w-4" />
+                    Categorized Trends
                   </TabsTrigger>
                 </TabsList>
 
@@ -711,6 +758,194 @@ export default function TrendingAIPicks() {
                   favoriteProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))
+                )}
+              </TabsContent>
+
+              {/* Categorized Trending View */}
+              <TabsContent value="categorized" className="space-y-6">
+                <div className="flex items-center gap-4 mb-6">
+                  <h3 className="text-lg font-semibold">Select Niche:</h3>
+                  <Select value={selectedCategorizedNiche} onValueChange={setSelectedCategorizedNiche}>
+                    <SelectTrigger className="w-48">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="beauty">Beauty</SelectItem>
+                      <SelectItem value="tech">Tech</SelectItem>
+                      <SelectItem value="fashion">Fashion</SelectItem>
+                      <SelectItem value="fitness">Fitness</SelectItem>
+                      <SelectItem value="food">Food</SelectItem>
+                      <SelectItem value="travel">Travel</SelectItem>
+                      <SelectItem value="pets">Pets</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {categorizedLoading ? (
+                  <div className="space-y-4">
+                    <div className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+                    <div className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+                    <div className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+                    <div className="h-32 bg-gray-100 rounded-lg animate-pulse" />
+                  </div>
+                ) : (
+                  <div className="space-y-6">
+                    {/* Hot Trends */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-red-600">
+                          🔥 HOT TRENDS
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {categorizedData?.data?.hot?.map((trend, index) => (
+                          <div key={index} className="mb-6 last:mb-0">
+                            <div className="flex items-start gap-3 mb-3">
+                              <Flame className="h-5 w-5 text-red-500 flex-shrink-0 mt-1" />
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-lg">{trend.trend}</h4>
+                                <p className="text-sm text-gray-600 mb-2">{trend.reason} • {trend.volume}</p>
+                                <div className="space-y-2">
+                                  <p className="font-medium text-sm">Products to promote:</p>
+                                  {trend.products?.map((product, pidx) => (
+                                    <div key={pidx} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                      <div className="flex-1">
+                                        <span className="font-medium">{product.name}</span>
+                                        <span className="ml-2 text-green-600 font-semibold">({product.price})</span>
+                                      </div>
+                                      <Link href={`/unified-generator?product=${encodeURIComponent(product.name)}&niche=${selectedCategorizedNiche}`}>
+                                        <Button variant="outline" size="sm">
+                                          <Zap className="h-4 w-4 mr-1" />
+                                          Generate
+                                        </Button>
+                                      </Link>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    {/* Rising Trends */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-blue-600">
+                          📈 RISING TRENDS
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {categorizedData?.data?.rising?.map((trend, index) => (
+                          <div key={index} className="mb-6 last:mb-0">
+                            <div className="flex items-start gap-3 mb-3">
+                              <TrendingUp className="h-5 w-5 text-blue-500 flex-shrink-0 mt-1" />
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-lg">{trend.trend}</h4>
+                                <p className="text-sm text-gray-600 mb-2">{trend.reason} • {trend.volume}</p>
+                                <div className="space-y-2">
+                                  <p className="font-medium text-sm">Products to promote:</p>
+                                  {trend.products?.map((product, pidx) => (
+                                    <div key={pidx} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                      <div className="flex-1">
+                                        <span className="font-medium">{product.name}</span>
+                                        <span className="ml-2 text-green-600 font-semibold">({product.price})</span>
+                                      </div>
+                                      <Link href={`/unified-generator?product=${encodeURIComponent(product.name)}&niche=${selectedCategorizedNiche}`}>
+                                        <Button variant="outline" size="sm">
+                                          <Zap className="h-4 w-4 mr-1" />
+                                          Generate
+                                        </Button>
+                                      </Link>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    {/* Upcoming Trends */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-purple-600">
+                          🔮 UPCOMING TRENDS
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {categorizedData?.data?.upcoming?.map((trend, index) => (
+                          <div key={index} className="mb-6 last:mb-0">
+                            <div className="flex items-start gap-3 mb-3">
+                              <Eye className="h-5 w-5 text-purple-500 flex-shrink-0 mt-1" />
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-lg">{trend.trend}</h4>
+                                <p className="text-sm text-gray-600 mb-2">{trend.reason} • {trend.volume}</p>
+                                <div className="space-y-2">
+                                  <p className="font-medium text-sm">Products to promote:</p>
+                                  {trend.products?.map((product, pidx) => (
+                                    <div key={pidx} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                      <div className="flex-1">
+                                        <span className="font-medium">{product.name}</span>
+                                        <span className="ml-2 text-green-600 font-semibold">({product.price})</span>
+                                      </div>
+                                      <Link href={`/unified-generator?product=${encodeURIComponent(product.name)}&niche=${selectedCategorizedNiche}`}>
+                                        <Button variant="outline" size="sm">
+                                          <Zap className="h-4 w-4 mr-1" />
+                                          Generate
+                                        </Button>
+                                      </Link>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+
+                    {/* Declining Trends */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="flex items-center gap-2 text-gray-600">
+                          📉 DECLINING TRENDS
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        {categorizedData?.data?.declining?.map((trend, index) => (
+                          <div key={index} className="mb-6 last:mb-0">
+                            <div className="flex items-start gap-3 mb-3">
+                              <TrendingUp className="h-5 w-5 text-gray-500 flex-shrink-0 mt-1 rotate-180" />
+                              <div className="flex-1">
+                                <h4 className="font-semibold text-lg">{trend.trend}</h4>
+                                <p className="text-sm text-gray-600 mb-2">{trend.reason} • {trend.volume}</p>
+                                <div className="space-y-2">
+                                  <p className="font-medium text-sm">Products to promote:</p>
+                                  {trend.products?.map((product, pidx) => (
+                                    <div key={pidx} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
+                                      <div className="flex-1">
+                                        <span className="font-medium">{product.name}</span>
+                                        <span className="ml-2 text-green-600 font-semibold">({product.price})</span>
+                                      </div>
+                                      <Link href={`/unified-generator?product=${encodeURIComponent(product.name)}&niche=${selectedCategorizedNiche}`}>
+                                        <Button variant="outline" size="sm">
+                                          <Zap className="h-4 w-4 mr-1" />
+                                          Generate
+                                        </Button>
+                                      </Link>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </CardContent>
+                    </Card>
+                  </div>
                 )}
               </TabsContent>
             </Tabs>
