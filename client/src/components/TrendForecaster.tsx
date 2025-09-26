@@ -27,11 +27,26 @@ export default function TrendForecaster() {
   const { data: forecast, isLoading, isFetching, dataUpdatedAt } = useQuery({
     queryKey: ['/api/trend-forecast', selectedNiche],
     queryFn: async () => {
+      console.log(`🔮 TrendForecaster: Fetching ${selectedNiche} trends from Perplexity...`);
       const response = await fetch(`/api/trend-forecast/${selectedNiche}`);
       if (!response.ok) {
         throw new Error('Failed to fetch trend forecast');
       }
-      return response.json();
+      const data = await response.json();
+      
+      // Console logging for full visibility
+      console.log(`🎯 TrendForecaster: ${selectedNiche.toUpperCase()} Response:`, data);
+      console.log(`📊 Raw Trends Data for ${selectedNiche}:`, data.data?.trends);
+      
+      if (data.data?.trends) {
+        const trends = data.data.trends;
+        console.log(`🔥 HOT ${selectedNiche} trends (${trends.hot?.length || 0}):`, trends.hot);
+        console.log(`📈 RISING ${selectedNiche} trends (${trends.rising?.length || 0}):`, trends.rising);
+        console.log(`🕐 UPCOMING ${selectedNiche} trends (${trends.upcoming?.length || 0}):`, trends.upcoming);
+        console.log(`📉 DECLINING ${selectedNiche} trends (${trends.declining?.length || 0}):`, trends.declining);
+      }
+      
+      return data;
     },
     staleTime: Infinity, // Never auto-refresh
     gcTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
