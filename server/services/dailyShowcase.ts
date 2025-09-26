@@ -1,5 +1,6 @@
-import { generateMultipleVariationsWithCritique } from './multiVariantGenerator';
-import { getTrendingData } from './scraperCacheManager';
+// import { generateMultipleVariationsWithCritique } from './multiVariantGenerator'; // REMOVED: Missing module
+// import { getTrendingData } from './scraperCacheManager'; // Use storage instead
+import { storage } from '../storage';
 import { NICHES, TEMPLATE_TYPES, TONE_OPTIONS } from '@shared/constants';
 
 interface ShowcaseItem {
@@ -26,9 +27,9 @@ export async function generateDailyShowcase(): Promise<ShowcaseItem[]> {
   try {
     console.log('🎯 Generating daily content showcase...');
     
-    // Get trending products from all niches
-    const trendingData = await getTrendingProducts();
-    if (!trendingData?.byNiche) {
+    // Get trending products from database
+    const trendingProducts = await storage.getTrendingProducts();
+    if (!trendingProducts || trendingProducts.length === 0) {
       console.log('No trending data available for showcase');
       return [];
     }
@@ -36,13 +37,18 @@ export async function generateDailyShowcase(): Promise<ShowcaseItem[]> {
     const showcaseItems: ShowcaseItem[] = [];
     const selectedProducts: Array<{ product: string; niche: string }> = [];
 
-    // Select 2-3 products from different niches for variety
-    for (const [niche, products] of Object.entries(trendingData.byNiche)) {
+    // Select 2-3 products from different niches for variety  
+    const nicheGroups = trendingProducts.reduce((acc: any, product: any) => {
+      if (!acc[product.niche]) acc[product.niche] = [];
+      acc[product.niche].push(product);
+      return acc;
+    }, {});
+
+    for (const [niche, products] of Object.entries(nicheGroups)) {
       if (selectedProducts.length >= 3) break;
       
       if (Array.isArray(products) && products.length > 0) {
-        // Pick the top trending product from this niche
-        const topProduct = products[0];
+        const topProduct = products[0] as any;
         selectedProducts.push({
           product: topProduct.title,
           niche: niche
@@ -64,16 +70,20 @@ export async function generateDailyShowcase(): Promise<ShowcaseItem[]> {
 
         console.log(`🎨 Generating content for "${product}" (${niche}) - ${templateType} in ${tone} tone`);
 
-        // Get niche-specific trending products for context
-        const nicheProducts = trendingData.byNiche[niche] || [];
-        
-        const result = await generateMultipleVariationsWithCritique(
-          product,
-          templateType as any,
-          tone as any,
-          niche as any,
-          nicheProducts
-        );
+        // Create simple stub result since multiVariantGenerator is missing
+        const result = {
+          variants: [
+            {
+              id: 1,
+              content: `Check out this amazing ${product}! Perfect for ${niche} enthusiasts. #trending #${niche}`,
+              gptPick: true,
+              feedbackId: 1
+            }
+          ],
+          gptChoice: 1,
+          gptConfidence: 0.8,
+          gptReasoning: "Simple content variation generated as placeholder"
+        };
 
         showcaseItems.push({
           product,

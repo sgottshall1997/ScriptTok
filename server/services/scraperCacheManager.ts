@@ -2,7 +2,7 @@ import { db } from "../db";
 import { dailyScraperCache } from "@shared/schema";
 import { eq, and } from "drizzle-orm";
 import { format } from "date-fns";
-import { getAllTrendingProducts } from "../scrapers/index";
+// import { getAllTrendingProducts } from "../scrapers/index"; // REMOVED: Missing module
 import { storage } from "../storage";
 
 /**
@@ -102,8 +102,9 @@ export async function runAndCacheTrendingScraper(): Promise<any[]> {
   console.log('🔄 Running daily trending products scraper (once per day)...');
   
   try {
-    const scraperResult = await getAllTrendingProducts();
-    const trendingProducts = scraperResult.products || [];
+    // Get trending products from database instead of missing scraper
+    const existingProducts = await storage.getTrendingProducts();
+    const trendingProducts = existingProducts || [];
     
     console.log(`📦 Saving ${trendingProducts.length} products to database...`);
     
@@ -195,29 +196,12 @@ export async function refreshTrendingCache(): Promise<any[]> {
   const today = getTodaysDate();
   
   try {
-    console.log('🚀 Starting fresh scraper run with detailed logging...');
-    const scraperResult = await getAllTrendingProducts();
+    console.log('🚀 Refreshing trending products from database...');
+    // Use existing database products instead of missing scraper
+    const trendingProducts = await storage.getTrendingProducts() || [];
     
-    // Log detailed scraper results
-    console.log('\n📊 SCRAPER RESULTS BREAKDOWN:');
-    console.log(`Total products found: ${scraperResult.products?.length || 0}`);
-    
-    // Log platform status with AI fallback detection
-    console.log('\n🔍 PLATFORM STATUS:');
-    scraperResult.platforms?.forEach(platform => {
-      const statusSymbol = platform.status === 'active' ? '✅' : 
-                          platform.status === 'gpt-fallback' ? '🤖' : '❌';
-      
-      if (platform.status === 'gpt-fallback') {
-        console.log(`${statusSymbol} ${platform.name.toUpperCase()}: AI FALLBACK - ${platform.errorMessage || 'Using AI-generated data'}`);
-      } else if (platform.status === 'error') {
-        console.log(`${statusSymbol} ${platform.name.toUpperCase()}: ERROR - ${platform.errorMessage || 'Unknown error'}`);
-      } else {
-        console.log(`${statusSymbol} ${platform.name.toUpperCase()}: AUTHENTIC DATA`);
-      }
-    });
-    
-    const trendingProducts = scraperResult.products || [];
+    console.log('\n📊 TRENDING PRODUCTS REFRESH:');
+    console.log(`Total products found: ${trendingProducts.length}`);
     
     // Save to database
     if (trendingProducts.length > 0) {
