@@ -455,7 +455,7 @@ const Dashboard = () => {
       )}
 
       {/* 2️⃣ Trend Forecaster */}
-      <TrendForecaster niche="beauty" />
+      <TrendForecaster />
 
       {/* 3️⃣ AI-Powered Trending Picks (Unified) */}
       <Card data-testid="card-unified-trending-picks">

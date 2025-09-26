@@ -1,4 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+🤖 Replit Agent Prompt - Multi-Niche Trend Forecaster
+Copy and paste this directly into Replit Agent:
+
+TASK: Update TrendForecaster to show trends for ALL 7 niches with tab navigation
+Currently, the TrendForecaster component only shows beauty trends. I need it to show trends for all 7 niches (beauty, tech, fashion, fitness, food, travel, pets) with users able to switch between them using tabs.
+Replace the entire file: client/src/components/TrendForecaster.tsx
+Delete everything in that file and replace with this complete code:
+typescriptimport { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -233,3 +240,24 @@ function TrendCard({
     </div>
   );
 }
+Also update: client/src/pages/Dashboard.tsx
+Find this line (around line 180-190):
+typescript<TrendForecaster niche="beauty" />
+Replace it with:
+typescript<TrendForecaster />
+That's it! The component now:
+
+Shows 7 niche tabs at the top (Beauty, Tech, Fashion, Fitness, Food, Travel, Pets)
+Each tab shows 4 sub-tabs (Hot, Rising, Upcoming, Declining)
+Clicking any trend navigates to /generate with the product and correct niche pre-filled
+Mobile responsive (shows icons only on small screens)
+Auto-refreshes every hour
+Shows loading state when switching niches
+
+Test it by:
+
+Opening Dashboard
+Clicking each niche tab to see different trends
+Clicking "Generate →" button on any trend
+Verifying it navigates to /generate with correct product and niche
+RetryClaude can make mistakes. Please double-check responses.
