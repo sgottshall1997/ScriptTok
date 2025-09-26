@@ -1,6 +1,3 @@
-I'll carefully update the promptFactory.ts file with the complete, detailed universal prompts from the PDF, word-for-word. I'll triple-check everything to ensure nothing is missed.
-
-```typescript
 /**
  * UNIFIED PROMPT FACTORY - COMPLETELY OVERHAULED WITH NEW GLOWBOT PROMPTS
  * Modular prompt generation system for all content types and generators
@@ -1440,11 +1437,7 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
     }
   },
   
-  'seo _blog': {
-      generators: {
-        'universal': generateUniversalSEOBlog
-      }
-    },_blog': {
+  'seo_blog': {
     generators: {
       'universal': generateUniversalSEOBlog
     }
@@ -1513,69 +1506,4 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
     const generator = getTemplateGenerator('universal_short_video_script', config.niche);
     return generator(config);
   }
-  };
-
-    'universal_short_video_script': {
-      generators: {
-        'universal': generateUniversalShortVideoScript
-      }
-    }
-    };
-
-    // Export the registry for testing and validation
-    export { TEMPLATE_REGISTRY };
-
-    /**
-    * Clean template dispatcher - resolves by templateType and niche
-    */
-    function getTemplateGenerator(templateType: string, niche: string): (config: PromptConfig) => GeneratedPrompt {
-    const registry = TEMPLATE_REGISTRY[templateType];
-    if (!registry) {
-      throw new Error(`Template type '${templateType}' not found in registry`);
-    }
-
-    // Try niche-specific generator first, fallback to universal
-    const generator = registry.generators[niche] || registry.generators.universal;
-    if (!generator) {
-      throw new Error(`No generator found for template '${templateType}' and niche '${niche}'`);
-    }
-
-    return generator;
-    }
-
-    export const TEMPLATE_PROMPTS = {
-    'short_video': (config: PromptConfig): GeneratedPrompt => {
-      const generator = getTemplateGenerator('short_video', config.niche);
-      return generator(config);
-    },
-
-    'product_comparison': (config: PromptConfig): GeneratedPrompt => {
-      const generator = getTemplateGenerator('product_comparison', config.niche);
-      return generator(config);
-    },
-
-    'routine_kit': (config: PromptConfig): GeneratedPrompt => {
-      const generator = getTemplateGenerator('routine_kit', config.niche);
-      return generator(config);
-    },
-
-    'influencer_caption': (config: PromptConfig): GeneratedPrompt => {
-      const generator = getTemplateGenerator('influencer_caption', config.niche);
-      return generator(config);
-    },
-
-    'affiliate_email': (config: PromptConfig): GeneratedPrompt => {
-      const generator = getTemplateGenerator('affiliate_email', config.niche);
-      return generator(config);
-    },
-
-    'seo_blog': (config: PromptConfig): GeneratedPrompt => {
-      const generator = getTemplateGenerator('seo_blog', config.niche);
-      return generator(config);
-    },
-
-    'universal_short_video_script': (config: PromptConfig): GeneratedPrompt => {
-      const generator = getTemplateGenerator('universal_short_video_script', config.niche);
-      return generator(config);
-    }
-    };
+};
