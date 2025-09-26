@@ -418,16 +418,6 @@ const Dashboard = () => {
             </p>
           </div>
           <div className="flex items-center gap-3">
-            {/* Data Source Toggle */}
-            <Select value={selectedDataSource} onValueChange={(value: 'perplexity' | 'amazon') => setSelectedDataSource(value)}>
-              <SelectTrigger className="w-[150px]" data-testid="select-data-source">
-                <SelectValue placeholder="Data source" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="perplexity">🤖 Perplexity</SelectItem>
-              </SelectContent>
-            </Select>
-            
             <Select value={selectedNicheFilter} onValueChange={setSelectedNicheFilter}>
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by niche" />
