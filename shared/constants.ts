@@ -154,12 +154,12 @@ export const isAmazonEnabled = (): boolean => {
     // Server-side check
     return process.env.ENABLE_AMAZON_FEATURES === 'true';
   }
-  
+
   if (typeof import.meta !== 'undefined' && import.meta.env) {
     // Client-side check (Vite)
     return import.meta.env.VITE_ENABLE_AMAZON_FEATURES === 'true';
   }
-  
+
   // Default to disabled if environment variables are not available
   return false;
 };
@@ -175,14 +175,14 @@ export const getDisabledFeatureMessage = (featureName: string = 'Amazon Associat
 // Check if Amazon features are enabled with fallback
 export const checkAmazonFeatures = () => {
   const isEnabled = isAmazonEnabled();
-  
+
   if (!isEnabled) {
     return {
       enabled: false,
       ...getDisabledFeatureMessage('Amazon Associates')
     };
   }
-  
+
   return {
     enabled: true,
     message: 'Amazon Associates features are enabled'

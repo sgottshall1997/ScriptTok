@@ -38,7 +38,7 @@ export function TemplateSelector({
   // Handle checkbox toggle for multi-selection
   const handleTemplateToggle = (template: TemplateType, checked: boolean) => {
     if (!onMultiChange) return;
-    
+
     if (checked) {
       onMultiChange([...selectedTemplates, template]);
     } else {
@@ -59,7 +59,7 @@ export function TemplateSelector({
       onMultiChange([]);
     }
   };
-  
+
   // Template descriptions for TikTok viral content
   const descriptions: Record<TemplateType, string> = {
     'affiliate_email': 'Persuasive email content for affiliate marketing campaigns',
@@ -132,7 +132,7 @@ export function TemplateSelector({
             ⚠️ Please select at least one template to continue
           </div>
         )}
-        
+
         <TooltipProvider>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {options.map((template) => {
@@ -180,7 +180,7 @@ export function TemplateSelector({
   return (
     <div className={`space-y-3 ${className}`}>
       <h3 className="text-lg font-medium">Content Template</h3>
-      
+
       <TooltipProvider>
         <RadioGroup 
           value={value} 

@@ -296,6 +296,7 @@ export const generateSEOBlogPrompt = createPromptFactory('seo_blog');
 export const generateShortVideoPrompt = createPromptFactory('short_video');
 export const generateInfluencerCaptionPrompt = createPromptFactory('influencer_caption');
 export const generateProductComparisonPrompt = createPromptFactory('product_comparison');
+export const generateComparisonPrompt = createPromptFactory('product_comparison'); // Legacy alias
 export const generateRoutineKitPrompt = createPromptFactory('routine_kit');
 export const generateBulletPointsPrompt = createPromptFactory('short_video');
 export const generateTrendingExplainerPrompt = createPromptFactory('seo_blog');

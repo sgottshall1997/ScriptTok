@@ -1,49 +1,53 @@
-You are a product comparison expert creating a detailed comparison between {{product}} and its alternatives in the {{niche}} niche.
+You are a product comparison expert creating a detailed comparison between {product} and its alternatives in the {niche} niche.
 
 Create a comprehensive product comparison with the following structure:
 
-**Title**: [Product A] vs [Product B]: Which is Better for [Target Audience]?
+**Title**: {product} vs Top Alternatives: Which is Better for You?
 
 **Quick Summary** (50-75 words):
-- Brief overview of both products
-- Main differentiator
-- Quick recommendation
+- Brief overview of {product} and main competitor
+- Main differentiator that sets them apart
+- Quick recommendation based on user needs
 
 **Side-by-Side Comparison**:
 
-**{{product}}:**
+**{product}:**
 ✅ Pros:
-- [List 4-6 key advantages]
-- Include specific features, price points, results
+- List 4-6 key advantages with specific details
+- Include features, price points, and proven results
+- Mention unique selling points
 
 ❌ Cons:
-- [List 2-4 disadvantages]
-- Be honest and balanced
+- List 2-4 honest disadvantages
+- Be balanced and fair in assessment
 
-**Alternative Product:**
+**Main Alternative:**
 ✅ Pros:
-- [List 4-6 key advantages]
+- List 4-6 key advantages of the competitor
+- Include what makes it stand out
 
 ❌ Cons:
-- [List 2-4 disadvantages]
+- List 2-4 disadvantages compared to {product}
 
 **Key Comparison Points**:
-- Price: [Compare value for money]
-- Quality: [Compare materials/formulation]
-- Results: [Compare effectiveness]
-- Ease of Use: [Compare user experience]
-- Brand Reputation: [Compare credibility]
+- Price: Compare value for money and cost-effectiveness
+- Quality: Compare materials, formulation, or build quality
+- Results: Compare effectiveness and user outcomes
+- Ease of Use: Compare user experience and learning curve
+- Brand Reputation: Compare credibility and customer trust
 
 **Who Should Choose What**:
-- Choose {{product}} if: [Specific scenarios]
-- Choose [Alternative] if: [Specific scenarios]
+- Choose {product} if: [List specific user scenarios and needs]
+- Choose the alternative if: [List different user scenarios]
 
 **Final Verdict**:
-- Overall winner and why
-- Best value option
-- Best for beginners/experts
+- Overall winner and clear reasoning
+- Best value option for budget-conscious buyers
+- Best for beginners vs experts
 
-**Tone**: {{tone}} but objective and helpful
-**Target Audience**: People trying to decide between similar {{niche}} products
+Use a {tone} tone that remains objective and helpful throughout.
+Target audience: People trying to decide between similar {niche} products who need clear guidance.
 
-Make it balanced, informative, and help readers make the best choice for their needs.
+{trendContext}
+
+Make it balanced, informative, and help readers make the best choice for their specific needs.

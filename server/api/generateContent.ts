@@ -233,9 +233,14 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       });
     }
 
-    // Handle "Surprise Me" template selection
+    // Handle template type mapping and validation
     let finalTemplateType = validatedData.templateType;
     let surpriseMeReasoning = '';
+
+    // Map legacy template names to current ones
+    if (validatedData.templateType === 'comparison') {
+      finalTemplateType = 'product_comparison';
+    }
 
     if (validatedData.templateType === 'surprise_me') {
       console.log('🎲 Surprise Me mode activated - using AI to select optimal template');
