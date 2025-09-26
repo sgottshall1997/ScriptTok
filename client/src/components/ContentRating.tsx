@@ -22,10 +22,7 @@ interface Rating {
   contentHistoryId: number;
   userId?: number;
   overallRating?: number;
-  instagramRating?: number;
-  tiktokRating?: number;
-  youtubeRating?: number;
-  twitterRating?: number;
+  captionRating?: number;
   notes?: string;
 }
 
@@ -44,10 +41,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
     contentHistoryId,
     userId,
     overallRating: undefined,
-    instagramRating: undefined,
-    tiktokRating: undefined,
-    youtubeRating: undefined,
-    twitterRating: undefined,
+    captionRating: undefined,
     notes: '',
   });
 
@@ -73,10 +67,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
         contentHistoryId,
         userId,
         overallRating: existingRating.overallRating || undefined,
-        instagramRating: existingRating.instagramRating || undefined,
-        tiktokRating: existingRating.tiktokRating || undefined,
-        youtubeRating: existingRating.youtubeRating || undefined,
-        twitterRating: existingRating.twitterRating || undefined,
+        captionRating: existingRating.captionRating || undefined,
         notes: existingRating.notes || '',
       });
     }
@@ -158,10 +149,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
   const getAverageRating = () => {
     const ratingValues = [
       ratings.overallRating,
-      ratings.instagramRating,
-      ratings.tiktokRating,
-      ratings.youtubeRating,
-      ratings.twitterRating,
+      ratings.captionRating,
     ].filter(r => r !== undefined) as number[];
     
     if (ratingValues.length === 0) return undefined;
@@ -236,113 +224,30 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
           </div>
         </div>
 
-        {/* Platform-specific Ratings */}
-        <div className="space-y-4">
-          <h5 className="font-medium text-gray-700">Platform-Specific Ratings</h5>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-pink-600">
-                <span className="w-4 h-4 text-center">📷</span>
-                Instagram Caption
-              </Label>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => handleRatingChange('instagramRating', star)}
-                    className={`text-xl transition-colors ${
-                      (ratings.instagramRating || 0) >= star 
-                        ? 'text-pink-400 hover:text-pink-500' 
-                        : 'text-gray-300 hover:text-pink-300'
-                    }`}
-                  >
-                    ★
-                  </button>
-                ))}
-                <span className="ml-2 text-xs text-gray-600">
-                  {ratings.instagramRating ? `${ratings.instagramRating}/5` : '0/5'}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-black">
-                <span className="w-4 h-4 text-center">🎵</span>
-                TikTok Caption
-              </Label>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => handleRatingChange('tiktokRating', star)}
-                    className={`text-xl transition-colors ${
-                      (ratings.tiktokRating || 0) >= star 
-                        ? 'text-gray-800 hover:text-black' 
-                        : 'text-gray-300 hover:text-gray-500'
-                    }`}
-                  >
-                    ★
-                  </button>
-                ))}
-                <span className="ml-2 text-xs text-gray-600">
-                  {ratings.tiktokRating ? `${ratings.tiktokRating}/5` : '0/5'}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-red-600">
-                <span className="w-4 h-4 text-center">▶️</span>
-                YouTube Shorts
-              </Label>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => handleRatingChange('youtubeRating', star)}
-                    className={`text-xl transition-colors ${
-                      (ratings.youtubeRating || 0) >= star 
-                        ? 'text-red-400 hover:text-red-500' 
-                        : 'text-gray-300 hover:text-red-300'
-                    }`}
-                  >
-                    ★
-                  </button>
-                ))}
-                <span className="ml-2 text-xs text-gray-600">
-                  {ratings.youtubeRating ? `${ratings.youtubeRating}/5` : '0/5'}
-                </span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label className="flex items-center gap-2 text-blue-500">
-                <span className="w-4 h-4 text-center">𝕏</span>
-                X (Twitter) Post
-              </Label>
-              <div className="flex items-center gap-2">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    type="button"
-                    onClick={() => handleRatingChange('twitterRating', star)}
-                    className={`text-xl transition-colors ${
-                      (ratings.twitterRating || 0) >= star 
-                        ? 'text-blue-400 hover:text-blue-500' 
-                        : 'text-gray-300 hover:text-blue-300'
-                    }`}
-                  >
-                    ★
-                  </button>
-                ))}
-                <span className="ml-2 text-xs text-gray-600">
-                  {ratings.twitterRating ? `${ratings.twitterRating}/5` : '0/5'}
-                </span>
-              </div>
-            </div>
+        {/* Caption Rating */}
+        <div className="space-y-3">
+          <Label className="flex items-center gap-2">
+            <Target className="w-4 h-4" />
+            Caption Quality
+          </Label>
+          <div className="flex items-center gap-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => handleRatingChange('captionRating', star)} // Store 1-5 directly
+                className={`text-2xl transition-colors ${
+                  (ratings.captionRating || 0) >= star 
+                    ? 'text-blue-400 hover:text-blue-500' 
+                    : 'text-gray-300 hover:text-blue-300'
+                }`}
+              >
+                ★
+              </button>
+            ))}
+            <span className="ml-2 text-sm text-gray-600">
+              {ratings.captionRating ? `${ratings.captionRating}/5 stars` : 'Not rated'}
+            </span>
           </div>
         </div>
 
