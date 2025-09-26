@@ -50,7 +50,7 @@ export default function TrendForecaster() {
     },
     staleTime: Infinity, // Never auto-refresh
     gcTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
-    enabled: true, // Allow loading cached data but prevent auto-fetching
+    enabled: false, // Completely disable automatic fetching - only run when manually triggered
     refetchOnMount: false, // Don't fetch when component mounts
     refetchOnWindowFocus: false, // Don't fetch when window gains focus
     refetchOnReconnect: false, // Don't fetch when reconnecting
