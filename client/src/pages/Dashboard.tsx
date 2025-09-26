@@ -335,6 +335,14 @@ const Dashboard = () => {
                       <h5 className="text-xs font-semibold text-pink-800 dark:text-pink-200 mb-1">🔥 AI-Powered Trending Picks</h5>
                       <p className="text-xs text-pink-600 dark:text-pink-300">Automatic discovery of viral products across all niches using live web research. Gets what's trending now, not what was trending last week.</p>
                     </div>
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-blue-100 dark:border-blue-700">
+                      <h5 className="text-xs font-semibold text-blue-800 dark:text-blue-200 mb-1">📱 TikTok Trend Analysis</h5>
+                      <p className="text-xs text-blue-600 dark:text-blue-300">Deep analysis of TikTok's viral patterns, hashtag performance, and content formats to align your content with platform trends.</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-green-100 dark:border-green-700">
+                      <h5 className="text-xs font-semibold text-green-800 dark:text-green-200 mb-1">📊 Viral Competitor Analysis</h5>
+                      <p className="text-xs text-green-600 dark:text-green-300">Research successful competitor videos and viral strategies to understand what makes content go viral in your specific niche.</p>
+                    </div>
                   </div>
                   <div className="mt-3 p-2 bg-white dark:bg-gray-800 rounded border border-purple-100 dark:border-purple-700">
                     <p className="text-xs text-purple-700 dark:text-purple-300">
