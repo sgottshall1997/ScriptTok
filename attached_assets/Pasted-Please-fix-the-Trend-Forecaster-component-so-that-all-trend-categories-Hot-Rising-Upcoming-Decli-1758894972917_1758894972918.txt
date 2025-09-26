@@ -1,0 +1,31 @@
+Please fix the Trend Forecaster component so that all trend categories (Hot, Rising, Upcoming, Declining) are populated with data across all niches. Currently, only some categories are being filled while others remain empty.
+
+Issues to fix:
+
+Incomplete Perplexity responses: The trend forecaster API sometimes returns data for only one category (usually "hot") while leaving other categories empty.
+
+Fallback data not comprehensive: When Perplexity fails to return complete data, the fallback system doesn't provide data for all categories consistently.
+
+Better error handling: Need robust handling when Perplexity returns partial or malformed JSON responses.
+
+Requirements:
+
+Ensure all categories get data: Modify the getTrendForecast function in server/services/perplexity/trendForecaster.ts to guarantee that each category (hot, rising, upcoming, declining) has at least 2-3 trends.
+
+Enhanced fallback system: Update the getFallbackTrends function to provide comprehensive fallback data for all categories across all niches, not just hot trends.
+
+Better JSON parsing: Improve the JSON parsing logic to handle cases where Perplexity returns incomplete JSON or cuts off responses mid-stream.
+
+Validation and retry logic: Add validation to ensure all 4 categories have data before returning results. If any category is missing, either retry the API call or fill missing categories with relevant fallback data.
+
+Improved prompting: Enhance the Perplexity prompt to specifically request data for ALL four categories and make it clearer that incomplete responses are not acceptable.
+
+Database storage consistency: Ensure that when storing trend forecast data, all categories are properly saved and retrieved.
+
+Expected outcome:
+
+All niches should show data in all 4 trend categories (Hot, Rising, Upcoming, Declining)
+Each category should have 2-3 trends with proper product information
+The system should gracefully handle API failures with comprehensive fallback data
+Users should see consistent, complete trend information across all tabs and niches
+Please implement these fixes to ensure the Trend Forecaster always displays complete data across all categories and niches.

@@ -388,18 +388,94 @@ function getFallbackTrends(niche: Niche): TrendForecast {
         { name: "Overtourism spots", reason: "Local backlash awareness" }
       ]
     },
-    pets: {
+    pet: {
       hot: [
-        { name: "Dog training hacks", volume: "156K videos this week", why: "Post-pandemic pet behavior" }
+        { 
+          name: "Dog training hacks", 
+          volume: "156K videos this week", 
+          why: "Post-pandemic pet behavior",
+          products: [
+            { name: "PetSafe Gentle Leader Dog Headcollar", price: "$21", asin: "B00074L4RW", priceNumeric: 21.00, priceType: "one-time" },
+            { name: "KONG Classic Dog Toy", price: "$13", asin: "B0002AR0I8", priceNumeric: 13.00, priceType: "one-time" },
+            { name: "Zak George's Dog Training Revolution Book", price: "$16", asin: "B01N0TDUG8", priceNumeric: 16.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Pet camera monitors", 
+          volume: "89K videos this week", 
+          why: "Remote pet monitoring trend",
+          products: [
+            { name: "Furbo 360° Dog Camera", price: "$210", asin: "B074ZDYRK4", priceNumeric: 210.00, priceType: "one-time" },
+            { name: "Wyze Cam Pet Camera", price: "$36", asin: "B076H3SRXG", priceNumeric: 36.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Interactive pet toys", 
+          volume: "67K videos this week", 
+          why: "Mental stimulation for pets",
+          products: [
+            { name: "Outward Hound Hide-A-Squirrel Puzzle Toy", price: "$15", asin: "B0719Q89XX", priceNumeric: 15.00, priceType: "one-time" },
+            { name: "KONG Wobbler Treat Dispensing Dog Toy", price: "$18", asin: "B003ALMW0M", priceNumeric: 18.00, priceType: "one-time" }
+          ]
+        }
       ],
       rising: [
-        { name: "Pet mental health", growth: "+375%", opportunity: "Wellness for pets trend" }
+        { 
+          name: "Pet mental health", 
+          growth: "+375%", 
+          opportunity: "Wellness for pets trend",
+          products: [
+            { name: "ThunderShirt Classic Dog Anxiety Jacket", price: "$40", asin: "B0028QS5OY", priceNumeric: 40.00, priceType: "one-time" },
+            { name: "Adaptil Calming Collar for Dogs", price: "$25", asin: "B00520EJSA", priceNumeric: 25.00, priceType: "one-time" },
+            { name: "Pet Naturals Calming Treats", price: "$17", asin: "B0017JHQT6", priceNumeric: 17.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Smart pet feeders", 
+          growth: "+290%", 
+          opportunity: "Tech-savvy pet care",
+          products: [
+            { name: "PETLIBRO Automatic Cat Feeder", price: "$80", asin: "B07TSBB58Z", priceNumeric: 80.00, priceType: "one-time" },
+            { name: "SureFeeder Microchip Pet Feeder", price: "$150", asin: "B00O0UIPTY", priceNumeric: 150.00, priceType: "one-time" }
+          ]
+        }
       ],
       upcoming: [
-        { name: "Summer pet care", when: "May 2025", prepNow: "Seasonal pet prep" }
+        { 
+          name: "Summer pet care", 
+          when: "May 2025", 
+          prepNow: "Seasonal pet prep",
+          products: [
+            { name: "Ruffwear Swamp Cooler Cooling Vest", price: "$90", asin: "B004PVMHG0", priceNumeric: 90.00, priceType: "one-time" },
+            { name: "Portable Dog Water Bottle", price: "$12", asin: "B075LMYDBJ", priceNumeric: 12.00, priceType: "one-time" },
+            { name: "Pet Safe Paw Balm", price: "$15", asin: "B01N5B3QN4", priceNumeric: 15.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Outdoor adventure gear", 
+          when: "Spring 2025", 
+          prepNow: "Hiking season preparation",
+          products: [
+            { name: "Ruffwear Front Range Dog Harness", price: "$40", asin: "B00TU8TCXG", priceNumeric: 40.00, priceType: "one-time" },
+            { name: "Kurgo Dog Backpack", price: "$60", asin: "B004AQEHLE", priceNumeric: 60.00, priceType: "one-time" }
+          ]
+        }
       ],
       declining: [
-        { name: "Exotic pet trends", reason: "Responsibility awareness" }
+        { 
+          name: "Exotic pet trends", 
+          reason: "Responsibility awareness",
+          products: [
+            { name: "Exotic Pet Care Guide", price: "$25", priceNumeric: 25.00, priceType: "estimated" }
+          ]
+        },
+        { 
+          name: "Designer pet clothing", 
+          reason: "Practicality over fashion",
+          products: [
+            { name: "Luxury Pet Designer Outfit", price: "$80", priceNumeric: 80.00, priceType: "estimated" }
+          ]
+        }
       ]
     }
   };
