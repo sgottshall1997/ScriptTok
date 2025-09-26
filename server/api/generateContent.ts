@@ -604,8 +604,8 @@ Experience the difference today! #${niche} #trending`;
       viralAnalysis: viralAnalysis // AI analysis of viral score with improvement suggestions
     });
 
-    // Increment API usage counter with template and tone tracking
-    await storage.incrementApiUsage(templateType, tone, niche, 1);
+    // API usage tracking (storage method needs to be implemented)
+    console.log(`📊 Content generated: ${templateType} for ${niche} niche`);
 
     // Webhook notifications removed for streamlined TikTok Viral Product Generator
 

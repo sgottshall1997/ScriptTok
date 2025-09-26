@@ -236,15 +236,9 @@ export async function generateContent(
       fallbackLevel = promptParams.fallbackLevel || 'exact';
     }
 
-    // Get optimized AI model configuration for this specific content generation
-    const modelConfig = getModelConfig({
-      niche: niche as Niche,
-      templateType,
-      tone
-    });
-
-    // Get appropriate token limit based on template type
-    const maxTokens = getTokenLimit(templateType);
+    // Use default configuration values
+    const modelConfig = { temperature: 0.7 };
+    const maxTokens = 2048;
 
     // Log the content generation request for analytics
     console.log(`🚨 CONTENT GENERATOR AI MODEL DEBUG: aiModel parameter = "${aiModel}"`);
