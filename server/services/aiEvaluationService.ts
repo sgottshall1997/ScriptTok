@@ -47,6 +47,21 @@ const EVALUATION_PROMPT = `You are an expert content evaluator for social media 
    - Unique angles, fresh perspectives
    - Avoiding generic or overused formats
 
+**IMPROVEMENT SUGGESTIONS GUIDELINES:**
+Generate 3-5 specific, actionable improvement suggestions. Each suggestion should:
+- Be immediately implementable
+- Address the lowest-scoring metrics first
+- Be specific to the content type and niche
+- Include examples when possible
+- Focus on what would most increase viral potential
+
+Format suggestions as numbered list with clear action items:
+1. [HOOK IMPROVEMENT]: Specific suggestion for opening
+2. [ENGAGEMENT]: Specific suggestion for audience interaction
+3. [CTA ENHANCEMENT]: Specific call-to-action improvement
+4. [VISUAL/FORMAT]: Specific formatting or presentation tip
+5. [NICHE-SPECIFIC]: Suggestion tailored to the product/niche
+
 **RESPONSE FORMAT:**
 Provide your evaluation in the following JSON format:
 {
@@ -59,24 +74,41 @@ Provide your evaluation in the following JSON format:
   "persuasivenessJustification": "<2-3 sentence explanation>",
   "creativityJustification": "<2-3 sentence explanation>",
   "needsRevision": <true/false>,
-  "improvementSuggestions": "<specific suggestions for improvement>"
+  "improvementSuggestions": "<numbered list of 3-5 specific, actionable improvements following the format above>"
 }`;
 
 export async function evaluateContentWithChatGPT(content: string): Promise<EvaluationResult> {
   try {
+    // Extract content context for better suggestions
+    const contentLines = content.split('\n');
+    const niche = contentLines.find(line => line.startsWith('Niche:'))?.replace('Niche:', '').trim() || 'general';
+    const contentType = contentLines.find(line => line.startsWith('Content Type:'))?.replace('Content Type:', '').trim() || 'social media';
+    const platform = contentType.includes('video') ? 'TikTok/Instagram Reels' : 'Instagram/Facebook';
+
+    const enhancedPrompt = EVALUATION_PROMPT.replace('{content}', content) + `
+
+**ADDITIONAL CONTEXT FOR SUGGESTIONS:**
+- Niche: ${niche}
+- Content Type: ${contentType}  
+- Target Platform: ${platform}
+- Focus on ${niche}-specific improvements and ${platform} best practices
+- Consider current trends in ${niche} content
+- Provide platform-specific formatting suggestions for ${platform}`;
+
     const response = await openai.chat.completions.create({
       model: "gpt-4o", // Latest OpenAI model
       messages: [
         {
           role: "system",
-          content: "You are a professional social media content evaluator. Provide detailed, constructive feedback in valid JSON format only."
+          content: "You are a professional social media content evaluator specializing in viral content optimization. Provide detailed, constructive feedback with specific, actionable improvement suggestions in valid JSON format only."
         },
         {
           role: "user",
-          content: EVALUATION_PROMPT.replace('{content}', content)
+          content: enhancedPrompt
         }
       ],
       temperature: 0.3,
+      max_tokens: 1500, // Increased for better suggestions
       response_format: { type: "json_object" }
     });
 
@@ -102,14 +134,30 @@ export async function evaluateContentWithChatGPT(content: string): Promise<Evalu
 
 export async function evaluateContentWithClaude(content: string): Promise<EvaluationResult> {
   try {
+    // Extract content context for better suggestions
+    const contentLines = content.split('\n');
+    const niche = contentLines.find(line => line.startsWith('Niche:'))?.replace('Niche:', '').trim() || 'general';
+    const contentType = contentLines.find(line => line.startsWith('Content Type:'))?.replace('Content Type:', '').trim() || 'social media';
+    const platform = contentType.includes('video') ? 'TikTok/Instagram Reels' : 'Instagram/Facebook';
+
+    const enhancedPrompt = EVALUATION_PROMPT.replace('{content}', content) + `
+
+**ADDITIONAL CONTEXT FOR SUGGESTIONS:**
+- Niche: ${niche}
+- Content Type: ${contentType}  
+- Target Platform: ${platform}
+- Focus on ${niche}-specific improvements and ${platform} best practices
+- Consider current trends in ${niche} content
+- Provide platform-specific formatting suggestions for ${platform}`;
+
     const response = await anthropic.messages.create({
-      model: "claude-sonnet-4-20250514", // Latest Claude model
-      max_tokens: 1000,
+      model: "claude-3-5-sonnet-20241022", // Use latest Claude model
+      max_tokens: 1500, // Increased for better suggestions
       temperature: 0.3,
       messages: [
         {
           role: "user",
-          content: EVALUATION_PROMPT.replace('{content}', content)
+          content: enhancedPrompt
         }
       ]
     });
