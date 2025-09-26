@@ -1,0 +1,33 @@
+Replit Agent Test Prompt:
+
+"I need you to thoroughly test the TrendForecaster component in my TikTok Viral Product Generator app. The TrendForecaster shows real-time TikTok trends powered by Perplexity AI across all 7 niches (beauty, tech, fashion, fitness, food, travel, pets).
+
+What to test:
+
+Initial Load: Navigate to the dashboard and verify the TrendForecaster component loads with all 7 niche tabs visible
+Tab Switching: Click through each niche tab (beauty, tech, fashion, fitness, food, travel, pets) and confirm each loads trend data
+Manual Refresh: Test the "Refresh" button on each niche to verify it fetches new data from Perplexity API
+Trend Categories: For each niche, verify all 4 trend categories display correctly:
+Hot (red styling with flame icon)
+Rising (green styling with trending up icon)
+Upcoming (blue styling with clock icon)
+Avoid/Declining (gray styling with trending down icon)
+Product Generation: Click the "Generate →" buttons on trend items to verify they navigate to the content generation page with the correct product and niche pre-filled
+Data Freshness: Check that the "Last updated" timestamp updates when refreshing
+Loading States: Verify loading spinners appear during data fetching
+Error Handling: Test behavior when API calls fail or return empty data
+Responsive Design: Test on different screen sizes to ensure the 7-tab grid layout works properly
+Cache Behavior: Verify that trends are cached and don't auto-refresh (only manual refresh)
+API Endpoints to verify:
+
+/api/trend-forecast/:niche for each of the 7 niches
+Confirm Perplexity API integration is working
+Check that fallback data appears if API fails
+Expected Behavior:
+
+All 7 niches should load trend data successfully
+Manual refresh should fetch fresh data from Perplexity (uses 1 API call per niche)
+Trend items should be properly categorized and styled
+Navigation to content generation should work seamlessly
+Loading states and error handling should be smooth
+Please test all functionality and report any issues with the TrendForecaster component, API responses, or user experience problems.

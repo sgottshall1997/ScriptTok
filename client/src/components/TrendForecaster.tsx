@@ -15,7 +15,7 @@ const NICHES = [
   { id: 'fitness', name: 'Fitness', icon: '💪' },
   { id: 'food', name: 'Food', icon: '🍽️' },
   { id: 'travel', name: 'Travel', icon: '✈️' },
-  { id: 'pets', name: 'Pets', icon: '🐾' }
+  { id: 'pet', name: 'Pets', icon: '🐾' }
 ];
 
 export default function TrendForecaster() {
