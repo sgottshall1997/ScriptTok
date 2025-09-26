@@ -67,40 +67,14 @@ interface SidebarCategory {
 // SIMPLIFIED NAVIGATION STRUCTURE - TikTok Viral Product Generator
 const sidebarData: SidebarCategory[] = [
   {
-    name: "OVERVIEW",
-    items: [
-      { name: "About GlowBot", href: "/about", icon: Info },
-    ]
-  },
-  {
-    name: "CORE",
+    name: "",
     items: [
       { name: "Dashboard", href: "/", icon: Home },
       { name: "TikTok Generator", href: "/generate", icon: Sparkles },
-    ]
-  },
-  {
-    name: "CONTENT",
-    items: [
       { name: "Script History", href: "/content-history", icon: History },
-      { name: "Affiliate Links", href: "/affiliate-links", icon: ShoppingCart },
-    ]
-  },
-  {
-    name: "AI TOOLS",
-    items: [
-    ]
-  },
-  {
-    name: "SETTINGS",
-    items: [
-      { name: "FTC Disclosures", href: "/compliance", icon: Shield },
       { name: "Account", href: "/account", icon: Users },
-    ]
-  },
-  {
-    name: "SUPPORT",
-    items: [
+      { name: "About GlowBot", href: "/about", icon: Info },
+      { name: "FTC Disclosures", href: "/compliance", icon: Shield },
       { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
       { name: "FAQ", href: "/faq", icon: MessageCircle },
       { name: "Contact", href: "/contact", icon: Mail },
@@ -178,10 +152,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
             }
 
             return (
-              <div key={category.name}>
-                <h3 className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
-                  {category.name}
-                </h3>
+              <div key={category.name || 'main'}>
+                {category.name && (
+                  <h3 className="px-2 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">
+                    {category.name}
+                  </h3>
+                )}
                 <div className="space-y-1">
                   {filteredItems.map((item) => {
                   const Icon = item.icon;
