@@ -57,6 +57,7 @@ export interface IStorage {
   getTrendHistoryByNiche(niche: string, limit?: number, offset?: number): Promise<TrendHistory[]>;
   getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit?: number, offset?: number): Promise<TrendHistory[]>;
   clearTrendHistory(): Promise<void>;
+  clearTrendHistoryBySourceAndNiche(sourceType: string, niche: string): Promise<void>;
 }
 
 // In-memory storage implementation for development
@@ -342,6 +343,12 @@ export class MemStorage implements IStorage {
   async clearTrendHistory(): Promise<void> {
     this.trendHistoryData = [];
   }
+
+  async clearTrendHistoryBySourceAndNiche(sourceType: string, niche: string): Promise<void> {
+    this.trendHistoryData = this.trendHistoryData.filter(
+      h => !(h.sourceType === sourceType && h.niche === niche)
+    );
+  }
 }
 
 // PostgreSQL storage implementation using Drizzle ORM
@@ -497,6 +504,11 @@ export class DatabaseStorage implements IStorage {
 
   async clearTrendHistory(): Promise<void> {
     await db.delete(trendHistory);
+  }
+
+  async clearTrendHistoryBySourceAndNiche(sourceType: string, niche: string): Promise<void> {
+    await db.delete(trendHistory)
+      .where(and(eq(trendHistory.sourceType, sourceType), eq(trendHistory.niche, niche)));
   }
 }
 
