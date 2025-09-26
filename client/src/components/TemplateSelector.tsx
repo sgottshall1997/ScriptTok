@@ -60,38 +60,24 @@ export function TemplateSelector({
     }
   };
 
-  // Template descriptions for TikTok viral content
+  // Template descriptions for TikTok viral content (universal templates work across all niches)
   const descriptions: Record<TemplateType, string> = {
     'affiliate_email': 'Persuasive email content for affiliate marketing campaigns',
     'influencer_caption': 'Authentic social media captions for influencer posts',
     'product_comparison': 'Detailed comparison guides between products',
     'routine_kit': 'Step-by-step routine guides and tutorials',
     'seo_blog': 'Search-optimized blog posts (1000+ words)',
-    'short_video': 'TikTok, Reels, and YouTube Shorts scripts',
-    'skincare': 'Beauty and skincare focused content templates',
-    'fashion': 'Fashion and style content templates',
-    'fitness': 'Fitness and health content templates', 
-    'food': 'Food and cooking content templates',
-    'tech': 'Technology and gadget content templates',
-    'travel': 'Travel and adventure content templates',
-    'pet': 'Pet care and product content templates'
+    'short_video': 'TikTok, Reels, and YouTube Shorts scripts'
   };
 
-  // Icons for each template type
+  // Icons for each template type (universal templates)
   const templateIcons: Record<TemplateType, string> = {
     'affiliate_email': '📧',
     'influencer_caption': '📱',
     'product_comparison': '⚖️',
     'routine_kit': '📋',
     'seo_blog': '📝',
-    'short_video': '🎥',
-    'skincare': '🧴',
-    'fashion': '👗',
-    'fitness': '💪',
-    'food': '🍴',
-    'tech': '📱',
-    'travel': '✈️',
-    'pet': '🐾'
+    'short_video': '🎥'
   };
 
   if (multiSelect) {

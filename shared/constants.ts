@@ -1,54 +1,13 @@
 // Shared constants used across the application
 
-// Universal template types that apply to all niches (from optimized PDF system)
-export const UNIVERSAL_TEMPLATE_TYPES = [
+// Template types that work universally across all niches (clean template-type-first architecture)
+export const TEMPLATE_TYPES = [
   "affiliate_email",    // Affiliate Email Blurb (persuasive email sections)
   "influencer_caption", // Influencer Caption (authentic social media posts)
   "product_comparison", // Product Comparison (comprehensive comparison guides)
   "routine_kit",        // Routine Kit (step-by-step routine guides)
   "seo_blog",           // SEO Blog Post (1000+ words, search optimized)
   "short_video"         // Short-Form Video Script (TikTok, Reels, YT Shorts)
-] as const;
-
-// Niche-specific template types (from optimized PDF system)
-export const BEAUTY_TEMPLATE_TYPES = [
-  "skincare"           // Optimized skincare content template
-] as const;
-
-export const FASHION_TEMPLATE_TYPES = [
-  "fashion"            // Optimized fashion content template
-] as const;
-
-export const FITNESS_TEMPLATE_TYPES = [
-  "fitness"            // Optimized fitness content template
-] as const;
-
-export const FOOD_TEMPLATE_TYPES = [
-  "food"               // Optimized food content template
-] as const;
-
-export const TECH_TEMPLATE_TYPES = [
-  "tech"               // Optimized tech content template
-] as const;
-
-export const TRAVEL_TEMPLATE_TYPES = [
-  "travel"             // Optimized travel content template
-] as const;
-
-export const PET_TEMPLATE_TYPES = [
-  "pet"                // Optimized pet content template
-] as const;
-
-// Combined template types for validation (optimized PDF system)
-export const TEMPLATE_TYPES = [
-  ...UNIVERSAL_TEMPLATE_TYPES,
-  ...BEAUTY_TEMPLATE_TYPES,
-  ...FASHION_TEMPLATE_TYPES,
-  ...FITNESS_TEMPLATE_TYPES,
-  ...FOOD_TEMPLATE_TYPES,
-  ...TECH_TEMPLATE_TYPES,
-  ...TRAVEL_TEMPLATE_TYPES,
-  ...PET_TEMPLATE_TYPES
 ] as const;
 
 export type TemplateType = typeof TEMPLATE_TYPES[number];
