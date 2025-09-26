@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Link } from 'wouter';
+import { TEMPLATE_METADATA, getUniversalTemplates, getTemplatesByCategory } from '../../../shared/templateMetadata';
 import { 
   Video, 
   Sparkles, 
@@ -22,7 +23,8 @@ import {
   HelpCircle,
   Shield,
   Users,
-  BookOpen
+  BookOpen,
+  Code
 } from 'lucide-react';
 
 const AboutPage: React.FC = () => {
@@ -374,6 +376,120 @@ const AboutPage: React.FC = () => {
               <strong>Why niches matter:</strong> Each niche has unique audience preferences, trending formats, 
               and viral patterns. Our AI is trained on successful content from each category to ensure 
               your scripts resonate with the right audience.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Content Template Types */}
+      <Card className="mb-12 border-l-4 border-l-orange-600">
+        <CardHeader>
+          <CardTitle className="flex items-center text-2xl">
+            <Code className="h-6 w-6 mr-3 text-orange-600" />
+            Content Template Types
+          </CardTitle>
+          <CardDescription>
+            Highly sophisticated, proprietary AI prompts engineered for maximum viral potential
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {/* Universal Templates Section */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Sparkles className="h-5 w-5 mr-2 text-orange-600" />
+              Universal Templates
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              {getUniversalTemplates().map((template) => (
+                <div key={template.id} className="p-4 bg-orange-50 rounded-lg border border-orange-200 hover:shadow-md transition-shadow">
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center">
+                      <span className="text-2xl mr-3">{template.icon}</span>
+                      <div>
+                        <h4 className="font-semibold text-gray-900 text-sm">{template.name}</h4>
+                        <Badge variant="outline" className="text-xs mt-1">
+                          {template.estimatedLength}
+                        </Badge>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-sm text-gray-700 mb-3">{template.description}</p>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-xs text-gray-600">
+                      <span className="font-medium mr-2">Platforms:</span>
+                      <div className="flex flex-wrap gap-1">
+                        {template.platforms.map((platform, idx) => (
+                          <Badge key={idx} variant="secondary" className="text-xs">
+                            {platform}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-600">
+                      <span className="font-medium">Use Case:</span> {template.useCase}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Niche-Specific Templates Section */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Target className="h-5 w-5 mr-2 text-orange-600" />
+              Niche-Specific Templates
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              {['Beauty', 'Fashion', 'Fitness', 'Food', 'Tech', 'Travel', 'Pet'].map((category) => {
+                const categoryTemplates = getTemplatesByCategory(category);
+                return categoryTemplates.map((template) => (
+                  <div key={template.id} className="p-4 bg-blue-50 rounded-lg border border-blue-200 hover:shadow-md transition-shadow">
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center">
+                        <span className="text-2xl mr-3">{template.icon}</span>
+                        <div>
+                          <h4 className="font-semibold text-gray-900 text-sm">{template.name}</h4>
+                          <Badge variant="outline" className="text-xs mt-1">
+                            {template.estimatedLength}
+                          </Badge>
+                        </div>
+                      </div>
+                      <Badge variant="secondary" className="text-xs">
+                        {template.category}
+                      </Badge>
+                    </div>
+                    <p className="text-sm text-gray-700 mb-3">{template.description}</p>
+                    <div className="space-y-2">
+                      <div className="flex items-center text-xs text-gray-600">
+                        <span className="font-medium mr-2">Platforms:</span>
+                        <div className="flex flex-wrap gap-1">
+                          {template.platforms.map((platform, idx) => (
+                            <Badge key={idx} variant="secondary" className="text-xs">
+                              {platform}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-600">
+                        <span className="font-medium">Use Case:</span> {template.useCase}
+                      </div>
+                    </div>
+                  </div>
+                ));
+              })}
+            </div>
+          </div>
+
+          {/* Bottom Note */}
+          <div className="p-4 bg-gradient-to-r from-orange-50 to-yellow-50 rounded-lg border border-orange-200">
+            <p className="text-sm text-gray-800 font-medium mb-2">
+              🔧 Advanced Prompt Engineering
+            </p>
+            <p className="text-sm text-gray-700">
+              Each template utilizes advanced prompt engineering techniques developed through extensive testing and optimization. 
+              Our proprietary AI prompts are designed to maximize viral potential, engagement rates, and conversion performance 
+              across all supported platforms and content types.
             </p>
           </div>
         </CardContent>
