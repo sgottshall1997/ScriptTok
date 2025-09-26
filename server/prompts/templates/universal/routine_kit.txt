@@ -55,3 +55,59 @@ Create a detailed routine/kit guide with the following structure:
 **Target Audience**: {{niche}} enthusiasts looking for a complete solution
 
 Make it actionable, easy to follow, and position {{product}} as an essential part of the routine.
+Create a comprehensive routine guide featuring {product} in the {niche} niche with a {tone} tone.
+
+**Structure your routine guide as follows:**
+
+**Introduction**: 
+- Brief overview of why a proper routine matters in {niche}
+- How {product} fits into an effective routine
+- What readers will learn
+
+**Complete Daily Routine**:
+
+**Morning Routine** (5-10 minutes):
+- Step 1: [Preparation step]
+- Step 2: Apply/Use {product} [specific instructions]
+- Step 3: [Follow-up steps]
+- Step 4: [Final steps]
+
+**Evening Routine** (10-15 minutes):
+- Step 1: [Evening preparation]
+- Step 2: {product} application [evening-specific use]
+- Step 3: [Supporting products/steps]
+- Step 4: [Night routine completion]
+
+**Weekly Intensive Routine**:
+- Special {product} applications
+- Deep treatment steps
+- Maintenance and care
+
+**Timing and Frequency**:
+- How often to use {product}
+- Best times for application
+- What to expect week by week
+
+**Troubleshooting Common Issues**:
+- If you miss a day
+- Adjusting the routine for your needs
+- Signs it's working vs. needs adjustment
+
+**Pro Tips for Best Results**:
+- Expert techniques for using {product}
+- How to enhance effectiveness
+- Common mistakes to avoid
+
+**Expected Timeline**:
+- Week 1-2: Initial adjustment period
+- Week 3-4: First noticeable changes
+- Month 2-3: Full results timeline
+
+**Routine Variations**:
+- Quick 3-minute version for busy days
+- Extended version for maximum results
+- Travel-friendly adaptation
+
+Write in a {tone} tone perfect for {niche} enthusiasts. Include context: {trendContext}
+
+Make it practical, easy to follow, and results-focused.

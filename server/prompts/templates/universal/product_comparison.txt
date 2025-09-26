@@ -1,53 +1,44 @@
-You are a product comparison expert creating a detailed comparison between {product} and its alternatives in the {niche} niche.
+Create a comprehensive product comparison featuring {product} in the {niche} niche with a {tone} tone.
 
-Create a comprehensive product comparison with the following structure:
+**Structure your comparison as follows:**
 
-**Title**: {product} vs Top Alternatives: Which is Better for You?
+**Hook**: Start with a compelling question about choosing the right {niche} product
 
-**Quick Summary** (50-75 words):
-- Brief overview of {product} and main competitor
-- Main differentiator that sets them apart
-- Quick recommendation based on user needs
+**Product Overview**: Introduce {product} and why it's worth comparing
 
-**Side-by-Side Comparison**:
+**Main Competitor Analysis**: Compare {product} against 1-2 top alternatives
 
-**{product}:**
-✅ Pros:
-- List 4-6 key advantages with specific details
-- Include features, price points, and proven results
-- Mention unique selling points
+**Feature Comparison**:
+- Key features of {product}
+- How competitors stack up
+- Unique advantages of each
 
-❌ Cons:
-- List 2-4 honest disadvantages
-- Be balanced and fair in assessment
+**Performance Analysis**:
+- Real-world usage scenarios
+- User experience differences
+- Quality and durability comparison
 
-**Main Alternative:**
-✅ Pros:
-- List 4-6 key advantages of the competitor
-- Include what makes it stand out
+**Price and Value**:
+- Cost comparison breakdown
+- Value for money assessment
+- Long-term investment perspective
 
-❌ Cons:
-- List 2-4 disadvantages compared to {product}
+**Pros and Cons**:
+{product} Advantages:
+- List 3-4 key strengths
+- Why users choose this option
 
-**Key Comparison Points**:
-- Price: Compare value for money and cost-effectiveness
-- Quality: Compare materials, formulation, or build quality
-- Results: Compare effectiveness and user outcomes
-- Ease of Use: Compare user experience and learning curve
-- Brand Reputation: Compare credibility and customer trust
+{product} Limitations:
+- List 2-3 honest drawbacks
+- When alternatives might be better
 
-**Who Should Choose What**:
-- Choose {product} if: [List specific user scenarios and needs]
-- Choose the alternative if: [List different user scenarios]
+**Final Recommendation**:
+- Who should choose {product}
+- Who might prefer alternatives
+- Bottom-line verdict
 
-**Final Verdict**:
-- Overall winner and clear reasoning
-- Best value option for budget-conscious buyers
-- Best for beginners vs experts
+**Call to Action**: End with clear next steps for the reader
 
-Use a {tone} tone that remains objective and helpful throughout.
-Target audience: People trying to decide between similar {niche} products who need clear guidance.
+Write in a {tone} tone suitable for {niche} enthusiasts. Include relevant trending context: {trendContext}
 
-{trendContext}
-
-Make it balanced, informative, and help readers make the best choice for their specific needs.
+Keep the comparison balanced, informative, and helpful for decision-making.

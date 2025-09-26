@@ -331,14 +331,34 @@ async function loadUniversalTemplatesFromTextFiles(): Promise<NicheTemplates> {
         
         try {
           const content = await fs.readFile(filePath, 'utf-8');
-          templates[templateType] = content;
+          if (content.trim()) {
+            templates[templateType] = content.trim();
+          } else {
+            console.warn(`Universal template ${file} is empty`);
+          }
         } catch (error) {
           console.warn(`Could not load universal template ${file}:`, error instanceof Error ? error.message : String(error));
         }
       }
     }
     
-    console.log(`✅ Loaded ${Object.keys(templates).length} universal templates`);
+    // Ensure all required universal templates exist
+    const requiredTemplates: TemplateType[] = [
+      'affiliate_email',
+      'influencer_caption', 
+      'product_comparison',
+      'routine_kit',
+      'seo_blog',
+      'short_video'
+    ];
+    
+    for (const templateType of requiredTemplates) {
+      if (!templates[templateType]) {
+        console.warn(`⚠️ Missing required universal template: ${templateType}.txt`);
+      }
+    }
+    
+    console.log(`✅ Loaded ${Object.keys(templates).length} universal templates:`, Object.keys(templates));
     return templates;
   } catch (error) {
     console.warn("⚠️ Could not load universal templates directory:", error.message);

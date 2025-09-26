@@ -33,3 +33,75 @@ Write an engaging, keyword-optimized blog post with the following structure:
 **Target Audience**: People interested in {{niche}} products looking for detailed information
 
 Make it informative, engaging, and optimized for search engines while maintaining readability.
+Write a comprehensive, SEO-optimized blog post about {product} in the {niche} niche with a {tone} tone.
+
+**Article Structure (1000+ words):**
+
+**SEO Title** (50-60 characters):
+Create a search-friendly headline including {product} and main keyword
+
+**Introduction** (150-200 words):
+- Hook readers with compelling opening question or statement
+- Introduce {product} and its relevance to {niche}
+- Preview what the article will cover
+- Include target keyword naturally
+
+**What is {product}?** (200-250 words):
+- Comprehensive overview of the product
+- Key features and specifications
+- What makes it unique in the {niche} market
+- Who manufactures/creates it
+
+**How {product} Works** (250-300 words):
+- Detailed explanation of functionality
+- The science or methodology behind it
+- Why it's effective for {niche} applications
+- Step-by-step usage process
+
+**Key Benefits and Results** (300-350 words):
+- Primary advantages for users
+- Specific outcomes people can expect
+- Timeline for seeing results
+- Real-world applications and use cases
+
+**Who Should Use {product}** (150-200 words):
+- Ideal customer profiles
+- Specific {niche} scenarios where it excels
+- When it might not be the best choice
+- Skill level requirements
+
+**Comparison with Alternatives** (200-250 words):
+- How {product} stacks against competitors
+- Unique selling propositions
+- Price point analysis
+- When to choose {product} vs alternatives
+
+**Tips for Best Results** (150-200 words):
+- Expert recommendations for optimal use
+- Common mistakes to avoid
+- How to maximize effectiveness
+- Maintenance and care instructions
+
+**Conclusion** (100-150 words):
+- Summarize key points about {product}
+- Reinforce main benefits
+- Clear call-to-action
+- Final recommendation
+
+**SEO Requirements**:
+- Use target keywords naturally throughout
+- Include related LSI keywords
+- Optimize for featured snippets with lists/tables
+- Internal linking opportunities
+- Meta description ready content
+
+**Content Quality Standards**:
+- Write in {tone} voice
+- Keep paragraphs scannable (3-4 sentences max)
+- Use subheadings (H2, H3) for organization
+- Include bullet points and numbered lists
+- Provide genuine value and expertise
+
+Context: {trendContext}
+
+Focus on helping readers make informed decisions while ranking well in search engines.

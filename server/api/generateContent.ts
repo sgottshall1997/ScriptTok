@@ -238,8 +238,28 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     let surpriseMeReasoning = '';
 
     // Map legacy template names to current ones
-    if (validatedData.templateType === 'comparison') {
-      finalTemplateType = 'product_comparison';
+    const templateMappings: Record<string, string> = {
+      'comparison': 'product_comparison',
+      'review': 'product_comparison',
+      'caption': 'influencer_caption',
+      'pros_cons': 'product_comparison',
+      'routine': 'routine_kit',
+      'beginner_kit': 'routine_kit',
+      'demo_script': 'short_video',
+      'drugstore_dupe': 'product_comparison',
+      'personal_review': 'product_comparison',
+      'tiktok_breakdown': 'short_video',
+      'dry_skin_list': 'beauty',
+      'top5_under25': 'product_comparison',
+      'original': 'short_video',
+      'video_script': 'short_video',
+      'social_post': 'influencer_caption',
+      'blog_post': 'seo_blog'
+    };
+
+    if (templateMappings[validatedData.templateType]) {
+      finalTemplateType = templateMappings[validatedData.templateType];
+      console.log(`Template mapped: ${validatedData.templateType} → ${finalTemplateType}`);
     }
 
     if (validatedData.templateType === 'surprise_me') {

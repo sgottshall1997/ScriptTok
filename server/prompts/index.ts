@@ -319,6 +319,7 @@ export const generateHiddenFeaturesPrompt = createPromptFactory('tech');
 
 // Legacy template factories (for backward compatibility) - mapped to valid template types
 export const generateReviewPrompt = createPromptFactory('product_comparison');
+export const generateComparisonPrompt = createPromptFactory('product_comparison');
 export const generateCaptionPrompt = createPromptFactory('influencer_caption');
 export const generateProsConsPrompt = createPromptFactory('product_comparison');
 export const generateRoutinePrompt = createPromptFactory('routine_kit');
@@ -328,5 +329,11 @@ export const generateDrugstoreDupePrompt = createPromptFactory('product_comparis
 export const generatePersonalReviewPrompt = createPromptFactory('product_comparison');
 export const generateSurpriseMePrompt = createPromptFactory('short_video');
 export const generateTikTokBreakdownPrompt = createPromptFactory('short_video');
-export const generateDrySkinListPrompt = createPromptFactory('skincare');
+export const generateDrySkinListPrompt = createPromptFactory('beauty');
 export const generateTop5Under25Prompt = createPromptFactory('product_comparison');
+
+// Additional legacy mappings for compatibility
+export const generateOriginalPrompt = createPromptFactory('short_video');
+export const generateVideoScriptPrompt = createPromptFactory('short_video');
+export const generateSocialPostPrompt = createPromptFactory('influencer_caption');
+export const generateBlogPostPrompt = createPromptFactory('seo_blog');
