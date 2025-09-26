@@ -1,0 +1,69 @@
+Landing Page Structure for ScriptTok
+
+1. Above the Fold (Hero Section)
+	•	Clear headline: one sentence that spells out what it does.
+Example: “Turn TikTok trends into viral scripts in 30 seconds.”
+	•	Subheadline: why it matters.
+“Stop guessing what works. Get real-time product trends, competitor insights, and ready-to-post scripts.”
+	•	Primary CTA: big button → “Generate My First Script” or “Try Free Now”.
+
+⸻
+
+2. Social Proof / Authority Cues
+	•	Quick trust builders:
+	•	Logos of platforms you pull trends from (TikTok, Amazon, Perplexity).
+	•	Screenshot GIF of the generator working (show input → output).
+	•	Testimonials or a stat if you have it (“Creators using ScriptTok grew 3x faster”).
+
+⸻
+
+3. Product Demo (Scrolling Section)
+	•	Break the workflow into 3 clear steps with visuals:
+	1.	Pick a trending product (show “Glass Skin Serums” example).
+	2.	Get instant scripts + captions (screenshot with viral score + caption output).
+	3.	Post with confidence (highlight “best time to post” and competitor intel).
+
+Use screenshots like the ones you already have but styled cleanly in mock devices.
+
+⸻
+
+4. Key Features (Bulleted + Icons)
+
+Keep it tight:
+	•	Real-time Trend Forecasting
+	•	Competitor Intelligence
+	•	Auto-Generated Viral Scripts & Captions
+	•	FTC Compliance Built-In
+	•	Viral Score + AI Optimization
+
+⸻
+
+5. Pricing Section
+	•	Start with a free tier (even if super limited) → lowers signup friction.
+	•	Paid plan(s) just below, with one plan highlighted.
+	•	CTA repeated here → “Start Free”.
+
+⸻
+
+6. FAQ
+
+Handle objections directly:
+	•	“How do you find trends?”
+	•	“Is the content original?”
+	•	“Will this work if I’m not an influencer?”
+	•	“Do I need to connect my TikTok account?”
+
+⸻
+
+7. Final CTA (Sticky Footer / Bottom of Page)
+
+Reinforce urgency:
+“TikTok moves fast. Don’t get left behind—generate your first viral script now.”
+Button: “Try ScriptTok Free.”
+
+⸻
+
+What’s Non-Negotiable
+	•	Live product demo/GIF — people don’t believe text, they believe visuals.
+	•	One primary CTA — don’t scatter with “learn more” or “contact us.”
+	•	Proof of value — screenshots of your viral score, captions, competitor insights.

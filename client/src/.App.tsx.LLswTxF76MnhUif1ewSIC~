@@ -49,8 +49,8 @@ function Router() {
 function MainAppRouter() {
   return (
     <Switch>
-      {/* Dashboard as the landing page - trending products feed */}
-      <Route path="/" component={Dashboard} />
+      {/* Landing page as the entry point */}
+      <Route path="/" component={LandingPage} />
       <Route path="/dashboard" component={Dashboard} />
       
       {/* Core content generation functionality */}
