@@ -106,15 +106,39 @@ For each trend, provide 2-3 specific, real products available on Amazon with acc
     const data = await response.json();
     const content = data.choices[0]?.message?.content || "{}";
     
-    // Clean the response of any markdown formatting
-    const cleanContent = content
+    // Enhanced JSON cleaning and parsing
+    let cleanContent = content
       .replace(/```json\n?/g, '')
       .replace(/```\n?/g, '')
       .replace(/^```/g, '')
       .replace(/```$/g, '')
       .trim();
 
-    const trendData = JSON.parse(cleanContent);
+    // Try to extract JSON object if it's embedded in text
+    const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      cleanContent = jsonMatch[0];
+    }
+
+    // Additional JSON cleaning
+    cleanContent = cleanContent
+      .replace(/,(\s*[}\]])/g, '$1')  // Remove trailing commas
+      .replace(/([{,]\s*)(\w+):/g, '$1"$2":')  // Quote unquoted keys
+      .replace(/:\s*'([^']*)'/g, ': "$1"')  // Replace single quotes with double quotes
+      .replace(/\n/g, ' ')  // Remove newlines
+      .replace(/\s+/g, ' ')  // Normalize whitespace
+      .trim();
+
+    let trendData;
+    try {
+      trendData = JSON.parse(cleanContent);
+    } catch (parseError) {
+      console.error('JSON Parse Error:', parseError);
+      console.error('Raw content length:', content.length);
+      console.error('Cleaned content preview:', cleanContent.substring(0, 200) + '...');
+      console.error('Cleaned content end:', '...' + cleanContent.substring(cleanContent.length - 200));
+      throw parseError;
+    }
     
     // Validate the structure and provide fallbacks
     return {
