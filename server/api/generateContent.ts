@@ -74,6 +74,7 @@ const generateContentSchema = z.object({
   niche: z.string().default("skincare"),
   platforms: z.array(z.string()).min(1, "At least one platform is required").default(["Instagram"]),
   contentType: z.enum(["video", "photo"]).default("video"),
+  improvementInstructions: z.string().optional(), // NEW: For AI-powered improvements
   isVideoContent: z.boolean().optional().default(false),
   videoDuration: z.enum(["30", "45", "60"]).optional(),
   customHook: z.string().optional(),

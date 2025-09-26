@@ -43,6 +43,28 @@ interface GeneratedContent {
   platform: string;
   niche: string;
   videoDuration?: VideoDuration;
+  viralScore?: {
+    score: number;
+    breakdown: {
+      hookStrength: number;
+      engagement: number;
+      clarity: number;
+      length: number;
+      trending: number;
+    };
+    suggestions: string[];
+  };
+  viralAnalysis?: {
+    overallSummary: string;
+    hookFeedback: string;
+    engagementFeedback: string;
+    clarityFeedback: string;
+    lengthFeedback: string;
+    trendingFeedback: string;
+    topActions: string[];
+    improvementPrompt: string; // NEW: For AI-powered regeneration
+  };
+  historyId?: number; // NEW: For tracking database record
 }
 
 const GenerateContent = () => {
@@ -758,6 +780,72 @@ ${config.hashtags.join(' ')}`;
       toast({
         title: "Generation Failed",
         description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  // Apply AI Suggestions - Auto-regenerate content with AI improvements
+  const handleApplyAISuggestions = async () => {
+    if (!generatedContent?.viralAnalysis?.improvementPrompt) {
+      toast({
+        title: "No Suggestions Available",
+        description: "Generate content first to get AI suggestions",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      // Use the AI improvement prompt as custom instructions
+      const response = await fetch('/api/generate-content', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          product: selectedProduct,
+          niche: selectedNiche,
+          platforms: ['tiktok'],
+          templateType: selectedTemplates[0] || 'short_video',
+          tone: tone,
+          customHook: '', // Let AI create new hook based on suggestions
+          // Pass improvement instructions
+          improvementInstructions: generatedContent.viralAnalysis.improvementPrompt
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+          const contentData: GeneratedContent = {
+            content: result.data.content,
+            hook: result.data.customHook || '',
+            platform: 'tiktok',
+            niche: selectedNiche,
+            videoDuration: result.data.videoDuration,
+            viralScore: result.data.viralScore,
+            viralAnalysis: result.data.viralAnalysis,
+            historyId: result.data.historyId
+          };
+          
+          setGeneratedContent(contentData);
+          
+          toast({
+            title: "Improved Script Generated! ✨",
+            description: `New viral score: ${result.data.viralScore?.score || 'N/A'}/100`,
+          });
+        }
+      } else {
+        throw new Error('Generation failed');
+      }
+    } catch (error) {
+      console.error('Apply suggestions error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error instanceof Error ? error.message : 'Unknown error',
         variant: "destructive",
       });
     } finally {
@@ -1481,6 +1569,36 @@ ${config.hashtags.join(' ')}`;
                             <li key={index} className="text-sm text-gray-600">• {suggestion}</li>
                           ))}
                         </ul>
+                      </div>
+                    )}
+
+                    {/* AI-Powered Analysis & Auto-Apply */}
+                    {generatedContent?.viralAnalysis && (
+                      <div className="space-y-3 border-t pt-3 mt-3">
+                        <h5 className="font-medium text-gray-700 flex items-center gap-2">
+                          🤖 AI Analysis
+                        </h5>
+                        <p className="text-sm text-gray-600">{generatedContent.viralAnalysis.overallSummary}</p>
+                        
+                        {/* Apply AI Suggestions Button */}
+                        <Button 
+                          onClick={handleApplyAISuggestions}
+                          disabled={isGenerating}
+                          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                          data-testid="button-apply-ai-suggestions"
+                        >
+                          {isGenerating ? (
+                            <>
+                              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                              Applying AI Suggestions...
+                            </>
+                          ) : (
+                            <>
+                              <Sparkles className="h-4 w-4 mr-2" />
+                              ✨ Apply AI Suggestions
+                            </>
+                          )}
+                        </Button>
                       </div>
                     )}
 
