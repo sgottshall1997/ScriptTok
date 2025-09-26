@@ -38,7 +38,7 @@ export default function LandingPage() {
             </Badge>
 
             <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-  From trend to
+  Make Your Voice Heard. From trend to
   <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> viral script</span>
   <br />in 60 seconds
 </h1>
