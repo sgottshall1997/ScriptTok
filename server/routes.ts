@@ -135,18 +135,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       }
 
-      // Import prompt factory to get the actual prompt structure
-      const { generatePrompt } = await import('./services/promptFactory');
+      // Import TEMPLATE_PROMPTS to get the actual prompt structure
+      const { TEMPLATE_PROMPTS } = await import('./services/promptFactory.js');
       
       const promptConfig = {
-        niche,
-        templateType,
-        tone,
         productName: productName || 'Sample Product',
+        niche: niche as any,
+        templateType: templateType as any,
+        tone: tone as any,
+        trendingProducts: [],
         contentFormat: 'standard' as const
       };
 
-      const promptStructure = generatePrompt(promptConfig);
+      // Get the template function and generate the structured prompt
+      const templateFunction = TEMPLATE_PROMPTS[templateType as keyof typeof TEMPLATE_PROMPTS];
+      if (!templateFunction) {
+        return res.status(400).json({
+          error: `Template type '${templateType}' not supported`,
+          availableTypes: Object.keys(TEMPLATE_PROMPTS)
+        });
+      }
+      
+      const promptStructure = templateFunction(promptConfig);
       
       res.json({
         success: true,
