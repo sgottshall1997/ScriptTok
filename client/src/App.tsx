@@ -39,51 +39,57 @@ function Router() {
   // Track page views when routes change
   useAnalytics();
   
-  return (
-    <Layout>
-      <MainAppRouter />
-    </Layout>
-  );
+  return <MainAppRouter />;
 }
 
 function MainAppRouter() {
   return (
     <Switch>
-      {/* Dashboard as the landing page - trending products feed */}
-      <Route path="/" component={Dashboard} />
-      <Route path="/dashboard" component={Dashboard} />
+      {/* Landing page without layout */}
+      <Route path="/" component={LandingPage} />
       
-      {/* Core content generation functionality */}
-      <Route path="/generate" component={GenerateContent} />
-      <Route path="/niche/:niche" component={GenerateContent} />
-      <Route path="/trending-ai-picks" component={TrendingAIPicks} />
-      
-      {/* Content management */}
-      <Route path="/content-history" component={EnhancedContentHistory} />
-      <Route path="/trend-history" component={TrendHistory} />
-      {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}
-      
-      {/* Settings */}
-      <Route path="/compliance" component={CompliancePage} />
-      <Route path="/account" component={Account} />
-      
-      {/* Support pages */}
-      <Route path="/how-it-works" component={HowItWorksPage} />
-      <Route path="/about" component={AboutPage} />
-      <Route path="/faq" component={FAQPage} />
-      <Route path="/contact" component={ContactPage} />
-      <Route path="/privacy" component={PrivacyPolicyPage} />
-      <Route path="/terms" component={TermsPage} />
-      
-      {/* New Legal Pages */}
-      <Route path="/terms-billing" component={TermsBillingPage} />
-      <Route path="/privacy-cookies" component={PrivacyCookiesPage} />
-      <Route path="/cookie-preferences" component={CookiePreferencesPage} />
-      <Route path="/legal-notices" component={LegalNoticesPage} />
-      <Route path="/trust-safety" component={TrustSafetyPage} />
-      
-      {/* Fallback to 404 */}
-      <Route component={NotFound} />
+      {/* App pages with layout */}
+      <Route>
+        {(params) => (
+          <Layout>
+            <Switch>
+              <Route path="/dashboard" component={Dashboard} />
+              
+              {/* Core content generation functionality */}
+              <Route path="/generate" component={GenerateContent} />
+              <Route path="/niche/:niche" component={GenerateContent} />
+              <Route path="/trending-ai-picks" component={TrendingAIPicks} />
+              
+              {/* Content management */}
+              <Route path="/content-history" component={EnhancedContentHistory} />
+              <Route path="/trend-history" component={TrendHistory} />
+              {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}
+              
+              {/* Settings */}
+              <Route path="/compliance" component={CompliancePage} />
+              <Route path="/account" component={Account} />
+              
+              {/* Support pages */}
+              <Route path="/how-it-works" component={HowItWorksPage} />
+              <Route path="/about" component={AboutPage} />
+              <Route path="/faq" component={FAQPage} />
+              <Route path="/contact" component={ContactPage} />
+              <Route path="/privacy" component={PrivacyPolicyPage} />
+              <Route path="/terms" component={TermsPage} />
+              
+              {/* New Legal Pages */}
+              <Route path="/terms-billing" component={TermsBillingPage} />
+              <Route path="/privacy-cookies" component={PrivacyCookiesPage} />
+              <Route path="/cookie-preferences" component={CookiePreferencesPage} />
+              <Route path="/legal-notices" component={LegalNoticesPage} />
+              <Route path="/trust-safety" component={TrustSafetyPage} />
+              
+              {/* Fallback to 404 */}
+              <Route component={NotFound} />
+            </Switch>
+          </Layout>
+        )}
+      </Route>
     </Switch>
   );
 }
