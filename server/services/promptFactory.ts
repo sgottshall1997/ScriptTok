@@ -436,6 +436,7 @@ function generatePetRoutine(config: PromptConfig): GeneratedPrompt {
   return generateUniversalRoutine(config);
 }
 
+
 /**
  * NEW GLOWBOT PROMPT TEMPLATES FROM PDF - COMPLETE OVERHAUL
  * RESTRUCTURED: Template-type-first organization for proper template selection
@@ -511,6 +512,9 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
     }
   }
 };
+
+// Export the registry for testing and validation
+export { TEMPLATE_REGISTRY };
 
 /**
  * Clean template dispatcher - resolves by templateType and niche
