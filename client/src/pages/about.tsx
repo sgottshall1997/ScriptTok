@@ -51,8 +51,8 @@ const AboutPage: React.FC = () => {
     },
     {
       icon: Sparkles,
-      title: 'Multiple AI Models',
-      description: 'Choose from OpenAI GPT-4 and Anthropic Claude for diverse content styles and perspectives'
+      title: 'Multiple AI Models with Smart Context',
+      description: 'Choose from OpenAI GPT-4 and Anthropic Claude - both enhanced with real-time Perplexity trend data for smarter, more relevant content'
     },
     {
       icon: TrendingUp,
@@ -179,7 +179,7 @@ const AboutPage: React.FC = () => {
             Powered by Perplexity AI: Four Core Capabilities
           </CardTitle>
           <CardDescription>
-            Advanced AI research and trend analysis across every feature
+            Advanced AI research and trend analysis that makes your content generation smarter
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -281,7 +281,40 @@ const AboutPage: React.FC = () => {
           </div>
 
           <div className="mt-8 p-6 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg border border-purple-200">
-            <h3 className="text-xl font-semibold text-purple-900 mb-4">Why Perplexity AI Makes the Difference</h3>
+            <h3 className="text-xl font-semibold text-purple-900 mb-4">How Perplexity Intelligence Powers Your Content</h3>
+            <div className="mb-6 p-4 bg-white rounded-lg border border-purple-300">
+              <h4 className="font-bold text-purple-800 mb-3 flex items-center">
+                <Zap className="h-5 w-5 mr-2" />
+                Smart Content Generation Flow
+              </h4>
+              <div className="space-y-3 text-sm text-purple-700">
+                <div className="flex items-start">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">1</span>
+                  <div>
+                    <strong>Real-Time Research:</strong> When you generate content, Perplexity AI automatically researches trending products in your chosen niche
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">2</span>
+                  <div>
+                    <strong>Context Enrichment:</strong> This trending data is passed directly to ChatGPT/Claude as contextual information about what's viral right now
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">3</span>
+                  <div>
+                    <strong>Intelligent Script Writing:</strong> Your AI model uses this real-time trend data to create content that references current viral products and market preferences
+                  </div>
+                </div>
+                <div className="flex items-start">
+                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">4</span>
+                  <div>
+                    <strong>Result:</strong> Scripts that feel current, relevant, and aligned with what's actually trending on social media
+                  </div>
+                </div>
+              </div>
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <h4 className="font-semibold text-purple-800 mb-2">Real-Time Web Research</h4>
@@ -310,6 +343,72 @@ const AboutPage: React.FC = () => {
                   Tailored analysis for each niche ensures trends and products align with your specific 
                   audience and content style.
                 </p>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* ScriptTok Intelligence Explanation */}
+      <Card className="mb-12 border-l-4 border-l-green-600">
+        <CardHeader>
+          <CardTitle className="flex items-center text-2xl">
+            <BarChart3 className="h-6 w-6 mr-3 text-green-600" />
+            What Makes ScriptTok Content "Smart"?
+          </CardTitle>
+          <CardDescription>
+            Understanding the AI Model dropdown and intelligence features
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg mb-8">
+            <h3 className="text-lg font-semibold text-green-800 mb-4">When you see the AI Model dropdown, here's what's happening:</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-4 rounded-lg border border-green-200">
+                <h4 className="font-semibold text-green-700 mb-2 flex items-center">
+                  <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">🤖</span>
+                  ChatGPT (GPT-4) Option
+                </h4>
+                <p className="text-sm text-green-600">
+                  OpenAI's model enhanced with live Perplexity trend data. Great for creative, engaging content with current market awareness.
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-lg border border-blue-200">
+                <h4 className="font-semibold text-blue-700 mb-2 flex items-center">
+                  <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">🧠</span>
+                  Claude (Anthropic) Option
+                </h4>
+                <p className="text-sm text-blue-600">
+                  Anthropic's model enriched with viral product intelligence. Excellent for structured, persuasive content that converts.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+              <h4 className="font-semibold text-yellow-800 mb-2">🎯 Behind Every Generation:</h4>
+              <p className="text-sm text-yellow-700">
+                Regardless of which AI model you choose, ScriptTok automatically feeds it real-time trending product data from Perplexity. 
+                This means your content isn't just well-written—it's intelligently informed about what's actually viral right now.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center p-4 bg-white border rounded-lg">
+                <TrendingUp className="h-8 w-8 text-pink-600 mx-auto mb-2" />
+                <h5 className="font-semibold text-gray-900 mb-1">Trend-Aware Scripts</h5>
+                <p className="text-xs text-gray-600">Your chosen AI knows what products are trending in your niche</p>
+              </div>
+              <div className="text-center p-4 bg-white border rounded-lg">
+                <Target className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                <h5 className="font-semibold text-gray-900 mb-1">Market Context</h5>
+                <p className="text-xs text-gray-600">Content references current viral products and competitive landscape</p>
+              </div>
+              <div className="text-center p-4 bg-white border rounded-lg">
+                <Sparkles className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <h5 className="font-semibold text-gray-900 mb-1">Timely Relevance</h5>
+                <p className="text-xs text-gray-600">Scripts feel current and aligned with social media trends</p>
               </div>
             </div>
           </div>
