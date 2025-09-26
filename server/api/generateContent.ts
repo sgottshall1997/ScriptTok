@@ -370,6 +370,27 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
 
       const actualModelId = getActualModelId(validatedData.aiModel);
       
+      // Handle improvement instructions for AI-powered regeneration
+      let enhancedViralInspiration = validatedData.viralInspiration;
+      if (validatedData.improvementInstructions) {
+        // Create base inspiration object if not provided
+        const baseInspiration = validatedData.viralInspiration || {
+          hook: '',
+          format: '',
+          caption: '',
+          hashtags: []
+        };
+        
+        // Enhance viral inspiration with improvement instructions
+        enhancedViralInspiration = {
+          ...baseInspiration,
+          improvementPrompt: validatedData.improvementInstructions,
+          format: `Apply these improvements: ${validatedData.improvementInstructions}`,
+          hook: `Enhanced content with: ${validatedData.improvementInstructions.substring(0, 100)}...`
+        };
+        console.log('🔧 Applying improvement instructions:', validatedData.improvementInstructions);
+      }
+      
       const result = await generateContent(
         product, 
         templateType, 
@@ -377,7 +398,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         trendingProducts, 
         niche, 
         actualModelId, // Use mapped AI model ID
-        validatedData.viralInspiration, // Pass viral inspiration
+        enhancedViralInspiration, // Pass enhanced viral inspiration with improvements
         smartStyleRecommendations // Pass smart style recommendations
       );
       content = result.content;
@@ -411,7 +432,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
             trendingProducts, 
             niche, 
             fallbackModelId, // Use proper fallback model ID
-            validatedData.viralInspiration
+            enhancedViralInspiration // Use enhanced viral inspiration with improvements
           );
           content = fallbackResult.content;
           fallbackLevel = fallbackResult.fallbackLevel;
