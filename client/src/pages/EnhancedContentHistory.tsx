@@ -36,7 +36,7 @@ import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
 import SyncRatingsButton from '@/components/SyncRatingsButton';
-import { ContentEvaluationPanel } from '@/components/ContentEvaluationPanel';
+import { ViralScoreDisplay } from '@/components/ViralScoreDisplay';
 import { getGlowBotSectionByPath } from '@/lib/glowbot-sections';
 import AboutThisPage from '@/components/AboutThisPage';
 
@@ -139,6 +139,10 @@ const EnhancedContentHistory = () => {
         const parsedGeneratedOutput = item.generatedOutput ? 
           (typeof item.generatedOutput === 'string' ? JSON.parse(item.generatedOutput) : item.generatedOutput) : {};
         
+        // Parse viral score data
+        const parsedViralScore = item.viral_score ? 
+          (typeof item.viral_score === 'string' ? JSON.parse(item.viral_score) : item.viral_score) : null;
+        
         const convertedItem = {
           id: `db_${item.id}`,
           databaseId: item.id, // Preserve the actual database ID for rating system
@@ -157,6 +161,9 @@ const EnhancedContentHistory = () => {
           contentFormat: item.content_format || item.contentFormat || '',
           topRatedStyleUsed: item.top_rated_style_used || item.topRatedStyleUsed || false,
           useSmartStyle: item.use_smart_style || item.useSmartStyle || false,
+          // Add viral score data
+          viralScore: parsedViralScore,
+          viralScoreOverall: item.viral_score_overall || null,
           generatedOutput: {
             content: item.outputText || '',
             hook: parsedGeneratedOutput.hook || 'Generated content',
@@ -1303,19 +1310,12 @@ const EnhancedContentHistory = () => {
                     </div>
                   )}
 
-                  {/* AI Content Evaluation System */}
+                  {/* Viral Score Display System */}
                   {entry.databaseId && (
                     <div className="border-t pt-4 mt-4">
-                      <ContentEvaluationPanel
-                        contentHistoryId={entry.databaseId}
-                        productName={entry.productName || 'Unknown Product'}
-                        onEvaluationComplete={(evaluations) => {
-                          console.log('✅ Evaluation completed for content ID:', entry.databaseId, evaluations);
-                          toast({
-                            title: "Evaluation Saved",
-                            description: "Content evaluations have been stored for future reference and learning",
-                          });
-                        }}
+                      <ViralScoreDisplay
+                        viralScore={entry.viralScore || null}
+                        overallScore={entry.viralScoreOverall || null}
                       />
                     </div>
                   )}
