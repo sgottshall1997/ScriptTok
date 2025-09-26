@@ -71,7 +71,7 @@ const sidebarData: SidebarCategory[] = [
     items: [
       { name: "Dashboard", href: "/", icon: Home },
       { name: "TikTok Generator", href: "/generate", icon: Sparkles },
-      { name: "Script History", href: "/content-history", icon: History },
+      { name: "Content History", href: "/content-history", icon: History },
       { name: "Account", href: "/account", icon: Users },
       { name: "About ScriptTok", href: "/about", icon: Info },
       { name: "FTC Disclosures", href: "/compliance", icon: Shield },
