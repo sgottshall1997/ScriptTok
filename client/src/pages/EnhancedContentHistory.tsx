@@ -37,8 +37,6 @@ import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
 import { ViralScoreDisplay } from '@/components/ViralScoreDisplay';
-import { getScriptTokSectionByPath } from '@/lib/glowbot-sections';
-import AboutThisPage from '@/components/AboutThisPage';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -1305,20 +1303,6 @@ const EnhancedContentHistory = () => {
         ))}
       </div>
 
-      {/* About This Page Component */}
-      {(() => {
-        const sectionData = getScriptTokSectionByPath('/content-history');
-        return sectionData ? (
-          <AboutThisPage 
-            title={sectionData.name}
-            whatItDoes={sectionData.whatItDoes}
-            setupRequirements={sectionData.setupRequirements}
-            usageInstructions={sectionData.usageInstructions}
-            relatedLinks={sectionData.relatedLinks}
-            notes={sectionData.notes}
-          />
-        ) : null;
-      })()} 
     </div>
   );
 };

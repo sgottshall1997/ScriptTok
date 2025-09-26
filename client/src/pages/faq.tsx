@@ -1,5 +1,4 @@
 import React from 'react';
-import AboutThisPage from '@/components/AboutThisPage';
 import { 
   Accordion,
   AccordionContent,
@@ -294,36 +293,6 @@ const FAQPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      <AboutThisPage 
-        title="Frequently Asked Questions"
-        whatItDoes="Comprehensive FAQ resource covering common questions about GlowBot AI features, functionality, pricing, and troubleshooting. Organized by categories including general information, platform features, billing, and technical support to help users find answers quickly."
-        setupRequirements={[
-          "No special setup required - browse questions directly",
-          "Use search functionality to find specific topics",
-          "Check related links for additional detailed guides"
-        ]}
-        usageInstructions={[
-          "Browse questions by category (General, Features, Billing, Technical)",
-          "Use the search functionality to find specific topics quickly",
-          "Click on questions to expand detailed answers",
-          "Follow links to related guides and documentation",
-          "Contact support if you can't find the answer you need",
-          "Bookmark frequently referenced questions for quick access"
-        ]}
-        relatedLinks={[
-          {name: "How It Works Guide", path: "/how-it-works"},
-          {name: "Contact Support", path: "/contact"},
-          {name: "Get Started", path: "/"},
-          {name: "Template Explorer", path: "/template-explorer"}
-        ]}
-        notes={[
-          "FAQ content is regularly updated based on user questions and platform changes",
-          "Search functionality helps quickly locate specific information",
-          "Contact support for questions not covered in the FAQ",
-          "Many answers include links to hands-on guides and tutorials",
-          "FAQ categories are organized to match common user workflows"
-        ]}
-      />
 
     </div>
   );

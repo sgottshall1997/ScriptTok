@@ -3,7 +3,6 @@ import { useLocation } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ContentHistoryManager } from '@shared/contentHistoryUtils';
-import AboutThisPage from '@/components/AboutThisPage';
 
 
 import { Input } from "@/components/ui/input";
@@ -1914,35 +1913,6 @@ ${config.hashtags.join(' ')}`;
           </Card>
         )}
 
-        <AboutThisPage 
-          title="TikTok Content Generator"
-          whatItDoes="Streamlined TikTok content generation system with template-based creation. Supports all major niches (skincare, fitness, cooking, tech, etc.) optimized specifically for TikTok. Features viral hooks, trending product integration, and video duration calculation for maximum engagement."
-          setupRequirements={[
-            "Navigate via niche URL (/niche/skincare) or select niche from dropdown",
-            "Choose from TikTok-optimized content templates",
-            "Add trending product names or topics for personalization"
-          ]}
-          usageInstructions={[
-            "Select your target niche from the available options",
-            "Choose from curated TikTok templates for viral content",
-            "Add specific product names to leverage trending items",
-            "Generate content and review the TikTok-optimized caption with hashtags",
-            "Copy the content or save to content history for future use",
-            "Use video duration feedback to optimize content length for TikTok"
-          ]}
-          relatedLinks={[
-            {name: "Template Explorer", path: "/template-explorer"},
-            {name: "Trending AI Picks", path: "/trending-ai-picks"},
-            {name: "Content History", path: "/content-history"}
-          ]}
-          notes={[
-            "URL parameters auto-populate niche and template selections for quick access",
-            "Video duration calculations help optimize content for TikTok algorithms",
-            "Generated content includes TikTok-specific character limits and hashtag formatting",
-            "Content history automatically saves all generated items for future reference",
-            "Works best with specific, trending product names for maximum TikTok engagement"
-          ]}
-        />
       </div>
     </div>
   );

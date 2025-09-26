@@ -27,8 +27,6 @@ import {
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
-import AboutThisPage from "@/components/AboutThisPage";
-import { getGlowBotSectionByPath } from "@/lib/glowbot-sections";
 import { isAmazonEnabled } from '@shared/constants';
 import TrendForecaster from "@/components/TrendForecaster";
 
@@ -41,8 +39,6 @@ const Dashboard = () => {
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
   const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
   
-  // Get section metadata for this page
-  const sectionData = getGlowBotSectionByPath('/');
 
   // Fetch trending products for all niches (Perplexity organized by niche)
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
@@ -681,18 +677,6 @@ const Dashboard = () => {
         </Link>
       </div>
 
-      
-      {/* About This Page */}
-      {sectionData && (
-        <AboutThisPage
-          title={sectionData.name}
-          whatItDoes={sectionData.whatItDoes}
-          setupRequirements={sectionData.setupRequirements}
-          usageInstructions={sectionData.usageInstructions}
-          relatedLinks={sectionData.relatedLinks}
-          notes={sectionData.notes}
-        />
-      )}
     </div>
   );
 };
