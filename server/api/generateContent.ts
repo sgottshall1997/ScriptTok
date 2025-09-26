@@ -31,6 +31,38 @@ function extractHook(content: string): string {
   return 'Generated content';
 }
 
+// Helper function to generate platform-specific caption for saving to history
+function generatePlatformCaptionForSaving(platform: string, contentData: any, productName: string, linkUrl: string, niche: string): string {
+  if (!contentData || !productName) return '';
+  
+  // TikTok configuration only
+  const config = {
+    cta: "Link in bio! 🔗✨",
+    hashtags: ["#fyp", "#viral", `#${niche}`, "#trending", "#musthave"],
+    maxLength: 200
+  };
+
+  // Create a completely different social media style caption
+  const socialCaptions = [
+    `Just tried the ${productName} and I'm SHOOK! 😱 This is why everyone's talking about it. Definitely adding to cart! 🛒`,
+    `POV: You found the perfect ${productName} and your ${niche} routine is about to be elite ✨ Thank me later!`,
+    `This ${productName} has been all over my FYP and now I see why! The reviews don't lie 🔥`,
+    `Guys... this ${productName} is IT! Been using it for a week and I'm obsessed 💕 Had to share!`,
+    `Not me gatekeeping this ${productName} until now 🤫 But y'all deserve to know about this gem!`,
+    `The ${productName} that everyone's been raving about? Yeah, it lives up to the hype! 🙌`,
+    `Okay but why did nobody tell me about this ${productName} sooner?! Game changer! ⚡`,
+    `This ${productName} just hit different 💯 Perfect for my ${niche} girlies who get it!`
+  ];
+  
+  // Pick a random social caption
+  const caption = socialCaptions[Math.floor(Math.random() * socialCaptions.length)];
+  
+  // Add CTA and hashtags
+  const fullCaption = `${caption}\n\n${config.cta}\n\n${config.hashtags.join(' ')}`;
+
+  return fullCaption;
+}
+
 const router = Router();
 
 // Create a rate limiter middleware that limits to 5 requests per minute
