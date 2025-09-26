@@ -28,7 +28,8 @@ import {
   CheckSquare,
   Square,
   Trash,
-  Eye
+  Eye,
+  RefreshCw // Import RefreshCw for regeneration icon
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
@@ -89,13 +90,13 @@ const EnhancedContentHistory = () => {
   useEffect(() => {
     const fetchEvaluationData = async () => {
       const newEvaluationData: Record<string, any> = {};
-      
+
       for (const entry of history) {
         if (entry.databaseId) {
           try {
             const response = await fetch(`/api/content-evaluation/${entry.databaseId}`);
             const data = await response.json();
-            
+
             if (data.success && data.evaluations && data.evaluations.length > 0) {
               const evaluations: any = {};
               data.evaluations.forEach((evaluation: any) => {
@@ -108,7 +109,7 @@ const EnhancedContentHistory = () => {
           }
         }
       }
-      
+
       setEvaluationData(newEvaluationData);
     };
 
@@ -126,23 +127,23 @@ const EnhancedContentHistory = () => {
   const loadHistory = () => {
     // Prioritize database history, add local storage as fallback
     let combinedHistory: any[] = [];
-    
+
     // Add database history if available (these can be rated)
     if (dbHistory && Array.isArray(dbHistory)) {
       console.log('🔧 DEBUG: Raw dbHistory received:', dbHistory.length, 'items');
       console.log('🔧 DEBUG: First item raw:', dbHistory[0]);
-      
+
       const dbHistoryConverted = dbHistory.map((item: any) => {
         console.log('🔧 DEBUG: Processing item with ID:', item.id, 'type:', typeof item.id);
-        
+
         // Handle null/undefined values from database
         const parsedGeneratedOutput = item.generatedOutput ? 
           (typeof item.generatedOutput === 'string' ? JSON.parse(item.generatedOutput) : item.generatedOutput) : {};
-        
+
         // Parse viral score data (note: Drizzle returns camelCase field names)
         const parsedViralScore = item.viralScore ? 
           (typeof item.viralScore === 'string' ? JSON.parse(item.viralScore) : item.viralScore) : null;
-        
+
         const convertedItem = {
           id: `db_${item.id}`,
           databaseId: item.id, // Preserve the actual database ID for rating system
@@ -174,39 +175,39 @@ const EnhancedContentHistory = () => {
           },
           source: 'database'
         };
-        
+
         console.log('🔧 DEBUG: Converted item databaseId:', convertedItem.databaseId, 'type:', typeof convertedItem.databaseId);
         return convertedItem;
       });
-      
+
       console.log('🔧 DEBUG: Total converted items:', dbHistoryConverted.length);
       combinedHistory.push(...dbHistoryConverted);
     }
-    
+
     // Only show database entries on this page since they support rating
     // Local storage entries are shown on other pages but not here
     console.log('🔧 DEBUG: Final combined history length:', combinedHistory.length);
-    
+
     // Sort by timestamp (newest first)
     combinedHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-    
+
     setHistory(combinedHistory);
   };
 
   const applyFilters = () => {
     // Filter from the combined history instead of using ContentHistoryManager
     let filtered = history;
-    
+
     if (filters.niche !== 'all') {
       filtered = filtered.filter(item => item.niche === filters.niche);
     }
-    
+
     if (filters.platform !== 'all') {
       filtered = filtered.filter(item => 
         item.platformsSelected && item.platformsSelected.includes(filters.platform)
       );
     }
-    
+
     if (filters.template !== 'all') {
       filtered = filtered.filter(item => item.contentType === filters.template);
     }
@@ -237,7 +238,7 @@ const EnhancedContentHistory = () => {
       filtered = filtered.filter(item => {
         const aiModel = item.aiModel || item.model;
         if (!aiModel) return filters.aiModel === 'unknown';
-        
+
         const modelLower = aiModel.toLowerCase();
         if (filters.aiModel === 'chatgpt') {
           return modelLower.includes('gpt') || modelLower.includes('chatgpt');
@@ -252,7 +253,7 @@ const EnhancedContentHistory = () => {
       filtered = filtered.filter(item => {
         const format = item.contentFormat;
         if (!format) return filters.contentFormat === 'unknown';
-        
+
         const formatLower = format.toLowerCase();
         if (filters.contentFormat === 'spartan') {
           return formatLower.includes('spartan');
@@ -275,15 +276,15 @@ const EnhancedContentHistory = () => {
       console.log('🔍 SORTING DEBUG: sortBy =', sortBy);
       console.log('🔍 SORTING DEBUG: evaluationData keys =', Object.keys(evaluationData));
       console.log('🔍 SORTING DEBUG: first few evaluation entries =', Object.values(evaluationData).slice(0, 2));
-      
+
       filtered = [...filtered].sort((a, b) => {
         const aEvals = evaluationData[a.id] || {};
         const bEvals = evaluationData[b.id] || {};
-        
+
         console.log(`🔍 SORTING DEBUG: Comparing ${a.id} vs ${b.id}`);
         console.log(`🔍 SORTING DEBUG: aEvals =`, aEvals);
         console.log(`🔍 SORTING DEBUG: bEvals =`, bEvals);
-        
+
         switch (sortBy) {
           case 'gpt-highest':
             const aGptScore = calculateAverageRating(aEvals.chatgpt);
@@ -312,7 +313,7 @@ const EnhancedContentHistory = () => {
         }
       });
     }
-    
+
     setFilteredHistory(filtered);
   };
 
@@ -339,7 +340,7 @@ const EnhancedContentHistory = () => {
       evaluation.persuasivenessScore,
       evaluation.creativityScore
     ].filter(score => score != null);
-    
+
     if (scores.length === 0) return 0;
     return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   };
@@ -347,7 +348,7 @@ const EnhancedContentHistory = () => {
   // Enhanced content extraction function
   const extractCleanContent = (content: any): string => {
     if (!content) return 'No content available';
-    
+
     // If it's already a string, return it
     if (typeof content === 'string') {
       try {
@@ -359,12 +360,12 @@ const EnhancedContentHistory = () => {
         return content;
       }
     }
-    
+
     // If it's an object, extract the content field
     if (typeof content === 'object') {
       return content.content || content.script || JSON.stringify(content, null, 2);
     }
-    
+
     return String(content);
   };
 
@@ -378,7 +379,7 @@ const EnhancedContentHistory = () => {
         title: "Copied!",
         description: `${label} copied to clipboard`,
       });
-      
+
       // Reset copied state after 2 seconds
       setTimeout(() => {
         setCopiedItems(prev => ({ ...prev, [id]: false }));
@@ -470,7 +471,7 @@ const EnhancedContentHistory = () => {
             const response = await fetch(`/api/history/${databaseId}`, {
               method: 'DELETE',
             });
-            
+
             if (response.ok) {
               successCount++;
             } else {
@@ -512,22 +513,22 @@ const EnhancedContentHistory = () => {
   const clearAllHistory = async () => {
     try {
       setIsDeleting(true);
-      
+
       // Clear database history via API
       const response = await fetch('/api/history/clear-all', {
         method: 'POST',
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         // Also clear local storage for completeness
         ContentHistoryManager.clearHistory();
-        
+
         // Refresh the history display
         await refetchDbHistory();
         loadHistory();
-        
+
         toast({
           title: "History cleared",
           description: "All content generation history has been cleared",
@@ -596,6 +597,107 @@ const EnhancedContentHistory = () => {
     return colors[niche] || 'bg-gray-100 text-gray-800';
   };
 
+  // Function to handle regeneration based on viral score suggestions
+  const handleRegenerateWithSuggestions = async (entry: ContentGenerationEntry) => {
+    toast({
+      title: "Regenerating content...",
+      description: "Please wait while we generate new content based on suggestions.",
+      variant: "default",
+    });
+
+    try {
+      const response = await fetch('/api/regenerate-with-suggestions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entryId: entry.databaseId || entry.id.replace('db_', ''), // Use databaseId if available
+          originalContent: entry.generatedOutput.content, // Or relevant fields from entry
+          suggestions: entry.viralScore?.suggestions || [],
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.newContent) {
+        toast({
+          title: "Content Regenerated!",
+          description: "New content has been generated based on AI suggestions.",
+          variant: "success",
+        });
+        // Optionally, update the entry in the history or refetch
+        refetchDbHistory(); // Refetch to get the latest data, including potentially updated evaluations
+        loadHistory();
+      } else {
+        throw new Error(data.error || 'Failed to regenerate content');
+      }
+    } catch (error) {
+      console.error('❌ Error regenerating content:', error);
+      toast({
+        title: "Regeneration Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Function to handle regeneration based on AI evaluation suggestions
+  const handleRegenerateWithAIEvaluation = async (entry: ContentGenerationEntry, evals: any) => {
+    toast({
+      title: "Applying AI evaluation tips...",
+      description: "Please wait while we regenerate content with AI feedback.",
+      variant: "default",
+    });
+
+    try {
+      const improvementSuggestions = evals.chatgpt?.improvementSuggestions || evals.claude?.improvementSuggestions;
+      
+      if (!improvementSuggestions || improvementSuggestions.length === 0) {
+        toast({
+          title: "No AI Tips Available",
+          description: "There are no specific AI improvement suggestions for this entry.",
+          variant: "default",
+        });
+        return;
+      }
+
+      const response = await fetch('/api/regenerate-with-ai-evaluation', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          entryId: entry.databaseId || entry.id.replace('db_', ''),
+          originalPrompt: entry.promptText, // Use the original prompt as a base
+          evaluationSuggestions: improvementSuggestions,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.newContent) {
+        toast({
+          title: "Content Updated!",
+          description: "Content has been updated based on AI evaluation tips.",
+          variant: "success",
+        });
+        refetchDbHistory();
+        loadHistory();
+      } else {
+        throw new Error(data.error || 'Failed to update content with AI evaluation');
+      }
+    } catch (error) {
+      console.error('❌ Error updating content with AI evaluation:', error);
+      toast({
+        title: "Update Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred.",
+        variant: "destructive"
+      });
+    }
+  };
+
+
   if (history.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -641,7 +743,7 @@ const EnhancedContentHistory = () => {
             <p className="text-gray-600">View and manage your generated content history</p>
           </div>
         </div>
-        
+
         <div className="flex justify-between items-center mb-4">
           <div></div>
           <div className="flex gap-2">
@@ -743,7 +845,7 @@ const EnhancedContentHistory = () => {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div>
             <Select value={filters.platform} onValueChange={(value) => setFilters(prev => ({ ...prev, platform: value }))}>
               <SelectTrigger>
@@ -759,7 +861,7 @@ const EnhancedContentHistory = () => {
               </SelectContent>
             </Select>
           </div>
-          
+
           <div>
             <Select value={filters.template} onValueChange={(value) => setFilters(prev => ({ ...prev, template: value }))}>
               <SelectTrigger>
@@ -843,7 +945,7 @@ const EnhancedContentHistory = () => {
             </Select>
           </div>
         </div>
-        
+
         <div className="text-right mb-4">
           <p className="text-sm text-gray-500">
             Showing {filteredHistory.length} of {history.length} entries
@@ -868,16 +970,16 @@ const EnhancedContentHistory = () => {
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-2">
                       <CardTitle className="text-xl">📦 {entry.productName}</CardTitle>
-                      
+
                       {/* AI Ratings Display */}
                       <div className="flex items-center gap-3 text-sm">
                         {(() => {
                           const evals = evaluationData[entry.id];
                           if (!evals) return null;
-                          
+
                           const gptRating = evals.chatgpt ? calculateAverageRating(evals.chatgpt) : null;
                           const claudeRating = evals.claude ? calculateAverageRating(evals.claude) : null;
-                          
+
                           return (
                             <>
                               {gptRating && (
@@ -891,6 +993,17 @@ const EnhancedContentHistory = () => {
                                   <span className="text-orange-600 font-medium">Claude:</span>
                                   <span className="text-orange-800 font-bold">{claudeRating.toFixed(1)}</span>
                                 </div>
+                              )}
+                              {(evals.chatgpt?.improvementSuggestions || evals.claude?.improvementSuggestions) && (
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleRegenerateWithAIEvaluation(entry, evals)}
+                                  className="text-green-600 hover:text-green-700 border-green-300"
+                                >
+                                  <RefreshCw className="h-4 w-4 mr-2" />
+                                  Apply AI Tips
+                                </Button>
                               )}
                             </>
                           );
@@ -906,7 +1019,7 @@ const EnhancedContentHistory = () => {
                           {platform}
                         </Badge>
                       ))}
-                      
+
                       {/* AI Model Badge */}
                       {(entry.aiModel || entry.model) && (
                         <Badge className="bg-purple-100 text-purple-800">
@@ -915,21 +1028,21 @@ const EnhancedContentHistory = () => {
                            (entry.aiModel || entry.model)}
                         </Badge>
                       )}
-                      
+
                       {/* Content Format Badge */}
                       {entry.contentFormat && (
                         <Badge className={entry.contentFormat.toLowerCase().includes('spartan') ? 'bg-orange-100 text-orange-800' : 'bg-blue-100 text-blue-800'}>
                           {entry.contentFormat.includes('spartan') ? '🏛️ Spartan' : '📝 Regular'}
                         </Badge>
                       )}
-                      
+
                       {/* Smart Style Badge */}
                       {(entry.topRatedStyleUsed || entry.useSmartStyle) && (
                         <Badge className="bg-green-100 text-green-800">
                           ⭐ Smart Style
                         </Badge>
                       )}
-                      
+
                       {/* Affiliate Link Badge */}
                       {entry.generatedOutput?.affiliateLink && 
                        entry.generatedOutput.affiliateLink.trim() !== '' && 
@@ -958,7 +1071,7 @@ const EnhancedContentHistory = () => {
                 </Button>
               </div>
             </CardHeader>
-            
+
             <Collapsible
               open={expandedCards[entry.id]}
               onOpenChange={() => toggleExpanded(entry.id)}
@@ -969,7 +1082,7 @@ const EnhancedContentHistory = () => {
                   <ChevronDown className={`h-4 w-4 transition-transform ${expandedCards[entry.id] ? 'rotate-180' : ''}`} />
                 </Button>
               </CollapsibleTrigger>
-              
+
               <CollapsibleContent>
                 <CardContent className="space-y-4 border-t bg-gray-50">
                   {/* Main Content */}
@@ -996,9 +1109,9 @@ const EnhancedContentHistory = () => {
                     const platformCaptions = entry.generatedOutput.platformCaptions || {};
                     const tiktokCaption = platformCaptions.tiktok || entry.generatedOutput.tiktokCaption;
                     const caption = tiktokCaption || entry.generatedOutput.content;
-                    
+
                     if (!caption) return null;
-                    
+
                     return (
                       <div className="space-y-2">
                         <div className="flex justify-between items-center">
@@ -1085,11 +1198,11 @@ const EnhancedContentHistory = () => {
                     const instagramCaption = platformCaptions.instagram || entry.generatedOutput.instagramCaption;
                     const youtubeCaption = platformCaptions.youtube || entry.generatedOutput.youtubeCaption;
                     const twitterCaption = platformCaptions.twitter || platformCaptions.x || entry.generatedOutput.twitterCaption;
-                    
+
                     const hasPlatformCaptions = tiktokCaption || instagramCaption || youtubeCaption || twitterCaption;
-                    
+
                     if (!hasPlatformCaptions) return null;
-                    
+
                     return (
                       <div className="space-y-2">
                         <h4 className="font-medium">Platform-Specific Captions:</h4>
@@ -1116,7 +1229,7 @@ const EnhancedContentHistory = () => {
                               </div>
                             </div>
                           )}
-                          
+
                           {instagramCaption && (
                             <div className="bg-white p-3 rounded border">
                               <div className="flex justify-between items-center mb-2">
@@ -1139,7 +1252,7 @@ const EnhancedContentHistory = () => {
                               </div>
                             </div>
                           )}
-                          
+
                           {youtubeCaption && (
                             <div className="bg-white p-3 rounded border">
                               <div className="flex justify-between items-center mb-2">
@@ -1162,7 +1275,7 @@ const EnhancedContentHistory = () => {
                               </div>
                             </div>
                           )}
-                          
+
                           {twitterCaption && (
                             <div className="bg-white p-3 rounded border">
                               <div className="flex justify-between items-center mb-2">
@@ -1213,16 +1326,16 @@ const EnhancedContentHistory = () => {
                   {(() => {
                     // Extract viral score from generated output if available
                     const viralScore = entry.viralScore;
-                    
+
                     if (!viralScore) return null;
-                    
+
                     return (
                       <div className="border-t pt-4 mt-4">
                         <div className="space-y-3">
                           <h4 className="font-semibold text-gray-900 flex items-center gap-2">
                             📊 Viral Performance Score
                           </h4>
-                          
+
                           {/* Overall Score */}
                           <div className="bg-white p-4 rounded-lg border">
                             <div className="flex items-center justify-between mb-3">
@@ -1235,7 +1348,7 @@ const EnhancedContentHistory = () => {
                                 <span className="text-sm text-gray-500 ml-1">/100</span>
                               </div>
                             </div>
-                            
+
                             {/* Progress Bar */}
                             <div className="w-full bg-gray-200 rounded-full h-2">
                               <div 
@@ -1247,7 +1360,7 @@ const EnhancedContentHistory = () => {
                               ></div>
                             </div>
                           </div>
-                          
+
                           {/* Score Breakdown */}
                           {viralScore.breakdown && (
                             <div className="bg-white p-4 rounded-lg border">
@@ -1276,13 +1389,24 @@ const EnhancedContentHistory = () => {
                               </div>
                             </div>
                           )}
-                          
+
                           {/* Improvement Suggestions */}
                           {viralScore.suggestions && viralScore.suggestions.length > 0 && (
                             <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                              <h5 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
-                                💡 Improvement Suggestions
-                              </h5>
+                              <div className="flex justify-between items-start mb-2">
+                                <h5 className="font-medium text-blue-900 flex items-center gap-2">
+                                  💡 Improvement Suggestions
+                                </h5>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => handleRegenerateWithSuggestions(entry)}
+                                  className="text-blue-600 hover:text-blue-700 border-blue-300"
+                                >
+                                  <RefreshCw className="h-4 w-4 mr-2" />
+                                  Regenerate
+                                </Button>
+                              </div>
                               <ul className="space-y-1">
                                 {viralScore.suggestions.map((suggestion, index) => (
                                   <li key={index} className="text-sm text-blue-800 flex items-start gap-2">
@@ -1325,7 +1449,7 @@ const EnhancedContentHistory = () => {
           </Card>
         ))}
       </div>
-      
+
       {/* About This Page Component */}
       {(() => {
         const sectionData = getGlowBotSectionByPath('/content-history');

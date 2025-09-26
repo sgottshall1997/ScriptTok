@@ -56,11 +56,13 @@ Generate 3-5 specific, actionable improvement suggestions. Each suggestion shoul
 - Focus on what would most increase viral potential
 
 Format suggestions as numbered list with clear action items:
-1. [HOOK IMPROVEMENT]: Specific suggestion for opening
-2. [ENGAGEMENT]: Specific suggestion for audience interaction
-3. [CTA ENHANCEMENT]: Specific call-to-action improvement
+1. [HOOK IMPROVEMENT]: Specific suggestion for opening with example phrase
+2. [ENGAGEMENT]: Specific suggestion for audience interaction (questions, polls, etc.)
+3. [CTA ENHANCEMENT]: Specific call-to-action improvement with example
 4. [VISUAL/FORMAT]: Specific formatting or presentation tip
-5. [NICHE-SPECIFIC]: Suggestion tailored to the product/niche
+5. [NICHE-SPECIFIC]: Suggestion tailored to the product/niche with trending elements
+
+Each suggestion should be regeneration-ready - clear enough that AI can use it to improve the content.
 
 **RESPONSE FORMAT:**
 Provide your evaluation in the following JSON format:

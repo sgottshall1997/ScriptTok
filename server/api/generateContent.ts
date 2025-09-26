@@ -103,17 +103,17 @@ async function isValidTemplateType(templateType: string, niche: string): Promise
   try {
     // Load available templates
     const templates = await loadPromptTemplates();
-    
+
     // Check if the template exists in the niche-specific templates
     if (templates[niche] && templateType in templates[niche]) {
       return true;
     }
-    
+
     // If not in niche-specific, check if it exists in default templates
     if (templates.default && templateType in templates.default) {
       return true;
     }
-    
+
     return false;
   } catch (error) {
     console.error("Error checking template validity:", error);
@@ -136,24 +136,24 @@ async function getAvailableTemplateTypes(niche: string): Promise<string[]> {
     const templates = await loadPromptTemplates();
     const nicheTemplates = templates[niche] || {};
     const defaultTemplates = templates.default || {};
-    
+
     // Combine niche-specific and default templates without using Set
     const allTemplates: string[] = [];
-    
+
     // Add niche-specific templates
     Object.keys(nicheTemplates).forEach(key => {
       if (!allTemplates.includes(key)) {
         allTemplates.push(key);
       }
     });
-    
+
     // Add default templates (if not already added)
     Object.keys(defaultTemplates).forEach(key => {
       if (!allTemplates.includes(key)) {
         allTemplates.push(key);
       }
     });
-    
+
     return allTemplates;
   } catch (error) {
     console.error("Error getting available templates:", error);
@@ -177,7 +177,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
   try {
     // Validate request body against schema
     const result = generateContentSchema.safeParse(req.body);
-    
+
     if (!result.success) {
       console.error('Validation failed:', result.error.issues);
       return res.status(400).json({
@@ -187,10 +187,10 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         details: result.error.issues
       });
     }
-    
+
     // Get the validated data
     const validatedData = result.data;
-    
+
     // Check if the requested tone exists in the system
     if (!isValidTone(validatedData.tone)) {
       const availableTones = getAvailableTones();
@@ -200,11 +200,11 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         error: `Invalid tone "${validatedData.tone}". Available: ${availableTones.join(", ")}`
       });
     }
-    
+
     // Handle "Surprise Me" template selection
     let finalTemplateType = validatedData.templateType;
     let surpriseMeReasoning = '';
-    
+
     if (validatedData.templateType === 'surprise_me') {
       console.log('🎲 Surprise Me mode activated - using AI to select optimal template');
       try {
@@ -237,10 +237,10 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         }
       }
     }
-    
+
     const { product, tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength, useSmartStyle, userId } = result.data;
     const templateType = finalTemplateType;
-    
+
     // Get smart style recommendations if enabled
     let smartStyleRecommendations = null;
     if (useSmartStyle && userId) {
@@ -261,7 +261,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         console.error('Error logging smart style usage:', error);
       }
     }
-    
+
     // Create cache parameters object
     const cacheParams = {
       product: product.toLowerCase().trim(),
@@ -270,20 +270,20 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       niche,
       useSmartStyle: useSmartStyle || false
     };
-    
+
     // Generate cache key from parameters
     const cacheKey = contentCache.generateKey(cacheParams);
-    
+
     // Check if we have a cached result
     const cached = contentCache.get(cacheKey);
-    
+
     // If we have a valid cached result, return it
     if (cached && cached.content) {
       // Estimate video duration for cached content too
       const videoDuration = estimateVideoDuration(cached.content, tone, templateType);
-      
+
       console.log(`Using cached content for ${product}, template: ${templateType}, tone: ${tone}`);
-      
+
       return res.json({
         success: true,
         data: {
@@ -301,10 +301,10 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         error: null
       });
     }
-    
+
     // Get niche-specific trending data for context enrichment
     const trendingProducts = await storage.getTrendingProductsByNiche(niche);
-    
+
     // Handle video content generation - automatically enabled when contentType is "video"
     if ((isVideoContent || contentType === "video") && videoLength) {
       try {
@@ -349,13 +349,13 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
 
     // Generate regular content using OpenAI with error handling and model fallback
     let content, fallbackLevel, prompt, model, tokens;
-    
+
     try {
       // Log template source for debugging
       if (validatedData.templateSource) {
         console.log('🎯 Template source:', validatedData.templateSource);
       }
-      
+
       // Map user-friendly AI model names to actual model IDs
       const getActualModelId = (userModel: string) => {
         switch (userModel) {
@@ -369,7 +369,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       };
 
       const actualModelId = getActualModelId(validatedData.aiModel);
-      
+
       // Handle improvement instructions for AI-powered regeneration
       let enhancedViralInspiration = validatedData.viralInspiration;
       if (validatedData.improvementInstructions) {
@@ -380,7 +380,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
           caption: '',
           hashtags: []
         };
-        
+
         // Enhance viral inspiration with improvement instructions
         enhancedViralInspiration = {
           ...baseInspiration,
@@ -390,7 +390,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         };
         console.log('🔧 Applying improvement instructions:', validatedData.improvementInstructions);
       }
-      
+
       const result = await generateContent(
         product, 
         templateType, 
@@ -407,24 +407,24 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       model = result.model;
       tokens = result.tokens;
       const videoDuration = result.videoDuration;
-      
+
       // Ensure we have valid content
       if (!content || content.trim().length === 0) {
         throw new Error('Generated content is empty');
       }
-      
+
     } catch (error: any) {
       console.error('Content generation error:', error);
-      
+
       // Handle OpenAI quota exceeded errors gracefully
       if (error.status === 429 || error.code === 'insufficient_quota') {
         console.log('OpenAI quota exceeded, attempting fallback to GPT-3.5-turbo...');
-        
+
         try {
           // Retry with GPT-3.5-turbo, including viral inspiration
           // Use proper fallback model based on user's selection
           const fallbackModelId = validatedData.aiModel === 'claude' ? 'claude-3-haiku' : 'gpt-3.5-turbo';
-          
+
           const fallbackResult = await generateContent(
             product, 
             templateType, 
@@ -440,14 +440,14 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
           model = 'gpt-3.5-turbo';
           tokens = fallbackResult.tokens;
           const videoDuration = fallbackResult.videoDuration;
-          
+
           if (!content || content.trim().length === 0) {
             throw new Error('Fallback generation also returned empty content');
           }
-          
+
         } catch (fallbackError: any) {
           console.error('Both GPT-4 and GPT-3.5-turbo failed:', fallbackError);
-          
+
           // Return a meaningful fallback content instead of error
           content = `✨ ${product} - ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Content ✨
 
@@ -459,7 +459,7 @@ Key highlights:
 ✨ Trending among community members
 
 Experience the difference today! #${niche} #trending`;
-          
+
           fallbackLevel = 'generic';
           prompt = `Fallback content for ${product}`;
           model = 'fallback';
@@ -477,14 +477,14 @@ Key highlights:
 ✨ Trending among community members
 
 Experience the difference today! #${niche} #trending`;
-        
+
         fallbackLevel = 'generic';
         prompt = `Fallback content for ${product}`;
         model = 'fallback';
         tokens = 0;
       }
     }
-    
+
     // Generate platform-specific content if platforms are specified
     let platformContent = null;
     // TODO: Implement platform content generator
@@ -506,16 +506,16 @@ Experience the difference today! #${niche} #trending`;
     //     // Continue without platform content if it fails
     //   }
     // }
-    
+
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, { 
       content, 
       fallbackLevel,
       generatedAt: Date.now() 
     });
-    
+
     console.log(`Cached new content for ${product}, template: ${templateType}, tone: ${tone}`);
-    
+
     // Save to database
     await storage.saveContentGeneration({
       product,
@@ -524,7 +524,7 @@ Experience the difference today! #${niche} #trending`;
       niche,
       content
     });
-    
+
     // Prepare webhook-ready platform data for Make.com automation
     const webhookData = [];
     if (platformContent && platformContent.socialCaptions) {
@@ -547,7 +547,7 @@ Experience the difference today! #${niche} #trending`;
         });
       }
     }
-    
+
     // 🎯 Calculate viral score using product research and competitor insights
     let viralScore = null;
     let viralAnalysis = null;
@@ -555,7 +555,7 @@ Experience the difference today! #${niche} #trending`;
       // Pass the content string to the viral score calculator
       viralScore = calculateViralScore(content);
       console.log('🎯 Viral score calculated:', viralScore.overall);
-      
+
       // Generate AI analysis of the viral score
       if (viralScore) {
         viralAnalysis = await analyzeViralScore(
@@ -570,7 +570,7 @@ Experience the difference today! #${niche} #trending`;
       console.error('Error calculating viral score or AI analysis:', scoreError);
       // Continue without viral score if calculation fails
     }
-    
+
     // Save detailed content history record with all metadata including hook and platform content
     const contentHistoryEntry = await storage.saveContentHistory({
       userId: req.user?.id, // If user is authenticated
@@ -603,15 +603,15 @@ Experience the difference today! #${niche} #trending`;
       viralScoreOverall: viralScore?.overall || null, // Overall score for easy querying
       viralAnalysis: viralAnalysis // AI analysis of viral score with improvement suggestions
     });
-    
+
     // Increment API usage counter with template and tone tracking
     await storage.incrementApiUsage(templateType, tone, niche, 1);
-    
+
     // Webhook notifications removed for streamlined TikTok Viral Product Generator
-    
+
     // Calculate video duration from the generated content
     const estimatedVideoDuration = estimateVideoDuration(content);
-    
+
     // 📊 Log feedback to SQLite database
     try {
       const feedbackId = await logFeedback(product, templateType, tone, content);
@@ -660,19 +660,19 @@ Experience the difference today! #${niche} #trending`;
     });
   } catch (error) {
     console.error("Error generating content:", error);
-    
+
     // Ensure we always return valid JSON, never HTML
     const errorMessage = error instanceof Error ? error.message : "Failed to generate content";
-    
+
     // Check if response headers are already sent
     if (res.headersSent) {
       console.error("Headers already sent, cannot send error response");
       return;
     }
-    
+
     // Set proper content type to ensure JSON response
     res.setHeader('Content-Type', 'application/json');
-    
+
     res.status(500).json({
       success: false,
       data: null,

@@ -34,7 +34,7 @@ export function logSmartStyleUsage(params: {
 
   // Log to console for now (future: Google Sheets API integration)
   console.log('📊 Smart Style Usage Log:', JSON.stringify(logEntry, null, 2));
-  
+
   // TODO: Implement Google Sheets API logging
   // This could be done via Google Sheets API or webhook to Google Apps Script
 }
@@ -43,18 +43,18 @@ export function logSmartStyleUsage(params: {
 function cleanVideoScript(content: string | any): string {
   // Handle different response structures from different AI models
   let actualContent = content;
-  
+
   if (typeof content === 'object' && content.content) {
     // Claude response structure: { content: "actual content", model: "claude-3-5-sonnet-20241022", ... }
     actualContent = content.content;
   }
-  
+
   // Ensure content is a string
   if (typeof actualContent !== 'string') {
     console.error('cleanVideoScript received non-string content after extraction:', typeof actualContent, actualContent);
     return String(actualContent || '');
   }
-  
+
   return actualContent
     // Remove hashtags completely from the content
     .replace(/#\w+/g, '')
@@ -81,14 +81,14 @@ function cleanVideoScript(content: string | any): string {
 function estimateVideoDuration(content: string): VideoDuration {
   const words = content.trim().split(/\s+/).filter(word => word.length > 0);
   const wordCount = words.length;
-  
+
   // Average speaking rates for different content types
   const wordsPerSecond = {
     slow: 2.0,     // Deliberate, clear pace for tutorials
     moderate: 2.5, // Normal conversational pace  
     fast: 3.0      // Energetic, TikTok-style pace
   };
-  
+
   // Determine pacing based on content length and style
   let pacing: 'slow' | 'moderate' | 'fast';
   if (wordCount < 50) {
@@ -98,19 +98,19 @@ function estimateVideoDuration(content: string): VideoDuration {
   } else {
     pacing = 'slow'; // Longer content needs clearer delivery
   }
-  
+
   const seconds = Math.round(wordCount / wordsPerSecond[pacing]);
-  
+
   // Format readable time
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
   const readableTime = minutes > 0 
     ? `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
     : `${seconds}s`;
-  
+
   // Ideal length feedback for social media
   const isIdealLength = seconds >= 15 && seconds <= 60; // Sweet spot for TikTok/Instagram
-  
+
   let lengthFeedback: string;
   if (seconds < 15) {
     lengthFeedback = "Consider adding more detail - very short for engagement";
@@ -121,7 +121,7 @@ function estimateVideoDuration(content: string): VideoDuration {
   } else {
     lengthFeedback = "Consider shortening for better social media performance";
   }
-  
+
   return {
     seconds,
     readableTime,
@@ -197,7 +197,7 @@ export async function generateContent(
     // Use promptFactory for smart style support or generatePrompt for standard generation
     let prompt: string;
     let fallbackLevel: 'exact' | 'default' | 'generic' = 'exact';
-    
+
     if (smartStyleRecommendations) {
       // Convert smart style recommendations to BestRatedStyle format
       const bestRatedStyle = {
@@ -231,39 +231,39 @@ export async function generateContent(
         fallbackLevel: 'exact',
         successfulPatterns
       };
-      
+
       prompt = await generatePrompt(promptParams);
       fallbackLevel = promptParams.fallbackLevel || 'exact';
     }
-    
+
     // Get optimized AI model configuration for this specific content generation
     const modelConfig = getModelConfig({
       niche: niche as Niche,
       templateType,
       tone
     });
-    
+
     // Get appropriate token limit based on template type
     const maxTokens = getTokenLimit(templateType);
-    
+
     // Log the content generation request for analytics
     console.log(`🚨 CONTENT GENERATOR AI MODEL DEBUG: aiModel parameter = "${aiModel}"`);
     console.log(`🔥 GENERATING ${templateType} content for ${product} in ${niche} niche using ${tone} tone with AI model: ${aiModel?.toUpperCase() || 'CLAUDE'}`);
-    
+
     if (aiModel !== 'claude' && aiModel !== 'chatgpt') {
       console.error(`❌ INVALID AI MODEL: "${aiModel}" - Must be 'claude' or 'chatgpt'`);
     }
-    
+
     // Enhanced system prompt with viral inspiration integration
     let systemPrompt = "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause.";
-    
+
     // Enhanced user prompt with viral inspiration context
     let userPrompt = `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`;
-    
+
     // Inject viral inspiration if available
     if (viralInspiration) {
       console.log('🎯 Using viral inspiration to enhance content generation:', viralInspiration);
-      
+
       systemPrompt += `\n\nIMPORTANT: Use this real viral inspiration to guide the tone and structure of your content:
 - Hook Style: ${viralInspiration.hook}
 - Format: ${viralInspiration.format}
@@ -271,7 +271,7 @@ export async function generateContent(
 - Popular Hashtags: ${viralInspiration.hashtags.join(" ")}
 
 Mimic the viral format, tone, and pacing while adapting it for the new product. Include a call-to-action to click the affiliate link.`;
-      
+
       userPrompt = `You are creating a viral short-form video script for TikTok/Instagram. Use this real viral inspiration to guide the tone and structure:
 
 VIRAL INSPIRATION:
@@ -291,7 +291,7 @@ Generate a highly engaging script that mimics this viral format, tone, and pacin
     // Inject smart style recommendations if available
     if (smartStyleRecommendations) {
       console.log('🎯 Using smart style recommendations from user\'s best-rated content:', smartStyleRecommendations.recommendation);
-      
+
       // Log smart style usage for analytics (future Google Sheets integration)
       logSmartStyleUsage({
         userId: 1, // Demo user ID
@@ -303,7 +303,7 @@ Generate a highly engaging script that mimics this viral format, tone, and pacin
         averageRating: smartStyleRecommendations.averageRating,
         sampleCount: smartStyleRecommendations.sampleCount
       });
-      
+
       systemPrompt += `\n\nSMART STYLE ENHANCEMENT: This user has high-performing content patterns. Apply these insights:
 ${smartStyleRecommendations.recommendation}
 
@@ -313,7 +313,7 @@ ${smartStyleRecommendations.patterns.bestContent.slice(0, 2).map((content: strin
 ).join('\n')}
 
 Match the structure, tone patterns, and successful elements from these high-rated posts (${smartStyleRecommendations.averageRating}/100 average).`;
-      
+
       userPrompt += `\n\nUSER'S BEST-RATED STYLE:
 Apply these successful patterns from your previous high-rated content:
 - ${smartStyleRecommendations.recommendation}
@@ -330,10 +330,10 @@ Apply these successful patterns from your previous high-rated content:
     } else {
       console.error(`❌ INVALID AI MODEL IN CONTENT GENERATOR: "${aiModel}" - Must be 'claude' or 'chatgpt'`);
     }
-    
+
     // Call AI model router with the enhanced prompt and optimized parameters
     console.log(`🤖 GENERATING CONTENT WITH ${aiModel?.toUpperCase() || 'CLAUDE'} MODEL`);
-    
+
     const aiResponse = await generateWithAI(userPrompt, {
       model: aiModel,
       maxTokens: maxTokens,
@@ -371,14 +371,14 @@ Apply these successful patterns from your previous high-rated content:
       tokens: aiResponse.tokens || 0,
       videoDuration
     };
-      
+
   } catch (error) {
     console.error("Error generating content with enhanced system:", error);
-    
+
     try {
       // Try a more reliable configuration with the same prompt
       console.log("Attempting generation with fallback model configuration");
-      
+
       // Use a more reliable fallback configuration with proper type casting
       const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
         {
@@ -390,7 +390,7 @@ Apply these successful patterns from your previous high-rated content:
           content: `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`
         }
       ];
-      
+
       // Try the fallback request
       const fallbackCompletion = await openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024
@@ -400,9 +400,9 @@ Apply these successful patterns from your previous high-rated content:
         frequency_penalty: 0.0,
         presence_penalty: 0.0
       });
-      
+
       const genericPrompt = `Create ${templateType} content for ${product} in a ${tone} tone. This is for the ${niche} niche.`;
-      
+
       // Clean up the fallback content for video scripts too
       const fallbackContent = fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.";
       const cleanedFallbackContent = cleanVideoScript(fallbackContent);
@@ -416,17 +416,17 @@ Apply these successful patterns from your previous high-rated content:
         tokens: fallbackCompletion.usage?.total_tokens || 0,
         videoDuration: fallbackVideoDuration
       };
-      
+
     } catch (fallbackError) {
       console.error("Fallback generation also failed:", fallbackError);
-      
+
       // Fallback to the legacy system if all else fails
       console.log("Falling back to legacy template system");
       console.warn(`[PromptFactory] Deep fallback to legacy templates → niche=${niche}, type=${templateType}, fallbackLevel=legacy`);
-      
+
       // Generate content based on template type using the legacy system
       let legacyContent = "";
-      
+
       switch (templateType) {
         case "original":
           legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
@@ -473,10 +473,10 @@ Apply these successful patterns from your previous high-rated content:
         default:
           legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
       }
-      
+
       const legacyPrompt = `Create ${templateType} content for ${product} using legacy templates in a ${tone} tone. This is for the ${niche} niche.`;
       const legacyVideoDuration = estimateVideoDuration(legacyContent);
-      
+
       return {
         content: legacyContent,
         fallbackLevel: 'generic', // Consider legacy system as generic fallback
