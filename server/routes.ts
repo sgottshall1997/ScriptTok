@@ -14,6 +14,7 @@ import statisticsApi from "./api/statistics";
 import { trendForecastRouter } from "./api/trend-forecast";
 import { productResearchRouter } from "./api/product-research";
 import { trendingCategorizedRouter } from "./api/trending-categorized";
+import { trendHistoryRouter } from "./api/trend-history";
 
 // DISABLED: Amazon-related imports temporarily disabled
 // import { aiModelConfigRouter } from "./api/aiModelConfig";
@@ -41,6 +42,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.use('/api/trend-forecast', trendForecastRouter);
   app.use('/api/product-research', productResearchRouter);
   app.use('/api/trending-categorized', trendingCategorizedRouter);
+  app.use('/api/trend-history', trendHistoryRouter);
   
   // Usage statistics endpoint
   app.use('/api/statistics', statisticsApi);

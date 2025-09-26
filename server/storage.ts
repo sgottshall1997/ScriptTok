@@ -52,10 +52,11 @@ export interface IStorage {
 
   // Trend history operations
   saveTrendHistory(history: InsertTrendHistory): Promise<TrendHistory>;
-  getTrendHistory(limit?: number): Promise<TrendHistory[]>;
-  getTrendHistoryBySource(sourceType: string, limit?: number): Promise<TrendHistory[]>;
-  getTrendHistoryByNiche(niche: string, limit?: number): Promise<TrendHistory[]>;
-  getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit?: number): Promise<TrendHistory[]>;
+  getTrendHistory(limit?: number, offset?: number): Promise<TrendHistory[]>;
+  getTrendHistoryBySource(sourceType: string, limit?: number, offset?: number): Promise<TrendHistory[]>;
+  getTrendHistoryByNiche(niche: string, limit?: number, offset?: number): Promise<TrendHistory[]>;
+  getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit?: number, offset?: number): Promise<TrendHistory[]>;
+  clearTrendHistory(): Promise<void>;
 }
 
 // In-memory storage implementation for development
@@ -312,29 +313,34 @@ export class MemStorage implements IStorage {
     return newHistory;
   }
 
-  async getTrendHistory(limit = 50): Promise<TrendHistory[]> {
-    return this.trendHistoryData.slice(-limit).reverse();
+  async getTrendHistory(limit = 50, offset = 0): Promise<TrendHistory[]> {
+    const sorted = this.trendHistoryData.slice().reverse();
+    return sorted.slice(offset, offset + limit);
   }
 
-  async getTrendHistoryBySource(sourceType: string, limit = 50): Promise<TrendHistory[]> {
-    return this.trendHistoryData
+  async getTrendHistoryBySource(sourceType: string, limit = 50, offset = 0): Promise<TrendHistory[]> {
+    const filtered = this.trendHistoryData
       .filter(h => h.sourceType === sourceType)
-      .slice(-limit)
       .reverse();
+    return filtered.slice(offset, offset + limit);
   }
 
-  async getTrendHistoryByNiche(niche: string, limit = 50): Promise<TrendHistory[]> {
-    return this.trendHistoryData
+  async getTrendHistoryByNiche(niche: string, limit = 50, offset = 0): Promise<TrendHistory[]> {
+    const filtered = this.trendHistoryData
       .filter(h => h.niche === niche)
-      .slice(-limit)
       .reverse();
+    return filtered.slice(offset, offset + limit);
   }
 
-  async getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit = 50): Promise<TrendHistory[]> {
-    return this.trendHistoryData
+  async getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit = 50, offset = 0): Promise<TrendHistory[]> {
+    const filtered = this.trendHistoryData
       .filter(h => h.sourceType === sourceType && h.niche === niche)
-      .slice(-limit)
       .reverse();
+    return filtered.slice(offset, offset + limit);
+  }
+
+  async clearTrendHistory(): Promise<void> {
+    this.trendHistoryData = [];
   }
 }
 
@@ -458,29 +464,39 @@ export class DatabaseStorage implements IStorage {
     return result[0];
   }
 
-  async getTrendHistory(limit = 50): Promise<TrendHistory[]> {
-    return await db.select().from(trendHistory).orderBy(desc(trendHistory.createdAt)).limit(limit);
+  async getTrendHistory(limit = 50, offset = 0): Promise<TrendHistory[]> {
+    return await db.select().from(trendHistory)
+      .orderBy(desc(trendHistory.createdAt))
+      .limit(limit)
+      .offset(offset);
   }
 
-  async getTrendHistoryBySource(sourceType: string, limit = 50): Promise<TrendHistory[]> {
+  async getTrendHistoryBySource(sourceType: string, limit = 50, offset = 0): Promise<TrendHistory[]> {
     return await db.select().from(trendHistory)
       .where(eq(trendHistory.sourceType, sourceType))
       .orderBy(desc(trendHistory.createdAt))
-      .limit(limit);
+      .limit(limit)
+      .offset(offset);
   }
 
-  async getTrendHistoryByNiche(niche: string, limit = 50): Promise<TrendHistory[]> {
+  async getTrendHistoryByNiche(niche: string, limit = 50, offset = 0): Promise<TrendHistory[]> {
     return await db.select().from(trendHistory)
       .where(eq(trendHistory.niche, niche))
       .orderBy(desc(trendHistory.createdAt))
-      .limit(limit);
+      .limit(limit)
+      .offset(offset);
   }
 
-  async getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit = 50): Promise<TrendHistory[]> {
+  async getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit = 50, offset = 0): Promise<TrendHistory[]> {
     return await db.select().from(trendHistory)
       .where(and(eq(trendHistory.sourceType, sourceType), eq(trendHistory.niche, niche)))
       .orderBy(desc(trendHistory.createdAt))
-      .limit(limit);
+      .limit(limit)
+      .offset(offset);
+  }
+
+  async clearTrendHistory(): Promise<void> {
+    await db.delete(trendHistory);
   }
 }
 
