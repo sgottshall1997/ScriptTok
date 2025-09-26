@@ -878,3 +878,8 @@ export const getScriptTokSectionsByKeyword = (keyword: string): ScriptTokSection
     section.keyFeatures.some(feature => feature.toLowerCase().includes(lowercaseKeyword))
   );
 };
+
+// Legacy exports for backward compatibility
+export const getGlowBotSectionsByCategory = getScriptTokSectionsByCategory;
+export const getGlowBotSectionByPath = getScriptTokSectionByPath;
+export const getGlowBotSectionsByKeyword = getScriptTokSectionsByKeyword;
