@@ -193,7 +193,12 @@ export default function TrendingAIPicks() {
         title: "Perplexity Fetch Complete",
         description: `Added ${data.productsAdded} new trending products from Perplexity`,
       });
+      // Invalidate all related caches
       queryClient.invalidateQueries({ queryKey: ['/api/trending/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending-categorized'] });
+      // Force refetch by removing from cache
+      queryClient.removeQueries({ queryKey: ['/api/trending/products'] });
     },
     onError: (error) => {
       toast({
