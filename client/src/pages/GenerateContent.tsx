@@ -120,37 +120,127 @@ const GenerateContent = () => {
   const [viralResearchLoading, setViralResearchLoading] = useState(false);
   const [selectedViralTemplate, setSelectedViralTemplate] = useState<any>(null);
 
+  // Perplexity Intelligence System states
+  const [productResearch, setProductResearch] = useState<any>(null);
+  const [productResearchLoading, setProductResearchLoading] = useState(false);
+  const [competitorVideos, setCompetitorVideos] = useState<any[]>([]);
+  const [competitorLoading, setCompetitorLoading] = useState(false);
+  const [competitorIntelOpen, setCompetitorIntelOpen] = useState(false);
+  const [viralScore, setViralScore] = useState<any>(null);
+  const [selectedCompetitorStyle, setSelectedCompetitorStyle] = useState<any>(null);
 
 
 
-  // Fetch viral inspiration using Perplexity API for real trending insights
+
+  // Fetch product research using Perplexity Intelligence System
   const fetchViralInspirationForProduct = async (productName: string) => {
     if (!productName.trim()) {
       setViralInspo(null);
       setEnhancedViralResearch(null);
+      setProductResearch(null);
       setViralInspoLoading(false);
       setViralResearchLoading(false);
+      setProductResearchLoading(false);
       return;
     }
 
     setViralInspoLoading(true);
     setViralResearchLoading(true);
+    setProductResearchLoading(true);
     
     try {
-      // DISABLED: Viral video inspiration functionality temporarily disabled
-      // Viral research functionality is currently disabled
-      // Clear viral inspiration state for now
+      // Call Product Research API
+      const response = await fetch('/api/product-research/research', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product: productName,
+          niche: selectedNiche
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setProductResearch(result.data.research);
+          console.log('🔍 Product research loaded:', result.data.research);
+        }
+      } else {
+        console.log('Product research API not available, using fallback');
+        setProductResearch(null);
+      }
+
+      // Clear old viral inspiration data since we're using new research system
       setViralInspo(null);
       setEnhancedViralResearch(null);
-      console.log('Viral research is currently disabled');
     } catch (error) {
-      console.error('Error fetching viral inspiration:', error);
+      console.error('Error fetching product research:', error);
       setViralInspo(null);
       setEnhancedViralResearch(null);
+      setProductResearch(null);
     } finally {
       setViralInspoLoading(false);
       setViralResearchLoading(false);
+      setProductResearchLoading(false);
     }
+  };
+
+  // Fetch competitor intelligence
+  const fetchCompetitorIntel = async () => {
+    if (!selectedProduct.trim()) {
+      toast({
+        title: "Product Required",
+        description: "Please enter a product name first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setCompetitorLoading(true);
+    setCompetitorIntelOpen(true);
+    
+    try {
+      const response = await fetch('/api/product-research/competitors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          product: selectedProduct,
+          niche: selectedNiche
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setCompetitorVideos(result.data.competitors);
+          console.log('🎯 Competitor intel loaded:', result.data.competitors);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching competitor intel:', error);
+      toast({
+        title: "Fetch Failed",
+        description: "Could not load competitor videos. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setCompetitorLoading(false);
+    }
+  };
+
+  // Apply competitor style to generation
+  const applyCompetitorStyle = (competitor: any) => {
+    setSelectedCompetitorStyle(competitor);
+    setCustomHook(competitor.hook);
+    
+    toast({
+      title: "Style Applied! ⚡",
+      description: `Now using ${competitor.creator}'s successful format`,
+    });
   };
 
   // Watch for product name changes to fetch viral inspiration
@@ -496,6 +586,8 @@ ${config.hashtags.join(' ')}`;
           customHook,
           // No affiliate URL needed for TikTok-only generator
           ...(viralInspo ? { viralInspiration: viralInspo } : {}), // Include viral inspiration data only if exists
+          ...(productResearch ? { productResearch } : {}), // Include product research data
+          ...(selectedCompetitorStyle ? { competitorStyle: selectedCompetitorStyle } : {}), // Include competitor style
           templateSource, // Track how template was selected
           useSmartStyle, // Enable smart style recommendations
           userId: 1 // Demo user ID for rating system
@@ -581,6 +673,8 @@ ${config.hashtags.join(' ')}`;
           aiModel: aiModel, // Use selected single model
           // No affiliate URL needed for TikTok-only generator
           ...(viralInspo ? { viralInspiration: viralInspo } : {}), // Include viral inspiration data only if exists
+          ...(productResearch ? { productResearch } : {}), // Include product research data
+          ...(selectedCompetitorStyle ? { competitorStyle: selectedCompetitorStyle } : {}), // Include competitor style
           templateSource, // Track how template was selected
           useSmartStyle, // Enable smart style recommendations
           userId: 1 // Demo user ID for rating system
@@ -602,6 +696,12 @@ ${config.hashtags.join(' ')}`;
           
           setGeneratedContent(contentData);
           setComparisonResults(null); // Clear comparison results when showing single result
+
+          // Set viral score if available
+          if (result.data.viralScore) {
+            setViralScore(result.data.viralScore);
+            console.log('🎯 Viral score loaded:', result.data.viralScore);
+          }
           
           // Generate TikTok caption for saving to history
           const tiktokCaption = generatePlatformCaptionForSaving('tiktok', contentData, selectedProduct, '', selectedNiche);
@@ -734,6 +834,165 @@ ${config.hashtags.join(' ')}`;
 
           </CardContent>
         </Card>
+
+        {/* Product Research Card */}
+        {selectedProduct && (productResearchLoading || productResearch) && (
+          <Card className="shadow-lg bg-blue-50 border border-blue-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-blue-700 flex items-center gap-2">
+                {productResearchLoading ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    🔍 Analyzing {selectedProduct} on TikTok...
+                  </>
+                ) : (
+                  <>🎯 Product Research Complete</>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {productResearchLoading ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-blue-600">Discovering viral hooks, target audience, and trending angles...</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="h-2 bg-blue-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-blue-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-blue-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              ) : productResearch && (
+                <div className="space-y-4">
+                  {/* Viral Hooks */}
+                  {productResearch.viralHooks && productResearch.viralHooks.length > 0 && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-green-700 mb-2">🔥 Viral Hooks</h4>
+                      <ul className="space-y-1">
+                        {productResearch.viralHooks.map((hook, index) => (
+                          <li key={index} className="text-sm text-gray-700">• {hook}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Target Audience */}
+                  {productResearch.targetAudience && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-purple-700 mb-2">👥 Target Audience</h4>
+                      <p className="text-sm text-gray-700">{productResearch.targetAudience}</p>
+                    </div>
+                  )}
+
+                  {/* Trending Angles */}
+                  {productResearch.trendingAngles && productResearch.trendingAngles.length > 0 && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-orange-700 mb-2">📈 Trending Angles</h4>
+                      <ul className="space-y-1">
+                        {productResearch.trendingAngles.map((angle, index) => (
+                          <li key={index} className="text-sm text-gray-700">• {angle}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Best Time to Post */}
+                  {productResearch.bestTimeToPost && productResearch.bestTimeToPost.length > 0 && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-blue-700 mb-2">⏰ Best Time to Post</h4>
+                      <ul className="space-y-1">
+                        {productResearch.bestTimeToPost.map((time, index) => (
+                          <li key={index} className="text-sm text-gray-700">• {time}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* View Competitors Button */}
+                  <div className="pt-2">
+                    <Button 
+                      onClick={fetchCompetitorIntel}
+                      disabled={competitorLoading}
+                      className="w-full"
+                      variant="outline"
+                      data-testid="button-view-competitors"
+                    >
+                      {competitorLoading ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
+                          Loading Competitor Videos...
+                        </>
+                      ) : (
+                        <>
+                          👁️ View Competitor Videos →
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Competitor Intel Expandable Section */}
+        {competitorIntelOpen && (
+          <Card className="shadow-lg bg-purple-50 border border-purple-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-purple-700 flex items-center gap-2">
+                🎯 Competitor Intelligence
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {competitorLoading ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-purple-600">Finding top 5 viral videos about {selectedProduct}...</p>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-16 bg-purple-200 rounded animate-pulse"></div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {competitorVideos.length > 0 ? (
+                    competitorVideos.map((video, index) => (
+                      <div key={index} className="bg-white p-4 rounded-lg border hover:shadow-md transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">{video.creator}</h4>
+                            <p className="text-sm text-purple-600 font-medium">"{video.hook}"</p>
+                          </div>
+                          <div className="text-right text-xs text-gray-500">
+                            <div>{video.views}</div>
+                            <div>{video.engagement}</div>
+                          </div>
+                        </div>
+                        <div className="space-y-1 text-sm text-gray-600">
+                          <p><strong>Structure:</strong> {video.structure}</p>
+                          <p><strong>What Worked:</strong> {video.whatWorked}</p>
+                        </div>
+                        <div className="pt-2">
+                          <Button 
+                            onClick={() => applyCompetitorStyle(video)}
+                            size="sm"
+                            className="w-full bg-green-600 hover:bg-green-700"
+                            data-testid={`button-use-style-${index}`}
+                          >
+                            ⚡ Use This Style
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-purple-600">
+                      <p>No competitor videos found for this product.</p>
+                      <p className="text-sm mt-1">Try a different product name or check back later.</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
 
         {/* Enhanced Viral Research Preview */}
         {selectedProduct && (viralResearchLoading || enhancedViralResearch || viralInspo) && (
@@ -1138,6 +1397,107 @@ ${config.hashtags.join(' ')}`;
                   <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
                     <h4 className="font-semibold mb-2">Viral Hook:</h4>
                     <p className="text-blue-900 font-medium">{generatedContent.hook}</p>
+                  </div>
+                )}
+
+                {/* Viral Score Display */}
+                {viralScore && (
+                  <div className={`p-4 rounded-lg border-l-4 ${
+                    viralScore.colorCode === 'green' ? 'bg-green-50 border-green-500' :
+                    viralScore.colorCode === 'yellow' ? 'bg-yellow-50 border-yellow-500' :
+                    'bg-red-50 border-red-500'
+                  }`}>
+                    <div className="flex justify-between items-center mb-3">
+                      <h4 className="font-semibold">🎯 Viral Score</h4>
+                      <div className={`text-2xl font-bold ${
+                        viralScore.colorCode === 'green' ? 'text-green-700' :
+                        viralScore.colorCode === 'yellow' ? 'text-yellow-700' :
+                        'text-red-700'
+                      }`}>
+                        {viralScore.overall}/100
+                      </div>
+                    </div>
+                    
+                    {/* Score Breakdown */}
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600 mb-1">Hook Strength</div>
+                        <div className="h-2 bg-gray-200 rounded-full">
+                          <div 
+                            className="h-2 bg-green-500 rounded-full" 
+                            style={{ width: `${viralScore.breakdown.hookStrength}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.hookStrength}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600 mb-1">Engagement</div>
+                        <div className="h-2 bg-gray-200 rounded-full">
+                          <div 
+                            className="h-2 bg-blue-500 rounded-full" 
+                            style={{ width: `${viralScore.breakdown.engagement}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.engagement}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600 mb-1">Clarity</div>
+                        <div className="h-2 bg-gray-200 rounded-full">
+                          <div 
+                            className="h-2 bg-purple-500 rounded-full" 
+                            style={{ width: `${viralScore.breakdown.clarity}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.clarity}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600 mb-1">Length</div>
+                        <div className="h-2 bg-gray-200 rounded-full">
+                          <div 
+                            className="h-2 bg-orange-500 rounded-full" 
+                            style={{ width: `${viralScore.breakdown.length}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.length}</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-xs text-gray-600 mb-1">Trending</div>
+                        <div className="h-2 bg-gray-200 rounded-full">
+                          <div 
+                            className="h-2 bg-pink-500 rounded-full" 
+                            style={{ width: `${viralScore.breakdown.trending}%` }}
+                          ></div>
+                        </div>
+                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.trending}</div>
+                      </div>
+                    </div>
+
+                    {/* Suggestions */}
+                    {viralScore.suggestions && viralScore.suggestions.length > 0 && (
+                      <div className="space-y-2">
+                        <h5 className="font-medium text-gray-700">💡 Improvement Suggestions:</h5>
+                        <ul className="space-y-1">
+                          {viralScore.suggestions.map((suggestion, index) => (
+                            <li key={index} className="text-sm text-gray-600">• {suggestion}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Try Again Button for Low Scores */}
+                    {viralScore.overall < 70 && (
+                      <div className="pt-3 border-t mt-3">
+                        <Button 
+                          onClick={handleGenerateContent}
+                          disabled={isGenerating}
+                          variant="outline"
+                          className="w-full"
+                          data-testid="button-try-again"
+                        >
+                          🔄 Try Again (Aim for 70+)
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 )}
 

@@ -54,8 +54,8 @@ import { TONES } from '../prompts/tones';
 import { loadPromptTemplates } from '../prompts/templates';
 import { ViralInspiration } from '../services/contentGenerator';
 import { evaluateContentWithBothModels, createContentEvaluationData } from '../services/aiEvaluationService';
-import { contentEvaluations } from '@shared/schema';
 import { db } from '../db';
+import { calculateViralScore } from '../services/viralScoreCalculator';
 
 // Viral inspiration schema
 const viralInspirationSchema = z.object({
@@ -79,6 +79,18 @@ const generateContentSchema = z.object({
   affiliateUrl: z.string().optional(),
   aiModel: z.enum(["chatgpt", "claude", "both"]).optional().default("claude"), // AI model selection
   viralInspiration: viralInspirationSchema,
+  productResearch: z.object({
+    viralHooks: z.array(z.string()).optional(),
+    targetAudience: z.string().optional(),
+    trendingAngles: z.array(z.string()).optional(),
+    bestTimeToPost: z.array(z.string()).optional(),
+  }).optional(),
+  competitorStyle: z.object({
+    hook: z.string().optional(),
+    structure: z.string().optional(),
+    creator: z.string().optional(),
+    whatWorked: z.string().optional(),
+  }).optional(),
   templateSource: z.string().optional(),
   useSmartStyle: z.boolean().optional().default(false),
   userId: z.number().optional(),
@@ -578,6 +590,24 @@ Experience the difference today! #${niche} #trending`;
     // 🤖 AUTOMATIC AI EVALUATION - Add evaluation trigger placeholder
     // Note: This will be implemented after content history is saved to avoid duplicates
 
+    // 🎯 Calculate viral score using product research and competitor insights
+    let viralScore = null;
+    try {
+      const scoreData = {
+        content,
+        hook: validatedData.customHook || extractHook(content),
+        productResearch: validatedData.productResearch,
+        competitorStyle: validatedData.competitorStyle,
+        niche: validatedData.niche,
+        product: validatedData.product
+      };
+      viralScore = await calculateViralScore(scoreData);
+      console.log('🎯 Viral score calculated:', viralScore.overall);
+    } catch (scoreError) {
+      console.error('Error calculating viral score:', scoreError);
+      // Continue without viral score if calculation fails
+    }
+
     // Return success response with clean JSON structure including platform content
     res.json({
       success: true,
@@ -602,7 +632,9 @@ Experience the difference today! #${niche} #trending`;
         // Enhanced template system data
         ...(surpriseMeReasoning && { surpriseMeReasoning }),
         affiliateUrl: validatedData.affiliateUrl || null,
-        customHook: validatedData.customHook || null
+        customHook: validatedData.customHook || null,
+        // Viral score from Perplexity Intelligence System
+        ...(viralScore && { viralScore })
       },
       error: null
     });
