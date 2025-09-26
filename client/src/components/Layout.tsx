@@ -1,7 +1,6 @@
 import React from 'react';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
-import ModeSwitcher from './ModeSwitcher';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,7 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <ModeSwitcher />
+              {/* Future: Theme toggle, user menu, etc. */}
             </div>
           </div>
         </header>
