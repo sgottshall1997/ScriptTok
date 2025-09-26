@@ -13,6 +13,7 @@ import statisticsApi from "./api/statistics";
 // Perplexity Intelligence System imports
 import { trendForecastRouter } from "./api/trend-forecast";
 import { productResearchRouter } from "./api/product-research";
+import { trendingCategorizedRouter } from "./api/trending-categorized";
 
 // DISABLED: Amazon-related imports temporarily disabled
 // import { aiModelConfigRouter } from "./api/aiModelConfig";
@@ -39,6 +40,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Perplexity Intelligence System routes
   app.use('/api/trend-forecast', trendForecastRouter);
   app.use('/api/product-research', productResearchRouter);
+  app.use('/api/trending-categorized', trendingCategorizedRouter);
   
   // Usage statistics endpoint
   app.use('/api/statistics', statisticsApi);
