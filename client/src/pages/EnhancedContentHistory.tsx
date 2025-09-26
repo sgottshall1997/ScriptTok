@@ -36,7 +36,6 @@ import { useQuery } from '@tanstack/react-query';
 import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
-import SyncRatingsButton from '@/components/SyncRatingsButton';
 import { ViralScoreDisplay } from '@/components/ViralScoreDisplay';
 import { getGlowBotSectionByPath } from '@/lib/glowbot-sections';
 import AboutThisPage from '@/components/AboutThisPage';
@@ -53,13 +52,8 @@ const EnhancedContentHistory = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [filters, setFilters] = useState({
     niche: 'all',
-    platform: 'all',
     template: 'all',
-    affiliateLink: 'all',
-    amazonAffiliate: 'all',
-    aiModel: 'all',
-    contentFormat: 'all',
-    smartStyle: 'all'
+    aiModel: 'all'
   });
   const [sortBy, setSortBy] = useState('newest');
   const [evaluationData, setEvaluationData] = useState<Record<string, any>>({});
@@ -202,36 +196,8 @@ const EnhancedContentHistory = () => {
       filtered = filtered.filter(item => item.niche === filters.niche);
     }
 
-    if (filters.platform !== 'all') {
-      filtered = filtered.filter(item => 
-        item.platformsSelected && item.platformsSelected.includes(filters.platform)
-      );
-    }
-
     if (filters.template !== 'all') {
       filtered = filtered.filter(item => item.contentType === filters.template);
-    }
-
-    if (filters.affiliateLink !== 'all') {
-      filtered = filtered.filter(item => {
-        const hasAffiliateLink = item.generatedOutput?.affiliateLink && 
-          item.generatedOutput.affiliateLink.trim() !== '' &&
-          item.generatedOutput.affiliateLink !== 'N/A';
-        return filters.affiliateLink === 'has' ? hasAffiliateLink : !hasAffiliateLink;
-      });
-    }
-
-    if (filters.amazonAffiliate !== 'all') {
-      filtered = filtered.filter(item => {
-        const affiliateLink = item.generatedOutput?.affiliateLink || '';
-        const isAmazonLink = affiliateLink.includes('amazon.com') || 
-                            affiliateLink.includes('amzn.to') ||
-                            affiliateLink.includes('amazon.') ||
-                            affiliateLink.includes('/dp/') ||
-                            affiliateLink.includes('tag=');
-        return filters.amazonAffiliate === 'amazon' ? isAmazonLink : 
-               (affiliateLink.trim() !== '' && affiliateLink !== 'N/A' && !isAmazonLink);
-      });
     }
 
     if (filters.aiModel !== 'all') {
@@ -246,28 +212,6 @@ const EnhancedContentHistory = () => {
           return modelLower.includes('claude');
         }
         return false;
-      });
-    }
-
-    if (filters.contentFormat !== 'all') {
-      filtered = filtered.filter(item => {
-        const format = item.contentFormat;
-        if (!format) return filters.contentFormat === 'unknown';
-
-        const formatLower = format.toLowerCase();
-        if (filters.contentFormat === 'spartan') {
-          return formatLower.includes('spartan');
-        } else if (filters.contentFormat === 'regular') {
-          return formatLower.includes('regular') || !formatLower.includes('spartan');
-        }
-        return false;
-      });
-    }
-
-    if (filters.smartStyle !== 'all') {
-      filtered = filtered.filter(item => {
-        const smartStyleUsed = item.topRatedStyleUsed || item.useSmartStyle;
-        return filters.smartStyle === 'used' ? smartStyleUsed : !smartStyleUsed;
       });
     }
 
@@ -306,8 +250,19 @@ const EnhancedContentHistory = () => {
             const bClaudeScoreLow = calculateAverageRating(bEvals.claude);
             // For lowest, treat missing evaluations as high scores (10) so they appear last
             const aClaudeFinal = aClaudeScoreLow === 0 ? 10 : aClaudeScoreLow;
-            const bClaudeFinal = bClaudeScoreLow === 0 ? 10 : bClaudeScoreLow;
+            const bClaudeFinal = bClaudeFinal === 0 ? 10 : bClaudeScoreLow;
             return aClaudeFinal - bClaudeFinal; // Lower scores first
+          case 'viral-highest':
+            const aViralScore = a.viralScoreOverall || a.viralScore?.overall || 0;
+            const bViralScore = b.viralScoreOverall || b.viralScore?.overall || 0;
+            return bViralScore - aViralScore; // Higher scores first
+          case 'viral-lowest':
+            const aViralScoreLow = a.viralScoreOverall || a.viralScore?.overall || 0;
+            const bViralScoreLow = b.viralScoreOverall || b.viralScore?.overall || 0;
+            // For lowest, treat missing scores as high (100) so they appear last
+            const aViralFinal = aViralScoreLow === 0 ? 100 : aViralScoreLow;
+            const bViralFinal = bViralScoreLow === 0 ? 100 : bViralScoreLow;
+            return aViralFinal - bViralFinal; // Lower scores first
           default:
             return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime();
         }
@@ -567,7 +522,6 @@ const EnhancedContentHistory = () => {
 
   // Extract unique values for filter dropdowns
   const uniqueNiches = Array.from(new Set(history.map(entry => entry.niche)));
-  const uniquePlatforms = Array.from(new Set(history.flatMap(entry => entry.platformsSelected || [])));
   const uniqueTemplates = Array.from(new Set(
     history
       .map(entry => entry.templateUsed || entry.contentType)
@@ -806,9 +760,6 @@ const EnhancedContentHistory = () => {
           <SmartLearningToggle userId={1} />
         </div>
 
-        {/* Sync Ratings to Google Sheet Button */}
-        <SyncRatingsButton className="mb-6" />
-
         {/* Sort by AI Ratings */}
         <div className="mb-6">
           <div className="flex items-center gap-4">
@@ -823,13 +774,15 @@ const EnhancedContentHistory = () => {
                 <SelectItem value="gpt-lowest">GPT Rating: Lowest</SelectItem>
                 <SelectItem value="claude-highest">Claude Rating: Highest</SelectItem>
                 <SelectItem value="claude-lowest">Claude Rating: Lowest</SelectItem>
+                <SelectItem value="viral-highest">Viral Rating: Highest</SelectItem>
+                <SelectItem value="viral-lowest">Viral Rating: Lowest</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div>
             <Select value={filters.niche} onValueChange={(value) => setFilters(prev => ({ ...prev, niche: value }))}>
               <SelectTrigger>
@@ -840,22 +793,6 @@ const EnhancedContentHistory = () => {
                 {uniqueNiches.map(niche => (
                   <SelectItem key={niche} value={niche}>
                     {niche.charAt(0).toUpperCase() + niche.slice(1)}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Select value={filters.platform} onValueChange={(value) => setFilters(prev => ({ ...prev, platform: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Filter by platform" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Platforms</SelectItem>
-                {uniquePlatforms.map(platform => (
-                  <SelectItem key={platform} value={platform}>
-                    {platform}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -879,32 +816,6 @@ const EnhancedContentHistory = () => {
           </div>
 
           <div>
-            <Select value={filters.affiliateLink} onValueChange={(value) => setFilters(prev => ({ ...prev, affiliateLink: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Has / Does not have Affiliate Link" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Affiliate Link / No Affiliate Link</SelectItem>
-                <SelectItem value="has">Has Affiliate Link</SelectItem>
-                <SelectItem value="none">No Affiliate Link</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Select value={filters.amazonAffiliate} onValueChange={(value) => setFilters(prev => ({ ...prev, amazonAffiliate: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Amazon Affiliate Links" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Amazon Affiliate Links</SelectItem>
-                <SelectItem value="amazon">Amazon Affiliate Links</SelectItem>
-                <SelectItem value="nonamazon">Non-Amazon Links</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
             <Select value={filters.aiModel} onValueChange={(value) => setFilters(prev => ({ ...prev, aiModel: value }))}>
               <SelectTrigger>
                 <SelectValue placeholder="AI Model" />
@@ -914,33 +825,6 @@ const EnhancedContentHistory = () => {
                 <SelectItem value="chatgpt">ChatGPT</SelectItem>
                 <SelectItem value="claude">Claude</SelectItem>
                 <SelectItem value="unknown">Unknown</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Select value={filters.contentFormat} onValueChange={(value) => setFilters(prev => ({ ...prev, contentFormat: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Regular or Spartan Format" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Regular or Spartan Format</SelectItem>
-                <SelectItem value="regular">Regular Format</SelectItem>
-                <SelectItem value="spartan">Spartan Format</SelectItem>
-                <SelectItem value="unknown">Unknown</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <Select value={filters.smartStyle} onValueChange={(value) => setFilters(prev => ({ ...prev, smartStyle: value }))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Smart Style" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Smart Style or Standard</SelectItem>
-                <SelectItem value="used">Smart Style Used</SelectItem>
-                <SelectItem value="none">Standard Style</SelectItem>
               </SelectContent>
             </Select>
           </div>
