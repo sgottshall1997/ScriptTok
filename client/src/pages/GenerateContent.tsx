@@ -24,6 +24,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { UsageStatistics } from "@/components/UsageStatistics";
+import { ViralScoreDisplay } from "@/components/ViralScoreDisplay";
 import { type TemplateType, TIKTOK_TONE_OPTIONS } from '@shared/constants';
 
 // Video duration interface
@@ -43,7 +44,8 @@ interface GeneratedContent {
   niche: string;
   videoDuration?: VideoDuration;
   viralScore?: {
-    score: number;
+    overall: number;
+    score?: number; // backward compatibility
     breakdown: {
       hookStrength: number;
       engagement: number;
@@ -52,6 +54,7 @@ interface GeneratedContent {
       trending: number;
     };
     suggestions: string[];
+    colorCode?: 'green' | 'yellow' | 'red';
   };
   viralAnalysis?: {
     overallSummary: string;
@@ -555,7 +558,8 @@ ${config.hashtags.join(' ')}`;
                 hook: result.data.customHook || '',
                 platform: 'tiktok',
                 niche: selectedNiche,
-                videoDuration: result.data.videoDuration
+                videoDuration: result.data.videoDuration,
+                viralScore: result.data.viralScore
               };
             }
           }
@@ -650,6 +654,8 @@ ${config.hashtags.join(' ')}`;
               hook: claudeResult.data.customHook || '',
               platform: 'tiktok',
               niche: selectedNiche,
+              viralScore: claudeResult.data.viralScore,
+              viralAnalysis: claudeResult.data.viralAnalysis
             };
             
             const chatgptContent: GeneratedContent = {
@@ -657,6 +663,8 @@ ${config.hashtags.join(' ')}`;
               hook: chatgptResult.data.customHook || '',
               platform: 'tiktok',
               niche: selectedNiche,
+              viralScore: chatgptResult.data.viralScore,
+              viralAnalysis: chatgptResult.data.viralAnalysis
             };
 
             setComparisonResults({
@@ -1472,92 +1480,16 @@ ${config.hashtags.join(' ')}`;
                 )}
 
                 {/* Viral Score Display */}
-                {viralScore && (
-                  <div className={`p-4 rounded-lg border-l-4 ${
-                    viralScore.colorCode === 'green' ? 'bg-green-50 border-green-500' :
-                    viralScore.colorCode === 'yellow' ? 'bg-yellow-50 border-yellow-500' :
-                    'bg-red-50 border-red-500'
-                  }`}>
-                    <div className="flex justify-between items-center mb-3">
-                      <h4 className="font-semibold">🎯 Viral Score</h4>
-                      <div className={`text-2xl font-bold ${
-                        viralScore.colorCode === 'green' ? 'text-green-700' :
-                        viralScore.colorCode === 'yellow' ? 'text-yellow-700' :
-                        'text-red-700'
-                      }`}>
-                        {viralScore.overall}/100
-                      </div>
-                    </div>
-                    
-                    {/* Score Breakdown */}
-                    <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600 mb-1">Hook Strength</div>
-                        <div className="h-2 bg-gray-200 rounded-full">
-                          <div 
-                            className="h-2 bg-green-500 rounded-full" 
-                            style={{ width: `${viralScore.breakdown.hookStrength}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.hookStrength}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600 mb-1">Engagement</div>
-                        <div className="h-2 bg-gray-200 rounded-full">
-                          <div 
-                            className="h-2 bg-blue-500 rounded-full" 
-                            style={{ width: `${viralScore.breakdown.engagement}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.engagement}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600 mb-1">Clarity</div>
-                        <div className="h-2 bg-gray-200 rounded-full">
-                          <div 
-                            className="h-2 bg-purple-500 rounded-full" 
-                            style={{ width: `${viralScore.breakdown.clarity}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.clarity}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600 mb-1">Length</div>
-                        <div className="h-2 bg-gray-200 rounded-full">
-                          <div 
-                            className="h-2 bg-orange-500 rounded-full" 
-                            style={{ width: `${viralScore.breakdown.length}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.length}</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-xs text-gray-600 mb-1">Trending</div>
-                        <div className="h-2 bg-gray-200 rounded-full">
-                          <div 
-                            className="h-2 bg-pink-500 rounded-full" 
-                            style={{ width: `${viralScore.breakdown.trending}%` }}
-                          ></div>
-                        </div>
-                        <div className="text-xs font-medium mt-1">{viralScore.breakdown.trending}</div>
-                      </div>
-                    </div>
-
-                    {/* Suggestions */}
-                    {viralScore.suggestions && viralScore.suggestions.length > 0 && (
-                      <div className="space-y-2">
-                        <h5 className="font-medium text-gray-700">💡 Improvement Suggestions:</h5>
-                        <ul className="space-y-1">
-                          {viralScore.suggestions.map((suggestion, index) => (
-                            <li key={index} className="text-sm text-gray-600">• {suggestion}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
+                {(viralScore || generatedContent?.viralScore) && (
+                  <div className="space-y-4">
+                    <ViralScoreDisplay
+                      viralScore={viralScore || generatedContent?.viralScore || null}
+                      overallScore={viralScore?.overall || generatedContent?.viralScore?.overall || null}
+                    />
 
                     {/* AI-Powered Analysis & Auto-Apply */}
                     {generatedContent?.viralAnalysis && (
-                      <div className="space-y-3 border-t pt-3 mt-3">
+                      <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                         <h5 className="font-medium text-gray-700 flex items-center gap-2">
                           🤖 AI Analysis
                         </h5>
@@ -1586,8 +1518,8 @@ ${config.hashtags.join(' ')}`;
                     )}
 
                     {/* Try Again Button for Low Scores */}
-                    {viralScore.overall < 70 && (
-                      <div className="pt-3 border-t mt-3">
+                    {(viralScore?.overall || generatedContent?.viralScore?.overall || 0) < 70 && (
+                      <div className="bg-gray-50 p-4 rounded-lg">
                         <Button 
                           onClick={handleGenerateContent}
                           disabled={isGenerating}
@@ -1725,6 +1657,16 @@ ${config.hashtags.join(' ')}`;
                       </div>
                     </div>
 
+                    {/* Viral Score Display for this template */}
+                    {content.viralScore && (
+                      <div className="mt-4">
+                        <ViralScoreDisplay
+                          viralScore={content.viralScore}
+                          overallScore={content.viralScore?.overall || null}
+                        />
+                      </div>
+                    )}
+
                     {/* Action buttons for each template result */}
                     <div className="flex gap-2 justify-end">
                       <Button
@@ -1798,6 +1740,16 @@ ${config.hashtags.join(' ')}`;
                           <p className="text-orange-900 font-medium">{comparisonResults.claude.hook}</p>
                         </div>
                       )}
+                      {/* Viral Score Display for Claude */}
+                      {comparisonResults.claude.viralScore && (
+                        <div className="mt-4">
+                          <ViralScoreDisplay
+                            viralScore={comparisonResults.claude.viralScore}
+                            overallScore={comparisonResults.claude.viralScore?.overall || null}
+                          />
+                        </div>
+                      )}
+
                       <div className="mt-4">
                         <div className="bg-orange-100 p-4 rounded border border-orange-200">
                           <div className="flex items-center justify-between mb-3">
@@ -1845,6 +1797,16 @@ ${config.hashtags.join(' ')}`;
                           <p className="text-green-900 font-medium">{comparisonResults.chatgpt.hook}</p>
                         </div>
                       )}
+                      {/* Viral Score Display for ChatGPT */}
+                      {comparisonResults.chatgpt.viralScore && (
+                        <div className="mt-4">
+                          <ViralScoreDisplay
+                            viralScore={comparisonResults.chatgpt.viralScore}
+                            overallScore={comparisonResults.chatgpt.viralScore?.overall || null}
+                          />
+                        </div>
+                      )}
+
                       <div className="mt-4">
                         <div className="bg-green-100 p-4 rounded border border-green-200">
                           <div className="flex items-center justify-between mb-3">
