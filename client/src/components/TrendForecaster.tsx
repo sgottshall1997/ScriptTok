@@ -79,22 +79,52 @@ export default function TrendForecaster() {
     try {
       // Step 1: Fetch fresh data from Perplexity API (this saves to database automatically)
       console.log(`🔮 TrendForecaster: Manual refresh - Fetching ${selectedNiche} trends from Perplexity...`);
+      
+      // Show loading toast
+      toast({
+        title: "Refreshing Trends",
+        description: `Fetching latest ${selectedNiche} trends from AI...`,
+      });
+      
       const response = await fetch(`/api/trend-forecast/${selectedNiche}`);
+      
       if (!response.ok) {
-        throw new Error('Failed to fetch fresh trend forecast from Perplexity');
+        const errorData = await response.json().catch(() => ({}));
+        const errorMessage = errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+        
+        // Handle specific error types
+        if (response.status === 429) {
+          throw new Error('Rate limit exceeded. Please try again in a few minutes.');
+        } else if (response.status === 503) {
+          throw new Error('Service temporarily unavailable. Our AI service may be under maintenance.');
+        } else if (response.status >= 500) {
+          throw new Error('Server error occurred. Our team has been notified.');
+        } else if (response.status === 404) {
+          throw new Error('Trend forecast endpoint not found. Please refresh the page.');
+        } else {
+          throw new Error(`Failed to fetch trends: ${errorMessage}`);
+        }
       }
+      
       const perplexityData = await response.json();
+      
+      // Validate response data
+      if (!perplexityData.success) {
+        throw new Error(perplexityData.message || 'Invalid response from trend forecast service');
+      }
+      
+      if (!perplexityData.data?.trends) {
+        throw new Error('No trend data received from AI service');
+      }
       
       // Console logging for full visibility
       console.log(`🎯 TrendForecaster Perplexity: ${selectedNiche.toUpperCase()} Response:`, perplexityData);
       
-      if (perplexityData.data?.trends) {
-        const trends = perplexityData.data.trends;
-        console.log(`🔥 HOT ${selectedNiche} trends from Perplexity (${trends.hot?.length || 0}):`, trends.hot);
-        console.log(`📈 RISING ${selectedNiche} trends from Perplexity (${trends.rising?.length || 0}):`, trends.rising);
-        console.log(`🕐 UPCOMING ${selectedNiche} trends from Perplexity (${trends.upcoming?.length || 0}):`, trends.upcoming);
-        console.log(`📉 DECLINING ${selectedNiche} trends from Perplexity (${trends.declining?.length || 0}):`, trends.declining);
-      }
+      const trends = perplexityData.data.trends;
+      console.log(`🔥 HOT ${selectedNiche} trends from Perplexity (${trends.hot?.length || 0}):`, trends.hot);
+      console.log(`📈 RISING ${selectedNiche} trends from Perplexity (${trends.rising?.length || 0}):`, trends.rising);
+      console.log(`🕐 UPCOMING ${selectedNiche} trends from Perplexity (${trends.upcoming?.length || 0}):`, trends.upcoming);
+      console.log(`📉 DECLINING ${selectedNiche} trends from Perplexity (${trends.declining?.length || 0}):`, trends.declining);
       
       // Step 2: Invalidate the database cache to force a fresh read from database
       console.log(`💾 TrendForecaster: Invalidating database cache for ${selectedNiche}...`);
@@ -102,15 +132,32 @@ export default function TrendForecaster() {
         queryKey: ['/api/trend-history', 'forecaster', selectedNiche]
       });
       
+      // Count total trends for success message
+      const totalTrends = (trends.hot?.length || 0) + (trends.rising?.length || 0) + 
+                         (trends.upcoming?.length || 0) + (trends.declining?.length || 0);
+      
       toast({
-        title: "Trends Refreshed",
-        description: `Updated ${selectedNiche} trends from Perplexity and refreshed database`,
+        title: "✅ Trends Updated Successfully!",
+        description: `Found ${totalTrends} trending ${selectedNiche} products with AI-powered insights`,
       });
+      
     } catch (error) {
       console.error('Error refreshing trends:', error);
+      
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      
+      // Enhanced error logging for debugging
+      const errorDetails = {
+        niche: selectedNiche,
+        timestamp: new Date().toISOString(),
+        error: errorMessage,
+        stack: error instanceof Error ? error.stack : undefined
+      };
+      console.error('🚨 Detailed refresh error:', errorDetails);
+      
       toast({
-        title: "Refresh Failed",
-        description: "Failed to update trends. Please try again.",
+        title: "❌ Refresh Failed",
+        description: errorMessage,
         variant: "destructive",
       });
     }
@@ -145,12 +192,40 @@ export default function TrendForecaster() {
         
         // Fetch fresh data from Perplexity API
         const response = await fetch(`/api/trend-forecast/${niche.id}`);
+        
         if (!response.ok) {
-          throw new Error(`Failed to fetch ${niche.name} trends`);
+          const errorData = await response.json().catch(() => ({}));
+          const errorMessage = errorData.message || `HTTP ${response.status}: ${response.statusText}`;
+          
+          // Handle specific error types for bulk refresh
+          if (response.status === 429) {
+            throw new Error(`Rate limit exceeded for ${niche.name}. Skipping to avoid blocking other niches.`);
+          } else if (response.status === 503) {
+            throw new Error(`Service unavailable for ${niche.name}. AI service may be under maintenance.`);
+          } else if (response.status >= 500) {
+            throw new Error(`Server error for ${niche.name}: ${errorMessage}`);
+          } else {
+            throw new Error(`Failed to fetch ${niche.name} trends: ${errorMessage}`);
+          }
         }
         
         const data = await response.json();
-        console.log(`✅ Refresh All: ${niche.name} completed successfully`);
+        
+        // Validate response data
+        if (!data.success) {
+          throw new Error(`Invalid response for ${niche.name}: ${data.message || 'Unknown error'}`);
+        }
+        
+        if (!data.data?.trends) {
+          throw new Error(`No trend data received for ${niche.name}`);
+        }
+        
+        // Count trends for logging
+        const trends = data.data.trends;
+        const totalTrends = (trends.hot?.length || 0) + (trends.rising?.length || 0) + 
+                           (trends.upcoming?.length || 0) + (trends.declining?.length || 0);
+        
+        console.log(`✅ Refresh All: ${niche.name} completed successfully (${totalTrends} trends)`);
         
         results.completed.push(niche.name);
         
@@ -170,13 +245,22 @@ export default function TrendForecaster() {
         }
 
       } catch (error) {
-        console.error(`❌ Refresh All: ${niche.name} failed:`, error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        console.error(`❌ Refresh All: ${niche.name} failed:`, {
+          niche: niche.name,
+          error: errorMessage,
+          timestamp: new Date().toISOString()
+        });
+        
         results.failed.push(niche.name);
         
         setRefreshAllProgress(prev => ({
           ...prev,
           failed: [...prev.failed, niche.name]
         }));
+        
+        // Continue with next niche even if this one fails
+        console.log(`⏭️ Continuing with next niche after ${niche.name} failure...`);
       }
     }
 
@@ -187,17 +271,29 @@ export default function TrendForecaster() {
       currentNiche: null
     }));
 
-    // Show completion toast
+    // Show detailed completion toast
     if (results.completed.length === NICHES.length) {
       toast({
         title: "All Trends Refreshed! 🎉",
-        description: `Successfully updated all ${NICHES.length} niches from Perplexity`,
+        description: `Successfully updated all ${NICHES.length} niches with fresh AI-powered insights`,
+      });
+    } else if (results.completed.length > 0 && results.failed.length > 0) {
+      toast({
+        title: `Partial Success 🔄`,
+        description: `✅ ${results.completed.join(', ')} updated successfully. ❌ ${results.failed.join(', ')} failed. Retry individual niches if needed.`,
+        variant: "default",
+      });
+    } else if (results.completed.length === 0) {
+      toast({
+        title: "All Updates Failed ❌",
+        description: `No niches could be updated. Check your internet connection or try again later.`,
+        variant: "destructive",
       });
     } else {
       toast({
         title: `Refresh Complete`,
-        description: `${results.completed.length} niches succeeded, ${results.failed.length} failed. Check console for details.`,
-        variant: results.failed.length > 0 ? "destructive" : "default",
+        description: `${results.completed.length} niches succeeded, ${results.failed.length} failed`,
+        variant: results.failed.length > 0 ? "default" : "default",
       });
     }
 
