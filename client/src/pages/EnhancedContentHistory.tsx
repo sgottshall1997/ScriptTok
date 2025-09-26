@@ -733,10 +733,7 @@ const EnhancedContentHistory = () => {
           </div>
         </div>
 
-        {/* Smart Learning Toggle */}
-        <div className="mb-6">
-          <SmartLearningToggle userId={1} />
-        </div>
+        
 
         {/* Sort by AI Ratings */}
         <div className="mb-6">
