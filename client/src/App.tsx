@@ -11,6 +11,7 @@ import NotFound from "@/pages/not-found";
 // Essential Pages for TikTok Viral Product Generator
 import Dashboard from "@/pages/Dashboard";
 import EnhancedContentHistory from "@/pages/EnhancedContentHistory";
+import TrendHistory from "@/pages/TrendHistory";
 import AboutPage from "@/pages/about";
 import FAQPage from "@/pages/faq";
 import PrivacyPolicyPage from "@/pages/privacy";
@@ -58,6 +59,7 @@ function MainAppRouter() {
       
       {/* Content management */}
       <Route path="/content-history" component={EnhancedContentHistory} />
+      <Route path="/trend-history" component={TrendHistory} />
       {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}
       
       {/* Settings */}
