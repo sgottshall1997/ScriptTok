@@ -50,11 +50,12 @@ export default function TrendForecaster() {
     },
     staleTime: Infinity, // Never auto-refresh
     gcTime: 1000 * 60 * 60 * 24, // Cache for 24 hours
-    enabled: false, // Disable automatic fetching - only manual refresh
+    enabled: true, // Allow loading cached data but prevent auto-fetching
     refetchOnMount: false, // Don't fetch when component mounts
     refetchOnWindowFocus: false, // Don't fetch when window gains focus
     refetchOnReconnect: false, // Don't fetch when reconnecting
     refetchInterval: false, // Disable interval refetching
+    networkMode: 'offlineFirst', // Prefer cached data over network requests
   });
 
   const handleProductClick = (productName: string, niche: string) => {
