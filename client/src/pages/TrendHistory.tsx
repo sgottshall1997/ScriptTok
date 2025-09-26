@@ -25,7 +25,8 @@ import {
   Hash,
   Target,
   BarChart3,
-  Zap
+  Zap,
+  Package
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
@@ -192,7 +193,7 @@ const TrendHistory = () => {
               </CardTitle>
               
               {item.trendDescription && (
-                <p className="text-sm text-gray-600 line-clamp-2">
+                <p className={`text-sm text-gray-600 ${isExpanded ? '' : 'line-clamp-3'}`}>
                   {item.trendDescription}
                 </p>
               )}
@@ -225,6 +226,35 @@ const TrendHistory = () => {
         <Collapsible open={isExpanded}>
           <CollapsibleContent>
             <CardContent className="pt-0 space-y-4">
+              {/* Full Description */}
+              {item.trendDescription && (
+                <div className="p-4 bg-gray-50 rounded-lg">
+                  <div className="text-sm font-medium text-gray-700 mb-2">Full Description</div>
+                  <div className="text-sm text-gray-600">{item.trendDescription}</div>
+                </div>
+              )}
+
+              {/* Product Data from JSON */}
+              {item.productData && Array.isArray(item.productData) && item.productData.length > 0 && (
+                <div className="p-4 bg-purple-50 rounded-lg">
+                  <div className="text-sm font-medium text-purple-700 mb-3 flex items-center gap-2">
+                    <Package className="h-4 w-4" />
+                    Featured Products ({item.productData.length})
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {item.productData.map((product: any, index: number) => (
+                      <div key={index} className="bg-white rounded-lg p-3 border border-purple-200">
+                        <div className="font-medium text-sm text-gray-800">{product.name}</div>
+                        <div className="text-purple-600 font-semibold">{product.price}</div>
+                        {product.asin && (
+                          <div className="text-xs text-gray-500 mt-1">ASIN: {product.asin}</div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* Trend Details */}
               {(item.trendGrowth || item.trendWhen || item.trendOpportunity) && (
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-blue-50 rounded-lg">
