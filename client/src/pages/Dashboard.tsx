@@ -369,6 +369,100 @@ const Dashboard = () => {
                   </div>
                 </div>
                 
+                {/* ScriptTok Intelligence Flow Diagram */}
+                <div className="mt-6">
+                  <h4 className="text-base font-semibold text-purple-900 dark:text-purple-100 mb-4 text-center">How ScriptTok Creates Smart Content</h4>
+                  <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                    <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-2">
+                      
+                      {/* Step 1: Perplexity Discovery */}
+                      <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-purple-300 dark:border-purple-700 shadow-sm">
+                        <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                          <TrendingUp className="h-5 w-5 text-white" />
+                        </div>
+                        <h5 className="font-bold text-purple-800 dark:text-purple-200 mb-1 text-xs">Perplexity Discovery</h5>
+                        <p className="text-xs text-purple-700 dark:text-purple-300">Finds trending products for each niche using real-time web research</p>
+                      </div>
+
+                      {/* Arrow 1 */}
+                      <div className="hidden md:block">
+                        <ArrowRight className="h-5 w-5 text-purple-600" />
+                      </div>
+                      <div className="md:hidden">
+                        <div className="h-5 w-5 rotate-90">
+                          <ArrowRight className="h-5 w-5 text-purple-600" />
+                        </div>
+                      </div>
+
+                      {/* Step 2: Product Selection */}
+                      <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-blue-300 dark:border-blue-700 shadow-sm">
+                        <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                          <Target className="h-5 w-5 text-white" />
+                        </div>
+                        <h5 className="font-bold text-blue-800 dark:text-blue-200 mb-1 text-xs">Select Product</h5>
+                        <p className="text-xs text-blue-700 dark:text-blue-300">Choose from AI-discovered trending products across all niches</p>
+                      </div>
+
+                      {/* Arrow 2 */}
+                      <div className="hidden md:block">
+                        <ArrowRight className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div className="md:hidden">
+                        <div className="h-5 w-5 rotate-90">
+                          <ArrowRight className="h-5 w-5 text-blue-600" />
+                        </div>
+                      </div>
+
+                      {/* Step 3: TikTok Analysis */}
+                      <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-pink-300 dark:border-pink-700 shadow-sm">
+                        <div className="w-10 h-10 bg-pink-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                          <Eye className="h-5 w-5 text-white" />
+                        </div>
+                        <h5 className="font-bold text-pink-800 dark:text-pink-200 mb-1 text-xs">TikTok Analysis</h5>
+                        <p className="text-xs text-pink-700 dark:text-pink-300">Analyzes viral competitors and TikTok trends for selected product</p>
+                      </div>
+
+                      {/* Arrow 3 */}
+                      <div className="hidden md:block">
+                        <ArrowRight className="h-5 w-5 text-pink-600" />
+                      </div>
+                      <div className="md:hidden">
+                        <div className="h-5 w-5 rotate-90">
+                          <ArrowRight className="h-5 w-5 text-pink-600" />
+                        </div>
+                      </div>
+
+                      {/* Step 4: AI Generation */}
+                      <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-green-300 dark:border-green-700 shadow-sm">
+                        <div className="w-10 h-10 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                          <Sparkles className="h-5 w-5 text-white" />
+                        </div>
+                        <h5 className="font-bold text-green-800 dark:text-green-200 mb-1 text-xs">AI Content Creation</h5>
+                        <p className="text-xs text-green-700 dark:text-green-300">Passes all data to ChatGPT/Claude for intelligent content output</p>
+                      </div>
+
+                      {/* Arrow 4 */}
+                      <div className="hidden md:block">
+                        <ArrowRight className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div className="md:hidden">
+                        <div className="h-5 w-5 rotate-90">
+                          <ArrowRight className="h-5 w-5 text-green-600" />
+                        </div>
+                      </div>
+
+                      {/* Step 5: Viral Score Analysis */}
+                      <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-orange-300 dark:border-orange-700 shadow-sm">
+                        <div className="w-10 h-10 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                          <BarChart3 className="h-5 w-5 text-white" />
+                        </div>
+                        <h5 className="font-bold text-orange-800 dark:text-orange-200 mb-1 text-xs">Viral Score Rating</h5>
+                        <p className="text-xs text-orange-700 dark:text-orange-300">AI analyzes and rates output based on viral potential and engagement</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-200 dark:border-blue-800 mt-4">
                   <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
                     💡 <strong>Quick Start:</strong> Use the Trend Forecaster to discover viral opportunities, explore trending picks, then generate content with the Unified Generator. Monitor performance through Content History & Analytics.
