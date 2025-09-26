@@ -14,7 +14,7 @@ interface ViralScoreAnalysis {
 export async function analyzeViralScore(
   content: string,
   viralScore: {
-    score: number;
+    overall: number;
     breakdown: {
       hookStrength: number;
       engagement: number;
@@ -35,7 +35,7 @@ ${content}
 PRODUCT: ${productName || 'N/A'}
 NICHE: ${niche || 'general'}
 
-VIRAL SCORE: ${viralScore.score}/100
+VIRAL SCORE: ${viralScore.overall}/100
 
 BREAKDOWN:
 - Hook Strength: ${viralScore.breakdown.hookStrength}/100
@@ -82,7 +82,7 @@ Be specific, actionable, and reference the actual content. The improvementPrompt
     console.error("AI analysis error:", error);
     // Return fallback analysis
     return {
-      overallSummary: "Your script has good potential with a viral score of " + viralScore.score + "/100. Focus on the suggestions below to improve.",
+      overallSummary: "Your script has good potential with a viral score of " + viralScore.overall + "/100. Focus on the suggestions below to improve.",
       hookFeedback: viralScore.breakdown.hookStrength >= 70 ? "Strong hook that grabs attention" : "Hook could be more attention-grabbing",
       engagementFeedback: viralScore.breakdown.engagement >= 70 ? "Good engagement elements present" : "Add more calls-to-action and questions",
       clarityFeedback: viralScore.breakdown.clarity >= 70 ? "Clear and easy to understand" : "Simplify language for better clarity",
