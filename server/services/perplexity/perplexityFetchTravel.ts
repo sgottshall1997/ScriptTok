@@ -50,16 +50,16 @@ You MUST include a unique and specific reason why each product is trending. Avoi
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$12.99", "asin": "B01ABC123" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$25.50", "asin": "B01DEF456" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$18.00", "asin": "B01GHI789" }
 ]
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Compression Packing Cubes 6-Set Medium", "brand": "BAGSMART", "mentions": 23000, "reason": "Space-saving packing hacks by travel creators" },
-  { "product": "Portable Phone Charger PowerCore 20000mAh", "brand": "Anker", "mentions": 19000, "reason": "Essential power bank for digital nomads" },
-  { "product": "Travel Neck Pillow Memory Foam", "brand": "Cabeau", "mentions": 16000, "reason": "Comfortable long-haul flight accessories trending" }
+  { "product": "Compression Packing Cubes 6-Set Medium", "brand": "BAGSMART", "mentions": 23000, "reason": "Space-saving packing hacks by travel creators", "price": "$29.99", "asin": "B07BAGSMAR1" },
+  { "product": "Portable Phone Charger PowerCore 20000mAh", "brand": "Anker", "mentions": 19000, "reason": "Essential power bank for digital nomads", "price": "$45.99", "asin": "B08ANKERPC2" },
+  { "product": "Travel Neck Pillow Memory Foam", "brand": "Cabeau", "mentions": 16000, "reason": "Comfortable long-haul flight accessories trending", "price": "$39.99", "asin": "B09CABEAUP3" }
 ]
 
 STRICT REQUIREMENTS:
@@ -67,6 +67,8 @@ STRICT REQUIREMENTS:
 - Established brands: BAGSMART, Anker, Samsonite, Away, Cabeau, Eagle Creek, etc.
 - Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- Price: Must include real Amazon price in format "$12.99" (use current Amazon pricing)
+- ASIN: Must include real Amazon ASIN code (10-character alphanumeric like "B01ABC123D")
 - NO generic terms like "trending product", "travel item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"
 - Product names must include specific details (capacity, size, material, model)

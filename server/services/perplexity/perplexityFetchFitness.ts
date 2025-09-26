@@ -70,16 +70,16 @@ You MUST include a unique and specific reason why each product is trending. Avoi
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$12.99", "asin": "B01ABC123" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$25.50", "asin": "B01DEF456" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$18.00", "asin": "B01GHI789" }
 ]
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 31000, "reason": "Home workouts with influencer shoutouts" },
-  { "product": "Lululemon ABC Joggers", "brand": "Lululemon", "mentions": 24000, "reason": "Worn in trending gym fit videos" },
-  { "product": "Adjustable Dumbbells 5-52.5 lbs", "brand": "PowerBlocks", "mentions": 18000, "reason": "Space-saving apartment gym setups" }
+  { "product": "Resistance Band Set with Door Anchor", "brand": "Bodylastics", "mentions": 31000, "reason": "Home workouts with influencer shoutouts", "price": "$24.99", "asin": "B07BODYLA1" },
+  { "product": "Lululemon ABC Joggers", "brand": "Lululemon", "mentions": 24000, "reason": "Worn in trending gym fit videos", "price": "$128.00", "asin": "B08LULULEM2" },
+  { "product": "Adjustable Dumbbells 5-52.5 lbs", "brand": "PowerBlocks", "mentions": 18000, "reason": "Space-saving apartment gym setups", "price": "$319.99", "asin": "B09POWERBL3" }
 ]
 
 STRICT REQUIREMENTS:
@@ -87,6 +87,8 @@ STRICT REQUIREMENTS:
 - Established brands: Nike, Adidas, Gaiam, Bodylastics, Under Armour, Lululemon, etc.
 - Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-10 words explaining WHY it's trending
+- Price: Must include real Amazon price in format "$12.99" (use current Amazon pricing)
+- ASIN: Must include real Amazon ASIN code (10-character alphanumeric like "B01ABC123D")
 - NO generic terms like "trending product", "fitness item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"
 - Product names must be specific with details (weight, size, material, model)

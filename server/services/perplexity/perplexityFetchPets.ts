@@ -50,16 +50,16 @@ You MUST include a unique and specific reason why each product is trending. Avoi
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$12.99", "asin": "B01ABC123" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$25.50", "asin": "B01DEF456" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$18.00", "asin": "B01GHI789" }
 ]
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "360° Dog Camera Treat Dispenser WiFi", "brand": "Furbo", "mentions": 32000, "reason": "Remote pet monitoring for working owners" },
-  { "product": "Slow Feeder Dog Bowl Large Anti-Gulp", "brand": "Outward Hound", "mentions": 21000, "reason": "Healthy eating habits promoted by pet influencers" },
-  { "product": "Interactive Puzzle Plush Dog Toy Large", "brand": "Nina Ottosson", "mentions": 16000, "reason": "Mental stimulation toys for anxious pets" }
+  { "product": "360° Dog Camera Treat Dispenser WiFi", "brand": "Furbo", "mentions": 32000, "reason": "Remote pet monitoring for working owners", "price": "$199.99", "asin": "B07FURBO123" },
+  { "product": "Slow Feeder Dog Bowl Large Anti-Gulp", "brand": "Outward Hound", "mentions": 21000, "reason": "Healthy eating habits promoted by pet influencers", "price": "$12.99", "asin": "B08OUTWARD4" },
+  { "product": "Interactive Puzzle Plush Dog Toy Large", "brand": "Nina Ottosson", "mentions": 16000, "reason": "Mental stimulation toys for anxious pets", "price": "$24.99", "asin": "B09NINAOTT5" }
 ]
 
 STRICT REQUIREMENTS:
@@ -67,6 +67,8 @@ STRICT REQUIREMENTS:
 - Established brands: Furbo, Blue Buffalo, Hill's, PetSafe, Outward Hound, Nina Ottosson, etc.
 - Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- Price: Must include real Amazon price in format "$12.99" (use current Amazon pricing)
+- ASIN: Must include real Amazon ASIN code (10-character alphanumeric like "B01ABC123D")
 - NO generic terms like "trending product", "pet item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"
 - Product names must include specific details (size, capacity, breed, age range)

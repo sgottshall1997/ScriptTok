@@ -50,16 +50,16 @@ You MUST include a unique and specific reason why each product is trending. Avoi
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$12.99", "asin": "B01ABC123" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$25.50", "asin": "B01DEF456" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$18.00", "asin": "B01GHI789" }
 ]
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "AirPods Pro 2nd Generation", "brand": "Apple", "mentions": 35000, "reason": "Noise cancellation upgrade in tech reviews" },
-  { "product": "Echo Dot 5th Gen Smart Speaker", "brand": "Amazon", "mentions": 22000, "reason": "Voice control smart home automation setups" },
-  { "product": "Galaxy S24 Ultra 256GB", "brand": "Samsung", "mentions": 41000, "reason": "AI camera features showcased by creators" }
+  { "product": "AirPods Pro 2nd Generation", "brand": "Apple", "mentions": 35000, "reason": "Noise cancellation upgrade in tech reviews", "price": "$249.99", "asin": "B07AIRPODS1" },
+  { "product": "Echo Dot 5th Gen Smart Speaker", "brand": "Amazon", "mentions": 22000, "reason": "Voice control smart home automation setups", "price": "$49.99", "asin": "B08ECHODOT2" },
+  { "product": "Galaxy S24 Ultra 256GB", "brand": "Samsung", "mentions": 41000, "reason": "AI camera features showcased by creators", "price": "$1199.99", "asin": "B09SAMSUNG3" }
 ]
 
 STRICT REQUIREMENTS:
@@ -67,6 +67,8 @@ STRICT REQUIREMENTS:
 - Established brands: Apple, Samsung, Sony, JBL, Anker, Nintendo, PlayStation, etc.
 - Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- Price: Must include real Amazon price in format "$12.99" (use current Amazon pricing)
+- ASIN: Must include real Amazon ASIN code (10-character alphanumeric like "B01ABC123D")
 - NO generic terms like "trending product", "tech item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"
 - Product names must include specific details (model, generation, storage, size)
