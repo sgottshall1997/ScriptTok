@@ -669,7 +669,7 @@ const Dashboard = () => {
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Wand2 className="h-6 w-6 text-blue-600" />
               </div>
-              <h3 className="font-semibold text-blue-900 mb-2">🎯 Unified Content Generator</h3>
+              <h3 className="font-semibold text-blue-900 mb-2">🎯 Content Generator</h3>
               <p className="text-sm text-blue-700 mb-4">One-click content generation for all platforms</p>
               <div className="flex items-center justify-center text-blue-600">
                 <span className="text-sm font-medium">Generate Now</span>
