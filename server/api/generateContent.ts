@@ -56,6 +56,7 @@ import { ViralInspiration } from '../services/contentGenerator';
 import { evaluateContentWithBothModels, createContentEvaluationData } from '../services/aiEvaluationService';
 import { db } from '../db';
 import { calculateViralScore } from '../services/viralScoreCalculator';
+import { analyzeViralScore } from '../services/viralScoreAnalyzer';
 
 // Viral inspiration schema
 const viralInspirationSchema = z.object({
@@ -527,12 +528,24 @@ Experience the difference today! #${niche} #trending`;
     
     // 🎯 Calculate viral score using product research and competitor insights
     let viralScore = null;
+    let viralAnalysis = null;
     try {
       // Pass the content string to the viral score calculator
       viralScore = calculateViralScore(content);
       console.log('🎯 Viral score calculated:', viralScore.overall);
+      
+      // Generate AI analysis of the viral score
+      if (viralScore) {
+        viralAnalysis = await analyzeViralScore(
+          content,
+          viralScore,
+          product,
+          niche
+        );
+        console.log('🤖 AI analysis completed');
+      }
     } catch (scoreError) {
-      console.error('Error calculating viral score:', scoreError);
+      console.error('Error calculating viral score or AI analysis:', scoreError);
       // Continue without viral score if calculation fails
     }
     
@@ -565,7 +578,8 @@ Experience the difference today! #${niche} #trending`;
       topRatedStyleUsed: validatedData.useSmartStyle || false,
       // Add viral score fields to database
       viralScore: viralScore, // Full viral score object
-      viralScoreOverall: viralScore?.overall || null // Overall score for easy querying
+      viralScoreOverall: viralScore?.overall || null, // Overall score for easy querying
+      viralAnalysis: viralAnalysis // AI analysis of viral score with improvement suggestions
     });
     
     // Increment API usage counter with template and tone tracking
@@ -614,7 +628,11 @@ Experience the difference today! #${niche} #trending`;
         affiliateUrl: validatedData.affiliateUrl || null,
         customHook: validatedData.customHook || null,
         // Viral score from Perplexity Intelligence System
-        ...(viralScore && { viralScore })
+        ...(viralScore && { viralScore }),
+        // AI analysis of viral score with improvement suggestions
+        ...(viralAnalysis && { viralAnalysis }),
+        // Return history ID for reference
+        historyId: contentHistoryEntry.id
       },
       error: null
     });

@@ -128,6 +128,7 @@ export const contentHistory = pgTable("content_history", {
   // Viral Score System
   viralScore: jsonb("viral_score"), // Full viral score breakdown from calculateViralScore
   viralScoreOverall: integer("viral_score_overall"), // Overall viral score (0-100) for easy querying
+  viralAnalysis: jsonb("viral_analysis"), // AI analysis of viral score with improvement suggestions
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
