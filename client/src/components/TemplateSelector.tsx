@@ -71,6 +71,17 @@ export function TemplateSelector({
     'universal_short_video_script': 'Comprehensive universal video scripts with detailed structure'
   };
 
+  // Template display names for better UI readability
+  const templateDisplayNames: Record<TemplateType, string> = {
+    'affiliate_email': 'Affiliate Email',
+    'influencer_caption': 'Influencer Caption',
+    'product_comparison': 'Product Comparison',
+    'routine_kit': 'Routine Kit',
+    'seo_blog': 'SEO Blog',
+    'short_video': 'Short Video - Niche Specific',
+    'universal_short_video_script': 'Universal Short Video'
+  };
+
   // Icons for each template type (universal templates)
   const templateIcons: Record<TemplateType, string> = {
     'affiliate_email': '📧',
@@ -145,8 +156,8 @@ export function TemplateSelector({
                         />
                         <span className="text-2xl">{templateIcons[template]}</span>
                         <div className="flex-1">
-                          <div className="font-medium capitalize text-sm">
-                            {template.replace('_', ' ')}
+                          <div className="font-medium text-sm">
+                            {templateDisplayNames[template]}
                           </div>
                         </div>
                       </Label>
@@ -190,8 +201,8 @@ export function TemplateSelector({
                   >
                     <span className="text-2xl">{templateIcons[template]}</span>
                     <div className="flex-1">
-                      <div className="font-medium capitalize text-sm">
-                        {template.replace('_', ' ')}
+                      <div className="font-medium text-sm">
+                        {templateDisplayNames[template]}
                       </div>
                     </div>
                   </Label>
