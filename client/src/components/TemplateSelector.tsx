@@ -35,6 +35,21 @@ export function TemplateSelector({
   // Use provided options or default template types
   const options = templateOptions || TEMPLATE_TYPES;
 
+  // Organize templates into sections as requested
+  const templateSections = {
+    'Video Script Generator': [
+      'universal_short_video_script',  // Universal Short Video
+      'short_video',                   // Short Video - Niche Specific
+      'product_comparison',           // Product Comparison
+      'routine_kit'                   // Routine Kit
+    ],
+    'Marketing Content Tools': [
+      'seo_blog',                     // SEO Blog
+      'affiliate_email',              // Affiliate Email
+      'influencer_caption'            // Influencer Caption
+    ]
+  };
+
   // Handle checkbox toggle for multi-selection
   const handleTemplateToggle = (template: TemplateType, checked: boolean) => {
     if (!onMultiChange) return;
@@ -133,42 +148,52 @@ export function TemplateSelector({
         )}
 
         <TooltipProvider>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-            {options.map((template) => {
-              const isSelected = selectedTemplates.includes(template);
-              return (
-                <Tooltip key={template} delayDuration={300}>
-                  <TooltipTrigger asChild>
-                    <div className="relative">
-                      <Label
-                        htmlFor={`template-multi-${template}`}
-                        className={`flex items-center space-x-3 rounded-lg border-2 p-4 cursor-pointer hover:bg-gray-50 transition-all ${
-                          isSelected 
-                            ? 'border-blue-500 bg-blue-50' 
-                            : 'border-gray-200'
-                        }`}
-                      >
-                        <Checkbox
-                          id={`template-multi-${template}`}
-                          checked={isSelected}
-                          onCheckedChange={(checked) => handleTemplateToggle(template, checked as boolean)}
-                          className="shrink-0"
-                        />
-                        <span className="text-2xl">{templateIcons[template]}</span>
-                        <div className="flex-1">
-                          <div className="font-medium text-sm">
-                            {templateDisplayNames[template]}
+          <div className="space-y-6">
+            {Object.entries(templateSections).map(([sectionName, sectionTemplates]) => (
+              <div key={sectionName} className="space-y-3">
+                <h4 className="text-md font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                  {sectionName}
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {sectionTemplates.filter(template => options.includes(template as TemplateType)).map((template) => {
+                    const templateType = template as TemplateType;
+                    const isSelected = selectedTemplates.includes(templateType);
+                    return (
+                      <Tooltip key={template} delayDuration={300}>
+                        <TooltipTrigger asChild>
+                          <div className="relative">
+                            <Label
+                              htmlFor={`template-multi-${template}`}
+                              className={`flex items-center space-x-3 rounded-lg border-2 p-4 cursor-pointer hover:bg-gray-50 transition-all ${
+                                isSelected 
+                                  ? 'border-blue-500 bg-blue-50' 
+                                  : 'border-gray-200'
+                              }`}
+                            >
+                              <Checkbox
+                                id={`template-multi-${template}`}
+                                checked={isSelected}
+                                onCheckedChange={(checked) => handleTemplateToggle(templateType, checked as boolean)}
+                                className="shrink-0"
+                              />
+                              <span className="text-2xl">{templateIcons[templateType]}</span>
+                              <div className="flex-1">
+                                <div className="font-medium text-sm">
+                                  {templateDisplayNames[templateType]}
+                                </div>
+                              </div>
+                            </Label>
                           </div>
-                        </div>
-                      </Label>
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent side="bottom" className="max-w-xs">
-                    <p>{descriptions[template]}</p>
-                  </TooltipContent>
-                </Tooltip>
-              );
-            })}
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="max-w-xs">
+                          <p>{descriptions[templateType]}</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </TooltipProvider>
       </div>
@@ -184,34 +209,46 @@ export function TemplateSelector({
         <RadioGroup 
           value={value} 
           onValueChange={(selectedValue) => onChange && onChange(selectedValue as TemplateType)}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"
+          className="space-y-6"
         >
-          {options.map((template) => (
-            <Tooltip key={template} delayDuration={300}>
-              <TooltipTrigger asChild>
-                <div className="relative">
-                  <RadioGroupItem 
-                    value={template} 
-                    id={`template-${template}`}
-                    className="peer sr-only"
-                  />
-                  <Label
-                    htmlFor={`template-${template}`}
-                    className="flex items-center space-x-3 rounded-lg border-2 border-gray-200 p-4 cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all"
-                  >
-                    <span className="text-2xl">{templateIcons[template]}</span>
-                    <div className="flex-1">
-                      <div className="font-medium text-sm">
-                        {templateDisplayNames[template]}
-                      </div>
-                    </div>
-                  </Label>
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="bottom" className="max-w-xs">
-                <p>{descriptions[template]}</p>
-              </TooltipContent>
-            </Tooltip>
+          {Object.entries(templateSections).map(([sectionName, sectionTemplates]) => (
+            <div key={sectionName} className="space-y-3">
+              <h4 className="text-md font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                {sectionName}
+              </h4>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {sectionTemplates.filter(template => options.includes(template as TemplateType)).map((template) => {
+                  const templateType = template as TemplateType;
+                  return (
+                    <Tooltip key={template} delayDuration={300}>
+                      <TooltipTrigger asChild>
+                        <div className="relative">
+                          <RadioGroupItem 
+                            value={template} 
+                            id={`template-${template}`}
+                            className="peer sr-only"
+                          />
+                          <Label
+                            htmlFor={`template-${template}`}
+                            className="flex items-center space-x-3 rounded-lg border-2 border-gray-200 p-4 cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all"
+                          >
+                            <span className="text-2xl">{templateIcons[templateType]}</span>
+                            <div className="flex-1">
+                              <div className="font-medium text-sm">
+                                {templateDisplayNames[templateType]}
+                              </div>
+                            </div>
+                          </Label>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side="bottom" className="max-w-xs">
+                        <p>{descriptions[templateType]}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  );
+                })}
+              </div>
+            </div>
           ))}
         </RadioGroup>
       </TooltipProvider>
