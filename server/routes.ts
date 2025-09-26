@@ -328,16 +328,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
             const { db } = await import('./db');
             
             for (const product of nicheResult.products) {
+              // Convert priceNumeric to string for decimal field
+              const priceNumeric = product.price ? 
+                parseFloat(product.price.replace('$', '')) : null;
+
               await db.insert(trendingProducts).values({
                 title: product.product,
                 source: 'perplexity',
                 mentions: product.mentions,
                 niche: nicheResult.niche,
                 dataSource: 'perplexity',
-                reason: product.reason || null
+                reason: product.reason || null,
+                // Include pricing fields from fetcher
+                price: product.price || null,
+                priceNumeric: priceNumeric ? priceNumeric.toString() : null,
+                asin: product.asin || null
               });
               totalProductsAdded++;
-              console.log(`✅ Added ${nicheResult.niche} product: ${product.product} (reason: "${product.reason || 'no reason provided'}")`);
+              console.log(`✅ Added ${nicheResult.niche} product: ${product.product} ${product.price || ''} ${product.asin || ''} (reason: "${product.reason || 'no reason provided'}")`);
             }
           } catch (dbError) {
             console.error(`❌ Database error for ${nicheResult.niche}:`, dbError);
