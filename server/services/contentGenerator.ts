@@ -380,18 +380,18 @@ Apply these successful patterns from your previous high-rated content:
     console.error("Error generating content with enhanced system:", error);
 
     try {
-      // Try a more reliable configuration with the same prompt
-      console.log("Attempting generation with fallback model configuration");
+      // Try a more reliable configuration using the SAME template prompts that were generated
+      console.log("Attempting generation with fallback model configuration using original template prompts");
 
-      // Use a more reliable fallback configuration with proper type casting
+      // Use the proper template prompts instead of hardcoded generic ones
       const messages: Array<{role: "system" | "user" | "assistant", content: string}> = [
         {
           role: "system",
-          content: "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause."
+          content: systemPrompt // Use the ACTUAL template system prompt (e.g., "expert in product comparisons")
         },
         {
           role: "user",
-          content: `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`
+          content: prompt // Use the ACTUAL template user prompt (e.g., "Write a detailed comparison...")
         }
       ];
 
