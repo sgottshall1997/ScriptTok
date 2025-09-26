@@ -1,5 +1,14 @@
 import { Niche } from '@shared/constants';
 
+export interface ProductData {
+  name: string;
+  price: string;
+  asin?: string;
+  priceNumeric?: number;
+  priceCurrency?: string;
+  priceType?: 'one-time' | 'subscription' | 'estimated';
+}
+
 export interface TrendData {
   name: string;
   volume?: string;
@@ -9,6 +18,7 @@ export interface TrendData {
   when?: string;
   prepNow?: string;
   opportunity?: string;
+  products?: ProductData[];
 }
 
 export interface TrendForecast {
@@ -23,24 +33,52 @@ export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
     const currentMonth = new Date().toLocaleString('default', { month: 'long' });
     const currentYear = new Date().getFullYear();
     
-    const prompt = `Analyze TikTok ${niche} trends for ${currentMonth} ${currentYear}. Focus on viral products, techniques, and content angles. Return ONLY valid JSON with this exact structure:
+    const prompt = `Analyze TikTok ${niche} trends for ${currentMonth} ${currentYear}. Focus on viral products with specific Amazon/retail items and pricing. Return ONLY valid JSON with this exact structure:
 
 {
   "hot": [
-    {"name": "Product/trend name", "volume": "X videos this week", "why": "Why it's trending now"}
+    {
+      "name": "Trend name", 
+      "volume": "X videos this week", 
+      "why": "Why it's trending now",
+      "products": [
+        {"name": "Specific Product Name", "price": "$XX", "asin": "B0XXXXXXX", "priceNumeric": XX.XX, "priceType": "one-time"},
+        {"name": "Another Product", "price": "$XX/mo", "priceNumeric": XX.XX, "priceType": "subscription"}
+      ]
+    }
   ],
   "rising": [
-    {"name": "Product/trend name", "growth": "+X% growth", "opportunity": "Why creators should jump on this"}
+    {
+      "name": "Trend name", 
+      "growth": "+X%", 
+      "opportunity": "Why creators should jump on this",
+      "products": [
+        {"name": "Product Name", "price": "$XX", "priceNumeric": XX.XX, "priceType": "one-time"}
+      ]
+    }
   ],
   "upcoming": [
-    {"name": "Product/trend name", "when": "When it will peak", "prepNow": "Why to create content now"}
+    {
+      "name": "Trend name", 
+      "when": "When it will peak", 
+      "prepNow": "Why to create content now",
+      "products": [
+        {"name": "Product Name", "price": "$XX", "priceNumeric": XX.XX, "priceType": "one-time"}
+      ]
+    }
   ],
   "declining": [
-    {"name": "Product/trend name", "reason": "Why it's declining"}
+    {
+      "name": "Trend name", 
+      "reason": "Why it's declining",
+      "products": [
+        {"name": "Product Name", "price": "$XX", "priceNumeric": XX.XX, "priceType": "one-time"}
+      ]
+    }
   ]
 }
 
-Provide 3-5 items per category. Focus on products and techniques that TikTok creators can actually use for content creation.`;
+For each trend, provide 2-3 specific, real products available on Amazon with accurate pricing. Include ASINs when possible. Use "estimated" priceType if pricing is approximate.`;
 
     const response = await fetch("https://api.perplexity.ai/chat/completions", {
       method: "POST",
@@ -98,47 +136,163 @@ function getFallbackTrends(niche: Niche): TrendForecast {
   const fallbackData: Record<Niche, TrendForecast> = {
     beauty: {
       hot: [
-        { name: "Retinol serums", volume: "52K videos this week", why: "Viral anti-aging trend" },
-        { name: "Glass skin routine", volume: "38K videos this week", why: "Korean beauty influence" }
+        { 
+          name: "Retinol serums", 
+          volume: "52K videos this week", 
+          why: "Viral anti-aging trend",
+          products: [
+            { name: "The Ordinary Retinol 1% in Squalane", price: "$12", asin: "B06XX3BVXK", priceNumeric: 12.00, priceType: "one-time" },
+            { name: "CeraVe Resurfacing Retinol Serum", price: "$18", asin: "B08KZQZXL5", priceNumeric: 18.00, priceType: "one-time" },
+            { name: "Neutrogena Rapid Wrinkle Repair", price: "$29", asin: "B00AX4JHKU", priceNumeric: 29.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Glass skin routine", 
+          volume: "38K videos this week", 
+          why: "Korean beauty influence",
+          products: [
+            { name: "COSRX Snail 96 Mucin Power Essence", price: "$17", asin: "B00PBX3L7K", priceNumeric: 17.00, priceType: "one-time" },
+            { name: "Beauty of Joseon Glow Rice Water Toner", price: "$15", asin: "B08HLQYHH8", priceNumeric: 15.00, priceType: "one-time" }
+          ]
+        }
       ],
       rising: [
-        { name: "Skin cycling", growth: "+350%", opportunity: "Early trend opportunity" },
-        { name: "Face massagers", growth: "+280%", opportunity: "Growing wellness trend" }
+        { 
+          name: "Skin cycling", 
+          growth: "+350%", 
+          opportunity: "Early trend opportunity",
+          products: [
+            { name: "Paula's Choice BHA Liquid Exfoliant", price: "$32", asin: "B01N1LL62W", priceNumeric: 32.00, priceType: "one-time" },
+            { name: "Differin Adapalene Gel", price: "$13", asin: "B019HPZQRQ", priceNumeric: 13.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Face massagers", 
+          growth: "+280%", 
+          opportunity: "Growing wellness trend",
+          products: [
+            { name: "Jade Roller and Gua Sha Set", price: "$25", priceNumeric: 25.00, priceType: "one-time" },
+            { name: "NuFACE Trinity Facial Device", price: "$325", priceNumeric: 325.00, priceType: "one-time" }
+          ]
+        }
       ],
       upcoming: [
-        { name: "Summer SPF prep", when: "Peaks in May", prepNow: "Content now ranks later" }
+        { 
+          name: "Summer SPF prep", 
+          when: "Peaks in May", 
+          prepNow: "Content now ranks later",
+          products: [
+            { name: "EltaMD UV Clear Sunscreen SPF 46", price: "$39", priceNumeric: 39.00, priceType: "one-time" },
+            { name: "Supergoop! Unseen Sunscreen SPF 40", price: "$38", priceNumeric: 38.00, priceType: "one-time" }
+          ]
+        }
       ],
       declining: [
-        { name: "10-step routines", reason: "Too time consuming for viewers" }
+        { 
+          name: "10-step routines", 
+          reason: "Too time consuming for viewers",
+          products: [
+            { name: "Korean Skincare Set Bundle", price: "$89", priceNumeric: 89.00, priceType: "estimated" }
+          ]
+        }
       ]
     },
     tech: {
       hot: [
-        { name: "AI productivity tools", volume: "89K videos this week", why: "ChatGPT mainstream adoption" },
-        { name: "iPhone photography", volume: "65K videos this week", why: "Pro camera features viral" }
+        { 
+          name: "AI productivity tools", 
+          volume: "89K videos this week", 
+          why: "ChatGPT mainstream adoption",
+          products: [
+            { name: "Notion AI Pro Subscription", price: "$10/mo", priceNumeric: 10.00, priceType: "subscription" },
+            { name: "Grammarly Premium", price: "$30/mo", priceNumeric: 30.00, priceType: "subscription" },
+            { name: "Copy.ai Starter Plan", price: "$49/mo", priceNumeric: 49.00, priceType: "subscription" }
+          ]
+        },
+        { 
+          name: "iPhone photography", 
+          volume: "65K videos this week", 
+          why: "Pro camera features viral",
+          products: [
+            { name: "Moment Wide Lens for iPhone", price: "$120", priceNumeric: 120.00, priceType: "one-time" },
+            { name: "DJI OM 6 Smartphone Gimbal", price: "$159", priceNumeric: 159.00, priceType: "one-time" }
+          ]
+        }
       ],
       rising: [
-        { name: "Home studio setups", growth: "+420%", opportunity: "Creator economy boom" }
+        { 
+          name: "Home studio setups", 
+          growth: "+420%", 
+          opportunity: "Creator economy boom",
+          products: [
+            { name: "Blue Yeti USB Microphone", price: "$100", priceNumeric: 100.00, priceType: "one-time" },
+            { name: "Elgato Key Light", price: "$200", priceNumeric: 200.00, priceType: "one-time" }
+          ]
+        }
       ],
       upcoming: [
-        { name: "VR fitness", when: "Q2 2025", prepNow: "Early adopter advantage" }
+        { 
+          name: "VR fitness", 
+          when: "Q2 2025", 
+          prepNow: "Early adopter advantage",
+          products: [
+            { name: "Meta Quest 3 VR Headset", price: "$500", priceNumeric: 500.00, priceType: "one-time" },
+            { name: "FitXR VR Fitness App", price: "$10/mo", priceNumeric: 10.00, priceType: "subscription" }
+          ]
+        }
       ],
       declining: [
-        { name: "Crypto mining", reason: "Environmental concerns" }
+        { 
+          name: "Crypto mining", 
+          reason: "Environmental concerns",
+          products: [
+            { name: "ASIC Bitcoin Miner", price: "$2500", priceNumeric: 2500.00, priceType: "estimated" }
+          ]
+        }
       ]
     },
     fashion: {
       hot: [
-        { name: "Quiet luxury", volume: "78K videos this week", why: "Anti-trend movement" }
+        { 
+          name: "Quiet luxury", 
+          volume: "78K videos this week", 
+          why: "Anti-trend movement",
+          products: [
+            { name: "Everlane Cashmere Crew Sweater", price: "$100", priceNumeric: 100.00, priceType: "one-time" },
+            { name: "Cuyana Structured Leather Tote", price: "$175", priceNumeric: 175.00, priceType: "one-time" }
+          ]
+        }
       ],
       rising: [
-        { name: "Sustainable fashion", growth: "+380%", opportunity: "Conscious consumer trend" }
+        { 
+          name: "Sustainable fashion", 
+          growth: "+380%", 
+          opportunity: "Conscious consumer trend",
+          products: [
+            { name: "Patagonia Organic Cotton T-Shirt", price: "$35", priceNumeric: 35.00, priceType: "one-time" },
+            { name: "Allbirds Tree Runners", price: "$98", priceNumeric: 98.00, priceType: "one-time" }
+          ]
+        }
       ],
       upcoming: [
-        { name: "Spring pastels", when: "March 2025", prepNow: "Seasonal preparation" }
+        { 
+          name: "Spring pastels", 
+          when: "March 2025", 
+          prepNow: "Seasonal preparation",
+          products: [
+            { name: "Linen Button-Up Shirt Lavender", price: "$45", priceNumeric: 45.00, priceType: "one-time" },
+            { name: "Soft Pink Midi Dress", price: "$78", priceNumeric: 78.00, priceType: "one-time" }
+          ]
+        }
       ],
       declining: [
-        { name: "Fast fashion hauls", reason: "Sustainability awareness" }
+        { 
+          name: "Fast fashion hauls", 
+          reason: "Sustainability awareness",
+          products: [
+            { name: "Generic Fast Fashion Bundle", price: "$25", priceNumeric: 25.00, priceType: "estimated" }
+          ]
+        }
       ]
     },
     fitness: {
