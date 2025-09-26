@@ -1,0 +1,95 @@
+Prompt for Replit Agent:
+
+Please update and restructure the legal and informational pages for the ScriptTok application to match current app standards and create a comprehensive legal compliance framework.
+
+First, update these existing pages to reflect ScriptTok (not GlowBot) branding and functionality:
+
+Update client/src/pages/CompliancePage.tsx:
+
+Change all references from "GlowBot" to "ScriptTok"
+Update the description to focus on TikTok content generation compliance
+Remove Amazon Associates references since the app focuses on TikTok content creation
+Update compliance disclosures to be TikTok-specific (#ad, #affiliate hashtags)
+Update client/src/pages/how-it-works.tsx:
+
+Completely rewrite to reflect ScriptTok's TikTok content generation workflow
+Remove product research and Amazon integration references
+Focus on: Select niche → Choose template → Generate TikTok content → Save to history
+Update FAQ section to be ScriptTok-specific
+Remove trend analysis features that don't exist in the current app
+Update client/src/pages/faq.tsx:
+
+Rewrite all FAQ content to be ScriptTok-specific
+Remove references to Amazon integration, product research, trend detection
+Focus on TikTok content generation, viral score analysis, content history features
+Update contact information and support process
+Update client/src/pages/contact.tsx:
+
+Update branding from any GlowBot references to ScriptTok
+Ensure contact form works with ScriptTok's support system
+Update company information and social links if needed
+Next, restructure and create these new legal/compliance pages:
+
+Create client/src/pages/TermsBilling.tsx - "Terms & Billing" page:
+
+Combine Terms of Service + Acceptable Use + Billing Terms
+Cover: contract terms, usage rules, prohibited activities, subscription renewals, cancellations, refunds, arbitration, liability disclaimers
+Include ScriptTok-specific acceptable use policies for AI-generated content
+Add billing terms for subscription tiers and usage limits
+Create client/src/pages/PrivacyCookies.tsx - "Privacy & Cookies" page:
+
+Combine Privacy Policy + Data Rights + Cookie Policy
+Cover: data collection from TikTok content generation, Claude AI usage, content storage
+Include GDPR/CPRA rights (export/delete/correct data)
+Detail how user-generated content and ratings are stored and used
+Explain cookie usage for session management and preferences
+Create client/src/pages/CookiePreferences.tsx - Cookie Preferences modal/page:
+
+Functional cookie preferences management
+Must be legally distinct and functional
+Allow users to opt-out of non-essential cookies
+Include "Do Not Sell/Share" options for CCPA compliance
+Create client/src/pages/LegalNotices.tsx - "Legal Notices" page:
+
+Combine DMCA + Security & Responsible Disclosure
+Include copyright complaint process for AI-generated content
+Add security vulnerability reporting procedures
+Contact information for legal agent
+Counter-notice procedures
+Create client/src/pages/TrustSafety.tsx - "Trust & Safety" page:
+
+Combine Accessibility + AI/Claims Disclosure + Age Gate
+WCAG compliance intent statement
+Age restrictions and parental consent disclaimers
+Important AI disclaimer: "AI-generated content outputs are probabilistic and not guaranteed to go viral"
+Content safety guidelines for TikTok content creation
+Update the Footer component (client/src/components/Footer.tsx):
+
+Add all required legal page links:
+Terms & Billing
+Privacy & Cookies
+Cookie Preferences (should trigger modal/separate page)
+Legal Notices
+Trust & Safety
+Contact
+Organize links in a professional footer layout
+Ensure proper routing to all new pages
+Update routing in the main App component to include all new legal pages with proper paths:
+
+/terms-billing
+/privacy-cookies
+/cookie-preferences
+/legal-notices
+/trust-safety
+Important guidelines:
+
+All content should be ScriptTok-branded (no GlowBot references)
+Focus on TikTok content generation as the primary app function
+Include proper legal disclaimers for AI-generated content
+Ensure GDPR, CCPA, and platform compliance
+Make cookie preferences functional, not just informational
+Use professional legal language but keep it user-friendly
+Include proper contact information for legal matters
+Reference actual app features (viral score, content history, TikTok templates)
+Remove any AboutThisPage components from individual pages as requested earlier - all information should be consolidated into the main About ScriptTok page.
+
