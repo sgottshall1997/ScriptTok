@@ -3,7 +3,7 @@ import { generateWithAI, AIModel } from './aiModelRouter';
 import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption, Niche } from '@shared/constants';
 import * as GptTemplates from './gpt-templates';
-import { generatePrompt, PromptParams } from '../prompts';
+import { TEMPLATE_PROMPTS, type PromptConfig } from './promptFactory.js';
 // import { getModelConfig, getTokenLimit } from './aiModelSelector'; // TODO: Implement AI model selector
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
@@ -221,19 +221,29 @@ export async function generateContent(
         trendingProducts
       });
     } else {
-      // Use standard generatePrompt
-      const promptParams: PromptParams = {
-        niche,
+      // Use new TEMPLATE_PROMPTS structure
+      const promptConfig: PromptConfig = {
         productName: product,
-        templateType,
-        tone,
+        niche: niche as any,
+        templateType: templateType as any,
+        tone: tone as any,
         trendingProducts,
-        fallbackLevel: 'exact',
-        successfulPatterns
+        contentFormat: 'regular'
       };
 
-      prompt = await generatePrompt(promptParams);
-      fallbackLevel = promptParams.fallbackLevel || 'exact';
+      // Get the appropriate template function from TEMPLATE_PROMPTS
+      const templateFunction = TEMPLATE_PROMPTS[templateType as keyof typeof TEMPLATE_PROMPTS];
+      
+      if (templateFunction) {
+        console.log(`✅ Using TEMPLATE_PROMPTS for ${templateType} template`);
+        const templateResult = templateFunction(promptConfig);
+        prompt = templateResult.userPrompt;
+        fallbackLevel = 'exact';
+      } else {
+        console.warn(`⚠️ Template ${templateType} not found in TEMPLATE_PROMPTS, using fallback`);
+        prompt = `Write about ${product} in the ${niche} niche using a ${tone} tone. This should be in the format of a ${templateType}.`;
+        fallbackLevel = 'generic';
+      }
     }
 
     // Use default configuration values
