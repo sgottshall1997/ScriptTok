@@ -29,156 +29,29 @@ export interface TrendForecast {
 }
 
 export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
+  console.log('🔍 Generating comprehensive trend forecast for:', niche);
+
+  if (!process.env.PERPLEXITY_API_KEY) {
+    console.log('⚠️ Perplexity API key not found, using fallback data');
+    return getFallbackTrends(niche);
+  }
+
   try {
-    const currentMonth = new Date().toLocaleString('default', { month: 'long' });
-    const currentYear = new Date().getFullYear();
+    // Use the new retry system with validation and smart fallback
+    const trendData = await getTrendForecastWithRetry(niche);
     
-    const prompt = `Analyze TikTok ${niche} trends for ${currentMonth} ${currentYear}. Focus on viral products with specific Amazon/retail items and pricing. Return ONLY valid JSON with this exact structure:
-
-{
-  "hot": [
-    {
-      "name": "Trend name", 
-      "volume": "X videos this week", 
-      "why": "Why it's trending now",
-      "products": [
-        {"name": "Specific Product Name", "price": "$XX", "asin": "B0XXXXXXX", "priceNumeric": XX.XX, "priceType": "one-time"},
-        {"name": "Another Product", "price": "$XX/mo", "priceNumeric": XX.XX, "priceType": "subscription"}
-      ]
-    }
-  ],
-  "rising": [
-    {
-      "name": "Trend name", 
-      "growth": "+X%", 
-      "opportunity": "Why creators should jump on this",
-      "products": [
-        {"name": "Product Name", "price": "$XX", "priceNumeric": XX.XX, "priceType": "one-time"}
-      ]
-    }
-  ],
-  "upcoming": [
-    {
-      "name": "Trend name", 
-      "when": "When it will peak", 
-      "prepNow": "Why to create content now",
-      "products": [
-        {"name": "Product Name", "price": "$XX", "priceNumeric": XX.XX, "priceType": "one-time"}
-      ]
-    }
-  ],
-  "declining": [
-    {
-      "name": "Trend name", 
-      "reason": "Why it's declining",
-      "products": [
-        {"name": "Product Name", "price": "$XX", "priceNumeric": XX.XX, "priceType": "one-time"}
-      ]
-    }
-  ]
-}
-
-For each trend, provide 2-3 specific, real products available on Amazon with accurate pricing. Include ASINs when possible. Use "estimated" priceType if pricing is approximate.`;
-
-    const response = await fetch("https://api.perplexity.ai/chat/completions", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.PERPLEXITY_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        model: "sonar-pro",
-        messages: [
-          { role: "system", content: "You are a TikTok trend analyst. Return ONLY valid JSON, no markdown formatting." },
-          { role: "user", content: prompt }
-        ],
-        temperature: 0.2,
-        max_tokens: 2500,
-        search_domain_filter: ["tiktok.com"],
-        search_recency_filter: "week"
-      })
-    });
-
-    if (!response.ok) {
-      throw new Error(`Perplexity API error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    const content = data.choices[0]?.message?.content || "{}";
-    
-    // Enhanced JSON cleaning and parsing
-    let cleanContent = content
-      .replace(/```json\n?/g, '')
-      .replace(/```\n?/g, '')
-      .replace(/^```/g, '')
-      .replace(/```$/g, '')
-      .trim();
-
-    // Try to extract JSON object if it's embedded in text
-    const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      cleanContent = jsonMatch[0];
-    }
-
-    // Additional JSON cleaning
-    cleanContent = cleanContent
-      .replace(/,(\s*[}\]])/g, '$1')  // Remove trailing commas
-      .replace(/([{,]\s*)(\w+):/g, '$1"$2":')  // Quote unquoted keys
-      .replace(/:\s*'([^']*)'/g, ': "$1"')  // Replace single quotes with double quotes
-      .replace(/\n/g, ' ')  // Remove newlines
-      .replace(/\s+/g, ' ')  // Normalize whitespace
-      .trim();
-
-    // Attempt to fix incomplete JSON by adding missing closing brackets
-    let fixedContent = cleanContent;
-    try {
-      // Count opening and closing brackets to detect truncation
-      const openBraces = (fixedContent.match(/\{/g) || []).length;
-      const closeBraces = (fixedContent.match(/\}/g) || []).length;
-      const openBrackets = (fixedContent.match(/\[/g) || []).length;
-      const closeBrackets = (fixedContent.match(/\]/g) || []).length;
-      
-      // Add missing closing brackets and braces
-      for (let i = 0; i < (openBrackets - closeBrackets); i++) {
-        fixedContent += ']';
-      }
-      for (let i = 0; i < (openBraces - closeBraces); i++) {
-        fixedContent += '}';
-      }
-      
-      // Remove any trailing commas before closing brackets/braces
-      fixedContent = fixedContent.replace(/,(\s*[}\]])/g, '$1');
-      
-    } catch (fixError) {
-      console.warn('Error attempting to fix JSON:', fixError);
-    }
-
-    let trendData;
-    try {
-      trendData = JSON.parse(fixedContent);
-    } catch (parseError) {
-      console.error('JSON Parse Error:', parseError);
-      console.error('Raw content length:', content.length);
-      console.error('Cleaned content preview:', cleanContent.substring(0, 200) + '...');
-      console.error('Cleaned content end:', '...' + cleanContent.substring(cleanContent.length - 200));
-      
-      // Fall back to curated fallback data when parsing fails
-      console.log('Falling back to curated fallback data due to JSON parsing failure');
-      return getFallbackTrends(niche);
+    // Final validation to ensure we return complete data
+    const validation = validateTrendCompleteness(trendData);
+    if (!validation.isComplete) {
+      console.log('🔧 Final supplement required for:', niche, validation);
+      return supplementTrendData(trendData, niche);
     }
     
-    // Validate the structure and provide fallbacks
-    return {
-      hot: Array.isArray(trendData.hot) ? trendData.hot : [],
-      rising: Array.isArray(trendData.rising) ? trendData.rising : [],
-      upcoming: Array.isArray(trendData.upcoming) ? trendData.upcoming : [],
-      declining: Array.isArray(trendData.declining) ? trendData.declining : []
-    };
-
+    console.log('✅ Successfully generated complete trend forecast for:', niche);
+    return trendData;
   } catch (error) {
-    console.error('Error fetching trend forecast:', error);
-    
-    // Return fallback data for better user experience
+    console.error('❌ Error generating trend forecast:', error);
+    console.log('🛡️ Using complete fallback data due to error');
     return getFallbackTrends(niche);
   }
 }
@@ -712,4 +585,223 @@ function getFallbackTrends(niche: Niche): TrendForecast {
   };
 
   return fallbackData[niche] || fallbackData.beauty;
+}
+
+// Validation function to check if trend data is complete
+function validateTrendCompleteness(trends: TrendForecast): {
+  isComplete: boolean;
+  missingCategories: string[];
+  insufficientCategories: string[];
+} {
+  const requiredCategories = ['hot', 'rising', 'upcoming', 'declining'] as const;
+  const minTrendsPerCategory = 2;
+  
+  const missingCategories: string[] = [];
+  const insufficientCategories: string[] = [];
+
+  for (const category of requiredCategories) {
+    const categoryData = trends[category];
+    
+    if (!categoryData || !Array.isArray(categoryData)) {
+      missingCategories.push(category);
+    } else if (categoryData.length < minTrendsPerCategory) {
+      insufficientCategories.push(category);
+    }
+  }
+
+  const isComplete = missingCategories.length === 0 && insufficientCategories.length === 0;
+  
+  return {
+    isComplete,
+    missingCategories,
+    insufficientCategories
+  };
+}
+
+// Smart supplement function that fills missing categories with fallback data
+function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast {
+  const fallback = getFallbackTrends(niche);
+  const validation = validateTrendCompleteness(trends);
+
+  // If data is already complete, return as-is
+  if (validation.isComplete) {
+    return trends;
+  }
+
+  const supplemented = { ...trends };
+
+  // Fill missing categories entirely from fallback
+  for (const category of validation.missingCategories) {
+    if (fallback[category as keyof TrendForecast]) {
+      supplemented[category as keyof TrendForecast] = fallback[category as keyof TrendForecast];
+    }
+  }
+
+  // Supplement insufficient categories with additional fallback data
+  for (const category of validation.insufficientCategories) {
+    const existing = supplemented[category as keyof TrendForecast] || [];
+    const fallbackCategory = fallback[category as keyof TrendForecast] || [];
+    const needed = 2 - existing.length;
+    
+    if (needed > 0 && fallbackCategory.length > 0) {
+      // Add fallback trends that aren't already present (basic name matching)
+      const existingNames = existing.map((trend: any) => trend.name?.toLowerCase());
+      const additionalTrends = fallbackCategory
+        .filter((trend: any) => !existingNames.includes(trend.name?.toLowerCase()))
+        .slice(0, needed);
+      
+      supplemented[category as keyof TrendForecast] = [...existing, ...additionalTrends];
+    }
+  }
+
+  return supplemented;
+}
+
+// Enhanced API call with retry and validation logic
+async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
+  const maxRetries = 2;
+  let lastError: any = null;
+
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      console.log(`🔄 Trend forecast attempt ${attempt}/${maxRetries} for ${niche}`);
+      
+      // Try main API call
+      const result = await callPerplexityAPI(niche);
+      
+      if (result && typeof result === 'object') {
+        // Validate completeness
+        const validation = validateTrendCompleteness(result);
+        
+        if (validation.isComplete) {
+          console.log(`✅ Complete trend data received for ${niche}`);
+          return result;
+        }
+        
+        console.log(`⚠️ Incomplete data for ${niche}:`, {
+          missing: validation.missingCategories,
+          insufficient: validation.insufficientCategories
+        });
+        
+        // If this is our last attempt or we have partial data, supplement it
+        if (attempt === maxRetries || validation.missingCategories.length < 2) {
+          const supplemented = supplementTrendData(result, niche);
+          console.log(`🔧 Supplemented trend data for ${niche}`);
+          return supplemented;
+        }
+        
+        // Otherwise, try again with enhanced prompt
+        continue;
+      }
+    } catch (error) {
+      console.error(`❌ Trend forecast attempt ${attempt} failed for ${niche}:`, error);
+      lastError = error;
+    }
+  }
+
+  // If all retries failed, use complete fallback data
+  console.log(`🛡️ Using complete fallback data for ${niche} after ${maxRetries} attempts`);
+  return getFallbackTrends(niche);
+}
+
+// Enhanced API calling function with better prompting
+async function callPerplexityAPI(niche: Niche): Promise<TrendForecast | null> {
+  const enhancedPrompt = `You are a TikTok viral trend expert analyzing ${niche} niche trends. 
+
+CRITICAL REQUIREMENTS:
+- You MUST provide exactly 4 categories: hot, rising, upcoming, declining
+- Each category MUST contain minimum 2-3 comprehensive trends
+- Each trend MUST include relevant product recommendations with pricing
+- Your response MUST be valid JSON only, no explanation text
+
+Current niche: ${niche}
+
+For ${niche} trends, provide a complete JSON response with this exact structure:
+
+{
+  "hot": [
+    {
+      "name": "trend name",
+      "volume": "X videos this week", 
+      "why": "brief explanation",
+      "products": [
+        {
+          "name": "product name",
+          "price": "$XX",
+          "asin": "B0XXXXXXXX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    }
+    // Include 2-3 trends minimum
+  ],
+  "rising": [
+    // Same structure, 2-3 trends minimum
+  ],
+  "upcoming": [
+    // Same structure, 2-3 trends minimum
+  ],
+  "declining": [
+    // Same structure, 2-3 trends minimum
+  ]
+}
+
+ALL 4 CATEGORIES ARE MANDATORY. If you cannot fill a category, use relevant placeholder trends rather than omitting the category.`;
+
+  try {
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${process.env.PERPLEXITY_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.1-sonar-large-128k-online',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a TikTok trend analysis expert. Respond only with valid JSON data, no additional text or explanations.'
+          },
+          {
+            role: 'user',
+            content: enhancedPrompt
+          }
+        ],
+        temperature: 0.3,
+        max_tokens: 4000
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    const content = data.choices?.[0]?.message?.content;
+    
+    if (!content) {
+      throw new Error('No content received from Perplexity API');
+    }
+
+    // Enhanced JSON parsing with better error handling
+    try {
+      // Clean the content in case there are markdown code blocks
+      const cleanedContent = content.replace(/```json\n?|\n?```/g, '').trim();
+      const parsed = JSON.parse(cleanedContent);
+      
+      // Basic structure validation
+      if (typeof parsed === 'object' && parsed !== null) {
+        return parsed as TrendForecast;
+      } else {
+        throw new Error('Invalid JSON structure received');
+      }
+    } catch (parseError) {
+      console.error('JSON parsing error:', parseError);
+      throw new Error(`Failed to parse API response as JSON: ${parseError}`);
+    }
+  } catch (error) {
+    console.error('Perplexity API call failed:', error);
+    throw error;
+  }
 }
