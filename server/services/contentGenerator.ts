@@ -69,12 +69,21 @@ function cleanVideoScript(content: string | any): string {
     // Remove extra whitespace and line breaks
     .replace(/\n{3,}/g, '\n\n')
     // Remove leading/trailing whitespace
-    .trim()
-    // Ensure sentences flow naturally for video narration
-    .replace(/\n\n/g, ' ')
-    .replace(/\n/g, ' ')
-    // Clean up extra spaces
-    .replace(/\s+/g, ' ');
+    .trim();
+}
+
+// Function to format content by sentences for TikTok display and storage
+function formatBySentences(content: string): string {
+  // First clean the content
+  const cleaned = cleanVideoScript(content);
+  
+  // Split by sentence endings, keeping the punctuation
+  const sentences = cleaned.split(/(?<=[.!?])\s+/)
+    .map(sentence => sentence.trim())
+    .filter(sentence => sentence.length > 0);
+  
+  // Join sentences with double line breaks for paragraph separation
+  return sentences.join('\n\n');
 }
 
 // Function to estimate video duration based on content
@@ -373,13 +382,16 @@ Apply these successful patterns from your previous high-rated content:
     // Clean up the content for video scripts (remove markdown, asterisks, hashtag headers)
     const rawContent = content || "Could not generate content. Please try again.";
     const cleanedContent = cleanVideoScript(rawContent);
+    
+    // Format by sentences for TikTok display and storage
+    const formattedContent = formatBySentences(rawContent);
 
     // Estimate video duration for the cleaned content
     const videoDuration = estimateVideoDuration(cleanedContent);
 
     // Return additional metadata for history tracking
     return {
-      content: cleanedContent,
+      content: formattedContent, // Use sentence-formatted version
       fallbackLevel,
       prompt,
       model: aiResponse.model || aiModel,
@@ -421,10 +433,11 @@ Apply these successful patterns from your previous high-rated content:
       // Clean up the fallback content for video scripts too
       const fallbackContent = fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.";
       const cleanedFallbackContent = cleanVideoScript(fallbackContent);
+      const formattedFallbackContent = formatBySentences(fallbackContent);
       const fallbackVideoDuration = estimateVideoDuration(cleanedFallbackContent);
 
       return {
-        content: cleanedFallbackContent,
+        content: formattedFallbackContent, // Use sentence-formatted version
         fallbackLevel: 'default', // OpenAI fallback using template prompts
         prompt: genericPrompt,
         model: "gpt-4o",
@@ -466,10 +479,11 @@ Apply these successful patterns from your previous high-rated content:
       }
 
       const legacyPrompt = `Create ${templateType} content for ${product} using legacy templates in a ${tone} tone. This is for the ${niche} niche.`;
+      const formattedLegacyContent = formatBySentences(legacyContent);
       const legacyVideoDuration = estimateVideoDuration(legacyContent);
 
       return {
-        content: legacyContent,
+        content: formattedLegacyContent, // Use sentence-formatted version
         fallbackLevel: 'generic', // Consider legacy system as generic fallback
         prompt: legacyPrompt,
         model: "gpt-4o",

@@ -1468,7 +1468,9 @@ ${config.hashtags.join(' ')}`;
                     )}
                   </div>
                   <div className="prose prose-sm max-w-none">
-                    <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">{generatedContent.content}</p>
+                    <div className="whitespace-pre-line text-gray-900 leading-relaxed text-base">
+                      {generatedContent.content}
+                    </div>
                   </div>
                 </div>
               
@@ -1651,7 +1653,7 @@ ${config.hashtags.join(' ')}`;
                         )}
                       </div>
                       <div className="prose prose-sm max-w-none">
-                        <div className="whitespace-pre-wrap text-gray-800">
+                        <div className="whitespace-pre-line text-gray-800 leading-relaxed text-base">
                           {content.content}
                         </div>
                       </div>
@@ -1732,7 +1734,9 @@ ${config.hashtags.join(' ')}`;
                         <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
                       </div>
                       <div className="prose prose-sm max-w-none">
-                        <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">{comparisonResults.claude.content}</p>
+                        <div className="whitespace-pre-line text-gray-900 leading-relaxed text-base">
+                          {comparisonResults.claude.content}
+                        </div>
                       </div>
                       {comparisonResults.claude.hook && (
                         <div className="bg-orange-100 p-3 rounded-lg border-l-4 border-orange-400 mt-4">
@@ -1789,7 +1793,9 @@ ${config.hashtags.join(' ')}`;
                         <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
                       </div>
                       <div className="prose prose-sm max-w-none">
-                        <p className="whitespace-pre-wrap text-gray-900 leading-relaxed">{comparisonResults.chatgpt.content}</p>
+                        <div className="whitespace-pre-line text-gray-900 leading-relaxed text-base">
+                          {comparisonResults.chatgpt.content}
+                        </div>
                       </div>
                       {comparisonResults.chatgpt.hook && (
                         <div className="bg-green-100 p-3 rounded-lg border-l-4 border-green-400 mt-4">
