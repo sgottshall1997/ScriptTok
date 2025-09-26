@@ -89,7 +89,6 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "AI TOOLS",
     items: [
-      { name: "Trending Products", href: "/trending-ai-picks", icon: TrendingUp },
     ]
   },
   {
