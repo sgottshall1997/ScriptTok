@@ -348,44 +348,275 @@ function getFallbackTrends(niche: Niche): TrendForecast {
     },
     fitness: {
       hot: [
-        { name: "12-3-30 workout", volume: "125K videos this week", why: "Simple effective routine" }
+        { 
+          name: "12-3-30 workout", 
+          volume: "125K videos this week", 
+          why: "Simple effective routine",
+          products: [
+            { name: "NordicTrack Commercial 1750 Treadmill", price: "$1799", asin: "B08T8KLQY5", priceNumeric: 1799.00, priceType: "one-time" },
+            { name: "Sunny Health Incline Treadmill", price: "$699", asin: "B07T8KLQ92", priceNumeric: 699.00, priceType: "one-time" },
+            { name: "Fitbit Charge 5 Fitness Tracker", price: "$150", asin: "B09DLSK4R1", priceNumeric: 150.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Protein powder trends", 
+          volume: "89K videos this week", 
+          why: "Post-workout nutrition focus",
+          products: [
+            { name: "Optimum Nutrition Gold Standard Whey", price: "$58", asin: "B000QSNYGI", priceNumeric: 58.00, priceType: "one-time" },
+            { name: "Dymatize ISO100 Whey Protein", price: "$65", asin: "B00JG8SF4E", priceNumeric: 65.00, priceType: "one-time" },
+            { name: "Orgain Organic Plant Based Protein", price: "$45", asin: "B00J074W94", priceNumeric: 45.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Home gym essentials", 
+          volume: "78K videos this week", 
+          why: "Convenience fitness trend",
+          products: [
+            { name: "Bowflex SelectTech 552 Adjustable Dumbbells", price: "$349", asin: "B001ARYU58", priceNumeric: 349.00, priceType: "one-time" },
+            { name: "Resistance Bands Set", price: "$25", asin: "B08MVBF8VX", priceNumeric: 25.00, priceType: "one-time" }
+          ]
+        }
       ],
       rising: [
-        { name: "Pilates", growth: "+290%", opportunity: "Mind-body wellness trend" }
+        { 
+          name: "Pilates", 
+          growth: "+290%", 
+          opportunity: "Mind-body wellness trend",
+          products: [
+            { name: "AeroPilates Reformer 287", price: "$199", asin: "B0014CWRR8", priceNumeric: 199.00, priceType: "one-time" },
+            { name: "Gaiam Essentials Thick Yoga Mat", price: "$35", asin: "B01AUU7IW2", priceNumeric: 35.00, priceType: "one-time" },
+            { name: "Pilates Ball Exercise Ball", price: "$15", asin: "B07RGQV8T4", priceNumeric: 15.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Functional fitness", 
+          growth: "+310%", 
+          opportunity: "Real-world movement patterns",
+          products: [
+            { name: "TRX ALL-IN-ONE Suspension Trainer", price: "$165", asin: "B018WPXCNU", priceNumeric: 165.00, priceType: "one-time" },
+            { name: "Yes4All Kettlebell Set", price: "$80", asin: "B01A7CSSN6", priceNumeric: 80.00, priceType: "one-time" }
+          ]
+        }
       ],
       upcoming: [
-        { name: "Outdoor workouts", when: "Spring 2025", prepNow: "Seasonal fitness prep" }
+        { 
+          name: "Outdoor workouts", 
+          when: "Spring 2025", 
+          prepNow: "Seasonal fitness prep",
+          products: [
+            { name: "Nike Free Run 5.0 Running Shoes", price: "$100", asin: "B08N5GQ5K3", priceNumeric: 100.00, priceType: "one-time" },
+            { name: "Hydro Flask Water Bottle 32oz", price: "$45", asin: "B077JBQZPX", priceNumeric: 45.00, priceType: "one-time" },
+            { name: "Under Armour HeatGear Shirt", price: "$30", asin: "B07MDHQGN8", priceNumeric: 30.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Summer body prep", 
+          when: "April 2025", 
+          prepNow: "Beach season motivation",
+          products: [
+            { name: "Abs Stimulator EMS Trainer", price: "$40", asin: "B07VL8T3R5", priceNumeric: 40.00, priceType: "one-time" },
+            { name: "Meal Prep Containers Set", price: "$30", asin: "B01GC8GQHK", priceNumeric: 30.00, priceType: "one-time" }
+          ]
+        }
       ],
       declining: [
-        { name: "Extreme challenges", reason: "Safety concerns" }
+        { 
+          name: "Extreme challenges", 
+          reason: "Safety concerns",
+          products: [
+            { name: "Extreme Workout Challenge Guide", price: "$25", priceNumeric: 25.00, priceType: "estimated" }
+          ]
+        },
+        { 
+          name: "Fad workout equipment", 
+          reason: "Proven methods preferred",
+          products: [
+            { name: "Ab Coaster Exercise Machine", price: "$250", priceNumeric: 250.00, priceType: "estimated" }
+          ]
+        }
       ]
     },
     food: {
       hot: [
-        { name: "Protein coffee", volume: "94K videos this week", why: "Fitness nutrition crossover" }
+        { 
+          name: "Protein coffee", 
+          volume: "94K videos this week", 
+          why: "Fitness nutrition crossover",
+          products: [
+            { name: "Vital Proteins Collagen Peptides", price: "$43", asin: "B00K2ND2QM", priceNumeric: 43.00, priceType: "one-time" },
+            { name: "Premier Protein Powder Vanilla", price: "$35", asin: "B072JBQ434", priceNumeric: 35.00, priceType: "one-time" },
+            { name: "Bulletproof Brain Octane MCT Oil", price: "$30", asin: "B00P8E0QQG", priceNumeric: 30.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Air fryer recipes", 
+          volume: "156K videos this week", 
+          why: "Healthy convenience cooking",
+          products: [
+            { name: "COSORI Air Fryer 5.8 Quart", price: "$120", asin: "B07VJBF8Y4", priceNumeric: 120.00, priceType: "one-time" },
+            { name: "Ninja Air Fryer AF101", price: "$80", asin: "B07VT23JDM", priceNumeric: 80.00, priceType: "one-time" },
+            { name: "Air Fryer Cookbook for Beginners", price: "$12", asin: "B08KJQM7F3", priceNumeric: 12.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Sourdough bread making", 
+          volume: "78K videos this week", 
+          why: "Artisan home baking revival",
+          products: [
+            { name: "Lodge Cast Iron Dutch Oven", price: "$60", asin: "B000LEXR0K", priceNumeric: 60.00, priceType: "one-time" },
+            { name: "King Arthur Bread Flour", price: "$25", asin: "B07H8KLCQ1", priceNumeric: 25.00, priceType: "one-time" }
+          ]
+        }
       ],
       rising: [
-        { name: "Mediterranean diet", growth: "+340%", opportunity: "Health trend momentum" }
+        { 
+          name: "Mediterranean diet", 
+          growth: "+340%", 
+          opportunity: "Health trend momentum",
+          products: [
+            { name: "California Olive Ranch Extra Virgin Oil", price: "$15", asin: "B0019GW7S4", priceNumeric: 15.00, priceType: "one-time" },
+            { name: "Kirkland Signature Greek Yogurt", price: "$8", asin: "B08LKQP7R3", priceNumeric: 8.00, priceType: "one-time" },
+            { name: "Mediterranean Diet Cookbook", price: "$16", asin: "B071SGQJ4D", priceNumeric: 16.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Plant-based proteins", 
+          growth: "+380%", 
+          opportunity: "Sustainable nutrition trend",
+          products: [
+            { name: "Beyond Meat Plant-Based Patties", price: "$9", asin: "B07KQBX3R5", priceNumeric: 9.00, priceType: "one-time" },
+            { name: "Impossible Burger Plant-Based Meat", price: "$8", asin: "B083QV5H8L", priceNumeric: 8.00, priceType: "one-time" }
+          ]
+        }
       ],
       upcoming: [
-        { name: "Summer smoothies", when: "June 2025", prepNow: "Recipe testing season" }
+        { 
+          name: "Summer smoothies", 
+          when: "June 2025", 
+          prepNow: "Recipe testing season",
+          products: [
+            { name: "Vitamix A3500 Ascent Series Blender", price: "$450", asin: "B077HBQZPX", priceNumeric: 450.00, priceType: "one-time" },
+            { name: "NutriBullet Pro 900 Series", price: "$100", asin: "B071JVP8G8", priceNumeric: 100.00, priceType: "one-time" },
+            { name: "Frozen Fruit Smoothie Mix", price: "$15", asin: "B07RGQV8T4", priceNumeric: 15.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "BBQ and grilling", 
+          when: "May 2025", 
+          prepNow: "Summer prep content",
+          products: [
+            { name: "Weber Spirit II E-210 Gas Grill", price: "$399", asin: "B01MS19G4G", priceNumeric: 399.00, priceType: "one-time" },
+            { name: "ThermoPro TP20 Wireless Meat Thermometer", price: "$60", asin: "B01GE77QT0", priceNumeric: 60.00, priceType: "one-time" }
+          ]
+        }
       ],
       declining: [
-        { name: "Extreme diet trends", reason: "Balanced approach preferred" }
+        { 
+          name: "Extreme diet trends", 
+          reason: "Balanced approach preferred",
+          products: [
+            { name: "Extreme Diet Plan Book", price: "$20", priceNumeric: 20.00, priceType: "estimated" }
+          ]
+        },
+        { 
+          name: "Meal replacement shakes", 
+          reason: "Whole foods preferred",
+          products: [
+            { name: "Generic Meal Replacement Shake", price: "$40", priceNumeric: 40.00, priceType: "estimated" }
+          ]
+        }
       ]
     },
     travel: {
       hot: [
-        { name: "Solo travel safety", volume: "67K videos this week", why: "Independent travel surge" }
+        { 
+          name: "Solo travel safety", 
+          volume: "67K videos this week", 
+          why: "Independent travel surge",
+          products: [
+            { name: "Travelon Anti-Theft Classic Crossbody Bag", price: "$65", asin: "B004W8S3YW", priceNumeric: 65.00, priceType: "one-time" },
+            { name: "Personal Safety Alarm Keychain", price: "$12", asin: "B07K8SJFTZ", priceNumeric: 12.00, priceType: "one-time" },
+            { name: "Portable Door Lock Security Device", price: "$25", asin: "B07QRQZG7H", priceNumeric: 25.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Travel tech essentials", 
+          volume: "89K videos this week", 
+          why: "Digital nomad lifestyle",
+          products: [
+            { name: "Anker Portable Charger PowerCore 10000", price: "$25", asin: "B019GJLER8", priceNumeric: 25.00, priceType: "one-time" },
+            { name: "Universal Travel Adapter", price: "$20", asin: "B078N47LPL", priceNumeric: 20.00, priceType: "one-time" },
+            { name: "Noise Cancelling Headphones", price: "$80", asin: "B08PZHYWJS", priceNumeric: 80.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Travel packing hacks", 
+          volume: "78K videos this week", 
+          why: "Minimalist travel trend",
+          products: [
+            { name: "Compression Packing Cubes Set", price: "$30", asin: "B014VBQP9S", priceNumeric: 30.00, priceType: "one-time" },
+            { name: "Samsonite Winfield 3 DLX Luggage", price: "$180", asin: "B07DMQX5GY", priceNumeric: 180.00, priceType: "one-time" }
+          ]
+        }
       ],
       rising: [
-        { name: "Sustainable tourism", growth: "+310%", opportunity: "Eco-conscious travel" }
+        { 
+          name: "Sustainable tourism", 
+          growth: "+310%", 
+          opportunity: "Eco-conscious travel",
+          products: [
+            { name: "Hydro Flask Reusable Water Bottle", price: "$45", asin: "B077JBQZPX", priceNumeric: 45.00, priceType: "one-time" },
+            { name: "Patagonia Black Hole Duffel Bag", price: "$149", asin: "B07D7DN1RQ", priceNumeric: 149.00, priceType: "one-time" },
+            { name: "Solar Power Bank Charger", price: "$35", asin: "B07PVGWMTY", priceNumeric: 35.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Digital detox travel", 
+          growth: "+280%", 
+          opportunity: "Wellness travel trend",
+          products: [
+            { name: "Moleskine Travel Journal", price: "$25", asin: "B01FDQX1XY", priceNumeric: 25.00, priceType: "one-time" },
+            { name: "Offline Travel Maps Book", price: "$20", asin: "B086T7K9ZL", priceNumeric: 20.00, priceType: "one-time" }
+          ]
+        }
       ],
       upcoming: [
-        { name: "Summer Europe", when: "June 2025", prepNow: "Planning content season" }
+        { 
+          name: "Summer Europe", 
+          when: "June 2025", 
+          prepNow: "Planning content season",
+          products: [
+            { name: "Rick Steves Europe Through the Back Door", price: "$20", asin: "B08D8WSHPQ", priceNumeric: 20.00, priceType: "one-time" },
+            { name: "European Rail Pass Guide", price: "$15", asin: "B01N8U8ML4", priceNumeric: 15.00, priceType: "one-time" },
+            { name: "Portable Luggage Scale", price: "$10", asin: "B0146BBEI4", priceNumeric: 10.00, priceType: "one-time" }
+          ]
+        },
+        { 
+          name: "Adventure travel gear", 
+          when: "Spring 2025", 
+          prepNow: "Outdoor season preparation",
+          products: [
+            { name: "Osprey Atmos AG 65 Backpack", price: "$270", asin: "B01MQ18Q5C", priceNumeric: 270.00, priceType: "one-time" },
+            { name: "REI Co-op Merino Wool Travel Socks", price: "$22", asin: "B07H8KLCQ1", priceNumeric: 22.00, priceType: "one-time" }
+          ]
+        }
       ],
       declining: [
-        { name: "Overtourism spots", reason: "Local backlash awareness" }
+        { 
+          name: "Overtourism spots", 
+          reason: "Local backlash awareness",
+          products: [
+            { name: "Mass Tourism Destination Guide", price: "$18", priceNumeric: 18.00, priceType: "estimated" }
+          ]
+        },
+        { 
+          name: "All-inclusive resorts", 
+          reason: "Authentic experiences preferred",
+          products: [
+            { name: "Resort Vacation Package", price: "$1200", priceNumeric: 1200.00, priceType: "estimated" }
+          ]
+        }
       ]
     },
     pet: {
