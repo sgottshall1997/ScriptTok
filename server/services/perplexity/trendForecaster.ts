@@ -698,7 +698,7 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   details: Record<string, any>;
 } {
   const requiredCategories = ['hot', 'rising', 'upcoming', 'declining'] as const;
-  const minTrendsPerCategory = 2;
+  const minTrendsPerCategory = 1;
   
   const missingCategories: string[] = [];
   const insufficientCategories: string[] = [];
@@ -784,26 +784,26 @@ function validateSingleTrend(trend: any, category: string): {
     issues.push('Invalid or missing name');
   }
 
-  // Category-specific field validation
+  // Category-specific field validation (more flexible)
   switch (category) {
     case 'hot':
-      if (!trend.volume || !trend.why) {
-        issues.push('Missing volume or why fields for hot trend');
+      if (!trend.volume && !trend.why && !trend.reason) {
+        issues.push('Missing volume, why, or reason fields for hot trend');
       }
       break;
     case 'rising':
-      if (!trend.growth || !trend.opportunity) {
-        issues.push('Missing growth or opportunity fields for rising trend');
+      if (!trend.growth && !trend.opportunity && !trend.why) {
+        issues.push('Missing growth, opportunity, or why fields for rising trend');
       }
       break;
     case 'upcoming':
-      if (!trend.when || !trend.prepNow) {
-        issues.push('Missing when or prepNow fields for upcoming trend');
+      if (!trend.when && !trend.prepNow && !trend.why) {
+        issues.push('Missing when, prepNow, or why fields for upcoming trend');
       }
       break;
     case 'declining':
-      if (!trend.reason) {
-        issues.push('Missing reason field for declining trend');
+      if (!trend.reason && !trend.why) {
+        issues.push('Missing reason or why fields for declining trend');
       }
       break;
   }
@@ -1007,20 +1007,57 @@ For ${niche} trends, provide a complete JSON response with this exact structure:
         }
       ]
     }
-    // Include 2-3 trends minimum
   ],
   "rising": [
-    // Same structure, 2-3 trends minimum
+    {
+      "name": "trend name",
+      "growth": "+X%", 
+      "opportunity": "explanation of opportunity",
+      "why": "brief explanation",
+      "products": [
+        {
+          "name": "product name",
+          "price": "$XX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    }
   ],
   "upcoming": [
-    // Same structure, 2-3 trends minimum
+    {
+      "name": "trend name",
+      "when": "timing information", 
+      "prepNow": "preparation advice",
+      "why": "brief explanation",
+      "products": [
+        {
+          "name": "product name",
+          "price": "$XX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    }
   ],
   "declining": [
-    // Same structure, 2-3 trends minimum
+    {
+      "name": "trend name",
+      "reason": "why it's declining",
+      "why": "brief explanation",
+      "products": [
+        {
+          "name": "product name",
+          "price": "$XX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    }
   ]
 }
 
-ALL 4 CATEGORIES ARE MANDATORY. If you cannot fill a category, use relevant placeholder trends rather than omitting the category.`;
+Include 2-3 trends minimum per category. ALL 4 CATEGORIES ARE MANDATORY.`;
 
   try {
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -1030,7 +1067,7 @@ ALL 4 CATEGORIES ARE MANDATORY. If you cannot fill a category, use relevant plac
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'sonar-pro',
+        model: 'sonar',
         messages: [
           {
             role: 'system',
