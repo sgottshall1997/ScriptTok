@@ -329,24 +329,30 @@ const GenerateContent = () => {
     if (!content || !selectedProduct) return '';
 
     const productName = selectedProduct;
-    const mainContent = content.content;
-    
-    // Extract first sentence or create a short description
-    const shortDesc = mainContent.split('.')[0] + (mainContent.split('.').length > 1 ? '.' : '');
     
     // TikTok configuration only
     const config = {
-      cta: "Tap the link to grab it now! 👆",
-      hashtags: ["#fyp", "#viral", `#${selectedNiche}`, "#trending"],
-      maxLength: 150
+      cta: "Link in bio! 🔗✨",
+      hashtags: ["#fyp", "#viral", `#${selectedNiche}`, "#trending", "#musthave"],
+      maxLength: 200
     };
 
-    // Create caption components
-    const hook = content.hook || generateDynamicHook(productName, selectedNiche);
-    const description = shortDesc.length > config.maxLength ? 
-      shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
+    // Create a completely different hook and description for the caption
+    const captionHook = generateDynamicHook(productName, selectedNiche);
     
-    const caption = `${hook}
+    // Create a social media style description that's different from the script
+    const socialDescriptions = [
+      `This ${productName} is absolutely EVERYTHING! Perfect for ${selectedNiche} lovers who want the best. You need this in your life! ✨`,
+      `Obsessed with this ${productName}! It's been trending all over my FYP and now I know why. The quality is unmatched! 🔥`,
+      `POV: You found the perfect ${productName} and now you're gatekeeping it... just kidding, sharing the link! 💕`,
+      `This ${productName} has been selling out everywhere and I finally got my hands on it. Worth the hype! 🙌`,
+      `Everyone's asking about my ${productName} - here's where I got it! Thank me later 😍`,
+    ];
+    
+    // Pick a random social description
+    const description = socialDescriptions[Math.floor(Math.random() * socialDescriptions.length)];
+    
+    const caption = `${captionHook}
 
 ${description}
 
@@ -433,44 +439,30 @@ ${config.hashtags.join(' ')}`;
 
   const generatePlatformCaptionForSaving = (platform: string, contentData: GeneratedContent, productName: string, linkUrl: string, niche: string): string => {
     if (!contentData || !productName) return '';
-
-    const mainContent = contentData.content;
-    
-    // Create a more distinct caption that's different from the script
-    // Use the first two sentences but rephrase them more casually
-    const sentences = mainContent.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    const firstSentence = sentences[0]?.trim() || '';
     
     // TikTok configuration only
     const config = {
       cta: "Link in bio! 🔗✨",
       hashtags: ["#fyp", "#viral", `#${niche}`, "#trending", "#musthave"],
-      maxLength: 180
+      maxLength: 200
     };
 
-    // Create a more social media friendly hook
-    const hook = contentData.hook || generateDynamicHook(productName, niche);
+    // Create a completely different social media style caption
+    const socialCaptions = [
+      `Just tried the ${productName} and I'm SHOOK! 😱 This is why everyone's talking about it. Definitely adding to cart! 🛒`,
+      `POV: You found the perfect ${productName} and your ${niche} routine is about to be elite ✨ Thank me later!`,
+      `This ${productName} has been all over my FYP and now I see why! The reviews don't lie 🔥`,
+      `Guys... this ${productName} is IT! Been using it for a week and I'm obsessed 💕 Had to share!`,
+      `Not me gatekeeping this ${productName} until now 🤫 But y'all deserve to know about this gem!`,
+      `The ${productName} that everyone's been raving about? Yeah, it lives up to the hype! 🙌`,
+      `Okay but why did nobody tell me about this ${productName} sooner?! Game changer! ⚡`,
+      `This ${productName} just hit different 💯 Perfect for my ${niche} girlies who get it!`,
+    ];
     
-    // Create a condensed, social-media style description
-    let description = '';
-    if (firstSentence) {
-      // Make it more social media friendly
-      description = firstSentence
-        .replace(/^(Meet|Introducing|Discover|Check out|This is)/i, 'Obsessed with')
-        .replace(/the ultimate/, 'this amazing')
-        .replace(/game-changer/i, 'life changer');
-      
-      // Ensure it's not too long
-      if (description.length > config.maxLength - hook.length - config.cta.length - config.hashtags.join(' ').length - 10) {
-        description = description.substring(0, config.maxLength - hook.length - config.cta.length - config.hashtags.join(' ').length - 10) + '...';
-      }
-    } else {
-      description = `This ${productName} is incredible! Perfect for anyone in the ${niche} space.`;
-    }
+    // Pick a random caption style
+    const description = socialCaptions[Math.floor(Math.random() * socialCaptions.length)];
     
-    const caption = `${hook}
-
-${description}
+    const caption = `${description}
 
 ${config.cta}
 
