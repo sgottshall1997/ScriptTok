@@ -1202,31 +1202,106 @@ const EnhancedContentHistory = () => {
                     </div>
                   )}
 
-                  {/* Content Rating System */}
-                  <div className="border-t pt-4 mt-4">
-                    <div className="text-xs text-gray-400 mb-2">
-                      🔧 RATING DEBUG: entry.id={entry.id}, entry.databaseId={entry.databaseId}, 
-                      type={typeof entry.databaseId}, source={entry.source}, 
-                      truthyCheck={!!entry.databaseId}
-                    </div>
-                    {entry.databaseId ? (
-                      <>
-                        <div className="text-xs text-green-600 mb-2">✅ RATING ENABLED: databaseId = {entry.databaseId}</div>
-                        <ContentRating
-                          contentHistoryId={entry.databaseId}
-                          userId={1}
-                          isExpanded={expandedRatings[entry.id]}
-                          onToggle={() => toggleRatingExpanded(entry.id)}
-                        />
-                      </>
-                    ) : (
-                      <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50">
-                        <span className="text-sm text-gray-500">
-                          Rating available for database-saved content only
-                        </span>
+                  {/* Viral Score Display */}
+                  {(() => {
+                    // Extract viral score from generated output if available
+                    const viralScore = entry.generatedOutput?.viralScore;
+                    
+                    if (!viralScore) return null;
+                    
+                    return (
+                      <div className="border-t pt-4 mt-4">
+                        <div className="space-y-3">
+                          <h4 className="font-semibold text-gray-900 flex items-center gap-2">
+                            📊 Viral Performance Score
+                          </h4>
+                          
+                          {/* Overall Score */}
+                          <div className="bg-white p-4 rounded-lg border">
+                            <div className="flex items-center justify-between mb-3">
+                              <span className="text-sm font-medium text-gray-700">Overall Score</span>
+                              <div className={`text-2xl font-bold ${
+                                viralScore.colorCode === 'green' ? 'text-green-600' :
+                                viralScore.colorCode === 'yellow' ? 'text-yellow-600' : 'text-red-600'
+                              }`}>
+                                {viralScore.overall}
+                                <span className="text-sm text-gray-500 ml-1">/100</span>
+                              </div>
+                            </div>
+                            
+                            {/* Progress Bar */}
+                            <div className="w-full bg-gray-200 rounded-full h-2">
+                              <div 
+                                className={`h-2 rounded-full transition-all duration-300 ${
+                                  viralScore.colorCode === 'green' ? 'bg-green-500' :
+                                  viralScore.colorCode === 'yellow' ? 'bg-yellow-500' : 'bg-red-500'
+                                }`}
+                                style={{ width: `${viralScore.overall}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                          
+                          {/* Score Breakdown */}
+                          {viralScore.breakdown && (
+                            <div className="bg-white p-4 rounded-lg border">
+                              <h5 className="font-medium text-gray-700 mb-3">Score Breakdown</h5>
+                              <div className="grid grid-cols-2 gap-3">
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm text-gray-600">Hook Strength</span>
+                                  <span className="font-medium">{viralScore.breakdown.hookStrength}/100</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm text-gray-600">Engagement</span>
+                                  <span className="font-medium">{viralScore.breakdown.engagement}/100</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm text-gray-600">Clarity</span>
+                                  <span className="font-medium">{viralScore.breakdown.clarity}/100</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm text-gray-600">Length</span>
+                                  <span className="font-medium">{viralScore.breakdown.length}/100</span>
+                                </div>
+                                <div className="flex justify-between items-center">
+                                  <span className="text-sm text-gray-600">Trending</span>
+                                  <span className="font-medium">{viralScore.breakdown.trending}/100</span>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          
+                          {/* Improvement Suggestions */}
+                          {viralScore.suggestions && viralScore.suggestions.length > 0 && (
+                            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                              <h5 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                                💡 Improvement Suggestions
+                              </h5>
+                              <ul className="space-y-1">
+                                {viralScore.suggestions.map((suggestion, index) => (
+                                  <li key={index} className="text-sm text-blue-800 flex items-start gap-2">
+                                    <span className="text-blue-500 mt-1">•</span>
+                                    <span>{suggestion}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    )}
-                  </div>
+                    );
+                  })()}
+
+                  {/* Content Rating System */}
+                  {entry.databaseId && (
+                    <div className="border-t pt-4 mt-4">
+                      <ContentRating
+                        contentHistoryId={entry.databaseId}
+                        userId={1}
+                        isExpanded={expandedRatings[entry.id]}
+                        onToggle={() => toggleRatingExpanded(entry.id)}
+                      />
+                    </div>
+                  )}
 
                   {/* AI Content Evaluation System */}
                   {entry.databaseId && (

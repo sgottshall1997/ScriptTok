@@ -525,6 +525,17 @@ Experience the difference today! #${niche} #trending`;
       }
     }
     
+    // 🎯 Calculate viral score using product research and competitor insights
+    let viralScore = null;
+    try {
+      // Pass the content string to the viral score calculator
+      viralScore = calculateViralScore(content);
+      console.log('🎯 Viral score calculated:', viralScore.overall);
+    } catch (scoreError) {
+      console.error('Error calculating viral score:', scoreError);
+      // Continue without viral score if calculation fails
+    }
+    
     // Save detailed content history record with all metadata including hook and platform content
     const contentHistoryEntry = await storage.saveContentHistory({
       userId: req.user?.id, // If user is authenticated
@@ -541,7 +552,8 @@ Experience the difference today! #${niche} #trending`;
         hook: extractHook(content), // Extract hook from content
         platform: 'tiktok',
         platformContent: platformContent,
-        webhookData: webhookData
+        webhookData: webhookData,
+        viralScore: viralScore // Include viral score in generated output
       },
       affiliateLink: validatedData.affiliateUrl || null,
       viralInspo: validatedData.viralInspiration || null,
@@ -550,7 +562,10 @@ Experience the difference today! #${niche} #trending`;
       fallbackLevel: fallbackLevel || null,
       aiModel: model || "gpt-4o",
       contentFormat: "Regular Format",
-      topRatedStyleUsed: validatedData.useSmartStyle || false
+      topRatedStyleUsed: validatedData.useSmartStyle || false,
+      // Add viral score fields to database
+      viralScore: viralScore, // Full viral score object
+      viralScoreOverall: viralScore?.overall || null // Overall score for easy querying
     });
     
     // Increment API usage counter with template and tone tracking
@@ -572,17 +587,6 @@ Experience the difference today! #${niche} #trending`;
 
     // 🤖 AUTOMATIC AI EVALUATION - Add evaluation trigger placeholder
     // Note: This will be implemented after content history is saved to avoid duplicates
-
-    // 🎯 Calculate viral score using product research and competitor insights
-    let viralScore = null;
-    try {
-      // Pass the content string to the viral score calculator
-      viralScore = calculateViralScore(content);
-      console.log('🎯 Viral score calculated:', viralScore.overall);
-    } catch (scoreError) {
-      console.error('Error calculating viral score:', scoreError);
-      // Continue without viral score if calculation fails
-    }
 
     // Return success response with clean JSON structure including platform content
     res.json({

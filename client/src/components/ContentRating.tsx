@@ -210,81 +210,139 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
       
       <CardContent className="space-y-6">
         {/* Overall Rating */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <Label className="flex items-center gap-2">
             <Award className="w-4 h-4" />
-            Overall Content Quality (1-100)
+            Overall Content Quality
           </Label>
-          <Input
-            type="number"
-            min="1"
-            max="100"
-            placeholder="e.g., 85"
-            value={ratings.overallRating || ''}
-            onChange={(e) => handleRatingChange('overallRating', parseInt(e.target.value))}
-          />
+          <div className="flex items-center gap-2">
+            {[1, 2, 3, 4, 5].map((star) => (
+              <button
+                key={star}
+                type="button"
+                onClick={() => handleRatingChange('overallRating', star * 20)} // Convert 1-5 to 20-100
+                className={`text-2xl transition-colors ${
+                  (ratings.overallRating || 0) >= star * 20 
+                    ? 'text-yellow-400 hover:text-yellow-500' 
+                    : 'text-gray-300 hover:text-yellow-300'
+                }`}
+              >
+                ★
+              </button>
+            ))}
+            <span className="ml-2 text-sm text-gray-600">
+              {ratings.overallRating ? `${Math.ceil(ratings.overallRating / 20)}/5 stars` : 'Not rated'}
+            </span>
+          </div>
         </div>
 
         {/* Platform-specific Ratings */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-pink-600">
-              <span className="w-4 h-4 text-center">📷</span>
-              Instagram Caption (1-100)
-            </Label>
-            <Input
-              type="number"
-              min="1"
-              max="100"
-              placeholder="e.g., 80"
-              value={ratings.instagramRating || ''}
-              onChange={(e) => handleRatingChange('instagramRating', parseInt(e.target.value))}
-            />
-          </div>
+        <div className="space-y-4">
+          <h5 className="font-medium text-gray-700">Platform-Specific Ratings</h5>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-pink-600">
+                <span className="w-4 h-4 text-center">📷</span>
+                Instagram Caption
+              </Label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => handleRatingChange('instagramRating', star * 20)}
+                    className={`text-xl transition-colors ${
+                      (ratings.instagramRating || 0) >= star * 20 
+                        ? 'text-pink-400 hover:text-pink-500' 
+                        : 'text-gray-300 hover:text-pink-300'
+                    }`}
+                  >
+                    ★
+                  </button>
+                ))}
+                <span className="ml-2 text-xs text-gray-600">
+                  {ratings.instagramRating ? `${Math.ceil(ratings.instagramRating / 20)}/5` : '0/5'}
+                </span>
+              </div>
+            </div>
 
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-black">
-              <span className="w-4 h-4 text-center">🎵</span>
-              TikTok Caption (1-100)
-            </Label>
-            <Input
-              type="number"
-              min="1"
-              max="100"
-              placeholder="e.g., 90"
-              value={ratings.tiktokRating || ''}
-              onChange={(e) => handleRatingChange('tiktokRating', parseInt(e.target.value))}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-black">
+                <span className="w-4 h-4 text-center">🎵</span>
+                TikTok Caption
+              </Label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => handleRatingChange('tiktokRating', star * 20)}
+                    className={`text-xl transition-colors ${
+                      (ratings.tiktokRating || 0) >= star * 20 
+                        ? 'text-gray-800 hover:text-black' 
+                        : 'text-gray-300 hover:text-gray-500'
+                    }`}
+                  >
+                    ★
+                  </button>
+                ))}
+                <span className="ml-2 text-xs text-gray-600">
+                  {ratings.tiktokRating ? `${Math.ceil(ratings.tiktokRating / 20)}/5` : '0/5'}
+                </span>
+              </div>
+            </div>
 
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-red-600">
-              <span className="w-4 h-4 text-center">▶️</span>
-              YouTube Shorts (1-100)
-            </Label>
-            <Input
-              type="number"
-              min="1"
-              max="100"
-              placeholder="e.g., 75"
-              value={ratings.youtubeRating || ''}
-              onChange={(e) => handleRatingChange('youtubeRating', parseInt(e.target.value))}
-            />
-          </div>
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-red-600">
+                <span className="w-4 h-4 text-center">▶️</span>
+                YouTube Shorts
+              </Label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => handleRatingChange('youtubeRating', star * 20)}
+                    className={`text-xl transition-colors ${
+                      (ratings.youtubeRating || 0) >= star * 20 
+                        ? 'text-red-400 hover:text-red-500' 
+                        : 'text-gray-300 hover:text-red-300'
+                    }`}
+                  >
+                    ★
+                  </button>
+                ))}
+                <span className="ml-2 text-xs text-gray-600">
+                  {ratings.youtubeRating ? `${Math.ceil(ratings.youtubeRating / 20)}/5` : '0/5'}
+                </span>
+              </div>
+            </div>
 
-          <div className="space-y-2">
-            <Label className="flex items-center gap-2 text-blue-500">
-              <span className="w-4 h-4 text-center">𝕏</span>
-              X (Twitter) Caption (1-100)
-            </Label>
-            <Input
-              type="number"
-              min="1"
-              max="100"
-              placeholder="e.g., 70"
-              value={ratings.twitterRating || ''}
-              onChange={(e) => handleRatingChange('twitterRating', parseInt(e.target.value))}
-            />
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2 text-blue-500">
+                <span className="w-4 h-4 text-center">𝕏</span>
+                X (Twitter) Post
+              </Label>
+              <div className="flex items-center gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    onClick={() => handleRatingChange('twitterRating', star * 20)}
+                    className={`text-xl transition-colors ${
+                      (ratings.twitterRating || 0) >= star * 20 
+                        ? 'text-blue-400 hover:text-blue-500' 
+                        : 'text-gray-300 hover:text-blue-300'
+                    }`}
+                  >
+                    ★
+                  </button>
+                ))}
+                <span className="ml-2 text-xs text-gray-600">
+                  {ratings.twitterRating ? `${Math.ceil(ratings.twitterRating / 20)}/5` : '0/5'}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
 
