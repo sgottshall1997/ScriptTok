@@ -49,9 +49,9 @@ const Dashboard = () => {
   // Fetch trending products for all niches (Perplexity organized by niche)
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
-    retry: false,
-    staleTime: 0, // Always consider data stale
-    gcTime: 0, // Don't cache the data (updated from cacheTime)
+    retry: 1,
+    staleTime: 30000, // Data fresh for 30 seconds
+    gcTime: 60000, // Cache for 1 minute
   });
 
   // Fetch all trending products (includes Amazon products)
@@ -230,6 +230,7 @@ const Dashboard = () => {
     
     // Debug logging to see what products we're getting
     console.log('🔍 Dashboard Debug - Balanced Perplexity products:', perplexityProducts.length);
+    console.log('🔍 Loading states debug:', { trendingLoading, allTrendingLoading, hasData: !!trendingProducts?.data });
     perplexityProducts.forEach((p, i) => {
       console.log(`  ${i+1}. ${p.title} (${p.niche}) - Created: ${p.createdAt}`);
     });
@@ -624,7 +625,7 @@ const Dashboard = () => {
         
         {/* Products Display Section */}
         <CardContent>
-          {(selectedDataSource === 'perplexity' ? trendingLoading : allTrendingLoading) ? (
+          {((selectedDataSource === 'perplexity' ? trendingLoading && !trendingProducts?.data : allTrendingLoading && allTrendingProducts.length === 0)) ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array(6).fill(0).map((_, i) => (
                 <Card key={i} className="p-4">
