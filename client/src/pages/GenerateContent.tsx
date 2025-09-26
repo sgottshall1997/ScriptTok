@@ -1289,37 +1289,7 @@ ${config.hashtags.join(' ')}`;
               />
             </div>
 
-            {/* Prompt Structure Card */}
-            {currentPromptStructure && (
-              <Card className="bg-gradient-to-r from-blue-50 to-purple-50 border-blue-200">
-                <CardHeader className="pb-3">
-                  <CardTitle className="flex items-center gap-2 text-sm font-semibold text-blue-800">
-                    📋 Prompt Structure
-                  </CardTitle>
-                  <p className="text-xs text-blue-600">
-                    See exactly how AI prompts are structured for {selectedNiche} content with {selectedTemplates[0]} template
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div>
-                    <Label className="text-xs font-medium text-gray-700">System Prompt</Label>
-                    <div className="bg-white rounded-md border border-blue-200 p-3 text-xs font-mono text-gray-700 max-h-32 overflow-y-auto">
-                      {currentPromptStructure.systemPrompt}
-                    </div>
-                  </div>
-                  <div>
-                    <Label className="text-xs font-medium text-gray-700">User Prompt Template</Label>
-                    <div className="bg-white rounded-md border border-blue-200 p-3 text-xs font-mono text-gray-700 max-h-40 overflow-y-auto">
-                      {currentPromptStructure.userPrompt}
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-blue-600">
-                    <span>Template: {currentPromptStructure.templateType}</span>
-                    <span>Format: Standard</span>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
+            
 
             {/* Tone */}
             <div>
