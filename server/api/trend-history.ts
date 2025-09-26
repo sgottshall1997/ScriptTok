@@ -221,12 +221,20 @@ router.get("/forecaster/:niche", async (req, res) => {
     );
 
     // Filter to only include entries from the most recent forecast run
-    const latestRunTimestamp = mostRecentEntry.fetchedAt;
-    const latestRunEntries = history.filter(item => 
-      item.fetchedAt === latestRunTimestamp
-    );
+    // Use a small time window (1 second) to group entries from the same run
+    const latestRunTime = new Date(mostRecentEntry.fetchedAt);
+    const latestRunEntries = history.filter(item => {
+      const itemTime = new Date(item.fetchedAt);
+      const timeDiff = Math.abs(latestRunTime.getTime() - itemTime.getTime());
+      return timeDiff < 1000; // Within 1 second of the latest run
+    });
 
-    console.log(`📊 TrendForecaster API: Found ${history.length} total entries, filtering to ${latestRunEntries.length} from latest run (${latestRunTimestamp})`);
+    console.log(`📊 TrendForecaster API: Found ${history.length} total entries, filtering to ${latestRunEntries.length} from latest run (${latestRunTime.toISOString()})`);
+    
+    // Debug: Log all entries with their categories
+    latestRunEntries.forEach((entry, index) => {
+      console.log(`  Entry ${index + 1}: ${entry.trendCategory} - "${entry.trendName}" (${entry.fetchedAt})`);
+    });
 
     // Group trends by category using only the most recent run data
     const trendsByCategory: {
@@ -255,7 +263,7 @@ router.get("/forecaster/:niche", async (req, res) => {
     }
 
     // Group trends by category from the latest run only
-    latestRunEntries.forEach(item => {
+    latestRunEntries.forEach((item, index) => {
       if (item.trendCategory && item.trendName) {
         const trendData = {
           name: item.trendName,
@@ -268,6 +276,8 @@ router.get("/forecaster/:niche", async (req, res) => {
           products: item.productData ? (Array.isArray(item.productData) ? item.productData : [item.productData]) : []
         };
 
+        console.log(`  Adding trend to ${item.trendCategory}: "${item.trendName}"`);
+
         if (item.trendCategory === 'hot') {
           trendsByCategory.hot.push(trendData);
         } else if (item.trendCategory === 'rising') {
@@ -276,8 +286,20 @@ router.get("/forecaster/:niche", async (req, res) => {
           trendsByCategory.upcoming.push(trendData);
         } else if (item.trendCategory === 'declining') {
           trendsByCategory.declining.push(trendData);
+        } else {
+          console.warn(`  Unknown trend category: "${item.trendCategory}" for trend "${item.trendName}"`);
         }
+      } else {
+        console.warn(`  Skipping entry ${index + 1}: missing category (${item.trendCategory}) or name (${item.trendName})`);
       }
+    });
+
+    // Debug: Log final categorization
+    console.log(`📊 Final trend categorization for ${niche}:`, {
+      hot: trendsByCategory.hot.length,
+      rising: trendsByCategory.rising.length,
+      upcoming: trendsByCategory.upcoming.length,
+      declining: trendsByCategory.declining.length
     });
 
     // Return data in the same format as the original TrendForecaster API with dataSource metadata

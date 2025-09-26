@@ -55,10 +55,20 @@ export default function TrendForecaster() {
       
       if (data.data?.trends) {
         const trends = data.data.trends;
-        console.log(`🔥 HOT ${selectedNiche} trends from DB (${trends.hot?.length || 0}):`, trends.hot);
-        console.log(`📈 RISING ${selectedNiche} trends from DB (${trends.rising?.length || 0}):`, trends.rising);
-        console.log(`🕐 UPCOMING ${selectedNiche} trends from DB (${trends.upcoming?.length || 0}):`, trends.upcoming);
-        console.log(`📉 DECLINING ${selectedNiche} trends from DB (${trends.declining?.length || 0}):`, trends.declining);
+        console.log(`🔥 HOT ${selectedNiche} trends from DB (${trends.hot?.length || 0}):`, trends.hot?.map(t => t.name) || []);
+        console.log(`📈 RISING ${selectedNiche} trends from DB (${trends.rising?.length || 0}):`, trends.rising?.map(t => t.name) || []);
+        console.log(`🕐 UPCOMING ${selectedNiche} trends from DB (${trends.upcoming?.length || 0}):`, trends.upcoming?.map(t => t.name) || []);
+        console.log(`📉 DECLINING ${selectedNiche} trends from DB (${trends.declining?.length || 0}):`, trends.declining?.map(t => t.name) || []);
+        
+        // Log total trends found
+        const totalTrends = (trends.hot?.length || 0) + (trends.rising?.length || 0) + (trends.upcoming?.length || 0) + (trends.declining?.length || 0);
+        console.log(`📊 Total trends for ${selectedNiche}: ${totalTrends}`);
+        
+        if (totalTrends === 0) {
+          console.warn(`⚠️ No trends found for ${selectedNiche}! Data structure:`, trends);
+        }
+      } else {
+        console.warn(`⚠️ No trends data in response for ${selectedNiche}:`, data);
       }
       
       return data;
