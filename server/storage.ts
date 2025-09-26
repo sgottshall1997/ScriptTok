@@ -287,6 +287,17 @@ export class MemStorage implements IStorage {
 
   // Trend history operations
   async saveTrendHistory(history: InsertTrendHistory): Promise<TrendHistory> {
+    // Log pricing data for debugging
+    if (history.productData && typeof history.productData === 'object') {
+      const productData = history.productData as any;
+      console.log(`💾 Saving trend history with pricing:`, {
+        title: history.productTitle,
+        price: productData.price,
+        priceNumeric: productData.priceNumeric,
+        asin: productData.asin
+      });
+    }
+
     const newHistory: TrendHistory = {
       ...history,
       id: this.nextTrendHistoryId++,

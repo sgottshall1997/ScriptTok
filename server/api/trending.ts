@@ -62,6 +62,12 @@ router.get("/", async (req, res) => {
           // Only save if we don't have recent entries (within 24 hours)
           if (lastSavedTime < oneDayAgo) {
             console.log(`💾 Saving ${niche} AI trending picks to history...`);
+            console.log(`🔍 Debug pricing for ${niche}:`, products.map(p => ({
+              title: p.title,
+              price: p.price,
+              priceNumeric: p.priceNumeric,
+              asin: p.asin
+            })));
 
             for (const product of products) {
               const historyEntry = {
@@ -74,22 +80,30 @@ router.get("/", async (req, res) => {
                 productReason: product.reason || '',
                 productDescription: product.description || '',
                 viralKeywords: product.viralKeywords || [],
-                // Store additional product data as JSON
+                // Store additional product data as JSON with proper pricing info
                 productData: {
-                  price: product.price,
-                  priceNumeric: product.priceNumeric,
-                  priceCurrency: product.priceCurrency,
-                  priceType: product.priceType,
-                  asin: product.asin,
-                  trendCategory: product.trendCategory,
-                  videoCount: product.videoCount,
-                  growthPercentage: product.growthPercentage,
-                  trendMomentum: product.trendMomentum
+                  price: product.price || null,
+                  priceNumeric: product.priceNumeric || null,
+                  priceCurrency: product.priceCurrency || 'USD',
+                  priceType: product.priceType || 'one-time',
+                  asin: product.asin || null,
+                  trendCategory: product.trendCategory || null,
+                  videoCount: product.videoCount || null,
+                  growthPercentage: product.growthPercentage || null,
+                  trendMomentum: product.trendMomentum || null,
+                  // Ensure we capture all available pricing data
+                  title: product.title,
+                  source: product.source,
+                  mentions: product.mentions,
+                  engagement: product.engagement,
+                  dataSource: product.dataSource
                 },
                 rawData: {
-                  sourceUrl: product.sourceUrl,
-                  perplexityNotes: product.perplexityNotes,
-                  fetchedAt: product.fetchedAt
+                  sourceUrl: product.sourceUrl || null,
+                  perplexityNotes: product.perplexityNotes || null,
+                  fetchedAt: product.fetchedAt || product.createdAt,
+                  // Include the complete product object for debugging
+                  fullProduct: product
                 }
               };
 
@@ -341,20 +355,28 @@ router.get("/products", async (req, res) => {
                 productDescription: product.description || '',
                 viralKeywords: product.viralKeywords || [],
                 productData: {
-                  price: product.price,
-                  priceNumeric: product.priceNumeric,
-                  priceCurrency: product.priceCurrency,
-                  priceType: product.priceType,
-                  asin: product.asin,
-                  trendCategory: product.trendCategory,
-                  videoCount: product.videoCount,
-                  growthPercentage: product.growthPercentage,
-                  trendMomentum: product.trendMomentum
+                  price: product.price || null,
+                  priceNumeric: product.priceNumeric || null,
+                  priceCurrency: product.priceCurrency || 'USD',
+                  priceType: product.priceType || 'one-time',
+                  asin: product.asin || null,
+                  trendCategory: product.trendCategory || null,
+                  videoCount: product.videoCount || null,
+                  growthPercentage: product.growthPercentage || null,
+                  trendMomentum: product.trendMomentum || null,
+                  // Ensure we capture all available pricing data
+                  title: product.title,
+                  source: product.source,
+                  mentions: product.mentions,
+                  engagement: product.engagement,
+                  dataSource: product.dataSource
                 },
                 rawData: {
-                  sourceUrl: product.sourceUrl,
-                  perplexityNotes: product.perplexityNotes,
-                  fetchedAt: product.fetchedAt
+                  sourceUrl: product.sourceUrl || null,
+                  perplexityNotes: product.perplexityNotes || null,
+                  fetchedAt: product.fetchedAt || product.createdAt,
+                  // Include the complete product object for debugging
+                  fullProduct: product
                 }
               };
 
