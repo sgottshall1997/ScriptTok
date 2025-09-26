@@ -179,25 +179,25 @@ function TrendCategories({
       </TabsList>
 
       <TabsContent value="hot" className="space-y-3 mt-4">
-        {forecast.hot?.map((item: any, i: number) => (
+        {forecast.trends?.hot?.map((item: any, i: number) => (
           <TrendCard key={i} item={item} type="hot" niche={niche} onProductClick={onProductClick} />
         ))}
       </TabsContent>
 
       <TabsContent value="rising" className="space-y-3 mt-4">
-        {forecast.rising?.map((item: any, i: number) => (
+        {forecast.trends?.rising?.map((item: any, i: number) => (
           <TrendCard key={i} item={item} type="rising" niche={niche} onProductClick={onProductClick} />
         ))}
       </TabsContent>
 
       <TabsContent value="upcoming" className="space-y-3 mt-4">
-        {forecast.upcoming?.map((item: any, i: number) => (
+        {forecast.trends?.upcoming?.map((item: any, i: number) => (
           <TrendCard key={i} item={item} type="upcoming" niche={niche} onProductClick={onProductClick} />
         ))}
       </TabsContent>
 
       <TabsContent value="declining" className="space-y-3 mt-4">
-        {forecast.declining?.map((item: any, i: number) => (
+        {forecast.trends?.declining?.map((item: any, i: number) => (
           <TrendCard key={i} item={item} type="declining" niche={niche} onProductClick={onProductClick} />
         ))}
       </TabsContent>
