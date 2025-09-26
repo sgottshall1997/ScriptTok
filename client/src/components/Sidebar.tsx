@@ -69,7 +69,8 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "",
     items: [
-      { name: "Dashboard", href: "/", icon: Home },
+      { name: "Landing Page", href: "/", icon: Lightbulb },
+      { name: "Dashboard", href: "/dashboard", icon: Home },
       { name: "TikTok Generator", href: "/generate", icon: Sparkles },
       { name: "Content History", href: "/content-history", icon: History },
       { name: "Trend History", href: "/trend-history", icon: Clock },
@@ -93,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ className }) => {
 
   const isActive = (href: string) => {
     if (href === '/') {
-      return location === '/' || location === '/dashboard';
+      return location === '/';
     }
     return location === href || location.startsWith(href + '/');
   };
