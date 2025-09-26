@@ -24,6 +24,10 @@ router.get("/:niche", async (req, res) => {
     
     // Save trend forecast results to history
     try {
+      // Clear existing trend forecast data for this niche to keep only the latest generation
+      console.log(`🗑️ Clearing existing trend forecast data for ${niche}...`);
+      await storage.clearTrendHistoryBySourceAndNiche('trend_forecaster', niche);
+      
       // Save each trend category (hot, rising, upcoming, declining)
       const savePromises = [];
       
@@ -56,7 +60,7 @@ router.get("/:niche", async (req, res) => {
       }
       
       await Promise.all(savePromises);
-      console.log(`💾 Saved ${savePromises.length} trend forecast entries to history for ${niche}`);
+      console.log(`💾 Saved ${savePromises.length} new trend forecast entries to history for ${niche} (replaced previous generation)`);
       
     } catch (saveError) {
       console.error('Error saving trend forecast to history:', saveError);
