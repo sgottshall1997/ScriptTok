@@ -714,6 +714,10 @@ ${config.hashtags.join(' ')}`;
             hook: result.data.customHook || '',
             platform: 'tiktok',
             niche: selectedNiche,
+            videoDuration: result.data.videoDuration,
+            viralScore: result.data.viralScore,
+            viralAnalysis: result.data.viralAnalysis,
+            historyId: result.data.historyId
           };
           
           setGeneratedContent(contentData);
