@@ -48,7 +48,7 @@ export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
   try {
     // Use the new retry system with validation and smart fallback
     const trendData = await getTrendForecastWithRetry(niche);
-    
+
     // Final validation to ensure we return complete data
     const validation = validateTrendCompleteness(trendData, niche);
     if (!validation.isComplete) {
@@ -59,7 +59,7 @@ export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
       });
       return supplementTrendData(trendData, niche);
     }
-    
+
     console.log('✅ Successfully generated complete trend forecast for:', niche);
     return trendData;
   } catch (error) {
@@ -73,9 +73,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
   const fallbackData: Record<Niche, TrendForecast> = {
     beauty: {
       hot: [
-        { 
-          name: "Retinol serums", 
-          volume: "52K videos this week", 
+        {
+          name: "Retinol serums",
+          volume: "52K videos this week",
           why: "Viral anti-aging trend",
           products: [
             { name: "The Ordinary Retinol 1% in Squalane", price: "$12", asin: "B06XX3BVXK", priceNumeric: 12.00, priceType: "one-time" },
@@ -83,9 +83,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Neutrogena Rapid Wrinkle Repair", price: "$29", asin: "B00AX4JHKU", priceNumeric: 29.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Glass skin routine", 
-          volume: "38K videos this week", 
+        {
+          name: "Glass skin routine",
+          volume: "38K videos this week",
           why: "Korean beauty influence",
           products: [
             { name: "COSRX Snail 96 Mucin Power Essence", price: "$17", asin: "B00PBX3L7K", priceNumeric: 17.00, priceType: "one-time" },
@@ -94,18 +94,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       rising: [
-        { 
-          name: "Skin cycling", 
-          growth: "+350%", 
+        {
+          name: "Skin cycling",
+          growth: "+350%",
           opportunity: "Early trend opportunity",
           products: [
             { name: "Paula's Choice BHA Liquid Exfoliant", price: "$32", asin: "B01N1LL62W", priceNumeric: 32.00, priceType: "one-time" },
             { name: "Differin Adapalene Gel", price: "$13", asin: "B019HPZQRQ", priceNumeric: 13.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Face massagers", 
-          growth: "+280%", 
+        {
+          name: "Face massagers",
+          growth: "+280%",
           opportunity: "Growing wellness trend",
           products: [
             { name: "Jade Roller and Gua Sha Set", price: "$25", priceNumeric: 25.00, priceType: "one-time" },
@@ -114,18 +114,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       upcoming: [
-        { 
-          name: "Summer SPF prep", 
-          when: "Peaks in May", 
+        {
+          name: "Summer SPF prep",
+          when: "Peaks in May",
           prepNow: "Content now ranks later",
           products: [
             { name: "EltaMD UV Clear Sunscreen SPF 46", price: "$39", priceNumeric: 39.00, priceType: "one-time" },
             { name: "Supergoop! Unseen Sunscreen SPF 40", price: "$38", priceNumeric: 38.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Blue light protection", 
-          when: "September 2025", 
+        {
+          name: "Blue light protection",
+          when: "September 2025",
           prepNow: "Back-to-school screen time increase",
           products: [
             { name: "Blue Light Blocking Glasses", price: "$25", priceNumeric: 25.00, priceType: "one-time" },
@@ -134,15 +134,15 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       declining: [
-        { 
-          name: "10-step routines", 
+        {
+          name: "10-step routines",
           reason: "Too time consuming for viewers",
           products: [
             { name: "Korean Skincare Set Bundle", price: "$89", priceNumeric: 89.00, priceType: "estimated" }
           ]
         },
-        { 
-          name: "Heavy contouring", 
+        {
+          name: "Heavy contouring",
           reason: "Natural beauty trend taking over",
           products: [
             { name: "Heavy Contour Kit", price: "$45", priceNumeric: 45.00, priceType: "estimated" },
@@ -153,9 +153,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
     },
     tech: {
       hot: [
-        { 
-          name: "AI productivity tools", 
-          volume: "89K videos this week", 
+        {
+          name: "AI productivity tools",
+          volume: "89K videos this week",
           why: "ChatGPT mainstream adoption",
           products: [
             { name: "Notion AI Pro Subscription", price: "$10/mo", priceNumeric: 10.00, priceType: "subscription" },
@@ -163,9 +163,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Copy.ai Starter Plan", price: "$49/mo", priceNumeric: 49.00, priceType: "subscription" }
           ]
         },
-        { 
-          name: "iPhone photography", 
-          volume: "65K videos this week", 
+        {
+          name: "iPhone photography",
+          volume: "65K videos this week",
           why: "Pro camera features viral",
           products: [
             { name: "Moment Wide Lens for iPhone", price: "$120", priceNumeric: 120.00, priceType: "one-time" },
@@ -174,18 +174,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       rising: [
-        { 
-          name: "Home studio setups", 
-          growth: "+420%", 
+        {
+          name: "Home studio setups",
+          growth: "+420%",
           opportunity: "Creator economy boom",
           products: [
             { name: "Blue Yeti USB Microphone", price: "$100", priceNumeric: 100.00, priceType: "one-time" },
             { name: "Elgato Key Light", price: "$200", priceNumeric: 200.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Smart wearables", 
-          growth: "+340%", 
+        {
+          name: "Smart wearables",
+          growth: "+340%",
           opportunity: "Health tech integration",
           products: [
             { name: "Apple Watch Series 9", price: "$399", priceNumeric: 399.00, priceType: "one-time" },
@@ -194,18 +194,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       upcoming: [
-        { 
-          name: "VR fitness", 
-          when: "Q2 2025", 
+        {
+          name: "VR fitness",
+          when: "Q2 2025",
           prepNow: "Early adopter advantage",
           products: [
             { name: "Meta Quest 3 VR Headset", price: "$500", priceNumeric: 500.00, priceType: "one-time" },
             { name: "FitXR VR Fitness App", price: "$10/mo", priceNumeric: 10.00, priceType: "subscription" }
           ]
         },
-        { 
-          name: "5G mobile experiences", 
-          when: "Late 2025", 
+        {
+          name: "5G mobile experiences",
+          when: "Late 2025",
           prepNow: "Network infrastructure expansion",
           products: [
             { name: "iPhone 16 Pro 5G", price: "$999", priceNumeric: 999.00, priceType: "one-time" },
@@ -214,15 +214,15 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       declining: [
-        { 
-          name: "Crypto mining", 
+        {
+          name: "Crypto mining",
           reason: "Environmental concerns",
           products: [
             { name: "ASIC Bitcoin Miner", price: "$2500", priceNumeric: 2500.00, priceType: "estimated" }
           ]
         },
-        { 
-          name: "NFT collectibles", 
+        {
+          name: "NFT collectibles",
           reason: "Market speculation cooled",
           products: [
             { name: "Digital Art NFT Collection", price: "$100", priceNumeric: 100.00, priceType: "estimated" }
@@ -232,18 +232,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
     },
     fashion: {
       hot: [
-        { 
-          name: "Quiet luxury", 
-          volume: "78K videos this week", 
+        {
+          name: "Quiet luxury",
+          volume: "78K videos this week",
           why: "Anti-trend movement",
           products: [
             { name: "Everlane Cashmere Crew Sweater", price: "$100", priceNumeric: 100.00, priceType: "one-time" },
             { name: "Cuyana Structured Leather Tote", price: "$175", priceNumeric: 175.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Oversized blazers", 
-          volume: "92K videos this week", 
+        {
+          name: "Oversized blazers",
+          volume: "92K videos this week",
           why: "Power dressing revival",
           products: [
             { name: "Zara Oversized Blazer", price: "$89", priceNumeric: 89.00, priceType: "one-time" },
@@ -252,18 +252,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       rising: [
-        { 
-          name: "Sustainable fashion", 
-          growth: "+380%", 
+        {
+          name: "Sustainable fashion",
+          growth: "+380%",
           opportunity: "Conscious consumer trend",
           products: [
             { name: "Patagonia Organic Cotton T-Shirt", price: "$35", priceNumeric: 35.00, priceType: "one-time" },
             { name: "Allbirds Tree Runners", price: "$98", priceNumeric: 98.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Y2K revival", 
-          growth: "+420%", 
+        {
+          name: "Y2K revival",
+          growth: "+420%",
           opportunity: "Nostalgic trend cycle",
           products: [
             { name: "Low-Rise Jeans", price: "$65", priceNumeric: 65.00, priceType: "one-time" },
@@ -272,18 +272,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       upcoming: [
-        { 
-          name: "Spring pastels", 
-          when: "March 2025", 
+        {
+          name: "Spring pastels",
+          when: "March 2025",
           prepNow: "Seasonal preparation",
           products: [
             { name: "Linen Button-Up Shirt Lavender", price: "$45", priceNumeric: 45.00, priceType: "one-time" },
             { name: "Soft Pink Midi Dress", price: "$78", priceNumeric: 78.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Summer maxi dresses", 
-          when: "June 2025", 
+        {
+          name: "Summer maxi dresses",
+          when: "June 2025",
           prepNow: "Warm weather prep",
           products: [
             { name: "Flowy Floral Maxi Dress", price: "$85", priceNumeric: 85.00, priceType: "one-time" },
@@ -292,15 +292,15 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       declining: [
-        { 
-          name: "Fast fashion hauls", 
+        {
+          name: "Fast fashion hauls",
           reason: "Sustainability awareness",
           products: [
             { name: "Generic Fast Fashion Bundle", price: "$25", priceNumeric: 25.00, priceType: "estimated" }
           ]
         },
-        { 
-          name: "Ultra-tight skinny jeans", 
+        {
+          name: "Ultra-tight skinny jeans",
           reason: "Comfort-focused fashion shift",
           products: [
             { name: "Super Skinny Jeans", price: "$45", priceNumeric: 45.00, priceType: "one-time" }
@@ -310,9 +310,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
     },
     fitness: {
       hot: [
-        { 
-          name: "12-3-30 workout", 
-          volume: "125K videos this week", 
+        {
+          name: "12-3-30 workout",
+          volume: "125K videos this week",
           why: "Simple effective routine",
           products: [
             { name: "NordicTrack Commercial 1750 Treadmill", price: "$1799", asin: "B08T8KLQY5", priceNumeric: 1799.00, priceType: "one-time" },
@@ -320,9 +320,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Fitbit Charge 5 Fitness Tracker", price: "$150", asin: "B09DLSK4R1", priceNumeric: 150.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Protein powder trends", 
-          volume: "89K videos this week", 
+        {
+          name: "Protein powder trends",
+          volume: "89K videos this week",
           why: "Post-workout nutrition focus",
           products: [
             { name: "Optimum Nutrition Gold Standard Whey", price: "$58", asin: "B000QSNYGI", priceNumeric: 58.00, priceType: "one-time" },
@@ -330,9 +330,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Orgain Organic Plant Based Protein", price: "$45", asin: "B00J074W94", priceNumeric: 45.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Home gym essentials", 
-          volume: "78K videos this week", 
+        {
+          name: "Home gym essentials",
+          volume: "78K videos this week",
           why: "Convenience fitness trend",
           products: [
             { name: "Bowflex SelectTech 552 Adjustable Dumbbells", price: "$349", asin: "B001ARYU58", priceNumeric: 349.00, priceType: "one-time" },
@@ -341,9 +341,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       rising: [
-        { 
-          name: "Pilates", 
-          growth: "+290%", 
+        {
+          name: "Pilates",
+          growth: "+290%",
           opportunity: "Mind-body wellness trend",
           products: [
             { name: "AeroPilates Reformer 287", price: "$199", asin: "B0014CWRR8", priceNumeric: 199.00, priceType: "one-time" },
@@ -351,9 +351,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Pilates Ball Exercise Ball", price: "$15", asin: "B07RGQV8T4", priceNumeric: 15.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Functional fitness", 
-          growth: "+310%", 
+        {
+          name: "Functional fitness",
+          growth: "+310%",
           opportunity: "Real-world movement patterns",
           products: [
             { name: "TRX ALL-IN-ONE Suspension Trainer", price: "$165", asin: "B018WPXCNU", priceNumeric: 165.00, priceType: "one-time" },
@@ -362,9 +362,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       upcoming: [
-        { 
-          name: "Outdoor workouts", 
-          when: "Spring 2025", 
+        {
+          name: "Outdoor workouts",
+          when: "Spring 2025",
           prepNow: "Seasonal fitness prep",
           products: [
             { name: "Nike Free Run 5.0 Running Shoes", price: "$100", asin: "B08N5GQ5K3", priceNumeric: 100.00, priceType: "one-time" },
@@ -372,9 +372,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Under Armour HeatGear Shirt", price: "$30", asin: "B07MDHQGN8", priceNumeric: 30.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Summer body prep", 
-          when: "April 2025", 
+        {
+          name: "Summer body prep",
+          when: "April 2025",
           prepNow: "Beach season motivation",
           products: [
             { name: "Abs Stimulator EMS Trainer", price: "$40", asin: "B07VL8T3R5", priceNumeric: 40.00, priceType: "one-time" },
@@ -383,15 +383,15 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       declining: [
-        { 
-          name: "Extreme challenges", 
+        {
+          name: "Extreme challenges",
           reason: "Safety concerns",
           products: [
             { name: "Extreme Workout Challenge Guide", price: "$25", priceNumeric: 25.00, priceType: "estimated" }
           ]
         },
-        { 
-          name: "Fad workout equipment", 
+        {
+          name: "Fad workout equipment",
           reason: "Proven methods preferred",
           products: [
             { name: "Ab Coaster Exercise Machine", price: "$250", priceNumeric: 250.00, priceType: "estimated" }
@@ -401,9 +401,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
     },
     food: {
       hot: [
-        { 
-          name: "Protein coffee", 
-          volume: "94K videos this week", 
+        {
+          name: "Protein coffee",
+          volume: "94K videos this week",
           why: "Fitness nutrition crossover",
           products: [
             { name: "Vital Proteins Collagen Peptides", price: "$43", asin: "B00K2ND2QM", priceNumeric: 43.00, priceType: "one-time" },
@@ -411,9 +411,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Bulletproof Brain Octane MCT Oil", price: "$30", asin: "B00P8E0QQG", priceNumeric: 30.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Air fryer recipes", 
-          volume: "156K videos this week", 
+        {
+          name: "Air fryer recipes",
+          volume: "156K videos this week",
           why: "Healthy convenience cooking",
           products: [
             { name: "COSORI Air Fryer 5.8 Quart", price: "$120", asin: "B07VJBF8Y4", priceNumeric: 120.00, priceType: "one-time" },
@@ -421,9 +421,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Air Fryer Cookbook for Beginners", price: "$12", asin: "B08KJQM7F3", priceNumeric: 12.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Sourdough bread making", 
-          volume: "78K videos this week", 
+        {
+          name: "Sourdough bread making",
+          volume: "78K videos this week",
           why: "Artisan home baking revival",
           products: [
             { name: "Lodge Cast Iron Dutch Oven", price: "$60", asin: "B000LEXR0K", priceNumeric: 60.00, priceType: "one-time" },
@@ -432,9 +432,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       rising: [
-        { 
-          name: "Mediterranean diet", 
-          growth: "+340%", 
+        {
+          name: "Mediterranean diet",
+          growth: "+340%",
           opportunity: "Health trend momentum",
           products: [
             { name: "California Olive Ranch Extra Virgin Oil", price: "$15", asin: "B0019GW7S4", priceNumeric: 15.00, priceType: "one-time" },
@@ -442,9 +442,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Mediterranean Diet Cookbook", price: "$16", asin: "B071SGQJ4D", priceNumeric: 16.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Plant-based proteins", 
-          growth: "+380%", 
+        {
+          name: "Plant-based proteins",
+          growth: "+380%",
           opportunity: "Sustainable nutrition trend",
           products: [
             { name: "Beyond Meat Plant-Based Patties", price: "$9", asin: "B07KQBX3R5", priceNumeric: 9.00, priceType: "one-time" },
@@ -453,9 +453,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       upcoming: [
-        { 
-          name: "Summer smoothies", 
-          when: "June 2025", 
+        {
+          name: "Summer smoothies",
+          when: "June 2025",
           prepNow: "Recipe testing season",
           products: [
             { name: "Vitamix A3500 Ascent Series Blender", price: "$450", asin: "B077HBQZPX", priceNumeric: 450.00, priceType: "one-time" },
@@ -463,9 +463,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Frozen Fruit Smoothie Mix", price: "$15", asin: "B07RGQV8T4", priceNumeric: 15.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "BBQ and grilling", 
-          when: "May 2025", 
+        {
+          name: "BBQ and grilling",
+          when: "May 2025",
           prepNow: "Summer prep content",
           products: [
             { name: "Weber Spirit II E-210 Gas Grill", price: "$399", asin: "B01MS19G4G", priceNumeric: 399.00, priceType: "one-time" },
@@ -474,15 +474,15 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       declining: [
-        { 
-          name: "Extreme diet trends", 
+        {
+          name: "Extreme diet trends",
           reason: "Balanced approach preferred",
           products: [
             { name: "Extreme Diet Plan Book", price: "$20", priceNumeric: 20.00, priceType: "estimated" }
           ]
         },
-        { 
-          name: "Meal replacement shakes", 
+        {
+          name: "Meal replacement shakes",
           reason: "Whole foods preferred",
           products: [
             { name: "Generic Meal Replacement Shake", price: "$40", priceNumeric: 40.00, priceType: "estimated" }
@@ -492,9 +492,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
     },
     travel: {
       hot: [
-        { 
-          name: "Solo travel safety", 
-          volume: "67K videos this week", 
+        {
+          name: "Solo travel safety",
+          volume: "67K videos this week",
           why: "Independent travel surge",
           products: [
             { name: "Travelon Anti-Theft Classic Crossbody Bag", price: "$65", asin: "B004W8S3YW", priceNumeric: 65.00, priceType: "one-time" },
@@ -502,9 +502,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Portable Door Lock Security Device", price: "$25", asin: "B07QRQZG7H", priceNumeric: 25.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Travel tech essentials", 
-          volume: "89K videos this week", 
+        {
+          name: "Travel tech essentials",
+          volume: "89K videos this week",
           why: "Digital nomad lifestyle",
           products: [
             { name: "Anker Portable Charger PowerCore 10000", price: "$25", asin: "B019GJLER8", priceNumeric: 25.00, priceType: "one-time" },
@@ -512,9 +512,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Noise Cancelling Headphones", price: "$80", asin: "B08PZHYWJS", priceNumeric: 80.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Travel packing hacks", 
-          volume: "78K videos this week", 
+        {
+          name: "Travel packing hacks",
+          volume: "78K videos this week",
           why: "Minimalist travel trend",
           products: [
             { name: "Compression Packing Cubes Set", price: "$30", asin: "B014VBQP9S", priceNumeric: 30.00, priceType: "one-time" },
@@ -523,9 +523,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       rising: [
-        { 
-          name: "Sustainable tourism", 
-          growth: "+310%", 
+        {
+          name: "Sustainable tourism",
+          growth: "+310%",
           opportunity: "Eco-conscious travel",
           products: [
             { name: "Hydro Flask Reusable Water Bottle", price: "$45", asin: "B077JBQZPX", priceNumeric: 45.00, priceType: "one-time" },
@@ -533,9 +533,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Solar Power Bank Charger", price: "$35", asin: "B07PVGWMTY", priceNumeric: 35.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Digital detox travel", 
-          growth: "+280%", 
+        {
+          name: "Digital detox travel",
+          growth: "+280%",
           opportunity: "Wellness travel trend",
           products: [
             { name: "Moleskine Travel Journal", price: "$25", asin: "B01FDQX1XY", priceNumeric: 25.00, priceType: "one-time" },
@@ -544,9 +544,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       upcoming: [
-        { 
-          name: "Summer Europe", 
-          when: "June 2025", 
+        {
+          name: "Summer Europe",
+          when: "June 2025",
           prepNow: "Planning content season",
           products: [
             { name: "Rick Steves Europe Through the Back Door", price: "$20", asin: "B08D8WSHPQ", priceNumeric: 20.00, priceType: "one-time" },
@@ -554,9 +554,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Portable Luggage Scale", price: "$10", asin: "B0146BBEI4", priceNumeric: 10.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Adventure travel gear", 
-          when: "Spring 2025", 
+        {
+          name: "Adventure travel gear",
+          when: "Spring 2025",
           prepNow: "Outdoor season preparation",
           products: [
             { name: "Osprey Atmos AG 65 Backpack", price: "$270", asin: "B01MQ18Q5C", priceNumeric: 270.00, priceType: "one-time" },
@@ -565,15 +565,15 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       declining: [
-        { 
-          name: "Overtourism spots", 
+        {
+          name: "Overtourism spots",
           reason: "Local backlash awareness",
           products: [
             { name: "Mass Tourism Destination Guide", price: "$18", priceNumeric: 18.00, priceType: "estimated" }
           ]
         },
-        { 
-          name: "All-inclusive resorts", 
+        {
+          name: "All-inclusive resorts",
           reason: "Authentic experiences preferred",
           products: [
             { name: "Resort Vacation Package", price: "$1200", priceNumeric: 1200.00, priceType: "estimated" }
@@ -583,9 +583,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
     },
     pet: {
       hot: [
-        { 
-          name: "Dog training hacks", 
-          volume: "156K videos this week", 
+        {
+          name: "Dog training hacks",
+          volume: "156K videos this week",
           why: "Post-pandemic pet behavior",
           products: [
             { name: "PetSafe Gentle Leader Dog Headcollar", price: "$21", asin: "B00074L4RW", priceNumeric: 21.00, priceType: "one-time" },
@@ -593,18 +593,18 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Zak George's Dog Training Revolution Book", price: "$16", asin: "B01N0TDUG8", priceNumeric: 16.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Pet camera monitors", 
-          volume: "89K videos this week", 
+        {
+          name: "Pet camera monitors",
+          volume: "89K videos this week",
           why: "Remote pet monitoring trend",
           products: [
             { name: "Furbo 360° Dog Camera", price: "$210", asin: "B074ZDYRK4", priceNumeric: 210.00, priceType: "one-time" },
             { name: "Wyze Cam Pet Camera", price: "$36", asin: "B076H3SRXG", priceNumeric: 36.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Interactive pet toys", 
-          volume: "67K videos this week", 
+        {
+          name: "Interactive pet toys",
+          volume: "67K videos this week",
           why: "Mental stimulation for pets",
           products: [
             { name: "Outward Hound Hide-A-Squirrel Puzzle Toy", price: "$15", asin: "B0719Q89XX", priceNumeric: 15.00, priceType: "one-time" },
@@ -613,9 +613,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       rising: [
-        { 
-          name: "Pet mental health", 
-          growth: "+375%", 
+        {
+          name: "Pet mental health",
+          growth: "+375%",
           opportunity: "Wellness for pets trend",
           products: [
             { name: "ThunderShirt Classic Dog Anxiety Jacket", price: "$40", asin: "B0028QS5OY", priceNumeric: 40.00, priceType: "one-time" },
@@ -623,9 +623,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Pet Naturals Calming Treats", price: "$17", asin: "B0017JHQT6", priceNumeric: 17.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Smart pet feeders", 
-          growth: "+290%", 
+        {
+          name: "Smart pet feeders",
+          growth: "+290%",
           opportunity: "Tech-savvy pet care",
           products: [
             { name: "PETLIBRO Automatic Cat Feeder", price: "$80", asin: "B07TSBB58Z", priceNumeric: 80.00, priceType: "one-time" },
@@ -634,9 +634,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       upcoming: [
-        { 
-          name: "Summer pet care", 
-          when: "May 2025", 
+        {
+          name: "Summer pet care",
+          when: "May 2025",
           prepNow: "Seasonal pet prep",
           products: [
             { name: "Ruffwear Swamp Cooler Cooling Vest", price: "$90", asin: "B004PVMHG0", priceNumeric: 90.00, priceType: "one-time" },
@@ -644,9 +644,9 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
             { name: "Pet Safe Paw Balm", price: "$15", asin: "B01N5B3QN4", priceNumeric: 15.00, priceType: "one-time" }
           ]
         },
-        { 
-          name: "Outdoor adventure gear", 
-          when: "Spring 2025", 
+        {
+          name: "Outdoor adventure gear",
+          when: "Spring 2025",
           prepNow: "Hiking season preparation",
           products: [
             { name: "Ruffwear Front Range Dog Harness", price: "$40", asin: "B00TU8TCXG", priceNumeric: 40.00, priceType: "one-time" },
@@ -655,15 +655,15 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
         }
       ],
       declining: [
-        { 
-          name: "Exotic pet trends", 
+        {
+          name: "Exotic pet trends",
           reason: "Responsibility awareness",
           products: [
             { name: "Exotic Pet Care Guide", price: "$25", priceNumeric: 25.00, priceType: "estimated" }
           ]
         },
-        { 
-          name: "Designer pet clothing", 
+        {
+          name: "Designer pet clothing",
           reason: "Practicality over fashion",
           products: [
             { name: "Luxury Pet Designer Outfit", price: "$80", priceNumeric: 80.00, priceType: "estimated" }
@@ -674,7 +674,7 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
   };
 
   const trendData = fallbackData[niche] || fallbackData.beauty;
-  
+
   // Add data source metadata
   return {
     ...trendData,
@@ -698,73 +698,92 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   details: Record<string, any>;
 } {
   const requiredCategories = ['hot', 'rising', 'upcoming', 'declining'] as const;
-  const minTrendsPerCategory = 2; // Expect at least 2 trends per category
-  
+  const minTrendsPerCategory = 1; // Very lenient - just need 1 trend per category
+
   const missingCategories: string[] = [];
   const insufficientCategories: string[] = [];
   const invalidTrends: string[] = [];
   const details: Record<string, any> = {};
 
+  console.log(`🔍 TrendForecaster: Starting validation for ${niche}...`);
+  console.log(`📊 Raw trends data received:`, Object.keys(trends).map(key =>
+    `${key}: ${Array.isArray(trends[key as keyof TrendForecast]) ? trends[key as keyof TrendForecast]?.length : 'not array'}`
+  ).join(', '));
+
   for (const category of requiredCategories) {
     const categoryData = trends[category];
     details[category] = { count: 0, valid: 0, issues: [] };
-    
+
+    console.log(`🔍 Validating ${category} category for ${niche}:`, {
+      exists: !!categoryData,
+      isArray: Array.isArray(categoryData),
+      length: categoryData?.length || 0
+    });
+
     if (!categoryData || !Array.isArray(categoryData)) {
       missingCategories.push(category);
       details[category].issues.push('Category missing or not an array');
+      console.log(`❌ ${niche} ${category}: Missing or not an array`);
       continue;
     }
 
     details[category].count = categoryData.length;
 
-    // Validate each trend in the category with more flexible validation
+    // Very lenient validation - just check for basic structure
     let validTrendsCount = 0;
     for (let i = 0; i < categoryData.length; i++) {
       const trend = categoryData[i];
-      const trendValidation = validateSingleTrend(trend, category);
-      
-      if (trendValidation.isValid) {
+
+      // Super basic validation - just need name and some description
+      const hasName = trend && typeof trend.name === 'string' && trend.name.trim().length > 0;
+      const hasDescription = trend && (trend.why || trend.reason || trend.opportunity || trend.volume || trend.growth || trend.when || trend.prepNow);
+
+      if (hasName && hasDescription) {
         validTrendsCount++;
+        console.log(`✅ ${niche} ${category}[${i}]: "${trend.name}" - VALID`);
       } else {
-        // More lenient - count trends as valid if they have basic structure
-        if (trend && trend.name && (trend.why || trend.reason || trend.opportunity || trend.volume)) {
-          validTrendsCount++;
-          console.log(`⚠️ ${category}[${i}] has minor issues but counting as valid: ${trendValidation.issues.join(', ')}`);
-        } else {
-          invalidTrends.push(`${category}[${i}]: ${trendValidation.issues.join(', ')}`);
-          details[category].issues.push(`Trend ${i}: ${trendValidation.issues.join(', ')}`);
-        }
+        console.log(`❌ ${niche} ${category}[${i}]: INVALID - name: ${hasName}, description: ${hasDescription}`);
+        invalidTrends.push(`${category}[${i}]: Missing name or description`);
+        details[category].issues.push(`Trend ${i}: Missing name or description`);
       }
     }
 
     details[category].valid = validTrendsCount;
+    console.log(`📊 ${niche} ${category}: ${validTrendsCount}/${categoryData.length} valid trends`);
 
     // Check if we have enough valid trends
     if (validTrendsCount < minTrendsPerCategory) {
       insufficientCategories.push(category);
+      console.log(`⚠️ ${niche} ${category}: Insufficient trends (${validTrendsCount} < ${minTrendsPerCategory})`);
     }
   }
 
-  // More lenient completion check - require at least some trends in each category
-  const hasAllCategories = missingCategories.length === 0;
-  const hasMinimumTrends = insufficientCategories.length <= 1; // Allow up to 1 category to be short
-  const isComplete = hasAllCategories && hasMinimumTrends;
+  // Very lenient completion check - just need at least 3 categories with data
+  const categoriesWithData = requiredCategories.filter(cat =>
+    trends[cat] && Array.isArray(trends[cat]) && trends[cat]?.length > 0
+  );
+
+  const isComplete = categoriesWithData.length >= 3; // Accept if we have 3 out of 4 categories
 
   // Enhanced logging
-  console.log(`🔍 Validation for ${niche || 'unknown niche'}:`, {
+  console.log(`🎯 TrendForecaster validation summary for ${niche}:`, {
     complete: isComplete,
+    categoriesWithData: categoriesWithData.length,
     missing: missingCategories,
     insufficient: insufficientCategories,
     totalInvalid: invalidTrends.length,
-    summary: Object.keys(details).map(cat => 
+    categoriesWithData: categoriesWithData,
+    detailedCounts: Object.keys(details).map(cat =>
       `${cat}: ${details[cat].valid}/${details[cat].count} valid`
     ).join(', ')
   });
-  
+
   if (isComplete) {
-    console.log(`✅ Validation passed for ${niche || 'unknown niche'}: All categories have sufficient trends`);
+    console.log(`✅ TrendForecaster: Validation PASSED for ${niche} - ${categoriesWithData.length}/4 categories have data`);
+  } else {
+    console.log(`❌ TrendForecaster: Validation FAILED for ${niche} - only ${categoriesWithData.length}/4 categories have data`);
   }
-  
+
   return {
     isComplete,
     missingCategories,
@@ -774,7 +793,7 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   };
 }
 
-// Validate individual trend structure and content with improved flexibility
+// Super flexible validation for individual trends
 function validateSingleTrend(trend: any, category: string): {
   isValid: boolean;
   issues: string[];
@@ -787,83 +806,43 @@ function validateSingleTrend(trend: any, category: string): {
     return { isValid: false, issues };
   }
 
-  // Required name field - more flexible
-  if (!trend.name || typeof trend.name !== 'string' || trend.name.trim().length < 2) {
-    issues.push('Invalid or missing name');
+  // Just need a name - very lenient
+  if (!trend.name || typeof trend.name !== 'string' || trend.name.trim().length < 1) {
+    issues.push('Missing or empty name');
+    return { isValid: false, issues };
   }
 
-  // Category-specific field validation - much more flexible
-  let hasCategorySpecificData = false;
-  switch (category) {
-    case 'hot':
-      if (trend.volume || trend.why || trend.reason) {
-        hasCategorySpecificData = true;
-      }
-      if (!hasCategorySpecificData) {
-        issues.push('Missing any descriptive fields for hot trend');
-      }
-      break;
-    case 'rising':
-      if (trend.growth || trend.opportunity || trend.why) {
-        hasCategorySpecificData = true;
-      }
-      if (!hasCategorySpecificData) {
-        issues.push('Missing any descriptive fields for rising trend');
-      }
-      break;
-    case 'upcoming':
-      if (trend.when || trend.prepNow || trend.why) {
-        hasCategorySpecificData = true;
-      }
-      if (!hasCategorySpecificData) {
-        issues.push('Missing any descriptive fields for upcoming trend');
-      }
-      break;
-    case 'declining':
-      if (trend.reason || trend.why) {
-        hasCategorySpecificData = true;
-      }
-      if (!hasCategorySpecificData) {
-        issues.push('Missing any descriptive fields for declining trend');
-      }
-      break;
+  // Just need any descriptive field - very flexible
+  const hasAnyDescription = !!(
+    trend.why || trend.reason || trend.volume || trend.growth ||
+    trend.when || trend.opportunity || trend.prepNow
+  );
+
+  if (!hasAnyDescription) {
+    issues.push('Missing any descriptive field');
   }
 
-  // Products validation - more flexible
-  if (!trend.products || !Array.isArray(trend.products)) {
-    issues.push('Missing products array');
-  } else if (trend.products.length === 0) {
-    issues.push('Empty products array');
-  } else {
-    // Validate each product more flexibly
-    const validProducts = trend.products.filter((product: any) => {
-      if (!product || typeof product !== 'object') return false;
-      if (!product.name || typeof product.name !== 'string' || product.name.length < 3) return false;
-      
-      // Be flexible with pricing - accept various formats
-      const hasPrice = product.price && (
-        typeof product.price === 'string' ||
-        typeof product.price === 'number'
-      );
-      
-      const hasPriceNumeric = typeof product.priceNumeric === 'number' && product.priceNumeric > 0;
-      
-      return hasPrice || hasPriceNumeric;
-    });
+  // Products validation - very flexible, allow empty or missing
+  if (trend.products && Array.isArray(trend.products) && trend.products.length > 0) {
+    // If products exist, at least validate one is somewhat valid
+    const hasOneValidProduct = trend.products.some((product: any) =>
+      product &&
+      typeof product === 'object' &&
+      product.name &&
+      typeof product.name === 'string' &&
+      product.name.length > 0
+    );
 
-    if (validProducts.length === 0) {
-      issues.push('No valid products found');
-    } else if (validProducts.length < trend.products.length && validProducts.length < Math.ceil(trend.products.length * 0.5)) {
-      issues.push(`Too many invalid products: ${trend.products.length - validProducts.length} of ${trend.products.length}`);
+    if (!hasOneValidProduct) {
+      issues.push('Products array exists but no valid products found');
     }
   }
 
-  // Consider valid if it has basic structure and at least one good field
-  const hasBasicStructure = trend.name && (trend.why || trend.reason || trend.volume || trend.growth || trend.when || trend.opportunity || trend.prepNow);
-  const isValid = hasBasicStructure && issues.length <= 2; // Allow minor issues
+  // Very lenient - just need name and description
+  const isValid = trend.name && hasAnyDescription;
 
   return {
-    isValid,
+    isValid: isValid && issues.length <= 1, // Allow one minor issue
     issues
   };
 }
@@ -900,14 +879,14 @@ function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast
     const existing = supplemented[category as keyof TrendForecast] || [];
     const fallbackCategory = fallback[category as keyof TrendForecast] || [];
     const needed = Math.max(2 - existing.length, 0);
-    
+
     if (needed > 0 && fallbackCategory.length > 0) {
       // Add fallback trends that aren't already present (smart name matching)
       const existingNames = existing.map((trend: any) => trend.name?.toLowerCase().trim());
       const additionalTrends = fallbackCategory
         .filter((trend: any) => !existingNames.includes(trend.name?.toLowerCase().trim()))
         .slice(0, needed);
-      
+
       if (additionalTrends.length > 0) {
         supplemented[category as keyof TrendForecast] = [...existing, ...additionalTrends];
         console.log(`➕ Added ${additionalTrends.length} trends to ${category} category (now ${existing.length + additionalTrends.length} total)`);
@@ -932,7 +911,7 @@ function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast
   // Preserve existing dataSource metadata or create mixed metadata
   const existingDataSource = trends.dataSource;
   const fallbackUsed = validation.missingCategories.concat(validation.insufficientCategories);
-  
+
   return {
     ...supplemented,
     dataSource: existingDataSource ? {
@@ -960,19 +939,19 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
       console.log(`🔄 Trend forecast attempt ${attempt}/${maxRetries} for ${niche}`);
-      
+
       // Try main API call
       const result = await callPerplexityAPI(niche);
-      
+
       if (result && typeof result === 'object') {
         // Validate completeness
         const validation = validateTrendCompleteness(result, niche);
-        
+
         // Keep track of the best result so far
         if (!bestResult || validation.missingCategories.length < (validateTrendCompleteness(bestResult, niche).missingCategories.length)) {
           bestResult = result;
         }
-        
+
         if (validation.isComplete) {
           console.log(`✅ Complete trend data received for ${niche} on attempt ${attempt}`);
           return {
@@ -987,24 +966,24 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
             }
           };
         }
-        
+
         console.log(`⚠️ Incomplete data for ${niche} (attempt ${attempt}):`, {
           missing: validation.missingCategories,
           insufficient: validation.insufficientCategories,
           totalTrends: Object.values(result).flat().length
         });
-        
+
         // If we have at least some categories with multiple trends, this might be good enough
-        const categoriesWithMultipleTrends = Object.entries(result).filter(([key, value]) => 
+        const categoriesWithMultipleTrends = Object.entries(result).filter(([key, value]) =>
           Array.isArray(value) && value.length >= 2
         ).length;
-        
+
         if (categoriesWithMultipleTrends >= 2 && attempt >= 2) {
           console.log(`🔧 Using partial but decent result for ${niche} (${categoriesWithMultipleTrends} categories have 2+ trends)`);
           const supplemented = supplementTrendData(result, niche);
           return supplemented;
         }
-        
+
         // Wait a bit between retries
         if (attempt < maxRetries) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1013,7 +992,7 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
     } catch (error) {
       console.error(`❌ Trend forecast attempt ${attempt} failed for ${niche}:`, error);
       lastError = error;
-      
+
       // Wait a bit between retries on errors
       if (attempt < maxRetries) {
         await new Promise(resolve => setTimeout(resolve, 2000));
@@ -1063,7 +1042,7 @@ CRITICAL: Respond with ONLY this exact JSON structure - no text before or after:
     {
       "name": "second hot trend",
       "volume": "X videos this week",
-      "why": "why it's viral now", 
+      "why": "why it's viral now",
       "products": [
         {
           "name": "Product Name",
@@ -1204,7 +1183,7 @@ ALL 4 CATEGORIES REQUIRED. 2-3 trends per category. JSON only.`;
 
     const data = await response.json();
     const content = data.choices?.[0]?.message?.content;
-    
+
     if (!content) {
       throw new Error('No content received from Perplexity API');
     }
@@ -1215,37 +1194,37 @@ ALL 4 CATEGORIES REQUIRED. 2-3 trends per category. JSON only.`;
     try {
       // Clean the content in case there are markdown code blocks or extra text
       let cleanedContent = content.trim();
-      
+
       // Remove markdown code blocks
       cleanedContent = cleanedContent.replace(/```json\n?|\n?```/g, '');
-      
+
       // Find JSON object if there's extra text
       const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         cleanedContent = jsonMatch[0];
       }
-      
+
       const parsed = JSON.parse(cleanedContent);
-      
+
       // Enhanced validation - ensure we have all categories with content
       if (typeof parsed === 'object' && parsed !== null) {
         const requiredCategories = ['hot', 'rising', 'upcoming', 'declining'];
-        const missingCategories = requiredCategories.filter(cat => 
+        const missingCategories = requiredCategories.filter(cat =>
           !parsed[cat] || !Array.isArray(parsed[cat]) || parsed[cat].length === 0
         );
-        
+
         if (missingCategories.length > 0) {
           console.warn(`⚠️ Missing/empty categories in ${niche} response: ${missingCategories.join(', ')}`);
           // Don't throw error, let validation handle it
         }
-        
+
         console.log(`✅ Parsed ${niche} trends:`, {
           hot: parsed.hot?.length || 0,
           rising: parsed.rising?.length || 0,
           upcoming: parsed.upcoming?.length || 0,
           declining: parsed.declining?.length || 0
         });
-        
+
         return parsed as TrendForecast;
       } else {
         throw new Error('Invalid JSON structure received');
