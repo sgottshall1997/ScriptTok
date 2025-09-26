@@ -109,8 +109,8 @@ const GenerateContent = () => {
   }, [location, window.location.search]);
   // Hardcoded to TikTok only for simplified generator
   const selectedPlatforms = ['tiktok'];
-  const [templateType, setTemplateType] = useState(templateFromUrl || 'short_video');
-  const [selectedTemplates, setSelectedTemplates] = useState<TemplateType[]>([templateFromUrl || 'short_video'] as TemplateType[]);
+  const [templateType, setTemplateType] = useState(templateFromUrl || '');
+  const [selectedTemplates, setSelectedTemplates] = useState<TemplateType[]>(templateFromUrl ? [templateFromUrl] as TemplateType[] : []);
   const [tone, setTone] = useState('enthusiastic');
   const [isHookGeneratorOpen, setIsHookGeneratorOpen] = useState(false);
   const [customHook, setCustomHook] = useState('');
