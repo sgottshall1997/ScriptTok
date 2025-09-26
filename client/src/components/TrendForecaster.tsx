@@ -1,235 +1,252 @@
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Flame, TrendingUp, Clock, TrendingDown, Loader2 } from 'lucide-react';
-import { useLocation } from 'wouter';
-import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { TrendingUp, TrendingDown, Zap, Clock, ArrowRight } from 'lucide-react';
+import { Niche } from '@shared/constants';
+import { Link } from 'wouter';
 
-const NICHES = [
-  { id: 'beauty', name: 'Beauty', icon: '💄' },
-  { id: 'tech', name: 'Tech', icon: '📱' },
-  { id: 'fashion', name: 'Fashion', icon: '👗' },
-  { id: 'fitness', name: 'Fitness', icon: '💪' },
-  { id: 'food', name: 'Food', icon: '🍽️' },
-  { id: 'travel', name: 'Travel', icon: '✈️' },
-  { id: 'pets', name: 'Pets', icon: '🐾' }
-];
+interface TrendData {
+  name: string;
+  volume?: string;
+  growth?: string;
+  why?: string;
+  reason?: string;
+  when?: string;
+  prepNow?: string;
+  opportunity?: string;
+}
 
-export default function TrendForecaster() {
-  const [, setLocation] = useLocation();
-  const [selectedNiche, setSelectedNiche] = useState('beauty');
-  
-  const { data: forecast, isLoading } = useQuery({
-    queryKey: ['/api/trend-forecast', selectedNiche],
-    refetchInterval: 3600000, // Refresh every hour
-    enabled: !!selectedNiche
+interface TrendForecast {
+  hot: TrendData[];
+  rising: TrendData[];
+  upcoming: TrendData[];
+  declining: TrendData[];
+}
+
+interface TrendForecasterProps {
+  niche: Niche;
+}
+
+export function TrendForecaster({ niche }: TrendForecasterProps) {
+  const [selectedTab, setSelectedTab] = useState('hot');
+
+  const { data: forecastData, isLoading, error } = useQuery({
+    queryKey: ['trend-forecast', niche],
+    queryFn: async () => {
+      const response = await fetch(`/api/trend-forecast/${niche}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch trend forecast');
+      }
+      const result = await response.json();
+      return result.data;
+    },
+    staleTime: 30 * 60 * 1000, // 30 minutes
+    retry: 2
   });
 
-  const handleProductClick = (productName: string, niche: string) => {
-    setLocation(`/generate?product=${encodeURIComponent(productName)}&niche=${niche}`);
+  const trends: TrendForecast = forecastData?.trends || {
+    hot: [],
+    rising: [],
+    upcoming: [],
+    declining: []
+  };
+
+  const tabConfig = {
+    hot: {
+      icon: Zap,
+      color: 'text-red-600',
+      bgColor: 'bg-red-50 dark:bg-red-950',
+      borderColor: 'border-red-200 dark:border-red-800',
+      title: 'Hot Now',
+      description: 'Trending viral products right now'
+    },
+    rising: {
+      icon: TrendingUp,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50 dark:bg-green-950',
+      borderColor: 'border-green-200 dark:border-green-800',
+      title: 'Rising',
+      description: 'Growing trends to jump on'
+    },
+    upcoming: {
+      icon: Clock,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50 dark:bg-blue-950',
+      borderColor: 'border-blue-200 dark:border-blue-800',
+      title: 'Upcoming',
+      description: 'Future trends to prepare for'
+    },
+    declining: {
+      icon: TrendingDown,
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-50 dark:bg-gray-950',
+      borderColor: 'border-gray-200 dark:border-gray-800',
+      title: 'Declining',
+      description: 'Trends losing momentum'
+    }
+  };
+
+  if (isLoading) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-purple-600" />
+            Trend Forecaster
+          </CardTitle>
+          <CardDescription>AI-powered trend analysis for {niche}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-center py-8">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+            <span className="ml-3">🔍 Analyzing TikTok trends...</span>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Zap className="h-5 w-5 text-purple-600" />
+            Trend Forecaster
+          </CardTitle>
+          <CardDescription>AI-powered trend analysis for {niche}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-8">
+            <p className="text-gray-600 mb-4">Unable to load trend data right now</p>
+            <Button variant="outline" onClick={() => window.location.reload()}>
+              Try Again
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const renderTrendCard = (trend: TrendData, type: keyof TrendForecast) => {
+    const config = tabConfig[type];
+    
+    return (
+      <div
+        key={trend.name}
+        className={`p-4 rounded-lg border-2 ${config.bgColor} ${config.borderColor} hover:shadow-md transition-shadow`}
+      >
+        <div className="flex justify-between items-start mb-3">
+          <h4 className="font-semibold text-lg">{trend.name}</h4>
+          <config.icon className={`h-5 w-5 ${config.color}`} />
+        </div>
+        
+        <div className="space-y-2 mb-4">
+          {trend.volume && (
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs">
+                📈 {trend.volume}
+              </Badge>
+            </div>
+          )}
+          
+          {trend.growth && (
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs bg-green-100 text-green-700">
+                🚀 {trend.growth}
+              </Badge>
+            </div>
+          )}
+          
+          {trend.when && (
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
+                ⏰ {trend.when}
+              </Badge>
+            </div>
+          )}
+        </div>
+        
+        <div className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+          {trend.why && <p><strong>Why:</strong> {trend.why}</p>}
+          {trend.opportunity && <p><strong>Opportunity:</strong> {trend.opportunity}</p>}
+          {trend.prepNow && <p><strong>Prep now:</strong> {trend.prepNow}</p>}
+          {trend.reason && <p><strong>Decline reason:</strong> {trend.reason}</p>}
+        </div>
+        
+        {type !== 'declining' && (
+          <Link href={`/generate?product=${encodeURIComponent(trend.name)}&niche=${niche}`}>
+            <Button 
+              size="sm" 
+              className="w-full"
+              data-testid={`button-generate-${trend.name.toLowerCase().replace(/\s+/g, '-')}`}
+            >
+              Generate Content <ArrowRight className="h-4 w-4 ml-1" />
+            </Button>
+          </Link>
+        )}
+      </div>
+    );
   };
 
   return (
-    <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+    <Card data-testid="trend-forecaster-card">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          🔮 Trend Forecaster - All Niches
+          <Zap className="h-5 w-5 text-purple-600" />
+          Trend Forecaster
         </CardTitle>
-        <p className="text-sm text-gray-600">
-          Real-time TikTok trends powered by Perplexity AI
-        </p>
+        <CardDescription>
+          AI-powered trend analysis for {niche} • Updated {forecastData?.timestamp ? new Date(forecastData.timestamp).toLocaleTimeString() : 'recently'}
+        </CardDescription>
       </CardHeader>
       <CardContent>
-        {/* Niche Selector Tabs */}
-        <Tabs value={selectedNiche} onValueChange={setSelectedNiche} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-4">
-            {NICHES.map((niche) => (
-              <TabsTrigger key={niche.id} value={niche.id} className="text-xs">
-                <span className="hidden sm:inline">{niche.icon} {niche.name}</span>
-                <span className="sm:hidden">{niche.icon}</span>
+        <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-4">
+            {Object.entries(tabConfig).map(([key, config]) => (
+              <TabsTrigger 
+                key={key} 
+                value={key} 
+                className="flex items-center gap-1"
+                data-testid={`tab-${key}`}
+              >
+                <config.icon className="h-4 w-4" />
+                <span className="hidden sm:inline">{config.title}</span>
               </TabsTrigger>
             ))}
           </TabsList>
-
-          {NICHES.map((niche) => (
-            <TabsContent key={niche.id} value={niche.id}>
-              {isLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
-                  <span className="ml-2 text-gray-600">Loading {niche.name} trends...</span>
+          
+          {Object.entries(trends).map(([type, trendList]: [string, TrendData[]]) => (
+            <TabsContent key={type} value={type} className="mt-4">
+              <div className="space-y-1 mb-4">
+                <h3 className="text-lg font-semibold flex items-center gap-2">
+                  {React.createElement(tabConfig[type as keyof typeof tabConfig].icon, {
+                    className: `h-5 w-5 ${tabConfig[type as keyof typeof tabConfig].color}`
+                  })}
+                  {tabConfig[type as keyof typeof tabConfig].title}
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  {tabConfig[type as keyof typeof tabConfig].description}
+                </p>
+              </div>
+              
+              {trendList.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                  {trendList.map((trend) => renderTrendCard(trend, type as keyof TrendForecast))}
                 </div>
               ) : (
-                <TrendCategories 
-                  forecast={forecast?.data} 
-                  niche={niche.id}
-                  onProductClick={handleProductClick}
-                />
+                <div className="text-center py-8 text-gray-500">
+                  <p>No {type} trends available for {niche} right now</p>
+                  <p className="text-sm mt-1">Check back later for updates</p>
+                </div>
               )}
             </TabsContent>
           ))}
         </Tabs>
-
-        {forecast?.data && (
-          <div className="mt-4 text-xs text-gray-500 text-center">
-            Last updated: {new Date(forecast.data.lastUpdated).toLocaleString()}
-          </div>
-        )}
       </CardContent>
     </Card>
-  );
-}
-
-// Separate component for trend categories
-function TrendCategories({ 
-  forecast, 
-  niche, 
-  onProductClick 
-}: { 
-  forecast: any; 
-  niche: string;
-  onProductClick: (product: string, niche: string) => void;
-}) {
-  if (!forecast) {
-    return (
-      <div className="text-center py-8 text-gray-500">
-        No trends available for this niche
-      </div>
-    );
-  }
-
-  return (
-    <Tabs defaultValue="hot" className="w-full">
-      <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="hot">
-          <Flame className="h-4 w-4 mr-1" /> Hot
-        </TabsTrigger>
-        <TabsTrigger value="rising">
-          <TrendingUp className="h-4 w-4 mr-1" /> Rising
-        </TabsTrigger>
-        <TabsTrigger value="upcoming">
-          <Clock className="h-4 w-4 mr-1" /> Upcoming
-        </TabsTrigger>
-        <TabsTrigger value="declining">
-          <TrendingDown className="h-4 w-4 mr-1" /> Avoid
-        </TabsTrigger>
-      </TabsList>
-
-      <TabsContent value="hot" className="space-y-3 mt-4">
-        {forecast.hot?.map((item: any, i: number) => (
-          <TrendCard
-            key={i}
-            item={item}
-            type="hot"
-            niche={niche}
-            onProductClick={onProductClick}
-          />
-        ))}
-      </TabsContent>
-
-      <TabsContent value="rising" className="space-y-3 mt-4">
-        {forecast.rising?.map((item: any, i: number) => (
-          <TrendCard
-            key={i}
-            item={item}
-            type="rising"
-            niche={niche}
-            onProductClick={onProductClick}
-          />
-        ))}
-      </TabsContent>
-
-      <TabsContent value="upcoming" className="space-y-3 mt-4">
-        {forecast.upcoming?.map((item: any, i: number) => (
-          <TrendCard
-            key={i}
-            item={item}
-            type="upcoming"
-            niche={niche}
-            onProductClick={onProductClick}
-          />
-        ))}
-      </TabsContent>
-
-      <TabsContent value="declining" className="space-y-3 mt-4">
-        {forecast.declining?.map((item: any, i: number) => (
-          <TrendCard
-            key={i}
-            item={item}
-            type="declining"
-            niche={niche}
-            onProductClick={onProductClick}
-          />
-        ))}
-      </TabsContent>
-    </Tabs>
-  );
-}
-
-// Reusable trend card component
-function TrendCard({ 
-  item, 
-  type, 
-  niche, 
-  onProductClick 
-}: { 
-  item: any; 
-  type: 'hot' | 'rising' | 'upcoming' | 'declining';
-  niche: string;
-  onProductClick: (product: string, niche: string) => void;
-}) {
-  const styles = {
-    hot: {
-      border: 'border-red-200',
-      title: 'text-red-700',
-      badge: 'text-red-600 border-red-300',
-      button: 'bg-red-500 hover:bg-red-600'
-    },
-    rising: {
-      border: 'border-green-200',
-      title: 'text-green-700',
-      badge: 'text-green-600 border-green-300',
-      button: 'bg-green-500 hover:bg-green-600'
-    },
-    upcoming: {
-      border: 'border-blue-200',
-      title: 'text-blue-700',
-      badge: 'text-blue-600 border-blue-300',
-      button: 'bg-blue-500 hover:bg-blue-600'
-    },
-    declining: {
-      border: 'border-gray-200',
-      title: 'text-gray-700',
-      badge: 'text-gray-600 border-gray-300',
-      button: 'bg-gray-500 hover:bg-gray-600'
-    }
-  };
-
-  const style = styles[type];
-
-  return (
-    <div className={`bg-white rounded-lg p-4 border ${style.border}`}>
-      <div className="flex items-start justify-between">
-        <div className="flex-1">
-          <h4 className={`font-semibold ${style.title}`}>{item.name}</h4>
-          <p className="text-sm text-gray-600 mt-1">
-            {item.why || item.opportunity || item.prepNow || item.reason}
-          </p>
-          <Badge variant="outline" className={`mt-2 ${style.badge}`}>
-            {item.volume || item.growth || item.when || 'Declining'}
-          </Badge>
-        </div>
-        {type !== 'declining' && (
-          <Button 
-            size="sm" 
-            onClick={() => onProductClick(item.name, niche)}
-            className={style.button}
-          >
-            Generate →
-          </Button>
-        )}
-      </div>
-    </div>
   );
 }
