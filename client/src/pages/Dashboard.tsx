@@ -32,7 +32,7 @@ import { trackEvent } from "@/lib/analytics";
 import AboutThisPage from "@/components/AboutThisPage";
 import { getGlowBotSectionByPath } from "@/lib/glowbot-sections";
 import { isAmazonEnabled } from '@shared/constants';
-import { TrendForecaster } from "@/components/TrendForecaster";
+import TrendForecaster from "@/components/TrendForecaster";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -455,7 +455,7 @@ const Dashboard = () => {
       )}
 
       {/* 2️⃣ Trend Forecaster */}
-      <TrendForecaster niche="beauty" />
+      <TrendForecaster />
 
       {/* 3️⃣ AI-Powered Trending Picks (Unified) */}
       <Card data-testid="card-unified-trending-picks">

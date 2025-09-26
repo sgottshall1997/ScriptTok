@@ -1,4 +1,15 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+Update TrendForecaster to show all 7 niches with manual refresh only
+Currently the TrendForecaster only shows beauty trends and auto-refreshes hourly. I need to:
+
+Add tabs for all 7 niches (beauty, tech, fashion, fitness, food, travel, pets)
+Remove auto-refresh (hourly refetch)
+Add manual "Refresh" button to save Perplexity API credits
+Show "last updated" timestamp
+Cache results until manually refreshed
+
+File to Update: client/src/components/TrendForecaster.tsx
+Replace the entire file with this code:
+typescriptimport { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -263,3 +274,18 @@ function TrendCard({
     </div>
   );
 }
+Also update: client/src/pages/Dashboard.tsx
+Find the line where TrendForecaster is used (should have a niche prop) and change it to:
+From:
+typescript<TrendForecaster niche="beauty" />
+To:
+typescript<TrendForecaster />
+What This Does:
+
+7 Niche Tabs: Shows Beauty, Tech, Fashion, Fitness, Food, Travel, Pets tabs at top
+Manual Refresh Only: Removes auto-refresh, only updates when user clicks "Refresh" button
+Shows Last Updated: Displays "Just now", "5m ago", "2h ago" based on last refresh
+Saves API Credits: Cached for 24 hours, only calls Perplexity API when manually refreshed
+Trend Categories: Each niche has Hot/Rising/Upcoming/Declining sub-tabs
+Click to Generate: "Generate →" button navigates to content generator with pre-filled product and niche
+Mobile Responsive: Shows icons only on small screens
