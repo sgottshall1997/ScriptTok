@@ -276,6 +276,16 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* 1️⃣ Hero Header */}
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold text-gray-900">
+          🚀 ScriptTok AI: Your Content Command Center
+        </h1>
+        <p className="text-lg text-muted-foreground">
+          Trend-to-traffic in under 10 minutes. Powered by Perplexity + Claude + GPT.
+        </p>
+      </div>
+
       {/* Dashboard Overview Dropdown */}
       <Collapsible open={isDashboardInfoOpen} onOpenChange={setIsDashboardInfoOpen} className="w-full">
         <CollapsibleTrigger asChild>
@@ -285,7 +295,7 @@ const Dashboard = () => {
                 <div className="flex items-center gap-2">
                   <HelpCircle className="h-5 w-5 text-blue-600" />
                   <CardTitle className="text-lg text-blue-900 dark:text-blue-100">
-                    📱 What is GlowBot? Click to learn about each section
+                    📱 What is ScriptTok? Click to learn about each section
                   </CardTitle>
                 </div>
                 <ChevronDown 
@@ -341,16 +351,6 @@ const Dashboard = () => {
           </Card>
         </CollapsibleContent>
       </Collapsible>
-
-      {/* 1️⃣ Hero Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">
-          🚀 ScriptTok AI: Your Content Command Center
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Trend-to-traffic in under 10 minutes. Powered by Perplexity + Claude + GPT.
-        </p>
-      </div>
 
       {/* DISABLED: Amazon Associates Links - Hidden when Amazon features are disabled */}
       {isAmazonEnabled() && (
