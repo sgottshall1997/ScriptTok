@@ -139,9 +139,9 @@ const EnhancedContentHistory = () => {
         const parsedGeneratedOutput = item.generatedOutput ? 
           (typeof item.generatedOutput === 'string' ? JSON.parse(item.generatedOutput) : item.generatedOutput) : {};
         
-        // Parse viral score data
-        const parsedViralScore = item.viral_score ? 
-          (typeof item.viral_score === 'string' ? JSON.parse(item.viral_score) : item.viral_score) : null;
+        // Parse viral score data (note: Drizzle returns camelCase field names)
+        const parsedViralScore = item.viralScore ? 
+          (typeof item.viralScore === 'string' ? JSON.parse(item.viralScore) : item.viralScore) : null;
         
         const convertedItem = {
           id: `db_${item.id}`,
@@ -163,7 +163,7 @@ const EnhancedContentHistory = () => {
           useSmartStyle: item.use_smart_style || item.useSmartStyle || false,
           // Add viral score data
           viralScore: parsedViralScore,
-          viralScoreOverall: item.viral_score_overall || null,
+          viralScoreOverall: item.viralScoreOverall || null,
           generatedOutput: {
             content: item.outputText || '',
             hook: parsedGeneratedOutput.hook || 'Generated content',
