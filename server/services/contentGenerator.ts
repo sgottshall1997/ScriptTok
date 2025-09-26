@@ -391,7 +391,7 @@ Apply these successful patterns from your previous high-rated content:
         },
         {
           role: "user",
-          content: prompt // Use the ACTUAL template user prompt (e.g., "Write a detailed comparison...")
+          content: userPrompt // Use the ACTUAL template user prompt (e.g., "Write a detailed comparison...")
         }
       ];
 
@@ -405,7 +405,7 @@ Apply these successful patterns from your previous high-rated content:
         presence_penalty: 0.0
       });
 
-      const genericPrompt = `Create ${templateType} content for ${product} in a ${tone} tone. This is for the ${niche} niche.`;
+      const genericPrompt = userPrompt; // Use the actual template prompt instead of generic one
 
       // Clean up the fallback content for video scripts too
       const fallbackContent = fallbackCompletion.choices[0].message.content || "Could not generate content. Please try again.";
