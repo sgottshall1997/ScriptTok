@@ -5,22 +5,19 @@ import type {
   ContentHistory, InsertContentHistory,
   AmazonProduct, InsertAmazonProduct,
   AffiliateLink, InsertAffiliateLink,
-  ScraperStatus, InsertScraperStatus,
-  ApiUsage, InsertApiUsage,
-  AIModelConfig, InsertAIModelConfig,
+  TrendHistory, InsertTrendHistory,
 } from "@shared/schema";
 
 import {
   users, sessions, contentGenerations, trendingProducts,
   contentHistory, amazonProducts, affiliateLinks,
-  scraperStatus, apiUsage, aiModelConfigs
+  trendHistory
 } from "@shared/schema";
 
-import { SCRAPER_PLATFORMS, ScraperPlatform, ScraperStatusType, NICHES } from "@shared/constants";
 import { db } from "./db";
-import { eq, desc, and, gte, lte, sql, asc } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 
-// Streamlined interface for TikTok Viral Product Generator storage operations
+// Simplified interface for storage operations
 export interface IStorage {
   // User operations
   getUser(id: number): Promise<User | undefined>;
@@ -53,20 +50,12 @@ export interface IStorage {
   saveAffiliateLink(link: InsertAffiliateLink): Promise<AffiliateLink>;
   getAffiliateLinks(limit?: number): Promise<AffiliateLink[]>;
 
-  // API usage tracking
-  incrementApiUsage(templateType: string, tone: string, niche: string, userId?: number): Promise<void>;
-  getApiUsageStats(): Promise<ApiUsage[]>;
-  getTodayApiUsage(): Promise<number>;
-  getWeeklyApiUsage(): Promise<number>;
-  getMonthlyApiUsage(): Promise<number>;
-
-  // Scraper status operations
-  updateScraperStatus(platform: ScraperPlatform, status: ScraperStatusType): Promise<void>;
-  getScraperStatus(): Promise<ScraperStatus[]>;
-
-  // AI model config operations
-  getAIModelConfigs(): Promise<AIModelConfig[]>;
-  updateAIModelConfig(id: number, config: Partial<InsertAIModelConfig>): Promise<AIModelConfig | undefined>;
+  // Trend history operations
+  saveTrendHistory(history: InsertTrendHistory): Promise<TrendHistory>;
+  getTrendHistory(limit?: number): Promise<TrendHistory[]>;
+  getTrendHistoryBySource(sourceType: string, limit?: number): Promise<TrendHistory[]>;
+  getTrendHistoryByNiche(niche: string, limit?: number): Promise<TrendHistory[]>;
+  getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit?: number): Promise<TrendHistory[]>;
 }
 
 // In-memory storage implementation for development
@@ -77,9 +66,7 @@ export class MemStorage implements IStorage {
   private trendingProducts: TrendingProduct[] = [];
   private amazonProducts: AmazonProduct[] = [];
   private affiliateLinks: AffiliateLink[] = [];
-  private apiUsageData: ApiUsage[] = [];
-  private scraperStatusData: ScraperStatus[] = [];
-  private aiModelConfigs: AIModelConfig[] = [];
+  private trendHistoryData: TrendHistory[] = [];
 
   private nextUserId = 1;
   private nextContentId = 1;
@@ -87,7 +74,7 @@ export class MemStorage implements IStorage {
   private nextProductId = 1;
   private nextAmazonProductId = 1;
   private nextAffiliateLinkId = 1;
-  private nextApiUsageId = 1;
+  private nextTrendHistoryId = 1;
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
@@ -102,6 +89,14 @@ export class MemStorage implements IStorage {
     const newUser: User = {
       ...user,
       id: this.nextUserId++,
+      email: user.email || null,
+      role: user.role || 'creator',
+      firstName: user.firstName || null,
+      lastName: user.lastName || null,
+      profileImage: user.profileImage || null,
+      status: user.status || 'active',
+      lastLogin: user.lastLogin || null,
+      preferences: user.preferences || null,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -132,6 +127,7 @@ export class MemStorage implements IStorage {
     const newGeneration: ContentGeneration = {
       ...generation,
       id: this.nextContentId++,
+      niche: generation.niche || 'skincare',
       createdAt: new Date()
     };
     this.contentGenerations.push(newGeneration);
@@ -154,6 +150,24 @@ export class MemStorage implements IStorage {
     const newHistory: ContentHistory = {
       ...history,
       id: this.nextHistoryId++,
+      userId: history.userId || null,
+      sessionId: history.sessionId || null,
+      platformsSelected: history.platformsSelected || null,
+      generatedOutput: history.generatedOutput || null,
+      affiliateLink: history.affiliateLink || null,
+      viralInspo: history.viralInspo || null,
+      fallbackLevel: history.fallbackLevel || null,
+      aiModel: history.aiModel || null,
+      contentFormat: history.contentFormat || null,
+      topRatedStyleUsed: history.topRatedStyleUsed || false,
+      userOverallRating: history.userOverallRating || null,
+      userTiktokRating: history.userTiktokRating || null,
+      userInstagramRating: history.userInstagramRating || null,
+      userYoutubeRating: history.userYoutubeRating || null,
+      userComments: history.userComments || null,
+      viralScore: history.viralScore || null,
+      viralScoreOverall: history.viralScoreOverall || null,
+      viralAnalysis: history.viralAnalysis || null,
       createdAt: new Date()
     };
     this.contentHistoryData.push(newHistory);
@@ -176,7 +190,6 @@ export class MemStorage implements IStorage {
   }
 
   async getAllContentHistory(limit = 50, offset = 0): Promise<ContentHistory[]> {
-    // First reverse to get newest-first order, then apply offset and limit
     const reversed = this.contentHistoryData.slice().reverse();
     return reversed.slice(offset, offset + limit);
   }
@@ -186,6 +199,25 @@ export class MemStorage implements IStorage {
     const newProduct: TrendingProduct = {
       ...product,
       id: this.nextProductId++,
+      niche: product.niche || 'skincare',
+      mentions: product.mentions || null,
+      sourceUrl: product.sourceUrl || null,
+      dataSource: product.dataSource || 'gpt',
+      reason: product.reason || null,
+      fetchedAt: new Date(),
+      engagement: product.engagement || null,
+      description: product.description || null,
+      viralKeywords: product.viralKeywords || null,
+      perplexityNotes: product.perplexityNotes || null,
+      trendCategory: product.trendCategory || null,
+      videoCount: product.videoCount || null,
+      growthPercentage: product.growthPercentage || null,
+      trendMomentum: product.trendMomentum || null,
+      price: product.price || null,
+      priceNumeric: product.priceNumeric || null,
+      priceCurrency: product.priceCurrency || 'USD',
+      priceType: product.priceType || 'one-time',
+      asin: product.asin || null,
       createdAt: new Date()
     };
     this.trendingProducts.push(newProduct);
@@ -212,6 +244,14 @@ export class MemStorage implements IStorage {
     const newProduct: AmazonProduct = {
       ...product,
       id: this.nextAmazonProductId++,
+      price: product.price || null,
+      currency: product.currency || null,
+      imageUrl: product.imageUrl || null,
+      category: product.category || null,
+      rating: product.rating || null,
+      reviewCount: product.reviewCount || null,
+      availability: product.availability || null,
+      lastUpdated: new Date(),
       createdAt: new Date()
     };
     this.amazonProducts.push(newProduct);
@@ -226,7 +266,14 @@ export class MemStorage implements IStorage {
     const newLink: AffiliateLink = {
       ...link,
       id: this.nextAffiliateLinkId++,
-      createdAt: new Date()
+      contentId: link.contentId || null,
+      network: link.network || 'amazon',
+      commission: link.commission || null,
+      clicks: link.clicks || 0,
+      conversions: link.conversions || null,
+      revenue: link.revenue || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
     };
     this.affiliateLinks.push(newLink);
     return newLink;
@@ -236,87 +283,58 @@ export class MemStorage implements IStorage {
     return this.affiliateLinks.slice(-limit).reverse();
   }
 
-  // API usage tracking
-  async incrementApiUsage(templateType: string, tone: string, niche: string, userId?: number): Promise<void> {
-    const newUsage: ApiUsage = {
-      id: this.nextApiUsageId++,
-      templateType,
-      tone,
-      niche,
-      userId,
-      usageCount: 1,
+  // Trend history operations
+  async saveTrendHistory(history: InsertTrendHistory): Promise<TrendHistory> {
+    const newHistory: TrendHistory = {
+      ...history,
+      id: this.nextTrendHistoryId++,
+      fetchedAt: history.fetchedAt || new Date(),
+      trendCategory: history.trendCategory || null,
+      trendName: history.trendName || null,
+      trendDescription: history.trendDescription || null,
+      trendVolume: history.trendVolume || null,
+      trendGrowth: history.trendGrowth || null,
+      trendWhen: history.trendWhen || null,
+      trendOpportunity: history.trendOpportunity || null,
+      trendReason: history.trendReason || null,
+      productTitle: history.productTitle || null,
+      productMentions: history.productMentions || null,
+      productEngagement: history.productEngagement || null,
+      productSource: history.productSource || null,
+      productReason: history.productReason || null,
+      productDescription: history.productDescription || null,
+      viralKeywords: history.viralKeywords || null,
+      productData: history.productData || null,
+      rawData: history.rawData || null,
       createdAt: new Date()
     };
-    this.apiUsageData.push(newUsage);
+    this.trendHistoryData.push(newHistory);
+    return newHistory;
   }
 
-  async getApiUsageStats(): Promise<ApiUsage[]> {
-    return this.apiUsageData;
+  async getTrendHistory(limit = 50): Promise<TrendHistory[]> {
+    return this.trendHistoryData.slice(-limit).reverse();
   }
 
-  async getTodayApiUsage(): Promise<number> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    return this.apiUsageData.filter(usage =>
-      usage.createdAt >= today
-    ).reduce((sum, usage) => sum + usage.usageCount, 0);
+  async getTrendHistoryBySource(sourceType: string, limit = 50): Promise<TrendHistory[]> {
+    return this.trendHistoryData
+      .filter(h => h.sourceType === sourceType)
+      .slice(-limit)
+      .reverse();
   }
 
-  async getWeeklyApiUsage(): Promise<number> {
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    return this.apiUsageData.filter(usage =>
-      usage.createdAt >= weekAgo
-    ).reduce((sum, usage) => sum + usage.usageCount, 0);
+  async getTrendHistoryByNiche(niche: string, limit = 50): Promise<TrendHistory[]> {
+    return this.trendHistoryData
+      .filter(h => h.niche === niche)
+      .slice(-limit)
+      .reverse();
   }
 
-  async getMonthlyApiUsage(): Promise<number> {
-    const monthAgo = new Date();
-    monthAgo.setMonth(monthAgo.getMonth() - 1);
-    return this.apiUsageData.filter(usage =>
-      usage.createdAt >= monthAgo
-    ).reduce((sum, usage) => sum + usage.usageCount, 0);
-  }
-
-  // Scraper status operations
-  async updateScraperStatus(platform: ScraperPlatform, status: ScraperStatusType): Promise<void> {
-    const existingIndex = this.scraperStatusData.findIndex(s => s.platform === platform);
-    if (existingIndex >= 0) {
-      this.scraperStatusData[existingIndex] = {
-        ...this.scraperStatusData[existingIndex],
-        status,
-        lastUpdated: new Date()
-      };
-    } else {
-      this.scraperStatusData.push({
-        id: Math.random(), // Temporary ID for mem storage
-        platform,
-        status,
-        lastUpdated: new Date(),
-        createdAt: new Date()
-      });
-    }
-  }
-
-  async getScraperStatus(): Promise<ScraperStatus[]> {
-    return this.scraperStatusData;
-  }
-
-  // AI model config operations
-  async getAIModelConfigs(): Promise<AIModelConfig[]> {
-    return this.aiModelConfigs;
-  }
-
-  async updateAIModelConfig(id: number, config: Partial<InsertAIModelConfig>): Promise<AIModelConfig | undefined> {
-    const configIndex = this.aiModelConfigs.findIndex(c => c.id === id);
-    if (configIndex === -1) return undefined;
-
-    this.aiModelConfigs[configIndex] = {
-      ...this.aiModelConfigs[configIndex],
-      ...config,
-      updatedAt: new Date()
-    };
-    return this.aiModelConfigs[configIndex];
+  async getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit = 50): Promise<TrendHistory[]> {
+    return this.trendHistoryData
+      .filter(h => h.sourceType === sourceType && h.niche === niche)
+      .slice(-limit)
+      .reverse();
   }
 }
 
@@ -345,7 +363,7 @@ export class DatabaseStorage implements IStorage {
 
   async deleteUser(id: number): Promise<boolean> {
     const result = await db.delete(users).where(eq(users.id, id));
-    return result.rowCount > 0;
+    return (result.rowCount || 0) > 0;
   }
 
   // Content generation operations
@@ -434,86 +452,35 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(affiliateLinks).orderBy(desc(affiliateLinks.createdAt)).limit(limit);
   }
 
-  // API usage tracking
-  async incrementApiUsage(templateType: string, tone: string, niche: string, userId?: number): Promise<void> {
-    await db.insert(apiUsage).values({
-      templateType,
-      tone,
-      niche,
-      userId,
-      usageCount: 1,
-      createdAt: new Date()
-    });
-  }
-
-  async getApiUsageStats(): Promise<ApiUsage[]> {
-    return await db.select().from(apiUsage).orderBy(desc(apiUsage.createdAt));
-  }
-
-  async getTodayApiUsage(): Promise<number> {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const result = await db.select({ total: sql<number>`sum(${apiUsage.usageCount})` })
-      .from(apiUsage)
-      .where(gte(apiUsage.createdAt, today));
-    return result[0]?.total || 0;
-  }
-
-  async getWeeklyApiUsage(): Promise<number> {
-    const weekAgo = new Date();
-    weekAgo.setDate(weekAgo.getDate() - 7);
-    const result = await db.select({ total: sql<number>`sum(${apiUsage.usageCount})` })
-      .from(apiUsage)
-      .where(gte(apiUsage.createdAt, weekAgo));
-    return result[0]?.total || 0;
-  }
-
-  async getMonthlyApiUsage(): Promise<number> {
-    const monthAgo = new Date();
-    monthAgo.setMonth(monthAgo.getMonth() - 1);
-    const result = await db.select({ total: sql<number>`sum(${apiUsage.usageCount})` })
-      .from(apiUsage)
-      .where(gte(apiUsage.createdAt, monthAgo));
-    return result[0]?.total || 0;
-  }
-
-  // Scraper status operations
-  async updateScraperStatus(platform: ScraperPlatform, status: ScraperStatusType): Promise<void> {
-    const existingStatus = await db.select()
-      .from(scraperStatus)
-      .where(eq(scraperStatus.platform, platform));
-
-    if (existingStatus.length > 0) {
-      await db.update(scraperStatus)
-        .set({ status, lastUpdated: new Date() })
-        .where(eq(scraperStatus.platform, platform));
-    } else {
-      await db.insert(scraperStatus).values({
-        platform,
-        status,
-        lastUpdated: new Date(),
-        createdAt: new Date()
-      });
-    }
-  }
-
-  async getScraperStatus(): Promise<ScraperStatus[]> {
-    const scraperStatuses = await db
-      .select()
-      .from(scraperStatus)
-      .orderBy(scraperStatus.lastRun)
-      .limit(100);
-    return scraperStatuses;
-  }
-
-  // AI model config operations
-  async getAIModelConfigs(): Promise<AIModelConfig[]> {
-    return await db.select().from(aiModelConfigs);
-  }
-
-  async updateAIModelConfig(id: number, config: Partial<InsertAIModelConfig>): Promise<AIModelConfig | undefined> {
-    const result = await db.update(aiModelConfigs).set(config).where(eq(aiModelConfigs.id, id)).returning();
+  // Trend history operations
+  async saveTrendHistory(history: InsertTrendHistory): Promise<TrendHistory> {
+    const result = await db.insert(trendHistory).values(history).returning();
     return result[0];
+  }
+
+  async getTrendHistory(limit = 50): Promise<TrendHistory[]> {
+    return await db.select().from(trendHistory).orderBy(desc(trendHistory.createdAt)).limit(limit);
+  }
+
+  async getTrendHistoryBySource(sourceType: string, limit = 50): Promise<TrendHistory[]> {
+    return await db.select().from(trendHistory)
+      .where(eq(trendHistory.sourceType, sourceType))
+      .orderBy(desc(trendHistory.createdAt))
+      .limit(limit);
+  }
+
+  async getTrendHistoryByNiche(niche: string, limit = 50): Promise<TrendHistory[]> {
+    return await db.select().from(trendHistory)
+      .where(eq(trendHistory.niche, niche))
+      .orderBy(desc(trendHistory.createdAt))
+      .limit(limit);
+  }
+
+  async getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit = 50): Promise<TrendHistory[]> {
+    return await db.select().from(trendHistory)
+      .where(and(eq(trendHistory.sourceType, sourceType), eq(trendHistory.niche, niche)))
+      .orderBy(desc(trendHistory.createdAt))
+      .limit(limit);
   }
 }
 

@@ -93,7 +93,7 @@ For each trend, provide 2-3 specific, real products available on Amazon with acc
           { role: "user", content: prompt }
         ],
         temperature: 0.2,
-        max_tokens: 1500,
+        max_tokens: 2500,
         search_domain_filter: ["tiktok.com"],
         search_recency_filter: "week"
       })
@@ -129,15 +129,42 @@ For each trend, provide 2-3 specific, real products available on Amazon with acc
       .replace(/\s+/g, ' ')  // Normalize whitespace
       .trim();
 
+    // Attempt to fix incomplete JSON by adding missing closing brackets
+    let fixedContent = cleanContent;
+    try {
+      // Count opening and closing brackets to detect truncation
+      const openBraces = (fixedContent.match(/\{/g) || []).length;
+      const closeBraces = (fixedContent.match(/\}/g) || []).length;
+      const openBrackets = (fixedContent.match(/\[/g) || []).length;
+      const closeBrackets = (fixedContent.match(/\]/g) || []).length;
+      
+      // Add missing closing brackets and braces
+      for (let i = 0; i < (openBrackets - closeBrackets); i++) {
+        fixedContent += ']';
+      }
+      for (let i = 0; i < (openBraces - closeBraces); i++) {
+        fixedContent += '}';
+      }
+      
+      // Remove any trailing commas before closing brackets/braces
+      fixedContent = fixedContent.replace(/,(\s*[}\]])/g, '$1');
+      
+    } catch (fixError) {
+      console.warn('Error attempting to fix JSON:', fixError);
+    }
+
     let trendData;
     try {
-      trendData = JSON.parse(cleanContent);
+      trendData = JSON.parse(fixedContent);
     } catch (parseError) {
       console.error('JSON Parse Error:', parseError);
       console.error('Raw content length:', content.length);
       console.error('Cleaned content preview:', cleanContent.substring(0, 200) + '...');
       console.error('Cleaned content end:', '...' + cleanContent.substring(cleanContent.length - 200));
-      throw parseError;
+      
+      // Fall back to curated fallback data when parsing fails
+      console.log('Falling back to curated fallback data due to JSON parsing failure');
+      return getFallbackTrends(niche);
     }
     
     // Validate the structure and provide fallbacks
