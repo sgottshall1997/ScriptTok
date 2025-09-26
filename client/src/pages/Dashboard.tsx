@@ -625,111 +625,125 @@ const Dashboard = () => {
         
         {/* Products Display Section */}
         <CardContent>
-          {((selectedDataSource === 'perplexity' ? trendingLoading && !trendingProducts?.data : allTrendingLoading && allTrendingProducts.length === 0)) ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Array(6).fill(0).map((_, i) => (
-                <Card key={i} className="p-4">
-                  <div className="space-y-3">
-                    <div className="h-4 bg-gray-200 rounded animate-pulse" />
-                    <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3" />
-                    <div className="h-8 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                </Card>
-              ))}
-            </div>
-          ) : getFilteredProducts().length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {getFilteredProducts().map((product) => (
-                <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="space-y-4">
-                      {/* Product Title */}
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="font-semibold text-base leading-tight text-gray-900">
-                          {selectedDataSource === 'amazon' ? '🛒' : '🤖'} {product.title}
-                        </h3>
-                        <Badge className={getNicheColor(product.niche)} variant="secondary">
-                          {product.niche}
-                        </Badge>
+          {(() => {
+            const isLoading = selectedDataSource === 'perplexity' 
+              ? trendingLoading && !trendingProducts?.data 
+              : allTrendingLoading && allTrendingProducts.length === 0;
+            
+            if (isLoading) {
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {Array(6).fill(0).map((_, i) => (
+                    <Card key={i} className="p-4">
+                      <div className="space-y-3">
+                        <div className="h-4 bg-gray-200 rounded animate-pulse" />
+                        <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3" />
+                        <div className="h-8 bg-gray-200 rounded animate-pulse" />
                       </div>
-                      
-                      {/* Why it's hot */}
-                      <div className="text-sm text-gray-600">
-                        <span className="text-yellow-600">✨ Why it's hot:</span>
-                        <span className="ml-1">{product.reason || 'Trending across social platforms'}</span>
-                      </div>
+                    </Card>
+                  ))}
+                </div>
+              );
+            }
+            
+            if (getFilteredProducts().length > 0) {
+              return (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {getFilteredProducts().map((product) => (
+                    <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
+                      <CardContent className="p-4">
+                        <div className="space-y-4">
+                          {/* Product Title */}
+                          <div className="flex items-start justify-between gap-3">
+                            <h3 className="font-semibold text-base leading-tight text-gray-900">
+                              {selectedDataSource === 'amazon' ? '🛒' : '🤖'} {product.title}
+                            </h3>
+                            <Badge className={getNicheColor(product.niche)} variant="secondary">
+                              {product.niche}
+                            </Badge>
+                          </div>
+                          
+                          {/* Why it's hot */}
+                          <div className="text-sm text-gray-600">
+                            <span className="text-yellow-600">✨ Why it's hot:</span>
+                            <span className="ml-1">{product.reason || 'Trending across social platforms'}</span>
+                          </div>
 
-                      {/* Amazon-specific data */}
-                      {selectedDataSource === 'amazon' && (
-                        <>
-                          {product.price && (
-                            <div className="text-xs text-green-600 font-medium">
-                              💰 Price: {product.price}
-                            </div>
+                          {/* Amazon-specific data */}
+                          {selectedDataSource === 'amazon' && (
+                            <>
+                              {product.price && (
+                                <div className="text-xs text-green-600 font-medium">
+                                  💰 Price: {product.price}
+                                </div>
+                              )}
+                              {product.rating && (
+                                <div className="text-xs text-yellow-600">
+                                  ⭐ Rating: {product.rating}/5
+                                </div>
+                              )}
+                              {product.asin && (
+                                <div className="text-xs text-blue-600">
+                                  📦 ASIN: {product.asin}
+                                </div>
+                              )}
+                            </>
                           )}
-                          {product.rating && (
-                            <div className="text-xs text-yellow-600">
-                              ⭐ Rating: {product.rating}/5
-                            </div>
-                          )}
-                          {product.asin && (
-                            <div className="text-xs text-blue-600">
-                              📦 ASIN: {product.asin}
-                            </div>
-                          )}
-                        </>
-                      )}
-                      
-                      {/* Action Buttons */}
-                      <div className="flex gap-2 pt-2">
-                        <Button 
-                          size="sm" 
-                          className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-                          onClick={() => {
-                            const url = `/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`;
-                            console.log('🔄 Navigating to:', url);
-                            trackEvent('trending_product_click', 'bulk_generator', `${product.niche}_${product.title}`, 1);
-                            setLocation(url);
-                            // Scroll to top after navigation
-                            setTimeout(() => window.scrollTo(0, 0), 100);
-                          }}
-                        >
-                          <Zap className="h-3 w-3 mr-1" />
-                          Generate Content
-                        </Button>
-                        {selectedDataSource === 'perplexity' && (
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="border-gray-300"
-                            onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
-                            disabled={refreshIndividualMutation.isPending}
-                          >
-                            {refreshIndividualMutation.isPending ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <RotateCcw className="h-3 w-3 mr-1" />
+                          
+                          {/* Action Buttons */}
+                          <div className="flex gap-2 pt-2">
+                            <Button 
+                              size="sm" 
+                              className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                              onClick={() => {
+                                const url = `/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`;
+                                console.log('🔄 Navigating to:', url);
+                                trackEvent('trending_product_click', 'bulk_generator', `${product.niche}_${product.title}`, 1);
+                                setLocation(url);
+                                // Scroll to top after navigation
+                                setTimeout(() => window.scrollTo(0, 0), 100);
+                              }}
+                            >
+                              <Zap className="h-3 w-3 mr-1" />
+                              Generate Content
+                            </Button>
+                            {selectedDataSource === 'perplexity' && (
+                              <Button 
+                                size="sm" 
+                                variant="outline" 
+                                className="border-gray-300"
+                                onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
+                                disabled={refreshIndividualMutation.isPending}
+                              >
+                                {refreshIndividualMutation.isPending ? (
+                                  <Loader2 className="h-3 w-3 animate-spin" />
+                                ) : (
+                                  <RotateCcw className="h-3 w-3 mr-1" />
+                                )}
+                                Refresh
+                              </Button>
                             )}
-                            Refresh
-                          </Button>
-                        )}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>
-                {selectedDataSource === 'perplexity' 
-                  ? 'No Perplexity trends available. Click "Run Perplexity Fetch" to get started!'
-                  : 'No Amazon products available. Click "Run Amazon Fetch" to discover trending products!'
-                }
-              </p>
-            </div>
-          )}
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              );
+            }
+            
+            return (
+              <div className="text-center py-8 text-muted-foreground">
+                <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <p>
+                  {selectedDataSource === 'perplexity' 
+                    ? 'No Perplexity trends available. Click "Run Perplexity Fetch" to get started!'
+                    : 'No Amazon products available. Click "Run Amazon Fetch" to discover trending products!'
+                  }
+                </p>
+              </div>
+            );
+          })()}
         </CardContent>
       </Card>
 
