@@ -359,8 +359,64 @@ function TrendCategories({
     return forecast.trends?.[category]?.length || 0;
   };
 
+  // Data source information display
+  const getDataSourceInfo = () => {
+    const dataSource = forecast.trends?.dataSource;
+    if (!dataSource) return null;
+    
+    const getSourceIcon = () => {
+      switch (dataSource.type) {
+        case 'api': return '🟢';
+        case 'mixed': return '🟡';
+        case 'fallback': return '🔴';
+        default: return '⚪';
+      }
+    };
+
+    const getSourceColor = () => {
+      switch (dataSource.type) {
+        case 'api': return 'bg-green-50 border-green-200 text-green-800';
+        case 'mixed': return 'bg-yellow-50 border-yellow-200 text-yellow-800';
+        case 'fallback': return 'bg-red-50 border-red-200 text-red-800';
+        default: return 'bg-gray-50 border-gray-200 text-gray-800';
+      }
+    };
+
+    const getSourceLabel = () => {
+      switch (dataSource.type) {
+        case 'api': return 'Live API Data';
+        case 'mixed': return 'Mixed Data (API + Fallback)';
+        case 'fallback': return 'Fallback Data';
+        default: return 'Unknown Source';
+      }
+    };
+
+    return (
+      <div className={`mb-4 p-2 rounded-lg border text-xs ${getSourceColor()}`}>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span>{getSourceIcon()}</span>
+            <span className="font-medium">{getSourceLabel()}</span>
+            <span className="px-1 py-0.5 rounded bg-black bg-opacity-10">
+              {dataSource.reliability.toUpperCase()}
+            </span>
+          </div>
+          <div className="text-right">
+            <div>{getTimeSince(new Date(dataSource.lastUpdated))}</div>
+            {dataSource.type === 'mixed' && dataSource.fallbackCategoriesUsed.length > 0 && (
+              <div className="text-xs opacity-75">
+                Fallback: {dataSource.fallbackCategoriesUsed.join(', ')}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <Tabs defaultValue={findFirstTabWithData()} className="w-full">
+      {getDataSourceInfo()}
       <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="hot">
           <Flame className="h-4 w-4 mr-1" /> Hot {getTrendCount('hot') > 0 && <span className="ml-1 text-xs bg-red-100 text-red-600 px-1 rounded">({getTrendCount('hot')})</span>}

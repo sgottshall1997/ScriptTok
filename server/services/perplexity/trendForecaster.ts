@@ -26,6 +26,15 @@ export interface TrendForecast {
   rising: TrendData[];
   upcoming: TrendData[];
   declining: TrendData[];
+  // Data source metadata
+  dataSource: {
+    type: 'api' | 'fallback' | 'mixed';
+    apiCallsAttempted: number;
+    apiCallsSucceeded: number;
+    fallbackCategoriesUsed: string[];
+    lastUpdated: string;
+    reliability: 'high' | 'medium' | 'low';
+  };
 }
 
 export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
@@ -33,7 +42,7 @@ export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
 
   if (!process.env.PERPLEXITY_API_KEY) {
     console.log('⚠️ Perplexity API key not found, using fallback data');
-    return getFallbackTrends(niche);
+    return getFallbackTrends(niche, 'no_api_key');
   }
 
   try {
@@ -56,11 +65,11 @@ export async function getTrendForecast(niche: Niche): Promise<TrendForecast> {
   } catch (error) {
     console.error('❌ Error generating trend forecast:', error);
     console.log('🛡️ Using complete fallback data due to error');
-    return getFallbackTrends(niche);
+    return getFallbackTrends(niche, 'api_error');
   }
 }
 
-function getFallbackTrends(niche: Niche): TrendForecast {
+function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'validation_failure' = 'api_error'): TrendForecast {
   const fallbackData: Record<Niche, TrendForecast> = {
     beauty: {
       hot: [
@@ -664,7 +673,20 @@ function getFallbackTrends(niche: Niche): TrendForecast {
     }
   };
 
-  return fallbackData[niche] || fallbackData.beauty;
+  const trendData = fallbackData[niche] || fallbackData.beauty;
+  
+  // Add data source metadata
+  return {
+    ...trendData,
+    dataSource: {
+      type: 'fallback',
+      apiCallsAttempted: reason === 'no_api_key' ? 0 : 1,
+      apiCallsSucceeded: 0,
+      fallbackCategoriesUsed: ['hot', 'rising', 'upcoming', 'declining'],
+      lastUpdated: new Date().toISOString(),
+      reliability: 'low'
+    }
+  };
 }
 
 // Enhanced validation function with strict trend structure and content validation
@@ -875,7 +897,26 @@ function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast
     });
   }
 
-  return supplemented;
+  // Preserve existing dataSource metadata or create mixed metadata
+  const existingDataSource = trends.dataSource;
+  const fallbackUsed = validation.missingCategories.concat(validation.insufficientCategories);
+  
+  return {
+    ...supplemented,
+    dataSource: existingDataSource ? {
+      ...existingDataSource,
+      type: 'mixed',
+      fallbackCategoriesUsed: fallbackUsed,
+      reliability: 'medium'
+    } : {
+      type: 'mixed',
+      apiCallsAttempted: 1,
+      apiCallsSucceeded: 1,
+      fallbackCategoriesUsed: fallbackUsed,
+      lastUpdated: new Date().toISOString(),
+      reliability: 'medium'
+    }
+  };
 }
 
 // Enhanced API call with retry and validation logic
@@ -896,7 +937,17 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
         
         if (validation.isComplete) {
           console.log(`✅ Complete trend data received for ${niche}`);
-          return result;
+          return {
+            ...result,
+            dataSource: {
+              type: 'api',
+              apiCallsAttempted: attempt,
+              apiCallsSucceeded: 1,
+              fallbackCategoriesUsed: [],
+              lastUpdated: new Date().toISOString(),
+              reliability: 'high'
+            }
+          };
         }
         
         console.log(`⚠️ Incomplete data for ${niche}:`, {
@@ -908,6 +959,7 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
         if (attempt === maxRetries || validation.missingCategories.length < 2) {
           const supplemented = supplementTrendData(result, niche);
           console.log(`🔧 Supplemented trend data for ${niche}`);
+          // supplementTrendData now handles dataSource metadata, just return it
           return supplemented;
         }
         
@@ -922,7 +974,7 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
 
   // If all retries failed, use complete fallback data
   console.log(`🛡️ Using complete fallback data for ${niche} after ${maxRetries} attempts`);
-  return getFallbackTrends(niche);
+  return getFallbackTrends(niche, 'api_error');
 }
 
 // Enhanced API calling function with better prompting
