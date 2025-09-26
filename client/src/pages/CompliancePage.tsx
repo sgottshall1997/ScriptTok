@@ -3,8 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
-import { ArrowLeft, CheckCircle, AlertTriangle, ExternalLink, FileText, Scale, Shield } from 'lucide-react';
-// import { AmazonAssociatesDisclosure } from '@/components/AmazonAssociatesDisclosure'; // DISABLED: Amazon Associates functionality disabled
+import { ArrowLeft, CheckCircle, AlertTriangle, ExternalLink, FileText, Scale, Shield, Video, Zap } from 'lucide-react';
 
 const CompliancePage: React.FC = () => {
   return (
@@ -22,14 +21,14 @@ const CompliancePage: React.FC = () => {
           
           <div className="space-y-2">
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
-              <Shield className="h-3 w-3 mr-1" />
-              FTC & Amazon Associates Compliant
+              <Video className="h-3 w-3 mr-1" />
+              TikTok Content Compliant
             </Badge>
             <h1 className="text-4xl font-bold text-gray-900">
-              Affiliate Marketing Compliance Center
+              ScriptTok Compliance Center
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Your complete guide to FTC-compliant affiliate marketing and Amazon Associates Program requirements
+              Your complete guide to TikTok content creation compliance and AI-generated content best practices
             </p>
           </div>
         </div>
@@ -39,50 +38,63 @@ const CompliancePage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center text-green-800">
               <CheckCircle className="h-5 w-5 mr-2" />
-              Platform Compliance Status
+              TikTok Content Compliance Status
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm">FTC disclosure requirements implemented</span>
+                <span className="text-sm">AI content disclosure implemented</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm">Amazon Associates disclosures active</span>
+                <span className="text-sm">TikTok hashtag compliance active</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm">Content labeling system operational</span>
+                <span className="text-sm">Content length limits enforced</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm">Automated compliance wrapper integrated</span>
+                <span className="text-sm">Viral score analysis integrated</span>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Amazon Associates Disclosure */}
+        {/* AI Content Disclosure */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <FileText className="h-5 w-5 mr-2" />
-              Amazon Associates Program Disclosure
+              <Zap className="h-5 w-5 mr-2" />
+              AI-Generated Content Disclosure
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            {/* <AmazonAssociatesDisclosure /> */} {/* DISABLED: Amazon Associates functionality disabled */}
+          <CardContent className="space-y-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-start space-x-3">
+                <Zap className="h-5 w-5 text-blue-600 mt-0.5" />
+                <div>
+                  <h4 className="font-semibold text-blue-800 mb-2">Important AI Content Notice</h4>
+                  <p className="text-sm text-blue-700 mb-2">
+                    ScriptTok uses advanced AI technology (Claude AI) to generate TikTok content suggestions. All content is AI-generated and should be reviewed before posting.
+                  </p>
+                  <p className="text-sm text-blue-700 font-medium">
+                    ⚠️ AI-generated content outputs are probabilistic and not guaranteed to go viral or achieve specific engagement rates.
+                  </p>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        {/* FTC Guidelines */}
+        {/* TikTok Content Guidelines */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <Scale className="h-5 w-5 mr-2" />
-              FTC Disclosure Requirements
+              <Video className="h-5 w-5 mr-2" />
+              TikTok Content Guidelines
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -90,12 +102,12 @@ const CompliancePage: React.FC = () => {
               <div className="flex items-start space-x-3">
                 <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-yellow-800 mb-2">Required Disclosures</h4>
+                  <h4 className="font-semibold text-yellow-800 mb-2">TikTok Content Requirements</h4>
                   <ul className="text-sm text-yellow-700 space-y-1">
-                    <li>• All affiliate relationships must be clearly disclosed</li>
-                    <li>• Disclosures must be "clear and conspicuous"</li>
-                    <li>• Disclosures must be placed near affiliate links</li>
-                    <li>• Social media posts must include #ad or #affiliate hashtags</li>
+                    <li>• Content must be original and engaging</li>
+                    <li>• Follow TikTok Community Guidelines</li>
+                    <li>• Respect copyright and intellectual property</li>
+                    <li>• Use appropriate hashtags for content discovery</li>
                   </ul>
                 </div>
               </div>
@@ -103,113 +115,109 @@ const CompliancePage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <h4 className="font-semibold">Platform-Specific Requirements:</h4>
+                <h4 className="font-semibold">Content Best Practices:</h4>
                 <ul className="text-sm space-y-1">
-                  <li>• <strong>TikTok:</strong> Include #ad or #affiliate in caption</li>
-                  <li>• <strong>Instagram:</strong> Use "Paid partnership" or #ad</li>
-                  <li>• <strong>YouTube:</strong> Verbal and written disclosure required</li>
-                  <li>• <strong>Twitter/X:</strong> #ad hashtag in prominent position</li>
+                  <li>• <strong>Length:</strong> Keep content concise and engaging</li>
+                  <li>• <strong>Hashtags:</strong> Use relevant trending hashtags</li>
+                  <li>• <strong>Timing:</strong> Post when your audience is most active</li>
+                  <li>• <strong>Authenticity:</strong> Be genuine and relatable</li>
                 </ul>
               </div>
               
               <div className="space-y-2">
-                <h4 className="font-semibold">Best Practices:</h4>
+                <h4 className="font-semibold">ScriptTok Features:</h4>
                 <ul className="text-sm space-y-1">
-                  <li>• Place disclosures at the beginning of content</li>
-                  <li>• Use clear language like "I earn from qualifying purchases"</li>
-                  <li>• Ensure disclosures are visible without scrolling</li>
-                  <li>• Test disclosures on mobile devices</li>
+                  <li>• AI-powered content generation</li>
+                  <li>• Viral score analysis for optimization</li>
+                  <li>• Content history and performance tracking</li>
+                  <li>• Template-based content creation</li>
                 </ul>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Advanced AI System Compliance */}
+        {/* ScriptTok AI System */}
         <Card>
           <CardHeader>
-            <CardTitle>Advanced AI Content Generation & Compliance</CardTitle>
+            <CardTitle>ScriptTok AI Content Generation System</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">
-              Our sophisticated AI system ensures comprehensive compliance across all content generation features:
+              ScriptTok uses advanced AI technology to create engaging TikTok content with built-in viral score analysis:
             </p>
             
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-800 mb-3">Claude AI-Powered Compliance System</h4>
+              <h4 className="font-semibold text-blue-800 mb-3">Claude AI-Powered Content Creation</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <strong className="text-blue-700">Content Generation:</strong>
                   <ul className="text-sm text-blue-600 mt-1 space-y-1">
-                    <li>• Claude AI primary generation with automatic disclosures</li>
-                    <li>• Platform-specific compliance language (TikTok, Instagram, YouTube, Twitter)</li>
-                    <li>• Spartan format option for professional tone enforcement</li>
-                    <li>• Automated bulk generation with compliance across all content</li>
-                    <li>• Smart Style recommendations from your highest-rated compliant content</li>
+                    <li>• Claude AI for high-quality TikTok content</li>
+                    <li>• Niche-specific content templates</li>
+                    <li>• Viral score analysis and optimization</li>
+                    <li>• Content length optimization for TikTok</li>
+                    <li>• Trending hashtag integration</li>
                   </ul>
                 </div>
                 <div>
-                  <strong className="text-blue-700">Advanced Features:</strong>
+                  <strong className="text-blue-700">Smart Features:</strong>
                   <ul className="text-sm text-blue-600 mt-1 space-y-1">
-                    <li>• Dual AI evaluation system for quality assurance</li>
-                    <li>• Claude AI suggestions database for optimization</li>
-                    <li>• Scheduled generation with maintained compliance</li>
-                    <li>• Perplexity API integration for trending products</li>
-                    <li>• Comprehensive content history and analytics</li>
+                    <li>• Dual AI evaluation system</li>
+                    <li>• Content history and analytics</li>
+                    <li>• Performance tracking and ratings</li>
+                    <li>• Template-based generation</li>
+                    <li>• Real-time viral score calculation</li>
                   </ul>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-semibold">Platform-Specific Compliant Disclosures (Auto-Generated):</h4>
+              <h4 className="font-semibold">Example TikTok Content Formats:</h4>
               <div className="space-y-2">
                 <div className="bg-gray-100 rounded p-3">
-                  <strong className="text-sm">TikTok (60 words max):</strong>
-                  <p className="text-sm mt-1">"This amazing product is trending! As an Amazon Associate I earn from qualifying purchases. #ad #affiliate"</p>
+                  <strong className="text-sm">Beauty Niche Example:</strong>
+                  <p className="text-sm mt-1">"This skincare routine changed EVERYTHING! ✨ 3 simple steps for glowing skin. Who else is obsessed with that glow? #skincare #glowup #beautyTips"</p>
                 </div>
                 <div className="bg-gray-100 rounded p-3">
-                  <strong className="text-sm">Instagram (80 words max):</strong>
-                  <p className="text-sm mt-1">"Loving this find! Quality is incredible and shipping was super fast. As an Amazon Associate I earn from qualifying purchases. Link in bio! #affiliate #ad"</p>
+                  <strong className="text-sm">Tech Niche Example:</strong>
+                  <p className="text-sm mt-1">"POV: You finally found the perfect headphones 🎧 Sound quality is UNREAL! Game changer for productivity. #tech #productivity #headphones"</p>
                 </div>
                 <div className="bg-gray-100 rounded p-3">
-                  <strong className="text-sm">YouTube (100 words max):</strong>
-                  <p className="text-sm mt-1">"This video contains affiliate links. I earn a commission from qualifying purchases at no extra cost to you. All opinions are my own and based on personal experience."</p>
-                </div>
-                <div className="bg-gray-100 rounded p-3">
-                  <strong className="text-sm">Twitter (40 words max):</strong>
-                  <p className="text-sm mt-1">"Found the perfect product! As an Amazon Associate I earn from qualifying purchases. #ad"</p>
+                  <strong className="text-sm">Fitness Niche Example:</strong>
+                  <p className="text-sm mt-1">"This 5-minute morning routine hits different 💪 Energy levels through the roof! Try it and tell me how you feel. #fitness #morningroutine #energy"</p>
                 </div>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* AI Technology Compliance */}
+        {/* Data Processing & Privacy */}
         <Card>
           <CardHeader>
-            <CardTitle>AI Technology & Data Processing Compliance</CardTitle>
+            <CardTitle>Data Processing & Privacy Protection</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-              <h4 className="font-semibold text-purple-800 mb-3">Our AI Technology Stack</h4>
+              <h4 className="font-semibold text-purple-800 mb-3">ScriptTok Technology Stack</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <strong className="text-purple-700">Primary AI Models:</strong>
+                  <strong className="text-purple-700">AI Technology:</strong>
                   <ul className="text-sm text-purple-600 mt-1 space-y-1">
-                    <li>• Claude AI: Content generation and suggestions</li>
-                    <li>• Perplexity API: Trend discovery and viral insights</li>
-                    <li>• Dual evaluation system for quality assurance</li>
-                    <li>• Smart Style learning from your best content</li>
+                    <li>• Claude AI for content generation</li>
+                    <li>• Viral score analysis algorithms</li>
+                    <li>• Content quality assessment</li>
+                    <li>• Template-based generation system</li>
                   </ul>
                 </div>
                 <div>
-                  <strong className="text-purple-700">Compliance Features:</strong>
+                  <strong className="text-purple-700">Privacy Features:</strong>
                   <ul className="text-sm text-purple-600 mt-1 space-y-1">
-                    <li>• Automatic FTC disclosure integration</li>
-                    <li>• Platform-specific word limits enforced</li>
-                    <li>• Content evaluation and rating systems</li>
-                    <li>• Comprehensive audit trails and history</li>
+                    <li>• Secure content storage</li>
+                    <li>• User data protection</li>
+                    <li>• No personal data sharing</li>
+                    <li>• Transparent content tracking</li>
                   </ul>
                 </div>
               </div>
@@ -218,43 +226,67 @@ const CompliancePage: React.FC = () => {
             <div className="space-y-3">
               <h4 className="font-semibold">Data Processing Transparency:</h4>
               <ul className="text-sm space-y-1">
-                <li>• All content generation is logged with timestamps and AI model attribution</li>
-                <li>• User ratings and feedback improve future content recommendations</li>
-                <li>• Trending product data refreshed automatically via Perplexity API</li>
-                <li>• Claude AI suggestions database continuously optimized from high-rated content</li>
-                <li>• Scheduled generation maintains same compliance standards as manual generation</li>
+                <li>• All generated content is stored with timestamps and viral scores</li>
+                <li>• User ratings help improve content recommendations</li>
+                <li>• No personal information is required for content generation</li>
+                <li>• Content history helps track performance and optimization</li>
+                <li>• All AI interactions are logged for quality assurance</li>
               </ul>
             </div>
           </CardContent>
         </Card>
 
-        {/* Legal Resources */}
+        {/* Resources & Documentation */}
         <Card>
           <CardHeader>
-            <CardTitle>Legal Resources & Documentation</CardTitle>
+            <CardTitle>Resources & Platform Guidelines</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4 className="font-semibold">Official Guidelines:</h4>
+                <h4 className="font-semibold">TikTok Guidelines:</h4>
                 <div className="space-y-2">
                   <a 
-                    href="https://www.ftc.gov/tips-advice/business-center/guidance/ftcs-endorsement-guides-what-people-are-asking"
+                    href="https://www.tiktok.com/community-guidelines"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    FTC Endorsement Guidelines
+                    TikTok Community Guidelines
                   </a>
                   <a 
-                    href="https://affiliate-program.amazon.com/help/operating/agreement"
+                    href="https://www.tiktok.com/creators/creator-portal/en-us/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    Amazon Associates Operating Agreement
+                    TikTok Creator Portal
+                  </a>
+                  <a 
+                    href="https://support.tiktok.com/en/safety-hc/report-a-problem"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-2" />
+                    TikTok Safety Guidelines
+                  </a>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                <h4 className="font-semibold">AI Content Guidelines:</h4>
+                <div className="space-y-2">
+                  <a 
+                    href="https://www.anthropic.com/safety"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-2" />
+                    Claude AI Safety Guidelines
                   </a>
                   <a 
                     href="https://www.ftc.gov/business-guidance/resources/disclosures-101-social-media-influencers"
@@ -263,41 +295,14 @@ const CompliancePage: React.FC = () => {
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    FTC Social Media Disclosure Guidelines
+                    Social Media Content Guidelines
                   </a>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                <h4 className="font-semibold">Platform Policies:</h4>
-                <div className="space-y-2">
-                  <a 
-                    href="https://help.instagram.com/269983657173406"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
-                  >
-                    <ExternalLink className="h-3 w-3 mr-2" />
-                    Instagram Branded Content Policies
-                  </a>
-                  <a 
-                    href="https://support.google.com/youtube/answer/154235"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
-                  >
-                    <ExternalLink className="h-3 w-3 mr-2" />
-                    YouTube Paid Promotion Guidelines
-                  </a>
-                  <a 
-                    href="https://business.twitter.com/en/help/ads-policies/restricted-content-policies/political-content.html"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
-                  >
-                    <ExternalLink className="h-3 w-3 mr-2" />
-                    Twitter/X Advertising Policies
-                  </a>
+                  <Link href="/trust-safety">
+                    <span className="flex items-center text-blue-600 hover:text-blue-800 text-sm cursor-pointer">
+                      <ExternalLink className="h-3 w-3 mr-2" />
+                      ScriptTok Trust & Safety
+                    </span>
+                  </Link>
                 </div>
               </div>
             </div>
@@ -307,13 +312,13 @@ const CompliancePage: React.FC = () => {
         {/* Contact & Support */}
         <Card className="bg-gray-900 text-white">
           <CardContent className="text-center py-8">
-            <h3 className="text-xl font-semibold mb-2">Need Compliance Support?</h3>
+            <h3 className="text-xl font-semibold mb-2">Ready to Create Viral TikTok Content?</h3>
             <p className="text-gray-300 mb-4">
-              Our platform is designed to help you stay compliant with all affiliate marketing regulations.
+              ScriptTok helps you create engaging TikTok content with AI-powered viral score analysis.
             </p>
-            <Link href="/unified-generator">
+            <Link href="/generate">
               <Button variant="secondary" size="lg">
-                Start Creating Compliant Content
+                Start Creating TikTok Content
               </Button>
             </Link>
           </CardContent>

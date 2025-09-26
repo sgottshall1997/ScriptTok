@@ -23,6 +23,13 @@ import Account from "@/pages/Account";
 import CompliancePage from "@/pages/CompliancePage";
 import HowItWorksPage from "@/pages/how-it-works";
 
+// New Legal Pages
+import TermsBillingPage from "@/pages/TermsBilling";
+import PrivacyCookiesPage from "@/pages/PrivacyCookies";
+import CookiePreferencesPage from "@/pages/CookiePreferences";
+import LegalNoticesPage from "@/pages/LegalNotices";
+import TrustSafetyPage from "@/pages/TrustSafety";
+
 import Layout from "@/components/Layout";
 import { initScraperConsole } from "./lib/scraperConsole";
 
@@ -64,6 +71,13 @@ function MainAppRouter() {
       <Route path="/contact" component={ContactPage} />
       <Route path="/privacy" component={PrivacyPolicyPage} />
       <Route path="/terms" component={TermsPage} />
+      
+      {/* New Legal Pages */}
+      <Route path="/terms-billing" component={TermsBillingPage} />
+      <Route path="/privacy-cookies" component={PrivacyCookiesPage} />
+      <Route path="/cookie-preferences" component={CookiePreferencesPage} />
+      <Route path="/legal-notices" component={LegalNoticesPage} />
+      <Route path="/trust-safety" component={TrustSafetyPage} />
       
       {/* Fallback to 404 */}
       <Route component={NotFound} />

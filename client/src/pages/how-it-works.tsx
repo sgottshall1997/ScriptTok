@@ -9,49 +9,48 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Link } from 'wouter';
 import { 
-  TrendingUp, 
+  Video, 
   FileText, 
-  Settings, 
-  Send, 
-  Share2, 
+  Sparkles, 
+  BarChart3, 
+  History, 
   ChevronRight,
   Zap,
-  FileSearch,
+  TrendingUp,
   Brain,
   Target,
-  BarChart
+  Play
 } from 'lucide-react';
 
 const HowItWorksPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-5xl">
       <div className="mb-12">
-        <h1 className="text-3xl font-bold mb-3 text-gray-800">How GlowBot AI Works</h1>
+        <h1 className="text-3xl font-bold mb-3 text-gray-800">How ScriptTok Works</h1>
         <p className="text-lg text-gray-600 max-w-3xl">
-          Discover how our multi-niche content generation engine transforms your product ideas into 
-          engaging, trend-aware content in just a few clicks.
+          Create viral TikTok content with AI-powered generation, viral score analysis, and performance tracking. 
+          Turn your ideas into engaging TikTok scripts in minutes.
         </p>
       </div>
       
       {/* Process Steps */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
         <Card>
           <CardHeader className="pb-4">
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
-              <TrendingUp className="h-6 w-6 text-blue-600" />
+              <Target className="h-6 w-6 text-blue-600" />
             </div>
             <CardTitle className="flex items-start">
               <div className="bg-gray-200 text-gray-700 font-bold rounded-full w-7 h-7 flex items-center justify-center mr-2 flex-shrink-0">1</div>
-              <span>Select Your Niche</span>
+              <span>Select Niche</span>
             </CardTitle>
             <CardDescription>
-              Choose from multiple niches including skincare, tech, fashion, fitness and more.
+              Choose from beauty, tech, fashion, fitness, food, travel, or pets.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 text-sm">
-              Each niche comes with specialized templates and trend data to ensure your content is 
-              relevant and engaging for your specific audience.
+              Each niche has specialized TikTok templates optimized for that audience and content style.
             </p>
           </CardContent>
         </Card>
@@ -63,16 +62,15 @@ const HowItWorksPage: React.FC = () => {
             </div>
             <CardTitle className="flex items-start">
               <div className="bg-gray-200 text-gray-700 font-bold rounded-full w-7 h-7 flex items-center justify-center mr-2 flex-shrink-0">2</div>
-              <span>Pick a Template</span>
+              <span>Choose Template</span>
             </CardTitle>
             <CardDescription>
-              Choose from various content templates tailored to your specific needs.
+              Pick from viral TikTok content templates designed to engage your audience.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 text-sm">
-              From product reviews to comparison charts, we offer specialized templates for each 
-              niche to help you create the perfect content for your audience.
+              From product reveals to tutorials, our templates are crafted for maximum TikTok engagement.
             </p>
           </CardContent>
         </Card>
@@ -80,20 +78,39 @@ const HowItWorksPage: React.FC = () => {
         <Card>
           <CardHeader className="pb-4">
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
-              <Zap className="h-6 w-6 text-green-600" />
+              <Sparkles className="h-6 w-6 text-green-600" />
             </div>
             <CardTitle className="flex items-start">
               <div className="bg-gray-200 text-gray-700 font-bold rounded-full w-7 h-7 flex items-center justify-center mr-2 flex-shrink-0">3</div>
-              <span>Generate Content</span>
+              <span>Generate & Score</span>
             </CardTitle>
             <CardDescription>
-              Enter your product details, customize tone, and let our AI do the rest.
+              AI creates your TikTok content with instant viral score analysis.
             </CardDescription>
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 text-sm">
-              Our advanced AI engine combines your inputs with trending data to generate 
-              high-quality, engaging content optimized for your chosen niche.
+              Claude AI generates engaging content while our viral score algorithm predicts engagement potential.
+            </p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader className="pb-4">
+            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mb-4">
+              <History className="h-6 w-6 text-orange-600" />
+            </div>
+            <CardTitle className="flex items-start">
+              <div className="bg-gray-200 text-gray-700 font-bold rounded-full w-7 h-7 flex items-center justify-center mr-2 flex-shrink-0">4</div>
+              <span>Save & Track</span>
+            </CardTitle>
+            <CardDescription>
+              Save content to history and track performance over time.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-700 text-sm">
+              Access your content history, rate performance, and learn from your highest-scoring content.
             </p>
           </CardContent>
         </Card>
@@ -101,19 +118,18 @@ const HowItWorksPage: React.FC = () => {
       
       {/* Feature Highlights */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Key Features</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">ScriptTok Features</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex">
             <div className="mr-4 mt-1">
-              <FileSearch className="h-6 w-6 text-blue-600" />
+              <Zap className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Trend Analysis</h3>
+              <h3 className="text-xl font-semibold mb-2">Viral Score Analysis</h3>
               <p className="text-gray-700">
-                Our platform continuously monitors trending products across multiple platforms including 
-                TikTok, YouTube, Instagram, Reddit, and Amazon to ensure your content references what's 
-                popular now.
+                Every generated TikTok gets an instant viral score based on engagement patterns, 
+                trending elements, and content structure to help you pick winning content.
               </p>
             </div>
           </div>
@@ -123,36 +139,36 @@ const HowItWorksPage: React.FC = () => {
               <Brain className="h-6 w-6 text-purple-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">AI-Powered Templates</h3>
+              <h3 className="text-xl font-semibold mb-2">Claude AI Generation</h3>
               <p className="text-gray-700">
-                Our specialized templates have been trained on thousands of successful content pieces 
-                to ensure they follow best practices for engagement and conversion.
+                Powered by Claude AI for high-quality, engaging TikTok content that feels natural 
+                and authentic while maintaining viral potential.
               </p>
             </div>
           </div>
           
           <div className="flex">
             <div className="mr-4 mt-1">
-              <Target className="h-6 w-6 text-red-600" />
+              <Video className="h-6 w-6 text-red-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Niche Specialization</h3>
+              <h3 className="text-xl font-semibold mb-2">TikTok-Optimized</h3>
               <p className="text-gray-700">
-                Each niche has its own content patterns, audience expectations, and terminology. 
-                Our system is trained specifically for each niche to ensure authentic-sounding content.
+                All content is specifically designed for TikTok with optimal length, trending hashtags, 
+                and format structures that perform well on the platform.
               </p>
             </div>
           </div>
           
           <div className="flex">
             <div className="mr-4 mt-1">
-              <BarChart className="h-6 w-6 text-green-600" />
+              <BarChart3 className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Analytics Integration</h3>
+              <h3 className="text-xl font-semibold mb-2">Content History & Tracking</h3>
               <p className="text-gray-700">
-                Track which content performs best with built-in analytics, helping you refine your 
-                strategy and focus on what drives engagement and conversions.
+                Save all your generated content, rate performance, and build a library of your 
+                highest-performing TikTok scripts for future reference.
               </p>
             </div>
           </div>
@@ -166,101 +182,103 @@ const HowItWorksPage: React.FC = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger>
-              What niches does GlowBot AI support?
+              What niches does ScriptTok support?
             </AccordionTrigger>
             <AccordionContent>
-              GlowBot AI currently supports multiple niches including Skincare & Beauty, Technology, 
-              Fashion, Fitness, Food, Travel, and Pet Care. We're constantly expanding our niche coverage 
-              based on user feedback.
+              ScriptTok supports 7 major TikTok niches: Beauty, Technology, Fashion, Fitness, Food, 
+              Travel, and Pets. Each niche has specialized templates designed for that specific audience 
+              and content style.
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="item-2">
             <AccordionTrigger>
-              How accurate is the trend data?
+              How does the viral score work?
             </AccordionTrigger>
             <AccordionContent>
-              Our trend data is refreshed regularly from multiple sources including social media platforms 
-              and e-commerce sites. While we strive for accuracy, trends can change rapidly, so we recommend 
-              refreshing trend data before generating important content.
+              Our viral score algorithm analyzes your generated content for elements that typically 
+              perform well on TikTok: engagement hooks, trending patterns, optimal length, and audience 
+              appeal. Higher scores indicate better viral potential.
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="item-3">
             <AccordionTrigger>
-              Can I customize the generated content?
+              Can I edit the generated TikTok content?
             </AccordionTrigger>
             <AccordionContent>
-              Yes! After content generation, you can edit the output, change tone, add your own affiliate 
-              links, and make any adjustments needed before using it on your platforms.
+              Absolutely! After generation, you can copy, edit, and customize the content however you like. 
+              The generated scripts are starting points that you can adapt to your personal style and brand.
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="item-4">
             <AccordionTrigger>
-              How does the affiliate link option work?
+              How is my content history stored?
             </AccordionTrigger>
             <AccordionContent>
-              When generating content, you can optionally add your own Amazon affiliate links. The system 
-              will create properly formatted links using your affiliate ID that you can include in your 
-              content, helping you monetize your audience.
+              All your generated content is automatically saved to your content history with timestamps, 
+              viral scores, and the ability to rate performance. You can access this anytime to review 
+              and reuse successful content.
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="item-5">
             <AccordionTrigger>
-              Is the content unique and original?
+              Is each TikTok script unique?
             </AccordionTrigger>
             <AccordionContent>
-              Yes, each piece of content is uniquely generated based on your inputs, selected template, 
-              and current trends. The AI creates original content that doesn't duplicate existing material 
-              while maintaining best practices for each content type.
+              Yes! Claude AI generates completely original content every time based on your inputs, 
+              selected template, and niche. No two generations will be identical, ensuring your content 
+              stays fresh and unique.
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="item-6">
             <AccordionTrigger>
-              Can I create content for multiple products at once?
+              What makes ScriptTok different from other content generators?
             </AccordionTrigger>
             <AccordionContent>
-              Currently, each generation is focused on a single product for maximum quality. However, some 
-              templates like "comparison" or "top 5" will reference multiple products in relation to your 
-              main product, creating a richer content piece.
+              ScriptTok is specifically designed for TikTok success with viral score analysis, 
+              niche-specific templates, and Claude AI generation. We focus purely on TikTok optimization 
+              rather than generic social media content.
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="item-7">
             <AccordionTrigger>
-              Do I need technical knowledge to use GlowBot AI?
+              Do I need any experience to create viral TikTok content?
             </AccordionTrigger>
             <AccordionContent>
-              Not at all! GlowBot AI is designed with a user-friendly interface that anyone can use 
-              without technical expertise. Simply select options from dropdown menus, enter your product 
-              information, and the system handles the complex generation process.
+              Not at all! ScriptTok is designed for creators of all levels. Simply select your niche, 
+              pick a template, and let our AI handle the complex part of creating engaging, viral-worthy 
+              TikTok content.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
       </div>
       
       {/* CTA Section */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-none shadow-md">
+      <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-none shadow-md">
         <CardContent className="p-8">
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-transparent bg-clip-text">
-              Ready to Create Compelling Content?
+            <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+              Ready to Go Viral on TikTok?
             </h2>
             <p className="text-gray-700 mb-6">
-              Start generating trend-aware, niche-specific content for your products in minutes.
+              Start creating viral TikTok content with AI-powered generation and instant viral score analysis.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
-              <Link href="/">
-                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-blue-600 to-indigo-600">
-                  Get Started Now <ChevronRight className="ml-2 h-4 w-4" />
+              <Link href="/generate">
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600">
+                  <Play className="mr-2 h-4 w-4" />
+                  Create TikTok Content
                 </Button>
               </Link>
-              <Link href="/templates">
+              <Link href="/content-history">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                  Browse Templates
+                  <History className="mr-2 h-4 w-4" />
+                  View Content History
                 </Button>
               </Link>
             </div>
