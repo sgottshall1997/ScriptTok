@@ -321,6 +321,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const result = await runAllPerplexityFetchers();
       
       let totalProductsAdded = 0;
+      let historyEntriesSaved = 0;
       
       // Store products from each niche in database
       for (const nicheResult of result.results) {
@@ -328,6 +329,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           try {
             const { trendingProducts } = await import('@shared/schema');
             const { db } = await import('./db');
+            const { storage } = await import('./storage');
             
             for (const product of nicheResult.products) {
               // Convert priceNumeric to string for decimal field
@@ -349,6 +351,43 @@ export async function registerRoutes(app: Express): Promise<Server> {
               totalProductsAdded++;
               console.log(`✅ Added ${nicheResult.niche} product: ${product.product} ${product.price || ''} ${product.asin || ''} (reason: "${product.reason || 'no reason provided'}")`);
             }
+            
+            // Save AI trending picks to trend history
+            try {
+              for (const product of nicheResult.products) {
+                const historyEntry = {
+                  sourceType: 'ai_trending_picks' as const,
+                  niche: nicheResult.niche,
+                  trendCategory: 'ai_pick',
+                  trendName: product.product,
+                  trendDescription: product.reason || 'No reason provided',
+                  // Store product details as JSON for AI picks
+                  productData: {
+                    product: product.product,
+                    brand: product.brand,
+                    price: product.price,
+                    asin: product.asin,
+                    mentions: product.mentions
+                  },
+                  // Additional metadata as JSON
+                  rawData: {
+                    source: 'perplexity',
+                    priceNumeric: product.price ? parseFloat(product.price.replace('$', '')) : null,
+                    fetchTimestamp: new Date().toISOString(),
+                    nicheSuccess: nicheResult.success,
+                    fetcherType: 'ai_trending_picks'
+                  }
+                };
+                
+                await storage.saveTrendHistory(historyEntry);
+                historyEntriesSaved++;
+              }
+              console.log(`💾 Saved ${nicheResult.products.length} AI trending picks to history for ${nicheResult.niche}`);
+            } catch (historyError) {
+              console.error(`❌ Error saving AI trending picks to history for ${nicheResult.niche}:`, historyError);
+              // Don't fail the main request if history saving fails
+            }
+            
           } catch (dbError) {
             console.error(`❌ Database error for ${nicheResult.niche}:`, dbError);
           }
@@ -357,8 +396,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       res.json({
         success: true,
-        message: `Niche-specific fetch completed. Added ${totalProductsAdded} products from ${result.summary.successful}/${result.summary.totalFetchers} fetchers`,
+        message: `Niche-specific fetch completed. Added ${totalProductsAdded} products from ${result.summary.successful}/${result.summary.totalFetchers} fetchers. Saved ${historyEntriesSaved} entries to trend history.`,
         productsAdded: totalProductsAdded,
+        historyEntriesSaved: historyEntriesSaved,
         fetcherResults: result.summary,
         timestamp: new Date().toISOString()
       });
