@@ -22,6 +22,13 @@ import { Link } from "wouter";
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+      {/* ScriptTok Branding */}
+      <div className="text-center py-8 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
+          ScriptTok
+        </h1>
+      </div>
+      
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-32">
         <div className="container mx-auto px-4 max-w-6xl">
