@@ -75,6 +75,20 @@ export const trendingProducts = pgTable("trending_products", {
   description: text("description"), // Full product description
   viralKeywords: text("viral_keywords").array(), // Viral keyword highlights
   perplexityNotes: text("perplexity_notes"), // Additional notes from Perplexity
+  
+  // Enhanced trend categorization fields
+  trendCategory: text("trend_category"), // 'hot', 'rising', 'upcoming', 'declining'
+  videoCount: text("video_count"), // "52K videos this week" - string format for display
+  growthPercentage: text("growth_percentage"), // "+350%" - string format for display
+  trendMomentum: text("trend_momentum"), // Additional momentum description
+  
+  // Enhanced pricing fields
+  price: text("price"), // "$12" or "$10/mo" - formatted price string for display
+  priceNumeric: decimal("price_numeric"), // 12.00 - numeric value for sorting/filtering
+  priceCurrency: text("price_currency").default("USD"), // Currency code
+  priceType: text("price_type").default("one-time"), // 'one-time', 'subscription', 'estimated'
+  asin: text("asin"), // Amazon Standard Identification Number for linking
+  
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
