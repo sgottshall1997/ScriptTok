@@ -428,11 +428,6 @@ const Dashboard = () => {
               </SelectContent>
             </Select>
             <div className="flex flex-col items-center">
-              {selectedDataSource === 'perplexity' && (
-                <p className="text-red-600 font-semibold text-xs mb-1">
-                  (PLEASE DO NOT PRESS)
-                </p>
-              )}
               <Button 
                 onClick={selectedDataSource === 'perplexity' ? handlePerplexityFetch : () => amazonMutation.mutate()}
                 disabled={selectedDataSource === 'perplexity' ? isPerplexityLoading : amazonMutation.isPending}
