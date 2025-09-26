@@ -24,38 +24,36 @@ export default function TrendForecaster() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
+  // Primary query: Read existing data from database first
   const { data: forecast, isLoading, isFetching, dataUpdatedAt } = useQuery({
-    queryKey: ['/api/trend-forecast', selectedNiche],
+    queryKey: ['/api/trend-history', 'forecaster', selectedNiche],
     queryFn: async () => {
-      console.log(`🔮 TrendForecaster: Fetching ${selectedNiche} trends from Perplexity...`);
-      const response = await fetch(`/api/trend-forecast/${selectedNiche}`);
+      console.log(`💾 TrendForecaster: Reading ${selectedNiche} trends from database...`);
+      const response = await fetch(`/api/trend-history/forecaster/${selectedNiche}`);
       if (!response.ok) {
-        throw new Error('Failed to fetch trend forecast');
+        throw new Error('Failed to fetch trend forecast from database');
       }
       const data = await response.json();
       
-      // Console logging for full visibility
-      console.log(`🎯 TrendForecaster: ${selectedNiche.toUpperCase()} Response:`, data);
-      console.log(`📊 Raw Trends Data for ${selectedNiche}:`, data.data?.trends);
+      // Console logging for visibility
+      console.log(`🎯 TrendForecaster Database: ${selectedNiche.toUpperCase()} Response:`, data);
       
       if (data.data?.trends) {
         const trends = data.data.trends;
-        console.log(`🔥 HOT ${selectedNiche} trends (${trends.hot?.length || 0}):`, trends.hot);
-        console.log(`📈 RISING ${selectedNiche} trends (${trends.rising?.length || 0}):`, trends.rising);
-        console.log(`🕐 UPCOMING ${selectedNiche} trends (${trends.upcoming?.length || 0}):`, trends.upcoming);
-        console.log(`📉 DECLINING ${selectedNiche} trends (${trends.declining?.length || 0}):`, trends.declining);
+        console.log(`🔥 HOT ${selectedNiche} trends from DB (${trends.hot?.length || 0}):`, trends.hot);
+        console.log(`📈 RISING ${selectedNiche} trends from DB (${trends.rising?.length || 0}):`, trends.rising);
+        console.log(`🕐 UPCOMING ${selectedNiche} trends from DB (${trends.upcoming?.length || 0}):`, trends.upcoming);
+        console.log(`📉 DECLINING ${selectedNiche} trends from DB (${trends.declining?.length || 0}):`, trends.declining);
       }
       
       return data;
     },
-    staleTime: Infinity, // Data never becomes stale
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes to avoid excessive database calls
     gcTime: 1000 * 60 * 60 * 24, // Keep cache for 24 hours
-    enabled: false, // Completely disable automatic fetching
-    refetchOnMount: false, // Don't fetch when component mounts
+    refetchOnMount: true, // Allow fetching on mount to get latest database data
     refetchOnWindowFocus: false, // Don't fetch when window gains focus
     refetchOnReconnect: false, // Don't fetch when reconnecting
     refetchInterval: false, // Disable interval refetching
-    retry: false, // Don't retry failed requests automatically
   });
 
   const handleProductClick = (productName: string, niche: string) => {
@@ -63,41 +61,49 @@ export default function TrendForecaster() {
   };
 
   const handleRefresh = async () => {
-    // Manually trigger the query since automatic fetching is disabled
-    await queryClient.fetchQuery({
-      queryKey: ['/api/trend-forecast', selectedNiche],
-      queryFn: async () => {
-        console.log(`🔮 TrendForecaster: Manual refresh - Fetching ${selectedNiche} trends from Perplexity...`);
-        const response = await fetch(`/api/trend-forecast/${selectedNiche}`);
-        if (!response.ok) {
-          throw new Error('Failed to fetch trend forecast');
-        }
-        const data = await response.json();
-        
-        // Console logging for full visibility
-        console.log(`🎯 TrendForecaster: ${selectedNiche.toUpperCase()} Response:`, data);
-        console.log(`📊 Raw Trends Data for ${selectedNiche}:`, data.data?.trends);
-        
-        if (data.data?.trends) {
-          const trends = data.data.trends;
-          console.log(`🔥 HOT ${selectedNiche} trends (${trends.hot?.length || 0}):`, trends.hot);
-          console.log(`📈 RISING ${selectedNiche} trends (${trends.rising?.length || 0}):`, trends.rising);
-          console.log(`🕐 UPCOMING ${selectedNiche} trends (${trends.upcoming?.length || 0}):`, trends.upcoming);
-          console.log(`📉 DECLINING ${selectedNiche} trends (${trends.declining?.length || 0}):`, trends.declining);
-        }
-        
-        return data;
-      },
-      staleTime: Infinity,
-    });
-    
-    toast({
-      title: "Trends Refreshed",
-      description: `Updated ${selectedNiche} trends from Perplexity`,
-    });
+    try {
+      // Step 1: Fetch fresh data from Perplexity API (this saves to database automatically)
+      console.log(`🔮 TrendForecaster: Manual refresh - Fetching ${selectedNiche} trends from Perplexity...`);
+      const response = await fetch(`/api/trend-forecast/${selectedNiche}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch fresh trend forecast from Perplexity');
+      }
+      const perplexityData = await response.json();
+      
+      // Console logging for full visibility
+      console.log(`🎯 TrendForecaster Perplexity: ${selectedNiche.toUpperCase()} Response:`, perplexityData);
+      
+      if (perplexityData.data?.trends) {
+        const trends = perplexityData.data.trends;
+        console.log(`🔥 HOT ${selectedNiche} trends from Perplexity (${trends.hot?.length || 0}):`, trends.hot);
+        console.log(`📈 RISING ${selectedNiche} trends from Perplexity (${trends.rising?.length || 0}):`, trends.rising);
+        console.log(`🕐 UPCOMING ${selectedNiche} trends from Perplexity (${trends.upcoming?.length || 0}):`, trends.upcoming);
+        console.log(`📉 DECLINING ${selectedNiche} trends from Perplexity (${trends.declining?.length || 0}):`, trends.declining);
+      }
+      
+      // Step 2: Invalidate the database cache to force a fresh read from database
+      console.log(`💾 TrendForecaster: Invalidating database cache for ${selectedNiche}...`);
+      await queryClient.invalidateQueries({
+        queryKey: ['/api/trend-history', 'forecaster', selectedNiche]
+      });
+      
+      toast({
+        title: "Trends Refreshed",
+        description: `Updated ${selectedNiche} trends from Perplexity and refreshed database`,
+      });
+    } catch (error) {
+      console.error('Error refreshing trends:', error);
+      toast({
+        title: "Refresh Failed",
+        description: "Failed to update trends. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
-  const lastUpdated = dataUpdatedAt ? new Date(dataUpdatedAt) : null;
+  // Use database timestamp from the response if available, otherwise fall back to React Query timestamp
+  const databaseTimestamp = forecast?.data?.lastUpdated;
+  const lastUpdated = databaseTimestamp ? new Date(databaseTimestamp) : (dataUpdatedAt ? new Date(dataUpdatedAt) : null);
   const timeSinceUpdate = lastUpdated ? getTimeSince(lastUpdated) : 'Never';
 
   return (

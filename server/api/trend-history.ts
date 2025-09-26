@@ -187,6 +187,107 @@ router.post("/", async (req, res) => {
   }
 });
 
+// GET /api/trend-history/forecaster/:niche - Get latest trend forecast data for a specific niche from database
+router.get("/forecaster/:niche", async (req, res) => {
+  try {
+    const { niche } = req.params;
+    
+    if (!niche) {
+      return res.status(400).json({
+        success: false,
+        error: "Niche parameter is required"
+      });
+    }
+
+    // Get the latest trend forecaster data for this niche from database
+    const history = await storage.getTrendHistoryBySourceAndNiche(
+      'trend_forecaster',
+      niche,
+      100, // Get more records to ensure we have all categories
+      0
+    );
+
+    if (!history || history.length === 0) {
+      return res.json({
+        success: true,
+        data: null,
+        message: `No trend forecast data found for ${niche}`
+      });
+    }
+
+    // Find the most recent entry to get the timestamp for filtering
+    const mostRecentEntry = history.reduce((latest, current) => 
+      new Date(current.fetchedAt) > new Date(latest.fetchedAt) ? current : latest
+    );
+
+    // Filter to only include entries from the most recent forecast run
+    const latestRunTimestamp = mostRecentEntry.fetchedAt;
+    const latestRunEntries = history.filter(item => 
+      item.fetchedAt === latestRunTimestamp
+    );
+
+    console.log(`📊 TrendForecaster API: Found ${history.length} total entries, filtering to ${latestRunEntries.length} from latest run (${latestRunTimestamp})`);
+
+    // Group trends by category using only the most recent run data
+    const trendsByCategory: {
+      hot: any[];
+      rising: any[];
+      upcoming: any[];
+      declining: any[];
+    } = {
+      hot: [],
+      rising: [],
+      upcoming: [],
+      declining: []
+    };
+
+    // Group trends by category from the latest run only
+    latestRunEntries.forEach(item => {
+      if (item.trendCategory && item.trendName) {
+        const trendData = {
+          name: item.trendName,
+          volume: item.trendVolume || undefined,
+          growth: item.trendGrowth || undefined,
+          why: item.trendDescription || undefined,
+          reason: item.trendReason || undefined,
+          when: item.trendWhen || undefined,
+          opportunity: item.trendOpportunity || undefined,
+          products: item.productData ? (Array.isArray(item.productData) ? item.productData : [item.productData]) : []
+        };
+
+        if (item.trendCategory === 'hot') {
+          trendsByCategory.hot.push(trendData);
+        } else if (item.trendCategory === 'rising') {
+          trendsByCategory.rising.push(trendData);
+        } else if (item.trendCategory === 'upcoming') {
+          trendsByCategory.upcoming.push(trendData);
+        } else if (item.trendCategory === 'declining') {
+          trendsByCategory.declining.push(trendData);
+        }
+      }
+    });
+
+    // Return data in the same format as the original TrendForecaster API
+    res.json({
+      success: true,
+      data: {
+        trends: trendsByCategory,
+        niche: niche,
+        lastUpdated: mostRecentEntry.fetchedAt,
+        source: "database"
+      }
+    });
+
+  } catch (error) {
+    console.error(`Error fetching trend forecast data for ${req.params.niche}:`, error);
+    res.status(500).json({
+      success: false,
+      error: "Failed to fetch trend forecast data",
+      details: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
 // DELETE /api/trend-history/clear - Clear all trend history (for development)
 router.delete("/clear", async (req, res) => {
   try {
