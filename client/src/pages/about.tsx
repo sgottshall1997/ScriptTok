@@ -51,8 +51,8 @@ const AboutPage: React.FC = () => {
     },
     {
       icon: Sparkles,
-      title: 'Multiple AI Models with Smart Context',
-      description: 'Choose from OpenAI GPT-4 and Anthropic Claude - both enhanced with real-time Perplexity trend data for smarter, more relevant content'
+      title: 'Smart AI Integration',
+      description: 'Choose from OpenAI GPT-4 and Anthropic Claude - both enhanced with real-time Perplexity trend data'
     },
     {
       icon: TrendingUp,
@@ -61,13 +61,8 @@ const AboutPage: React.FC = () => {
     },
     {
       icon: Grid3X3,
-      title: 'Content Templates',
-      description: 'Access proven templates for product demos, reviews, comparisons, and viral format scripts'
-    },
-    {
-      icon: History,
-      title: 'Content History & Ratings',
-      description: 'Track all your generated content, rate performance, and identify your best-performing styles'
+      title: 'Content Templates & History',
+      description: 'Access proven templates and track all your generated content with performance ratings'
     }
   ];
 
@@ -118,7 +113,7 @@ const AboutPage: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto p-4 md:p-6 max-w-7xl">
+    <div className="container mx-auto p-4 md:p-6 max-w-6xl">
       {/* Header Section */}
       <div className="text-center mb-12">
         <div className="flex items-center justify-center mb-4">
@@ -136,7 +131,7 @@ const AboutPage: React.FC = () => {
         </p>
       </div>
 
-      {/* System Overview */}
+      {/* What ScriptTok Does */}
       <Card className="mb-12 border-l-4 border-l-pink-600">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
@@ -144,18 +139,19 @@ const AboutPage: React.FC = () => {
             What ScriptTok Does
           </CardTitle>
           <CardDescription>
-            AI-powered TikTok content generation platform
+            AI-powered TikTok content generation with real-time trend intelligence
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg mb-8">
             <p className="text-lg text-gray-800 leading-relaxed">
-              ScriptTok is specifically designed for TikTok content creation and viral content generation. 
-              Our platform combines AI technology with proven viral content patterns to help you create 
-              engaging TikTok scripts that capture attention and drive results.
+              ScriptTok combines AI technology with real-time trend data to help you create engaging TikTok scripts 
+              that capture attention and drive results. Our platform uses Perplexity AI to research trending products 
+              and viral content patterns, then feeds this intelligence to ChatGPT or Claude to generate smart, 
+              contextually relevant content.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {keyFeatures.map((feature, index) => {
               const Icon = feature.icon;
@@ -171,359 +167,146 @@ const AboutPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Perplexity AI Integration */}
+      {/* The ScriptTok Intelligence Process */}
       <Card className="mb-12 border-l-4 border-l-purple-600">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Sparkles className="h-6 w-6 mr-3 text-purple-600" />
-            Powered by Perplexity AI: Four Core Capabilities
+            The ScriptTok Intelligence Process
           </CardTitle>
           <CardDescription>
-            Advanced AI research and trend analysis that makes your content generation smarter
+            How we create trend-aware, viral content using AI
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg mb-8">
-            <p className="text-lg text-gray-800 leading-relaxed mb-4">
-              ScriptTok leverages Perplexity AI's powerful research capabilities across four key areas to give you unprecedented 
-              insight into viral content opportunities. This isn't just trend tracking - it's intelligent content strategy powered by real-time web analysis.
-            </p>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 bg-white border-2 border-purple-200 rounded-lg">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mr-4">
-                  <TrendingUp className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-purple-900">1. Trend Forecasting</h3>
-              </div>
-              <p className="text-gray-700 mb-4">
-                Our Trend Forecaster uses Perplexity AI to analyze real-time web data, social media patterns, 
-                and emerging conversations to predict what will go viral before it happens.
-              </p>
-              <div className="bg-purple-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-purple-800 mb-2">How it works:</h4>
-                <ul className="text-sm text-purple-700 space-y-1">
-                  <li>• Scans millions of web sources for emerging topics</li>
-                  <li>• Categorizes trends as Hot, Rising, Upcoming, or Declining</li>
-                  <li>• Provides specific product recommendations with pricing</li>
-                  <li>• Explains why each trend will succeed and when to act</li>
-                </ul>
-              </div>
-            </div>
+          {/* ScriptTok Intelligence Flow Diagram */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200">
+              <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-2">
 
-            <div className="p-6 bg-white border-2 border-pink-200 rounded-lg">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mr-4">
-                  <Target className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-pink-900">2. AI-Powered Trending Picks</h3>
-              </div>
-              <p className="text-gray-700 mb-4">
-                Automatically discover viral products across all niches using Perplexity's web research to find 
-                what's actually trending right now, not what was trending last week.
-              </p>
-              <div className="bg-pink-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-pink-800 mb-2">How it works:</h4>
-                <ul className="text-sm text-pink-700 space-y-1">
-                  <li>• Real-time product discovery across social media and commerce</li>
-                  <li>• Intelligent filtering by niche and viral potential</li>
-                  <li>• Instant access to trending product data for content creation</li>
-                  <li>• Automatic refresh with credit-conscious scheduling</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="p-6 bg-white border-2 border-blue-200 rounded-lg">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mr-4">
-                  <Video className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-blue-900">3. TikTok Trend Analysis</h3>
-              </div>
-              <p className="text-gray-700 mb-4">
-                Deep analysis of TikTok's current viral patterns, hashtag performance, and content formats 
-                to ensure your content aligns with platform-specific trends.
-              </p>
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-800 mb-2">How it works:</h4>
-                <ul className="text-sm text-blue-700 space-y-1">
-                  <li>• Analyzes viral TikTok content patterns and formats</li>
-                  <li>• Identifies trending hashtags and sound combinations</li>
-                  <li>• Recommends optimal posting times and content styles</li>
-                  <li>• Tracks algorithm preferences and engagement patterns</li>
-                </ul>
-              </div>
-            </div>
-
-            <div className="p-6 bg-white border-2 border-green-200 rounded-lg">
-              <div className="flex items-center mb-4">
-                <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mr-4">
-                  <BarChart3 className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-xl font-semibold text-green-900">4. Viral Competitor Analysis</h3>
-              </div>
-              <p className="text-gray-700 mb-4">
-                Research successful competitor videos and viral content strategies to understand 
-                what makes content go viral in your specific niche.
-              </p>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h4 className="font-semibold text-green-800 mb-2">How it works:</h4>
-                <ul className="text-sm text-green-700 space-y-1">
-                  <li>• Identifies top-performing videos in your niche</li>
-                  <li>• Analyzes viral content structure and timing</li>
-                  <li>• Extracts successful content patterns and formulas</li>
-                  <li>• Provides actionable insights for your content strategy</li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-8 p-6 bg-gradient-to-r from-purple-100 to-pink-100 rounded-lg border border-purple-200">
-            <h3 className="text-xl font-semibold text-purple-900 mb-4">How Perplexity Intelligence Powers Your Content</h3>
-            <div className="mb-6 p-4 bg-white rounded-lg border border-purple-300">
-              <h4 className="font-bold text-purple-800 mb-3 flex items-center">
-                <Zap className="h-5 w-5 mr-2" />
-                Smart Content Generation Flow
-              </h4>
-              <div className="space-y-3 text-sm text-purple-700">
-                <div className="flex items-start">
-                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">1</span>
-                  <div>
-                    <strong>Real-Time Research:</strong> When you generate content, Perplexity AI automatically researches trending products in your chosen niche
+                {/* Step 1: Perplexity Discovery */}
+                <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-purple-300 shadow-sm">
+                  <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <TrendingUp className="h-6 w-6 text-white" />
                   </div>
+                  <h4 className="font-bold text-purple-800 mb-2 text-sm">Perplexity Discovery</h4>
+                  <p className="text-xs text-purple-700">Finds trending products for each niche using real-time web research</p>
                 </div>
-                <div className="flex items-start">
-                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">2</span>
-                  <div>
-                    <strong>Context Enrichment:</strong> This trending data is passed directly to ChatGPT/Claude as contextual information about what's viral right now
-                  </div>
+
+                {/* Arrow 1 */}
+                <div className="hidden md:block">
+                  <ArrowRight className="h-6 w-6 text-purple-600" />
                 </div>
-                <div className="flex items-start">
-                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">3</span>
-                  <div>
-                    <strong>Intelligent Script Writing:</strong> Your AI model uses this real-time trend data to create content that references current viral products and market preferences
-                  </div>
-                </div>
-                <div className="flex items-start">
-                  <span className="bg-purple-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-3 mt-0.5">4</span>
-                  <div>
-                    <strong>Result:</strong> Scripts that feel current, relevant, and aligned with what's actually trending on social media
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-semibold text-purple-800 mb-2">Real-Time Web Research</h4>
-                <p className="text-sm text-purple-700">
-                  Unlike static databases, Perplexity accesses live web data to give you the most current trends 
-                  and opportunities as they emerge.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-purple-800 mb-2">Multi-Source Analysis</h4>
-                <p className="text-sm text-purple-700">
-                  Combines data from social media, e-commerce, news, and content platforms for comprehensive 
-                  trend intelligence.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-purple-800 mb-2">Predictive Insights</h4>
-                <p className="text-sm text-purple-700">
-                  Not just what's trending now, but what will trend next - giving you the competitive edge 
-                  to create content before topics explode.
-                </p>
-              </div>
-              <div>
-                <h4 className="font-semibold text-purple-800 mb-2">Niche-Specific Intelligence</h4>
-                <p className="text-sm text-purple-700">
-                  Tailored analysis for each niche ensures trends and products align with your specific 
-                  audience and content style.
-                </p>
-              </div>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* ScriptTok Intelligence Explanation */}
-      <Card className="mb-12 border-l-4 border-l-green-600">
-        <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
-            <BarChart3 className="h-6 w-6 mr-3 text-green-600" />
-            What Makes ScriptTok Content "Smart"?
-          </CardTitle>
-          <CardDescription>
-            Understanding the AI Model dropdown and intelligence features
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 p-6 rounded-lg mb-8">
-            <h3 className="text-lg font-semibold text-green-800 mb-4">When you see the AI Model dropdown, here's what's happening:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-white p-4 rounded-lg border border-green-200">
-                <h4 className="font-semibold text-green-700 mb-2 flex items-center">
-                  <span className="bg-green-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">🤖</span>
-                  ChatGPT (GPT-4) Option
-                </h4>
-                <p className="text-sm text-green-600">
-                  OpenAI's model enhanced with live Perplexity trend data. Great for creative, engaging content with current market awareness.
-                </p>
-              </div>
-              <div className="bg-white p-4 rounded-lg border border-blue-200">
-                <h4 className="font-semibold text-blue-700 mb-2 flex items-center">
-                  <span className="bg-blue-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs mr-2">🧠</span>
-                  Claude (Anthropic) Option
-                </h4>
-                <p className="text-sm text-blue-600">
-                  Anthropic's model enriched with viral product intelligence. Excellent for structured, persuasive content that converts.
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-              <h4 className="font-semibold text-yellow-800 mb-2">🎯 Behind Every Generation:</h4>
-              <p className="text-sm text-yellow-700">
-                Regardless of which AI model you choose, ScriptTok automatically feeds it real-time trending product data from Perplexity. 
-                This means your content isn't just well-written—it's intelligently informed about what's actually viral right now.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-              <div className="text-center p-4 bg-white border rounded-lg">
-                <TrendingUp className="h-8 w-8 text-pink-600 mx-auto mb-2" />
-                <h5 className="font-semibold text-gray-900 mb-1">Trend-Aware Scripts</h5>
-                <p className="text-xs text-gray-600">Your chosen AI knows what products are trending in your niche</p>
-              </div>
-              <div className="text-center p-4 bg-white border rounded-lg">
-                <Target className="h-8 w-8 text-purple-600 mx-auto mb-2" />
-                <h5 className="font-semibold text-gray-900 mb-1">Market Context</h5>
-                <p className="text-xs text-gray-600">Content references current viral products and competitive landscape</p>
-              </div>
-              <div className="text-center p-4 bg-white border rounded-lg">
-                <Sparkles className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <h5 className="font-semibold text-gray-900 mb-1">Timely Relevance</h5>
-                <p className="text-xs text-gray-600">Scripts feel current and aligned with social media trends</p>
-              </div>
-            </div>
-
-            {/* ScriptTok Intelligence Flow Diagram */}
-            <div className="mt-8">
-              <h3 className="text-xl font-semibold text-purple-900 mb-6 text-center">How ScriptTok Creates Smart Content</h3>
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200">
-                <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-2">
-                  
-                  {/* Step 1: Perplexity Discovery */}
-                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-purple-300 shadow-sm">
-                    <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <TrendingUp className="h-6 w-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-purple-800 mb-2 text-sm">Perplexity Discovery</h4>
-                    <p className="text-xs text-purple-700">Finds trending products for each niche using real-time web research</p>
-                  </div>
-
-                  {/* Arrow 1 */}
-                  <div className="hidden md:block">
+                <div className="md:hidden">
+                  <div className="h-6 w-6 rotate-90">
                     <ArrowRight className="h-6 w-6 text-purple-600" />
                   </div>
-                  <div className="md:hidden">
-                    <div className="h-6 w-6 rotate-90">
-                      <ArrowRight className="h-6 w-6 text-purple-600" />
-                    </div>
-                  </div>
+                </div>
 
-                  {/* Step 2: Product Selection */}
-                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-blue-300 shadow-sm">
-                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Target className="h-6 w-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-blue-800 mb-2 text-sm">Product Selection</h4>
-                    <p className="text-xs text-blue-700">You select a trending product to create content about</p>
+                {/* Step 2: Product Selection */}
+                <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-blue-300 shadow-sm">
+                  <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Target className="h-6 w-6 text-white" />
                   </div>
+                  <h4 className="font-bold text-blue-800 mb-2 text-sm">Product Selection</h4>
+                  <p className="text-xs text-blue-700">You select a trending product to create content about</p>
+                </div>
 
-                  {/* Arrow 2 */}
-                  <div className="hidden md:block">
+                {/* Arrow 2 */}
+                <div className="hidden md:block">
+                  <ArrowRight className="h-6 w-6 text-blue-600" />
+                </div>
+                <div className="md:hidden">
+                  <div className="h-6 w-6 rotate-90">
                     <ArrowRight className="h-6 w-6 text-blue-600" />
                   </div>
-                  <div className="md:hidden">
-                    <div className="h-6 w-6 rotate-90">
-                      <ArrowRight className="h-6 w-6 text-blue-600" />
-                    </div>
-                  </div>
+                </div>
 
-                  {/* Step 3: Viral Analysis */}
-                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-green-300 shadow-sm">
-                    <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Video className="h-6 w-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-green-800 mb-2 text-sm">Viral Analysis</h4>
-                    <p className="text-xs text-green-700">Perplexity analyzes TikTok and competitor viral videos for the product</p>
+                {/* Step 3: Viral Analysis */}
+                <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-green-300 shadow-sm">
+                  <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Video className="h-6 w-6 text-white" />
                   </div>
+                  <h4 className="font-bold text-green-800 mb-2 text-sm">Viral Analysis</h4>
+                  <p className="text-xs text-green-700">Perplexity analyzes TikTok and competitor viral videos for the product</p>
+                </div>
 
-                  {/* Arrow 3 */}
-                  <div className="hidden md:block">
+                {/* Arrow 3 */}
+                <div className="hidden md:block">
+                  <ArrowRight className="h-6 w-6 text-green-600" />
+                </div>
+                <div className="md:hidden">
+                  <div className="h-6 w-6 rotate-90">
                     <ArrowRight className="h-6 w-6 text-green-600" />
                   </div>
-                  <div className="md:hidden">
-                    <div className="h-6 w-6 rotate-90">
-                      <ArrowRight className="h-6 w-6 text-green-600" />
-                    </div>
-                  </div>
+                </div>
 
-                  {/* Step 4: AI Generation */}
-                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-orange-300 shadow-sm">
-                    <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Sparkles className="h-6 w-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-orange-800 mb-2 text-sm">AI Generation</h4>
-                    <p className="text-xs text-orange-700">ChatGPT/Claude creates script using all viral intelligence</p>
+                {/* Step 4: AI Generation */}
+                <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-orange-300 shadow-sm">
+                  <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <Sparkles className="h-6 w-6 text-white" />
                   </div>
+                  <h4 className="font-bold text-orange-800 mb-2 text-sm">AI Generation</h4>
+                  <p className="text-xs text-orange-700">ChatGPT/Claude creates script using all viral intelligence</p>
+                </div>
 
-                  {/* Arrow 4 */}
-                  <div className="hidden md:block">
+                {/* Arrow 4 */}
+                <div className="hidden md:block">
+                  <ArrowRight className="h-6 w-6 text-orange-600" />
+                </div>
+                <div className="md:hidden">
+                  <div className="h-6 w-6 rotate-90">
                     <ArrowRight className="h-6 w-6 text-orange-600" />
                   </div>
-                  <div className="md:hidden">
-                    <div className="h-6 w-6 rotate-90">
-                      <ArrowRight className="h-6 w-6 text-orange-600" />
-                    </div>
-                  </div>
-
-                  {/* Step 5: Viral Score Analysis */}
-                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-pink-300 shadow-sm">
-                    <div className="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <BarChart3 className="h-6 w-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-pink-800 mb-2 text-sm">Viral Score Analysis</h4>
-                    <p className="text-xs text-pink-700">AI analyzes and rates output with viral potential score</p>
-                  </div>
-
                 </div>
 
-                {/* Flow Summary */}
-                <div className="mt-6 p-4 bg-white rounded-lg border border-purple-300">
-                  <h4 className="font-bold text-purple-800 mb-2 text-center">The Result</h4>
-                  <p className="text-sm text-purple-700 text-center">
-                    You get scripts that are informed by real trending data, proven viral patterns, and optimized for maximum engagement - not just well-written generic content.
-                  </p>
+                {/* Step 5: Viral Score Analysis */}
+                <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-pink-300 shadow-sm">
+                  <div className="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                    <BarChart3 className="h-6 w-6 text-white" />
+                  </div>
+                  <h4 className="font-bold text-pink-800 mb-2 text-sm">Viral Score Analysis</h4>
+                  <p className="text-xs text-pink-700">AI analyzes and rates output with viral potential score</p>
                 </div>
+
               </div>
+
+              {/* Flow Summary */}
+              <div className="mt-6 p-4 bg-white rounded-lg border border-purple-300">
+                <h4 className="font-bold text-purple-800 mb-2 text-center">The Result</h4>
+                <p className="text-sm text-purple-700 text-center">
+                  Scripts that are informed by real trending data, proven viral patterns, and optimized for maximum engagement - not just well-written generic content.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Key Benefits */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+              <h4 className="font-semibold text-yellow-800 mb-2">🎯 Why This Matters:</h4>
+              <p className="text-sm text-yellow-700">
+                Your content isn't just well-written—it's intelligently informed about what's actually viral right now, 
+                giving you the competitive edge to create content that resonates with audiences.
+              </p>
+            </div>
+            <div className="p-4 bg-green-50 rounded-lg border border-green-200">
+              <h4 className="font-semibold text-green-800 mb-2">⚡ Smart AI Models:</h4>
+              <p className="text-sm text-green-700">
+                Both ChatGPT and Claude are enhanced with live Perplexity trend data. Choose the AI model that 
+                works best for your content style - both create trend-aware, viral content.
+              </p>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* How ScriptTok Works */}
+      {/* How to Use ScriptTok */}
       <Card className="mb-12 border-l-4 border-l-blue-600">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Play className="h-6 w-6 mr-3 text-blue-600" />
-            How ScriptTok Works
+            How to Use ScriptTok
           </CardTitle>
           <CardDescription>
             Simple 4-step workflow to viral TikTok content
@@ -536,17 +319,17 @@ const AboutPage: React.FC = () => {
                 <span className="text-white font-bold text-lg">1</span>
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Choose Your Niche</h3>
-              <p className="text-sm text-gray-600">Select from beauty, fitness, tech, fashion, food, travel, or pets</p>
+              <p className="text-sm text-gray-600">Select from 7 supported niches with specialized templates</p>
             </div>
-            
+
             <div className="text-center p-6 bg-purple-50 rounded-lg border-2 border-purple-200">
               <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-lg">2</span>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Select Templates</h3>
-              <p className="text-sm text-gray-600">Pick from viral content templates optimized for TikTok</p>
+              <h3 className="font-semibold text-gray-900 mb-2">Select Product & Template</h3>
+              <p className="text-sm text-gray-600">Pick trending products and viral content templates</p>
             </div>
-            
+
             <div className="text-center p-6 bg-green-50 rounded-lg border-2 border-green-200">
               <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-lg">3</span>
@@ -554,12 +337,12 @@ const AboutPage: React.FC = () => {
               <h3 className="font-semibold text-gray-900 mb-2">Generate Content</h3>
               <p className="text-sm text-gray-600">AI creates viral-ready scripts and captions instantly</p>
             </div>
-            
+
             <div className="text-center p-6 bg-orange-50 rounded-lg border-2 border-orange-200">
               <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-lg">4</span>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Review & Save</h3>
+              <h3 className="font-semibold text-gray-900 mb-2">Review & Optimize</h3>
               <p className="text-sm text-gray-600">Get viral scores, save to history, and improve with AI feedback</p>
             </div>
           </div>
@@ -578,7 +361,7 @@ const AboutPage: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
             {supportedNiches.map((niche, index) => (
               <div key={index} className="flex items-center p-3 bg-green-50 rounded-lg border border-green-200">
                 <Star className="h-4 w-4 text-green-600 mr-2 flex-shrink-0" />
@@ -586,7 +369,7 @@ const AboutPage: React.FC = () => {
               </div>
             ))}
           </div>
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          <div className="p-4 bg-gray-50 rounded-lg">
             <p className="text-sm text-gray-700">
               <strong>Why niches matter:</strong> Each niche has unique audience preferences, trending formats, 
               and viral patterns. Our AI is trained on successful content from each category to ensure 
@@ -596,12 +379,12 @@ const AboutPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* Quick Navigation Grid */}
+      {/* ScriptTok Features Navigation */}
       <Card className="mb-12">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Grid3X3 className="h-6 w-6 mr-3 text-purple-600" />
-            ScriptTok Features
+            Explore ScriptTok Features
           </CardTitle>
           <CardDescription>
             Navigate to any ScriptTok feature or page
@@ -665,7 +448,7 @@ const AboutPage: React.FC = () => {
                 </Button>
               </Link>
             </div>
-            
+
             <div className="text-center">
               <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold">2</span>
@@ -680,7 +463,7 @@ const AboutPage: React.FC = () => {
                 </Button>
               </Link>
             </div>
-            
+
             <div className="text-center">
               <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold">3</span>
