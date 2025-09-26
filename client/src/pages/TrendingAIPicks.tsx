@@ -76,6 +76,12 @@ interface TrendingProduct {
   perplexityNotes?: string;
   createdAt?: string;
   fetchedAt?: string;
+  // Pricing fields
+  price?: string;
+  priceNumeric?: number;
+  priceCurrency?: string;
+  priceType?: string;
+  asin?: string;
 }
 
 interface FavoriteProduct {
@@ -406,6 +412,34 @@ export default function TrendingAIPicks() {
                 <Badge variant="outline" className="text-xs">
                   {product.dataSource || product.source}
                 </Badge>
+              </div>
+              
+              {/* Pricing Information */}
+              <div className="mt-2 flex items-center gap-2">
+                <DollarSign className="h-4 w-4 text-green-600" />
+                <div className="text-sm">
+                  {product.price ? (
+                    <div className="flex items-center gap-2">
+                      <span className="font-semibold text-green-700">
+                        {product.price}
+                      </span>
+                      {product.asin && (
+                        <Badge variant="outline" className="text-xs bg-blue-50 text-blue-700 border-blue-300">
+                          ASIN: {product.asin}
+                        </Badge>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium text-gray-600">
+                        Price: Not available
+                      </span>
+                      <span className="text-xs text-gray-500">
+                        (Enhanced pricing coming soon)
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               {product.reason && (
