@@ -324,11 +324,12 @@ const GenerateContent = () => {
   };
 
   // Generate TikTok-optimized caption
-  const generatePlatformCaption = (platform: string): string => {
-    if (!generatedContent || !selectedProduct) return '';
+  const generatePlatformCaption = (platform: string, contentData?: GeneratedContent): string => {
+    const content = contentData || generatedContent;
+    if (!content || !selectedProduct) return '';
 
     const productName = selectedProduct;
-    const mainContent = generatedContent.content;
+    const mainContent = content.content;
     
     // Extract first sentence or create a short description
     const shortDesc = mainContent.split('.')[0] + (mainContent.split('.').length > 1 ? '.' : '');
@@ -341,7 +342,7 @@ const GenerateContent = () => {
     };
 
     // Create caption components
-    const hook = generatedContent.hook || generateDynamicHook(productName, selectedNiche);
+    const hook = content.hook || generateDynamicHook(productName, selectedNiche);
     const description = shortDesc.length > config.maxLength ? 
       shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
     
@@ -435,20 +436,37 @@ ${config.hashtags.join(' ')}`;
 
     const mainContent = contentData.content;
     
-    // Extract first sentence or create a short description
-    const shortDesc = mainContent.split('.')[0] + (mainContent.split('.').length > 1 ? '.' : '');
+    // Create a more distinct caption that's different from the script
+    // Use the first two sentences but rephrase them more casually
+    const sentences = mainContent.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const firstSentence = sentences[0]?.trim() || '';
     
     // TikTok configuration only
     const config = {
-      cta: "Tap the link to grab it now! 👆",
-      hashtags: ["#fyp", "#viral", `#${niche}`, "#trending"],
-      maxLength: 150
+      cta: "Link in bio! 🔗✨",
+      hashtags: ["#fyp", "#viral", `#${niche}`, "#trending", "#musthave"],
+      maxLength: 180
     };
 
-    // Create caption components
+    // Create a more social media friendly hook
     const hook = contentData.hook || generateDynamicHook(productName, niche);
-    const description = shortDesc.length > config.maxLength ? 
-      shortDesc.substring(0, config.maxLength - 3) + '...' : shortDesc;
+    
+    // Create a condensed, social-media style description
+    let description = '';
+    if (firstSentence) {
+      // Make it more social media friendly
+      description = firstSentence
+        .replace(/^(Meet|Introducing|Discover|Check out|This is)/i, 'Obsessed with')
+        .replace(/the ultimate/, 'this amazing')
+        .replace(/game-changer/i, 'life changer');
+      
+      // Ensure it's not too long
+      if (description.length > config.maxLength - hook.length - config.cta.length - config.hashtags.join(' ').length - 10) {
+        description = description.substring(0, config.maxLength - hook.length - config.cta.length - config.hashtags.join(' ').length - 10) + '...';
+      }
+    } else {
+      description = `This ${productName} is incredible! Perfect for anyone in the ${niche} space.`;
+    }
     
     const caption = `${hook}
 
@@ -1797,7 +1815,7 @@ ${config.hashtags.join(' ')}`;
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok'), 'Claude TikTok caption')}
+                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok', comparisonResults.claude), 'Claude TikTok caption')}
                               className="text-xs bg-white text-orange-600 hover:bg-gray-100"
                             >
                               <Copy className="h-3 w-3 mr-1" />
@@ -1805,7 +1823,7 @@ ${config.hashtags.join(' ')}`;
                             </Button>
                           </div>
                           <div className="bg-white p-4 rounded border border-gray-300 text-sm whitespace-pre-wrap text-gray-800 leading-relaxed max-h-40 overflow-y-auto">
-                            {generatePlatformCaption('tiktok')}
+                            {generatePlatformCaption('tiktok', comparisonResults.claude)}
                           </div>
                         </div>
                       </div>
@@ -1844,7 +1862,7 @@ ${config.hashtags.join(' ')}`;
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok'), 'ChatGPT TikTok caption')}
+                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok', comparisonResults.chatgpt), 'ChatGPT TikTok caption')}
                               className="text-xs bg-white text-green-600 hover:bg-gray-100"
                             >
                               <Copy className="h-3 w-3 mr-1" />
@@ -1852,7 +1870,7 @@ ${config.hashtags.join(' ')}`;
                             </Button>
                           </div>
                           <div className="bg-white p-4 rounded border border-gray-300 text-sm whitespace-pre-wrap text-gray-800 leading-relaxed max-h-40 overflow-y-auto">
-                            {generatePlatformCaption('tiktok')}
+                            {generatePlatformCaption('tiktok', comparisonResults.chatgpt)}
                           </div>
                         </div>
                       </div>

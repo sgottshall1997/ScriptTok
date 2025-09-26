@@ -392,11 +392,11 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       }
 
       const result = await generateContent(
-        product, 
-        templateType, 
-        tone, 
-        trendingProducts, 
-        niche, 
+        product,
+        templateType,
+        tone,
+        trendingProducts,
+        niche,
         actualModelId, // Use mapped AI model ID
         enhancedViralInspiration, // Pass enhanced viral inspiration with improvements
         smartStyleRecommendations // Pass smart style recommendations
@@ -426,11 +426,11 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
           const fallbackModelId = validatedData.aiModel === 'claude' ? 'claude-3-haiku' : 'gpt-3.5-turbo';
 
           const fallbackResult = await generateContent(
-            product, 
-            templateType, 
-            tone, 
-            trendingProducts, 
-            niche, 
+            product,
+            templateType,
+            tone,
+            trendingProducts,
+            niche,
             fallbackModelId, // Use proper fallback model ID
             enhancedViralInspiration // Use enhanced viral inspiration with improvements
           );
@@ -508,10 +508,10 @@ Experience the difference today! #${niche} #trending`;
     // }
 
     // Store in cache with optimized parameters
-    contentCache.set(cacheKey, { 
-      content, 
+    contentCache.set(cacheKey, {
+      content,
       fallbackLevel,
-      generatedAt: Date.now() 
+      generatedAt: Date.now()
     });
 
     console.log(`Cached new content for ${product}, template: ${templateType}, tone: ${tone}`);
@@ -528,22 +528,31 @@ Experience the difference today! #${niche} #trending`;
     // Prepare webhook-ready platform data for Make.com automation
     const webhookData = [];
     if (platformContent && platformContent.socialCaptions) {
-      for (const [platform, content] of Object.entries(platformContent.socialCaptions)) {
+      for (const [platform, contentData] of Object.entries(platformContent.socialCaptions)) {
+        // Generate TikTok caption for saving to history
+        const tiktokCaption = generatePlatformCaptionForSaving('tiktok', contentData, product, '', niche);
+        const platformCaptions = {
+          tiktok: tiktokCaption,
+          tiktokCaption: tiktokCaption // Keep legacy format for backward compatibility
+        };
+
         webhookData.push({
           platform,
           contentType,
-          caption: content.caption,
-          postInstructions: content.postInstructions,
+          caption: contentData.caption,
+          postInstructions: contentData.postInstructions,
           videoScript: platformContent.videoScript || null,
           photoDescription: platformContent.photoDescription || null,
           product,
           niche,
           tone,
           templateType,
-          hashtags: extractHashtags(content.caption),
+          hashtags: extractHashtags(contentData.caption),
           mediaUrl: null, // Ready for user to add media URL
           scheduledTime: null, // Ready for scheduling
-          makeWebhookReady: true
+          makeWebhookReady: true,
+          // Include platform-specific captions here
+          platformCaptions: platformCaptions
         });
       }
     }
