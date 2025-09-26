@@ -689,7 +689,7 @@ function getFallbackTrends(niche: Niche, reason: 'no_api_key' | 'api_error' | 'v
   };
 }
 
-// Enhanced validation function with strict trend structure and content validation
+// Enhanced validation function with improved flexibility for trend structure and content validation
 function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   isComplete: boolean;
   missingCategories: string[];
@@ -698,7 +698,7 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   details: Record<string, any>;
 } {
   const requiredCategories = ['hot', 'rising', 'upcoming', 'declining'] as const;
-  const minTrendsPerCategory = 1;
+  const minTrendsPerCategory = 2; // Expect at least 2 trends per category
   
   const missingCategories: string[] = [];
   const insufficientCategories: string[] = [];
@@ -717,7 +717,7 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
 
     details[category].count = categoryData.length;
 
-    // Validate each trend in the category
+    // Validate each trend in the category with more flexible validation
     let validTrendsCount = 0;
     for (let i = 0; i < categoryData.length; i++) {
       const trend = categoryData[i];
@@ -726,8 +726,14 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
       if (trendValidation.isValid) {
         validTrendsCount++;
       } else {
-        invalidTrends.push(`${category}[${i}]: ${trendValidation.issues.join(', ')}`);
-        details[category].issues.push(`Trend ${i}: ${trendValidation.issues.join(', ')}`);
+        // More lenient - count trends as valid if they have basic structure
+        if (trend && trend.name && (trend.why || trend.reason || trend.opportunity || trend.volume)) {
+          validTrendsCount++;
+          console.log(`⚠️ ${category}[${i}] has minor issues but counting as valid: ${trendValidation.issues.join(', ')}`);
+        } else {
+          invalidTrends.push(`${category}[${i}]: ${trendValidation.issues.join(', ')}`);
+          details[category].issues.push(`Trend ${i}: ${trendValidation.issues.join(', ')}`);
+        }
       }
     }
 
@@ -739,22 +745,24 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
     }
   }
 
-  const isComplete = missingCategories.length === 0 && 
-                    insufficientCategories.length === 0 && 
-                    invalidTrends.length === 0;
+  // More lenient completion check - require at least some trends in each category
+  const hasAllCategories = missingCategories.length === 0;
+  const hasMinimumTrends = insufficientCategories.length <= 1; // Allow up to 1 category to be short
+  const isComplete = hasAllCategories && hasMinimumTrends;
 
   // Enhanced logging
-  if (!isComplete) {
-    console.log(`🔍 Validation failed for ${niche || 'unknown niche'}:`, {
-      missing: missingCategories,
-      insufficient: insufficientCategories,
-      invalid: invalidTrends.slice(0, 3), // Show first 3 issues
-      summary: Object.keys(details).map(cat => 
-        `${cat}: ${details[cat].valid}/${details[cat].count} valid`
-      ).join(', ')
-    });
-  } else {
-    console.log(`✅ Validation passed for ${niche || 'unknown niche'}: All categories complete`);
+  console.log(`🔍 Validation for ${niche || 'unknown niche'}:`, {
+    complete: isComplete,
+    missing: missingCategories,
+    insufficient: insufficientCategories,
+    totalInvalid: invalidTrends.length,
+    summary: Object.keys(details).map(cat => 
+      `${cat}: ${details[cat].valid}/${details[cat].count} valid`
+    ).join(', ')
+  });
+  
+  if (isComplete) {
+    console.log(`✅ Validation passed for ${niche || 'unknown niche'}: All categories have sufficient trends`);
   }
   
   return {
@@ -766,7 +774,7 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   };
 }
 
-// Validate individual trend structure and content
+// Validate individual trend structure and content with improved flexibility
 function validateSingleTrend(trend: any, category: string): {
   isValid: boolean;
   issues: string[];
@@ -779,59 +787,83 @@ function validateSingleTrend(trend: any, category: string): {
     return { isValid: false, issues };
   }
 
-  // Required name field
-  if (!trend.name || typeof trend.name !== 'string' || trend.name.trim().length < 3) {
+  // Required name field - more flexible
+  if (!trend.name || typeof trend.name !== 'string' || trend.name.trim().length < 2) {
     issues.push('Invalid or missing name');
   }
 
-  // Category-specific field validation (more flexible)
+  // Category-specific field validation - much more flexible
+  let hasCategorySpecificData = false;
   switch (category) {
     case 'hot':
-      if (!trend.volume && !trend.why && !trend.reason) {
-        issues.push('Missing volume, why, or reason fields for hot trend');
+      if (trend.volume || trend.why || trend.reason) {
+        hasCategorySpecificData = true;
+      }
+      if (!hasCategorySpecificData) {
+        issues.push('Missing any descriptive fields for hot trend');
       }
       break;
     case 'rising':
-      if (!trend.growth && !trend.opportunity && !trend.why) {
-        issues.push('Missing growth, opportunity, or why fields for rising trend');
+      if (trend.growth || trend.opportunity || trend.why) {
+        hasCategorySpecificData = true;
+      }
+      if (!hasCategorySpecificData) {
+        issues.push('Missing any descriptive fields for rising trend');
       }
       break;
     case 'upcoming':
-      if (!trend.when && !trend.prepNow && !trend.why) {
-        issues.push('Missing when, prepNow, or why fields for upcoming trend');
+      if (trend.when || trend.prepNow || trend.why) {
+        hasCategorySpecificData = true;
+      }
+      if (!hasCategorySpecificData) {
+        issues.push('Missing any descriptive fields for upcoming trend');
       }
       break;
     case 'declining':
-      if (!trend.reason && !trend.why) {
-        issues.push('Missing reason or why fields for declining trend');
+      if (trend.reason || trend.why) {
+        hasCategorySpecificData = true;
+      }
+      if (!hasCategorySpecificData) {
+        issues.push('Missing any descriptive fields for declining trend');
       }
       break;
   }
 
-  // Products validation
-  if (!trend.products || !Array.isArray(trend.products) || trend.products.length === 0) {
-    issues.push('Missing or empty products array');
+  // Products validation - more flexible
+  if (!trend.products || !Array.isArray(trend.products)) {
+    issues.push('Missing products array');
+  } else if (trend.products.length === 0) {
+    issues.push('Empty products array');
   } else {
-    // Validate each product
-    const validProducts = trend.products.filter((product: any) => 
-      product && 
-      typeof product.name === 'string' && 
-      product.name.length > 3 &&
-      typeof product.price === 'string' &&
-      product.price.includes('$') &&
-      typeof product.priceNumeric === 'number' &&
-      product.priceNumeric > 0
-    );
+    // Validate each product more flexibly
+    const validProducts = trend.products.filter((product: any) => {
+      if (!product || typeof product !== 'object') return false;
+      if (!product.name || typeof product.name !== 'string' || product.name.length < 3) return false;
+      
+      // Be flexible with pricing - accept various formats
+      const hasPrice = product.price && (
+        typeof product.price === 'string' ||
+        typeof product.price === 'number'
+      );
+      
+      const hasPriceNumeric = typeof product.priceNumeric === 'number' && product.priceNumeric > 0;
+      
+      return hasPrice || hasPriceNumeric;
+    });
 
     if (validProducts.length === 0) {
       issues.push('No valid products found');
-    } else if (validProducts.length < trend.products.length) {
-      issues.push(`${trend.products.length - validProducts.length} invalid products`);
+    } else if (validProducts.length < trend.products.length && validProducts.length < Math.ceil(trend.products.length * 0.5)) {
+      issues.push(`Too many invalid products: ${trend.products.length - validProducts.length} of ${trend.products.length}`);
     }
   }
 
+  // Consider valid if it has basic structure and at least one good field
+  const hasBasicStructure = trend.name && (trend.why || trend.reason || trend.volume || trend.growth || trend.when || trend.opportunity || trend.prepNow);
+  const isValid = hasBasicStructure && issues.length <= 2; // Allow minor issues
+
   return {
-    isValid: issues.length === 0,
+    isValid,
     issues
   };
 }
@@ -919,10 +951,11 @@ function supplementTrendData(trends: TrendForecast, niche: Niche): TrendForecast
   };
 }
 
-// Enhanced API call with retry and validation logic
+// Enhanced API call with aggressive retry and validation logic
 async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
-  const maxRetries = 2;
+  const maxRetries = 3; // Increased retries
   let lastError: any = null;
+  let bestResult: any = null;
 
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
@@ -935,8 +968,13 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
         // Validate completeness
         const validation = validateTrendCompleteness(result, niche);
         
+        // Keep track of the best result so far
+        if (!bestResult || validation.missingCategories.length < (validateTrendCompleteness(bestResult, niche).missingCategories.length)) {
+          bestResult = result;
+        }
+        
         if (validation.isComplete) {
-          console.log(`✅ Complete trend data received for ${niche}`);
+          console.log(`✅ Complete trend data received for ${niche} on attempt ${attempt}`);
           return {
             ...result,
             dataSource: {
@@ -950,58 +988,86 @@ async function getTrendForecastWithRetry(niche: Niche): Promise<TrendForecast> {
           };
         }
         
-        console.log(`⚠️ Incomplete data for ${niche}:`, {
+        console.log(`⚠️ Incomplete data for ${niche} (attempt ${attempt}):`, {
           missing: validation.missingCategories,
-          insufficient: validation.insufficientCategories
+          insufficient: validation.insufficientCategories,
+          totalTrends: Object.values(result).flat().length
         });
         
-        // If this is our last attempt or we have partial data, supplement it
-        if (attempt === maxRetries || validation.missingCategories.length < 2) {
+        // If we have at least some categories with multiple trends, this might be good enough
+        const categoriesWithMultipleTrends = Object.entries(result).filter(([key, value]) => 
+          Array.isArray(value) && value.length >= 2
+        ).length;
+        
+        if (categoriesWithMultipleTrends >= 2 && attempt >= 2) {
+          console.log(`🔧 Using partial but decent result for ${niche} (${categoriesWithMultipleTrends} categories have 2+ trends)`);
           const supplemented = supplementTrendData(result, niche);
-          console.log(`🔧 Supplemented trend data for ${niche}`);
-          // supplementTrendData now handles dataSource metadata, just return it
           return supplemented;
         }
         
-        // Otherwise, try again with enhanced prompt
-        continue;
+        // Wait a bit between retries
+        if (attempt < maxRetries) {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
       }
     } catch (error) {
       console.error(`❌ Trend forecast attempt ${attempt} failed for ${niche}:`, error);
       lastError = error;
+      
+      // Wait a bit between retries on errors
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+      }
     }
   }
 
-  // If all retries failed, use complete fallback data
-  console.log(`🛡️ Using complete fallback data for ${niche} after ${maxRetries} attempts`);
+  // If we have any result, supplement it rather than using complete fallback
+  if (bestResult) {
+    console.log(`🔧 Using best partial result for ${niche} after ${maxRetries} attempts`);
+    const supplemented = supplementTrendData(bestResult, niche);
+    return supplemented;
+  }
+
+  // If all retries failed completely, use complete fallback data
+  console.log(`🛡️ Using complete fallback data for ${niche} after ${maxRetries} failed attempts`);
   return getFallbackTrends(niche, 'api_error');
 }
 
 // Enhanced API calling function with better prompting
 async function callPerplexityAPI(niche: Niche): Promise<TrendForecast | null> {
-  const enhancedPrompt = `You are a TikTok viral trend expert analyzing ${niche} niche trends. 
+  const enhancedPrompt = `Analyze trending ${niche} products on TikTok/Instagram. You MUST provide exactly 2-3 trends for each of the 4 mandatory categories.
 
-CRITICAL REQUIREMENTS:
-- You MUST provide exactly 4 categories: hot, rising, upcoming, declining
-- Each category MUST contain minimum 2-3 comprehensive trends
-- Each trend MUST include relevant product recommendations with pricing
-- Your response MUST be valid JSON only, no explanation text
-
-Current niche: ${niche}
-
-For ${niche} trends, provide a complete JSON response with this exact structure:
+CRITICAL: Respond with ONLY this exact JSON structure - no text before or after:
 
 {
   "hot": [
     {
-      "name": "trend name",
-      "volume": "X videos this week", 
-      "why": "brief explanation",
+      "name": "trending topic name",
+      "volume": "X videos this week",
+      "why": "why it's viral now",
       "products": [
         {
-          "name": "product name",
+          "name": "Specific Product Name",
           "price": "$XX",
-          "asin": "B0XXXXXXXX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        },
+        {
+          "name": "Another Product Name",
+          "price": "$XX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    },
+    {
+      "name": "second hot trend",
+      "volume": "X videos this week",
+      "why": "why it's viral now", 
+      "products": [
+        {
+          "name": "Product Name",
+          "price": "$XX",
           "priceNumeric": XX.XX,
           "priceType": "one-time"
         }
@@ -1010,13 +1076,27 @@ For ${niche} trends, provide a complete JSON response with this exact structure:
   ],
   "rising": [
     {
-      "name": "trend name",
-      "growth": "+X%", 
-      "opportunity": "explanation of opportunity",
+      "name": "growing trend name",
+      "growth": "+XXX%",
+      "opportunity": "why now is the time",
       "why": "brief explanation",
       "products": [
         {
-          "name": "product name",
+          "name": "Product Name",
+          "price": "$XX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    },
+    {
+      "name": "second rising trend",
+      "growth": "+XXX%",
+      "opportunity": "opportunity description",
+      "why": "brief explanation",
+      "products": [
+        {
+          "name": "Product Name",
           "price": "$XX",
           "priceNumeric": XX.XX,
           "priceType": "one-time"
@@ -1026,13 +1106,27 @@ For ${niche} trends, provide a complete JSON response with this exact structure:
   ],
   "upcoming": [
     {
-      "name": "trend name",
-      "when": "timing information", 
+      "name": "future trend name",
+      "when": "timing prediction",
+      "prepNow": "what to do now",
+      "why": "brief explanation",
+      "products": [
+        {
+          "name": "Product Name",
+          "price": "$XX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    },
+    {
+      "name": "second upcoming trend",
+      "when": "timing prediction",
       "prepNow": "preparation advice",
       "why": "brief explanation",
       "products": [
         {
-          "name": "product name",
+          "name": "Product Name",
           "price": "$XX",
           "priceNumeric": XX.XX,
           "priceType": "one-time"
@@ -1042,12 +1136,25 @@ For ${niche} trends, provide a complete JSON response with this exact structure:
   ],
   "declining": [
     {
-      "name": "trend name",
+      "name": "declining trend name",
       "reason": "why it's declining",
       "why": "brief explanation",
       "products": [
         {
-          "name": "product name",
+          "name": "Product Name",
+          "price": "$XX",
+          "priceNumeric": XX.XX,
+          "priceType": "one-time"
+        }
+      ]
+    },
+    {
+      "name": "second declining trend",
+      "reason": "why it's declining",
+      "why": "brief explanation",
+      "products": [
+        {
+          "name": "Product Name",
           "price": "$XX",
           "priceNumeric": XX.XX,
           "priceType": "one-time"
@@ -1057,7 +1164,7 @@ For ${niche} trends, provide a complete JSON response with this exact structure:
   ]
 }
 
-Include 2-3 trends minimum per category. ALL 4 CATEGORIES ARE MANDATORY.`;
+ALL 4 CATEGORIES REQUIRED. 2-3 trends per category. JSON only.`;
 
   try {
     const response = await fetch('https://api.perplexity.ai/chat/completions', {
@@ -1071,16 +1178,16 @@ Include 2-3 trends minimum per category. ALL 4 CATEGORIES ARE MANDATORY.`;
         messages: [
           {
             role: 'system',
-            content: 'You are a TikTok trend analysis expert. Respond only with valid JSON data, no additional text or explanations.'
+            content: 'You are a TikTok trend analysis expert specializing in viral product trends. You must respond with complete JSON data containing exactly 4 categories with multiple trends each. Never provide explanations or incomplete data.'
           },
           {
             role: 'user',
             content: enhancedPrompt
           }
         ],
-        temperature: 0.1,
-        max_tokens: 2000,
-        top_p: 0.8,
+        temperature: 0.2,
+        max_tokens: 3000,
+        top_p: 0.9,
         search_domain_filter: ["tiktok.com", "instagram.com", "amazon.com"],
         return_images: false,
         return_related_questions: false,
@@ -1090,6 +1197,8 @@ Include 2-3 trends minimum per category. ALL 4 CATEGORIES ARE MANDATORY.`;
     });
 
     if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Perplexity API error for ${niche}:`, response.status, errorText);
       throw new Error(`Perplexity API error: ${response.status} ${response.statusText}`);
     }
 
@@ -1100,24 +1209,54 @@ Include 2-3 trends minimum per category. ALL 4 CATEGORIES ARE MANDATORY.`;
       throw new Error('No content received from Perplexity API');
     }
 
+    console.log(`🔍 Raw Perplexity response for ${niche}:`, content.substring(0, 200) + '...');
+
     // Enhanced JSON parsing with better error handling
     try {
-      // Clean the content in case there are markdown code blocks
-      const cleanedContent = content.replace(/```json\n?|\n?```/g, '').trim();
+      // Clean the content in case there are markdown code blocks or extra text
+      let cleanedContent = content.trim();
+      
+      // Remove markdown code blocks
+      cleanedContent = cleanedContent.replace(/```json\n?|\n?```/g, '');
+      
+      // Find JSON object if there's extra text
+      const jsonMatch = cleanedContent.match(/\{[\s\S]*\}/);
+      if (jsonMatch) {
+        cleanedContent = jsonMatch[0];
+      }
+      
       const parsed = JSON.parse(cleanedContent);
       
-      // Basic structure validation
+      // Enhanced validation - ensure we have all categories with content
       if (typeof parsed === 'object' && parsed !== null) {
+        const requiredCategories = ['hot', 'rising', 'upcoming', 'declining'];
+        const missingCategories = requiredCategories.filter(cat => 
+          !parsed[cat] || !Array.isArray(parsed[cat]) || parsed[cat].length === 0
+        );
+        
+        if (missingCategories.length > 0) {
+          console.warn(`⚠️ Missing/empty categories in ${niche} response: ${missingCategories.join(', ')}`);
+          // Don't throw error, let validation handle it
+        }
+        
+        console.log(`✅ Parsed ${niche} trends:`, {
+          hot: parsed.hot?.length || 0,
+          rising: parsed.rising?.length || 0,
+          upcoming: parsed.upcoming?.length || 0,
+          declining: parsed.declining?.length || 0
+        });
+        
         return parsed as TrendForecast;
       } else {
         throw new Error('Invalid JSON structure received');
       }
     } catch (parseError) {
-      console.error('JSON parsing error:', parseError);
+      console.error(`JSON parsing error for ${niche}:`, parseError);
+      console.error(`Content that failed to parse:`, content);
       throw new Error(`Failed to parse API response as JSON: ${parseError}`);
     }
   } catch (error) {
-    console.error('Perplexity API call failed:', error);
+    console.error(`Perplexity API call failed for ${niche}:`, error);
     throw error;
   }
 }
