@@ -271,6 +271,49 @@ function TrendCard({
           <Badge variant="outline" className={`mt-2 ${style.badge}`}>
             {item.volume || item.growth || item.when || 'Declining'}
           </Badge>
+          
+          {/* Product Details */}
+          {item.products && item.products.length > 0 && (
+            <div className="mt-3 space-y-2">
+              <h6 className="text-xs font-medium text-gray-500 uppercase tracking-wide">
+                Featured Products:
+              </h6>
+              {item.products.map((product: any, idx: number) => (
+                <div 
+                  key={idx} 
+                  className="flex items-center justify-between p-2 bg-gray-50 rounded border cursor-pointer hover:bg-gray-100 transition-colors"
+                  onClick={() => onProductClick(product.name, niche)}
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-800 line-clamp-1">
+                      {product.name}
+                    </p>
+                    {product.asin && (
+                      <p className="text-xs text-gray-500">
+                        ASIN: {product.asin}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 ml-2">
+                    <span className={`text-sm font-semibold ${style.title}`}>
+                      {product.price}
+                    </span>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      className={`text-xs px-2 py-1 h-auto ${style.badge} hover:bg-opacity-20`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onProductClick(product.name, niche);
+                      }}
+                    >
+                      Generate
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         {type !== 'declining' && (
           <Button 
