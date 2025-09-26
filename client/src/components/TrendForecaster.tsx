@@ -212,45 +212,91 @@ function TrendCategories({
     );
   }
 
+  // Find the first tab with data, fallback to "hot"
+  const findFirstTabWithData = () => {
+    const trends = forecast.trends || {};
+    if (trends.hot?.length > 0) return "hot";
+    if (trends.rising?.length > 0) return "rising";
+    if (trends.upcoming?.length > 0) return "upcoming";
+    if (trends.declining?.length > 0) return "declining";
+    return "hot";
+  };
+
+  const getTrendCount = (category: string) => {
+    return forecast.trends?.[category]?.length || 0;
+  };
+
   return (
-    <Tabs defaultValue="hot" className="w-full">
+    <Tabs defaultValue={findFirstTabWithData()} className="w-full">
       <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="hot">
-          <Flame className="h-4 w-4 mr-1" /> Hot
+          <Flame className="h-4 w-4 mr-1" /> Hot {getTrendCount('hot') > 0 && <span className="ml-1 text-xs bg-red-100 text-red-600 px-1 rounded">({getTrendCount('hot')})</span>}
         </TabsTrigger>
         <TabsTrigger value="rising">
-          <TrendingUp className="h-4 w-4 mr-1" /> Rising
+          <TrendingUp className="h-4 w-4 mr-1" /> Rising {getTrendCount('rising') > 0 && <span className="ml-1 text-xs bg-green-100 text-green-600 px-1 rounded">({getTrendCount('rising')})</span>}
         </TabsTrigger>
         <TabsTrigger value="upcoming">
-          <Clock className="h-4 w-4 mr-1" /> Upcoming
+          <Clock className="h-4 w-4 mr-1" /> Upcoming {getTrendCount('upcoming') > 0 && <span className="ml-1 text-xs bg-blue-100 text-blue-600 px-1 rounded">({getTrendCount('upcoming')})</span>}
         </TabsTrigger>
         <TabsTrigger value="declining">
-          <TrendingDown className="h-4 w-4 mr-1" /> Avoid
+          <TrendingDown className="h-4 w-4 mr-1" /> Avoid {getTrendCount('declining') > 0 && <span className="ml-1 text-xs bg-gray-100 text-gray-600 px-1 rounded">({getTrendCount('declining')})</span>}
         </TabsTrigger>
       </TabsList>
 
       <TabsContent value="hot" className="space-y-3 mt-4">
-        {forecast.trends?.hot?.map((item: any, i: number) => (
-          <TrendCard key={i} item={item} type="hot" niche={niche} onProductClick={onProductClick} />
-        ))}
+        {forecast.trends?.hot?.length > 0 ? (
+          forecast.trends.hot.map((item: any, i: number) => (
+            <TrendCard key={i} item={item} type="hot" niche={niche} onProductClick={onProductClick} />
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <Flame className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p className="font-medium">No hot trends right now</p>
+            <p className="text-xs mt-1">Check other tabs for available trends</p>
+          </div>
+        )}
       </TabsContent>
 
       <TabsContent value="rising" className="space-y-3 mt-4">
-        {forecast.trends?.rising?.map((item: any, i: number) => (
-          <TrendCard key={i} item={item} type="rising" niche={niche} onProductClick={onProductClick} />
-        ))}
+        {forecast.trends?.rising?.length > 0 ? (
+          forecast.trends.rising.map((item: any, i: number) => (
+            <TrendCard key={i} item={item} type="rising" niche={niche} onProductClick={onProductClick} />
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p className="font-medium">No rising trends detected</p>
+            <p className="text-xs mt-1">Check other tabs for available trends</p>
+          </div>
+        )}
       </TabsContent>
 
       <TabsContent value="upcoming" className="space-y-3 mt-4">
-        {forecast.trends?.upcoming?.map((item: any, i: number) => (
-          <TrendCard key={i} item={item} type="upcoming" niche={niche} onProductClick={onProductClick} />
-        ))}
+        {forecast.trends?.upcoming?.length > 0 ? (
+          forecast.trends.upcoming.map((item: any, i: number) => (
+            <TrendCard key={i} item={item} type="upcoming" niche={niche} onProductClick={onProductClick} />
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p className="font-medium">No upcoming trends found</p>
+            <p className="text-xs mt-1">Check other tabs for available trends</p>
+          </div>
+        )}
       </TabsContent>
 
       <TabsContent value="declining" className="space-y-3 mt-4">
-        {forecast.trends?.declining?.map((item: any, i: number) => (
-          <TrendCard key={i} item={item} type="declining" niche={niche} onProductClick={onProductClick} />
-        ))}
+        {forecast.trends?.declining?.length > 0 ? (
+          forecast.trends.declining.map((item: any, i: number) => (
+            <TrendCard key={i} item={item} type="declining" niche={niche} onProductClick={onProductClick} />
+          ))
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <TrendingDown className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <p className="font-medium">No declining trends to avoid</p>
+            <p className="text-xs mt-1">Check other tabs for available trends</p>
+          </div>
+        )}
       </TabsContent>
     </Tabs>
   );
