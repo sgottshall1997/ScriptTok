@@ -73,29 +73,30 @@ export const glowBotSections: GlowBotSection[] = [
   // Core
   {
     name: "Dashboard",
-    description: "Your main command center for monitoring content performance, trending products, and platform overview.",
+    description: "Your streamlined command center for viral content creation, trend discovery, and performance tracking.",
     icon: Home,
     path: "/",
     category: "Core",
-    whatItDoes: "Provides a comprehensive overview of your content generation activities, performance metrics, trending products, and quick access to all major features. Displays key statistics, recent activity, and personalized recommendations.",
-    setupRequirements: ["No setup required", "Automatically populated with your content data"],
+    whatItDoes: "Serves as your central hub for discovering viral trends, generating content, and accessing key tools. Features the comprehensive Trend Forecaster, AI-powered trending picks from multiple sources, and quick access to content generation and analytics tools.",
+    setupRequirements: ["No setup required", "Automatically populated with trending data"],
     usageInstructions: [
-      "Access from sidebar navigation or by visiting the home page",
-      "Review trending products and content performance metrics",
-      "Use quick action buttons to generate content or access tools",
-      "Monitor your content generation statistics and recent activity"
+      "Explore trends using the comprehensive Trend Forecaster across all 7 niches",
+      "Switch between Perplexity AI and Amazon data sources for trending products",
+      "Use trending products to generate viral content with one-click navigation",
+      "Access Unified Content Generator and Content History via quick action buttons",
+      "Review product insights and filter by niche to find your target opportunities"
     ],
     relatedLinks: [
+      { name: "Unified Generator", path: "/unified-generator" },
       { name: "Content History", path: "/content-history" },
-      { name: "Analytics Dashboard", path: "/analytics" },
-      { name: "Unified Generator", path: "/unified-generator" }
+      { name: "AI Trending Picks", path: "/trending-ai-picks" }
     ],
     notes: [
-      "Dashboard data refreshes automatically",
-      "Trending products are updated daily via Perplexity automation",
-      "Performance metrics are calculated in real-time"
+      "Trend Forecaster provides real-time insights with manual refresh control",
+      "Data sources can be toggled between Perplexity AI and Amazon PA-API",
+      "All trending products link directly to content generation workflows"
     ],
-    keyFeatures: ["Real-time metrics", "Trending products", "Quick actions", "Recent activity", "Performance overview"]
+    keyFeatures: ["Trend Forecaster", "Multi-source trending picks", "Quick content generation", "Data source switching", "Niche filtering"]
   },
   {
     name: "Unified Generator",

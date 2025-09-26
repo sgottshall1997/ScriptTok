@@ -3,7 +3,6 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Link, useLocation } from "wouter";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
@@ -17,7 +16,6 @@ import {
   RefreshCw, 
   Sparkles,
   Wand2,
-  Layers,
   Eye,
   Zap,
   Target,
@@ -71,17 +69,6 @@ const Dashboard = () => {
     refetchInterval: 60000, // Refresh every minute
   });
 
-  // Fetch Perplexity automation status
-  const { data: automationStatus } = useQuery<{
-    success: boolean;
-    enabled: boolean;
-    schedule: string;
-    description: string;
-    status: string;
-  }>({
-    queryKey: ['/api/perplexity-automation/status'],
-    refetchInterval: 30000, // Refresh every 30 seconds
-  });
 
   // Fetch Amazon status for integration display
   const { data: amazonStatus } = useQuery<{
@@ -104,40 +91,6 @@ const Dashboard = () => {
     refetchInterval: 60000, // Refresh every minute
   });
 
-  // Toggle Perplexity automation mutation
-  const toggleAutomationMutation = useMutation({
-    mutationFn: async (enabled: boolean) => {
-      const response = await fetch('/api/perplexity-automation/toggle', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ enabled }),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to toggle automation');
-      }
-      
-      return response.json();
-    },
-    onSuccess: (data) => {
-      toast({
-        title: data.enabled ? "Automation Enabled" : "Automation Disabled",
-        description: data.message,
-        variant: data.enabled ? "default" : "destructive",
-      });
-      // Refetch automation status
-      queryClient.invalidateQueries({ queryKey: ['/api/perplexity-automation/status'] });
-    },
-    onError: (error) => {
-      toast({
-        title: "Toggle Failed",
-        description: error instanceof Error ? error.message : "Unknown error",
-        variant: "destructive",
-      });
-    },
-  });
 
   // Individual product refresh mutation
   const refreshIndividualMutation = useMutation({
@@ -310,8 +263,6 @@ const Dashboard = () => {
     }
   };
 
-  const totalProducts = trendingProducts?.count || 0;
-  const activeNiches = trendingProducts?.data ? Object.keys(trendingProducts.data).length : 0;
 
   // Niche color mapping
   const getNicheColor = (niche: string) => {
@@ -356,40 +307,40 @@ const Dashboard = () => {
               <div className="space-y-4">
                 <div>
                   <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                    🚀 GlowBot AI Overview
+                    🚀 GlowBot TikTok Viral Product Generator
                   </h3>
                   <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed">
-                    GlowBot is your all-in-one AI content generation platform designed to transform trending products into viral social media content across multiple niches. Powered by advanced AI models including Claude, GPT, and Perplexity, GlowBot automates the entire content creation workflow from trend discovery to multi-platform publishing.
+                    GlowBot is your AI-powered command center for creating viral TikTok content from trending products. This streamlined dashboard gives you everything you need to discover trends, generate engaging content, and track performance - all powered by advanced AI models including Claude, GPT, and Perplexity.
                   </p>
                 </div>
                 
                 <div className="grid md:grid-cols-2 gap-4 mt-4">
                   <div className="space-y-3">
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🔮 Trend Forecaster</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Get real-time trend insights across all 7 niches with our comprehensive forecasting system. View Hot, Rising, Upcoming, and Declining trends with detailed analysis from Perplexity AI to stay ahead of viral opportunities.</p>
+                    
                     <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🔥 AI-Powered Trending Picks</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Discover viral products automatically using Perplexity AI or Amazon PA-API. Switch between data sources, filter by niche, and get real-time trending insights with automated daily fetching at 5:00 AM.</p>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Discover viral products automatically using Perplexity AI or Amazon PA-API. Switch between data sources, filter by niche, and get curated trending insights with manual refresh control to save API credits.</p>
                     
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">📊 Content Analytics & Tracking</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Monitor your content performance with detailed analytics, click tracking, and engagement metrics. View historical content, top-rated posts, and comprehensive performance dashboards.</p>
-                    
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🎯 Multi-Platform Content Generation</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Generate optimized content for TikTok, Instagram, YouTube, Twitter, and Facebook simultaneously. Use trending product data to create engaging captions with affiliate links automatically integrated.</p>
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🎯 Unified Content Generator</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Generate optimized content for TikTok, Instagram, YouTube, Twitter, and Facebook simultaneously. Create engaging captions with trending product data and integrated affiliate monetization.</p>
                   </div>
                   
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">⚙️ AI Model Testing & Configuration</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Fine-tune AI models, test different configurations, and optimize content quality with Claude AI suggestions. Access advanced settings for model routing and response optimization.</p>
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">📊 Content History & Analytics</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Track your content performance with comprehensive analytics and historical data. Monitor engagement metrics, view top-rated posts, and analyze generation patterns to optimize your viral content strategy.</p>
                     
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🔗 Amazon Monetization & Affiliate Management</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Integrated Amazon Associates tracking with smart affiliate link injection, revenue analytics, and product performance monitoring. Streamlined monetization across all content.</p>
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🤖 Advanced AI Integration</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Leverage multiple AI models with intelligent routing and optimization. Access Claude AI suggestions, model testing capabilities, and advanced configuration options for superior content quality.</p>
                     
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">📅 Bulk Generation & Automation</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Schedule automated content generation, create bulk campaigns, and manage cross-platform publishing workflows. Set up recurring jobs and webhook integrations for seamless automation.</p>
+                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">💰 Monetization Ready</h4>
+                    <p className="text-xs text-blue-700 dark:text-blue-300">Built-in Amazon Associates integration with smart affiliate link injection and revenue tracking. Transform trending discoveries into monetized content effortlessly.</p>
                   </div>
                 </div>
                 
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-200 dark:border-blue-800 mt-4">
                   <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
-                    💡 <strong>Quick Start:</strong> Begin by exploring trending picks, then use the content generators to create platform-specific posts. Monitor performance through analytics and optimize using AI model configurations.
+                    💡 <strong>Quick Start:</strong> Use the Trend Forecaster to discover viral opportunities, explore trending picks, then generate content with the Unified Generator. Monitor performance through Content History & Analytics.
                   </p>
                 </div>
               </div>
@@ -552,29 +503,6 @@ const Dashboard = () => {
                         <div>Loading status...</div>
                       )}
                     </div>
-                  
-                    {/* Automation Toggle Switch */}
-                    <div className="flex items-center justify-between mt-3 pt-3 border-t border-blue-200">
-                      <div className="flex flex-col">
-                        <span className="text-sm font-medium text-blue-900">Daily 5:00 AM Automation</span>
-                        <span className="text-xs text-blue-600">
-                          {automationStatus?.enabled ? "Automatic trend fetching enabled" : "Manual fetching only"}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-blue-600">
-                          {automationStatus?.enabled ? "ON" : "OFF"}
-                        </span>
-                        <Switch
-                          checked={automationStatus?.enabled || false}
-                          onCheckedChange={(enabled) => {
-                            toggleAutomationMutation.mutate(enabled);
-                          }}
-                          disabled={toggleAutomationMutation.isPending}
-                          className="data-[state=checked]:bg-blue-600"
-                        />
-                      </div>
-                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -733,7 +661,7 @@ const Dashboard = () => {
       </Card>
 
       {/* 3️⃣ Fast-Action Buttons Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
             <CardContent className="p-6 text-center">
@@ -744,22 +672,6 @@ const Dashboard = () => {
               <p className="text-sm text-blue-700 mb-4">One-click content generation for all platforms</p>
               <div className="flex items-center justify-center text-blue-600">
                 <span className="text-sm font-medium">Generate Now</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Link href="/bulk-content-generation" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-            <CardContent className="p-6 text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Layers className="h-6 w-6 text-purple-600" />
-              </div>
-              <h3 className="font-semibold text-purple-900 mb-2">🚀 Bulk Content Generator</h3>
-              <p className="text-sm text-purple-700 mb-4">Generate content at scale with automation</p>
-              <div className="flex items-center justify-center text-purple-600">
-                <span className="text-sm font-medium">Bulk Generate</span>
                 <ArrowRight className="h-4 w-4 ml-1" />
               </div>
             </CardContent>
@@ -783,33 +695,6 @@ const Dashboard = () => {
         </Link>
       </div>
 
-      {/* 4️⃣ Platform Stats Overview */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <Card className="text-center">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-blue-600">{totalProducts}</div>
-            <div className="text-sm text-muted-foreground">Total Products</div>
-          </CardContent>
-        </Card>
-        <Card className="text-center">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-green-600">{activeNiches}</div>
-            <div className="text-sm text-muted-foreground">Active Niches</div>
-          </CardContent>
-        </Card>
-        <Card className="text-center">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-purple-600">∞</div>
-            <div className="text-sm text-muted-foreground">Content Generated</div>
-          </CardContent>
-        </Card>
-        <Card className="text-center">
-          <CardContent className="p-4">
-            <div className="text-2xl font-bold text-orange-600">24/7</div>
-            <div className="text-sm text-muted-foreground">AI Monitoring</div>
-          </CardContent>
-        </Card>
-      </div>
       
       {/* About This Page */}
       {sectionData && (

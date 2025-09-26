@@ -1,0 +1,44 @@
+"I need you to make several specific updates to the Dashboard page in my TikTok Viral Product Generator app. Please make these exact changes to /client/src/pages/Dashboard.tsx:
+
+1. Update the "What is GlowBot" section:
+
+Modify the collapsible dropdown section at the top of the dashboard
+Update the content to better reflect the current state of the application
+Keep the same collapsible format but refresh the descriptions and feature explanations
+Make sure it accurately describes the dashboard's current functionality
+2. Remove Daily 5:00 AM Automation Toggle:
+
+In the Perplexity status card (the blue gradient card), remove the entire automation toggle section
+Keep the "Last Perplexity Run" information (time, next scheduled, products count)
+Remove the Switch component and all related automation controls
+Remove the toggleAutomationMutation and related automation status queries
+Clean up any unused imports related to automation
+3. Remove Bulk Content Generator Card:
+
+Completely remove the "🚀 Bulk Content Generator" card from the Fast-Action Buttons Panel
+This should leave only the "🎯 Unified Content Generator" and "📊 Content History & Analytics" cards
+Adjust the grid layout accordingly (change from 3 columns to 2 columns)
+4. Remove Statistics Cards:
+
+Remove the entire "Platform Stats Overview" section that contains the 4 cards:
+Total Products
+Active Niches
+Content Generated (∞)
+AI Monitoring (24/7)
+Delete this entire grid section completely
+5. Update About This Page Section:
+
+Update the AboutThisPage component call at the bottom to reflect the updated dashboard functionality
+Make sure the metadata from getGlowBotSectionByPath('/') accurately describes the new simplified dashboard
+If needed, update the corresponding entry in /client/src/lib/glowbot-sections.ts for the Dashboard section to match the new functionality
+Key Requirements:
+
+Keep all existing trending products functionality intact
+Maintain the TrendForecaster component
+Preserve the Amazon Associates links section if enabled
+Keep the data source toggle (Perplexity/Amazon) functionality
+Maintain all existing imports that are still needed
+Clean up any unused imports after removing features
+Ensure the layout remains responsive and visually balanced
+Test that all remaining functionality still works properly
+Please make these changes while preserving all other dashboard functionality. The goal is to simplify the dashboard by removing automation controls, bulk generation shortcuts, and statistics cards while keeping the core trending products and content generation features.
