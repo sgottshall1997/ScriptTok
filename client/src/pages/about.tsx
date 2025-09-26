@@ -394,7 +394,7 @@ const AboutPage: React.FC = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
               <div className="text-center p-4 bg-white border rounded-lg">
                 <TrendingUp className="h-8 w-8 text-pink-600 mx-auto mb-2" />
                 <h5 className="font-semibold text-gray-900 mb-1">Trend-Aware Scripts</h5>
@@ -409,6 +409,109 @@ const AboutPage: React.FC = () => {
                 <Sparkles className="h-8 w-8 text-blue-600 mx-auto mb-2" />
                 <h5 className="font-semibold text-gray-900 mb-1">Timely Relevance</h5>
                 <p className="text-xs text-gray-600">Scripts feel current and aligned with social media trends</p>
+              </div>
+            </div>
+
+            {/* ScriptTok Intelligence Flow Diagram */}
+            <div className="mt-8">
+              <h3 className="text-xl font-semibold text-purple-900 mb-6 text-center">How ScriptTok Creates Smart Content</h3>
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200">
+                <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-2">
+                  
+                  {/* Step 1: Perplexity Discovery */}
+                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-purple-300 shadow-sm">
+                    <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <TrendingUp className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-purple-800 mb-2 text-sm">Perplexity Discovery</h4>
+                    <p className="text-xs text-purple-700">Finds trending products for each niche using real-time web research</p>
+                  </div>
+
+                  {/* Arrow 1 */}
+                  <div className="hidden md:block">
+                    <ArrowRight className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div className="md:hidden">
+                    <div className="h-6 w-6 rotate-90">
+                      <ArrowRight className="h-6 w-6 text-purple-600" />
+                    </div>
+                  </div>
+
+                  {/* Step 2: Product Selection */}
+                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-blue-300 shadow-sm">
+                    <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <Target className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-blue-800 mb-2 text-sm">Product Selection</h4>
+                    <p className="text-xs text-blue-700">You select a trending product to create content about</p>
+                  </div>
+
+                  {/* Arrow 2 */}
+                  <div className="hidden md:block">
+                    <ArrowRight className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div className="md:hidden">
+                    <div className="h-6 w-6 rotate-90">
+                      <ArrowRight className="h-6 w-6 text-blue-600" />
+                    </div>
+                  </div>
+
+                  {/* Step 3: Viral Analysis */}
+                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-green-300 shadow-sm">
+                    <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <Video className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-green-800 mb-2 text-sm">Viral Analysis</h4>
+                    <p className="text-xs text-green-700">Perplexity analyzes TikTok and competitor viral videos for the product</p>
+                  </div>
+
+                  {/* Arrow 3 */}
+                  <div className="hidden md:block">
+                    <ArrowRight className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div className="md:hidden">
+                    <div className="h-6 w-6 rotate-90">
+                      <ArrowRight className="h-6 w-6 text-green-600" />
+                    </div>
+                  </div>
+
+                  {/* Step 4: AI Generation */}
+                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-orange-300 shadow-sm">
+                    <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <Sparkles className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-orange-800 mb-2 text-sm">AI Generation</h4>
+                    <p className="text-xs text-orange-700">ChatGPT/Claude creates script using all viral intelligence</p>
+                  </div>
+
+                  {/* Arrow 4 */}
+                  <div className="hidden md:block">
+                    <ArrowRight className="h-6 w-6 text-orange-600" />
+                  </div>
+                  <div className="md:hidden">
+                    <div className="h-6 w-6 rotate-90">
+                      <ArrowRight className="h-6 w-6 text-orange-600" />
+                    </div>
+                  </div>
+
+                  {/* Step 5: Viral Score Analysis */}
+                  <div className="flex-1 text-center p-4 bg-white rounded-lg border-2 border-pink-300 shadow-sm">
+                    <div className="w-12 h-12 bg-pink-600 rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <BarChart3 className="h-6 w-6 text-white" />
+                    </div>
+                    <h4 className="font-bold text-pink-800 mb-2 text-sm">Viral Score Analysis</h4>
+                    <p className="text-xs text-pink-700">AI analyzes and rates output with viral potential score</p>
+                  </div>
+
+                </div>
+
+                {/* Flow Summary */}
+                <div className="mt-6 p-4 bg-white rounded-lg border border-purple-300">
+                  <h4 className="font-bold text-purple-800 mb-2 text-center">The Result</h4>
+                  <p className="text-sm text-purple-700 text-center">
+                    You get scripts that are informed by real trending data, proven viral patterns, and optimized for maximum engagement - not just well-written generic content.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
