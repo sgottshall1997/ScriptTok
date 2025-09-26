@@ -162,6 +162,42 @@ export const dailyScraperCache = pgTable("daily_scraper_cache", {
   };
 });
 
+// Trend history for tracking historical trend data
+export const trendHistory = pgTable("trend_history", {
+  id: serial("id").primaryKey(),
+  // Source metadata
+  sourceType: text("source_type").notNull(), // 'trend_forecaster' or 'ai_trending_picks'
+  niche: text("niche").notNull(), // beauty, tech, fashion, etc.
+  fetchedAt: timestamp("fetched_at").defaultNow().notNull(),
+  
+  // Trend Forecaster specific fields
+  trendCategory: text("trend_category"), // 'hot', 'rising', 'upcoming', 'declining' (for forecaster only)
+  trendName: text("trend_name"), // Name of the trend (for forecaster)
+  trendDescription: text("trend_description"), // Why it's trending description
+  trendVolume: text("trend_volume"), // "42,000 videos this week" format
+  trendGrowth: text("trend_growth"), // "+28%" format
+  trendWhen: text("trend_when"), // When it will peak (for upcoming)
+  trendOpportunity: text("trend_opportunity"), // Why creators should jump on this
+  trendReason: text("trend_reason"), // Why it's declining (for declining trends)
+  
+  // AI Trending Picks specific fields
+  productTitle: text("product_title"), // Product title (for AI picks)
+  productMentions: integer("product_mentions"), // Mention count
+  productEngagement: integer("product_engagement"), // Engagement score
+  productSource: text("product_source"), // Perplexity, etc.
+  productReason: text("product_reason"), // Why this product is trending
+  productDescription: text("product_description"), // Product description
+  viralKeywords: text("viral_keywords").array(), // Viral keywords
+  
+  // Shared product information
+  productData: jsonb("product_data"), // Array of associated products with pricing info
+  
+  // Raw data preservation
+  rawData: jsonb("raw_data"), // Complete original data for reference
+  
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 // Amazon products for affiliate monetization
 export const amazonProducts = pgTable("amazon_products", {
   id: serial("id").primaryKey(),
@@ -233,6 +269,12 @@ export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit
   updatedAt: true,
 });
 
+export const insertTrendHistorySchema = createInsertSchema(trendHistory).omit({
+  id: true,
+  createdAt: true,
+  fetchedAt: true,
+});
+
 // TypeScript types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -251,6 +293,9 @@ export type InsertAmazonProduct = z.infer<typeof insertAmazonProductSchema>;
 
 export type AffiliateLink = typeof affiliateLinks.$inferSelect;
 export type InsertAffiliateLink = z.infer<typeof insertAffiliateLinkSchema>;
+
+export type TrendHistory = typeof trendHistory.$inferSelect;
+export type InsertTrendHistory = z.infer<typeof insertTrendHistorySchema>;
 
 // ===============================================================================
 // COMMENTED OUT - NON-ESSENTIAL TABLES FOR TIKTOK VIRAL PRODUCT GENERATOR
