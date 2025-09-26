@@ -220,9 +220,9 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
               <button
                 key={star}
                 type="button"
-                onClick={() => handleRatingChange('overallRating', star * 20)} // Convert 1-5 to 20-100
+                onClick={() => handleRatingChange('overallRating', star)} // Store 1-5 directly
                 className={`text-2xl transition-colors ${
-                  (ratings.overallRating || 0) >= star * 20 
+                  (ratings.overallRating || 0) >= star 
                     ? 'text-yellow-400 hover:text-yellow-500' 
                     : 'text-gray-300 hover:text-yellow-300'
                 }`}
@@ -231,7 +231,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
               </button>
             ))}
             <span className="ml-2 text-sm text-gray-600">
-              {ratings.overallRating ? `${Math.ceil(ratings.overallRating / 20)}/5 stars` : 'Not rated'}
+              {ratings.overallRating ? `${ratings.overallRating}/5 stars` : 'Not rated'}
             </span>
           </div>
         </div>
@@ -250,9 +250,9 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   <button
                     key={star}
                     type="button"
-                    onClick={() => handleRatingChange('instagramRating', star * 20)}
+                    onClick={() => handleRatingChange('instagramRating', star)}
                     className={`text-xl transition-colors ${
-                      (ratings.instagramRating || 0) >= star * 20 
+                      (ratings.instagramRating || 0) >= star 
                         ? 'text-pink-400 hover:text-pink-500' 
                         : 'text-gray-300 hover:text-pink-300'
                     }`}
@@ -261,7 +261,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   </button>
                 ))}
                 <span className="ml-2 text-xs text-gray-600">
-                  {ratings.instagramRating ? `${Math.ceil(ratings.instagramRating / 20)}/5` : '0/5'}
+                  {ratings.instagramRating ? `${ratings.instagramRating}/5` : '0/5'}
                 </span>
               </div>
             </div>
@@ -276,9 +276,9 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   <button
                     key={star}
                     type="button"
-                    onClick={() => handleRatingChange('tiktokRating', star * 20)}
+                    onClick={() => handleRatingChange('tiktokRating', star)}
                     className={`text-xl transition-colors ${
-                      (ratings.tiktokRating || 0) >= star * 20 
+                      (ratings.tiktokRating || 0) >= star 
                         ? 'text-gray-800 hover:text-black' 
                         : 'text-gray-300 hover:text-gray-500'
                     }`}
@@ -287,7 +287,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   </button>
                 ))}
                 <span className="ml-2 text-xs text-gray-600">
-                  {ratings.tiktokRating ? `${Math.ceil(ratings.tiktokRating / 20)}/5` : '0/5'}
+                  {ratings.tiktokRating ? `${ratings.tiktokRating}/5` : '0/5'}
                 </span>
               </div>
             </div>
@@ -302,9 +302,9 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   <button
                     key={star}
                     type="button"
-                    onClick={() => handleRatingChange('youtubeRating', star * 20)}
+                    onClick={() => handleRatingChange('youtubeRating', star)}
                     className={`text-xl transition-colors ${
-                      (ratings.youtubeRating || 0) >= star * 20 
+                      (ratings.youtubeRating || 0) >= star 
                         ? 'text-red-400 hover:text-red-500' 
                         : 'text-gray-300 hover:text-red-300'
                     }`}
@@ -313,7 +313,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   </button>
                 ))}
                 <span className="ml-2 text-xs text-gray-600">
-                  {ratings.youtubeRating ? `${Math.ceil(ratings.youtubeRating / 20)}/5` : '0/5'}
+                  {ratings.youtubeRating ? `${ratings.youtubeRating}/5` : '0/5'}
                 </span>
               </div>
             </div>
@@ -328,9 +328,9 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   <button
                     key={star}
                     type="button"
-                    onClick={() => handleRatingChange('twitterRating', star * 20)}
+                    onClick={() => handleRatingChange('twitterRating', star)}
                     className={`text-xl transition-colors ${
-                      (ratings.twitterRating || 0) >= star * 20 
+                      (ratings.twitterRating || 0) >= star 
                         ? 'text-blue-400 hover:text-blue-500' 
                         : 'text-gray-300 hover:text-blue-300'
                     }`}
@@ -339,7 +339,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                   </button>
                 ))}
                 <span className="ml-2 text-xs text-gray-600">
-                  {ratings.twitterRating ? `${Math.ceil(ratings.twitterRating / 20)}/5` : '0/5'}
+                  {ratings.twitterRating ? `${ratings.twitterRating}/5` : '0/5'}
                 </span>
               </div>
             </div>
