@@ -568,25 +568,21 @@ const Dashboard = () => {
                         <span className="ml-1">{product.reason || 'Trending across social platforms'}</span>
                       </div>
 
-                      {/* Amazon-specific data */}
-                      {selectedDataSource === 'amazon' && (
-                        <>
-                          {product.price && (
-                            <div className="text-xs text-green-600 font-medium">
-                              💰 Price: {product.price}
-                            </div>
-                          )}
-                          {product.rating && (
-                            <div className="text-xs text-yellow-600">
-                              ⭐ Rating: {product.rating}/5
-                            </div>
-                          )}
-                          {product.asin && (
-                            <div className="text-xs text-blue-600">
-                              📦 ASIN: {product.asin}
-                            </div>
-                          )}
-                        </>
+                      {/* Product data */}
+                      {product.price && (
+                        <div className="text-xs text-green-600 font-medium">
+                          💰 Price: {product.price}
+                        </div>
+                      )}
+                      {product.rating && (
+                        <div className="text-xs text-yellow-600">
+                          ⭐ Rating: {product.rating}/5
+                        </div>
+                      )}
+                      {product.asin && (
+                        <div className="text-xs text-blue-600">
+                          📦 ASIN: {product.asin}
+                        </div>
                       )}
                       
                       {/* Action Buttons */}
