@@ -1205,7 +1205,7 @@ const EnhancedContentHistory = () => {
                   {/* Viral Score Display */}
                   {(() => {
                     // Extract viral score from generated output if available
-                    const viralScore = entry.generatedOutput?.viralScore;
+                    const viralScore = entry.viralScore;
                     
                     if (!viralScore) return null;
                     
