@@ -50,16 +50,16 @@ You MUST include a unique and specific reason why each product is trending. Avoi
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$12.99", "asin": "B01ABC123" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$25.50", "asin": "B01DEF456" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$18.00", "asin": "B01GHI789" }
 ]
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Prime Hydration Drink Ice Pop 16.9oz", "brand": "Prime", "mentions": 42000, "reason": "Logan Paul collaboration with summer athletes" },
-  { "product": "Grass Fed Beef Sticks Original 12-Pack", "brand": "Chomps", "mentions": 18000, "reason": "High protein snacks for fitness content creators" },
-  { "product": "Prebiotic Soda Classic Cola 12oz 12-Pack", "brand": "OLIPOP", "mentions": 29000, "reason": "Gut health drinks promoted by wellness influencers" }
+  { "product": "Prime Hydration Drink Ice Pop 16.9oz", "brand": "Prime", "mentions": 42000, "reason": "Logan Paul collaboration with summer athletes", "price": "$24.99", "asin": "B09PRIMEHY1" },
+  { "product": "Grass Fed Beef Sticks Original 12-Pack", "brand": "Chomps", "mentions": 18000, "reason": "High protein snacks for fitness content creators", "price": "$18.99", "asin": "B07CHOMPST2" },
+  { "product": "Prebiotic Soda Classic Cola 12oz 12-Pack", "brand": "OLIPOP", "mentions": 29000, "reason": "Gut health drinks promoted by wellness influencers", "price": "$36.00", "asin": "B08OLIPOP34" }
 ]
 
 STRICT REQUIREMENTS:
@@ -67,6 +67,8 @@ STRICT REQUIREMENTS:
 - Established brands: Prime, OLIPOP, Kind, Chomps, Liquid Death, Athletic Greens, etc.
 - Mentions: 5,000-50,000 range
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- Price: Must include real Amazon price in format "$12.99" (use current Amazon pricing)
+- ASIN: Must include real Amazon ASIN code (10-character alphanumeric like "B01ABC123D")
 - NO generic terms like "trending product", "food item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"
 - Product names must include specific details (flavor, size, pack count, type)
