@@ -31,11 +31,3 @@ author = "agent"
 task = "shell.exec"
 args = "npm run dev"
 waitForPort = 5000
-
-[[ports]]
-localPort = 33045
-externalPort = 3000
-
-[[ports]]
-localPort = 34687
-externalPort = 80
