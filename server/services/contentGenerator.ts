@@ -179,6 +179,12 @@ export async function generateContent(
   tokens?: number;
   videoDuration?: VideoDuration;
 }> {
+  // Declare prompt variables outside try block for fallback access
+  let prompt: string;
+  let systemPrompt: string = "";
+  let userPrompt: string = "";
+  let fallbackLevel: 'exact' | 'default' | 'generic' = 'exact';
+
   try {
     // 🎯 Get most successful patterns from user feedback
     let successfulPatterns: { mostUsedTone: string | null; mostUsedTemplateType: string | null } = { 
@@ -195,8 +201,6 @@ export async function generateContent(
     }
 
     // Use promptFactory for smart style support or generatePrompt for standard generation
-    let prompt: string;
-    let fallbackLevel: 'exact' | 'default' | 'generic' = 'exact';
 
     if (smartStyleRecommendations) {
       // Convert smart style recommendations to BestRatedStyle format
@@ -238,10 +242,14 @@ export async function generateContent(
         console.log(`✅ Using TEMPLATE_PROMPTS for ${templateType} template`);
         const templateResult = templateFunction(promptConfig);
         prompt = templateResult.userPrompt;
+        systemPrompt = templateResult.systemPrompt;
+        userPrompt = templateResult.userPrompt;
         fallbackLevel = 'exact';
       } else {
         console.warn(`⚠️ Template ${templateType} not found in TEMPLATE_PROMPTS, using fallback`);
         prompt = `Write about ${product} in the ${niche} niche using a ${tone} tone. This should be in the format of a ${templateType}.`;
+        systemPrompt = "You are an expert content creator.";
+        userPrompt = prompt;
         fallbackLevel = 'generic';
       }
     }
@@ -258,11 +266,14 @@ export async function generateContent(
       console.error(`❌ INVALID AI MODEL: "${aiModel}" - Must be 'claude' or 'chatgpt'`);
     }
 
-    // Enhanced system prompt with viral inspiration integration
-    let systemPrompt = "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause.";
-
-    // Enhanced user prompt with viral inspiration context
-    let userPrompt = `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`;
+    // If no template was found, use enhanced defaults
+    if (!systemPrompt) {
+      systemPrompt = "You're an AI scriptwriter for short-form video content focused on product reviews and recommendations. Your job is to generate ONLY the spoken narration script — clean and natural sounding — without including any visual directions, shot cues, or internal notes. Do NOT include phrases like 'Opening shot:', 'Scene:', 'Visual:', 'Cut to:', 'Note:', or 'This video shows...'. Just return the actual lines that would be read aloud by a narrator or presenter. Keep it short, punchy, and engaging — around 25-30 seconds long, conversational in tone, and formatted as a simple paragraph. Add line breaks only if there's a natural pause.";
+    }
+    
+    if (!userPrompt) {
+      userPrompt = `Create a clean video script for ${product} in ${niche} niche using ${tone} tone. Product: ${product}. Tone: ${tone}. Output: Only the clean spoken script.`;
+    }
 
     // Inject viral inspiration if available
     if (viralInspiration) {
@@ -414,7 +425,7 @@ Apply these successful patterns from your previous high-rated content:
 
       return {
         content: cleanedFallbackContent,
-        fallbackLevel: 'generic', // Model fallback is considered generic
+        fallbackLevel: 'default', // OpenAI fallback using template prompts
         prompt: genericPrompt,
         model: "gpt-4o",
         tokens: fallbackCompletion.usage?.total_tokens || 0,
@@ -432,47 +443,23 @@ Apply these successful patterns from your previous high-rated content:
       let legacyContent = "";
 
       switch (templateType) {
-        case "original":
-          legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
-          break;
-        case "comparison":
+        case "product_comparison":
           legacyContent = await GptTemplates.generateProductComparison(openai, product, tone, trendingProducts);
           break;
-        case "caption":
+        case "influencer_caption":
           legacyContent = await GptTemplates.generateCaption(openai, product, tone);
           break;
-        case "pros_cons":
-          legacyContent = await GptTemplates.generateProsAndCons(openai, product, tone);
-          break;
-        case "routine":
+        case "routine_kit":
           legacyContent = await GptTemplates.generateRoutine(openai, product, tone);
           break;
-        case "beginner_kit":
-          legacyContent = await GptTemplates.generateBeginnerKit(openai, product, tone);
+        case "seo_blog":
+          legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
           break;
-        case "demo_script":
+        case "short_video":
           legacyContent = await GptTemplates.generateDemoScript(openai, product, tone);
           break;
-        case "drugstore_dupe":
-          legacyContent = await GptTemplates.generateDrugstoreDupe(openai, product, tone);
-          break;
-        case "personal_review":
-          legacyContent = await GptTemplates.generatePersonalReview(openai, product, tone);
-          break;
-        case "surprise_me":
-          legacyContent = await GptTemplates.generateSurpriseMe(openai, product, tone);
-          break;
-        case "tiktok_breakdown":
-          legacyContent = await GptTemplates.generateTikTokBreakdown(openai, product, tone);
-          break;
-        case "dry_skin_list":
-          legacyContent = await GptTemplates.generateDrySkinList(openai, product, tone);
-          break;
-        case "top5_under25":
-          legacyContent = await GptTemplates.generateTop5Under25(openai, product, tone);
-          break;
-        case "influencer_caption":
-          legacyContent = await GptTemplates.generateInfluencerCaption(openai, product, tone);
+        case "affiliate_email":
+          legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
           break;
         default:
           legacyContent = await GptTemplates.generateOriginalReview(openai, product, tone, trendingProducts);
