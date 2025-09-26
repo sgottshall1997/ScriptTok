@@ -319,6 +319,38 @@ const Dashboard = () => {
                     ScriptTok is your AI-powered command center for creating viral TikTok content from trending products. This streamlined dashboard gives you everything you need to discover trends, generate engaging content, and track performance - all powered by advanced AI models including Claude, GPT, and Perplexity.
                   </p>
                 </div>
+
+                {/* Perplexity AI Capabilities Section */}
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <h4 className="text-base font-semibold text-purple-900 dark:text-purple-100 mb-3 flex items-center">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    Powered by Perplexity AI: Four Core Capabilities
+                  </h4>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-purple-100 dark:border-purple-700">
+                      <h5 className="text-xs font-semibold text-purple-800 dark:text-purple-200 mb-1">🔮 Trend Forecasting</h5>
+                      <p className="text-xs text-purple-600 dark:text-purple-300">Real-time web analysis to predict viral trends before they explode. Categories trends as Hot, Rising, Upcoming, or Declining with specific product recommendations.</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-pink-100 dark:border-pink-700">
+                      <h5 className="text-xs font-semibold text-pink-800 dark:text-pink-200 mb-1">🔥 AI-Powered Trending Picks</h5>
+                      <p className="text-xs text-pink-600 dark:text-pink-300">Automatic discovery of viral products across all niches using live web research. Gets what's trending now, not what was trending last week.</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-blue-100 dark:border-blue-700">
+                      <h5 className="text-xs font-semibold text-blue-800 dark:text-blue-200 mb-1">📱 TikTok Trend Analysis</h5>
+                      <p className="text-xs text-blue-600 dark:text-blue-300">Deep analysis of TikTok's viral patterns, hashtag performance, and content formats to align your content with platform trends.</p>
+                    </div>
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-green-100 dark:border-green-700">
+                      <h5 className="text-xs font-semibold text-green-800 dark:text-green-200 mb-1">📊 Viral Competitor Analysis</h5>
+                      <p className="text-xs text-green-600 dark:text-green-300">Research successful competitor videos and viral strategies to understand what makes content go viral in your specific niche.</p>
+                    </div>
+                  </div>
+                  <div className="mt-3 p-2 bg-white dark:bg-gray-800 rounded border border-purple-100 dark:border-purple-700">
+                    <p className="text-xs text-purple-700 dark:text-purple-300">
+                      <strong>Why this matters:</strong> While other tools show historical data, Perplexity gives you real-time web intelligence. 
+                      This means you create content about trends as they emerge, not after they peak - giving you the competitive edge to go viral first.
+                    </p>
+                  </div>
+                </div>
                 
                 <div className="grid md:grid-cols-2 gap-4 mt-4">
                   <div className="space-y-3">
