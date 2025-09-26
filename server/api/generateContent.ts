@@ -83,7 +83,7 @@ const contentGenerationLimiter = rateLimit({
 
 // Import tone definitions
 import { TONES } from '../prompts/tones';
-import { loadPromptTemplates } from '../prompts/templates';
+import { TEMPLATE_PROMPTS } from '../services/promptFactory';
 import { ViralInspiration } from '../services/contentGenerator';
 import { evaluateContentWithBothModels, createContentEvaluationData } from '../services/aiEvaluationService';
 import { db } from '../db';
@@ -133,20 +133,8 @@ const generateContentSchema = z.object({
 // Helper functions to check if tone and template exist in the system
 async function isValidTemplateType(templateType: string, niche: string): Promise<boolean> {
   try {
-    // Load available templates
-    const templates = await loadPromptTemplates();
-
-    // Check if the template exists in the niche-specific templates
-    if (templates[niche] && templateType in templates[niche]) {
-      return true;
-    }
-
-    // If not in niche-specific, check if it exists in default templates
-    if (templates.default && templateType in templates.default) {
-      return true;
-    }
-
-    return false;
+    // Check if the template exists in the new TEMPLATE_PROMPTS structure
+    return templateType in TEMPLATE_PROMPTS;
   } catch (error) {
     console.error("Error checking template validity:", error);
     return false;
@@ -165,28 +153,8 @@ function getAvailableTones(): string[] {
 // Helper to get all available template types
 async function getAvailableTemplateTypes(niche: string): Promise<string[]> {
   try {
-    const templates = await loadPromptTemplates();
-    const nicheTemplates = templates[niche] || {};
-    const defaultTemplates = templates.default || {};
-
-    // Combine niche-specific and default templates without using Set
-    const allTemplates: string[] = [];
-
-    // Add niche-specific templates
-    Object.keys(nicheTemplates).forEach(key => {
-      if (!allTemplates.includes(key)) {
-        allTemplates.push(key);
-      }
-    });
-
-    // Add default templates (if not already added)
-    Object.keys(defaultTemplates).forEach(key => {
-      if (!allTemplates.includes(key)) {
-        allTemplates.push(key);
-      }
-    });
-
-    return allTemplates;
+    // Return all available template types from TEMPLATE_PROMPTS
+    return Object.keys(TEMPLATE_PROMPTS);
   } catch (error) {
     console.error("Error getting available templates:", error);
     return [];

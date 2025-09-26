@@ -7,13 +7,10 @@
 import { TemplateType, ToneOption } from '@shared/constants';
 import { TrendingProduct } from '@shared/schema';
 import { 
-  loadPromptTemplates, 
-  loadTemplateMetadata, 
-  loadNicheInfo,
-  getTemplateMetadata,
-  TemplateMetadata,
-  NicheInfo
-} from './templates';
+  TEMPLATE_PROMPTS,
+  type PromptConfig,
+  type GeneratedPrompt 
+} from '../services/promptFactory.js';
 import { getToneInstructions, getToneDescription } from './tones';
 import { getTopRatedContentForStyle } from '../services/ratingSystem';
 
@@ -101,51 +98,43 @@ export async function promptFactory(params: {
 }
 
 /**
- * Generate a prompt for a specific niche, template, and tone
+ * Generate a prompt using the new TEMPLATE_PROMPTS structure
  */
 export async function generatePrompt(params: PromptParams): Promise<string> {
   const { niche, productName, templateType, tone, trendingProducts = [] } = params;
   
-  // Load prompt templates (uses cache after first load)
-  const templates = await loadPromptTemplates();
+  // Create prompt config for new system
+  const promptConfig: PromptConfig = {
+    productName,
+    niche: niche as any,
+    templateType: templateType as any,
+    tone: tone as any,
+    trendingProducts,
+    contentFormat: 'standard'
+  };
+
+  // Get the appropriate template function from TEMPLATE_PROMPTS
+  const templateFunction = TEMPLATE_PROMPTS[templateType as keyof typeof TEMPLATE_PROMPTS];
   
-  // Get the prompt template for this niche/template combination
-  // First check if there's a specific template for this niche
-  const nicheTemplates = templates[niche] || {};
+  let finalPrompt: string;
+  let fallbackLevel: 'exact' | 'default' | 'generic' = 'exact';
   
-  // Implement enhanced fallback logic with clear error handling
-  let promptTemplate: string | null = null;
-  let fallbackLevel: 'exact' | 'default' | 'generic' = 'exact'; // Track which level of fallback is used
-  
-  // Step 1: Try to get the specific niche+template combination
-  if (nicheTemplates && templateType in nicheTemplates) {
-    promptTemplate = nicheTemplates[templateType] || null;
+  if (templateFunction) {
+    console.log(`✅ Using TEMPLATE_PROMPTS for ${templateType} template`);
+    const templateResult = templateFunction(promptConfig);
+    finalPrompt = templateResult.userPrompt;
     fallbackLevel = 'exact';
-  }
-  
-  // Step 2: If not found, fall back to the default template for this template type
-  if (!promptTemplate && templates.default && templateType in templates.default) {
-    fallbackLevel = 'default';
-    console.warn(`[PromptFactory] Fallback used → niche=${niche}, type=${templateType}, fallbackLevel=${fallbackLevel}`);
-    promptTemplate = templates.default[templateType] || null;
-  }
-  
-  // Step 3: If still not found, use a generic fallback with a warning
-  if (!promptTemplate) {
+  } else {
+    console.warn(`⚠️ Template ${templateType} not found in TEMPLATE_PROMPTS, using fallback`);
+    const toneDescription = await getToneDescription(tone);
+    finalPrompt = `Write about ${productName} in the ${niche} niche using a ${toneDescription} tone. This should be in the format of a ${templateType}.`;
     fallbackLevel = 'generic';
-    console.warn(`[PromptFactory] Fallback used → niche=${niche}, type=${templateType}, fallbackLevel=${fallbackLevel}`);
-    // Instead of silently using a generic fallback, provide a more detailed prompt
-    const templateTypeFormatted = templateType ? templateType.replace(/_/g, ' ') : 'content piece';
-    promptTemplate = `Write about ${productName} for the ${niche} niche in a ${tone} style. 
-This should be in the format of a ${templateTypeFormatted}. 
-Note: A specific template for this combination wasn't found, so this is using a generic fallback.`;
   }
-  
+
   // Store the fallback level for later use in the response
   params.fallbackLevel = fallbackLevel;
   
   // 🎯 Apply successful patterns optimization
-  let optimizedTone = tone;
   let optimizationNote = '';
   
   if (params.successfulPatterns?.mostUsedTone && params.successfulPatterns.mostUsedTone !== tone) {
@@ -154,22 +143,6 @@ Note: A specific template for this combination wasn't found, so this is using a 
   
   if (params.successfulPatterns?.mostUsedTemplateType && params.successfulPatterns.mostUsedTemplateType !== templateType) {
     optimizationNote += `\n\nSUCCESS PATTERN: The "${params.successfulPatterns.mostUsedTemplateType}" template type has shown high user engagement. Where appropriate, incorporate successful elements from this format.`;
-  }
-
-  // Get the tone description - now async
-  const toneDescription = await getToneDescription(optimizedTone);
-  
-  // Build context about trending products
-  let trendContext = '';
-  if (trendingProducts && Array.isArray(trendingProducts) && trendingProducts.length > 0) {
-    const relevantProducts = trendingProducts
-      .filter(p => p && p.title && p.title !== productName)
-      .slice(0, 3);
-      
-    if (relevantProducts.length > 0) {
-      trendContext = `\n\nFor context, these are some trending products in this space:\n` +
-        relevantProducts.map(p => `- ${p.title} (${p.source})`).join('\n');
-    }
   }
   
   // Inject smart style recommendations if available
@@ -225,56 +198,13 @@ Note: A specific template for this combination wasn't found, so this is using a 
 - Focus on ${params.platform}-specific engagement tactics and user behavior patterns`;
     }
   }
-
-  // Replace placeholders in the template
-  const filledPrompt = promptTemplate
-    .replace(/{product}/g, productName)
-    .replace(/{tone}/g, toneDescription)
-    .replace(/{trendContext}/g, trendContext);
   
-  // Add optimization notes based on successful patterns
-  const finalPrompt = filledPrompt + optimizationNote + smartStyleInstructions + platformInstructions;
-  
-  return finalPrompt;
+  // Add all enhancements to the final prompt
+  return finalPrompt + optimizationNote + smartStyleInstructions + platformInstructions;
 }
 
-/**
- * Get metadata for a specific template type and niche
- * Used for UI display, template previews, etc.
- */
-export async function getTemplateInfo(niche: string, templateType: TemplateType): Promise<TemplateMetadata | undefined> {
-  return getTemplateMetadata(niche, templateType);
-}
-
-/**
- * Get information about a specific niche
- * Used for UI display, niche selection, etc.
- */
-export async function getNicheInfo(niche: string): Promise<NicheInfo | undefined> {
-  const nicheInfoMap = await loadNicheInfo();
-  return nicheInfoMap[niche];
-}
-
-/**
- * Get all available template metadata for a specific niche
- * Used for template selection UI
- */
-export async function getAllTemplatesForNiche(niche: string): Promise<Record<string, TemplateMetadata>> {
-  const metadataMap = await loadTemplateMetadata();
-  const defaultMetadata = metadataMap['default'] || {};
-  const nicheMetadata = metadataMap[niche] || {};
-  
-  // Combine default and niche-specific templates, with niche-specific overriding defaults
-  return { ...defaultMetadata, ...nicheMetadata } as Record<string, TemplateMetadata>;
-}
-
-/**
- * Get all available niche info
- * Used for niche selection UI
- */
-export async function getAllNicheInfo(): Promise<Record<string, NicheInfo>> {
-  return loadNicheInfo();
-}
+// Legacy functions removed - these were dependent on the old templates.ts system
+// Template metadata and niche info is now handled by the new TEMPLATE_PROMPTS system
 
 /**
  * Factory function to create a prompt for a specific template type
@@ -328,7 +258,7 @@ export const generateDrugstoreDupePrompt = createPromptFactory('product_comparis
 export const generatePersonalReviewPrompt = createPromptFactory('product_comparison');
 export const generateSurpriseMePrompt = createPromptFactory('short_video');
 export const generateTikTokBreakdownPrompt = createPromptFactory('short_video');
-export const generateDrySkinListPrompt = createPromptFactory('beauty');
+export const generateDrySkinListPrompt = createPromptFactory('short_video');
 export const generateTop5Under25Prompt = createPromptFactory('product_comparison');
 
 // Additional legacy mappings for compatibility
