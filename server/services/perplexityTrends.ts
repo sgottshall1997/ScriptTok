@@ -236,7 +236,11 @@ Respond with JSON array only:`;
         title: item.product || item.name || item.title || 'Unknown Product',
         source: 'perplexity',
         niche,
-        mentions: typeof item.mentions === 'number' ? item.mentions : 100000
+        mentions: typeof item.mentions === 'number' ? item.mentions : 100000,
+        reason: item.reason || null,
+        price: item.price || null,
+        priceNumeric: item.price ? parseFloat(item.price.replace(/[$,]/g, '')).toString() : null,
+        asin: item.asin || null
       }));
       
       // Apply quality filtering

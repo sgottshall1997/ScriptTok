@@ -10,6 +10,10 @@ function isValidProduct(item: any): boolean {
   if (typeof item.brand !== 'string' || item.brand.length <= 2) return false;
   if (typeof item.mentions !== 'number' || item.mentions < 5000 || item.mentions > 50000) return false;
   if (typeof item.reason !== 'string' || item.reason.length <= 2) return false;
+  
+  // Validate pricing and ASIN fields
+  if (typeof item.price !== 'string' || !item.price.match(/^\$\d+(\.\d{2})?$/)) return false;
+  if (typeof item.asin !== 'string' || !item.asin.match(/^B[0-9A-Z]{9}$/)) return false;
 
   const productLower = item.product.toLowerCase();
   const brandLower = item.brand.toLowerCase();
@@ -50,16 +54,16 @@ You MUST include a unique and specific reason why each product is trending. Avoi
 
 EXACT FORMAT - Return only this JSON structure:
 [
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" },
-  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason" }
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$12.99", "asin": "B01ABC123" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$25.50", "asin": "B01DEF456" },
+  { "product": "Product Name", "brand": "Brand Name", "mentions": 123456, "reason": "Specific trending reason", "price": "$18.00", "asin": "B01GHI789" }
 ]
 
 FEW-SHOT EXAMPLES (do NOT copy these exactly):
 [
-  { "product": "Glossy Lip Balm in Cherry", "brand": "Glossier", "mentions": 28000, "reason": "Clean girl makeup trend with influencers" },
-  { "product": "Hair Treatment Masque 8oz", "brand": "OUAI", "mentions": 15000, "reason": "Celebrity hairstylist recommended routine" },
-  { "product": "Daily Moisturizing Lotion 19oz", "brand": "CeraVe", "mentions": 42000, "reason": "Dermatologist-approved skincare on TikTok" }
+  { "product": "Glossy Lip Balm in Cherry", "brand": "Glossier", "mentions": 28000, "reason": "Clean girl makeup trend with influencers", "price": "$12.00", "asin": "B07XYGL123" },
+  { "product": "Hair Treatment Masque 8oz", "brand": "OUAI", "mentions": 15000, "reason": "Celebrity hairstylist recommended routine", "price": "$32.00", "asin": "B08ZQP456" },
+  { "product": "Daily Moisturizing Lotion 19oz", "brand": "CeraVe", "mentions": 42000, "reason": "Dermatologist-approved skincare on TikTok", "price": "$15.99", "asin": "B01ABC789" }
 ]
 
 STRICT REQUIREMENTS:
@@ -67,6 +71,8 @@ STRICT REQUIREMENTS:
 - Established brands: The Ordinary, Fenty Beauty, OUAI, Native, CeraVe, Glossier, Rare Beauty, etc.
 - Mentions: 5,000-50,000 range  
 - Each reason must be unique, specific, and 4-12 words explaining WHY it's trending
+- Price: Must include real Amazon price in format "$12.99" (use current Amazon pricing)
+- ASIN: Must include real Amazon ASIN code (10-character alphanumeric like "B01ABC123D")
 - NO generic terms like "trending product", "beauty item", "popular", "viral"
 - NO template headers like "Name | Brand" or "Product | Brand"
 - Product names must include specific details (size, shade, type, volume)

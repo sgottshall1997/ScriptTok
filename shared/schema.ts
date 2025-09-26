@@ -82,7 +82,7 @@ export const trendingProducts = pgTable("trending_products", {
   growthPercentage: text("growth_percentage"), // "+350%" - string format for display
   trendMomentum: text("trend_momentum"), // Additional momentum description
   
-  // Enhanced pricing fields
+  // Pricing and Amazon data fields
   price: text("price"), // "$12" or "$10/mo" - formatted price string for display
   priceNumeric: decimal("price_numeric"), // 12.00 - numeric value for sorting/filtering
   priceCurrency: text("price_currency").default("USD"), // Currency code
