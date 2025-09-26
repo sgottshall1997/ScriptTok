@@ -30,8 +30,8 @@ const AboutPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [expandedCategories, setExpandedCategories] = useState<{ [key: string]: boolean }>({});
   
-  const sectionsByCategory = getGlowBotSectionsByCategory();
-  const filteredSections = searchTerm ? getGlowBotSectionsByKeyword(searchTerm) : glowBotSections;
+  const sectionsByCategory = getScriptTokSectionsByCategory();
+  const filteredSections = searchTerm ? getScriptTokSectionsByKeyword(searchTerm) : scriptTokSections;
 
   const toggleCategory = (category: string) => {
     setExpandedCategories(prev => ({
@@ -426,7 +426,7 @@ const AboutPage: React.FC = () => {
       
       {/* About This Page Component */}
       {(() => {
-        const sectionData = getGlowBotSectionByPath('/about');
+        const sectionData = getScriptTokSectionByPath('/about');
         return sectionData ? (
           <AboutThisPage 
             title={sectionData.name}
