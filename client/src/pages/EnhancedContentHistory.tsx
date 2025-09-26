@@ -230,28 +230,6 @@ const EnhancedContentHistory = () => {
         console.log(`🔍 SORTING DEBUG: bEvals =`, bEvals);
 
         switch (sortBy) {
-          case 'gpt-highest':
-            const aGptScore = calculateAverageRating(aEvals.chatgpt);
-            const bGptScore = calculateAverageRating(bEvals.chatgpt);
-            return bGptScore - aGptScore; // Higher scores first
-          case 'gpt-lowest':
-            const aGptScoreLow = calculateAverageRating(aEvals.chatgpt);
-            const bGptScoreLow = calculateAverageRating(bEvals.chatgpt);
-            // For lowest, treat missing evaluations as high scores (10) so they appear last
-            const aGptFinal = aGptScoreLow === 0 ? 10 : aGptScoreLow;
-            const bGptFinal = bGptScoreLow === 0 ? 10 : bGptScoreLow;
-            return aGptFinal - bGptFinal; // Lower scores first
-          case 'claude-highest':
-            const aClaudeScore = calculateAverageRating(aEvals.claude);
-            const bClaudeScore = calculateAverageRating(bEvals.claude);
-            return bClaudeScore - aClaudeScore; // Higher scores first
-          case 'claude-lowest':
-            const aClaudeScoreLow = calculateAverageRating(aEvals.claude);
-            const bClaudeScoreLow = calculateAverageRating(bEvals.claude);
-            // For lowest, treat missing evaluations as high scores (10) so they appear last
-            const aClaudeFinal = aClaudeScoreLow === 0 ? 10 : aClaudeScoreLow;
-            const bClaudeFinal = bClaudeFinal === 0 ? 10 : bClaudeScoreLow;
-            return aClaudeFinal - bClaudeFinal; // Lower scores first
           case 'viral-highest':
             const aViralScore = a.viralScoreOverall || a.viralScore?.overall || 0;
             const bViralScore = b.viralScoreOverall || b.viralScore?.overall || 0;
@@ -770,10 +748,6 @@ const EnhancedContentHistory = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="gpt-highest">GPT Rating: Highest</SelectItem>
-                <SelectItem value="gpt-lowest">GPT Rating: Lowest</SelectItem>
-                <SelectItem value="claude-highest">Claude Rating: Highest</SelectItem>
-                <SelectItem value="claude-lowest">Claude Rating: Lowest</SelectItem>
                 <SelectItem value="viral-highest">Viral Rating: Highest</SelectItem>
                 <SelectItem value="viral-lowest">Viral Rating: Lowest</SelectItem>
               </SelectContent>
