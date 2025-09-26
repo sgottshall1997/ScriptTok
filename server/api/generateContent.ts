@@ -629,7 +629,9 @@ Experience the difference today! #${niche} #trending`;
         platform: 'tiktok',
         platformContent: platformContent,
         webhookData: webhookData,
-        viralScore: viralScore // Include viral score in generated output
+        viralScore: viralScore, // Include viral score in generated output
+        // Generate TikTok caption for saving - different from script content
+        tiktokCaption: generatePlatformCaptionForSaving('tiktok', { content }, product, '', niche)
       },
       affiliateLink: validatedData.affiliateUrl || null,
       viralInspo: validatedData.viralInspiration || null,
