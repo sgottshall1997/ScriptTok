@@ -579,29 +579,13 @@ const Dashboard = () => {
                 <div className="flex items-center gap-3">
                   <Clock className="h-5 w-5 text-blue-600" />
                   <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-blue-900">Last Perplexity Run</span>
-                      {perplexityStatus ? (
-                        <Badge variant="secondary" className="bg-blue-100 text-blue-800">
-                          {perplexityStatus.timeSince}
-                        </Badge>
-                      ) : (
-                        <Badge variant="secondary" className="bg-gray-100 text-gray-600">
-                          Loading...
-                        </Badge>
-                      )}
-                    </div>
-                    <div className="text-sm text-blue-700 mt-1">
-                      {perplexityStatus ? (
-                        <>
-                          <div><strong>Time:</strong> {perplexityStatus.lastRun}</div>
-                          <div><strong>Next:</strong> {perplexityStatus.nextScheduled}</div>
-                          <div><strong>Products:</strong> {perplexityStatus.totalProducts} total in database</div>
-                        </>
-                      ) : (
-                        <div>Loading status...</div>
-                      )}
-                    </div>
+                    <span className="font-medium text-blue-900">Last Perplexity Run</span>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500">Last updated</p>
+                    <p className="text-xs font-semibold text-gray-700">
+                      {perplexityStatus ? perplexityStatus.timeSince : 'Loading...'}
+                    </p>
                   </div>
                 </div>
               </CardContent>
