@@ -179,7 +179,8 @@ export async function generateContent(
   model: string = "gpt-4o",
   viralInspiration?: ViralInspiration,
   smartStyleRecommendations?: any,
-  aiModel: AIModel = "chatgpt"
+  aiModel: AIModel = "chatgpt",
+  viralTopic?: string
 ): Promise<{ 
   content: string; 
   fallbackLevel?: 'exact' | 'default' | 'generic';
@@ -237,6 +238,8 @@ export async function generateContent(
       // Use new TEMPLATE_PROMPTS structure
       const promptConfig: PromptConfig = {
         productName: product,
+        viralTopic: viralTopic, // Pass viral topic for viral templates
+        contentMode: viralTopic ? 'viral' : 'affiliate', // Set content mode based on viral topic
         niche: niche as any,
         templateType: templateType as any,
         tone: tone as any,

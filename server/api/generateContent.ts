@@ -441,7 +441,9 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         niche,
         actualModelId, // Use mapped AI model ID
         enhancedViralInspiration, // Pass enhanced viral inspiration with improvements
-        smartStyleRecommendations // Pass smart style recommendations
+        smartStyleRecommendations, // Pass smart style recommendations
+        validatedData.aiModel as any,
+        validatedData.viralTopic // Pass viral topic for viral content mode
       );
       content = result.content;
       fallbackLevel = result.fallbackLevel;
@@ -474,7 +476,10 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
             trendingProducts,
             niche,
             fallbackModelId, // Use proper fallback model ID
-            enhancedViralInspiration // Use enhanced viral inspiration with improvements
+            enhancedViralInspiration, // Use enhanced viral inspiration with improvements
+            smartStyleRecommendations,
+            validatedData.aiModel as any,
+            validatedData.viralTopic // Pass viral topic for viral content mode
           );
           content = fallbackResult.content;
           fallbackLevel = fallbackResult.fallbackLevel;
