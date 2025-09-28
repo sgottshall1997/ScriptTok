@@ -79,8 +79,8 @@ const AboutPage: React.FC = () => {
     },
     {
       icon: Video,
-      title: 'TikTok Generator',
-      description: 'Generate viral TikTok content with AI-powered scripts and captions',
+      title: 'Content Generator',
+      description: 'Access both Viral Content Studio and Affiliate Content Studio for all your content needs',
       path: '/generate-content',
       category: 'Generation'
     },
@@ -128,8 +128,9 @@ const AboutPage: React.FC = () => {
           </div>
         </div>
         <p className="text-gray-700 max-w-3xl mx-auto text-lg leading-relaxed">
-          Transform your TikTok content creation with AI-powered viral script generation. ScriptTok helps creators, 
-          marketers, and businesses generate high-performing TikTok content that drives engagement and grows your audience.
+          ScriptTok offers two powerful content generation studios: <strong>Viral Content Studio</strong> for trend-based viral content 
+          and <strong>Affiliate Content Studio</strong> for product-focused content with affiliate integration. Whether you want to 
+          ride trending topics or promote specific products, ScriptTok's AI creates high-performing content that drives engagement.
         </p>
       </div>
 
@@ -141,17 +142,30 @@ const AboutPage: React.FC = () => {
             What ScriptTok Does
           </CardTitle>
           <CardDescription>
-            AI-powered TikTok content generation with real-time trend intelligence
+            Dual-mode AI content generation: Viral trends and affiliate marketing
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg mb-8">
-            <p className="text-lg text-gray-800 leading-relaxed">
-              ScriptTok combines AI technology with real-time trend data to help you create engaging TikTok scripts 
-              that capture attention and drive results. Our platform uses Perplexity AI to research trending products 
-              and viral content patterns, then feeds this intelligence to ChatGPT or Claude to generate smart, 
-              contextually relevant content.
+            <p className="text-lg text-gray-800 leading-relaxed mb-4">
+              ScriptTok features two distinct content generation studios designed for different creator goals:
             </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-4 rounded-lg border border-pink-200">
+                <h4 className="font-bold text-pink-700 mb-2">🔥 Viral Content Studio</h4>
+                <p className="text-sm text-gray-700">
+                  Creates trend-based viral content without requiring specific products. Perfect for creators 
+                  who want to ride trending topics and create engaging content that goes viral.
+                </p>
+              </div>
+              <div className="bg-white p-4 rounded-lg border border-purple-200">
+                <h4 className="font-bold text-purple-700 mb-2">💰 Affiliate Content Studio</h4>
+                <p className="text-sm text-gray-700">
+                  Creates product-focused content with affiliate integration. Ideal for affiliate marketers 
+                  and influencers who want compelling product-focused content with affiliate links.
+                </p>
+              </div>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -311,25 +325,46 @@ const AboutPage: React.FC = () => {
             How to Use ScriptTok
           </CardTitle>
           <CardDescription>
-            Simple 4-step workflow to viral TikTok content
+            Choose your content studio, then follow our simple workflow
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Studio Selection Step */}
+          <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg border-2 border-blue-200">
+            <div className="text-center mb-4">
+              <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <span className="text-white font-bold text-2xl">⚡</span>
+              </div>
+              <h3 className="font-bold text-gray-900 mb-2 text-lg">First: Choose Your Content Studio</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-white rounded-lg border-2 border-pink-200 hover:border-pink-400 transition-colors">
+                <h4 className="font-semibold text-pink-700 mb-2">🔥 Viral Content Studio</h4>
+                <p className="text-sm text-gray-600">For trend-based viral content without specific products</p>
+              </div>
+              <div className="p-4 bg-white rounded-lg border-2 border-purple-200 hover:border-purple-400 transition-colors">
+                <h4 className="font-semibold text-purple-700 mb-2">💰 Affiliate Content Studio</h4>
+                <p className="text-sm text-gray-600">For product-focused content with affiliate integration</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Workflow Steps */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
             <div className="text-center p-6 bg-blue-50 rounded-lg border-2 border-blue-200">
               <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-lg">1</span>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Choose Your Niche</h3>
-              <p className="text-sm text-gray-600">Select from 7 supported niches with specialized templates</p>
+              <h3 className="font-semibold text-gray-900 mb-2">Choose Your Input</h3>
+              <p className="text-sm text-gray-600">Enter trending topic (Viral) or select product (Affiliate)</p>
             </div>
 
             <div className="text-center p-6 bg-purple-50 rounded-lg border-2 border-purple-200">
               <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <span className="text-white font-bold text-lg">2</span>
               </div>
-              <h3 className="font-semibold text-gray-900 mb-2">Select Product & Template</h3>
-              <p className="text-sm text-gray-600">Pick trending products and viral content templates</p>
+              <h3 className="font-semibold text-gray-900 mb-2">Select Template</h3>
+              <p className="text-sm text-gray-600">Pick from viral or affiliate content templates</p>
             </div>
 
             <div className="text-center p-6 bg-green-50 rounded-lg border-2 border-green-200">
@@ -337,7 +372,7 @@ const AboutPage: React.FC = () => {
                 <span className="text-white font-bold text-lg">3</span>
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Generate Content</h3>
-              <p className="text-sm text-gray-600">AI creates viral-ready scripts and captions instantly</p>
+              <p className="text-sm text-gray-600">AI creates optimized scripts and captions instantly</p>
             </div>
 
             <div className="text-center p-6 bg-orange-50 rounded-lg border-2 border-orange-200">
@@ -389,16 +424,141 @@ const AboutPage: React.FC = () => {
             Content Template Types
           </CardTitle>
           <CardDescription>
-            Highly sophisticated, proprietary AI prompts engineered for maximum viral potential
+            Specialized templates for both viral content creation and affiliate marketing
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* Viral Templates Section */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <span className="text-2xl mr-2">🔥</span>
+              Viral Content Studio Templates
+            </h3>
+            <p className="text-gray-600 mb-4 text-sm">
+              Perfect for creators who want to ride trending topics and create engaging content without promoting specific products.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 bg-pink-50 rounded-lg border border-pink-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">🎯</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Viral Hooks</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Scroll-stopping opening lines designed to grab attention instantly</p>
+                <Badge variant="outline" className="text-xs">5-15 seconds</Badge>
+              </div>
+              <div className="p-4 bg-pink-50 rounded-lg border border-pink-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">📱</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Viral Short Script</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Complete viral video scripts based on trending topics</p>
+                <Badge variant="outline" className="text-xs">30-60 seconds</Badge>
+              </div>
+              <div className="p-4 bg-pink-50 rounded-lg border border-pink-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">📚</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Viral Storytime</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Engaging narrative scripts that capitalize on trending stories</p>
+                <Badge variant="outline" className="text-xs">60-90 seconds</Badge>
+              </div>
+              <div className="p-4 bg-pink-50 rounded-lg border border-pink-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">🤝</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Viral Duet Reaction</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Reaction scripts for duetting with trending content</p>
+                <Badge variant="outline" className="text-xs">15-30 seconds</Badge>
+              </div>
+              <div className="p-4 bg-pink-50 rounded-lg border border-pink-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">📋</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Viral Listicle</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">List-based content around trending topics</p>
+                <Badge variant="outline" className="text-xs">45-75 seconds</Badge>
+              </div>
+              <div className="p-4 bg-pink-50 rounded-lg border border-pink-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">🏆</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Viral Challenge</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Scripts for creating or participating in viral challenges</p>
+                <Badge variant="outline" className="text-xs">30-45 seconds</Badge>
+              </div>
+            </div>
+          </div>
+
+          {/* Affiliate Templates Section */}
+          <div className="mb-8">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <span className="text-2xl mr-2">💰</span>
+              Affiliate Content Studio Templates
+            </h3>
+            <p className="text-gray-600 mb-4 text-sm">
+              Ideal for affiliate marketers and influencers who want to create compelling product-focused content with affiliate links.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">📧</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Affiliate Email</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Email campaigns promoting affiliate products</p>
+                <Badge variant="outline" className="text-xs">Email format</Badge>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">💬</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Influencer Caption</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Social media captions for product promotions</p>
+                <Badge variant="outline" className="text-xs">15-30 seconds</Badge>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">⚖️</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Product Comparison</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Compare multiple products with affiliate recommendations</p>
+                <Badge variant="outline" className="text-xs">45-90 seconds</Badge>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">📦</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Unboxing Review</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Product unboxing and review scripts</p>
+                <Badge variant="outline" className="text-xs">60-120 seconds</Badge>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">📱</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Short Video Script</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Product-focused short video content</p>
+                <Badge variant="outline" className="text-xs">30-60 seconds</Badge>
+              </div>
+              <div className="p-4 bg-purple-50 rounded-lg border border-purple-200 hover:shadow-md transition-shadow">
+                <div className="flex items-center mb-3">
+                  <span className="text-2xl mr-3">🛍️</span>
+                  <h4 className="font-semibold text-gray-900 text-sm">Routine Kit</h4>
+                </div>
+                <p className="text-sm text-gray-700 mb-2">Complete routine content featuring multiple products</p>
+                <Badge variant="outline" className="text-xs">90-180 seconds</Badge>
+              </div>
+            </div>
+          </div>
+
           {/* Universal Templates Section */}
           <div className="mb-8">
             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
               <Sparkles className="h-5 w-5 mr-2 text-orange-600" />
               Universal Templates
             </h3>
+            <p className="text-gray-600 mb-4 text-sm">
+              Versatile templates that work for both viral content and affiliate marketing depending on your input.
+            </p>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
               {getUniversalTemplates().map((template) => (
                 <div key={template.id} className="p-4 bg-orange-50 rounded-lg border border-orange-200 hover:shadow-md transition-shadow">

@@ -34,21 +34,37 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <Badge variant="secondary" className="mb-6 text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-              ✨ AI-Powered Tik-Tok Content Generator
+              ✨ Dual-Mode AI Content Generator
             </Badge>
 
             <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-  Make Your Voice Heard.
-  <br />From trend to
-  <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> viral script</span>
-  <br />in 60 seconds
-</h1>
+              Two Powerful Studios.
+              <br />From
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600"> viral trends</span>
+              to
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> affiliate sales</span>
+              <br />in 60 seconds
+            </h1>
 
             <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl p-6 mb-8 max-w-4xl mx-auto">
-              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200 flex items-center justify-center gap-2">
-                <Brain className="h-6 w-6 text-purple-600" />
-                Built for TikTok creators who want to turn trends into viral scripts fast. ScriptTok finds trending products, analyzes viral video patterns, and generates ready-to-post scripts in seconds. Other formats like blogs and affiliate content are coming next.
-              </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="text-center">
+                  <h3 className="font-bold text-pink-700 dark:text-pink-300 mb-2 flex items-center justify-center gap-2">
+                    🔥 Viral Content Studio
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    Create trend-based viral content without specific products. Perfect for riding trending topics.
+                  </p>
+                </div>
+                <div className="text-center">
+                  <h3 className="font-bold text-purple-700 dark:text-purple-300 mb-2 flex items-center justify-center gap-2">
+                    💰 Affiliate Content Studio
+                  </h3>
+                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                    Generate product-focused content with affiliate integration for maximum conversions.
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -74,7 +90,7 @@ export default function LandingPage() {
               The AI Behind ScriptTok
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              ScriptTok combines trend research with viral content analysis to inform your scripts. We analyze successful videos, performance metrics, and real-time trend data to generate scripts informed by current viral patterns.
+              ScriptTok's dual AI engines power both viral trend analysis and affiliate product research. Whether you're creating viral content or promoting products, our AI adapts to deliver scripts optimized for your specific goals.
             </p>
           </div>
 
@@ -154,24 +170,64 @@ export default function LandingPage() {
               How ScriptTok Works
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Three simple steps to engagement-optimized TikTok content
+              Choose your content studio, then follow our simple workflow
             </p>
           </div>
 
+          {/* Studio Selection */}
+          <div className="mb-16 max-w-4xl mx-auto">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Step 1: Choose Your Content Studio</h3>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <Card className="bg-gradient-to-br from-pink-50 to-red-50 dark:from-pink-900/20 dark:to-red-900/20 border-2 border-pink-200 dark:border-pink-700 shadow-lg">
+                <CardContent className="p-8 text-center">
+                  <div className="text-6xl mb-4">🔥</div>
+                  <h4 className="text-xl font-bold text-pink-700 dark:text-pink-300 mb-4">Viral Content Studio</h4>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    Enter trending topics (like "One Piece", "Stanley Cup", "Viral Dance") and get content that rides the wave.
+                  </p>
+                  <div className="bg-white dark:bg-gray-700 rounded-lg p-3 border border-pink-200">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">Example: "AI Art Controversy"</span>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 border-2 border-purple-200 dark:border-purple-700 shadow-lg">
+                <CardContent className="p-8 text-center">
+                  <div className="text-6xl mb-4">💰</div>
+                  <h4 className="text-xl font-bold text-purple-700 dark:text-purple-300 mb-4">Affiliate Content Studio</h4>
+                  <p className="text-gray-600 dark:text-gray-300 mb-4">
+                    Select trending products and get affiliate-optimized content with conversion-focused messaging.
+                  </p>
+                  <div className="bg-white dark:bg-gray-700 rounded-lg p-3 border border-purple-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-900 dark:text-white">Stanley Tumbler</span>
+                      <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">Hot 🔥</Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Workflow Steps */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <Card className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-0 shadow-lg">
               <CardContent className="p-8">
                 <div className="bg-blue-500 rounded-full w-12 h-12 flex items-center justify-center mb-6">
-                  <span className="text-white font-bold text-xl">1</span>
+                  <span className="text-white font-bold text-xl">2</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Pick a Trending Product</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">AI Research & Analysis</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Browse trending products discovered by Perplexity AI, organized by niche with popularity indicators.
+                  Our AI researches trending patterns (viral) or product performance data (affiliate) to inform your content.
                 </p>
                 <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-blue-200 dark:border-blue-700">
-                  <div className="flex items-center justify-between">
-                    <span className="font-medium text-gray-900 dark:text-white">Glass Skin Serums</span>
-                    <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">Hot 🔥</Badge>
+                  <div className="text-center">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">AI analyzing trends...</span>
+                    <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                      <div className="bg-blue-600 h-2 rounded-full w-[75%]"></div>
+                    </div>
                   </div>
                 </div>
               </CardContent>
@@ -180,19 +236,16 @@ export default function LandingPage() {
             <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-0 shadow-lg">
               <CardContent className="p-8">
                 <div className="bg-purple-500 rounded-full w-12 h-12 flex items-center justify-center mb-6">
-                  <span className="text-white font-bold text-xl">2</span>
+                  <span className="text-white font-bold text-xl">3</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">AI Analyzes Viral Competitors</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Template Selection</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Perplexity researches successful TikTok videos about your chosen product to identify viral content patterns.
+                  Choose from viral templates (hooks, challenges) or affiliate templates (reviews, comparisons).
                 </p>
                 <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-purple-200 dark:border-purple-700">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-900 dark:text-white">Engagement Score</span>
-                    <span className="text-lg font-bold text-purple-600">94/100</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2">
-                    <div className="bg-purple-600 h-2 rounded-full w-[94%]"></div>
+                  <div className="space-y-2">
+                    <div className="text-xs text-pink-600 font-medium">🔥 Viral Hooks</div>
+                    <div className="text-xs text-purple-600 font-medium">💰 Product Review</div>
                   </div>
                 </div>
               </CardContent>
@@ -201,15 +254,15 @@ export default function LandingPage() {
             <Card className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 border-0 shadow-lg">
               <CardContent className="p-8">
                 <div className="bg-green-500 rounded-full w-12 h-12 flex items-center justify-center mb-6">
-                  <span className="text-white font-bold text-xl">3</span>
+                  <span className="text-white font-bold text-xl">4</span>
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Get Optimized Scripts</h3>
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">Optimized Content</h3>
                 <p className="text-gray-600 dark:text-gray-300 mb-4">
-                  Get AI-generated scripts with captions, suggested posting times, and FTC disclosure reminders.
+                  Get scripts optimized for viral engagement or affiliate conversions, with viral scores and suggestions.
                 </p>
                 <div className="bg-white dark:bg-gray-700 rounded-lg p-4 border-2 border-dashed border-green-200 dark:border-green-700">
                   <p className="text-sm text-gray-600 dark:text-gray-300 italic">
-                    "POV: You found the glass skin secret that Korean influencers don't want you to know... 🤫✨"
+                    "POV: You discovered this trend before it exploded... 🚀✨"
                   </p>
                 </div>
               </CardContent>
@@ -223,21 +276,21 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-16">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
-              Powerful Features
+              Powerful Features for Both Studios
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Everything you need to create engaging TikTok content
+              Whether you're going viral or driving sales, we've got you covered
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className="flex items-start gap-4">
-              <div className="bg-blue-500 rounded-lg p-3 shadow-lg">
+              <div className="bg-pink-500 rounded-lg p-3 shadow-lg">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Trend Discovery and Research</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">Stay ahead with live trend analysis across all niches</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Viral Trend Discovery</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">Real-time trend analysis for viral content opportunities</p>
               </div>
             </div>
 
@@ -246,8 +299,8 @@ export default function LandingPage() {
                 <Target className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Competitor Intelligence</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">Analyze what's working for top creators in your niche</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Product Intelligence</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">Smart product research for affiliate content optimization</p>
               </div>
             </div>
 
@@ -256,8 +309,8 @@ export default function LandingPage() {
                 <Zap className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">AI-Generated Scripts Based on Viral Patterns</h3>
-                <p className="text-gray-600 dark:text-gray-300 text-sm">AI creates optimized scripts and captions instantly</p>
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Dual-Mode AI Generation</h3>
+                <p className="text-gray-600 dark:text-gray-300 text-sm">Scripts optimized for viral engagement or affiliate conversions</p>
               </div>
             </div>
 
@@ -428,10 +481,10 @@ export default function LandingPage() {
       <section className="py-20 bg-gradient-to-r from-purple-600 to-blue-600">
         <div className="container mx-auto px-4 max-w-4xl text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
-            TikTok moves fast. Don't get left behind.
+            Whether you're chasing trends or driving sales...
           </h2>
           <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
-            Generate your first script now and see how AI-powered trend research can improve your content.
+            Choose your content studio and start creating optimized scripts in seconds. Viral or affiliate - we've got both covered.
           </p>
           <Link href="/dashboard">
             <Button size="lg" className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300" data-testid="button-try-scripttok-final">
