@@ -30,9 +30,9 @@ export default function LandingPage() {
       </div>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-20 lg:py-32">
+      <section className="relative overflow-hidden py-12 lg:py-16">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <Badge variant="secondary" className="mb-6 text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
               ✨ Dual-Mode AI Content Generator
             </Badge>
@@ -83,9 +83,9 @@ export default function LandingPage() {
       </section>
 
       {/* The AI Behind ScriptTok */}
-      <section className="py-20 bg-white dark:bg-gray-800">
+      <section className="py-12 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
               The AI Behind ScriptTok
             </h2>
@@ -140,10 +140,10 @@ export default function LandingPage() {
       </section>
 
       {/* Social Proof */}
-      <section className="py-16 bg-gray-50 dark:bg-gray-900">
+      <section className="py-8 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-12">
-            <p className="text-gray-600 dark:text-gray-400 mb-8">Built with leading AI platforms</p>
+          <div className="text-center mb-8">
+            <p className="text-gray-600 dark:text-gray-400 mb-6">Built with leading AI platforms</p>
             <div className="flex flex-wrap justify-center items-center gap-8 opacity-60">
               <div className="flex items-center gap-2 text-2xl font-bold text-gray-700 dark:text-gray-300">
                 <Video className="h-8 w-8" />
@@ -163,9 +163,9 @@ export default function LandingPage() {
       </section>
 
       {/* Product Demo */}
-      <section className="py-20 bg-white dark:bg-gray-800">
+      <section className="py-12 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
               How ScriptTok Works
             </h2>
@@ -175,8 +175,8 @@ export default function LandingPage() {
           </div>
 
           {/* Studio Selection */}
-          <div className="mb-16 max-w-4xl mx-auto">
-            <div className="text-center mb-8">
+          <div className="mb-8 max-w-4xl mx-auto">
+            <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Step 1: Choose Your Content Studio</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -272,9 +272,9 @@ export default function LandingPage() {
       </section>
 
       {/* Key Features */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900">
+      <section className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
               Powerful Features for Both Studios
             </h2>
@@ -348,9 +348,9 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 bg-white dark:bg-gray-800">
+      <section className="py-12 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
               Simple Pricing
             </h2>
@@ -429,15 +429,15 @@ export default function LandingPage() {
       </section>
 
       {/* FAQ Section */}
-      <section className="py-20 bg-gray-50 dark:bg-gray-900">
+      <section className="py-12 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto px-4 max-w-4xl">
-          <div className="text-center mb-16">
+          <div className="text-center mb-8">
             <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
               Frequently Asked Questions
             </h2>
           </div>
 
-          <div className="space-y-8">
+          <div className="space-y-6">
             <Card>
               <CardContent className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">How do you find trends?</h3>
@@ -478,12 +478,12 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-blue-600">
+      <section className="py-12 bg-gradient-to-r from-purple-600 to-blue-600">
         <div className="container mx-auto px-4 max-w-4xl text-center">
           <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6">
             Whether you're chasing trends or driving sales...
           </h2>
-          <p className="text-xl text-purple-100 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-purple-100 mb-6 max-w-2xl mx-auto">
             Choose your content studio and start creating optimized scripts in seconds. Viral or affiliate - we've got both covered.
           </p>
           <Link href="/dashboard">
