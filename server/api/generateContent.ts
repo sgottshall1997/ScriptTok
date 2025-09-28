@@ -247,7 +247,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       console.log('🎲 Surprise Me mode activated - using AI to select optimal template');
       try {
         const aiSelection = await selectBestTemplate(
-          validatedData.product,
+          validatedData.product || validatedData.viralTopic || '',
           validatedData.niche,
           validatedData.platforms,
           validatedData.tone
@@ -276,8 +276,12 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       }
     }
 
-    const { product, tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength, useSmartStyle, userId } = result.data;
+    const { product, viralTopic, contentMode = 'affiliate', tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength, useSmartStyle, userId } = result.data;
     const templateType = finalTemplateType;
+    
+    // Determine the main subject based on content mode
+    const mainSubject = contentMode === 'viral' ? viralTopic : product;
+    const displaySubject = mainSubject || 'Unknown Subject';
 
     // Get smart style recommendations if enabled
     let smartStyleRecommendations = null;
@@ -302,10 +306,11 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
 
     // Create cache parameters object
     const cacheParams = {
-      product: product.toLowerCase().trim(),
+      product: mainSubject?.toLowerCase().trim() || '',
       templateType,
       tone,
       niche,
+      contentMode: contentMode || 'affiliate',
       useSmartStyle: useSmartStyle || false
     };
 
@@ -318,17 +323,17 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     // If we have a valid cached result, return it
     if (cached && cached.content) {
       // Estimate video duration for cached content too
-      const videoDuration = estimateVideoDuration(cached.content, tone, templateType);
+      const videoDuration = estimateVideoDuration(cached.content);
 
-      console.log(`Using cached content for ${product}, template: ${templateType}, tone: ${tone}`);
+      console.log(`Using cached content for ${displaySubject}, template: ${templateType}, tone: ${tone}`);
 
       return res.json({
         success: true,
         data: {
           content: cached.content,
-          summary: `${templateType} content for ${product} (${tone} tone)`,
+          summary: `${templateType} content for ${displaySubject} (${tone} tone)`,
           tags: [niche, templateType, tone, "cached"],
-          product,
+          product: mainSubject,
           templateType,
           tone,
           niche,
@@ -347,7 +352,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     if ((isVideoContent || contentType === "video") && videoLength) {
       try {
         const videoResult = await generateVideoContent({
-          productName: product,
+          productName: mainSubject || '',
           niche,
           tone,
           duration: videoLength,
@@ -422,7 +427,6 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
         // Enhance viral inspiration with improvement instructions
         enhancedViralInspiration = {
           ...baseInspiration,
-          improvementPrompt: validatedData.improvementInstructions,
           format: `Apply these improvements: ${validatedData.improvementInstructions}`,
           hook: `Enhanced content with: ${validatedData.improvementInstructions.substring(0, 100)}...`
         };
@@ -430,7 +434,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       }
 
       const result = await generateContent(
-        product,
+        mainSubject || '',
         templateType,
         tone,
         trendingProducts,
@@ -464,8 +468,8 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
           const fallbackModelId = validatedData.aiModel === 'claude' ? 'claude-3-haiku' : 'gpt-3.5-turbo';
 
           const fallbackResult = await generateContent(
-            product,
-            templateType,
+            mainSubject || '',
+            templateType as any,
             tone,
             trendingProducts,
             niche,
@@ -487,9 +491,9 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
           console.error('Both GPT-4 and GPT-3.5-turbo failed:', fallbackError);
 
           // Return a meaningful fallback content instead of error
-          content = `✨ ${product} - ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Content ✨
+          content = `✨ ${displaySubject} - ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Content ✨
 
-This ${product} is a fantastic choice for your ${niche} journey! With its exceptional quality and ${tone} appeal, it's become a trending favorite.
+This ${displaySubject} is a fantastic choice for your ${niche} journey! With its exceptional quality and ${tone} appeal, it's become a trending favorite.
 
 Key highlights:
 🌟 Perfect for ${niche} enthusiasts
@@ -499,15 +503,15 @@ Key highlights:
 Experience the difference today! #${niche} #trending`;
 
           fallbackLevel = 'generic';
-          prompt = `Fallback content for ${product}`;
+          prompt = `Fallback content for ${displaySubject}`;
           model = 'fallback';
           tokens = 0;
         }
       } else {
         // For other errors, provide meaningful fallback content
-        content = `✨ ${product} - ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Content ✨
+        content = `✨ ${displaySubject} - ${templateType.charAt(0).toUpperCase() + templateType.slice(1)} Content ✨
 
-This ${product} is a fantastic choice for your ${niche} journey! With its exceptional quality and ${tone} appeal, it's become a trending favorite.
+This ${displaySubject} is a fantastic choice for your ${niche} journey! With its exceptional quality and ${tone} appeal, it's become a trending favorite.
 
 Key highlights:
 🌟 Perfect for ${niche} enthusiasts
@@ -548,15 +552,15 @@ Experience the difference today! #${niche} #trending`;
     // Store in cache with optimized parameters
     contentCache.set(cacheKey, {
       content,
-      fallbackLevel,
+      fallbackLevel: fallbackLevel as 'exact' | 'generic' | 'default' | undefined,
       generatedAt: Date.now()
     });
 
-    console.log(`Cached new content for ${product}, template: ${templateType}, tone: ${tone}`);
+    console.log(`Cached new content for ${displaySubject}, template: ${templateType}, tone: ${tone}`);
 
     // Save to database
     await storage.saveContentGeneration({
-      product,
+      product: mainSubject,
       templateType,
       tone,
       niche,
@@ -568,7 +572,7 @@ Experience the difference today! #${niche} #trending`;
     if (platformContent && platformContent.socialCaptions) {
       for (const [platform, contentData] of Object.entries(platformContent.socialCaptions)) {
         // Generate TikTok caption for saving to history
-        const tiktokCaption = generatePlatformCaptionForSaving('tiktok', contentData, product, '', niche);
+        const tiktokCaption = generatePlatformCaptionForSaving('tiktok', contentData, mainSubject || '', '', niche);
         const platformCaptions = {
           tiktok: tiktokCaption,
           tiktokCaption: tiktokCaption // Keep legacy format for backward compatibility
@@ -581,7 +585,7 @@ Experience the difference today! #${niche} #trending`;
           postInstructions: contentData.postInstructions,
           videoScript: platformContent.videoScript || null,
           photoDescription: platformContent.photoDescription || null,
-          product,
+          product: mainSubject,
           niche,
           tone,
           templateType,
@@ -608,7 +612,7 @@ Experience the difference today! #${niche} #trending`;
         viralAnalysis = await analyzeViralScore(
           content,
           viralScore,
-          product,
+          mainSubject || '',
           niche
         );
         console.log('🤖 AI analysis completed');
@@ -620,13 +624,13 @@ Experience the difference today! #${niche} #trending`;
 
     // Save detailed content history record with all metadata including hook and platform content
     const contentHistoryEntry = await storage.saveContentHistory({
-      userId: req.user?.id, // If user is authenticated
+      userId: (req as any).user?.id, // If user is authenticated
       sessionId: `session_${Date.now()}`,
       niche,
       contentType: templateType,
       tone,
-      productName: product,
-      promptText: prompt || `Generate ${templateType} content for ${product} with ${tone} tone in ${niche} niche`,
+      productName: mainSubject,
+      promptText: prompt || `Generate ${templateType} content for ${displaySubject} with ${tone} tone in ${niche} niche`,
       outputText: content,
       platformsSelected: platforms || ['tiktok'],
       generatedOutput: {
@@ -637,7 +641,7 @@ Experience the difference today! #${niche} #trending`;
         webhookData: webhookData,
         viralScore: viralScore, // Include viral score in generated output
         // Generate TikTok caption for saving - different from script content
-        tiktokCaption: generatePlatformCaptionForSaving('tiktok', { content }, product, '', niche)
+        tiktokCaption: generatePlatformCaptionForSaving('tiktok', { content }, mainSubject || '', '', niche)
       },
       affiliateLink: validatedData.affiliateUrl || null,
       viralInspo: validatedData.viralInspiration || null,
@@ -663,7 +667,7 @@ Experience the difference today! #${niche} #trending`;
 
     // 📊 Log feedback to SQLite database
     try {
-      const feedbackId = await logFeedback(product, templateType, tone, content);
+      const feedbackId = await logFeedback(mainSubject || '', templateType, tone, content);
       console.log(`📊 Feedback logged successfully with ID: ${feedbackId}`);
     } catch (feedbackError) {
       // Log error but don't block the response
