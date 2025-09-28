@@ -257,7 +257,7 @@ export function TemplateSelector({
                 {sectionName}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {sectionTemplates.filter(template => options.includes(template as TemplateType)).map((template) => {
+                {sectionTemplates.filter((template): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType) => {
                   const templateType = template as TemplateType;
                   return (
                     <Tooltip key={template} delayDuration={300}>
