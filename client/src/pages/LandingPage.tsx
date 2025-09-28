@@ -38,11 +38,10 @@ export default function LandingPage() {
             </Badge>
 
             <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-              Two Powerful Studios.
               <br />From
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600"> viral trends</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600"> trend </span>
               to
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> affiliate sales</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> viral script</span>
               <br />in 60 seconds
             </h1>
 

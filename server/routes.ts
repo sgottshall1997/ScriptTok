@@ -8,6 +8,7 @@ import { trendingRouter } from "./api/trending";
 import { scraperStatusRouter } from "./api/scraperStatus";
 import { historyRouter } from "./api/history";
 import perplexityTrendsRouter from "./api/perplexity-trends";
+import perplexityStatusRouter from "./api/perplexity-status";
 import statisticsApi from "./api/statistics";
 
 // Perplexity Intelligence System imports
@@ -38,6 +39,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Perplexity trends for viral research
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
+  app.use('/api/perplexity-status', perplexityStatusRouter);
   
   // Perplexity Intelligence System routes
   app.use('/api/trend-forecast', trendForecastRouter);
