@@ -86,7 +86,7 @@ const GenerateContent = () => {
   // console.log('🔍 URL Debug:', { location, search: window.location.search, productFromUrl, nicheFromUrl });
 
   // State management
-  const [contentMode, setContentMode] = useState<ContentMode>('affiliate'); // Default to affiliate mode
+  const [contentMode, setContentMode] = useState<ContentMode | null>(null); // No default mode - user must choose
   const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'beauty');
   const [selectedProduct, setSelectedProduct] = useState(productFromUrl || '');
   const [viralTopic, setViralTopic] = useState(''); // For viral mode topic input
@@ -1086,14 +1086,15 @@ ${config.hashtags.join(' ')}`;
             </CardContent>
           </Card>
 
-          {/* Content Setup - Conditional based on mode */}
-          <Card className="shadow-lg">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Sparkles className="h-5 w-5 text-blue-500" />
-                {contentMode === 'viral' ? '🔥 Viral Content Setup' : '📄 Product Setup'}
-              </CardTitle>
-            </CardHeader>
+          {/* Content Setup - Show only when mode is selected */}
+          {contentMode && (
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-blue-500" />
+                  {contentMode === 'viral' ? '🔥 Viral Content Setup' : '📄 Product Setup'}
+                </CardTitle>
+              </CardHeader>
             <CardContent className="space-y-4">
               
               {contentMode === 'viral' ? (
@@ -1153,7 +1154,19 @@ ${config.hashtags.join(' ')}`;
               </div>
 
           </CardContent>
-        </Card>
+          </Card>
+          )}
+
+          {/* Show selection prompt when no mode is chosen */}
+          {!contentMode && (
+            <Card className="shadow-lg border-2 border-yellow-200 bg-yellow-50">
+              <CardContent className="p-8 text-center">
+                <div className="text-4xl mb-4">👆</div>
+                <h3 className="text-xl font-bold text-gray-800 mb-2">Choose Your Content Studio</h3>
+                <p className="text-gray-600">Select either Viral Content Studio or Affiliate Content Studio above to get started</p>
+              </CardContent>
+            </Card>
+          )}
 
         {/* Product Research Card */}
         {selectedProduct && (productResearchLoading || productResearch) && (
@@ -1788,7 +1801,7 @@ ${config.hashtags.join(' ')}`;
             <Button 
               className="w-full h-12 text-lg font-semibold"
               onClick={handleGenerateContent}
-              disabled={isGenerating || (contentMode === 'affiliate' && !selectedProduct) || (contentMode === 'viral' && !viralTopic) || selectedTemplates.length === 0}
+              disabled={isGenerating || !contentMode || (contentMode === 'affiliate' && !selectedProduct) || (contentMode === 'viral' && !viralTopic) || selectedTemplates.length === 0}
             >
               {isGenerating ? (
                 <>
