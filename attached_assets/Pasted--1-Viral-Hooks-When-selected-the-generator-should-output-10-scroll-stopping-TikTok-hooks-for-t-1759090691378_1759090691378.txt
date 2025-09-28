@@ -1,0 +1,108 @@
+🔹 1. Viral Hooks
+
+
+When selected, the generator should output 10 scroll-stopping TikTok hooks for the given topic.
+Each hook must be 3–8 words long, easy to say aloud, and fit viral patterns like “POV:…”, “Stop scrolling if…”, or “Nobody told you…”.
+Output them as a numbered list from 1–10, one hook per line.
+No products, no affiliate language, no hashtags, no emojis.
+Save this template under the ScriptTok registry so it can be selected in the frontend alongside the others.
+
+⸻
+
+🔹 2. Short Script (15–30s)
+
+
+When selected, the generator should output a 15–30 second TikTok script for the given topic.
+The structure must include:
+	•	HOOK (0–3s)
+	•	BUILD (3–12s, 2–3 tight lines)
+	•	PAYOFF (12–24s, the reveal or main point)
+	•	BUTTON (24–30s, snappy closing line or question to invite comments)
+Limit total words to 70–120. Use short sentences, no filler.
+No products, no hashtags, no affiliate links.
+Register this template in the ScriptTok template registry.
+
+⸻
+
+🔹 3. Storytime
+
+
+When selected, the generator should output a 90–150 word TikTok story script about the given topic.
+Structure:
+	•	Setup (time/place + why it matters)
+	•	Inciting moment (what triggered the story)
+	•	Rising stakes (2–3 lines of tension or humor)
+	•	Peak beat (the key turning point)
+	•	Resolution (what changed)
+	•	Comment prompt (ask viewers to share a similar experience)
+Must feel authentic and conversational.
+No products, brands, or hashtags.
+Add this template to the ScriptTok registry.
+
+⸻
+
+🔹 4. Duet / Reaction
+
+
+When selected, the generator should output a script outline for reacting to or stitching another video in the given topic.
+Structure:
+	•	OPEN (≤8 words) — cold open line that pairs with a stitch
+	•	BEAT 1 (≤10 words)
+	•	BEAT 2 (≤10 words)
+	•	BEAT 3 (≤10 words)
+	•	PAYOFF (≤10 words)
+	•	QUESTION — short comment prompt for engagement
+No products, brands, hashtags, or affiliate references.
+Integrate into ScriptTok template registry.
+
+⸻
+
+🔹 5. Listicle
+
+
+When selected, the generator should create a script in the format:
+“Top 3–5 things about [topic].”
+For each item:
+	•	A short title (≤6 words)
+	•	One explanatory sentence (≤14 words)
+	•	Optional micro-example (≤10 words)
+Total output should be 90–140 words.
+Clear, punchy, scannable.
+No products, hashtags, or sales language.
+Add this to the ScriptTok registry.
+
+⸻
+
+🔹 6. Challenge
+
+Prompt 
+
+When selected, the generator should output a TikTok participation idea around the topic.
+Structure:
+	•	NAME (≤4 words)
+	•	SETUP line (≤12 words)
+	•	STEP 1, STEP 2, STEP 3 (≤8 words each)
+	•	VARIATIONS (two quick ideas for beginners/advanced)
+	•	NOTE (one short safety/comfort line)
+Must be easy to film in 15–30 seconds.
+No brands, hashtags, or affiliate mentions.
+Register in the ScriptTok template registry.
+
+⸻
+
+🔹 7. Caption + Hashtags
+
+
+When selected, the generator should output:
+	•	CAPTION 1 (8–18 words)
+	•	CAPTION 2 (8–18 words)
+	•	CAPTION 3 (8–18 words)
+	•	HASHTAGS (broad): 6–8 generic/trending tags (e.g., #fyp, #viralvideo)
+	•	HASHTAGS (niche): 6–8 community-specific tags related to the topic
+Captions should be conversational and invite engagement.
+No emojis, no affiliate language.
+Add this template type to the ScriptTok registry.
+
+⸻
+
+⚡️ With these 7 prompts in place, ScriptTok can now generate viral scripts and packaging for any trend without touching affiliate/product features.
