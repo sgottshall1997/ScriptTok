@@ -195,7 +195,7 @@ export function TemplateSelector({
                   {sectionName}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {sectionTemplates.filter((template: string) => options.includes(template as TemplateType)).map((template: string) => {
+                  {sectionTemplates.filter((template): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType) => {
                     const templateType = template as TemplateType;
                     const isSelected = selectedTemplates.includes(templateType);
                     return (
