@@ -5,7 +5,7 @@ import { storage } from "./storage";
 // Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
-// import { scraperStatusRouter } from "./api/scraperStatus"; // TODO: Implement scraper status API
+import { scraperStatusRouter } from "./api/scraperStatus";
 import { historyRouter } from "./api/history";
 import perplexityTrendsRouter from "./api/perplexity-trends";
 import statisticsApi from "./api/statistics";
@@ -33,7 +33,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Essential TikTok Viral Product Generator routes
   app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);
-  // app.use('/api/scraper-status', scraperStatusRouter); // TODO: Implement scraper status API
+  app.use('/api/scraper-status', scraperStatusRouter);
   app.use('/api/history', historyRouter);
   
   // Perplexity trends for viral research
