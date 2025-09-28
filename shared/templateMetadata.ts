@@ -95,20 +95,6 @@ export const TEMPLATE_METADATA: Record<TemplateType, TemplateMetadata> = {
     contentType: 'product-focused'
   },
 
-  // Niche-Specific Templates (from optimized PDF system)
-  'skincare': {
-    id: 'skincare',
-    name: 'Skincare Content',
-    description: 'Beauty and skincare focused content with expert positioning',
-    category: 'Beauty',
-    icon: '✨',
-    platforms: ['All'],
-    estimatedLength: '100-170 words',
-    useCase: 'Beauty product promotion and education',
-    example: 'Skincare benefits + routine integration + results',
-    usesProduct: true,
-    contentType: 'product-focused'
-  },
   'fashion': {
     id: 'fashion',
     name: 'Fashion Content',

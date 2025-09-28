@@ -1001,14 +1001,21 @@ ${config.hashtags.join(' ')}`;
                 </div>
               )}
 
-              {/* Niche */}
+              {/* Niche - Optional for viral mode */}
               <div>
-                <Label htmlFor="niche">Niche</Label>
+                <Label htmlFor="niche">
+                  Niche {contentMode === 'viral' && <span className="text-xs text-gray-500">(Optional)</span>}
+                </Label>
                 <Select value={selectedNiche} onValueChange={setSelectedNiche}>
                   <SelectTrigger>
-                    <SelectValue />
+                    <SelectValue placeholder={contentMode === 'viral' ? "Select niche (optional for viral content)" : "Select your niche"} />
                   </SelectTrigger>
                   <SelectContent>
+                    {contentMode === 'viral' && (
+                      <SelectItem value="">
+                        🌐 Universal (Cross-Niche)
+                      </SelectItem>
+                    )}
                     {niches.map((niche) => (
                       <SelectItem key={niche.id} value={niche.id}>
                         {niche.name}
@@ -1016,6 +1023,11 @@ ${config.hashtags.join(' ')}`;
                     ))}
                   </SelectContent>
                 </Select>
+                {contentMode === 'viral' && (
+                  <p className="text-xs text-muted-foreground mt-1">
+                    💡 Tip: Leave blank or select "Universal" for cross-niche viral content that works across all audiences
+                  </p>
+                )}
               </div>
 
           </CardContent>
@@ -1380,6 +1392,7 @@ ${config.hashtags.join(' ')}`;
                 selectedTemplates={selectedTemplates}
                 onMultiChange={setSelectedTemplates}
                 selectedNiche={selectedNiche}
+                contentMode={contentMode}
               />
             </div>
 

@@ -189,7 +189,7 @@ export function TemplateSelector({
 
         <TooltipProvider>
           <div className="space-y-6">
-            {Object.entries(templateSections).map(([sectionName, sectionTemplates]: [string, string[]]) => (
+            {Object.entries(templateSections).map(([sectionName, sectionTemplates]) => (
               <div key={sectionName} className="space-y-3">
                 <h4 className="text-md font-semibold text-gray-800 border-b border-gray-200 pb-2">
                   {sectionName}
