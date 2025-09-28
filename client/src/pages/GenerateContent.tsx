@@ -1012,7 +1012,7 @@ ${config.hashtags.join(' ')}`;
                   </SelectTrigger>
                   <SelectContent>
                     {contentMode === 'viral' && (
-                      <SelectItem value="">
+                      <SelectItem value="universal">
                         🌐 Universal (Cross-Niche)
                       </SelectItem>
                     )}
