@@ -98,9 +98,8 @@ const viralInspirationSchema = z.object({
   hashtags: z.array(z.string()),
 }).optional();
 
-// Validate request body schema with basic type checking
-const generateContentSchema = z.object({
-  product: z.string().trim().min(1, "Product name is required"),
+// Base schema with common fields
+const baseSchema = z.object({
   templateType: z.string().default("original"),
   tone: z.string().default("friendly"),
   niche: z.string().default("skincare"),
@@ -129,6 +128,25 @@ const generateContentSchema = z.object({
   useSmartStyle: z.boolean().optional().default(false),
   userId: z.number().optional(),
 });
+
+// Discriminated union schema for different content modes
+const generateContentSchema = z.discriminatedUnion("contentMode", [
+  baseSchema.extend({
+    contentMode: z.literal("affiliate"),
+    product: z.string().trim().min(1, "Product name is required for affiliate mode"),
+    viralTopic: z.string().optional(), // Optional for affiliate mode
+  }),
+  baseSchema.extend({
+    contentMode: z.literal("viral"),
+    viralTopic: z.string().trim().min(1, "Viral topic is required for viral mode"),
+    product: z.string().optional(), // Optional for viral mode
+  }),
+  // Fallback for legacy requests without contentMode (defaults to affiliate)
+  baseSchema.extend({
+    product: z.string().trim().min(1, "Product name is required"),
+    viralTopic: z.string().optional(),
+  }).transform(data => ({ ...data, contentMode: "affiliate" as const })),
+]);
 
 // Helper functions to check if tone and template exist in the system
 async function isValidTemplateType(templateType: string, niche: string): Promise<boolean> {

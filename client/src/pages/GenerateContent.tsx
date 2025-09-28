@@ -561,13 +561,14 @@ ${config.hashtags.join(' ')}`;
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              product: selectedProduct,
+              ...(contentMode === 'affiliate' ? { product: selectedProduct } : { viralTopic: viralTopic }),
               niche: selectedNiche,
               platforms: ['tiktok'],
               templateType: templateType,
               tone,
               customHook,
               aiModel: aiModel === 'both' ? 'claude' : aiModel, // Use selected AI model
+              contentMode,
             }),
           });
 
@@ -634,12 +635,13 @@ ${config.hashtags.join(' ')}`;
     if (aiModel === 'both') {
       try {
         const requestBody = {
-          product: selectedProduct,
+          ...(contentMode === 'affiliate' ? { product: selectedProduct } : { viralTopic: viralTopic }),
           niche: selectedNiche,
           platforms: ['tiktok'], // TikTok-only generator
           templateType: finalTemplateType,
           tone,
           customHook,
+          contentMode, // Add content mode to request
           // No affiliate URL needed for TikTok-only generator
           ...(viralInspo ? { viralInspiration: viralInspo } : {}), // Include viral inspiration data only if exists
           ...(productResearch ? { productResearch } : {}), // Include product research data
@@ -724,13 +726,14 @@ ${config.hashtags.join(' ')}`;
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          product: selectedProduct,
+          ...(contentMode === 'affiliate' ? { product: selectedProduct } : { viralTopic: viralTopic }),
           niche: selectedNiche,
           platforms: ['tiktok'], // TikTok-only generator
           templateType: finalTemplateType,
           tone,
           customHook,
           aiModel: aiModel, // Use selected single model
+          contentMode, // Add content mode to request
           // No affiliate URL needed for TikTok-only generator
           ...(viralInspo ? { viralInspiration: viralInspo } : {}), // Include viral inspiration data only if exists
           ...(productResearch ? { productResearch } : {}), // Include product research data
