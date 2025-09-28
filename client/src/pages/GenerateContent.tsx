@@ -109,6 +109,15 @@ const GenerateContent = () => {
       // console.log('🔍 Setting niche from URL:', nicheParam);
     }
   }, [location, window.location.search]);
+  
+  // Auto-set niche to "universal" when switching to viral mode
+  useEffect(() => {
+    if (contentMode === 'viral' && selectedNiche !== 'universal') {
+      setSelectedNiche('universal');
+    } else if (contentMode === 'affiliate' && selectedNiche === 'universal') {
+      setSelectedNiche('beauty'); // Default back to beauty for affiliate mode
+    }
+  }, [contentMode]);
   // Hardcoded to TikTok only for simplified generator
   const selectedPlatforms = ['tiktok'];
   const [templateType, setTemplateType] = useState(templateFromUrl || '');
@@ -1473,7 +1482,7 @@ ${config.hashtags.join(' ')}`;
             <Button 
               className="w-full h-12 text-lg font-semibold"
               onClick={handleGenerateContent}
-              disabled={isGenerating || !selectedProduct || selectedTemplates.length === 0}
+              disabled={isGenerating || (contentMode === 'affiliate' && !selectedProduct) || (contentMode === 'viral' && !viralTopic) || selectedTemplates.length === 0}
             >
               {isGenerating ? (
                 <>
