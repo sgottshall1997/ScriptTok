@@ -163,6 +163,14 @@ const GenerateContent = () => {
   const [competitorIntelOpen, setCompetitorIntelOpen] = useState(false);
   const [viralScore, setViralScore] = useState<any>(null);
   const [selectedCompetitorStyle, setSelectedCompetitorStyle] = useState<any>(null);
+  
+  // Viral Trend Research System states (new)
+  const [trendResearch, setTrendResearch] = useState<any>(null);
+  const [trendResearchLoading, setTrendResearchLoading] = useState(false);
+  const [trendCompetitorVideos, setTrendCompetitorVideos] = useState<any[]>([]);
+  const [trendCompetitorLoading, setTrendCompetitorLoading] = useState(false);
+  const [trendCompetitorIntelOpen, setTrendCompetitorIntelOpen] = useState(false);
+  const [selectedTrendCompetitorStyle, setSelectedTrendCompetitorStyle] = useState<any>(null);
 
 
 
@@ -278,11 +286,113 @@ const GenerateContent = () => {
     });
   };
 
+  // NEW: Fetch trend research using Perplexity Intelligence System
+  const fetchTrendResearch = async (topic: string) => {
+    if (!topic.trim()) {
+      setTrendResearch(null);
+      setTrendResearchLoading(false);
+      return;
+    }
+
+    setTrendResearchLoading(true);
+    
+    try {
+      // Call Trend Research API
+      const response = await fetch('/api/trend-research/research', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: topic,
+          niche: selectedNiche !== 'universal' ? selectedNiche : undefined
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setTrendResearch(result.data.research);
+          console.log('🔥 Trend research loaded:', result.data.research);
+        }
+      } else {
+        console.log('Trend research API not available, using fallback');
+        setTrendResearch(null);
+      }
+    } catch (error) {
+      console.error('Error fetching trend research:', error);
+      setTrendResearch(null);
+    } finally {
+      setTrendResearchLoading(false);
+    }
+  };
+
+  // NEW: Fetch trend competitor intelligence
+  const fetchTrendCompetitorIntel = async () => {
+    if (!viralTopic.trim()) {
+      toast({
+        title: "Trend Topic Required",
+        description: "Please enter a viral topic first",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setTrendCompetitorLoading(true);
+    setTrendCompetitorIntelOpen(true);
+    
+    try {
+      const response = await fetch('/api/trend-research/competitors', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: viralTopic,
+          niche: selectedNiche !== 'universal' ? selectedNiche : undefined
+        }),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        if (result.success) {
+          setTrendCompetitorVideos(result.data.competitors);
+          console.log('🔥 Trend competitor intel loaded:', result.data.competitors);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching trend competitor intel:', error);
+      toast({
+        title: "Fetch Failed",
+        description: "Could not load trending competitor videos. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setTrendCompetitorLoading(false);
+    }
+  };
+
+  // NEW: Apply trend competitor style to generation
+  const applyTrendCompetitorStyle = (competitor: any) => {
+    setSelectedTrendCompetitorStyle(competitor);
+    setCustomHook(competitor.hook);
+    
+    toast({
+      title: "Trending Style Applied! 🔥",
+      description: `Now using ${competitor.creator}'s viral format`,
+    });
+  };
+
   // Watch for product name changes to fetch viral inspiration
   useEffect(() => {
     console.log('useEffect triggered:', { selectedProduct, selectedNiche });
-    fetchViralInspirationForProduct(selectedProduct);
-  }, [selectedProduct, selectedNiche]);
+    
+    if (contentMode === 'affiliate') {
+      fetchViralInspirationForProduct(selectedProduct);
+    } else if (contentMode === 'viral') {
+      fetchTrendResearch(viralTopic);
+    }
+  }, [selectedProduct, selectedNiche, contentMode, viralTopic]);
 
   // Fetch prompt structure when template type, niche, or tone changes
   const fetchPromptStructure = async () => {
@@ -1137,6 +1247,199 @@ ${config.hashtags.join(' ')}`;
                       )}
                     </Button>
                   </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* NEW: Viral Trend Research Section */}
+        {contentMode === 'viral' && viralTopic && (trendResearchLoading || trendResearch) && (
+          <Card className="shadow-lg bg-orange-50 border border-orange-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-orange-700 flex items-center gap-2">
+                {trendResearchLoading ? (
+                  <>
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    🔥 Analyzing {viralTopic} trend...
+                  </>
+                ) : (
+                  <>📈 Trend Research Complete</>
+                )}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {trendResearchLoading ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-orange-600">Discovering viral hooks, trend insights, and trending angles...</p>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
+                  </div>
+                </div>
+              ) : trendResearch && (
+                <div className="space-y-4">
+                  {/* Viral Hooks */}
+                  {trendResearch.viralHooks && trendResearch.viralHooks.length > 0 && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-green-700 mb-2">🔥 Viral Hooks</h4>
+                      <ul className="space-y-1">
+                        {trendResearch.viralHooks.map((hook: string, index: number) => (
+                          <li key={index} className="text-sm text-gray-700">• {hook}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Target Audience */}
+                  {trendResearch.targetAudience && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-purple-700 mb-2">👥 Target Audience</h4>
+                      <p className="text-sm text-gray-700">{trendResearch.targetAudience}</p>
+                    </div>
+                  )}
+
+                  {/* Trending Angles */}
+                  {trendResearch.trendingAngles && trendResearch.trendingAngles.length > 0 && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-blue-700 mb-2">🎆 Trending Angles</h4>
+                      <ul className="space-y-1">
+                        {trendResearch.trendingAngles.map((angle: string, index: number) => (
+                          <li key={index} className="text-sm text-gray-700">• {angle}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Trend Insights */}
+                  {trendResearch.trendInsights && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-yellow-700 mb-2">✨ Trend Insights</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-medium text-gray-600">Popularity Score:</span>
+                          <span className="text-sm bg-yellow-100 px-2 py-1 rounded text-yellow-800">
+                            {trendResearch.trendInsights.popularityScore}/100
+                          </span>
+                        </div>
+                        <div className="text-sm text-gray-700">
+                          <strong>Peak Time:</strong> {trendResearch.trendInsights.peakTime}
+                        </div>
+                        {trendResearch.trendInsights.relatedTrends && trendResearch.trendInsights.relatedTrends.length > 0 && (
+                          <div>
+                            <strong className="text-sm text-gray-600">Related Trends:</strong>
+                            <div className="flex flex-wrap gap-1 mt-1">
+                              {trendResearch.trendInsights.relatedTrends.map((trend: string, index: number) => (
+                                <span key={index} className="text-xs bg-orange-100 px-2 py-1 rounded text-orange-700">
+                                  {trend}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Best Time to Post */}
+                  {trendResearch.bestTimeToPost && trendResearch.bestTimeToPost.length > 0 && (
+                    <div className="bg-white p-3 rounded-lg border">
+                      <h4 className="font-semibold text-indigo-700 mb-2">📅 Best Time to Post</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {trendResearch.bestTimeToPost.map((time: string, index: number) => (
+                          <span key={index} className="text-xs bg-indigo-100 px-2 py-1 rounded text-indigo-700">
+                            {time}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* View Trend Competitor Videos Button */}
+                  <div className="pt-2">
+                    <Button 
+                      onClick={fetchTrendCompetitorIntel}
+                      className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white"
+                      disabled={trendCompetitorLoading}
+                      data-testid="button-view-trend-competitors"
+                    >
+                      {trendCompetitorLoading ? (
+                        <>
+                          <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                          Analyzing Trending Videos...
+                        </>
+                      ) : (
+                        <>
+                          🔥 View Trending Competitor Videos →
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* NEW: Trend Competitor Intel Expandable Section */}
+        {trendCompetitorIntelOpen && (
+          <Card className="shadow-lg bg-red-50 border border-red-200">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-red-700 flex items-center gap-2">
+                🔥 Trending Competitor Intelligence
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {trendCompetitorLoading ? (
+                <div className="space-y-2">
+                  <p className="text-sm text-red-600">Finding top 5 viral videos about {viralTopic}...</p>
+                  <div className="grid grid-cols-5 gap-2">
+                    {[...Array(5)].map((_, i) => (
+                      <div key={i} className="h-16 bg-red-200 rounded animate-pulse"></div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {trendCompetitorVideos.length > 0 ? (
+                    trendCompetitorVideos.map((video, index) => (
+                      <div key={index} className="bg-white p-4 rounded-lg border hover:shadow-md transition-shadow">
+                        <div className="flex justify-between items-start mb-2">
+                          <div className="flex-1">
+                            <h4 className="font-semibold text-gray-900">{video.creator}</h4>
+                            <p className="text-sm text-red-600 font-medium">"{video.hook}"</p>
+                          </div>
+                          <div className="text-right text-xs text-gray-500">
+                            <div>{video.views}</div>
+                            <div>{video.engagement}</div>
+                          </div>
+                        </div>
+                        <div className="space-y-1 text-sm text-gray-600">
+                          <p><strong>Structure:</strong> {video.structure}</p>
+                          <p><strong>What Worked:</strong> {video.whatWorked}</p>
+                          {video.trendElement && (
+                            <p><strong>Trend Element:</strong> {video.trendElement}</p>
+                          )}
+                        </div>
+                        <div className="pt-2">
+                          <Button 
+                            onClick={() => applyTrendCompetitorStyle(video)}
+                            size="sm"
+                            className="w-full bg-green-600 hover:bg-green-700"
+                            data-testid={`button-use-trend-style-${index}`}
+                          >
+                            🔥 Use This Trending Style
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4 text-red-600">
+                      <p>No trending competitor videos found for this topic.</p>
+                      <p className="text-sm mt-1">Try a different trending topic or check back later.</p>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

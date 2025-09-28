@@ -98,8 +98,11 @@ const viralInspirationSchema = z.object({
   hashtags: z.array(z.string()),
 }).optional();
 
-// Base schema with common fields
-const baseSchema = z.object({
+// Validate request body schema with conditional validation
+const generateContentSchema = z.object({
+  product: z.string().trim().optional(), // Made optional - validated conditionally below
+  viralTopic: z.string().trim().optional(), // For viral mode
+  contentMode: z.enum(["affiliate", "viral"]).optional().default("affiliate"), // Content generation mode
   templateType: z.string().default("original"),
   tone: z.string().default("friendly"),
   niche: z.string().default("skincare"),
@@ -127,26 +130,18 @@ const baseSchema = z.object({
   templateSource: z.string().optional(),
   useSmartStyle: z.boolean().optional().default(false),
   userId: z.number().optional(),
+}).refine((data) => {
+  // Conditional validation based on content mode
+  if (data.contentMode === 'affiliate') {
+    return data.product && data.product.length >= 1;
+  } else if (data.contentMode === 'viral') {
+    return data.viralTopic && data.viralTopic.length >= 1;
+  }
+  return true; // Default case
+}, {
+  message: "Product name is required for affiliate mode, viral topic is required for viral mode",
+  path: ["product"], // This will be overridden by the specific error
 });
-
-// Discriminated union schema for different content modes
-const generateContentSchema = z.discriminatedUnion("contentMode", [
-  baseSchema.extend({
-    contentMode: z.literal("affiliate"),
-    product: z.string().trim().min(1, "Product name is required for affiliate mode"),
-    viralTopic: z.string().optional(), // Optional for affiliate mode
-  }),
-  baseSchema.extend({
-    contentMode: z.literal("viral"),
-    viralTopic: z.string().trim().min(1, "Viral topic is required for viral mode"),
-    product: z.string().optional(), // Optional for viral mode
-  }),
-  // Fallback for legacy requests without contentMode (defaults to affiliate)
-  baseSchema.extend({
-    product: z.string().trim().min(1, "Product name is required"),
-    viralTopic: z.string().optional(),
-  }).transform(data => ({ ...data, contentMode: "affiliate" as const })),
-]);
 
 // Helper functions to check if tone and template exist in the system
 async function isValidTemplateType(templateType: string, niche: string): Promise<boolean> {

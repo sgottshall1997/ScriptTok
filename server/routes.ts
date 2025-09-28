@@ -13,6 +13,7 @@ import statisticsApi from "./api/statistics";
 // Perplexity Intelligence System imports
 import { trendForecastRouter } from "./api/trend-forecast";
 import { productResearchRouter } from "./api/product-research";
+import { trendResearchRouter } from "./api/trend-research";
 import { trendingCategorizedRouter } from "./api/trending-categorized";
 import { trendHistoryRouter } from "./api/trend-history";
 
@@ -41,6 +42,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Perplexity Intelligence System routes
   app.use('/api/trend-forecast', trendForecastRouter);
   app.use('/api/product-research', productResearchRouter);
+  app.use('/api/trend-research', trendResearchRouter);
   app.use('/api/trending-categorized', trendingCategorizedRouter);
   app.use('/api/trend-history', trendHistoryRouter);
   
