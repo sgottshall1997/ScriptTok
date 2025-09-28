@@ -4,7 +4,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { TEMPLATE_TYPES, type TemplateType } from '@shared/constants';
+import { TEMPLATE_TYPES, type TemplateType, type ContentMode, getTemplatesByMode } from '@shared/constants';
 
 // Properties for the TemplateSelector component
 interface TemplateSelectorProps {
@@ -16,6 +16,7 @@ interface TemplateSelectorProps {
   className?: string;
   templateOptions?: TemplateType[];
   multiSelect?: boolean; // Flag to enable multi-selection mode
+  contentMode?: ContentMode; // Filter templates by mode
 }
 
 /**
@@ -30,13 +31,25 @@ export function TemplateSelector({
   selectedNiche,
   className = "",
   templateOptions,
-  multiSelect = false
+  multiSelect = false,
+  contentMode = 'affiliate'
 }: TemplateSelectorProps) {
-  // Use provided options or default template types
-  const options = templateOptions || TEMPLATE_TYPES;
+  // Filter templates based on content mode
+  const modeTemplates = getTemplatesByMode(contentMode) as TemplateType[];
+  const options = templateOptions || modeTemplates;
 
-  // Organize templates into sections as requested
-  const templateSections = {
+  // Organize templates into sections based on content mode
+  const templateSections = contentMode === 'viral' ? {
+    'Viral Content Templates': [
+      'viral_hooks',                  // Viral Hooks
+      'viral_short_script',           // Short Script (15-30s)
+      'viral_storytime',              // Storytime
+      'viral_duet_reaction',          // Duet/Reaction
+      'viral_listicle',               // Listicle
+      'viral_challenge',              // Challenge
+      'viral_caption_hashtags'        // Caption + Hashtags
+    ]
+  } : {
     'Video Script Generator': [
       'universal_short_video_script',  // Universal Short Video
       'short_video',                   // Short Video - Niche Specific
@@ -75,37 +88,64 @@ export function TemplateSelector({
     }
   };
 
-  // Template descriptions for TikTok viral content (universal templates work across all niches)
-  const descriptions: Record<TemplateType, string> = {
+  // Template descriptions for both viral and affiliate content
+  const descriptions: Record<string, string> = {
+    // Affiliate templates
     'affiliate_email': 'Persuasive email content for affiliate marketing campaigns',
     'influencer_caption': 'Authentic social media captions for influencer posts',
     'product_comparison': 'Detailed comparison guides between products',
     'routine_kit': 'Step-by-step routine guides and tutorials',
     'seo_blog': 'Search-optimized blog posts (1000+ words)',
     'short_video': 'TikTok, Reels, and YouTube Shorts scripts',
-    'universal_short_video_script': 'Comprehensive universal video scripts with detailed structure'
+    'universal_short_video_script': 'Comprehensive universal video scripts with detailed structure',
+    // Viral templates
+    'viral_hooks': '10 scroll-stopping TikTok hooks (3-8 words each)',
+    'viral_short_script': '15-30 second script with Hook/Build/Payoff/Button structure',
+    'viral_storytime': '90-150 word authentic story script with narrative structure',
+    'viral_duet_reaction': 'Script outline for reacting to or stitching another video',
+    'viral_listicle': 'Top 3-5 format with titles, explanations and examples',
+    'viral_challenge': 'TikTok participation idea with steps and variations',
+    'viral_caption_hashtags': '3 engaging captions plus optimized hashtag sets'
   };
 
   // Template display names for better UI readability
-  const templateDisplayNames: Record<TemplateType, string> = {
+  const templateDisplayNames: Record<string, string> = {
+    // Affiliate templates
     'affiliate_email': 'Affiliate Email',
-    'influencer_caption': 'Influencer Caption',
+    'influencer_caption': 'Influencer Caption', 
     'product_comparison': 'Product Comparison',
     'routine_kit': 'Routine Kit',
     'seo_blog': 'SEO Blog',
     'short_video': 'Short Video - Niche Specific',
-    'universal_short_video_script': 'Universal Short Video'
+    'universal_short_video_script': 'Universal Short Video',
+    // Viral templates
+    'viral_hooks': 'Viral Hooks',
+    'viral_short_script': 'Short Script (15-30s)',
+    'viral_storytime': 'Storytime',
+    'viral_duet_reaction': 'Duet/Reaction',
+    'viral_listicle': 'Listicle',
+    'viral_challenge': 'Challenge',
+    'viral_caption_hashtags': 'Caption + Hashtags'
   };
 
-  // Icons for each template type (universal templates)
-  const templateIcons: Record<TemplateType, string> = {
+  // Icons for each template type
+  const templateIcons: Record<string, string> = {
+    // Affiliate templates
     'affiliate_email': '📧',
     'influencer_caption': '📱',
     'product_comparison': '⚖️',
     'routine_kit': '📋',
     'seo_blog': '📝',
     'short_video': '🎥',
-    'universal_short_video_script': '🎬'
+    'universal_short_video_script': '🎬',
+    // Viral templates
+    'viral_hooks': '🔥',
+    'viral_short_script': '⚡',
+    'viral_storytime': '📖',
+    'viral_duet_reaction': '🎭',
+    'viral_listicle': '📄',
+    'viral_challenge': '🏆',
+    'viral_caption_hashtags': '📱'
   };
 
   if (multiSelect) {
@@ -149,13 +189,13 @@ export function TemplateSelector({
 
         <TooltipProvider>
           <div className="space-y-6">
-            {Object.entries(templateSections).map(([sectionName, sectionTemplates]) => (
+            {Object.entries(templateSections).map(([sectionName, sectionTemplates]: [string, string[]]) => (
               <div key={sectionName} className="space-y-3">
                 <h4 className="text-md font-semibold text-gray-800 border-b border-gray-200 pb-2">
                   {sectionName}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {sectionTemplates.filter(template => options.includes(template as TemplateType)).map((template) => {
+                  {sectionTemplates.filter((template: string) => options.includes(template as TemplateType)).map((template: string) => {
                     const templateType = template as TemplateType;
                     const isSelected = selectedTemplates.includes(templateType);
                     return (

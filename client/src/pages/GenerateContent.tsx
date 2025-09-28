@@ -25,7 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { UsageStatistics } from "@/components/UsageStatistics";
 import { ViralScoreDisplay } from "@/components/ViralScoreDisplay";
-import { type TemplateType, TIKTOK_TONE_OPTIONS } from '@shared/constants';
+import { type TemplateType, type ContentMode, TIKTOK_TONE_OPTIONS, templateRequiresProduct } from '@shared/constants';
 
 // Video duration interface
 interface VideoDuration {
@@ -86,8 +86,10 @@ const GenerateContent = () => {
   // console.log('🔍 URL Debug:', { location, search: window.location.search, productFromUrl, nicheFromUrl });
 
   // State management
+  const [contentMode, setContentMode] = useState<ContentMode>('affiliate'); // Default to affiliate mode
   const [selectedNiche, setSelectedNiche] = useState(nicheFromUrl || 'beauty');
   const [selectedProduct, setSelectedProduct] = useState(productFromUrl || '');
+  const [viralTopic, setViralTopic] = useState(''); // For viral mode topic input
   
   // Update state when URL parameters change
   useEffect(() => {
@@ -499,10 +501,20 @@ ${config.hashtags.join(' ')}`;
   };
 
   const handleGenerateContent = async () => {
-    if (!selectedProduct) {
+    // Validate input based on content mode
+    if (contentMode === 'affiliate' && !selectedProduct) {
       toast({
         title: "Missing Product",
-        description: "Please select a product first",
+        description: "Please enter a product name for affiliate content",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (contentMode === 'viral' && !viralTopic) {
+      toast({
+        title: "Missing Topic",
+        description: "Please enter a topic or subject for viral content",
         variant: "destructive",
       });
       return;
@@ -904,42 +916,107 @@ ${config.hashtags.join(' ')}`;
 
         {/* Content Generation Module - Vertical Stack Layout */}
         <div className="flex flex-col gap-6 w-full max-w-3xl mx-auto">
-          {/* Product Setup */}
+          
+          {/* Mode Selector */}
+          <Card className="shadow-lg border-2 border-purple-200 bg-gradient-to-r from-purple-50 to-pink-50">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-center justify-center">
+                <Zap className="h-6 w-6 text-purple-600" />
+                Choose Your Content Studio
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Viral Content Studio */}
+                <div 
+                  className={`p-6 rounded-lg border-2 cursor-pointer transition-all ${
+                    contentMode === 'viral' 
+                      ? 'border-purple-500 bg-purple-100 shadow-lg scale-105' 
+                      : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md'
+                  }`}
+                  onClick={() => setContentMode('viral')}
+                >
+                  <div className="text-center space-y-3">
+                    <div className="text-4xl">🔥</div>
+                    <h3 className="font-bold text-lg text-purple-700">Viral Content Studio</h3>
+                    <p className="text-sm text-gray-600">Create trending viral content without products. Perfect for building audience and engagement.</p>
+                    <div className="text-xs text-purple-600 font-medium">✨ Trending topics • Viral hooks • Story content</div>
+                  </div>
+                </div>
+                
+                {/* Affiliate Content Studio */}
+                <div 
+                  className={`p-6 rounded-lg border-2 cursor-pointer transition-all ${
+                    contentMode === 'affiliate' 
+                      ? 'border-purple-500 bg-purple-100 shadow-lg scale-105' 
+                      : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md'
+                  }`}
+                  onClick={() => setContentMode('affiliate')}
+                >
+                  <div className="text-center space-y-3">
+                    <div className="text-4xl">💰</div>
+                    <h3 className="font-bold text-lg text-purple-700">Affiliate Content Studio</h3>
+                    <p className="text-sm text-gray-600">Generate product-focused content with affiliate links. Perfect for monetization and sales.</p>
+                    <div className="text-xs text-purple-600 font-medium">🛒 Product reviews • Sales scripts • Affiliate links</div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Content Setup - Conditional based on mode */}
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-blue-500" />
-                📄 Product Setup
+                {contentMode === 'viral' ? '🔥 Viral Content Setup' : '📄 Product Setup'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-            {/* Product Name */}
-            <div>
-              <Label htmlFor="product">Product Name</Label>
-              <Input
-                id="product"
-                value={selectedProduct}
-                onChange={(e) => setSelectedProduct(e.target.value)}
-                placeholder="Enter product name..."
-              />
-            </div>
+              
+              {contentMode === 'viral' ? (
+                // Viral Mode: Topic Input
+                <div>
+                  <Label htmlFor="viral-topic">Trending Topic or Subject</Label>
+                  <Input
+                    id="viral-topic"
+                    value={viralTopic}
+                    onChange={(e) => setViralTopic(e.target.value)}
+                    placeholder="Enter topic (e.g., 'productivity hacks', 'dating red flags', 'workout motivation')..."
+                  />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    💡 Tip: Use trending topics, relatable situations, or engaging subjects that don't require specific products
+                  </p>
+                </div>
+              ) : (
+                // Affiliate Mode: Product Input
+                <div>
+                  <Label htmlFor="product">Product Name</Label>
+                  <Input
+                    id="product"
+                    value={selectedProduct}
+                    onChange={(e) => setSelectedProduct(e.target.value)}
+                    placeholder="Enter product name..."
+                  />
+                </div>
+              )}
 
-            {/* Niche */}
-            <div>
-              <Label htmlFor="niche">Niche</Label>
-              <Select value={selectedNiche} onValueChange={setSelectedNiche}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {niches.map((niche) => (
-                    <SelectItem key={niche.id} value={niche.id}>
-                      {niche.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+              {/* Niche */}
+              <div>
+                <Label htmlFor="niche">Niche</Label>
+                <Select value={selectedNiche} onValueChange={setSelectedNiche}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {niches.map((niche) => (
+                      <SelectItem key={niche.id} value={niche.id}>
+                        {niche.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
 
           </CardContent>
         </Card>
@@ -976,7 +1053,7 @@ ${config.hashtags.join(' ')}`;
                     <div className="bg-white p-3 rounded-lg border">
                       <h4 className="font-semibold text-green-700 mb-2">🔥 Viral Hooks</h4>
                       <ul className="space-y-1">
-                        {productResearch.viralHooks.map((hook, index) => (
+                        {productResearch.viralHooks.map((hook: string, index: number) => (
                           <li key={index} className="text-sm text-gray-700">• {hook}</li>
                         ))}
                       </ul>
@@ -996,7 +1073,7 @@ ${config.hashtags.join(' ')}`;
                     <div className="bg-white p-3 rounded-lg border">
                       <h4 className="font-semibold text-orange-700 mb-2">📈 Trending Angles</h4>
                       <ul className="space-y-1">
-                        {productResearch.trendingAngles.map((angle, index) => (
+                        {productResearch.trendingAngles.map((angle: string, index: number) => (
                           <li key={index} className="text-sm text-gray-700">• {angle}</li>
                         ))}
                       </ul>
@@ -1008,7 +1085,7 @@ ${config.hashtags.join(' ')}`;
                     <div className="bg-white p-3 rounded-lg border">
                       <h4 className="font-semibold text-blue-700 mb-2">⏰ Best Time to Post</h4>
                       <ul className="space-y-1">
-                        {productResearch.bestTimeToPost.map((time, index) => (
+                        {productResearch.bestTimeToPost.map((time: string, index: number) => (
                           <li key={index} className="text-sm text-gray-700">• {time}</li>
                         ))}
                       </ul>
@@ -1649,7 +1726,7 @@ ${config.hashtags.join(' ')}`;
                     {content.viralScore && (
                       <div className="mt-4">
                         <ViralScoreDisplay
-                          viralScore={content.viralScore}
+                          viralScore={{...content.viralScore, colorCode: content.viralScore.colorCode || 'green'}}
                           overallScore={content.viralScore?.overall || null}
                         />
                       </div>
@@ -1734,7 +1811,7 @@ ${config.hashtags.join(' ')}`;
                       {comparisonResults.claude.viralScore && (
                         <div className="mt-4">
                           <ViralScoreDisplay
-                            viralScore={comparisonResults.claude.viralScore}
+                            viralScore={{...comparisonResults.claude.viralScore, colorCode: comparisonResults.claude.viralScore.colorCode || 'green'}}
                             overallScore={comparisonResults.claude.viralScore?.overall || null}
                           />
                         </div>
@@ -1749,7 +1826,7 @@ ${config.hashtags.join(' ')}`;
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok', comparisonResults.claude), 'Claude TikTok caption')}
+                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok', comparisonResults.claude || undefined), 'Claude TikTok caption')}
                               className="text-xs bg-white text-orange-600 hover:bg-gray-100"
                             >
                               <Copy className="h-3 w-3 mr-1" />
@@ -1793,7 +1870,7 @@ ${config.hashtags.join(' ')}`;
                       {comparisonResults.chatgpt.viralScore && (
                         <div className="mt-4">
                           <ViralScoreDisplay
-                            viralScore={comparisonResults.chatgpt.viralScore}
+                            viralScore={{...comparisonResults.chatgpt.viralScore, colorCode: comparisonResults.chatgpt.viralScore.colorCode || 'green'}}
                             overallScore={comparisonResults.chatgpt.viralScore?.overall || null}
                           />
                         </div>
@@ -1808,7 +1885,7 @@ ${config.hashtags.join(' ')}`;
                             <Button
                               size="sm"
                               variant="outline"
-                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok', comparisonResults.chatgpt), 'ChatGPT TikTok caption')}
+                              onClick={() => copyToClipboard(generatePlatformCaption('tiktok', comparisonResults.chatgpt || undefined), 'ChatGPT TikTok caption')}
                               className="text-xs bg-white text-green-600 hover:bg-gray-100"
                             >
                               <Copy className="h-3 w-3 mr-1" />

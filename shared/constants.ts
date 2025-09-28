@@ -2,16 +2,64 @@
 
 // Template types that work universally across all niches (clean template-type-first architecture)
 export const TEMPLATE_TYPES = [
+  // Affiliate Content Templates (require product)
   "affiliate_email",    // Affiliate Email Blurb (persuasive email sections)
   "influencer_caption", // Influencer Caption (authentic social media posts)
   "product_comparison", // Product Comparison (comprehensive comparison guides)
   "routine_kit",        // Routine Kit (step-by-step routine guides)
   "seo_blog",           // SEO Blog Post (1000+ words, search optimized)
   "short_video",        // Short-Form Video Script (TikTok, Reels, YT Shorts)
-  "universal_short_video_script" // Universal Short Video Script (comprehensive video scripts)
+  "universal_short_video_script", // Universal Short Video Script (comprehensive video scripts)
+  // Viral Content Templates (no product needed)
+  "viral_hooks",        // Viral Hooks (10 scroll-stopping hooks, 3-8 words each)
+  "viral_short_script", // Short Script 15-30s (Hook/Build/Payoff/Button structure)
+  "viral_storytime",    // Storytime (90-150 word authentic story script)
+  "viral_duet_reaction", // Duet/Reaction (script outline for stitching/reacting)
+  "viral_listicle",     // Listicle (Top 3-5 format with titles and explanations)
+  "viral_challenge",    // Challenge (participation idea with steps and variations)
+  "viral_caption_hashtags" // Caption + Hashtags (3 captions plus broad/niche hashtag sets)
 ] as const;
 
 export type TemplateType = typeof TEMPLATE_TYPES[number];
+
+// Content generation modes
+export const CONTENT_MODES = [
+  "viral",     // Viral Content Studio - trend-based content without products
+  "affiliate"  // Affiliate Content Studio - product-focused content with links
+] as const;
+
+export type ContentMode = typeof CONTENT_MODES[number];
+
+// Template mode mapping - which templates belong to which mode
+export const AFFILIATE_TEMPLATES = [
+  "affiliate_email",
+  "influencer_caption", 
+  "product_comparison",
+  "routine_kit",
+  "seo_blog",
+  "short_video",
+  "universal_short_video_script"
+] as const;
+
+export const VIRAL_TEMPLATES = [
+  "viral_hooks",
+  "viral_short_script",
+  "viral_storytime", 
+  "viral_duet_reaction",
+  "viral_listicle",
+  "viral_challenge",
+  "viral_caption_hashtags"
+] as const;
+
+// Helper function to get templates by mode
+export const getTemplatesByMode = (mode: ContentMode): readonly string[] => {
+  return mode === 'viral' ? VIRAL_TEMPLATES : AFFILIATE_TEMPLATES;
+};
+
+// Helper function to check if template requires product
+export const templateRequiresProduct = (template: TemplateType): boolean => {
+  return (AFFILIATE_TEMPLATES as readonly string[]).includes(template);
+};
 
 // Supported content niches
 export const NICHES = [

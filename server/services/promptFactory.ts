@@ -29,7 +29,9 @@ export interface PromptConfig {
   niche: string;
   templateType: string;
   tone: string;
-  productName: string;
+  productName?: string; // Optional for viral mode
+  viralTopic?: string; // For viral mode instead of product
+  contentMode?: 'viral' | 'affiliate'; // Content generation mode
   platforms?: string[];
   contentFormat?: 'standard' | 'spartan';
   trendingProducts?: TrendingProduct[];
@@ -1373,6 +1375,318 @@ function generatePetRoutine(config: PromptConfig): GeneratedPrompt {
  * RESTRUCTURED: Template-type-first organization for proper template selection
  */
 /**
+ * VIRAL TEMPLATE GENERATORS - For trending content without products
+ */
+
+// Viral Hooks Generator
+function generateViralHooks(config: PromptConfig): GeneratedPrompt {
+  const topic = config.viralTopic || 'trending topic';
+  
+  return {
+    systemPrompt: `You are a TikTok viral content expert specializing in scroll-stopping hooks. Generate exactly 10 viral hooks for the topic "${topic}".`,
+    
+    userPrompt: `Create 10 scroll-stopping TikTok hooks for "${topic}" in the ${config.niche} niche.
+
+REQUIREMENTS:
+- Each hook must be 3-8 words long
+- Easy to say aloud with natural rhythm
+- Use viral patterns like "POV:", "Stop scrolling if...", "Nobody told you...", "This is why...", "Wait until you see..."
+- No emojis, no hashtags, no affiliate language
+- Each hook should be unique and attention-grabbing
+- Focus on curiosity, controversy, or relatability
+
+OUTPUT FORMAT:
+1. [Hook 1]
+2. [Hook 2]
+3. [Hook 3]
+4. [Hook 4]
+5. [Hook 5]
+6. [Hook 6]
+7. [Hook 7]
+8. [Hook 8]
+9. [Hook 9]
+10. [Hook 10]
+
+Topic: ${topic}
+Niche: ${config.niche}
+Tone: ${config.tone}`,
+
+    templateMetadata: {
+      templateType: 'viral_hooks',
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: 'standard'
+    }
+  };
+}
+
+// Viral Short Script Generator (15-30s)
+function generateViralShortScript(config: PromptConfig): GeneratedPrompt {
+  const topic = config.viralTopic || 'trending topic';
+  
+  return {
+    systemPrompt: `You are a TikTok script expert. Create a 15-30 second viral script with Hook/Build/Payoff/Button structure.`,
+    
+    userPrompt: `Write a 15-30 second TikTok script about "${topic}" for the ${config.niche} niche.
+
+STRUCTURE REQUIREMENTS:
+• HOOK (0-3s): Attention-grabbing opening line
+• BUILD (3-12s): 2-3 tight lines that develop the concept
+• PAYOFF (12-24s): The reveal or main point
+• BUTTON (24-30s): Snappy closing line or question for comments
+
+WRITING GUIDELINES:
+- Total words: 70-120 words
+- Short sentences, no filler
+- Conversational and engaging tone
+- No products, no affiliate links, no hashtags
+- Focus on entertainment, education, or relatability
+
+OUTPUT FORMAT:
+HOOK: [0-3s opening line]
+BUILD: [3-12s development, 2-3 lines]
+PAYOFF: [12-24s main reveal]
+BUTTON: [24-30s closing/engagement prompt]
+
+Topic: ${topic}
+Niche: ${config.niche}
+Tone: ${config.tone}`,
+
+    templateMetadata: {
+      templateType: 'viral_short_script',
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: 'standard'
+    }
+  };
+}
+
+// Viral Storytime Generator  
+function generateViralStorytime(config: PromptConfig): GeneratedPrompt {
+  const topic = config.viralTopic || 'trending topic';
+  
+  return {
+    systemPrompt: `You are a TikTok storytelling expert. Create an authentic 90-150 word story script with proper narrative structure.`,
+    
+    userPrompt: `Write a 90-150 word TikTok story script about "${topic}" for the ${config.niche} niche.
+
+STORY STRUCTURE:
+• Setup: Time/place + why it matters
+• Inciting moment: What triggered the story
+• Rising stakes: 2-3 lines of tension or humor  
+• Peak beat: The key turning point
+• Resolution: What changed or was learned
+• Comment prompt: Ask viewers to share similar experiences
+
+WRITING GUIDELINES:
+- 90-150 words total
+- Authentic and conversational tone
+- Relatable situations that feel real
+- No products, brands, or hashtags
+- Focus on human experiences and emotions
+- Use "I" statements to make it personal
+
+Topic: ${topic}
+Niche: ${config.niche}
+Tone: ${config.tone}
+
+Write the complete story script in natural paragraph form.`,
+
+    templateMetadata: {
+      templateType: 'viral_storytime',
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: 'standard'
+    }
+  };
+}
+
+// Viral Duet/Reaction Generator
+function generateViralDuetReaction(config: PromptConfig): GeneratedPrompt {
+  const topic = config.viralTopic || 'trending topic';
+  
+  return {
+    systemPrompt: `You are a TikTok reaction expert. Create a script outline for reacting to or stitching another video.`,
+    
+    userPrompt: `Create a duet/reaction script outline for content about "${topic}" in the ${config.niche} niche.
+
+STRUCTURE REQUIREMENTS:
+• OPEN (≤8 words): Cold open line that pairs with a stitch
+• BEAT 1 (≤10 words): First reaction point
+• BEAT 2 (≤10 words): Second reaction point  
+• BEAT 3 (≤10 words): Third reaction point
+• PAYOFF (≤10 words): Final reaction or conclusion
+• QUESTION: Short comment prompt for engagement
+
+WRITING GUIDELINES:
+- Each beat should be concise and impactful
+- React to hypothetical popular content about the topic
+- No products, brands, or affiliate references
+- Focus on agreeing, disagreeing, or adding perspective
+- Keep it conversational and authentic
+
+OUTPUT FORMAT:
+OPEN: [≤8 words]
+BEAT 1: [≤10 words]  
+BEAT 2: [≤10 words]
+BEAT 3: [≤10 words]
+PAYOFF: [≤10 words]
+QUESTION: [Short engagement prompt]
+
+Topic: ${topic}
+Niche: ${config.niche}
+Tone: ${config.tone}`,
+
+    templateMetadata: {
+      templateType: 'viral_duet_reaction',
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: 'standard'
+    }
+  };
+}
+
+// Viral Listicle Generator
+function generateViralListicle(config: PromptConfig): GeneratedPrompt {
+  const topic = config.viralTopic || 'trending topic';
+  
+  return {
+    systemPrompt: `You are a TikTok listicle expert. Create a "Top 3-5" format script with clear titles and explanations.`,
+    
+    userPrompt: `Create a listicle script in "Top 3-5 things about ${topic}" format for the ${config.niche} niche.
+
+STRUCTURE FOR EACH ITEM:
+• Title (≤6 words): Short, punchy headline
+• Explanation (≤14 words): One clear sentence explaining it
+• Optional micro-example (≤10 words): Brief example if helpful
+
+WRITING GUIDELINES:
+- Total output: 90-140 words
+- 3-5 items total (choose based on content depth)
+- Clear, punchy, scannable format
+- No products, hashtags, or sales language
+- Focus on education, entertainment, or tips
+- Make each point valuable and memorable
+
+OUTPUT FORMAT:
+Top [3-5] Things About [Topic]:
+
+1. [Title]: [Explanation] [Optional example]
+2. [Title]: [Explanation] [Optional example]  
+3. [Title]: [Explanation] [Optional example]
+[Continue for 4-5 if needed]
+
+Topic: ${topic}
+Niche: ${config.niche}
+Tone: ${config.tone}`,
+
+    templateMetadata: {
+      templateType: 'viral_listicle',
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: 'standard'
+    }
+  };
+}
+
+// Viral Challenge Generator
+function generateViralChallenge(config: PromptConfig): GeneratedPrompt {
+  const topic = config.viralTopic || 'trending topic';
+  
+  return {
+    systemPrompt: `You are a TikTok challenge expert. Create a participation idea that's easy to film and encourages user-generated content.`,
+    
+    userPrompt: `Design a TikTok challenge around "${topic}" for the ${config.niche} niche.
+
+CHALLENGE STRUCTURE:
+• NAME (≤4 words): Catchy challenge name with hashtag potential
+• SETUP line (≤12 words): Brief explanation of the challenge
+• STEP 1 (≤8 words): First action participants should take
+• STEP 2 (≤8 words): Second action or element
+• STEP 3 (≤8 words): Final action or reveal
+• VARIATIONS: Two quick ideas for different skill levels
+• NOTE: One short safety/comfort reminder
+
+WRITING GUIDELINES:
+- Must be filmable in 15-30 seconds
+- Accessible to most people
+- No brands, hashtags, or affiliate content in description
+- Focus on fun, creativity, or self-expression
+- Clear, simple instructions
+- Encourage positive participation
+
+OUTPUT FORMAT:
+NAME: [Challenge name]
+SETUP: [Brief explanation]
+STEP 1: [First action]
+STEP 2: [Second action]  
+STEP 3: [Final action]
+VARIATIONS: 
+- Beginners: [Simple version]
+- Advanced: [Creative version]
+NOTE: [Safety/comfort reminder]
+
+Topic: ${topic}
+Niche: ${config.niche}
+Tone: ${config.tone}`,
+
+    templateMetadata: {
+      templateType: 'viral_challenge',
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: 'standard'
+    }
+  };
+}
+
+// Viral Caption + Hashtags Generator
+function generateViralCaptionHashtags(config: PromptConfig): GeneratedPrompt {
+  const topic = config.viralTopic || 'trending topic';
+  
+  return {
+    systemPrompt: `You are a social media caption expert. Create engaging captions and strategic hashtag sets for maximum viral potential.`,
+    
+    userPrompt: `Create caption options and hashtag sets for content about "${topic}" in the ${config.niche} niche.
+
+CAPTION REQUIREMENTS:
+• 3 different caption options
+• Each caption: 8-18 words
+• Conversational and engaging
+• Invite comments and interaction
+• No emojis, no affiliate language
+
+HASHTAG REQUIREMENTS:
+• BROAD hashtags: 6-8 generic/trending tags (e.g., #fyp, #viral, #trending)
+• NICHE hashtags: 6-8 community-specific tags related to ${config.niche} and "${topic}"
+• Mix of high-volume and medium-volume tags
+• Current trending hashtags when relevant
+
+OUTPUT FORMAT:
+CAPTIONS:
+1. [Caption option 1]
+2. [Caption option 2]  
+3. [Caption option 3]
+
+BROAD HASHTAGS:
+[6-8 generic/trending hashtags]
+
+NICHE HASHTAGS:
+[6-8 topic/niche-specific hashtags]
+
+Topic: ${topic}
+Niche: ${config.niche}
+Tone: ${config.tone}`,
+
+    templateMetadata: {
+      templateType: 'viral_caption_hashtags',
+      niche: config.niche,
+      tone: config.tone,
+      contentFormat: 'standard'
+    }
+  };
+}
+
+/**
  * TEMPLATE REGISTRY - Clean template-type-first architecture
  * Each template type has niche-specific generators with universal fallback
  */
@@ -1447,6 +1761,49 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
     generators: {
       'universal': generateUniversalShortVideoScript
     }
+  },
+  
+  // Viral Templates (no product required)
+  'viral_hooks': {
+    generators: {
+      'universal': generateViralHooks
+    }
+  },
+  
+  'viral_short_script': {
+    generators: {
+      'universal': generateViralShortScript
+    }
+  },
+  
+  'viral_storytime': {
+    generators: {
+      'universal': generateViralStorytime
+    }
+  },
+  
+  'viral_duet_reaction': {
+    generators: {
+      'universal': generateViralDuetReaction
+    }
+  },
+  
+  'viral_listicle': {
+    generators: {
+      'universal': generateViralListicle
+    }
+  },
+  
+  'viral_challenge': {
+    generators: {
+      'universal': generateViralChallenge
+    }
+  },
+  
+  'viral_caption_hashtags': {
+    generators: {
+      'universal': generateViralCaptionHashtags
+    }
   }
   };
 
@@ -1504,6 +1861,42 @@ const TEMPLATE_REGISTRY: TemplateRegistry = {
 
   'universal_short_video_script': (config: PromptConfig): GeneratedPrompt => {
     const generator = getTemplateGenerator('universal_short_video_script', config.niche);
+    return generator(config);
+  },
+  
+  // Viral Template Prompts
+  'viral_hooks': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('viral_hooks', config.niche);
+    return generator(config);
+  },
+  
+  'viral_short_script': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('viral_short_script', config.niche);
+    return generator(config);
+  },
+  
+  'viral_storytime': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('viral_storytime', config.niche);
+    return generator(config);
+  },
+  
+  'viral_duet_reaction': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('viral_duet_reaction', config.niche);
+    return generator(config);
+  },
+  
+  'viral_listicle': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('viral_listicle', config.niche);
+    return generator(config);
+  },
+  
+  'viral_challenge': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('viral_challenge', config.niche);
+    return generator(config);
+  },
+  
+  'viral_caption_hashtags': (config: PromptConfig): GeneratedPrompt => {
+    const generator = getTemplateGenerator('viral_caption_hashtags', config.niche);
     return generator(config);
   }
 };

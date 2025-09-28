@@ -199,6 +199,98 @@ export const TEMPLATE_METADATA: Record<TemplateType, TemplateMetadata> = {
     example: 'Hook + benefits + problem-solving + call-to-action',
     usesProduct: true,
     contentType: 'product-focused'
+  },
+  // Viral Content Templates (no product needed)
+  'viral_hooks': {
+    id: 'viral_hooks',
+    name: 'Viral Hooks',
+    description: '10 scroll-stopping TikTok hooks for the given topic',
+    category: 'Viral',
+    icon: '🔥',
+    platforms: ['TikTok', 'Instagram', 'YouTube'],
+    estimatedLength: '3-8 words each',
+    useCase: 'Attention-grabbing opening lines for viral content',
+    example: 'POV:..., Stop scrolling if..., Nobody told you...',
+    usesProduct: false,
+    contentType: 'generic'
+  },
+  'viral_short_script': {
+    id: 'viral_short_script',
+    name: 'Short Script (15-30s)',
+    description: '15-30 second TikTok script with Hook/Build/Payoff/Button structure',
+    category: 'Viral',
+    icon: '⚡',
+    platforms: ['TikTok', 'Instagram', 'YouTube'],
+    estimatedLength: '70-120 words',
+    useCase: 'Quick viral content with structured storytelling',
+    example: 'Hook (0-3s) + Build (3-12s) + Payoff (12-24s) + Button (24-30s)',
+    usesProduct: false,
+    contentType: 'generic'
+  },
+  'viral_storytime': {
+    id: 'viral_storytime',
+    name: 'Storytime',
+    description: '90-150 word TikTok story script with authentic narrative structure',
+    category: 'Viral',
+    icon: '📖',
+    platforms: ['TikTok', 'Instagram', 'YouTube'],
+    estimatedLength: '90-150 words',
+    useCase: 'Engaging story content that feels authentic and relatable',
+    example: 'Setup + Inciting moment + Rising stakes + Peak beat + Resolution + Comment prompt',
+    usesProduct: false,
+    contentType: 'generic'
+  },
+  'viral_duet_reaction': {
+    id: 'viral_duet_reaction',
+    name: 'Duet/Reaction',
+    description: 'Script outline for reacting to or stitching another video',
+    category: 'Viral',
+    icon: '🎭',
+    platforms: ['TikTok', 'Instagram'],
+    estimatedLength: '≤50 words total',
+    useCase: 'Reaction content and video stitching for engagement',
+    example: 'Open (≤8 words) + 3 Beats (≤10 each) + Payoff + Question',
+    usesProduct: false,
+    contentType: 'generic'
+  },
+  'viral_listicle': {
+    id: 'viral_listicle',
+    name: 'Listicle',
+    description: 'Top 3-5 format with titles, explanations and micro-examples',
+    category: 'Viral',
+    icon: '📋',
+    platforms: ['TikTok', 'Instagram', 'YouTube'],
+    estimatedLength: '90-140 words',
+    useCase: 'Educational content in digestible list format',
+    example: 'Title (≤6 words) + Explanation (≤14 words) + Example (≤10 words) per item',
+    usesProduct: false,
+    contentType: 'generic'
+  },
+  'viral_challenge': {
+    id: 'viral_challenge',
+    name: 'Challenge',
+    description: 'TikTok participation idea with steps and variations',
+    category: 'Viral',
+    icon: '🏆',
+    platforms: ['TikTok', 'Instagram'],
+    estimatedLength: 'Easy 15-30s filming',
+    useCase: 'Interactive content that encourages user participation',
+    example: 'Name + Setup + 3 Steps + Variations + Safety note',
+    usesProduct: false,
+    contentType: 'generic'
+  },
+  'viral_caption_hashtags': {
+    id: 'viral_caption_hashtags',
+    name: 'Caption + Hashtags',
+    description: '3 engaging captions plus optimized hashtag sets',
+    category: 'Viral',
+    icon: '📱',
+    platforms: ['TikTok', 'Instagram', 'Twitter'],
+    estimatedLength: '8-18 words per caption',
+    useCase: 'Social media captions with viral hashtag optimization',
+    example: '3 Captions + 6-8 Broad hashtags + 6-8 Niche hashtags',
+    usesProduct: false,
+    contentType: 'generic'
   }
 };
 
@@ -212,6 +304,21 @@ export function getTemplatesByCategory(category: string): TemplateMetadata[] {
 // Helper function to get universal templates
 export function getUniversalTemplates(): TemplateMetadata[] {
   return getTemplatesByCategory('Universal');
+}
+
+// Helper function to get viral templates
+export function getViralTemplates(): TemplateMetadata[] {
+  return getTemplatesByCategory('Viral');
+}
+
+// Helper function to get templates by mode
+export function getTemplatesByMode(mode: 'viral' | 'affiliate'): TemplateMetadata[] {
+  if (mode === 'viral') {
+    return getViralTemplates();
+  } else {
+    // Return all affiliate templates (Universal + legacy niche-specific)
+    return Object.values(TEMPLATE_METADATA).filter(template => template.usesProduct);
+  }
 }
 
 // Helper function to get niche-specific templates
