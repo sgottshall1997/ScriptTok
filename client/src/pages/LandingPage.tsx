@@ -34,7 +34,7 @@ export default function LandingPage() {
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-8">
             <Badge variant="secondary" className="mb-6 text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-              ✨ Dual-Mode AI Content Generator
+              ✨ AI Trend Fetcher and Dual Content Generator
             </Badge>
 
             <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
