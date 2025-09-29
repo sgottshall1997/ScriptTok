@@ -23,57 +23,57 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* ScriptTok Branding */}
-      <div className="text-center py-8 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <h1 className="text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
+      <div className="text-center py-4 md:py-6 lg:py-8 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">
           ScriptTok
         </h1>
       </div>
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden py-12 lg:py-16">
+      <section className="relative overflow-hidden py-6 md:py-8 lg:py-12 xl:py-16">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-8">
-            <Badge variant="secondary" className="mb-6 text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+          <div className="text-center mb-6 md:mb-8">
+            <Badge variant="secondary" className="mb-4 md:mb-6 text-xs md:text-sm font-medium bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
               ✨ AI Trend Fetcher and Dual Content Generator
             </Badge>
 
-            <h1 className="text-4xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6">
-              <br />From
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6 leading-tight">
+              From
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-600 to-purple-600"> trend </span>
               to
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600"> viral script</span>
               <br />in 60 seconds
             </h1>
 
-            <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 rounded-2xl p-6 mb-8 max-w-4xl mx-auto">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-gradient-to-r from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20 rounded-xl md:rounded-2xl p-4 md:p-6 mb-6 md:mb-8 max-w-4xl mx-auto">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div className="text-center">
-                  <h3 className="font-bold text-pink-700 dark:text-pink-300 mb-2 flex items-center justify-center gap-2">
+                  <h3 className="font-bold text-pink-700 dark:text-pink-300 mb-2 flex items-center justify-center gap-2 text-sm md:text-base">
                     🔥 Viral Content Studio
                   </h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
                     Create trend-based viral content without specific products. Perfect for riding trending topics.
                   </p>
                 </div>
                 <div className="text-center">
-                  <h3 className="font-bold text-purple-700 dark:text-purple-300 mb-2 flex items-center justify-center gap-2">
+                  <h3 className="font-bold text-purple-700 dark:text-purple-300 mb-2 flex items-center justify-center gap-2 text-sm md:text-base">
                     💰 Affiliate Content Studio
                   </h3>
-                  <p className="text-sm text-gray-700 dark:text-gray-300">
+                  <p className="text-xs md:text-sm text-gray-700 dark:text-gray-300">
                     Generate product-focused content with affiliate integration for maximum conversions.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
               <Link href="/dashboard">
-                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300" data-testid="button-try-free-hero">
-                  Generate My First Script <ArrowRight className="ml-2 h-5 w-5" />
+                <Button size="default" className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-lg md:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 min-h-[44px]" data-testid="button-try-free-hero">
+                  Generate My First Script <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
               </Link>
-              <Button variant="outline" size="lg" className="px-8 py-4 text-lg font-semibold rounded-xl border-2 border-gray-300 hover:border-purple-400 transition-all duration-300" data-testid="button-watch-demo">
-                <Video className="mr-2 h-5 w-5" />
+              <Button variant="outline" size="default" className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-lg md:rounded-xl border-2 border-gray-300 hover:border-purple-400 transition-all duration-300 min-h-[44px]" data-testid="button-watch-demo">
+                <Video className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 Watch Demo
               </Button>
             </div>
@@ -82,13 +82,13 @@ export default function LandingPage() {
       </section>
 
       {/* The AI Behind ScriptTok */}
-      <section className="py-12 bg-white dark:bg-gray-800">
+      <section className="py-8 md:py-10 lg:py-12 bg-white dark:bg-gray-800">
         <div className="container mx-auto px-4 max-w-6xl">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-6">
+          <div className="text-center mb-6 md:mb-8">
+            <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white mb-4 md:mb-6">
               The AI Behind ScriptTok
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-base md:text-lg lg:text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto px-2">
               ScriptTok's dual AI engines power both viral trend analysis and affiliate product research. Whether you're creating viral content or promoting products, our AI adapts to deliver scripts optimized for your specific goals.
             </p>
           </div>

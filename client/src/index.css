@@ -2,6 +2,58 @@
 @tailwind components;
 @tailwind utilities;
 
+/* iOS Safari mobile optimizations */
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: none;
+  /* Better iOS scrolling without breaking navigation */
+}
+
+#root {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Better touch targets for iOS */
+button, 
+a[role="button"], 
+.clickable {
+  min-height: 44px;
+  min-width: 44px;
+  touch-action: manipulation;
+}
+
+/* Prevent zoom on input focus for iOS Safari */
+input[type="text"],
+input[type="email"], 
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  font-size: 16px;
+  -webkit-appearance: none;
+  border-radius: 0;
+}
+
+/* iOS Safari viewport height fix */
+.min-h-screen {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+}
+
+/* Smooth scrolling for iOS */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
 @layer utilities {
   .text-gradient {
     @apply text-transparent bg-clip-text;

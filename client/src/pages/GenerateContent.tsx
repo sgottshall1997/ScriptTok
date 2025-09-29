@@ -1015,11 +1015,11 @@ ${config.hashtags.join(' ')}`;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-32">
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
+      <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
         {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl font-bold text-gray-900">🎵 TikTok Content Generator</h1>
-          <p className="text-lg text-muted-foreground">
+        <div className="text-center space-y-2 px-2">
+          <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">🎵 TikTok Content Generator</h1>
+          <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
             Generate viral TikTok content in under 60 seconds
           </p>
         </div>

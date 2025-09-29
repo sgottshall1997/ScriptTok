@@ -275,13 +275,13 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 md:space-y-6">
       {/* 1️⃣ Hero Header */}
-      <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold text-gray-900">
+      <div className="text-center space-y-2 px-2">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           🚀 ScriptTok AI: Your Content Command Center
         </h1>
-        <p className="text-lg text-muted-foreground">
+        <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
           Trend-to-traffic in under 10 minutes. Powered by Perplexity + Claude + GPT.
         </p>
       </div>
@@ -636,9 +636,9 @@ const Dashboard = () => {
         {/* Products Display Section */}
         <CardContent>
           {(selectedDataSource === 'perplexity' ? trendingLoading : allTrendingLoading) ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {Array(6).fill(0).map((_, i) => (
-                <Card key={i} className="p-4">
+                <Card key={i} className="p-3 md:p-4">
                   <div className="space-y-3">
                     <div className="h-4 bg-gray-200 rounded animate-pulse" />
                     <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3" />
@@ -648,7 +648,7 @@ const Dashboard = () => {
               ))}
             </div>
           ) : getFilteredProducts().length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {getFilteredProducts().map((product) => (
                 <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
                   <CardContent className="p-4">
@@ -740,10 +740,10 @@ const Dashboard = () => {
       </Card>
 
       {/* 3️⃣ Fast-Action Buttons Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
-            <CardContent className="p-6 text-center">
+            <CardContent className="p-4 md:p-6 text-center">
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <Wand2 className="h-6 w-6 text-blue-600" />
               </div>
@@ -759,7 +759,7 @@ const Dashboard = () => {
 
         <Link href="/content-history" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
           <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200">
-            <CardContent className="p-6 text-center">
+            <CardContent className="p-4 md:p-6 text-center">
               <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                 <BarChart3 className="h-6 w-6 text-emerald-600" />
               </div>
