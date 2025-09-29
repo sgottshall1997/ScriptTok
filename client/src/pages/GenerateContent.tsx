@@ -383,16 +383,8 @@ const GenerateContent = () => {
     });
   };
 
-  // Watch for product name changes to fetch viral inspiration
-  useEffect(() => {
-    console.log('useEffect triggered:', { selectedProduct, selectedNiche });
-    
-    if (contentMode === 'affiliate') {
-      fetchViralInspirationForProduct(selectedProduct);
-    } else if (contentMode === 'viral') {
-      fetchTrendResearch(viralTopic);
-    }
-  }, [selectedProduct, selectedNiche, contentMode, viralTopic]);
+  // REMOVED: Automatic Perplexity triggering to prevent token waste
+  // Now using manual "Run Perplexity" buttons instead
 
   // Fetch prompt structure when template type, niche, or tone changes
   const fetchPromptStructure = async () => {
@@ -1101,12 +1093,30 @@ ${config.hashtags.join(' ')}`;
                 // Viral Mode: Topic Input
                 <div>
                   <Label htmlFor="viral-topic">Trending Topic or Subject</Label>
-                  <Input
-                    id="viral-topic"
-                    value={viralTopic}
-                    onChange={(e) => setViralTopic(e.target.value)}
-                    placeholder="Enter topic (e.g., 'productivity hacks', 'dating red flags', 'workout motivation')..."
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="viral-topic"
+                      value={viralTopic}
+                      onChange={(e) => setViralTopic(e.target.value)}
+                      placeholder="Enter topic (e.g., 'productivity hacks', 'dating red flags', 'workout motivation')..."
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="default"
+                      onClick={() => fetchTrendResearch(viralTopic)}
+                      disabled={!viralTopic.trim() || trendResearchLoading}
+                      className="whitespace-nowrap"
+                    >
+                      {trendResearchLoading ? (
+                        <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                      ) : (
+                        <Sparkles className="h-4 w-4 mr-2" />
+                      )}
+                      Run Perplexity
+                    </Button>
+                  </div>
                   <p className="text-xs text-muted-foreground mt-1">
                     💡 Tip: Use trending topics, relatable situations, or engaging subjects that don't require specific products
                   </p>
@@ -1115,12 +1125,30 @@ ${config.hashtags.join(' ')}`;
                 // Affiliate Mode: Product Input
                 <div>
                   <Label htmlFor="product">Product Name</Label>
-                  <Input
-                    id="product"
-                    value={selectedProduct}
-                    onChange={(e) => setSelectedProduct(e.target.value)}
-                    placeholder="Enter product name..."
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      id="product"
+                      value={selectedProduct}
+                      onChange={(e) => setSelectedProduct(e.target.value)}
+                      placeholder="Enter product name..."
+                      className="flex-1"
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="default"
+                      onClick={() => fetchViralInspirationForProduct(selectedProduct)}
+                      disabled={!selectedProduct.trim() || viralInspoLoading}
+                      className="whitespace-nowrap"
+                    >
+                      {viralInspoLoading ? (
+                        <RefreshCw className="h-4 w-4 animate-spin mr-2" />
+                      ) : (
+                        <Sparkles className="h-4 w-4 mr-2" />
+                      )}
+                      Run Perplexity
+                    </Button>
+                  </div>
                 </div>
               )}
 
