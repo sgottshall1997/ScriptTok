@@ -115,11 +115,23 @@ You need to set up all required environment variables from your Replit Secrets:
 | `OPENAI_API_KEY` | OpenAI API key | Replit Secrets or OpenAI Platform |
 | `NODE_ENV` | Set to `production` | Enter manually: `production` |
 
+**⚠️ CRITICAL: VITE_ Variables Require Redeploy**
+
+Variables prefixed with `VITE_` (like `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`) are **embedded into the JavaScript at BUILD time**, not runtime.
+
+**This means:**
+1. ✅ **Before first deploy**: Add these variables BEFORE deploying
+2. ❌ **If you forgot**: Adding them AFTER deploy won't work
+3. 🔄 **Solution**: After adding VITE_ variables, **trigger a NEW deployment**
+   - Click the "Deploy" button in Railway
+   - Or push a new commit to GitHub
+   - The new build will include the environment variables
+
 **Note about DATABASE_URL**: 
 - ✅ **Already configured** - Railway automatically provides this when you add PostgreSQL
 - ❌ **Do NOT manually set** - Let Railway manage this
 
-4. After adding all variables, click **"Deploy"** if prompted, or the deployment will trigger automatically
+4. After adding all variables, click **"Deploy"** to trigger a new build with the variables embedded
 
 ### 3.4 Verify Build Configuration
 
