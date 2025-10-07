@@ -29,6 +29,7 @@ import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { isAmazonEnabled } from '@shared/constants';
+import { useCTATracking } from "@/hooks/use-cta-tracking";
 import TrendForecaster from "@/components/TrendForecaster";
 import { useUsageData } from "@/hooks/useUsageData";
 import { Progress } from "@/components/ui/progress";
@@ -41,6 +42,7 @@ const Dashboard = () => {
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
   const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
+  const { trackUpgradeCTA } = useCTATracking();
   
   // Fetch usage data for the widget
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
@@ -306,7 +308,7 @@ const Dashboard = () => {
       </div>
 
       {/* 📊 Usage Widget */}
-      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200" data-testid="card-usage-widget">
+      <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200" data-testid="card-usage-widget">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-xl flex items-center gap-2">
@@ -416,6 +418,7 @@ const Dashboard = () => {
                       <Button 
                         className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white whitespace-nowrap"
                         data-testid="button-upgrade-to-pro"
+                        onClick={() => trackUpgradeCTA('dashboard_usage_widget', 'pro')}
                       >
                         <Crown className="h-4 w-4 mr-2" />
                         Upgrade to Pro
@@ -436,17 +439,17 @@ const Dashboard = () => {
       {/* Dashboard Overview Dropdown */}
       <Collapsible open={isDashboardInfoOpen} onOpenChange={setIsDashboardInfoOpen} className="w-full">
         <CollapsibleTrigger asChild>
-          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-blue-200 bg-blue-50 dark:bg-blue-950" data-testid="button-dashboard-info">
+          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-purple-200 bg-purple-50 dark:bg-purple-950" data-testid="button-dashboard-info">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <HelpCircle className="h-5 w-5 text-blue-600" />
-                  <CardTitle className="text-lg text-blue-900 dark:text-blue-100">
+                  <HelpCircle className="h-5 w-5 text-purple-600" />
+                  <CardTitle className="text-lg text-purple-900 dark:text-purple-100">
                     📱 What is ScriptTok? Click to learn about each section
                   </CardTitle>
                 </div>
                 <ChevronDown 
-                  className={`h-4 w-4 text-blue-600 transition-transform duration-200 ${
+                  className={`h-4 w-4 text-purple-600 transition-transform duration-200 ${
                     isDashboardInfoOpen ? 'rotate-180' : ''
                   }`} 
                 />
@@ -455,14 +458,14 @@ const Dashboard = () => {
           </Card>
         </CollapsibleTrigger>
         <CollapsibleContent>
-          <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950 border-t-0 rounded-t-none">
+          <Card className="border-purple-200 bg-purple-50 dark:bg-purple-950 border-t-0 rounded-t-none">
             <CardContent className="pt-4">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                  <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-2">
                     🚀 ScriptTok TikTok Viral Product Generator
                   </h3>
-                  <p className="text-blue-800 dark:text-blue-200 text-sm leading-relaxed">
+                  <p className="text-purple-800 dark:text-purple-200 text-sm leading-relaxed">
                     ScriptTok is your AI-powered command center for creating viral TikTok content from trending products. This streamlined dashboard gives you everything you need to discover trends, generate engaging content, and track performance - all powered by advanced AI models including Claude, GPT, and Perplexity.
                   </p>
                 </div>
@@ -501,18 +504,18 @@ const Dashboard = () => {
                 
                 <div className="grid md:grid-cols-3 gap-4 mt-4">
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🎯 Unified Content Generator</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Generate optimized content for TikTok, Instagram, YouTube, Twitter, and Facebook simultaneously. Create engaging captions with trending product data and integrated affiliate monetization.</p>
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-100 text-sm">🎯 Unified Content Generator</h4>
+                    <p className="text-xs text-purple-700 dark:text-purple-300">Generate optimized content for TikTok, Instagram, YouTube, Twitter, and Facebook simultaneously. Create engaging captions with trending product data and integrated affiliate monetization.</p>
                   </div>
                   
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">📊 Content History & Analytics</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Track your content performance with comprehensive analytics and historical data. Monitor engagement metrics, view top-rated posts, and analyze generation patterns to optimize your viral content strategy.</p>
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-100 text-sm">📊 Content History & Analytics</h4>
+                    <p className="text-xs text-purple-700 dark:text-purple-300">Track your content performance with comprehensive analytics and historical data. Monitor engagement metrics, view top-rated posts, and analyze generation patterns to optimize your viral content strategy.</p>
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-sm">🤖 Advanced AI Integration</h4>
-                    <p className="text-xs text-blue-700 dark:text-blue-300">Leverage multiple AI models with intelligent routing and optimization. Access Claude AI suggestions, model testing capabilities, and advanced configuration options for superior content quality.</p>
+                    <h4 className="font-semibold text-purple-900 dark:text-purple-100 text-sm">🤖 Advanced AI Integration</h4>
+                    <p className="text-xs text-purple-700 dark:text-purple-300">Leverage multiple AI models with intelligent routing and optimization. Access Claude AI suggestions, model testing capabilities, and advanced configuration options for superior content quality.</p>
                   </div>
                 </div>
                 
@@ -910,14 +913,14 @@ const Dashboard = () => {
       {/* 3️⃣ Fast-Action Buttons Panel */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
         <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
             <CardContent className="p-4 md:p-6 text-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Wand2 className="h-6 w-6 text-blue-600" />
+              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                <Wand2 className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="font-semibold text-blue-900 mb-2">🎯 Content Generator</h3>
-              <p className="text-sm text-blue-700 mb-4">One-click content generation for all platforms</p>
-              <div className="flex items-center justify-center text-blue-600">
+              <h3 className="font-semibold text-purple-900 mb-2">🎯 Content Generator</h3>
+              <p className="text-sm text-purple-700 mb-4">One-click content generation for all platforms</p>
+              <div className="flex items-center justify-center text-purple-600">
                 <span className="text-sm font-medium">Generate Now</span>
                 <ArrowRight className="h-4 w-4 ml-1" />
               </div>
