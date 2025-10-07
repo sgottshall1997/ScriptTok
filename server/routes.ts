@@ -61,11 +61,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Setup Clerk Auth middleware - only for API routes to avoid blocking frontend HTML
-  app.use('/api', clerkMiddleware);
-
-  // Auth endpoint
-  app.get('/api/auth/user', requireAuth, async (req: any, res) => {
+  // Auth endpoint (with Clerk middleware)
+  app.get('/api/auth/user', clerkMiddleware, requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
       const user = await storage.getUser(userId);
@@ -77,16 +74,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Essential TikTok Viral Product Generator routes
-  app.use('/api/generate-content', generateContentRouter);
-  app.use('/api/trending', trendingRouter);
-  app.use('/api/scraper-status', scraperStatusRouter);
-  app.use('/api/history', historyRouter);
+  // Apply Clerk middleware only to routes that need authentication
+  app.use('/api/generate-content', clerkMiddleware, generateContentRouter);
+  app.use('/api/trending', trendingRouter); // Public - no auth needed
+  app.use('/api/scraper-status', scraperStatusRouter); // Public - no auth needed
+  app.use('/api/history', clerkMiddleware, historyRouter); // Protected - needs auth
   
-  // Perplexity trends for viral research
+  // Perplexity trends for viral research (public - no auth)
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   app.use('/api/perplexity-status', perplexityStatusRouter);
   
-  // Perplexity Intelligence System routes
+  // Perplexity Intelligence System routes (public - no auth for trend data)
   app.use('/api/trend-forecast', trendForecastRouter);
   app.use('/api/product-research', productResearchRouter);
   app.use('/api/trend-research', trendResearchRouter);
@@ -129,7 +127,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   
   // Content history alias endpoint (protected)
-  app.get('/api/content-history', requireAuth, async (req: any, res) => {
+  app.get('/api/content-history', clerkMiddleware, requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
