@@ -9,12 +9,12 @@ const Footer: React.FC = () => {
           
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-900">ScriptTok</h3>
+            <h3 className="text-lg font-semibold text-gray-900">Pheme</h3>
             <p className="text-sm text-gray-600">
-              AI-powered TikTok content generation with viral score analysis.
+              AI-powered content generation with viral score analysis.
             </p>
             <p className="text-sm text-gray-600">
-              Create engaging TikTok content that resonates with your audience.
+              Create engaging viral content that resonates with your audience.
             </p>
           </div>
           
@@ -23,7 +23,7 @@ const Footer: React.FC = () => {
             <h4 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">Product</h4>
             <div className="space-y-2">
               <Link href="/generate">
-                <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">TikTok Generator</span>
+                <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">Content Generator</span>
               </Link>
               <Link href="/content-history">
                 <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">Content History</span>
@@ -48,7 +48,7 @@ const Footer: React.FC = () => {
                 <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">Contact</span>
               </Link>
               <Link href="/about">
-                <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">About ScriptTok</span>
+                <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">About Pheme</span>
               </Link>
               <a 
                 href="mailto:shallsdigital@gmail.com" 
@@ -90,7 +90,7 @@ const Footer: React.FC = () => {
         <div className="mt-8 pt-8 border-t border-gray-300">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <p className="text-sm text-gray-500">
-              © 2025 ScriptTok. All rights reserved.
+              © 2025 Pheme. All rights reserved.
             </p>
             <div className="flex space-x-6">
               <Link href="/privacy-cookies">

@@ -1140,9 +1140,9 @@ ${config.hashtags.join(' ')}`;
         <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
           {/* Header */}
           <div className="text-center space-y-2 px-2">
-            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">🎵 TikTok Content Generator</h1>
+            <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900"> Pheme Content Generator</h1>
             <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
-              Generate viral TikTok content in under 60 seconds
+              Generate viral content in under 60 seconds
             </p>
           </div>
 
@@ -2187,7 +2187,7 @@ ${config.hashtags.join(' ')}`;
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-green-500" />
-                ✨ Generated TikTok Content
+                 Generated Pheme Content
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -2232,7 +2232,7 @@ ${config.hashtags.join(' ')}`;
                 <div className="space-y-4 border-t pt-6">
                   <div className="flex items-center justify-between">
                     <h4 className="font-semibold text-lg flex items-center gap-2">
-                      🎯 TikTok Caption
+                      🎯 Video Caption
                     </h4>
                     <div className="flex items-center gap-2">
                       <Switch 
@@ -2256,7 +2256,7 @@ ${config.hashtags.join(' ')}`;
                       <div className="bg-black text-white p-4 rounded-lg border">
                         <div className="flex items-center justify-between mb-3">
                           <h5 className="font-semibold flex items-center gap-2 text-white">
-                            📱 TikTok Caption
+                            📱 Video Caption
                           </h5>
                           <Button
                             size="sm"
@@ -2494,7 +2494,7 @@ ${config.hashtags.join(' ')}`;
                         <div className="bg-orange-100 p-4 rounded border border-orange-200">
                           <div className="flex items-center justify-between mb-3">
                             <h5 className="font-semibold flex items-center gap-2 text-orange-800">
-                              📱 TikTok Caption
+                              📱 Video Caption
                             </h5>
                             <Button
                               size="sm"
@@ -2554,7 +2554,7 @@ ${config.hashtags.join(' ')}`;
                         <div className="bg-green-100 p-4 rounded border border-green-200">
                           <div className="flex items-center justify-between mb-3">
                             <h5 className="font-semibold flex items-center gap-2 text-green-800">
-                              📱 TikTok Caption
+                              📱 Video Caption
                             </h5>
                             <Button
                               size="sm"

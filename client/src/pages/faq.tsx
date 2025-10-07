@@ -17,7 +17,7 @@ const FAQPage: React.FC = () => {
         <h1 className="text-3xl font-bold mb-3 text-gray-800">Frequently Asked Questions</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Find answers to common questions about ScriptTok and how it helps you create 
-          viral TikTok content with AI-powered generation and viral score analysis.
+          viral content with AI-powered generation and viral score analysis.
         </p>
       </div>
       
@@ -30,7 +30,7 @@ const FAQPage: React.FC = () => {
             </div>
             <CardTitle>Getting Started</CardTitle>
             <CardDescription>
-              Basic information about ScriptTok
+              Basic information about Pheme
             </CardDescription>
           </CardHeader>
         </Card>
@@ -40,7 +40,7 @@ const FAQPage: React.FC = () => {
             <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
               <Video className="h-6 w-6 text-green-600" />
             </div>
-            <CardTitle>TikTok Content</CardTitle>
+            <CardTitle>Viral Content</CardTitle>
             <CardDescription>
               Learn about content generation
             </CardDescription>
@@ -67,11 +67,11 @@ const FAQPage: React.FC = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="what-is-scripttok">
             <AccordionTrigger>
-              What is ScriptTok?
+              What is Pheme?
             </AccordionTrigger>
             <AccordionContent>
-              ScriptTok is an AI-powered TikTok content generator that helps creators make viral content. 
-              Using Claude AI technology, it generates engaging TikTok scripts with instant viral score 
+              Pheme is an AI-powered content generator that helps creators make viral content. 
+              Using Claude AI technology, it generates engaging scripts with instant viral score 
               analysis to help you create content that resonates with your audience and has the potential to go viral.
             </AccordionContent>
           </AccordionItem>
@@ -86,7 +86,7 @@ const FAQPage: React.FC = () => {
               </p>
               <ol className="list-decimal pl-6 space-y-2">
                 <li>Select your content niche (beauty, tech, fashion, etc.)</li>
-                <li>Choose a TikTok template designed for viral content</li>
+                <li>Choose a template designed for viral content</li>
                 <li>Generate content using Claude AI</li>
                 <li>Get instant viral score analysis and save to content history</li>
               </ol>
@@ -103,10 +103,10 @@ const FAQPage: React.FC = () => {
           
           <AccordionItem value="what-niches">
             <AccordionTrigger>
-              What TikTok niches are supported?
+              What niches are supported?
             </AccordionTrigger>
             <AccordionContent>
-              ScriptTok supports 7 major TikTok niches:
+              ScriptTok supports 7 major niches:
               <ul className="list-disc pl-6 mt-2 grid grid-cols-2 gap-2">
                 <li>Beauty & Skincare</li>
                 <li>Technology & Gadgets</li>
@@ -117,17 +117,17 @@ const FAQPage: React.FC = () => {
                 <li>Pets & Animals</li>
               </ul>
               <p className="mt-2">
-                Each niche has specialized templates designed specifically for TikTok audiences in that category.
+                Each niche has specialized templates designed specifically for audiences in that category.
               </p>
             </AccordionContent>
           </AccordionItem>
           
           <AccordionItem value="cost">
             <AccordionTrigger>
-              Is ScriptTok free to use?
+              Is Pheme free to use?
             </AccordionTrigger>
             <AccordionContent>
-              ScriptTok offers both free and premium features. You can generate TikTok content and view 
+              Pheme offers both free and premium features. You can generate content and view 
               viral scores without any cost. Premium features may include additional templates, unlimited 
               generations, and advanced analytics. Check our pricing page for current plan details.
             </AccordionContent>
@@ -137,16 +137,16 @@ const FAQPage: React.FC = () => {
       
       {/* TikTok Content FAQs */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">TikTok Content Generation</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Pheme Content Generation</h2>
         
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="templates">
             <AccordionTrigger>
-              What TikTok templates are available?
+              What content templates are available?
             </AccordionTrigger>
             <AccordionContent>
               <p className="mb-2">
-                ScriptTok offers viral TikTok templates designed for engagement:
+                ScriptTok offers viral templates designed for engagement:
               </p>
               <ul className="list-disc pl-6 grid grid-cols-2 gap-2">
                 <li>Product Reveals</li>
@@ -166,13 +166,13 @@ const FAQPage: React.FC = () => {
           
           <AccordionItem value="viral-optimization">
             <AccordionTrigger>
-              How is content optimized for TikTok?
+              How is content optimized for social platforms?
             </AccordionTrigger>
             <AccordionContent>
-              ScriptTok optimizes content specifically for TikTok by focusing on engagement hooks, optimal 
-              content length, trending patterns, and audience appeal. Our AI analyzes successful TikTok 
-              content patterns to create scripts that follow proven viral formulas while maintaining 
-              authenticity and niche relevance.
+              Pheme optimizes every piece of content for high engagement across TikTok, Reels, Shorts, and more. 
+                Our AI studies successful posts to identify proven viral patterns—strong hooks, ideal length, 
+                trending topics, and audience appeal—then generates scripts that stay authentic to your voice 
+                and niche.
             </AccordionContent>
           </AccordionItem>
           
@@ -181,7 +181,7 @@ const FAQPage: React.FC = () => {
               How does content history work?
             </AccordionTrigger>
             <AccordionContent>
-              All your generated TikTok content is automatically saved to your content history with timestamps, 
+              All your generated content is automatically saved to your content history with timestamps, 
               viral scores, and performance ratings. You can access your history anytime to review past content, 
               rate how it performed, and reuse successful scripts. This helps you learn what works best for 
               your audience.
@@ -190,12 +190,12 @@ const FAQPage: React.FC = () => {
           
           <AccordionItem value="export">
             <AccordionTrigger>
-              How can I use the generated TikTok content?
+              How can I use the generated content?
             </AccordionTrigger>
             <AccordionContent>
-              After generating content, you can copy it directly to use in your TikTok captions, video scripts, 
-              or content planning. The generated text is optimized for TikTok's format and ready to use. You 
-              can also edit and customize the content to match your personal style and brand voice.
+              After generating content, you can copy it directly for use in your captions, video scripts, 
+                or content calendar. Each piece is optimized for platforms like TikTok, Reels, and Shorts, 
+                and can be easily customized to fit your unique style, tone, and brand voice.
             </AccordionContent>
           </AccordionItem>
         </Accordion>
@@ -211,13 +211,13 @@ const FAQPage: React.FC = () => {
               What does the viral score mean?
             </AccordionTrigger>
             <AccordionContent>
-              <p>The viral score is a prediction of how well your TikTok content might perform, based on:</p>
+              <p>The viral score is a prediction of how well your content might perform, based on:</p>
               <ul className="list-disc pl-6 mt-2 space-y-2">
                 <li>Engagement hooks and opening lines</li>
                 <li>Content structure and flow</li>
                 <li>Trending elements and patterns</li>
                 <li>Audience appeal for your selected niche</li>
-                <li>Optimal length and format for TikTok</li>
+                <li>Optimal length and format</li>
               </ul>
               <p className="mt-2">
                 Higher scores indicate better viral potential, but remember that actual performance depends 
@@ -232,11 +232,11 @@ const FAQPage: React.FC = () => {
             </AccordionTrigger>
             <AccordionContent>
               <p>
-                To get higher viral scores on your TikTok content:
+                To get higher viral scores on your content:
               </p>
               <ol className="list-decimal pl-6 mt-2 space-y-2">
                 <li>Try different templates for the same topic</li>
-                <li>Choose templates that match current TikTok trends</li>
+                <li>Choose templates that match current trends</li>
                 <li>Select the niche that best fits your content</li>
                 <li>Regenerate content multiple times to compare scores</li>
                 <li>Look at your content history to see which styles score highest</li>
@@ -250,10 +250,10 @@ const FAQPage: React.FC = () => {
           
           <AccordionItem value="content-quality">
             <AccordionTrigger>
-              How can I improve my TikTok content quality?
+              How can I improve my content quality?
             </AccordionTrigger>
             <AccordionContent>
-              <p>To get the best TikTok content from ScriptTok:</p>
+              <p>To get the best content from ScriptTok:</p>
               <ul className="list-disc pl-6 mt-2 space-y-2">
                 <li>Choose the template that best matches your content goal</li>
                 <li>Select the most relevant niche for your topic</li>
@@ -274,16 +274,16 @@ const FAQPage: React.FC = () => {
       <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-none shadow-md">
         <CardContent className="p-8">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Ready to Create Viral TikTok Content?</h2>
+            <h2 className="text-2xl font-bold mb-4">Ready to Create Viral Content?</h2>
             <p className="text-gray-700 mb-6 max-w-2xl mx-auto">
-              Start generating engaging TikTok content with AI-powered viral score analysis. 
+              Start generating engaging content with AI-powered viral score analysis. 
               Still have questions? Check out our guides or contact support.
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/generate">
                 <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600">
                   <Video className="mr-2 h-4 w-4" />
-                  Generate TikTok Content
+                  Generate Content
                 </Button>
               </Link>
               <Link href="/how-it-works">

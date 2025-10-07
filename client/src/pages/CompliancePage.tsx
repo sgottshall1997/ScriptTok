@@ -22,13 +22,13 @@ const CompliancePage: React.FC = () => {
           <div className="space-y-2">
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
               <Video className="h-3 w-3 mr-1" />
-              TikTok Content Compliant
+              Social Media Content Compliant
             </Badge>
             <h1 className="text-4xl font-bold text-gray-900">
               Pheme Compliance Center
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Your complete guide to TikTok content creation compliance and AI-generated content best practices
+              Your complete guide to content creation compliance and AI-generated content best practices
             </p>
           </div>
         </div>
@@ -38,7 +38,7 @@ const CompliancePage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center text-green-800">
               <CheckCircle className="h-5 w-5 mr-2" />
-              TikTok Content Compliance Status
+              Pheme Content Compliance Status
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
@@ -49,7 +49,7 @@ const CompliancePage: React.FC = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <span className="text-sm">TikTok hashtag compliance active</span>
+                <span className="text-sm">Social Media hashtag compliance active</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="h-4 w-4 text-green-600" />
@@ -78,7 +78,7 @@ const CompliancePage: React.FC = () => {
                 <div>
                   <h4 className="font-semibold text-blue-800 mb-2">Important AI Content Notice</h4>
                   <p className="text-sm text-blue-700 mb-2">
-                    Pheme uses advanced AI technology (Claude AI) to generate TikTok content suggestions. All content is AI-generated and should be reviewed before posting.
+                    Pheme uses advanced AI technology (Claude AI) to generate content suggestions. All content is AI-generated and should be reviewed before posting.
                   </p>
                   <p className="text-sm text-blue-700 font-medium">
                     ⚠️ AI-generated content outputs are probabilistic and not guaranteed to go viral or achieve specific engagement rates.
@@ -94,7 +94,7 @@ const CompliancePage: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Video className="h-5 w-5 mr-2" />
-              TikTok Content Guidelines
+              Pheme Content Guidelines
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -102,10 +102,10 @@ const CompliancePage: React.FC = () => {
               <div className="flex items-start space-x-3">
                 <AlertTriangle className="h-5 w-5 text-yellow-600 mt-0.5" />
                 <div>
-                  <h4 className="font-semibold text-yellow-800 mb-2">TikTok Content Requirements</h4>
+                  <h4 className="font-semibold text-yellow-800 mb-2">Pheme Content Requirements</h4>
                   <ul className="text-sm text-yellow-700 space-y-1">
                     <li>• Content must be original and engaging</li>
-                    <li>• Follow TikTok Community Guidelines</li>
+                    <li>• Follow social media Community Guidelines</li>
                     <li>• Respect copyright and intellectual property</li>
                     <li>• Use appropriate hashtags for content discovery</li>
                   </ul>
@@ -144,7 +144,7 @@ const CompliancePage: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">
-              Pheme uses advanced AI technology to create engaging TikTok content with built-in viral score analysis:
+              Pheme uses advanced AI technology to create engaging content with built-in viral score analysis:
             </p>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -153,10 +153,10 @@ const CompliancePage: React.FC = () => {
                 <div>
                   <strong className="text-blue-700">Content Generation:</strong>
                   <ul className="text-sm text-blue-600 mt-1 space-y-1">
-                    <li>• Claude AI for high-quality TikTok content</li>
+                    <li>• Claude AI for high-quality content</li>
                     <li>• Niche-specific content templates</li>
                     <li>• Viral score analysis and optimization</li>
-                    <li>• Content length optimization for TikTok</li>
+                    <li>• Content length optimization</li>
                     <li>• Trending hashtag integration</li>
                   </ul>
                 </div>
@@ -174,7 +174,7 @@ const CompliancePage: React.FC = () => {
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-semibold">Example TikTok Content Formats:</h4>
+              <h4 className="font-semibold">Example Content Formats:</h4>
               <div className="space-y-2">
                 <div className="bg-gray-100 rounded p-3">
                   <strong className="text-sm">Beauty Niche Example:</strong>
@@ -244,7 +244,7 @@ const CompliancePage: React.FC = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4 className="font-semibold">TikTok Guidelines:</h4>
+                <h4 className="font-semibold">Pheme Guidelines:</h4>
                 <div className="space-y-2">
                   <a 
                     href="https://www.tiktok.com/community-guidelines"
@@ -253,7 +253,7 @@ const CompliancePage: React.FC = () => {
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    TikTok Community Guidelines
+                    Pheme Community Guidelines
                   </a>
                   <a 
                     href="https://www.tiktok.com/creators/creator-portal/en-us/"
@@ -262,7 +262,7 @@ const CompliancePage: React.FC = () => {
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    TikTok Creator Portal
+                    Pheme Creator Portal
                   </a>
                   <a 
                     href="https://support.tiktok.com/en/safety-hc/report-a-problem"
@@ -271,7 +271,7 @@ const CompliancePage: React.FC = () => {
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    TikTok Safety Guidelines
+                    Pheme Safety Guidelines
                   </a>
                 </div>
               </div>
@@ -312,13 +312,13 @@ const CompliancePage: React.FC = () => {
         {/* Contact & Support */}
         <Card className="bg-gray-900 text-white">
           <CardContent className="text-center py-8">
-            <h3 className="text-xl font-semibold mb-2">Ready to Create Viral TikTok Content?</h3>
+            <h3 className="text-xl font-semibold mb-2">Ready to Create Viral Content?</h3>
             <p className="text-gray-300 mb-4">
-              Pheme helps you create engaging TikTok content with AI-powered viral score analysis.
+              Pheme helps you create engaging content with AI-powered viral score analysis.
             </p>
             <Link href="/generate">
               <Button variant="secondary" size="lg">
-                Start Creating TikTok Content
+                Start Creating Viral Content
               </Button>
             </Link>
           </CardContent>

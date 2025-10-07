@@ -207,7 +207,7 @@ export default function TemplateLibraryFeature() {
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://scripttok.com/features/template-library" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Template Library - 20+ Proven Script Templates | ScriptTok" />
+        <meta name="twitter:title" content="Template Library - 20+ Proven Script Templates | Pheme" />
         <meta name="twitter:description" content="Pre-built viral formulas and affiliate frameworks for every niche. Browse proven templates and customize in seconds." />
       </Helmet>
       

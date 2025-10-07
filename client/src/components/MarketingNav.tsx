@@ -57,7 +57,7 @@ const featuresData: CardItem[] = [
   {
     icon: TrendingUp,
     title: "Real-Time Trend Discovery",
-    description: "Track and transform trending topics into ready-to-film TikTok scripts.",
+    description: "Track and transform trending topics into ready-to-film video scripts.",
     href: "/features/trend-discovery"
   },
   {
@@ -201,7 +201,7 @@ const learnData: CardItem[] = [
   {
     icon: Video,
     title: "Tutorials",
-    description: "Step-by-step guides on ScriptTok tools and studios.",
+    description: "Step-by-step guides on Pheme tools and studios.",
     href: "#"
   },
   {
@@ -213,7 +213,7 @@ const learnData: CardItem[] = [
   {
     icon: Award,
     title: "Showcase",
-    description: "Explore user-generated content made with ScriptTok AI.",
+    description: "Explore user-generated content made with Pheme AI.",
     href: "#"
   },
   {
@@ -288,7 +288,7 @@ export function MarketingNav() {
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer" data-testid="link-logo">
             <span className="font-bold text-xl">
-              👼 Pheme
+              ✏️ Pheme
             </span>
           </div>
         </Link>

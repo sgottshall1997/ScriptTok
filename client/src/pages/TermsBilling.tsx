@@ -59,11 +59,11 @@ const TermsBillingPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">1. Service Description</h3>
               <p className="text-gray-700 mb-2">
-                ScriptTok is an AI-powered TikTok content generation platform that helps users create viral TikTok content 
+                Pheme is an AI-powered content generation platform that helps users create viral TikTok content 
                 using Claude AI technology with viral score analysis.
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>AI-generated TikTok content creation</li>
+                <li>AI-generated viral content creation</li>
                 <li>Viral score analysis and optimization</li>
                 <li>Content history and performance tracking</li>
                 <li>Niche-specific templates and customization</li>
@@ -139,7 +139,7 @@ const TermsBillingPage: React.FC = () => {
               <p className="text-gray-700 mb-3">You may not use Pheme to:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>Generate harmful, offensive, or inappropriate content</li>
-                <li>Create content that violates TikTok's Community Guidelines</li>
+                <li>Create content that violates social media Community Guidelines</li>
                 <li>Impersonate others or create misleading content</li>
                 <li>Generate spam or repetitive content</li>
                 <li>Attempt to circumvent usage limits or restrictions</li>
@@ -152,7 +152,7 @@ const TermsBillingPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Content Guidelines</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>Generated content should comply with TikTok's Community Guidelines</li>
+                <li>Generated content should comply with social media Community Guidelines</li>
                 <li>You are responsible for ensuring content accuracy before posting</li>
                 <li>Respect intellectual property rights when using generated content</li>
                 <li>Do not use AI-generated content to mislead audiences about its origin</li>
