@@ -89,7 +89,7 @@ select {
     background-color: hsl(var(--theme-primary));
   }
   
-  /* ScriptTok wireframe gradients */
+  /* Pheme wireframe gradients */
   .bg-gradient-hero {
     background: linear-gradient(to right, hsl(var(--blue-600)), hsl(var(--purple-600)));
   }

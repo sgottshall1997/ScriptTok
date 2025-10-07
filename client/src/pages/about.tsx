@@ -655,15 +655,15 @@ const AboutPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* ScriptTok Features Navigation */}
+      {/* Pheme Features Navigation */}
       <Card className="mb-12">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Grid3X3 className="h-6 w-6 mr-3 text-purple-600" />
-            Explore ScriptTok Features
+            Explore Pheme Features
           </CardTitle>
           <CardDescription>
-            Navigate to any ScriptTok feature or page
+            Navigate to any Pheme feature or page
           </CardDescription>
         </CardHeader>
         <CardContent>

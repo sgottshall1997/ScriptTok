@@ -26,7 +26,7 @@ const HowItWorksPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-5xl">
       <div className="mb-12">
-        <h1 className="text-3xl font-bold mb-3 text-gray-800">How ScriptTok Works</h1>
+        <h1 className="text-3xl font-bold mb-3 text-gray-800">How Pheme Works</h1>
         <p className="text-lg text-gray-600 max-w-3xl">
           Create viral TikTok content with AI-powered generation, viral score analysis, and performance tracking. 
           Turn your ideas into engaging TikTok scripts in minutes.
@@ -118,7 +118,7 @@ const HowItWorksPage: React.FC = () => {
       
       {/* Feature Highlights */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">ScriptTok Features</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">Pheme Features</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex">

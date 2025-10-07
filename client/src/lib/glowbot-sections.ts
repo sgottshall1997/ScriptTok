@@ -26,7 +26,7 @@ import {
   Package
 } from 'lucide-react';
 
-export interface ScriptTokSection {
+export interface PhemeSection {
   name: string;
   description: string;
   icon: React.ComponentType<{ className?: string }>;
@@ -40,7 +40,7 @@ export interface ScriptTokSection {
   keyFeatures: string[];
 }
 
-export const scriptTokSections: ScriptTokSection[] = [
+export const phemeSections: PhemeSection[] = [
   // Overview
   {
     name: "About Pheme",
@@ -852,10 +852,10 @@ export const scriptTokSections: ScriptTokSection[] = [
   }
 ];
 
-export const getScriptTokSectionsByCategory = () => {
-  const categories: { [key: string]: ScriptTokSection[] } = {};
+export const getPhemeSectionsByCategory = () => {
+  const categories: { [key: string]: PhemeSection[] } = {};
   
-  scriptTokSections.forEach(section => {
+  phemeSections.forEach(section => {
     if (!categories[section.category]) {
       categories[section.category] = [];
     }
@@ -865,13 +865,13 @@ export const getScriptTokSectionsByCategory = () => {
   return categories;
 };
 
-export const getScriptTokSectionByPath = (path: string): ScriptTokSection | undefined => {
-  return scriptTokSections.find(section => section.path === path);
+export const getPhemeSectionByPath = (path: string): PhemeSection | undefined => {
+  return phemeSections.find(section => section.path === path);
 };
 
-export const getScriptTokSectionsByKeyword = (keyword: string): ScriptTokSection[] => {
+export const getPhemeSectionsByKeyword = (keyword: string): PhemeSection[] => {
   const lowercaseKeyword = keyword.toLowerCase();
-  return scriptTokSections.filter(section => 
+  return phemeSections.filter(section => 
     section.name.toLowerCase().includes(lowercaseKeyword) ||
     section.description.toLowerCase().includes(lowercaseKeyword) ||
     section.whatItDoes.toLowerCase().includes(lowercaseKeyword) ||
@@ -880,6 +880,10 @@ export const getScriptTokSectionsByKeyword = (keyword: string): ScriptTokSection
 };
 
 // Legacy exports for backward compatibility
-export const getGlowBotSectionsByCategory = getScriptTokSectionsByCategory;
-export const getGlowBotSectionByPath = getScriptTokSectionByPath;
-export const getGlowBotSectionsByKeyword = getScriptTokSectionsByKeyword;
+export const getGlowBotSectionsByCategory = getPhemeSectionsByCategory;
+export const getGlowBotSectionByPath = getPhemeSectionByPath;
+export const getGlowBotSectionsByKeyword = getPhemeSectionsByKeyword;
+export const scriptTokSections = phemeSections;
+export const getScriptTokSectionsByCategory = getPhemeSectionsByCategory;
+export const getScriptTokSectionByPath = getPhemeSectionByPath;
+export const getScriptTokSectionsByKeyword = getPhemeSectionsByKeyword;

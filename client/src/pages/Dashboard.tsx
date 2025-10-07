@@ -45,7 +45,7 @@ const Dashboard = () => {
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
   const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
   const { trackUpgradeCTA } = useCTATracking();
-  
+
   // Fetch usage data for the widget
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
   const usageData = usageResponse?.data?.data;
@@ -108,11 +108,11 @@ const Dashboard = () => {
         },
         body: JSON.stringify({ productId, niche }),
       });
-      
+
       if (!response.ok) {
         throw new Error('Failed to refresh product');
       }
-      
+
       return response.json();
     },
     onSuccess: (data) => {
@@ -141,11 +141,11 @@ const Dashboard = () => {
           'Content-Type': 'application/json',
         },
       });
-      
+
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      
+
       return await response.json();
     },
     onSuccess: (data) => {
@@ -169,10 +169,10 @@ const Dashboard = () => {
   // Get Perplexity products (exactly 3 per niche, balanced representation)
   const getPerplexityProducts = () => {
     if (!trendingProducts?.data) return [];
-    
+
     const allNiches = ['beauty', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pets'];
     const perplexityProducts: TrendingProduct[] = [];
-    
+
     // Get exactly 3 products from each niche
     allNiches.forEach(niche => {
       const nicheProducts = trendingProducts.data[niche] || [];
@@ -186,23 +186,23 @@ const Dashboard = () => {
         .slice(0, 3); // Take exactly 3 from each niche
       perplexityProducts.push(...uniqueProducts);
     });
-    
+
     // Debug logging to see what products we're getting
     console.log('🔍 Dashboard Debug - Balanced Perplexity products:', perplexityProducts.length);
     perplexityProducts.forEach((p, i) => {
       console.log(`  ${i+1}. ${p.title} (${p.niche}) - Created: ${p.createdAt}`);
     });
-    
+
     // Show products by niche for clarity
     const byNiche = perplexityProducts.reduce((acc, p) => {
       if (!acc[p.niche]) acc[p.niche] = [];
       acc[p.niche].push(p.title);
       return acc;
     }, {} as Record<string, string[]>);
-    
+
     console.log('🎯 Products by niche on dashboard:', byNiche);
     console.log('📊 Products count by niche:', Object.entries(byNiche).map(([niche, products]) => `${niche}: ${products.length}`).join(', '));
-    
+
     return perplexityProducts; // Return all products (up to 21)
   };
 
@@ -233,14 +233,14 @@ const Dashboard = () => {
   const getProductsByNiche = () => {
     const products = getFilteredProducts();
     const grouped: Record<string, TrendingProduct[]> = {};
-    
+
     products.forEach(product => {
       if (!grouped[product.niche]) {
         grouped[product.niche] = [];
       }
       grouped[product.niche].push(product);
     });
-    
+
     return grouped;
   };
 
@@ -303,7 +303,7 @@ const Dashboard = () => {
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-3 px-2 py-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl border border-purple-100">
         <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-          🚀 ScriptTok AI: Your Viral Content Command Center
+          🚀 Pheme AI: Your Viral Content Command Center
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-gray-700 max-w-3xl mx-auto">
           Discover trends → Generate viral content → Track performance. All powered by Perplexity AI + Claude + GPT.
@@ -343,13 +343,13 @@ const Dashboard = () => {
                   limit={usageData.limits.gpt}
                   label="GPT Generations"
                 />
-                
+
                 <UsageProgress
                   used={usageData.usage.claudeGenerationsUsed}
                   limit={usageData.limits.claude}
                   label="Claude Generations"
                 />
-                
+
                 <UsageProgress
                   used={usageData.usage.trendAnalysesUsed}
                   limit={usageData.limits.trends}
@@ -403,7 +403,7 @@ const Dashboard = () => {
                 <div className="flex items-center gap-2">
                   <HelpCircle className="h-5 w-5 text-purple-600" />
                   <CardTitle className="text-lg text-purple-900 dark:text-purple-100">
-                    📱 What is ScriptTok? Click to learn about each section
+                    📱 What is Pheme? Click to learn about each section
                   </CardTitle>
                 </div>
                 <ChevronDown 
@@ -420,11 +420,11 @@ const Dashboard = () => {
             <CardContent className="pt-4">
               <div className="space-y-4">
                 <div>
-                  <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-2">
-                    🚀 ScriptTok TikTok Viral Product Generator
+                  <h3 className="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-2">
+                    🚀 Pheme TikTok Viral Product Generator
                   </h3>
                   <p className="text-purple-800 dark:text-purple-200 text-sm leading-relaxed">
-                    ScriptTok is your AI-powered command center for creating viral TikTok content from trending products. This streamlined dashboard gives you everything you need to discover trends, generate engaging content, and track performance - all powered by advanced AI models including Claude, GPT, and Perplexity.
+                    Pheme is your AI-powered command center for creating viral TikTok content from trending products. This streamlined dashboard gives you everything you need to discover trends, generate engaging content, and track performance - all powered by advanced AI models including Claude, GPT, and Perplexity.
                   </p>
                 </div>
 
@@ -459,13 +459,13 @@ const Dashboard = () => {
                     </p>
                   </div>
                 </div>
-                
+
                 <div className="grid md:grid-cols-3 gap-4 mt-4">
                   <div className="space-y-3">
                     <h4 className="font-semibold text-purple-900 dark:text-purple-100 text-sm">🎯 Unified Content Generator</h4>
                     <p className="text-xs text-purple-700 dark:text-purple-300">Generate optimized content for TikTok, Instagram, YouTube, Twitter, and Facebook simultaneously. Create engaging captions with trending product data and integrated affiliate monetization.</p>
                   </div>
-                  
+
                   <div className="space-y-3">
                     <h4 className="font-semibold text-purple-900 dark:text-purple-100 text-sm">📊 Content History & Analytics</h4>
                     <p className="text-xs text-purple-700 dark:text-purple-300">Track your content performance with comprehensive analytics and historical data. Monitor engagement metrics, view top-rated posts, and analyze generation patterns to optimize your viral content strategy.</p>
@@ -476,13 +476,13 @@ const Dashboard = () => {
                     <p className="text-xs text-purple-700 dark:text-purple-300">Leverage multiple AI models with intelligent routing and optimization. Access Claude AI suggestions, model testing capabilities, and advanced configuration options for superior content quality.</p>
                   </div>
                 </div>
-                
-                {/* ScriptTok Intelligence Flow Diagram */}
+
+                {/* Pheme Intelligence Flow Diagram */}
                 <div className="mt-6">
                   <h4 className="text-base font-semibold text-purple-900 dark:text-purple-100 mb-4 text-center">How Pheme Creates Smart Content</h4>
                   <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
                     <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-2">
-                      
+
                       {/* Step 1: Perplexity Discovery */}
                       <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-purple-300 dark:border-purple-700 shadow-sm">
                         <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2">
@@ -661,7 +661,7 @@ const Dashboard = () => {
             </Select>
           </div>
         </CardHeader>
-        
+
         {/* Status Section - Conditional Based on Data Source */}
         <CardContent className="pt-0 pb-4">
           {selectedDataSource === 'perplexity' ? (
@@ -726,7 +726,7 @@ const Dashboard = () => {
             </Card>
           )}
         </CardContent>
-        
+
         {/* Products Display Section */}
         <CardContent>
           {(selectedDataSource === 'perplexity' ? trendingLoading : allTrendingLoading) ? (
@@ -754,7 +754,7 @@ const Dashboard = () => {
                       {shouldLimitProducts() ? `1 of ${nicheProducts.length}` : nicheProducts.length} products
                     </span>
                   </div>
-                  
+
                   {/* Products Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                     {getLimitedNicheProducts(nicheProducts).map((product) => (
@@ -770,7 +770,7 @@ const Dashboard = () => {
                                 {product.niche}
                               </Badge>
                             </div>
-                            
+
                             {/* Why it's hot */}
                             <div className="text-sm text-gray-600">
                               <span className="text-yellow-600">✨ Why it's hot:</span>
@@ -793,7 +793,7 @@ const Dashboard = () => {
                                 📦 ASIN: {product.asin}
                               </div>
                             )}
-                            
+
                             {/* Action Buttons */}
                             <div className="flex gap-2 pt-2">
                               <Button 
@@ -833,7 +833,7 @@ const Dashboard = () => {
                       </Card>
                     ))}
                   </div>
-                  
+
                   {/* Upgrade CTA for this niche */}
                   {hasMoreProducts(nicheProducts) && (
                     <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
