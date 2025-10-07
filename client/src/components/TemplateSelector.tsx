@@ -8,6 +8,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Crown } from "lucide-react";
 import { TEMPLATE_TYPES, type TemplateType, type ContentMode, getTemplatesByMode } from '@shared/constants';
 import { useUsageData } from '@/hooks/useUsageData';
+import { useLocation } from 'wouter';
 
 // Properties for the TemplateSelector component
 interface TemplateSelectorProps {
@@ -37,12 +38,22 @@ export function TemplateSelector({
   multiSelect = false,
   contentMode = 'affiliate'
 }: TemplateSelectorProps) {
+  const [, setLocation] = useLocation();
+  
   // Get usage data to determine tier
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
   const usageData = usageResponse?.data;
   
   // Determine if user is on free tier (fail-safe: default to free if data unavailable)
   const isFreeUser = !usageData || usageData.tier === 'free';
+  
+  // Pro-only templates (always locked for free users)
+  const proOnlyTemplates: TemplateType[] = [
+    'routine_kit',
+    'seo_blog',
+    'affiliate_email',
+    'influencer_caption'
+  ];
   
   // Filter templates based on content mode
   const modeTemplates = getTemplatesByMode(contentMode) as TemplateType[];
@@ -208,7 +219,7 @@ export function TemplateSelector({
                   {sectionTemplates.filter((template: string): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType, indexInSection: number): React.ReactElement => {
                     const templateType = template as TemplateType;
                     const isSelected = selectedTemplates.includes(templateType);
-                    const isLocked = isFreeUser && indexInSection >= 3;
+                    const isLocked = isFreeUser && (proOnlyTemplates.includes(templateType) || indexInSection >= 3);
                     
                     return (
                       <Tooltip key={template} delayDuration={300}>
@@ -257,6 +268,27 @@ export function TemplateSelector({
                     );
                   })}
                 </div>
+                
+                {/* Upgrade CTA for Marketing Content Tools section */}
+                {sectionName === 'Marketing Content Tools' && isFreeUser && (
+                  <div className="mt-4 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                    <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                    <h4 className="font-semibold text-gray-900 mb-2">
+                      Unlock All Marketing Templates
+                    </h4>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Upgrade to Pro to access SEO Blog Posts, Affiliate Emails, and Influencer Captions
+                    </p>
+                    <Button
+                      onClick={() => setLocation('/account')}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                      data-testid="upgrade-marketing-templates"
+                    >
+                      <Crown className="h-4 w-4 mr-2" />
+                      Upgrade to Pro
+                    </Button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -284,7 +316,7 @@ export function TemplateSelector({
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {sectionTemplates.filter((template: string): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType, indexInSection: number): React.ReactElement => {
                   const templateType = template;
-                  const isLocked = isFreeUser && indexInSection >= 3;
+                  const isLocked = isFreeUser && (proOnlyTemplates.includes(templateType) || indexInSection >= 3);
                   
                   return (
                     <Tooltip key={template} delayDuration={300}>
@@ -330,6 +362,27 @@ export function TemplateSelector({
                   );
                 })}
               </div>
+              
+              {/* Upgrade CTA for Marketing Content Tools section */}
+              {sectionName === 'Marketing Content Tools' && isFreeUser && (
+                <div className="mt-4 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                  <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                  <h4 className="font-semibold text-gray-900 mb-2">
+                    Unlock All Marketing Templates
+                  </h4>
+                  <p className="text-sm text-gray-600 mb-4">
+                    Upgrade to Pro to access SEO Blog Posts, Affiliate Emails, and Influencer Captions
+                  </p>
+                  <Button
+                    onClick={() => setLocation('/account')}
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    data-testid="upgrade-marketing-templates-single"
+                  >
+                    <Crown className="h-4 w-4 mr-2" />
+                    Upgrade to Pro
+                  </Button>
+                </div>
+              )}
             </div>
           ))}
         </RadioGroup>
