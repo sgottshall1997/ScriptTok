@@ -6,28 +6,26 @@ import { z } from "zod";
 // ESSENTIAL TABLES FOR TIKTOK VIRAL PRODUCT GENERATOR
 // ===============================================================================
 
-// Basic user schema (simplified)
-export const users = pgTable("users", {
-  id: serial("id").primaryKey(),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
-  email: text("email").unique(),
-  role: text("role").notNull().default("creator"), // creator, admin
-  firstName: text("first_name"),
-  lastName: text("last_name"),
-  profileImage: text("profile_image"),
-  status: text("status").notNull().default("active"), // active, suspended
-  lastLogin: timestamp("last_login"),
-  preferences: jsonb("preferences"), // User-specific preferences
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
-});
+// Session storage table for Replit Auth
+export const sessions = pgTable(
+  "sessions",
+  {
+    sid: varchar("sid").primaryKey(),
+    sess: jsonb("sess").notNull(),
+    expire: timestamp("expire").notNull(),
+  },
+  (table) => [index("IDX_session_expire").on(table.expire)],
+);
 
-// Sessions table for auth
-export const sessions = pgTable("sessions", {
-  sid: varchar("sid").primaryKey(),
-  sess: jsonb("sess").notNull(),
-  expire: timestamp("expire").notNull(),
+// User storage table for Replit Auth (varchar id for OIDC compatibility)
+export const users = pgTable("users", {
+  id: varchar("id").primaryKey(),
+  email: varchar("email").unique(),
+  firstName: varchar("first_name"),
+  lastName: varchar("last_name"),
+  profileImageUrl: varchar("profile_image_url"),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
 // AI Model Configuration schema for content generation
@@ -42,7 +40,7 @@ export const aiModelConfigs = pgTable("ai_model_configs", {
   modelName: text("model_name").notNull().default("gpt-4"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  createdBy: integer("created_by").references(() => users.id),
+  createdBy: varchar("created_by").references(() => users.id),
 }, (table) => {
   return {
     unq: unique().on(table.niche, table.templateType, table.tone),
@@ -52,6 +50,7 @@ export const aiModelConfigs = pgTable("ai_model_configs", {
 // Content generated schema - Core content generation
 export const contentGenerations = pgTable("content_generations", {
   id: serial("id").primaryKey(),
+  userId: varchar("user_id").references(() => users.id),
   product: text("product").notNull(),
   niche: text("niche").notNull().default("skincare"),
   templateType: text("template_type").notNull(),
@@ -109,13 +108,13 @@ export const apiUsage = pgTable("api_usage", {
   niche: text("niche"),
   templateType: text("template_type"),
   tone: text("tone"),
-  userId: integer("user_id").references(() => users.id),
+  userId: varchar("user_id").references(() => users.id),
 });
 
 // Content generation history for tracking
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id), // Optional user reference
+  userId: varchar("user_id").references(() => users.id), // Optional user reference
   sessionId: text("session_id"), // For preventing duplicates within sessions
   niche: text("niche").notNull(),
   contentType: text("content_type").notNull(), // Maps to templateType
@@ -236,7 +235,6 @@ export const affiliateLinks = pgTable("affiliate_links", {
 
 // Insert schemas using createInsertSchema from drizzle-zod
 export const insertUserSchema = createInsertSchema(users).omit({
-  id: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -278,6 +276,7 @@ export const insertTrendHistorySchema = createInsertSchema(trendHistory).omit({
 // TypeScript types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
+export type UpsertUser = typeof users.$inferInsert;
 
 export type ContentGeneration = typeof contentGenerations.$inferSelect;
 export type InsertContentGeneration = z.infer<typeof insertContentGenerationSchema>;

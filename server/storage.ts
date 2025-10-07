@@ -1,5 +1,5 @@
 import type {
-  User, InsertUser,
+  User, InsertUser, UpsertUser,
   ContentGeneration, InsertContentGeneration,
   TrendingProduct, InsertTrendingProduct,
   ContentHistory, InsertContentHistory,
@@ -19,12 +19,9 @@ import { eq, desc, and } from "drizzle-orm";
 
 // Simplified interface for storage operations
 export interface IStorage {
-  // User operations
-  getUser(id: number): Promise<User | undefined>;
-  getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
-  updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined>;
-  deleteUser(id: number): Promise<boolean>;
+  // User operations (Replit Auth)
+  getUser(id: string): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
 
   // Content generation operations
   saveContentGeneration(generation: InsertContentGeneration): Promise<ContentGeneration>;
@@ -70,7 +67,6 @@ export class MemStorage implements IStorage {
   private affiliateLinks: AffiliateLink[] = [];
   private trendHistoryData: TrendHistory[] = [];
 
-  private nextUserId = 1;
   private nextContentId = 1;
   private nextHistoryId = 1;
   private nextProductId = 1;
@@ -78,50 +74,35 @@ export class MemStorage implements IStorage {
   private nextAffiliateLinkId = 1;
   private nextTrendHistoryId = 1;
 
-  // User operations
-  async getUser(id: number): Promise<User | undefined> {
+  // User operations (Replit Auth)
+  async getUser(id: string): Promise<User | undefined> {
     return this.users.find(u => u.id === id);
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    return this.users.find(u => u.username === username);
-  }
-
-  async createUser(user: InsertUser): Promise<User> {
-    const newUser: User = {
-      ...user,
-      id: this.nextUserId++,
-      email: user.email || null,
-      role: user.role || 'creator',
-      firstName: user.firstName || null,
-      lastName: user.lastName || null,
-      profileImage: user.profileImage || null,
-      status: user.status || 'active',
-      lastLogin: user.lastLogin || null,
-      preferences: user.preferences || null,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    this.users.push(newUser);
-    return newUser;
-  }
-
-  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
-    const userIndex = this.users.findIndex(u => u.id === id);
-    if (userIndex === -1) return undefined;
-
-    this.users[userIndex] = {
-      ...this.users[userIndex],
-      ...updates,
-      updatedAt: new Date()
-    };
-    return this.users[userIndex];
-  }
-
-  async deleteUser(id: number): Promise<boolean> {
-    const initialLength = this.users.length;
-    this.users = this.users.filter(u => u.id !== id);
-    return this.users.length < initialLength;
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const existingIndex = this.users.findIndex(u => u.id === userData.id);
+    
+    if (existingIndex >= 0) {
+      this.users[existingIndex] = {
+        ...this.users[existingIndex],
+        ...userData,
+        updatedAt: new Date(),
+      };
+      return this.users[existingIndex];
+    } else {
+      const newUser: User = {
+        ...userData,
+        id: userData.id || crypto.randomUUID(),
+        email: userData.email || null,
+        firstName: userData.firstName || null,
+        lastName: userData.lastName || null,
+        profileImageUrl: userData.profileImageUrl || null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      this.users.push(newUser);
+      return newUser;
+    }
   }
 
   // Content generation operations
@@ -364,30 +345,25 @@ export class MemStorage implements IStorage {
 
 // PostgreSQL storage implementation using Drizzle ORM
 export class DatabaseStorage implements IStorage {
-  // User operations
-  async getUser(id: number): Promise<User | undefined> {
+  // User operations (Replit Auth)
+  async getUser(id: string): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
     return result[0];
   }
 
-  async getUserByUsername(username: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.username, username));
-    return result[0];
-  }
-
-  async createUser(user: InsertUser): Promise<User> {
-    const result = await db.insert(users).values(user).returning();
-    return result[0];
-  }
-
-  async updateUser(id: number, updates: Partial<InsertUser>): Promise<User | undefined> {
-    const result = await db.update(users).set(updates).where(eq(users.id, id)).returning();
-    return result[0];
-  }
-
-  async deleteUser(id: number): Promise<boolean> {
-    const result = await db.delete(users).where(eq(users.id, id));
-    return (result.rowCount || 0) > 0;
+  async upsertUser(userData: UpsertUser): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values(userData)
+      .onConflictDoUpdate({
+        target: users.id,
+        set: {
+          ...userData,
+          updatedAt: new Date(),
+        },
+      })
+      .returning();
+    return user;
   }
 
   // Content generation operations
