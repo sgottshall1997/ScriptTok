@@ -482,7 +482,7 @@ const Dashboard = () => {
                       <p className="text-xs text-purple-600 dark:text-purple-300">Real-time web analysis to predict viral trends before they explode. Categories trends as Hot, Rising, Upcoming, or Declining with specific product recommendations.</p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-3 rounded border border-pink-100 dark:border-pink-700">
-                      <h5 className="text-xs font-semibold text-pink-800 dark:text-pink-200 mb-1">🔥 AI-Powered Trending Picks</h5>
+                      <h5 className="text-xs font-semibold text-pink-800 dark:text-pink-200 mb-1">🔥 AI-Powered Trending Products</h5>
                       <p className="text-xs text-pink-600 dark:text-pink-300">Automatic discovery of viral products across all niches using live web research. Gets what's trending now, not what was trending last week.</p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-3 rounded border border-purple-100 dark:border-purple-700">
@@ -677,7 +677,7 @@ const Dashboard = () => {
       <Card data-testid="card-unified-trending-picks">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
           <div>
-            <CardTitle className="text-xl">🔥 AI-Powered Trending Picks</CardTitle>
+            <CardTitle className="text-xl">🔥 AI-Powered Trending Products</CardTitle>
             <p className="text-sm text-muted-foreground">
               {selectedDataSource === 'perplexity' 
                 ? 'Hottest products discovered by Perplexity AI' 
