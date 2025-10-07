@@ -7,7 +7,7 @@ RUN apk add --no-cache python3 make g++
 
 # Install dependencies first (for better caching)
 COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
+RUN npm ci
 
 # Copy the rest of the application
 COPY . .
