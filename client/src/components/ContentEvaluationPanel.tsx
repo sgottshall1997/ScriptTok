@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertCircle, Brain, TrendingUp, Eye, Lightbulb, CheckCircle, XCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react';
+import { AlertCircle, Brain, TrendingUp, Eye, Lightbulb, CheckCircle, XCircle, Loader2, ChevronDown, ChevronUp, Lock, Crown } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { useUsageData } from '@/hooks/useUsageData';
+import { Link } from 'wouter';
 
 interface ContentEvaluation {
   id: number;
@@ -54,6 +56,13 @@ export function ContentEvaluationPanel({
   const [evaluations, setEvaluations] = useState<EvaluationResponse['evaluations'] | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const { toast } = useToast();
+
+  // Fetch usage data for tier detection
+  const { data: usageResponse, error: usageError } = useUsageData();
+  const usageData = usageResponse?.data;
+  
+  // Fail-safe: default to hiding if tier cannot be determined (conservative approach)
+  const isFreeUser = !!usageError || !usageData || usageData.tier === 'free';
 
   // Fetch existing evaluations when component mounts
   useEffect(() => {
@@ -120,7 +129,7 @@ export function ContentEvaluationPanel({
     try {
       console.log(`🔍 Starting AI evaluation for content ID ${contentHistoryId}...`);
       
-      const response = await apiRequest('POST', `/api/content-evaluation/evaluate/${contentHistoryId}`);
+      const response = await apiRequest('POST', `/api/content-evaluation/evaluate/${contentHistoryId}`) as unknown as EvaluationResponse;
       
       if (response.success) {
         setEvaluations(response.evaluations);
@@ -136,7 +145,7 @@ export function ContentEvaluationPanel({
           description: `Content rated ${avgScore}/10 by both ChatGPT and Claude`,
         });
       } else {
-        throw new Error(response.error || 'Evaluation failed');
+        throw new Error('Evaluation failed');
       }
     } catch (error: any) {
       console.error('Evaluation error:', error);
@@ -162,21 +171,53 @@ export function ContentEvaluationPanel({
     return <XCircle className="w-4 h-4" />;
   };
 
+  // Upgrade prompt for free users
+  const renderUpgradePrompt = () => (
+    <div className="text-center py-8">
+      <div className="inline-block p-6 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white mb-4">
+        <div className="flex items-center justify-center gap-3 mb-3">
+          <Lock className="w-8 h-8" />
+          <Crown className="w-8 h-8" />
+        </div>
+        <h3 className="text-xl font-bold mb-2">🔒 Pro Feature</h3>
+        <p className="text-sm opacity-90">Unlock detailed viral analytics and AI evaluations</p>
+      </div>
+      <p className="text-gray-600 mb-4 max-w-md mx-auto">
+        Get professional AI feedback on your content quality from both ChatGPT and Claude. 
+        Analyze virality, clarity, persuasiveness, and creativity scores with detailed insights.
+      </p>
+      <Link href="/account">
+        <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+          <Crown className="w-4 h-4 mr-2" />
+          Upgrade to Pro
+        </Button>
+      </Link>
+    </div>
+  );
+
   return (
     <Card className="w-full">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Brain className="w-5 h-5 text-purple-600" />
           AI Content Evaluation
-          {evaluations && (
+          {evaluations && !isFreeUser && (
             <Badge variant="outline" className="ml-auto">
               Dual AI Analysis Complete
+            </Badge>
+          )}
+          {isFreeUser && (
+            <Badge variant="outline" className="ml-auto bg-purple-50 text-purple-700 border-purple-300">
+              <Lock className="w-3 h-3 mr-1" />
+              Pro Only
             </Badge>
           )}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoadingExisting ? (
+        {isFreeUser ? (
+          renderUpgradePrompt()
+        ) : isLoadingExisting ? (
           <div className="text-center py-6">
             <Loader2 className="w-4 h-4 mx-auto mb-2 animate-spin" />
             <p className="text-sm text-gray-600">Loading evaluations...</p>

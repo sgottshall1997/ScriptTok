@@ -43,25 +43,7 @@ import { ViralScoreDisplay } from '@/components/ViralScoreDisplay';
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from 'wouter';
-
-// Usage data interface
-interface UsageData {
-  tier: 'free' | 'pro';
-  gpt: { used: number; limit: number; remaining: number };
-  claude: { used: number; limit: number; remaining: number };
-  trendAnalyses: { used: number; limit: number; remaining: number };
-  canBulkGenerate: boolean;
-  templatesUnlocked: number;
-}
-
-// Hook to fetch usage data
-const useUsageData = () => {
-  return useQuery<{ success: boolean; data: UsageData }>({
-    queryKey: ['/api/billing/usage'],
-    refetchOnMount: true,
-    staleTime: 0,
-  });
-};
+import { useUsageData } from '@/hooks/useUsageData';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -895,8 +877,12 @@ const EnhancedContentHistory = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest First</SelectItem>
-                <SelectItem value="viral-highest">Viral Rating: Highest</SelectItem>
-                <SelectItem value="viral-lowest">Viral Rating: Lowest</SelectItem>
+                {!isFreeUser && (
+                  <>
+                    <SelectItem value="viral-highest">Viral Rating: Highest</SelectItem>
+                    <SelectItem value="viral-lowest">Viral Rating: Lowest</SelectItem>
+                  </>
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -1332,10 +1318,45 @@ const EnhancedContentHistory = () => {
                   {/* Viral Score Display System */}
                   {entry.databaseId && (
                     <div className="border-t pt-4 mt-4">
-                      <ViralScoreDisplay
-                        viralScore={entry.viralScore || null}
-                        overallScore={entry.viralScoreOverall || null}
-                      />
+                      {isFreeUser ? (
+                        <Card className="w-full bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200">
+                          <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                              <TrendingUp className="w-5 h-5 text-purple-600" />
+                              Viral Score Analysis
+                              <Badge variant="outline" className="ml-auto bg-purple-100 text-purple-700 border-purple-300">
+                                <Lock className="w-3 h-3 mr-1" />
+                                Pro Only
+                              </Badge>
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="text-center py-6">
+                              <div className="inline-block p-4 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white mb-4">
+                                <div className="flex items-center justify-center gap-2 mb-2">
+                                  <Lock className="w-6 h-6" />
+                                  <Crown className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-lg font-bold">🔒 Viral Analytics - Pro Only</h3>
+                              </div>
+                              <p className="text-gray-600 mb-4">
+                                Unlock detailed viral score breakdowns, performance metrics, and AI optimization tips
+                              </p>
+                              <Link href="/account">
+                                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                                  <Crown className="w-4 h-4 mr-2" />
+                                  Upgrade to Pro
+                                </Button>
+                              </Link>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ) : (
+                        <ViralScoreDisplay
+                          viralScore={entry.viralScore || null}
+                          overallScore={entry.viralScoreOverall || null}
+                        />
+                      )}
                     </div>
                   )}
                 </CardContent>
