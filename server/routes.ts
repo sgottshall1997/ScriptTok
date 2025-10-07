@@ -2,6 +2,10 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
+// Middleware imports
+import { authGuard } from "./middleware/authGuard";
+import { checkQuota } from "./middleware/checkQuota";
+
 // Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
 import { trendingRouter } from "./api/trending";
@@ -10,6 +14,7 @@ import { historyRouter } from "./api/history";
 import perplexityTrendsRouter from "./api/perplexity-trends";
 import perplexityStatusRouter from "./api/perplexity-status";
 import statisticsApi from "./api/statistics";
+import billingRouter from "./api/billing";
 
 // Perplexity Intelligence System imports
 import { trendForecastRouter } from "./api/trend-forecast";
@@ -31,25 +36,24 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Essential TikTok Viral Product Generator routes
-  app.use('/api/generate-content', generateContentRouter);
+  // Public routes (no authentication required)
   app.use('/api/trending', trendingRouter);
   app.use('/api/scraper-status', scraperStatusRouter);
-  app.use('/api/history', historyRouter);
-  
-  // Perplexity trends for viral research
-  app.use('/api/perplexity-trends', perplexityTrendsRouter);
   app.use('/api/perplexity-status', perplexityStatusRouter);
   
-  // Perplexity Intelligence System routes
-  app.use('/api/trend-forecast', trendForecastRouter);
-  app.use('/api/product-research', productResearchRouter);
-  app.use('/api/trend-research', trendResearchRouter);
-  app.use('/api/trending-categorized', trendingCategorizedRouter);
-  app.use('/api/trend-history', trendHistoryRouter);
+  // Protected routes with authGuard + checkQuota (content generation and user data)
+  app.use('/api/generate-content', authGuard, checkQuota, generateContentRouter);
+  app.use('/api/history', authGuard, checkQuota, historyRouter);
+  app.use('/api/perplexity-trends', authGuard, checkQuota, perplexityTrendsRouter);
   
-  // Usage statistics endpoint
-  app.use('/api/statistics', statisticsApi);
+  // Protected routes with authGuard only (reading/research endpoints)
+  app.use('/api/statistics', authGuard, statisticsApi);
+  app.use('/api/trend-forecast', authGuard, trendForecastRouter);
+  app.use('/api/product-research', authGuard, productResearchRouter);
+  app.use('/api/trend-research', authGuard, trendResearchRouter);
+  app.use('/api/trending-categorized', authGuard, trendingCategorizedRouter);
+  app.use('/api/trend-history', authGuard, trendHistoryRouter);
+  app.use('/api/billing', billingRouter);
   
   // DISABLED: Amazon-related routes temporarily disabled - returning 503 responses
   const amazonDisabledResponse = {
@@ -83,8 +87,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // app.use('/api/product-research', productResearchRouter);
 
   
-  // Content history alias endpoint
-  app.get('/api/content-history', async (req, res) => {
+  // Content history alias endpoint (protected: authGuard + checkQuota)
+  app.get('/api/content-history', authGuard, checkQuota, async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;

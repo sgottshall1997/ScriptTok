@@ -6,16 +6,20 @@ import type {
   AmazonProduct, InsertAmazonProduct,
   AffiliateLink, InsertAffiliateLink,
   TrendHistory, InsertTrendHistory,
+  UserIdentity, InsertUserIdentity,
+  Subscription, InsertSubscription,
+  MonthlyUsage, InsertMonthlyUsage
 } from "@shared/schema";
 
 import {
   users, sessions, contentGenerations, trendingProducts,
   contentHistory, amazonProducts, affiliateLinks,
-  trendHistory
+  trendHistory,
+  userIdentities, subscriptions, monthlyUsage
 } from "@shared/schema";
 
 import { db } from "./db";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, sql } from "drizzle-orm";
 
 // Simplified interface for storage operations
 export interface IStorage {
@@ -58,6 +62,21 @@ export interface IStorage {
   getTrendHistoryBySourceAndNiche(sourceType: string, niche: string, limit?: number, offset?: number): Promise<TrendHistory[]>;
   clearTrendHistory(): Promise<void>;
   clearTrendHistoryBySourceAndNiche(sourceType: string, niche: string): Promise<void>;
+
+  // User identity operations (for auth provider mapping)
+  getUserIdentity(provider: string, providerUserId: string): Promise<UserIdentity | undefined>;
+  createUserIdentity(identity: InsertUserIdentity): Promise<UserIdentity>;
+  getUserIdentities(userId: number): Promise<UserIdentity[]>;
+
+  // Subscription operations
+  getUserSubscription(userId: number): Promise<Subscription | undefined>;
+  createSubscription(subscription: InsertSubscription): Promise<Subscription>;
+  updateSubscription(userId: number, updates: Partial<InsertSubscription>): Promise<Subscription | undefined>;
+
+  // Monthly usage operations
+  getMonthlyUsage(userId: number, periodYyyymm: string): Promise<MonthlyUsage | undefined>;
+  createMonthlyUsage(usage: InsertMonthlyUsage): Promise<MonthlyUsage>;
+  incrementUsage(userId: number, periodYyyymm: string, count?: number): Promise<MonthlyUsage>;
 }
 
 // In-memory storage implementation for development
@@ -69,6 +88,9 @@ export class MemStorage implements IStorage {
   private amazonProducts: AmazonProduct[] = [];
   private affiliateLinks: AffiliateLink[] = [];
   private trendHistoryData: TrendHistory[] = [];
+  private userIdentitiesData: UserIdentity[] = [];
+  private subscriptionsData: Subscription[] = [];
+  private monthlyUsageData: MonthlyUsage[] = [];
 
   private nextUserId = 1;
   private nextContentId = 1;
@@ -77,6 +99,9 @@ export class MemStorage implements IStorage {
   private nextAmazonProductId = 1;
   private nextAffiliateLinkId = 1;
   private nextTrendHistoryId = 1;
+  private nextUserIdentityId = 1;
+  private nextSubscriptionId = 1;
+  private nextMonthlyUsageId = 1;
 
   // User operations
   async getUser(id: number): Promise<User | undefined> {
@@ -141,10 +166,9 @@ export class MemStorage implements IStorage {
   }
 
   async getUserContentGenerations(userId: number, limit = 50): Promise<ContentGeneration[]> {
-    return this.contentGenerations
-      .filter(c => c.userId === userId)
-      .slice(-limit)
-      .reverse();
+    // Note: contentGenerations table doesn't have userId field
+    // This method returns empty array until schema is updated
+    return [];
   }
 
   // Content history operations
@@ -301,7 +325,7 @@ export class MemStorage implements IStorage {
     const newHistory: TrendHistory = {
       ...history,
       id: this.nextTrendHistoryId++,
-      fetchedAt: history.fetchedAt || new Date(),
+      fetchedAt: new Date(),
       trendCategory: history.trendCategory || null,
       trendName: history.trendName || null,
       trendDescription: history.trendDescription || null,
@@ -360,6 +384,101 @@ export class MemStorage implements IStorage {
       h => !(h.sourceType === sourceType && h.niche === niche)
     );
   }
+
+  // User identity operations
+  async getUserIdentity(provider: string, providerUserId: string): Promise<UserIdentity | undefined> {
+    return this.userIdentitiesData.find(
+      i => i.provider === provider && i.providerUserId === providerUserId
+    );
+  }
+
+  async createUserIdentity(identity: InsertUserIdentity): Promise<UserIdentity> {
+    const newIdentity: UserIdentity = {
+      ...identity,
+      id: this.nextUserIdentityId++,
+      createdAt: new Date()
+    };
+    this.userIdentitiesData.push(newIdentity);
+    return newIdentity;
+  }
+
+  async getUserIdentities(userId: number): Promise<UserIdentity[]> {
+    return this.userIdentitiesData.filter(i => i.userId === userId);
+  }
+
+  // Subscription operations
+  async getUserSubscription(userId: number): Promise<Subscription | undefined> {
+    return this.subscriptionsData.find(s => s.userId === userId);
+  }
+
+  async createSubscription(subscription: InsertSubscription): Promise<Subscription> {
+    const newSubscription: Subscription = {
+      ...subscription,
+      id: this.nextSubscriptionId++,
+      tier: subscription.tier || 'free',
+      status: subscription.status || 'active',
+      stripeCustomerId: subscription.stripeCustomerId || null,
+      stripeSubscriptionId: subscription.stripeSubscriptionId || null,
+      endAt: subscription.endAt || null,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.subscriptionsData.push(newSubscription);
+    return newSubscription;
+  }
+
+  async updateSubscription(userId: number, updates: Partial<InsertSubscription>): Promise<Subscription | undefined> {
+    const subIndex = this.subscriptionsData.findIndex(s => s.userId === userId);
+    if (subIndex === -1) return undefined;
+
+    this.subscriptionsData[subIndex] = {
+      ...this.subscriptionsData[subIndex],
+      ...updates,
+      updatedAt: new Date()
+    };
+    return this.subscriptionsData[subIndex];
+  }
+
+  // Monthly usage operations
+  async getMonthlyUsage(userId: number, periodYyyymm: string): Promise<MonthlyUsage | undefined> {
+    return this.monthlyUsageData.find(
+      u => u.userId === userId && u.periodYyyymm === periodYyyymm
+    );
+  }
+
+  async createMonthlyUsage(usage: InsertMonthlyUsage): Promise<MonthlyUsage> {
+    const newUsage: MonthlyUsage = {
+      ...usage,
+      id: this.nextMonthlyUsageId++,
+      generationsUsed: usage.generationsUsed || 0,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    this.monthlyUsageData.push(newUsage);
+    return newUsage;
+  }
+
+  async incrementUsage(userId: number, periodYyyymm: string, count = 1): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodYyyymm);
+    
+    if (existing) {
+      const usageIndex = this.monthlyUsageData.findIndex(
+        u => u.userId === userId && u.periodYyyymm === periodYyyymm
+      );
+      this.monthlyUsageData[usageIndex] = {
+        ...this.monthlyUsageData[usageIndex],
+        generationsUsed: this.monthlyUsageData[usageIndex].generationsUsed + count,
+        updatedAt: new Date()
+      };
+      return this.monthlyUsageData[usageIndex];
+    } else {
+      return await this.createMonthlyUsage({
+        userId,
+        periodYyyymm,
+        generationsUsed: count
+      });
+    }
+  }
 }
 
 // PostgreSQL storage implementation using Drizzle ORM
@@ -401,10 +520,9 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getUserContentGenerations(userId: number, limit = 50): Promise<ContentGeneration[]> {
-    return await db.select().from(contentGenerations)
-      .where(eq(contentGenerations.userId, userId))
-      .orderBy(desc(contentGenerations.createdAt))
-      .limit(limit);
+    // Note: contentGenerations table doesn't have userId field
+    // This method returns empty array until schema is updated
+    return [];
   }
 
   // Content history operations
@@ -520,6 +638,76 @@ export class DatabaseStorage implements IStorage {
   async clearTrendHistoryBySourceAndNiche(sourceType: string, niche: string): Promise<void> {
     await db.delete(trendHistory)
       .where(and(eq(trendHistory.sourceType, sourceType), eq(trendHistory.niche, niche)));
+  }
+
+  // User identity operations
+  async getUserIdentity(provider: string, providerUserId: string): Promise<UserIdentity | undefined> {
+    const result = await db.select().from(userIdentities)
+      .where(and(eq(userIdentities.provider, provider), eq(userIdentities.providerUserId, providerUserId)));
+    return result[0];
+  }
+
+  async createUserIdentity(identity: InsertUserIdentity): Promise<UserIdentity> {
+    const result = await db.insert(userIdentities).values(identity).returning();
+    return result[0];
+  }
+
+  async getUserIdentities(userId: number): Promise<UserIdentity[]> {
+    return await db.select().from(userIdentities)
+      .where(eq(userIdentities.userId, userId));
+  }
+
+  // Subscription operations
+  async getUserSubscription(userId: number): Promise<Subscription | undefined> {
+    const result = await db.select().from(subscriptions)
+      .where(eq(subscriptions.userId, userId));
+    return result[0];
+  }
+
+  async createSubscription(subscription: InsertSubscription): Promise<Subscription> {
+    const result = await db.insert(subscriptions).values(subscription).returning();
+    return result[0];
+  }
+
+  async updateSubscription(userId: number, updates: Partial<InsertSubscription>): Promise<Subscription | undefined> {
+    const result = await db.update(subscriptions)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(subscriptions.userId, userId))
+      .returning();
+    return result[0];
+  }
+
+  // Monthly usage operations
+  async getMonthlyUsage(userId: number, periodYyyymm: string): Promise<MonthlyUsage | undefined> {
+    const result = await db.select().from(monthlyUsage)
+      .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodYyyymm, periodYyyymm)));
+    return result[0];
+  }
+
+  async createMonthlyUsage(usage: InsertMonthlyUsage): Promise<MonthlyUsage> {
+    const result = await db.insert(monthlyUsage).values(usage).returning();
+    return result[0];
+  }
+
+  async incrementUsage(userId: number, periodYyyymm: string, count = 1): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodYyyymm);
+    
+    if (existing) {
+      const result = await db.update(monthlyUsage)
+        .set({
+          generationsUsed: sql`${monthlyUsage.generationsUsed} + ${count}`,
+          updatedAt: new Date()
+        })
+        .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodYyyymm, periodYyyymm)))
+        .returning();
+      return result[0];
+    } else {
+      return await this.createMonthlyUsage({
+        userId,
+        periodYyyymm,
+        generationsUsed: count
+      });
+    }
   }
 }
 

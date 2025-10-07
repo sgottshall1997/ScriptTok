@@ -230,6 +230,48 @@ export const affiliateLinks = pgTable("affiliate_links", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
+// User identities for authentication providers
+export const userIdentities = pgTable("user_identities", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  provider: text("provider").notNull(), // "replit", "dev", etc.
+  providerUserId: text("provider_user_id").notNull(),
+  emailAtSignup: text("email_at_signup").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    providerUserUnique: unique().on(table.provider, table.providerUserId),
+  };
+});
+
+// Subscriptions for user subscription management
+export const subscriptions = pgTable("subscriptions", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().unique().references(() => users.id),
+  tier: text("tier").notNull().default("free"),
+  status: text("status").notNull().default("active"),
+  stripeCustomerId: text("stripe_customer_id"),
+  stripeSubscriptionId: text("stripe_subscription_id"),
+  startAt: timestamp("start_at").notNull(),
+  endAt: timestamp("end_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Monthly usage for tracking user generation limits
+export const monthlyUsage = pgTable("monthly_usage", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id),
+  periodYyyymm: varchar("period_yyyymm", { length: 7 }).notNull(),
+  generationsUsed: integer("generations_used").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+}, (table) => {
+  return {
+    userPeriodUnique: unique().on(table.userId, table.periodYyyymm),
+  };
+});
+
 // ===============================================================================
 // ZOD SCHEMAS FOR VALIDATION
 // ===============================================================================
@@ -275,6 +317,23 @@ export const insertTrendHistorySchema = createInsertSchema(trendHistory).omit({
   fetchedAt: true,
 });
 
+export const insertUserIdentitySchema = createInsertSchema(userIdentities).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertSubscriptionSchema = createInsertSchema(subscriptions).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const insertMonthlyUsageSchema = createInsertSchema(monthlyUsage).omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
 // TypeScript types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
@@ -296,6 +355,15 @@ export type InsertAffiliateLink = z.infer<typeof insertAffiliateLinkSchema>;
 
 export type TrendHistory = typeof trendHistory.$inferSelect;
 export type InsertTrendHistory = z.infer<typeof insertTrendHistorySchema>;
+
+export type UserIdentity = typeof userIdentities.$inferSelect;
+export type InsertUserIdentity = z.infer<typeof insertUserIdentitySchema>;
+
+export type Subscription = typeof subscriptions.$inferSelect;
+export type InsertSubscription = z.infer<typeof insertSubscriptionSchema>;
+
+export type MonthlyUsage = typeof monthlyUsage.$inferSelect;
+export type InsertMonthlyUsage = z.infer<typeof insertMonthlyUsageSchema>;
 
 // ===============================================================================
 // COMMENTED OUT - NON-ESSENTIAL TABLES FOR TIKTOK VIRAL PRODUCT GENERATOR

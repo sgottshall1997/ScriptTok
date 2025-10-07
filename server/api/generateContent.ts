@@ -10,6 +10,7 @@ import { insertContentHistorySchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
+import { identityService } from "../services/identityService";
 
 // Helper function to extract hashtags from text
 function extractHashtags(text: string): string[] {
@@ -76,8 +77,8 @@ const contentGenerationLimiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers
   skipSuccessfulRequests: false, // Count all requests, including successful ones
   keyGenerator: (req) => {
-    // If user is authenticated, use their ID as the key, otherwise use IP
-    return req.ip || 'unknown';
+    // If user is authenticated, use their provider ID as the key, otherwise use IP
+    return (req as any).user?.userId || req.ip || 'unknown';
   }
 });
 
@@ -203,6 +204,38 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
 
     // Get the validated data
     const validatedData = result.data;
+
+    // Extract and convert provider userId to internal userId
+    let internalUserId: number | undefined;
+    if ((req as any).user?.userId) {
+      const providerUserId = (req as any).user.userId;
+      const provider = process.env.APP_ENV === 'production' ? 'replit' : 'dev';
+      
+      console.log(`[generateContent] Extracting userId - provider: ${provider}, providerUserId: ${providerUserId}`);
+      
+      try {
+        const user = await identityService.getUserByIdentity(provider, providerUserId);
+        
+        if (user) {
+          internalUserId = user.id;
+          console.log(`[generateContent] ✅ Internal user found - userId: ${internalUserId}`);
+        } else {
+          console.error(`[generateContent] ❌ User not found for provider ${provider} and providerUserId ${providerUserId}`);
+          return res.status(401).json({
+            success: false,
+            data: null,
+            error: "User not found. Please re-authenticate."
+          });
+        }
+      } catch (error) {
+        console.error(`[generateContent] ❌ Error retrieving user:`, error);
+        return res.status(401).json({
+          success: false,
+          data: null,
+          error: "Authentication error. Please try again."
+        });
+      }
+    }
 
     // Check if the requested tone exists in the system
     if (!isValidTone(validatedData.tone)) {
@@ -393,6 +426,9 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     // Generate regular content using OpenAI with error handling and model fallback
     let content, fallbackLevel, prompt, model, tokens;
 
+    // Handle improvement instructions for AI-powered regeneration (declare outside try block for error handling access)
+    let enhancedViralInspiration = validatedData.viralInspiration;
+
     try {
       // Log template source for debugging
       if (validatedData.templateSource) {
@@ -413,8 +449,7 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
 
       const actualModelId = getActualModelId(validatedData.aiModel);
 
-      // Handle improvement instructions for AI-powered regeneration
-      let enhancedViralInspiration = validatedData.viralInspiration;
+      // Enhance viral inspiration with improvement instructions if provided
       if (validatedData.improvementInstructions) {
         // Create base inspiration object if not provided
         const baseInspiration = validatedData.viralInspiration || {
@@ -629,7 +664,7 @@ Experience the difference today! #${niche} #trending`;
 
     // Save detailed content history record with all metadata including hook and platform content
     const contentHistoryEntry = await storage.saveContentHistory({
-      userId: (req as any).user?.id, // If user is authenticated
+      userId: internalUserId, // Internal user ID (integer) from identity service
       sessionId: `session_${Date.now()}`,
       niche,
       contentType: templateType,
