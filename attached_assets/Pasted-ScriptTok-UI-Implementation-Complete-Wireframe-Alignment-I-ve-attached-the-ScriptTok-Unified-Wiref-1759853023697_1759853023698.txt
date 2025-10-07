@@ -1,0 +1,427 @@
+ScriptTok UI Implementation - Complete Wireframe Alignment
+I've attached the ScriptTok Unified Wireframes document that specifies the exact UI design for our TikTok content generation platform. Please implement the UI exactly as detailed in the wireframes.
+
+⚠️ CRITICAL: Feature Preservation Protocol
+BEFORE Making ANY Changes - Mandatory Inventory
+Step 1: Pre-Implementation Audit
+1. Inventory Check: Document ALL existing features in the current codebase
+2. Functional Mapping: List every working feature and its dependencies
+3. API Catalog: Note all API endpoints and their consumers
+4. State Flow Diagram: Map all state management and data flows
+Absolute Preservation Requirements
+These systems are UNTOUCHABLE - preserve 100%:
+✅ Backend Infrastructure
+* All API routes in server/api/* (zero deletions allowed)
+* All database queries and mutations
+* All middleware and auth guards
+✅ Core Intelligence Systems
+* Perplexity Intelligence System (product research, competitor intel, trend analysis)
+* Viral Score calculation engine and display logic
+* AI model selection system (Claude, ChatGPT, Both)
+* Smart style recommendations based on user ratings
+* Trend forecasting and competitor analysis
+✅ User-Facing Features
+* Content generation history and ratings system
+* Usage quota tracking and billing logic
+* Authentication and session management
+* Multi-template generation capabilities
+* Platform caption generation (TikTok, Instagram, etc.)
+* Niche filtering and product search
+* Bulk operations and Pro tier features
+✅ Technical Infrastructure
+* All React hooks and custom utilities
+* All data fetching, mutations, and query invalidation
+* All form handlers, onClick events, and user interactions
+* All error handling and loading states
+Refactoring Safety Protocol
+When refactoring components, follow this exact sequence:
+1. Document First: Add comments explaining existing functionality
+2. Preserve Logic: Keep ALL functional code intact
+3. UI Only Updates: Modify only styling, layout, and visual elements
+4. Verify Data Flow: Confirm data flow remains identical
+5. Test Interactions: Ensure all onClick, onSubmit, onChange handlers work
+🚨 Red Flags - STOP Immediately If You See:
+* 🚫 Deleting functions without replacement
+* 🚫 Removing API calls without alternatives
+* 🚫 Commenting out working code "for later"
+* 🚫 Simplifying complex logic that handles edge cases
+* 🚫 Removing error handling or loading states
+* 🚫 Deleting utility functions (they may be used elsewhere)
+* 🚫 Replacing real data with placeholder/mock data
+* 🚫 Breaking TypeScript types or interfaces
+
+🎨 Design System Implementation
+Visual Foundation
+Color Palette
+* Background: bg-gray-50 (#f9fafb) for page backgrounds
+* Cards: bg-white with rounded-2xl shadow-sm
+* Primary Accent: #2563eb (blue-600) for CTAs and highlights
+* Gradients: Use for hero sections and emphasis elements
+Typography Scale
+* Headlines: font-bold with optional gradient text effects
+* Body Text: text-gray-700 for optimal readability
+* Muted/Secondary: text-gray-600
+* Labels: text-sm font-medium text-gray-900
+Spacing System (Tailwind utilities only)
+* Default gap: gap-4
+* Section spacing: gap-6
+* Major block spacing: gap-8
+* Page padding: p-6 desktop, p-4 mobile
+Layout Standards
+Desktop Containers
+* Page wrapper: max-w-5xl mx-auto p-6
+* Focused content: max-w-3xl for readability
+* Full-width sections: Use for hero/CTA areas
+Button Styling
+* Shape: rounded-xl
+* Padding: px-4 py-2 (small), px-6 py-3 (large)
+* States: Add hover:scale-105 transition-all duration-200
+* Disabled: opacity-50 cursor-not-allowed
+Card Design Pattern
+bg-white rounded-2xl shadow-sm p-6
+hover:shadow-md transition-all duration-200
+border border-gray-100
+Component Library (Shadcn/UI)
+Use these components consistently:
+* Card, CardHeader, CardContent, CardFooter
+* Badge (for tags, status, niches)
+* Button (primary, secondary, ghost variants)
+* Input, Textarea, Select
+* Tabs, TabsList, TabsTrigger, TabsContent
+* Accordion, AccordionItem, AccordionTrigger
+* Sheet (for mobile navigation)
+* Tooltip, Progress, Skeleton
+* Carousel (for product/mockup displays)
+
+📄 Page Implementation Roadmap
+1️⃣ Landing Page (PRIORITY 1)
+File: client/src/pages/LandingPage.tsx
+Required Sections (in order):
+1. Hero Section
+    * Gradient background with pattern overlay
+    * Headline + subheadline + dual CTAs
+    * Optional: Animated mockup preview
+2. Features Grid
+    * 2-column layout (3-column on xl screens)
+    * Icon + headline + description per feature
+    * Consistent card heights with items-start alignment
+3. Mockup Carousel
+    * Auto-playing carousel with pause on hover
+    * Dot indicators and arrow navigation
+    * Smooth transitions
+4. Pricing Teaser
+    * Side-by-side Free vs Pro comparison
+    * Highlight Pro benefits
+    * "See Full Pricing" CTA
+5. Testimonials
+    * 3-card grid layout
+    * Avatar + name + role + quote
+    * Star ratings if available
+6. Final CTA Banner
+    * Gradient background matching hero
+    * Strong headline + single primary CTA
+    * Sticky on mobile (optional)
+
+2️⃣ Trend Dashboard (PRIORITY 2)
+File: client/src/pages/Dashboard.tsx
+Layout Structure:
+Desktop Layout:
+┌─────────────────────────────────────────┐
+│ Page Header (title + actions) │
+├─────────────────────────────────────────┤
+│ Sticky Filter Bar (niche, stage, search)│
+├─────────────────────────────────────────┤
+│ Featured Trend Card (hero treatment) │
+├─────────────────────────────────────────┤
+│ Category Tabs (Hot | Rising | Upcoming) │
+├─────────────────────────────────────────┤
+│ AI Picks Grid (3-4 per row) │
+├─────────────────────────────────────────┤
+│ Info/Tips Section │
+├─────────────────────────────────────────┤
+│ CTA Footer → Content Generator │
+└─────────────────────────────────────────┘
+Mobile Adaptations:
+* Collapsible filter drawer (Sheet component)
+* Single-column card layout
+* Horizontal scroll tabs with snap
+* Sticky bottom CTA bar
+
+3️⃣ Content Generator / Viral Studio (PRIORITY 3)
+File: client/src/pages/GenerateContent.tsx
+Required Components:
+1. Optional Trend Summary (if coming from dashboard)
+    * Compact card showing selected trend context
+    * Dismissible with X button
+2. Input Area
+    * Large Textarea for prompt input
+    * Niche/tone/template selectors in row
+    * Prominent "Generate" button
+3. Viral Score Breakdown
+    * Overall score (large, centered)
+    * 5 metric bars with labels (Hook, Relevance, etc.)
+    * AI suggestions section below
+4. Generated Content Grid
+    * Consistent card styling
+    * Copy button + actions per card
+    * Loading skeletons when generating
+5. Bottom Toolbar
+    * Back to dashboard link
+    * View history link
+    * Upgrade CTA (if applicable)
+
+4️⃣ Pricing Page (CREATE/UPDATE)
+File: Create client/src/pages/Pricing.tsx
+Structure:
+1. Hero Section
+    * Clear value proposition headline
+    * Toggle: Monthly/Yearly (if applicable)
+    * Dual CTAs (Start Free + See Demo)
+2. 3-Column Plan Cards
+    * Free | Pro [Most Popular Badge] | Creator+
+    * Feature list with checkmarks
+    * Pricing + CTA per plan
+    * Highlight Pro with border/shadow
+3. Optional: Comparison Table
+    * Detailed feature matrix
+    * Collapsible on mobile
+4. FAQ Accordion
+    * 6-8 common questions
+    * Clean expand/collapse
+5. Final CTA Banner
+    * "Ready to go viral?" headline
+    * Primary CTA button
+
+📱 Mobile Responsiveness Requirements
+Breakpoint Strategy
+Mobile First Approach:
+* < 768px: Single column, touch-optimized (base styles)
+* 768px - 1024px: 2-column where appropriate (md:)
+* > 1024px: Full grid layouts (lg:, xl:)
+Mobile-Specific Rules
+1. Navigation:
+    * Use Sheet component for slide-in menu
+    * Hamburger icon in header
+    * Full-height drawer with close button
+2. Cards:
+    * Full-width (w-full) with p-4 padding
+    * Stack vertically (flex-col)
+    * No horizontal scrolling
+3. Touch Targets:
+    * Minimum h-12 (44px) for all interactive elements
+    * Adequate spacing between tappable items (gap-3 minimum)
+4. Tabs:
+    * Horizontal scroll with overflow-x-auto
+    * Snap scroll behavior (snap-x snap-mandatory)
+    * Visible scroll indicators
+5. Filters:
+    * Collapsible by default on mobile
+    * Slide-in drawer for advanced filters
+    * Floating action button to open
+6. CTAs:
+    * Sticky bottom CTA bar (fixed bottom-0 left-0 right-0)
+    * Safe area padding for notched devices
+    * z-50 to stay above content
+7. Carousels:
+    * Swipeable with touch gestures
+    * Dot indicators visible below
+    * Auto-pause on interaction
+Testing Checklist (Required Widths)
+* ☐ 360px (small phones)
+* ☐ 375px (iPhone SE)
+* ☐ 768px (tablet portrait)
+* ☐ 1024px (tablet landscape)
+* ☐ 1280px (laptop)
+* ☐ 1920px (desktop)
+
+♿ Accessibility Requirements (WCAG AA)
+Mandatory Implementations:
+* ☐ Keyboard Navigation: All interactive elements accessible via Tab
+* ☐ Focus Indicators: Visible focus-visible:ring-2 ring-blue-500 on all focusable elements
+* ☐ Color Contrast: Minimum 4.5:1 for text, 3:1 for UI components
+* ☐ ARIA Labels: All icon buttons have aria-label attributes
+* ☐ Semantic HTML: Proper use of <header>, <main>, <nav>, <footer>, <article>
+* ☐ Loading States: Skeleton loaders with aria-busy="true"
+* ☐ Screen Readers: Descriptive labels for all form inputs
+* ☐ Skip Links: "Skip to main content" link at page top
+* ☐ Headings Hierarchy: Logical H1 → H2 → H3 structure
+
+🎨 Niche Color Coding System
+Apply these Badge color schemes:
+const nicheColors = {
+beauty: "bg-pink-100 text-pink-800 border-pink-200",
+tech: "bg-blue-100 text-blue-800 border-blue-200",
+fashion: "bg-purple-100 text-purple-800 border-purple-200",
+fitness: "bg-green-100 text-green-800 border-green-200",
+food: "bg-orange-100 text-orange-800 border-orange-200",
+travel: "bg-cyan-100 text-cyan-800 border-cyan-200",
+pets: "bg-yellow-100 text-yellow-800 border-yellow-200"
+}
+
+✅ Implementation Best Practices
+DO ✅
+* Use Tailwind utility classes exclusively (no inline styles)
+* Maintain consistent card heights within grids (h-full on cards)
+* Add smooth transitions (transition-all duration-200)
+* Use semantic Badge variants for status (success, warning, info)
+* Implement skeleton loaders for async content
+* Extract repeated patterns into reusable components
+* Keep component files under 250 lines (split if needed)
+* Use TypeScript strictly (no any types)
+DON'T ❌
+* Create one-off magic values or inline styles
+* Nest components more than 3 levels deep
+* Duplicate code between pages (use shared components)
+* Use fixed widths that break mobile layout
+* Skip hover/focus states on interactive elements
+* Hardcode colors (use Tailwind theme)
+* Mix CSS files with Tailwind utilities
+
+🔍 Quality Assurance Checklist
+Before Marking a Page "Complete"
+Functional Integrity:
+* ☐ All buttons that worked before still work
+* ☐ All forms submit successfully
+* ☐ All API calls are preserved and functional
+* ☐ All conditional rendering logic intact
+* ☐ All error states display correctly
+* ☐ All loading states show properly
+* ☐ All data transformations preserved
+* ☐ All navigation links functional
+* ☐ All modals/dialogs open and close
+* ☐ All filters and search work correctly
+Code Quality:
+* ☐ No TypeScript errors
+* ☐ No console warnings
+* ☐ No unused imports
+* ☐ No TODO/FIXME comments added
+* ☐ Line count similar or justified if changed
+* ☐ No placeholder data replacing real functionality
+Visual/UX:
+* ☐ Matches wireframe layout exactly
+* ☐ Responsive at all breakpoints
+* ☐ Smooth animations and transitions
+* ☐ Consistent spacing throughout
+* ☐ Proper loading/error states
+* ☐ Accessible to keyboard and screen readers
+
+📊 Final Deliverable: Feature Preservation Report
+After completing ALL UI improvements, provide:
+1. ✅ Preserved Features Manifest
+List every preserved feature with:
+* Feature name
+* File location(s)
+* Brief description
+* Verification method
+2. 🔄 Refactoring Log
+Document any refactored logic:
+* Component/function name
+* Before: Original implementation approach
+* After: New implementation approach
+* Justification: Why refactor was necessary
+* Tests: How you verified functionality remains identical
+3. ⚠️ Modification Report
+Any features requiring changes:
+* Feature name
+* What was modified and why
+* Impact assessment
+* Alternative approaches considered
+4. ❌ Deletion Confirmation
+Explicit statement: "ZERO features were deleted. All functionality preserved."
+If ANY feature was removed or broken:
+* 🛑 HALT IMMEDIATELY
+* Document what broke
+* Explain why
+* Await explicit approval before proceeding
+
+🚀 Success Criteria
+Your implementation will be considered complete when:
+1. ✅ All pages match wireframe layouts pixel-perfectly
+2. ✅ Consistent design system applied across all pages
+3. ✅ Smooth mobile experience with thumb-friendly interactions
+4. ✅ Zero console errors or accessibility warnings
+5. ✅ Fast page transitions with responsive UI feedback
+6. ✅ Clean, maintainable code with reusable components
+7. ✅ 100% feature preservation confirmed
+8. ✅ Complete Feature Preservation Report provided
+
+📋 Execution Plan
+Suggested Implementation Order:
+1. Phase 1: Foundation (Do this first)
+    * Set up global design tokens
+    * Create reusable component library
+    * Establish responsive utilities
+2. Phase 2: Core Pages (Priority order)
+    * Landing Page → Trend Dashboard → Content Generator
+3. Phase 3: Supporting Pages
+    * Pricing Page → History/Account pages
+4. Phase 4: Polish
+    * Mobile optimization pass
+    * Accessibility audit
+    * Performance optimization
+5. Phase 5: Validation
+    * Feature preservation verification
+    * Cross-browser testing
+    * Final QA checklist
+
+## 🗺️ FILE-TO-WIREFRAME MAPPING
+
+Map current files to wireframe sections:
+
+**Landing Page Wireframe** → `client/src/pages/LandingPage.tsx`
+- Keep: All existing functionality (auth, routing, CTAs)
+- Update: Layout to match wireframe structure
+- Preserve: All links, buttons, event handlers
+
+**Viral Content Studio Wireframe** → `client/src/pages/GenerateContent.tsx`
+- Keep: All generation logic, API calls, state management
+- Update: UI layout only (card structure, spacing, colors)
+- Preserve: Product research, competitor intel, viral score system
+
+**Trend Dashboard (Desktop)** → `client/src/pages/Dashboard.tsx`
+- Keep: Your Usage and Limits (Upgrade to Pro), All trending data fetching, filtering logic
+- Update: Card layouts, grid structure to match wireframe
+- Preserve: Perplexity integration, niche filtering
+
+**Trend Dashboard (Mobile)** → `client/src/pages/Dashboard.tsx` (responsive)
+- Keep: Same logic as desktop
+- Update: Add mobile-specific layouts (single column, horizontal scrolling)
+- Preserve: All functionality, just adapt layout
+
+**Pricing Page Wireframe** → Create new `client/src/pages/Pricing.tsx`
+- Build from wireframe specs
+- Link from Landing page and Dashboard
+2. Component Reuse Strategy (7/10)
+The prompt doesn't guide on:
+* Which Shadcn components are already installed
+* How to leverage existing components vs. creating new ones
+Recommendation: Add this:
+
+## 🧩 COMPONENT REUSE RULES
+
+**Already Installed Shadcn Components:**
+✅ Use these (already in codebase):
+- Card, Button, Badge, Select, Input, Textarea
+- Tabs, Accordion, Collapsible, Sheet
+- Alert, Toast, Tooltip, Progress
+- Carousel, Separator, Switch
+
+**Component Usage Examples:**
+- Trend cards → Use existing `<Card>` component
+- Filter dropdowns → Use existing `<Select>` component
+- Mobile navigation → Use existing `<Sheet>` component
+- Trend categories → Use existing `<Tabs>` component
+
+**DO NOT:**
+- Recreate components that already exist
+- Change component APIs (props, events)
+- Remove existing component imports
+
+
+📝 Notes & Clarifications
+* Ambiguous wireframe details? → Choose the most user-friendly, accessible option
+* Conflicting requirements? → Prioritize feature preservation over visual changes
+* Missing specifications? → Reference existing design patterns in codebase
+* Performance concerns? → Code splitting and lazy loading are encouraged
+
+Ready to begin? Start with Phase 1 (Foundation), then proceed through the pages in priority order. Report progress after each major phase and provide the complete Feature Preservation Report upon completion.
