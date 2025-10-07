@@ -434,6 +434,18 @@ Length & Structure:
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 • Make it conversion-oriented and professional across all product types.
 
+STRICT STRUCTURAL REQUIREMENTS:
+• Output exactly 5 paragraphs (one for each section: Hook, Features, Problem-Solution, Target Audience, CTA)
+• Each paragraph must be ONE concise sentence only
+• Total word count: 70-140 words MAXIMUM (count words before returning)
+• If over 140 words, reduce immediately - no exceptions
+• Example output format:
+  [Hook sentence.]
+  [Feature sentence.]
+  [Problem-solution sentence.]
+  [Target audience sentence.]
+  [CTA sentence.]
+
 Your goal is to give viewers clear, actionable reasons to consider buying ${config.productName}, help them understand its value and fit for their needs, and end with a direct question that prompts them to take action.`;
 
   return {
@@ -490,10 +502,12 @@ Address these five points explicitly and compare both products in each:
 • Quality: Compare materials, build, or formulation
 • Results: Which delivers better outcomes
 • Ease of Use: Which is more user-friendly
-• Brand Reputation: Which is more trusted
+• Brand Reputation: Which is more trusted (cite one credible signal: industry award, years in market, category leadership, or expert endorsement)
 
 Example:
 "When it comes to price, ${config.productName} is more affordable without sacrificing quality. The alternative feels more premium but comes at a higher cost."
+
+"When it comes to brand reputation, ${config.productName} has earned trust through 15 years in the market and consistent dermatologist recommendations. The alternative is newer but has won innovation awards in ${config.niche}."
 
 Who Should Choose What
 Clearly state who benefits more from ${config.productName}, with 2–3 specific scenarios.
@@ -607,6 +621,19 @@ Pro Tips for Success
 • How to adapt the routine for different goals, needs, or skin types
 • A brief troubleshooting guide for common issues
 
+Troubleshooting Guide (Required)
+• Include 3-bullet troubleshooting section for common issues
+• Format as:
+  **Common Issue 1:** [Problem] → **Solution:** [Fix]
+  **Common Issue 2:** [Problem] → **Solution:** [Fix]
+  **Common Issue 3:** [Problem] → **Solution:** [Fix]
+
+Routine Variants (Required)
+• Provide 2 brief variants adapted for different needs/types
+• Variant 1: [For specific skin type/fitness level/dietary need]
+• Variant 2: [For different goal/concern/preference]
+• Each variant: 2-3 sentence modification guidance
+
 Results Timeline
 • What readers can expect after the first use or first week
 • Typical results after 30 days of consistent use
@@ -695,6 +722,12 @@ Hashtag Strategy
 • Example:
 #${config.niche} #${config.productName} #affiliate #sponsored #trustedrecommendation #communityname #dailyinspo
 
+Structural Requirements:
+• Output must contain exactly 4 paragraphs (Opening Hook, Product Story, Value & Benefits, Call-to-Action)
+• Hashtag section must include exactly 15-20 hashtags ending with #ad
+• NO EMOJIS anywhere in caption (this is critical - violates platform authenticity)
+• Verify paragraph count and hashtag count before returning
+
 Content Quality Controls
 
 • Tone: ${config.tone} — relatable, warm, authentic, and persuasive without being pushy.
@@ -771,6 +804,12 @@ Writing Guidelines
 • Make it feel like personal advice, not a corporate email
 • End with an engaging P.S. that adds value or urgency
 
+CRITICAL WORD COUNT LIMIT:
+• HARD CAP: Maximum 150 words total (count all words including subject lines)
+• Count words before returning - if over 150, reduce immediately
+• Avoid ALL metaphors, similes, and figurative language
+• Use ONLY direct, literal statements (e.g., "This product lasts 3 years" not "This product is a marathon runner")
+
 Target Audience
 
 • Email subscribers interested in ${config.niche} products, looking for honest recommendations that improve their experience.
@@ -836,7 +875,22 @@ Tips for Best Results
 • Share actionable tips to maximize results with ${config.productName}
 • Include common mistakes to avoid
 
-Use clear H2 and H3 subheadings to organize sections.
+• Use markdown headings: ## for main sections (H2), ### for subsections (H3)
+• Example: ## Product Overview and Key Features
+• Example: ### How to Apply for Best Results
+
+FAQ Section (Required - 100-150 words)
+• Include exactly 3 frequently asked questions with answers
+• Format as:
+  **Q: [Question about ${config.productName}?]**
+  **A:** [Clear, concise answer in 2-3 sentences]
+• Place FAQ section immediately before Conclusion
+• Questions must address: pricing/value, usage/application, and results/effectiveness
+
+MINIMUM WORD COUNT:
+• Article must be minimum 1,050 words (do not return if under 1,000 words)
+• Use H2 (##) and H3 (###) markdown headings for all sections
+• Conclusion must include: bullet-point summary + CTA + affiliate disclosure statement
 
 Conclusion (100–150 words)
 • Summarize the main points concisely
