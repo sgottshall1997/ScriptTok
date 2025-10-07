@@ -30,6 +30,16 @@ export interface IStorage {
     profileImageUrl?: string;
   }): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
+  
+  // User operations (Supabase Auth)
+  getUserBySupabaseId(supabaseId: string): Promise<User | undefined>;
+  createSupabaseUser(data: {
+    supabaseId: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImageUrl?: string;
+  }): Promise<User>;
 
   // Content generation operations
   saveContentGeneration(generation: InsertContentGeneration): Promise<ContentGeneration>;
@@ -117,6 +127,7 @@ export class MemStorage implements IStorage {
       loginCount: 0,
       preferences: null,
       clerkId: data.clerkId,
+      supabaseId: null,
     };
     this.users.push(newUser);
     return newUser;
@@ -149,12 +160,47 @@ export class MemStorage implements IStorage {
         loginCount: userData.loginCount || 0,
         preferences: userData.preferences || null,
         clerkId: userData.clerkId || null,
+        supabaseId: userData.supabaseId || null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
       this.users.push(newUser);
       return newUser;
     }
+  }
+
+  async getUserBySupabaseId(supabaseId: string): Promise<User | undefined> {
+    return this.users.find(u => u.supabaseId === supabaseId);
+  }
+
+  async createSupabaseUser(data: {
+    supabaseId: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImageUrl?: string;
+  }): Promise<User> {
+    const newUser: User = {
+      id: this.nextUserId++,
+      username: data.email || `user_${this.nextUserId}`,
+      password: '',
+      email: data.email || null,
+      role: 'writer',
+      firstName: data.firstName || null,
+      lastName: data.lastName || null,
+      profileImage: null,
+      profileImageUrl: data.profileImageUrl || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: 'active',
+      lastLogin: null,
+      loginCount: 0,
+      preferences: null,
+      clerkId: null,
+      supabaseId: data.supabaseId,
+    };
+    this.users.push(newUser);
+    return newUser;
   }
 
   // Content generation operations
@@ -450,6 +496,36 @@ export class DatabaseStorage implements IStorage {
           ...userData,
           updatedAt: new Date(),
         },
+      })
+      .returning();
+    return user;
+  }
+
+  async getUserBySupabaseId(supabaseId: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.supabaseId, supabaseId));
+    return result[0];
+  }
+
+  async createSupabaseUser(data: {
+    supabaseId: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImageUrl?: string;
+  }): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values({
+        username: data.email || `supabase_user_${Date.now()}`,
+        password: '',
+        email: data.email || null,
+        role: 'writer',
+        firstName: data.firstName || null,
+        lastName: data.lastName || null,
+        profileImageUrl: data.profileImageUrl || null,
+        supabaseId: data.supabaseId,
+        status: 'active',
+        loginCount: 0,
       })
       .returning();
     return user;

@@ -3,14 +3,20 @@ import { storage } from '../storage';
 import { insertContentHistorySchema, contentHistory } from '@shared/schema';
 import { z } from 'zod';
 import { db } from '../db';
-import { requireAuth } from '../clerkAuth';
+import { isAuthenticated, AuthenticatedRequest } from '../middleware/supabaseAuth';
+import { getUserIdFromSupabaseId } from '../middleware/supabaseUserHelper';
 
 const router = express.Router();
 
 // GET /api/history - Get all content history with pagination (filtered by authenticated user)
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', isAuthenticated, async (req: AuthenticatedRequest, res) => {
   try {
-    const userId = (req as any).user.id;
+    if (!req.userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    const userId = await getUserIdFromSupabaseId(req.userId, req.user?.email);
+    
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
     
@@ -57,9 +63,14 @@ router.post("/clear-all", async (req, res) => {
 });
 
 // GET /api/history/:id - Get content history by id (filtered by authenticated user)
-router.get('/:id', requireAuth, async (req, res) => {
+router.get('/:id', isAuthenticated, async (req: AuthenticatedRequest, res) => {
   try {
-    const userId = (req as any).user.id;
+    if (!req.userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    const userId = await getUserIdFromSupabaseId(req.userId, req.user?.email);
+    
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
       return res.status(400).json({ 
@@ -92,9 +103,13 @@ router.get('/:id', requireAuth, async (req, res) => {
 });
 
 // POST /api/history - Save content history (protected)
-router.post('/', requireAuth, async (req: any, res) => {
+router.post('/', isAuthenticated, async (req: AuthenticatedRequest, res) => {
   try {
-    const userId = req.user.claims.sub;
+    if (!req.userId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    const userId = await getUserIdFromSupabaseId(req.userId, req.user?.email);
     
     // Validate request body against schema
     const result = insertContentHistorySchema.safeParse(req.body);

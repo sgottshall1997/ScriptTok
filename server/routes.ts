@@ -1,7 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { requireAuth, clerkMiddleware } from "./clerkAuth";
+import { isAuthenticated, AuthenticatedRequest } from "./middleware/supabaseAuth";
+import { getUserIdFromSupabaseId } from "./middleware/supabaseUserHelper";
 
 // Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
@@ -42,60 +43,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  app.get('/health/auth', async (req, res) => {
+  // Auth endpoints (with Supabase middleware)
+  app.get('/api/auth/user', isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      // Test Clerk server connection
-      const { clerkClient } = await import('@clerk/clerk-sdk-node');
-      await clerkClient.users.getUserList({ limit: 1 });
-      res.json({
-        ok: true,
-        env: process.env.CLERK_PUBLISHABLE_KEY?.startsWith('pk_test') ? 'test' : 'live',
-        message: 'Clerk server connection successful'
-      });
-    } catch (error: any) {
-      res.status(500).json({
-        ok: false,
-        error: error.message,
-        message: 'Clerk server connection failed'
-      });
-    }
-  });
-
-  // Auth endpoints (with Clerk middleware)
-  app.get('/api/auth/user', clerkMiddleware, requireAuth, async (req: any, res) => {
-    try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
-      res.json(user);
+      const userId = req.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "Unauthorized" });
+      }
+      res.json(req.user);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
     }
   });
 
-  // Logout endpoint
-  app.get('/api/logout', clerkMiddleware, async (req: any, res) => {
+  // Logout endpoint - client-side handles Supabase logout
+  app.post('/api/logout', async (req, res) => {
     try {
-      const { clerkClient } = await import('@clerk/clerk-sdk-node');
-      const sessionId = req.auth?.sessionId;
-      
-      if (sessionId) {
-        await clerkClient.sessions.revokeSession(sessionId);
-      }
-      
-      res.redirect('/');
+      // Supabase logout is handled on the client side
+      res.json({ success: true, message: 'Logout successful' });
     } catch (error) {
       console.error("Logout error:", error);
-      res.redirect('/');
+      res.status(500).json({ success: false, message: 'Logout failed' });
     }
   });
 
   // Essential TikTok Viral Product Generator routes
-  // Apply Clerk middleware only to routes that need authentication
-  app.use('/api/generate-content', clerkMiddleware, generateContentRouter);
+  // Apply Supabase middleware only to routes that need authentication
+  app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter); // Public - no auth needed
   app.use('/api/scraper-status', scraperStatusRouter); // Public - no auth needed
-  app.use('/api/history', clerkMiddleware, historyRouter); // Protected - needs auth
+  app.use('/api/history', historyRouter); // Protected - auth handled within router
   
   // Perplexity trends for viral research (public - no auth)
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
@@ -144,9 +122,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   
   // Content history alias endpoint (protected)
-  app.get('/api/content-history', clerkMiddleware, requireAuth, async (req: any, res) => {
+  app.get('/api/content-history', isAuthenticated, async (req: AuthenticatedRequest, res) => {
     try {
-      const userId = req.user.id;
+      if (!req.userId) {
+        return res.status(401).json({ success: false, error: 'Unauthorized' });
+      }
+      
+      const userId = await getUserIdFromSupabaseId(req.userId, req.user?.email);
+      
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
       
