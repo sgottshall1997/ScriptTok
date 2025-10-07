@@ -123,14 +123,14 @@ const AboutPage: React.FC = () => {
             <Video className="h-8 w-8 text-white" />
           </div>
           <div className="text-left">
-            <h1 className="text-4xl font-bold text-gray-900">ScriptTok</h1>
+            <h1 className="text-4xl font-bold text-gray-900">Pheme</h1>
             <p className="text-lg text-gray-600">TikTok Viral Content Generator</p>
           </div>
         </div>
         <p className="text-gray-700 max-w-3xl mx-auto text-lg leading-relaxed">
-          ScriptTok offers two powerful content generation studios: <strong>Viral Content Studio</strong> for trend-based viral content 
+          Pheme offers two powerful content generation studios: <strong>Viral Content Studio</strong> for trend-based viral content 
           and <strong>Affiliate Content Studio</strong> for product-focused content with affiliate integration. Whether you want to 
-          ride trending topics or promote specific products, ScriptTok's AI creates high-performing content that drives engagement.
+          ride trending topics or promote specific products, Pheme's AI creates high-performing content that drives engagement.
         </p>
       </div>
 
@@ -139,7 +139,7 @@ const AboutPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Target className="h-6 w-6 mr-3 text-pink-600" />
-            What ScriptTok Does
+            What Pheme Does
           </CardTitle>
           <CardDescription>
             Dual-mode AI content generation: Viral trends and affiliate marketing
@@ -148,7 +148,7 @@ const AboutPage: React.FC = () => {
         <CardContent>
           <div className="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg mb-8">
             <p className="text-lg text-gray-800 leading-relaxed mb-4">
-              ScriptTok features two distinct content generation studios designed for different creator goals:
+              Pheme features two distinct content generation studios designed for different creator goals:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="bg-white p-4 rounded-lg border border-pink-200">
@@ -322,7 +322,7 @@ const AboutPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Play className="h-6 w-6 mr-3 text-blue-600" />
-            How to Use ScriptTok
+            How to Use Pheme
           </CardTitle>
           <CardDescription>
             Choose your content studio, then follow our simple workflow
@@ -702,10 +702,10 @@ const AboutPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Zap className="h-6 w-6 mr-3 text-pink-600" />
-            Getting Started with ScriptTok
+            Getting Started with Pheme
           </CardTitle>
           <CardDescription>
-            New to ScriptTok? Follow this quick start guide
+            New to Pheme? Follow this quick start guide
           </CardDescription>
         </CardHeader>
         <CardContent>

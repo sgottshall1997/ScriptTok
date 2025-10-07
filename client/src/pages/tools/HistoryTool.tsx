@@ -116,12 +116,12 @@ export default function HistoryTool() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Content History - Track All Your Scripts & Trends | ScriptTok</title>
+        <title>Content History - Track All Your Scripts & Trends | Pheme</title>
         <meta
           name="description"
           content="Access your complete content creation archive. Track scripts, trends, and viral scores. Search, filter, rate, and export your best-performing content. Get insights and analytics."
         />
-        <meta property="og:title" content="Content History - Track All Your Scripts & Trends | ScriptTok" />
+        <meta property="og:title" content="Content History - Track All Your Scripts & Trends | Pheme" />
         <meta
           property="og:description"
           content="Access your complete content creation archive. Track scripts, trends, and viral scores. Search, filter, rate, and export your best-performing content. Get insights and analytics."

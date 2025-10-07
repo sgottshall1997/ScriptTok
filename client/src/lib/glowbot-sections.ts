@@ -43,12 +43,12 @@ export interface ScriptTokSection {
 export const scriptTokSections: ScriptTokSection[] = [
   // Overview
   {
-    name: "About ScriptTok",
-    description: "Comprehensive overview of the ScriptTok AI platform, its capabilities, and how it transforms content creation.",
+    name: "About Pheme",
+    description: "Comprehensive overview of the Pheme AI platform, its capabilities, and how it transforms content creation.",
     icon: HelpCircle,
     path: "/about",
     category: "Overview",
-    whatItDoes: "Provides a complete introduction to ScriptTok's AI-powered content generation platform, explaining core features, supported platforms, and the comprehensive toolkit available for scaling content production.",
+    whatItDoes: "Provides a complete introduction to Pheme's AI-powered content generation platform, explaining core features, supported platforms, and the comprehensive toolkit available for scaling content production.",
     setupRequirements: ["No setup required", "Explore platform capabilities", "Review available tools and features"],
     usageInstructions: [
       "Read through platform overview and key features",

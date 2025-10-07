@@ -955,15 +955,15 @@ export default function UseCasesPage() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>ScriptTok Use Cases - Tools for Every Creator Type</title>
+        <title>Use Cases - Pheme for Every Creator Type</title>
         <meta
           name="description"
-          content="From content creators to SaaS companies, discover how ScriptTok's AI-powered tools transform your video content workflow"
+          content="From content creators to SaaS companies, discover how Pheme's AI-powered tools transform your video content workflow"
         />
-        <meta property="og:title" content="ScriptTok Use Cases - Tools for Every Creator Type" />
+        <meta property="og:title" content="Use Cases - Pheme for Every Creator Type" />
         <meta
           property="og:description"
-          content="From content creators to SaaS companies, discover how ScriptTok's AI-powered tools transform your video content workflow"
+          content="From content creators to SaaS companies, discover how Pheme's AI-powered tools transform your video content workflow"
         />
         <meta property="og:type" content="website" />
       </Helmet>
@@ -980,7 +980,7 @@ export default function UseCasesPage() {
               className="text-sm font-semibold tracking-wide uppercase text-violet-200"
               data-testid="hero-eyebrow"
             >
-              WHO SCRIPTTOK IS FOR
+              WHO PHEME IS FOR
             </p>
 
             {/* Headline */}
@@ -1013,7 +1013,7 @@ export default function UseCasesPage() {
               className="text-lg md:text-xl text-violet-100 max-w-3xl mx-auto"
               data-testid="hero-subheadline"
             >
-              From viral TikToks to high-converting product videos, ScriptTok adapts to your unique content goals
+              From viral TikToks to high-converting product videos, Pheme adapts to your unique content goals
             </p>
 
             {/* Primary CTA */}

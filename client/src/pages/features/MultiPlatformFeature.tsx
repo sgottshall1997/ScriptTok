@@ -225,9 +225,9 @@ export default function MultiPlatformFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Multi-Platform Optimization - One Script, Every Platform | ScriptTok</title>
+        <title>Multi-Platform Optimization - One Script, Every Platform | Pheme</title>
         <meta name="description" content="Automatically adapt content for TikTok, Instagram, YouTube, and more. Platform-specific optimization with perfect formatting." />
-        <meta property="og:title" content="Multi-Platform Optimization - One Script, Every Platform | ScriptTok" />
+        <meta property="og:title" content="Multi-Platform Optimization - One Script, Every Platform | Pheme" />
         <meta property="og:description" content="Automatically adapt content for TikTok, Instagram, YouTube, and more. Platform-specific optimization with perfect formatting." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://scripttok.com/features/multi-platform" />

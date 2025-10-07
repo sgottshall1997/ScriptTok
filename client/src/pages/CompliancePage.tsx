@@ -9,7 +9,7 @@ const CompliancePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-4xl mx-auto px-4 space-y-8">
-        
+
         {/* Header */}
         <div className="text-center space-y-4">
           <Link href="/">
@@ -18,14 +18,14 @@ const CompliancePage: React.FC = () => {
               Back to Dashboard
             </Button>
           </Link>
-          
+
           <div className="space-y-2">
             <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
               <Video className="h-3 w-3 mr-1" />
               TikTok Content Compliant
             </Badge>
             <h1 className="text-4xl font-bold text-gray-900">
-              ScriptTok Compliance Center
+              Pheme Compliance Center
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
               Your complete guide to TikTok content creation compliance and AI-generated content best practices
@@ -78,7 +78,7 @@ const CompliancePage: React.FC = () => {
                 <div>
                   <h4 className="font-semibold text-blue-800 mb-2">Important AI Content Notice</h4>
                   <p className="text-sm text-blue-700 mb-2">
-                    ScriptTok uses advanced AI technology (Claude AI) to generate TikTok content suggestions. All content is AI-generated and should be reviewed before posting.
+                    Pheme uses advanced AI technology (Claude AI) to generate TikTok content suggestions. All content is AI-generated and should be reviewed before posting.
                   </p>
                   <p className="text-sm text-blue-700 font-medium">
                     ⚠️ AI-generated content outputs are probabilistic and not guaranteed to go viral or achieve specific engagement rates.
@@ -123,9 +123,9 @@ const CompliancePage: React.FC = () => {
                   <li>• <strong>Authenticity:</strong> Be genuine and relatable</li>
                 </ul>
               </div>
-              
+
               <div className="space-y-2">
-                <h4 className="font-semibold">ScriptTok Features:</h4>
+                <h4 className="font-semibold">Pheme Features:</h4>
                 <ul className="text-sm space-y-1">
                   <li>• AI-powered content generation</li>
                   <li>• Viral score analysis for optimization</li>
@@ -137,16 +137,16 @@ const CompliancePage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* ScriptTok AI System */}
+        {/* Pheme AI Content Generation System */}
         <Card>
           <CardHeader>
-            <CardTitle>ScriptTok AI Content Generation System</CardTitle>
+            <CardTitle>Pheme AI Content Generation System</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">
-              ScriptTok uses advanced AI technology to create engaging TikTok content with built-in viral score analysis:
+              Pheme uses advanced AI technology to create engaging TikTok content with built-in viral score analysis:
             </p>
-            
+
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
               <h4 className="font-semibold text-blue-800 mb-3">Claude AI-Powered Content Creation</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -200,7 +200,7 @@ const CompliancePage: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-              <h4 className="font-semibold text-purple-800 mb-3">ScriptTok Technology Stack</h4>
+              <h4 className="font-semibold text-purple-800 mb-3">Pheme Technology Stack</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <strong className="text-purple-700">AI Technology:</strong>
@@ -275,7 +275,7 @@ const CompliancePage: React.FC = () => {
                   </a>
                 </div>
               </div>
-              
+
               <div className="space-y-3">
                 <h4 className="font-semibold">AI Content Guidelines:</h4>
                 <div className="space-y-2">
@@ -297,10 +297,10 @@ const CompliancePage: React.FC = () => {
                     <ExternalLink className="h-3 w-3 mr-2" />
                     Social Media Content Guidelines
                   </a>
-                  <Link href="/trust-safety">
+                  <Link href="/trust-and-safety">
                     <span className="flex items-center text-blue-600 hover:text-blue-800 text-sm cursor-pointer">
                       <ExternalLink className="h-3 w-3 mr-2" />
-                      ScriptTok Trust & Safety
+                      Pheme Trust & Safety
                     </span>
                   </Link>
                 </div>
@@ -314,7 +314,7 @@ const CompliancePage: React.FC = () => {
           <CardContent className="text-center py-8">
             <h3 className="text-xl font-semibold mb-2">Ready to Create Viral TikTok Content?</h3>
             <p className="text-gray-300 mb-4">
-              ScriptTok helps you create engaging TikTok content with AI-powered viral score analysis.
+              Pheme helps you create engaging TikTok content with AI-powered viral score analysis.
             </p>
             <Link href="/generate">
               <Button variant="secondary" size="lg">

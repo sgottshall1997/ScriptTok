@@ -124,12 +124,12 @@ export default function ScriptGeneratorTool() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Script Generator - AI-Powered Viral Scripts in Seconds | ScriptTok</title>
+        <title>Script Generator - AI-Powered Viral Scripts in Seconds | Pheme</title>
         <meta
           name="description"
           content="Generate scroll-stopping TikTok, Instagram, and YouTube scripts in seconds with AI. Choose Viral Studio for engagement or Affiliate Studio for conversions. Get started free today."
         />
-        <meta property="og:title" content="Script Generator - AI-Powered Viral Scripts in Seconds | ScriptTok" />
+        <meta property="og:title" content="Script Generator - AI-Powered Viral Scripts in Seconds | Pheme" />
         <meta
           property="og:description"
           content="Generate scroll-stopping TikTok, Instagram, and YouTube scripts in seconds with AI. Choose Viral Studio for engagement or Affiliate Studio for conversions. Get started free today."

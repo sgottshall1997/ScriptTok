@@ -149,12 +149,12 @@ export default function TemplateLibraryTool() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Template Library - 20+ Proven Viral Templates | ScriptTok</title>
+        <title>Template Library - 20+ Proven Viral Templates | Pheme</title>
         <meta
           name="description"
           content="Browse 20+ proven viral templates for TikTok, Instagram, and YouTube. Pre-built formulas tested across millions of views. Filter by niche, content type, and platform."
         />
-        <meta property="og:title" content="Template Library - 20+ Proven Viral Templates | ScriptTok" />
+        <meta property="og:title" content="Template Library - 20+ Proven Viral Templates | Pheme" />
         <meta
           property="og:description"
           content="Browse 20+ proven viral templates for TikTok, Instagram, and YouTube. Pre-built formulas tested across millions of views. Filter by niche, content type, and platform."

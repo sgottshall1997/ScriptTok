@@ -183,9 +183,9 @@ export default function PricingPage() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Pricing Plans - ScriptTok | Choose Your Perfect Plan</title>
-        <meta name="description" content="Start free with ScriptTok's 4-tier pricing. From Starter ($7/mo) to Agency ($69/mo), find the perfect plan for your viral content creation needs." />
-        <meta property="og:title" content="ScriptTok Pricing - 4 Plans to Fit Every Creator" />
+        <title>Pricing Plans - Pheme | Choose Your Perfect Plan</title>
+        <meta name="description" content="Start free with Pheme's 4-tier pricing. From Starter ($7/mo) to Agency ($69/mo), find the perfect plan for your viral content creation needs." />
+        <meta property="og:title" content="Pheme Pricing - 4 Plans to Fit Every Creator" />
         <meta property="og:description" content="Starter, Creator, Pro, or Agency - choose the plan that scales with your viral content ambitions." />
       </Helmet>
       

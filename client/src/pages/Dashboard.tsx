@@ -479,7 +479,7 @@ const Dashboard = () => {
                 
                 {/* ScriptTok Intelligence Flow Diagram */}
                 <div className="mt-6">
-                  <h4 className="text-base font-semibold text-purple-900 dark:text-purple-100 mb-4 text-center">How ScriptTok Creates Smart Content</h4>
+                  <h4 className="text-base font-semibold text-purple-900 dark:text-purple-100 mb-4 text-center">How Pheme Creates Smart Content</h4>
                   <div className="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
                     <div className="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-2">
                       

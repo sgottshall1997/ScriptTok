@@ -111,9 +111,9 @@ export default function DualStudiosFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Dual Studios - Switch Between Viral & Affiliate Content | ScriptTok</title>
+        <title>Dual Studios - Switch Between Viral & Affiliate Content | Pheme</title>
         <meta name="description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />
-        <meta property="og:title" content="Dual Studios - Switch Between Viral & Affiliate Content | ScriptTok" />
+        <meta property="og:title" content="Dual Studios - Switch Between Viral & Affiliate Content | Pheme" />
         <meta property="og:description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://scripttok.com/features/dual-studios" />

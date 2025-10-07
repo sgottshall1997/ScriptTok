@@ -133,12 +133,12 @@ export default function ViralScoreAnalyzerTool() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Viral Score Analyzer - Predict Content Performance | ScriptTok</title>
+        <title>Viral Score Analyzer - Predict Content Performance | Pheme</title>
         <meta
           name="description"
           content="AI-powered viral score analyzer predicts content performance before you post. Get 0-100 score with detailed breakdown and AI improvement suggestions for TikTok, Instagram, and YouTube."
         />
-        <meta property="og:title" content="Viral Score Analyzer - Predict Content Performance | ScriptTok" />
+        <meta property="og:title" content="Viral Score Analyzer - Predict Content Performance | Pheme" />
         <meta
           property="og:description"
           content="AI-powered viral score analyzer predicts content performance before you post. Get 0-100 score with detailed breakdown and AI improvement suggestions for TikTok, Instagram, and YouTube."

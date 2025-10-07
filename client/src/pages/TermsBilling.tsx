@@ -136,7 +136,7 @@ const TermsBillingPage: React.FC = () => {
 
             <div>
               <h3 className="text-lg font-semibold mb-3">Prohibited Activities</h3>
-              <p className="text-gray-700 mb-3">You may not use ScriptTok to:</p>
+              <p className="text-gray-700 mb-3">You may not use Pheme to:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>Generate harmful, offensive, or inappropriate content</li>
                 <li>Create content that violates TikTok's Community Guidelines</li>

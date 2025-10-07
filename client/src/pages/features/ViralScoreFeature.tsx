@@ -119,9 +119,9 @@ export default function ViralScoreFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>AI Viral Score - Predict Content Performance | ScriptTok</title>
+        <title>AI Viral Score - Predict Content Performance | Pheme</title>
         <meta name="description" content="Know your content will perform before you post. AI-powered viral prediction scores with actionable feedback to maximize reach." />
-        <meta property="og:title" content="AI Viral Score - Predict Content Performance | ScriptTok" />
+        <meta property="og:title" content="AI Viral Score - Predict Content Performance | Pheme" />
         <meta property="og:description" content="Know your content will perform before you post. AI-powered viral prediction scores with actionable feedback to maximize reach." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://scripttok.com/features/viral-score" />

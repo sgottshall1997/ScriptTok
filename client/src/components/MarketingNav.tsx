@@ -288,7 +288,7 @@ export function MarketingNav() {
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer" data-testid="link-logo">
             <span className="font-bold text-xl">
-              ✏️ ScriptTok
+              ✏️ Pheme
             </span>
           </div>
         </Link>

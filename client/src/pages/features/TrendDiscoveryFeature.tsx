@@ -190,9 +190,9 @@ export default function TrendDiscoveryFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Trend Discovery - Real-Time Viral Trends & Sounds | ScriptTok</title>
+        <title>Trend Discovery - Real-Time Viral Trends & Sounds | Pheme</title>
         <meta name="description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
-        <meta property="og:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | ScriptTok" />
+        <meta property="og:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | Pheme" />
         <meta property="og:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://scripttok.com/features/trend-discovery" />

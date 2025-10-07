@@ -124,12 +124,12 @@ export default function TrendDiscoveryTool() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Trend Discovery - Find Viral Trends Before They Peak | ScriptTok</title>
+        <title>Trend Discovery - Find Viral Trends Before They Peak | Pheme</title>
         <meta
           name="description"
           content="AI-powered trend discovery tool that monitors TikTok, Instagram, and YouTube Shorts in real-time. Find viral trends before they peak and get AI-matched product recommendations for your niche."
         />
-        <meta property="og:title" content="Trend Discovery - Find Viral Trends Before They Peak | ScriptTok" />
+        <meta property="og:title" content="Trend Discovery - Find Viral Trends Before They Peak | Pheme" />
         <meta
           property="og:description"
           content="AI-powered trend discovery tool that monitors TikTok, Instagram, and YouTube Shorts in real-time. Find viral trends before they peak and get AI-matched product recommendations for your niche."
