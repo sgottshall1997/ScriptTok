@@ -68,7 +68,7 @@ const EnhancedContentHistory = () => {
 
   // Fetch usage data for tier detection
   const { data: usageResponse, isLoading: usageLoading, error: usageError } = useUsageData();
-  const usage = usageResponse?.data;
+  const usage = usageResponse?.data?.data;
   
   // Fail-safe: default to starter tier on error
   const userTier = usageError ? 'starter' : (usage?.features?.tier || 'starter');
