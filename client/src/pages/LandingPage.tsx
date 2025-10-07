@@ -174,10 +174,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Features</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              From trend to script in 60 seconds.
-            </p>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">From Trend to Script in 60 Seconds.</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Everything you need to create viral content and grow your audience.
             </p>
