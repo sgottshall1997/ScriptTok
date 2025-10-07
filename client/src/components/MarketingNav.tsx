@@ -22,7 +22,6 @@ import {
   Flame,
   Library,
   Target,
-  BarChart3,
   Calculator,
   Package,
   History,
@@ -277,7 +276,7 @@ function DropdownCard({ item }: { item: CardItem }) {
 }
 
 export function MarketingNav() {
-  const { isAuthenticated, login } = useAuth();
+  const { login } = useAuth();
   const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [, navigate] = useLocation();
@@ -380,40 +379,27 @@ export function MarketingNav() {
 
         {/* Desktop CTAs */}
         <div className="hidden lg:flex items-center gap-3">
-          {!isAuthenticated ? (
-            <>
-              <Button
-                variant="ghost"
-                onClick={() => {
-                  trackNavigateCTA('nav', 'sign_in');
-                  login();
-                }}
-                data-testid="button-nav-signin"
-              >
-                Sign In
-              </Button>
-              <Button
-                onClick={() => {
-                  trackSignupCTA('nav');
-                  login();
-                }}
-                className="bg-gradient-hero text-white hover:opacity-90"
-                data-testid="button-nav-start-free"
-              >
-                <Zap className="mr-2 h-4 w-4" />
-                Start Free
-              </Button>
-            </>
-          ) : (
-            <Button
-              onClick={() => navigate('/dashboard')}
-              className="bg-gradient-hero text-white hover:opacity-90"
-              data-testid="button-nav-dashboard"
-            >
-              <BarChart3 className="mr-2 h-4 w-4" />
-              Dashboard
-            </Button>
-          )}
+          <Button
+            variant="ghost"
+            onClick={() => {
+              trackNavigateCTA('nav', 'login');
+              login();
+            }}
+            data-testid="button-nav-login"
+          >
+            Login
+          </Button>
+          <Button
+            onClick={() => {
+              trackSignupCTA('nav');
+              login();
+            }}
+            className="bg-gradient-hero text-white hover:opacity-90"
+            data-testid="button-nav-get-started"
+          >
+            <Zap className="mr-2 h-4 w-4" />
+            Get Started
+          </Button>
         </div>
 
         {/* Mobile Menu Button */}
@@ -431,46 +417,30 @@ export function MarketingNav() {
             <div className="mt-6 flex flex-col gap-4">
               {/* Mobile CTAs */}
               <div className="flex flex-col gap-2 pb-4 border-b">
-                {!isAuthenticated ? (
-                  <>
-                    <Button
-                      onClick={() => {
-                        trackSignupCTA('mobile_nav');
-                        login();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full bg-gradient-hero text-white"
-                      data-testid="button-mobile-start-free"
-                    >
-                      <Zap className="mr-2 h-4 w-4" />
-                      Start Free
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        trackNavigateCTA('mobile_nav', 'sign_in');
-                        login();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="w-full"
-                      data-testid="button-mobile-signin"
-                    >
-                      Sign In
-                    </Button>
-                  </>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      navigate('/dashboard');
-                    }}
-                    className="w-full bg-gradient-hero text-white"
-                    data-testid="button-mobile-dashboard"
-                  >
-                    <BarChart3 className="mr-2 h-4 w-4" />
-                    Dashboard
-                  </Button>
-                )}
+                <Button
+                  onClick={() => {
+                    trackSignupCTA('mobile_nav');
+                    login();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full bg-gradient-hero text-white"
+                  data-testid="button-mobile-get-started"
+                >
+                  <Zap className="mr-2 h-4 w-4" />
+                  Get Started
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    trackNavigateCTA('mobile_nav', 'login');
+                    login();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full"
+                  data-testid="button-mobile-login"
+                >
+                  Login
+                </Button>
               </div>
 
               {/* Mobile Navigation Accordion */}
