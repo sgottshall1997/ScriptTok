@@ -34,6 +34,11 @@ import CookiePreferencesPage from "@/pages/CookiePreferences";
 import LegalNoticesPage from "@/pages/LegalNotices";
 import TrustSafetyPage from "@/pages/TrustSafety";
 
+// Feature Pages
+import DualStudiosFeature from "@/pages/features/DualStudiosFeature";
+import AIScriptGeneratorFeature from "@/pages/features/AIScriptGeneratorFeature";
+import TemplateLibraryFeature from "@/pages/features/TemplateLibraryFeature";
+
 import Layout from "@/components/Layout";
 import MarketingLayout from "@/components/MarketingLayout";
 import { initScraperConsole } from "./lib/scraperConsole";
@@ -59,6 +64,23 @@ function MainAppRouter() {
       <Route path="/pricing">
         <MarketingLayout>
           <PricingPage />
+        </MarketingLayout>
+      </Route>
+
+      {/* Feature pages with MarketingLayout */}
+      <Route path="/features/dual-studios">
+        <MarketingLayout>
+          <DualStudiosFeature />
+        </MarketingLayout>
+      </Route>
+      <Route path="/features/ai-script-generator">
+        <MarketingLayout>
+          <AIScriptGeneratorFeature />
+        </MarketingLayout>
+      </Route>
+      <Route path="/features/template-library">
+        <MarketingLayout>
+          <TemplateLibraryFeature />
         </MarketingLayout>
       </Route>
       
