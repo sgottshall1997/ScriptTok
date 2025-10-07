@@ -712,7 +712,7 @@ const Dashboard = () => {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <Sparkles className="h-5 w-5 text-purple-600" />
-                    <span className="font-medium text-purple-900">AI-Powered Trending Picks</span>
+                    <span className="font-medium text-purple-900">Trending Products by Niche</span>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-gray-500">Last updated</p>

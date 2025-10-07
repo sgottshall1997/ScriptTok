@@ -58,55 +58,77 @@ function enhancePromptWithViralTemplate(
   basePrompt: string, 
   config: PromptConfig
 ): string {
-  if (!config.viralTemplate) {
-    return basePrompt;
-  }
-
-  const viral = config.viralTemplate;
   let enhancedPrompt = basePrompt;
 
-  // Add viral-specific instructions
-  let viralInstructions = '\n\n🎯 **VIRAL CONTENT INTEGRATION:**\n';
+  // Add viral template instructions if provided
+  if (config.viralTemplate) {
+    const viral = config.viralTemplate;
 
-  if (viral.viralHook) {
-    viralInstructions += `- Use this proven viral hook pattern: "${viral.viralHook}"\n`;
+    // Add viral-specific instructions
+    let viralInstructions = '\n\n🎯 **VIRAL CONTENT INTEGRATION:**\n';
+
+    if (viral.viralHook) {
+      viralInstructions += `- Use this proven viral hook pattern: "${viral.viralHook}"\n`;
+    }
+
+    if (viral.viralFormat) {
+      viralInstructions += `- Follow this successful format: ${viral.viralFormat}\n`;
+    }
+
+    if (viral.viralStructure) {
+      viralInstructions += `- Structure your content like this successful viral video:\n`;
+      viralInstructions += `  • Opening: ${viral.viralStructure.opening}\n`;
+      viralInstructions += `  • Main Content: ${viral.viralStructure.demonstration}\n`;
+      viralInstructions += `  • Call-to-Action: ${viral.viralStructure.callToAction}\n`;
+    }
+
+    if (viral.engagementPatterns && viral.engagementPatterns.length > 0) {
+      viralInstructions += `- Apply these engagement drivers: ${viral.engagementPatterns.join(', ')}\n`;
+    }
+
+    if (viral.bestPractices?.hookTemplate) {
+      viralInstructions += `- Hook template to follow: "${viral.bestPractices.hookTemplate}"\n`;
+    }
+
+    if (viral.recommendedHashtags && viral.recommendedHashtags.length > 0) {
+      viralInstructions += `- Prioritize these proven hashtags: ${viral.recommendedHashtags.join(' ')}\n`;
+    }
+
+    if (viral.templateConfidence) {
+      viralInstructions += `- This template has ${viral.templateConfidence}% proven success rate\n`;
+    }
+
+    // Insert viral instructions before the writing guidelines section
+    if (enhancedPrompt.includes('Writing Guidelines:')) {
+      enhancedPrompt = enhancedPrompt.replace('Writing Guidelines:', viralInstructions + '\nWriting Guidelines:');
+    } else {
+      enhancedPrompt += viralInstructions;
+    }
   }
 
-  if (viral.viralFormat) {
-    viralInstructions += `- Follow this successful format: ${viral.viralFormat}\n`;
-  }
+  // Always add universal audit footer to ALL prompts
+  return addUniversalAuditFooter(enhancedPrompt);
+}
 
-  if (viral.viralStructure) {
-    viralInstructions += `- Structure your content like this successful viral video:\n`;
-    viralInstructions += `  • Opening: ${viral.viralStructure.opening}\n`;
-    viralInstructions += `  • Main Content: ${viral.viralStructure.demonstration}\n`;
-    viralInstructions += `  • Call-to-Action: ${viral.viralStructure.callToAction}\n`;
-  }
+/**
+ * Helper function to add universal audit footer to ALL prompts
+ * Ensures AI validates its output before returning
+ */
+function addUniversalAuditFooter(basePrompt: string): string {
+  const auditFooter = `
 
-  if (viral.engagementPatterns && viral.engagementPatterns.length > 0) {
-    viralInstructions += `- Apply these engagement drivers: ${viral.engagementPatterns.join(', ')}\n`;
-  }
+OUTPUT VALIDATION CHECKLIST:
+Before returning your response, verify:
+✓ All required sections present and properly formatted
+✓ Word count within specified limits (count total words)
+✓ Emojis removed (unless template explicitly allows them)
+✓ No bracketed notes like [Note:] or [Performance Notes:]
+✓ Required hashtags included (count them: must have exact number specified)
+✓ Compliance disclosures present (#ad, affiliate statement, etc.)
 
-  if (viral.bestPractices?.hookTemplate) {
-    viralInstructions += `- Hook template to follow: "${viral.bestPractices.hookTemplate}"\n`;
-  }
+If ANY check fails, revise your output before returning. Do not explain - just output corrected content.`;
 
-  if (viral.recommendedHashtags && viral.recommendedHashtags.length > 0) {
-    viralInstructions += `- Prioritize these proven hashtags: ${viral.recommendedHashtags.join(' ')}\n`;
-  }
-
-  if (viral.templateConfidence) {
-    viralInstructions += `- This template has ${viral.templateConfidence}% proven success rate\n`;
-  }
-
-  // Insert viral instructions before the writing guidelines section
-  if (enhancedPrompt.includes('Writing Guidelines:')) {
-    enhancedPrompt = enhancedPrompt.replace('Writing Guidelines:', viralInstructions + '\nWriting Guidelines:');
-  } else {
-    enhancedPrompt += viralInstructions;
-  }
-
-  return enhancedPrompt;
+  return basePrompt + auditFooter;
 }
 
 /**
@@ -971,80 +993,86 @@ function generateFoodRoutine(config: PromptConfig): GeneratedPrompt {
   return generateUniversalRoutine(config);
 }
 function generateBeautyShortVideo(config: PromptConfig): GeneratedPrompt {
-  const basePrompt = `Write a comprehensive, actionable skincare routine guide featuring "${config.productName}", designed for a morning and night routine breakdown.
+  const basePrompt = `Write a direct, impactful review script for the beauty product "${config.productName}", designed for a 30–60 second social media video.
 
-Your task is to help viewers understand exactly how to use ${config.productName} effectively in their daily skincare, presenting clear, specific information about application, layering, and expected results while avoiding vague claims and filler.
+Your task is to help viewers understand exactly why this beauty product is worth considering, by presenting clear, specific information about its ingredients, benefits, application, and results, while avoiding vague claims and filler.
 
-The script must include the following sections, in this exact order and structure:
+The script must include the following sections, in order:
 
-Title: Your Complete Morning & Night Skincare Routine with ${config.productName}
+1. Attention-grabbing hook
+Start with a negative or surprising statement that mentions the product name and stops the viewer from scrolling.
+Choose a different hook each time you write a new script — do not reuse the same one repeatedly.
 
-Morning Routine (AM)
+Examples:
+• "Still using harsh products instead of ${config.productName}? Big mistake."
+• "Most people skip ${config.productName} — here's why they shouldn't."
+• "Stop buying skincare before you know this about ${config.productName}."
+• "Think ${config.productName} is overhyped? Your skin disagrees."
+• "Is ${config.productName} worth it? Let me show you."
+• "Not using ${config.productName} yet? You're missing out on results."
+• "Wasting money on products that don't work? Here's what ${config.productName} does differently."
 
-Step 1: Gentle Cleanser
-• Start with a mild, pH-balanced cleanser
-• Removes overnight buildup without stripping skin
+2. Key ingredients and benefits
+List 2–3 specific ingredients or features that make this product effective.
+Include details like:
+• Active ingredients (e.g., hyaluronic acid, vitamin C, retinol, niacinamide, peptides)
+• Texture and absorption (e.g., lightweight serum, rich cream, fast-absorbing gel)
+• Skin benefits (e.g., reduces fine lines, brightens dark spots, controls oil, hydrates deeply)
+• Application method (e.g., pat gently, massage in circular motions, layer under moisturizer)
+• Formulation quality (e.g., fragrance-free, non-comedogenic, dermatologist-tested)
 
-Step 2: ${config.productName} Application
-• How to properly apply ${config.productName} in the morning
-• Specify amount to use and recommended technique
-• Explain why morning is an optimal time for this step
+Avoid vague statements like "makes skin glow" — be specific about what it does and how.
 
-Step 3: Moisturizer
-• Recommend options based on skin type (e.g., lightweight for oily, creamier for dry)
-• Locks in the benefits of ${config.productName}
+3. Problem-solving and skin concerns
+Explain what skin concern this product addresses and how it delivers results.
 
-Step 4: SPF Protection
-• Always finish with broad-spectrum SPF 30+
-• Explain how it protects the skin and preserves results
+Examples:
+• "Targets stubborn dark spots with concentrated vitamin C."
+• "Locks in moisture for dry, flaky skin that needs deep hydration."
+• "Reduces breakouts without stripping your skin's natural oils."
+• "Smooths texture and minimizes pores with gentle exfoliation."
+• "Calms redness and irritation with soothing ingredients."
 
-Evening Routine (PM)
+4. Who it's for
+State clearly who benefits most from this product, using specific skin types or concerns.
 
-Step 1: Double Cleanse
-• Oil-based cleanser first (if wearing makeup or sunscreen)
-• Follow with a water-based cleanser
+Examples:
+• "Perfect for oily skin that needs oil control without dryness."
+• "Ideal for mature skin targeting fine lines and firmness."
+• "Great for sensitive skin prone to redness and irritation."
+• "Best for combination skin needing balanced hydration."
+• "Suited for anyone dealing with hyperpigmentation or uneven tone."
 
-Step 2: ${config.productName} Application
-• Evening application tips specific to ${config.productName}
-• How to layer it with other actives
-• List ingredients or products it should not be mixed with
+5. Motivational call-to-action
+End with a clear, engaging question or challenge addressed directly to the viewer.
+Always pick a different CTA each time — do not reuse the same one repeatedly.
 
-Step 3: Treatment Products (if applicable)
-• Suggestions for serums, retinol, or other targeted treatments
-• Indicate proper order of application when combined with ${config.productName}
-
-Step 4: Night Moisturizer
-• Recommend a richer, more nourishing formula for overnight repair
-• Explain how it seals in the previous steps
-
-Pro Tips
-• Start with ${config.productName} slowly (e.g., 2–3 times per week, then increase)
-• Always patch test before regular use
-• Pay attention to how your skin reacts and adjust accordingly
-• Consistency over time produces better results
-
-Timeline for Results
-• Week 1–2: Skin adjustment period mild changes and possible sensitivity
-• Week 4–6: Noticeable initial improvements
-• Week 8–12: Significant, more stable results
+Examples:
+• "Ready to see what your skin's been missing?"
+• "Think this could solve your skin concerns?"
+• "What would clearer skin mean to you?"
+• "Is your current routine giving you results?"
+• "When are you upgrading your skincare game?"
+• "Your move — will you try it?"
 
 Writing Guidelines:
-• Use clear, simple, specific language, appropriate for skincare enthusiasts building an effective routine.
+• Use clear, simple, specific language, appropriate for skincare enthusiasts.
 • Use active voice only.
-• Write short, declarative sentences that are easy to follow and understand.
+• Write short, declarative sentences that are easy to speak and understand.
 • Avoid metaphors, clichés, and vague statements.
 • Do not use filler words such as: really, very, literally, actually, certainly, probably, basically, maybe.
 • Do not include disclaimers, notes, or instructions in the output.
 • Do not include hashtags, emojis, or asterisks.
 
-Tone & Target:
-• Tone: ${config.tone} and educational confident but approachable
-• Target Audience: Skincare enthusiasts who want to build an effective, balanced routine with ${config.productName} as the star player in both AM and PM routines.
+Length & Structure:
+• Target 70–140 words, spoken naturally in 30–60 seconds.
+• Structured clearly for on-camera delivery or voice-over.
+• Smooth transitions between sections, but keep sentences crisp and impactful.
 
-Your goal is to equip viewers with a clear, practical skincare routine that makes ${config.productName} central to their results, while keeping the guide easy to follow and realistic.`;
+Your goal is to equip viewers with clear, actionable reasons to consider ${config.productName}, show how it addresses their skin concerns, and end with a direct, motivating question that encourages them to take action.`;
 
   return {
-    systemPrompt: `You are an expert skincare content creator specializing in skincare product reviews and routines for social media.`,
+    systemPrompt: `You are an expert beauty content creator specializing in skincare and beauty product reviews for social media.`,
     userPrompt: enhancePromptWithViralTemplate(basePrompt, config),
     templateMetadata: {
       templateType: config.templateType,

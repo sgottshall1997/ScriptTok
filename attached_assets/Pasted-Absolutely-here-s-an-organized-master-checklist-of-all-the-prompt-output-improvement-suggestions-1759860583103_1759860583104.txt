@@ -1,0 +1,210 @@
+Absolutely — here’s an organized master checklist of all the prompt + output improvement suggestions for your ScriptTok templates, grouped by category for clarity.
+
+⸻
+
+🧩 Template-by-Template Fix Checklist
+
+1. Influencer Caption
+
+Prompt Fixes
+	•	Add: “Output only 4 sections (hook, story, value, CTA) + exactly 15–20 hashtags ending with #ad or #affiliate.”
+	•	Add: “No extra lines, no emojis.”
+
+Output Fixes
+	•	Add missing hashtags and disclosure.
+	•	Compress long airy paragraphs into 3–4 short ones.
+
+⸻
+
+2. Affiliate Email
+
+Prompt Fixes
+	•	Add: “Hard cap: ≤150 words.”
+	•	Add: “Avoid metaphors or figurative language.”
+
+Output Fixes
+	•	Cut length by ~60–70 words.
+	•	Replace metaphors with plain statements.
+	•	Keep a clear single CTA.
+
+⸻
+
+3. SEO Blog
+
+Prompt Fixes
+	•	Add: “Minimum 1,050 words.”
+	•	Add: “Format with H2/H3 markdown headings.”
+	•	Add: “Include a 3-question FAQ section.”
+	•	Add: “Conclude with a bullet-point summary and CTA.”
+
+Output Fixes
+	•	Expand under-length blogs.
+	•	Add FAQ + better heading structure.
+	•	Add proper affiliate disclosure.
+
+⸻
+
+4. Routine / Kit
+
+Prompt Fixes
+	•	Add: “Include a 3-bullet Troubleshooting section.”
+	•	Add: “Add 2 short variants (for oily vs dry skin).”
+
+Output Fixes
+	•	Add quick troubleshooting tips and small adaptation variants.
+	•	Keep step-based format consistent.
+
+⸻
+
+5. Product Comparison
+
+Prompt Fixes
+	•	Add: “Include one credible signal of brand reputation (award, years in market, etc.).”
+
+Output Fixes
+	•	Add a brand credibility mention.
+	•	Tighten pricing comparisons into ranges if uncertain.
+
+⸻
+
+6. Beauty Short Video (Mismatch Template)
+
+Prompt Fixes
+	•	Replace the current beauty short_video prompt with the universal short script structure (Hook → 3–4 features → benefits → CTA; 70–140 words).
+	•	OR, reassign the existing version to routine_kit.
+
+Output Fixes
+	•	Convert long “routine” output into 5–7 concise on-camera sentences.
+
+⸻
+
+7. Universal Short Video Script
+
+Prompt Fixes
+	•	Add: “Output exactly 5 short paragraphs with one sentence each.”
+	•	Keep total word count ≤140.
+
+Output Fixes
+	•	Shorten slightly (remove filler).
+	•	Make CTA a crisp question.
+
+⸻
+
+8. Viral Hooks
+
+Prompt Fixes
+	•	Add: “Output exactly 10 numbered hooks (1–10).”
+	•	Add: “No commentary or notes.”
+
+Output Fixes
+	•	Number the list.
+	•	Remove any explanations after hooks.
+
+⸻
+
+9. Viral Short Script
+
+Prompt Fixes
+	•	Add: “Output only HOOK, BUILD, PAYOFF, BUTTON sections.”
+	•	Add: “No emojis or bracketed notes.”
+
+Output Fixes
+	•	Remove emojis and meta-notes.
+	•	Keep labeling consistent.
+
+⸻
+
+10. Viral Storytime
+
+Prompt Fixes
+	•	Add: “One single paragraph (90–130 words).”
+	•	Add: “No emojis.”
+
+Output Fixes
+	•	Merge short lines into a single paragraph.
+	•	Trim 30–40 words.
+	•	Remove emojis.
+
+⸻
+
+11. Viral Duet / Reaction
+
+Prompt Fixes
+	•	Add: “Output exactly 6 labeled lines only (OPEN, BEATS, PAYOFF, QUESTION, etc.).”
+	•	Add: “No stage directions or emojis.”
+
+Output Fixes
+	•	Remove “Performance Notes” and emojis.
+
+⸻
+
+12. Viral Listicle
+
+Prompt Fixes
+	•	Add: “No commentary or explanations after the list.”
+	•	Add: “Each item must have Title ≤6 words, Explanation ≤14 words, Example ≤10 words.”
+
+Output Fixes
+	•	Delete any bracketed or extra note at the end.
+	•	Verify all items fit within length constraints.
+
+⸻
+
+13. Viral Challenge
+
+Prompt Fixes
+	•	No major changes needed — already strong.
+	•	(Optional) Add: “Output must include both beginner and advanced versions.”
+
+Output Fixes
+	•	Keep current format.
+
+⸻
+
+14. Viral Caption + Hashtags
+
+Prompt Fixes
+	•	Add: “Validate that both hashtag blocks contain only hashtags beginning with #.”
+	•	Add: “If hashtags are missing, regenerate before returning.”
+	•	Add: “No notes or commentary.”
+
+Output Fixes
+	•	Remove “Note” section and filler symbols (e.g., “シ”).
+	•	Add proper hashtags (6–8 broad + 6–8 niche).
+
+⸻
+
+⚙️ Global Prompt Improvements
+
+✅ 1. Add a Universal Output Audit Footer
+
+Add this to every prompt:
+
+“Before returning, verify:
+	•	All required sections present
+	•	Word count within limits
+	•	No emojis or bracketed notes
+	•	Hashtags/disclosures included (if required).
+If any check fails, silently fix and re-output.”
+
+⸻
+
+✅ 2. Add a Post-Processor Validator in Code
+
+Implement a simple function that:
+	•	Strips bracketed notes (e.g., [Note:], [Performance Notes:])
+	•	Removes emojis (unless allowed)
+	•	Checks word counts
+	•	Confirms required sections exist
+	•	Ensures hashtags count and format
+	•	Regenerates automatically if invalid
+
+⸻
+
+✅ 3. Fix Beauty Short Video Routing
+	•	Either rename the beauty short_video prompt to routine_kit
+	•	Or replace it with a real short-form video prompt consistent with your other niches.
+
+⸻
+
+Would you like me to turn this checklist into a developer-ready JSON validation guide (so you can embed it into your Replit backend)? It would automatically validate and re-generate outputs that miss these conditions.

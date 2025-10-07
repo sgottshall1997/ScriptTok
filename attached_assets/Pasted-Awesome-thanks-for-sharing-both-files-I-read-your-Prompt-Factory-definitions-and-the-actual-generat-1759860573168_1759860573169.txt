@@ -1,0 +1,98 @@
+Awesome—thanks for sharing both files. I read your Prompt Factory definitions and the actual generated outputs side-by-side. Here are tight, actionable fixes template-by-template (what to change in the prompts and what to fix in the samples).
+
+Influencer caption
+
+What the prompt demands: opening hook → product story → value/benefits → CTA → 15–20 hashtags and #ad/#affiliate; no emojis; short paras.  ￼
+Your sample issues: no hashtags, no disclosure, too many short paragraphs (reads long and airy).  ￼
+Fix the prompt: add a final “Output Guardrail” line: “Output only the 4 sections plus exactly 15–20 hashtags and end with ‘#ad’ (or ‘#affiliate’). No extra lines or commentary.”  ￼
+Fix the sample: compress to 3–4 short paragraphs; append 15–20 relevant tags and “#ad”.  ￼
+
+Affiliate email
+
+Prompt requires: 3 subject lines + email under 150 words, conversational tone, clear CTA, optional disclosure; avoid metaphors.  ￼
+Your sample issues: ~213 words (too long) and metaphor “tiny vacuum cleaners.”  ￼
+Fix the prompt: add “Hard cap: ≤150 words. If >150, revise before returning. Avoid metaphors.”  ￼
+Fix the sample: trim ~60–70 words; replace the metaphor with a plain claim (e.g., “absorbs fluid overnight”).  ￼
+
+SEO blog
+
+Prompt requires: 1000+ words, H2/H3 sectioning, scannable paras (≤3 sentences), LSI terms, CTA + affiliate disclosure.  ￼
+Your sample issues: ~680 words (short) and headings aren’t clearly marked as H2/H3.  ￼
+Fix the prompt: add “Minimum 1,050 words; format with H2/H3 markdown; include a 3-question FAQ; add internal summary bullets at end.”  ￼
+Fix the sample: expand each section, add FAQ (e.g., “Do patches work on cystic acne?”), and use H2/H3 markdown.  ￼
+
+Routine / kit
+
+Prompt requires: title, intro, steps 1–4, shopping list, schedule, pro tips, results timeline; no warnings/notes.  ￼
+Your sample: structurally strong; you could add a tiny “Troubleshooting” and “Skin-type adaptations” block (the prompt invites adaptability).  ￼
+Nice-to-have prompt tweak: add “Include a 3-bullet Troubleshooting mini-section and 2 variants for oily/dry skin.”  ￼
+
+Product comparison
+
+Prompt requires: exact title format, quick summary, product stories with pros/cons, 5 explicit comparison points, who should choose what, final verdict; scannable; no semicolons.  ￼
+Your sample: meets structure well; tighten price math to a range if uncertain and add 1–2 brand-reputation specifics (awards, category focus) for balance.  ￼
+Prompt micro-tweak: add “Cite one credible signal for brand reputation (award, tenure, category focus).”  ￼
+
+Short video (beauty)
+
+Big mismatch: your beauty short_video generator is actually an AM/PM routine and produces ~370 words, not a 30–60s script (70–140 words).  ￼  ￼
+Fix the code (best path): replace generateBeautyShortVideo body with the same structure your tech/fitness short-video templates use (Hook → 3–4 features → quick UX/benefits → who it’s for → CTA; 70–140 words). Or redirect beauty “routine” to routine_kit and keep short_video concise.  ￼
+Fix the sample: convert to a 5–7 sentence on-camera script (no step lists).  ￼
+
+Universal short video script
+
+Prompt requires: Hook → 2–3 features → problem/solution → audience/use-cases → CTA; 70–140 words.  ￼
+Your sample: ~143 words (slightly long) but follows the spirit; tighten by ~10–20 words and make the CTA a crisp question.  ￼
+Prompt tweak: add “Return exactly 5 short paragraphs with one sentence each.” for even tighter control.  ￼
+
+Viral hooks
+
+Prompt requires: 10 hooks, numbered 1–10, each 3–8 words, no extra commentary.  ￼
+Your sample issues: not numbered and adds explanatory commentary at the end.  ￼
+Fix the prompt: append “Output exactly a numbered list 1–10. Do not add notes.” and add a self-check step.  ￼
+Fix the sample: number them and remove the commentary.  ￼
+
+Viral short script
+
+Prompt requires: HOOK/BUILD/PAYOFF/BUTTON; 70–120 words; no hashtags/products/affiliate.  ￼
+Your sample: labeled correctly; includes an emoji and a bracketed “Note”. Emojis aren’t banned here, but consistency across templates is cleaner without them; remove the meta-note.  ￼
+Prompt tweak: add “No emojis or bracketed notes. Output only the 4 labeled sections.” for uniformity.  ￼
+
+Viral storytime
+
+Prompt requires: 90–150 words, “write the complete story script in natural paragraph form.”  ￼
+Your sample issues: broken into many short lines + emoji at the end; also slightly long (~180).  ￼
+Fix the prompt: add “One single paragraph. 90–130 words. No emojis.” for platform consistency.  ￼
+Fix the sample: reflow to one paragraph and trim ~30–40 words.  ￼
+
+Viral duet/reaction
+
+Prompt requires: OPEN ≤8 words; BEATS ≤10 words; PAYOFF ≤10; QUESTION short; no extra sections.  ￼
+Your sample issues: adds “Performance Notes” and an emoji; remove both. Core beats are within limits—nice.  ￼
+Prompt tweak: add “Output exactly the 6 labeled lines only. No stage directions, no emojis.”  ￼
+
+Viral listicle
+
+Prompt requires: Top 3–5 items; each item = Title ≤6 words + Explanation ≤14 words + Optional micro-example ≤10; no extra notes.  ￼
+Your sample issues: structure is good, but you appended a bracketed explanatory note—drop it.  ￼
+Prompt tweak: add “No commentary after the list.” and a quick self-check rule on word limits.  ￼
+
+Viral challenge
+
+Prompt requires: Name ≤4 words, concise setup, 3 steps ≤8 words each, 2 variations, 1 safety note.  ￼
+Your sample: clean and compliant—nice add with beginner/advanced variants. Keep.  ￼
+
+Viral caption + hashtags
+
+Prompt requires: 3 captions (8–18 words each) plus two hashtag blocks (6–8 broad + 6–8 niche); no emojis; no extras.  ￼
+Your sample issues: hashtags are missing (shows stray “シ”), and there’s a “Note” paragraph—both should be removed.  ￼
+Fix the prompt: add “Validate that both hashtag blocks contain only real hashtags beginning with ‘#’; if any are missing, regenerate before returning. No notes.”  ￼
+
+⸻
+
+Global upgrades (will raise all boats)
+	1.	Add an “Output Audit Checklist” footer to every prompt: “Before returning, verify section presence, word-count limits, no emojis (unless allowed), no bracketed notes, and required disclosures/hashtags. If any check fails, silently fix and re-emit.”  ￼
+	2.	Post-processor in code: strip bracketed “Note:”/“Performance Notes:” blocks; enforce emoji ban where required; count words; ensure hashtag counts; and reject if a required section is missing—then auto-regenerate.  ￼
+	3.	Fix the beauty short_video generator (currently a routine). Either move that script under routine_kit or swap in a true 30–60s review scaffold to match other niches.  ￼
+
+If you want, I can patch the exact prompt strings (or drop in a tiny validator function) so your next runs pass all these checks out of the gate.
