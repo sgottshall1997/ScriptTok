@@ -135,10 +135,10 @@ export default function TrendForecaster() {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
-                🔮 Trend Forecaster - All Niches
+                🔮 Trend Forecaster
               </CardTitle>
               <p className="text-sm text-gray-600 mt-1">
-                Real-time TikTok trends powered by Perplexity AI
+                Real-time viral trends powered by Perplexity AI
               </p>
             </div>
             <div className="text-right">
