@@ -8,6 +8,14 @@ import { queryClient } from '@/lib/queryClient';
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { 
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -190,6 +198,10 @@ const GenerateContent = () => {
   const [trendCompetitorLoading, setTrendCompetitorLoading] = useState(false);
   const [trendCompetitorIntelOpen, setTrendCompetitorIntelOpen] = useState(false);
   const [selectedTrendCompetitorStyle, setSelectedTrendCompetitorStyle] = useState<any>(null);
+  
+  // Upgrade dialog state
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [, navigate] = useLocation();
 
 
 
@@ -1203,6 +1215,7 @@ ${config.hashtags.join(' ')}`;
                       : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md'
                   }`}
                   onClick={() => setContentMode('viral')}
+                  data-testid="button-viral-studio"
                 >
                   <div className="text-center space-y-3">
                     <div className="text-4xl">🔥</div>
@@ -1214,18 +1227,46 @@ ${config.hashtags.join(' ')}`;
                 
                 {/* Affiliate Content Studio */}
                 <div 
-                  className={`p-6 rounded-lg border-2 cursor-pointer transition-all ${
-                    contentMode === 'affiliate' 
-                      ? 'border-purple-500 bg-purple-100 shadow-lg scale-105' 
-                      : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md'
+                  className={`p-6 rounded-lg border-2 transition-all relative ${
+                    features?.canAccessAffiliate
+                      ? `cursor-pointer ${
+                          contentMode === 'affiliate' 
+                            ? 'border-purple-500 bg-purple-100 shadow-lg scale-105' 
+                            : 'border-gray-200 bg-white hover:border-purple-300 hover:shadow-md'
+                        }`
+                      : 'border-gray-300 bg-gray-50 cursor-not-allowed opacity-75'
                   }`}
-                  onClick={() => setContentMode('affiliate')}
+                  onClick={() => {
+                    if (features?.canAccessAffiliate) {
+                      setContentMode('affiliate');
+                    } else {
+                      setShowUpgradeDialog(true);
+                    }
+                  }}
+                  data-testid="button-affiliate-studio"
                 >
                   <div className="text-center space-y-3">
-                    <div className="text-4xl">💰</div>
-                    <h3 className="font-bold text-lg text-purple-700">Affiliate Content Studio</h3>
+                    <div className="flex items-center justify-center gap-2">
+                      <div className="text-4xl">💰</div>
+                      {!features?.canAccessAffiliate && (
+                        <Lock className="h-5 w-5 text-gray-400" data-testid="icon-affiliate-lock" />
+                      )}
+                    </div>
+                    <div className="flex items-center justify-center gap-2">
+                      <h3 className="font-bold text-lg text-purple-700">Affiliate Content Studio</h3>
+                      {!features?.canAccessAffiliate && (
+                        <Badge variant="outline" className="bg-gradient-to-r from-purple-500 to-pink-500 text-white border-0" data-testid="badge-pro-plus">
+                          Pro+
+                        </Badge>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-600">Generate product-focused content with affiliate links. Perfect for monetization and sales.</p>
                     <div className="text-xs text-purple-600 font-medium">🛒 Product reviews • Sales scripts • Affiliate links</div>
+                    {!features?.canAccessAffiliate && (
+                      <div className="text-xs text-gray-500 mt-2 font-semibold">
+                        Click to upgrade to Pro
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -2589,6 +2630,53 @@ ${config.hashtags.join(' ')}`;
 
       </div>
       </div>
+
+      {/* Upgrade Dialog for Affiliate Studio */}
+      <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <AlertDialogContent data-testid="dialog-upgrade-affiliate">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-purple-600" />
+              Upgrade to Pro
+            </AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3 pt-2">
+              <p className="text-base">
+                Affiliate Studio is available on Pro and Agency tiers. Generate product-focused content with affiliate links.
+              </p>
+              <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 space-y-2">
+                <p className="font-semibold text-purple-900 text-sm">Pro Features Include:</p>
+                <ul className="text-sm text-purple-800 space-y-1">
+                  <li>✓ Affiliate Content Studio access</li>
+                  <li>✓ Product research & viral hooks</li>
+                  <li>✓ Competitor intelligence analysis</li>
+                  <li>✓ Bulk content generation</li>
+                  <li>✓ Advanced viral scoring</li>
+                </ul>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setShowUpgradeDialog(false)}
+              data-testid="button-cancel-upgrade"
+            >
+              Maybe Later
+            </Button>
+            <Button 
+              onClick={() => {
+                setShowUpgradeDialog(false);
+                navigate('/pricing');
+              }}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              data-testid="button-upgrade-to-pro"
+            >
+              <Crown className="h-4 w-4 mr-2" />
+              Upgrade to Pro - $35/mo
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </TooltipProvider>
   );
 };
