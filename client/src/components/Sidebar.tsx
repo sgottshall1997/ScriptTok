@@ -47,8 +47,7 @@ import {
   Send,
   Wrench,
   BookOpen,
-  Building,
-  Lightbulb
+  Building
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isAmazonEnabled } from '@shared/constants';

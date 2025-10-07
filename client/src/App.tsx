@@ -47,6 +47,15 @@ function Router() {
 }
 
 function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolean; isLoading: boolean }) {
+  const [location, setLocation] = useLocation();
+  
+  // Redirect authenticated users from root to dashboard
+  useEffect(() => {
+    if (!isLoading && isAuthenticated && location === '/') {
+      setLocation('/dashboard');
+    }
+  }, [isAuthenticated, isLoading, location, setLocation]);
+
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -73,19 +82,9 @@ function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolea
         )}
       </Route>
       
-      {/* Root path - Landing or Dashboard based on auth */}
+      {/* Root path - Landing Page for unauthenticated */}
       <Route path="/">
-        {() => {
-          const [, setLocation] = useLocation();
-          
-          useEffect(() => {
-            if (isAuthenticated) {
-              setLocation('/dashboard');
-            }
-          }, [isAuthenticated, setLocation]);
-          
-          return <LandingPage />;
-        }}
+        {() => <LandingPage />}
       </Route>
       
       {/* App pages with layout */}
