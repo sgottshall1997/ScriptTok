@@ -89,6 +89,10 @@ export function TemplateSelector({
     if (!onMultiChange) return;
 
     if (checked) {
+      // Free users can only select 1 template at a time (total variations = 1)
+      if (isFreeUser && selectedTemplates.length >= 1) {
+        return; // Silently block - checkbox is already disabled in UI
+      }
       onMultiChange([...selectedTemplates, template]);
     } else {
       onMultiChange(selectedTemplates.filter(t => t !== template));
@@ -98,7 +102,12 @@ export function TemplateSelector({
   // Handle Select All
   const handleSelectAll = () => {
     if (onMultiChange) {
-      onMultiChange([...options]);
+      // Free users can only select 1 template - select the first one only
+      if (isFreeUser) {
+        onMultiChange(options.length > 0 ? [options[0]] : []);
+      } else {
+        onMultiChange([...options]);
+      }
     }
   };
 
@@ -178,19 +187,23 @@ export function TemplateSelector({
             <p className="text-sm text-muted-foreground">
               {selectedTemplates.length > 0 
                 ? `${selectedTemplates.length} template${selectedTemplates.length !== 1 ? 's' : ''} selected`
-                : 'Select one or more templates'
+                : isFreeUser 
+                  ? 'Select 1 template (Free: 1 variation at a time)'
+                  : 'Select one or more templates'
               }
             </p>
           </div>
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSelectAll}
-              disabled={selectedTemplates.length === options.length}
-            >
-              Select All
-            </Button>
+            {!isFreeUser && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleSelectAll}
+                disabled={selectedTemplates.length === options.length}
+              >
+                Select All
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
@@ -219,7 +232,12 @@ export function TemplateSelector({
                   {sectionTemplates.filter((template: string): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType, indexInSection: number): React.ReactElement => {
                     const templateType = template as TemplateType;
                     const isSelected = selectedTemplates.includes(templateType);
-                    const isLocked = isFreeUser && (proOnlyTemplates.includes(templateType) || indexInSection >= 3);
+                    // Lock if: 1) Pro-only template, 2) Beyond first 3 in section, or 3) Free user already has 1 template selected
+                    const isLocked = isFreeUser && (
+                      proOnlyTemplates.includes(templateType) || 
+                      indexInSection >= 3 ||
+                      (selectedTemplates.length >= 1 && !isSelected)
+                    );
                     
                     return (
                       <Tooltip key={template} delayDuration={300}>
@@ -259,7 +277,11 @@ export function TemplateSelector({
                         </TooltipTrigger>
                         <TooltipContent side="bottom" className="max-w-xs">
                           {isLocked ? (
-                            <p>🔒 Pro Feature: Upgrade to unlock this template</p>
+                            isFreeUser && selectedTemplates.length >= 1 && !isSelected ? (
+                              <p>🔒 Free users can only generate 1 output at a time. Upgrade to Pro to generate multiple variations!</p>
+                            ) : (
+                              <p>🔒 Pro Feature: Upgrade to unlock this template</p>
+                            )
                           ) : (
                             <p>{descriptions[templateType]}</p>
                           )}
