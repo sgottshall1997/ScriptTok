@@ -150,7 +150,7 @@ const GenerateContent = () => {
   const [selectedTemplates, setSelectedTemplates] = useState<TemplateType[]>(templateFromUrl ? [templateFromUrl] as TemplateType[] : []);
   const [tone, setTone] = useState('enthusiastic');
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
-  const [multiTemplateResults, setMultiTemplateResults] = useState<Record<string, GeneratedContent>>({});
+  const [multiTemplateResults, setMultiTemplateResults] = useState<Array<{id: string; templateType: string; content: GeneratedContent}>>([]);
   const [comparisonResults, setComparisonResults] = useState<{
     claude: GeneratedContent | null;
     chatgpt: GeneratedContent | null;
@@ -737,7 +737,7 @@ ${config.hashtags.join(' ')}`;
     // Handle multi-template generation
     if (selectedTemplates.length > 1) {
       setIsGenerating(true);
-      setMultiTemplateResults({});
+      setMultiTemplateResults([]);
       
       toast({
         title: "🚀 Multi-Template Generation",
@@ -746,10 +746,13 @@ ${config.hashtags.join(' ')}`;
       });
 
       try {
-        const results: Record<string, GeneratedContent> = {};
+        const results: Array<{id: string; templateType: string; content: GeneratedContent}> = [];
         
         // Generate content for each selected template
-        for (const templateType of selectedTemplates) {
+        for (let i = 0; i < selectedTemplates.length; i++) {
+          const templateType = selectedTemplates[i];
+          const uniqueId = `${templateType}-${Date.now()}-${i}`;
+          
           const response = await fetch('/api/generate-content', {
             method: 'POST',
             headers: {
@@ -770,14 +773,18 @@ ${config.hashtags.join(' ')}`;
           if (response.ok) {
             const result = await response.json();
             if (result.success) {
-              results[templateType] = {
-                content: result.data.content,
-                hook: result.data.customHook || '',
-                platform: 'tiktok',
-                niche: selectedNiche,
-                videoDuration: result.data.videoDuration,
-                viralScore: result.data.viralScore
-              };
+              results.push({
+                id: uniqueId,
+                templateType: templateType,
+                content: {
+                  content: result.data.content,
+                  hook: result.data.customHook || '',
+                  platform: 'tiktok',
+                  niche: selectedNiche,
+                  videoDuration: result.data.videoDuration,
+                  viralScore: result.data.viralScore
+                }
+              });
             }
           }
         }
@@ -789,7 +796,7 @@ ${config.hashtags.join(' ')}`;
         
         toast({
           title: "✨ Multi-Template Generation Complete!",
-          description: `Generated content for ${Object.keys(results).length} templates`,
+          description: `Generated content for ${results.length} templates`,
         });
 
       } catch (error) {
@@ -2290,7 +2297,7 @@ ${config.hashtags.join(' ')}`;
         )}
 
         {/* Multi-Template Results */}
-        {Object.keys(multiTemplateResults).length > 0 && (
+        {multiTemplateResults.length > 0 && (
           <Card className="shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -2298,43 +2305,43 @@ ${config.hashtags.join(' ')}`;
                 🎯 Multi-Template Results
               </CardTitle>
               <p className="text-sm text-muted-foreground">
-                Generated content for {Object.keys(multiTemplateResults).length} different templates
+                Generated content for {multiTemplateResults.length} templates
               </p>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {Object.entries(multiTemplateResults).map(([templateType, content]) => (
-                  <div key={templateType} className="space-y-4">
+                {multiTemplateResults.map((item) => (
+                  <div key={item.id} className="space-y-4">
                     <div className="flex items-center gap-2 mb-4">
                       <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
                       <h3 className="font-semibold text-lg capitalize">
-                        📄 {templateType.replace('_', ' ')} Template
+                        📄 {item.templateType.replace('_', ' ')} Template
                       </h3>
                     </div>
                     <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
                       <div className="text-sm text-gray-600 mb-4 flex gap-2 flex-wrap">
-                        <span className="bg-white px-2 py-1 rounded">Template: {templateType}</span>
+                        <span className="bg-white px-2 py-1 rounded">Template: {item.templateType}</span>
                         <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
                         <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
-                        {content.videoDuration && (
+                        {item.content.videoDuration && (
                           <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
-                            🎥 Duration: {content.videoDuration.readableTime}
+                            🎥 Duration: {item.content.videoDuration.readableTime}
                           </span>
                         )}
                       </div>
                       <div className="prose prose-sm max-w-none">
                         <div className="whitespace-pre-line text-gray-800 leading-relaxed text-base">
-                          {content.content}
+                          {item.content.content}
                         </div>
                       </div>
                     </div>
 
                     {/* Viral Score Display for this template */}
-                    {content.viralScore && (
+                    {item.content.viralScore && (
                       <div className="mt-4">
                         <ViralScoreDisplay
-                          viralScore={{...content.viralScore, colorCode: content.viralScore.colorCode || 'green'}}
-                          overallScore={content.viralScore?.overall || null}
+                          viralScore={{...item.content.viralScore, colorCode: item.content.viralScore.colorCode || 'green'}}
+                          overallScore={item.content.viralScore?.overall || null}
                         />
                       </div>
                     )}
@@ -2345,10 +2352,10 @@ ${config.hashtags.join(' ')}`;
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          navigator.clipboard.writeText(content.content);
+                          navigator.clipboard.writeText(item.content.content);
                           toast({
                             title: "Content Copied!",
-                            description: `${templateType} content copied to clipboard`,
+                            description: `${item.templateType} content copied to clipboard`,
                           });
                         }}
                       >
@@ -2358,11 +2365,11 @@ ${config.hashtags.join(' ')}`;
                       <Button
                         size="sm"
                         onClick={() => {
-                          setGeneratedContent(content);
-                          setMultiTemplateResults({});
+                          setGeneratedContent(item.content);
+                          setMultiTemplateResults([]);
                           toast({
                             title: "Template Selected",
-                            description: `Using ${templateType} as your main content`,
+                            description: `Using ${item.templateType} as your main content`,
                           });
                         }}
                       >
