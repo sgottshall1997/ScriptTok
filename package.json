@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.37.0",
+    "@clerk/clerk-react": "^5.51.0",
+    "@clerk/clerk-sdk-node": "^4.13.23",
     "@hookform/resolvers": "^3.10.0",
     "@jridgewell/trace-mapping": "^0.3.25",
     "@neondatabase/serverless": "^0.10.4",
