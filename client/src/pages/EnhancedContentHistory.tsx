@@ -151,6 +151,10 @@ const EnhancedContentHistory = () => {
         // Parse viral score data (note: Drizzle returns camelCase field names)
         const parsedViralScore = item.viralScore ? 
           (typeof item.viralScore === 'string' ? JSON.parse(item.viralScore) : item.viralScore) : null;
+        
+        // Parse viral analysis data
+        const parsedViralAnalysis = item.viralAnalysis ? 
+          (typeof item.viralAnalysis === 'string' ? JSON.parse(item.viralAnalysis) : item.viralAnalysis) : null;
 
         const convertedItem = {
           id: `db_${item.id}`,
@@ -173,6 +177,7 @@ const EnhancedContentHistory = () => {
           // Add viral score data
           viralScore: parsedViralScore,
           viralScoreOverall: item.viralScoreOverall || null,
+          viralAnalysis: parsedViralAnalysis,
           generatedOutput: {
             content: item.outputText || '',
             hook: parsedGeneratedOutput.hook || 'Generated content',
