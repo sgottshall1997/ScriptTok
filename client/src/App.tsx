@@ -35,6 +35,7 @@ import LegalNoticesPage from "@/pages/LegalNotices";
 import TrustSafetyPage from "@/pages/TrustSafety";
 
 import Layout from "@/components/Layout";
+import MarketingLayout from "@/components/MarketingLayout";
 import { initScraperConsole } from "./lib/scraperConsole";
 
 function Router() {
@@ -47,10 +48,14 @@ function Router() {
 function MainAppRouter() {
   return (
     <Switch>
-      {/* Landing page without layout */}
-      <Route path="/" component={LandingPage} />
+      {/* Landing page with MarketingLayout */}
+      <Route path="/">
+        <MarketingLayout>
+          <LandingPage />
+        </MarketingLayout>
+      </Route>
       
-      {/* App pages with layout */}
+      {/* App pages with Layout */}
       <Route>
         {(params) => (
           <Layout>
