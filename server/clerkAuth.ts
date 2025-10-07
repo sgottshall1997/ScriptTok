@@ -1,4 +1,4 @@
-import { ClerkExpressRequireAuth, clerkClient } from '@clerk/clerk-sdk-node';
+import { ClerkExpressWithAuth, clerkClient } from '@clerk/clerk-sdk-node';
 import type { RequestHandler } from 'express';
 import { storage } from './storage';
 
@@ -38,4 +38,4 @@ export const requireAuth: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const clerkMiddleware = ClerkExpressRequireAuth();
+export const clerkMiddleware = ClerkExpressWithAuth();
