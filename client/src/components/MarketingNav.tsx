@@ -91,39 +91,33 @@ const featuresData: CardItem[] = [
 const toolsData: CardItem[] = [
   {
     icon: TrendingUp,
-    title: "Trend Forecaster",
-    description: "Identify real-time viral sounds, hashtags, and topics across platforms.",
-    href: "#"
+    title: "Trend Discovery",
+    description: "Discover what's trending before it goes viral with AI-powered trend analysis.",
+    href: "/tools/trend-discovery"
   },
   {
     icon: Sparkles,
     title: "Script Generator",
-    description: "Create full short-form scripts with hooks, pacing, and CTAs automatically.",
-    href: "#"
-  },
-  {
-    icon: Calculator,
-    title: "Viral Score Calculator",
-    description: "Evaluate scripts with AI feedback and a 0–100 viral potential score.",
-    href: "#"
-  },
-  {
-    icon: Package,
-    title: "Affiliate Ad Builder",
-    description: "Generate product-focused UGC reviews, comparisons, and demos.",
-    href: "#"
+    description: "Generate scroll-stopping scripts in seconds with dual studio modes.",
+    href: "/tools/script-generator"
   },
   {
     icon: Library,
-    title: "Template Selector",
-    description: "Pick or customize viral & affiliate templates for your brand.",
-    href: "#"
+    title: "Template Library",
+    description: "20+ proven templates for every niche and platform tested across millions of views.",
+    href: "/tools/template-library"
+  },
+  {
+    icon: Target,
+    title: "Viral Score Analyzer",
+    description: "Know your content will perform before you post with AI-powered scoring.",
+    href: "/tools/viral-score"
   },
   {
     icon: History,
-    title: "Content History",
-    description: "Access all your saved scripts, scores, and trend data in one place.",
-    href: "#"
+    title: "History",
+    description: "Your complete content creation archive with scripts, trends, and viral scores.",
+    href: "/tools/history"
   },
 ];
 
