@@ -8,6 +8,7 @@ import { TEMPLATE_PROMPTS, type PromptConfig } from './promptFactory.js';
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
 import { enhanceContentCompliance, ComplianceOptions } from './complianceEnhancer';
+import { validateContent, ValidationResult } from './contentValidator';
 
 // Smart style usage logging function (for future Google Sheets integration)
 export function logSmartStyleUsage(params: {
@@ -188,6 +189,7 @@ export async function generateContent(
   model?: string;
   tokens?: number;
   videoDuration?: VideoDuration;
+  validationResult?: ValidationResult;
 }> {
   // Declare prompt variables outside try block for fallback access
   let prompt: string;
@@ -392,6 +394,24 @@ Apply these successful patterns from your previous high-rated content:
     // Estimate video duration for the cleaned content
     const videoDuration = estimateVideoDuration(cleanedContent);
 
+    // Validate content
+    const validationResult = validateContent(formattedContent, templateType);
+
+    if (!validationResult.isValid) {
+      console.warn('⚠️ Content validation failed:', {
+        templateType,
+        errors: validationResult.errors,
+        warnings: validationResult.warnings
+      });
+      
+      // Log validation failures for monitoring (don't block content)
+      // Future: Could implement retry logic or fallback here
+    }
+
+    if (validationResult.warnings.length > 0) {
+      console.info('ℹ️ Content validation warnings:', validationResult.warnings);
+    }
+
     // Return additional metadata for history tracking
     return {
       content: formattedContent, // Use sentence-formatted version
@@ -399,7 +419,8 @@ Apply these successful patterns from your previous high-rated content:
       prompt,
       model: aiResponse.model || aiModel,
       tokens: aiResponse.tokens || 0,
-      videoDuration
+      videoDuration,
+      validationResult
     };
 
   } catch (error) {
@@ -439,13 +460,25 @@ Apply these successful patterns from your previous high-rated content:
       const formattedFallbackContent = formatBySentences(fallbackContent);
       const fallbackVideoDuration = estimateVideoDuration(cleanedFallbackContent);
 
+      // Validate fallback content
+      const fallbackValidationResult = validateContent(formattedFallbackContent, templateType);
+
+      if (!fallbackValidationResult.isValid) {
+        console.warn('⚠️ Fallback content validation failed:', {
+          templateType,
+          errors: fallbackValidationResult.errors,
+          warnings: fallbackValidationResult.warnings
+        });
+      }
+
       return {
         content: formattedFallbackContent, // Use sentence-formatted version
         fallbackLevel: 'default', // OpenAI fallback using template prompts
         prompt: genericPrompt,
         model: "gpt-4o",
         tokens: fallbackCompletion.usage?.total_tokens || 0,
-        videoDuration: fallbackVideoDuration
+        videoDuration: fallbackVideoDuration,
+        validationResult: fallbackValidationResult
       };
 
     } catch (fallbackError) {
@@ -485,13 +518,25 @@ Apply these successful patterns from your previous high-rated content:
       const formattedLegacyContent = formatBySentences(legacyContent);
       const legacyVideoDuration = estimateVideoDuration(legacyContent);
 
+      // Validate legacy fallback content
+      const legacyValidationResult = validateContent(formattedLegacyContent, templateType);
+
+      if (!legacyValidationResult.isValid) {
+        console.warn('⚠️ Legacy fallback content validation failed:', {
+          templateType,
+          errors: legacyValidationResult.errors,
+          warnings: legacyValidationResult.warnings
+        });
+      }
+
       return {
         content: formattedLegacyContent, // Use sentence-formatted version
         fallbackLevel: 'generic', // Consider legacy system as generic fallback
         prompt: legacyPrompt,
         model: "gpt-4o",
         tokens: 0, // We don't have token usage from legacy system
-        videoDuration: legacyVideoDuration
+        videoDuration: legacyVideoDuration,
+        validationResult: legacyValidationResult
       };
     }
   }

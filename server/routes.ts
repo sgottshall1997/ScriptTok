@@ -36,6 +36,9 @@ import { trendHistoryRouter } from "./api/trend-history";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 
+// Content validation imports
+import { validateContent } from "./services/contentValidator";
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes (handles authentication internally)
   app.use('/api/auth', authRouter);
@@ -184,6 +187,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({
         error: 'Failed to generate prompt structure',
         details: error.message
+      });
+    }
+  });
+
+  // Validate content endpoint (for testing and debugging)
+  app.post('/api/validate-content', async (req, res) => {
+    try {
+      const { content, templateType } = req.body;
+      
+      if (!content || !templateType) {
+        return res.status(400).json({ 
+          error: 'Missing required fields: content, templateType' 
+        });
+      }
+      
+      const validationResult = validateContent(content, templateType);
+      
+      res.json(validationResult);
+    } catch (error) {
+      console.error('Content validation error:', error);
+      res.status(500).json({ 
+        error: 'Validation failed',
+        message: error instanceof Error ? error.message : 'Unknown error'
       });
     }
   });
