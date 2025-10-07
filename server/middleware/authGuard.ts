@@ -34,16 +34,20 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
         tierHint: authResult.tierHint || '(not set)'
       });
       
-      // Look up internal user ID and attach to request
+      // Find or create user - automatically creates new users on first login
       const provider = isProduction ? 'replit' : 'dev';
-      const internalUser = await identityService.getUserByIdentity(provider, authResult.userId);
+      const email = authResult.email || `${authResult.userId}@${provider}.local`;
       
-      if (internalUser) {
-        req.internalUserId = internalUser.id;
-        console.log(`[AuthGuard] ✅ Internal user ID attached: ${internalUser.id}`);
-      } else {
-        console.warn(`[AuthGuard] ⚠️ No internal user found for provider ${provider}, userId ${authResult.userId}`);
-      }
+      const internalUserId = await identityService.findOrCreateUser(
+        provider,
+        authResult.userId,
+        email,
+        authResult.name,
+        authResult.profileImage
+      );
+      
+      req.internalUserId = internalUserId;
+      console.log(`[AuthGuard] ✅ Internal user ID attached: ${internalUserId}`);
       
       next();
       return;
@@ -74,14 +78,15 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
       tierHint: req.user.tierHint
     });
     
-    // Look up internal user ID for dev user
-    const internalUser = await identityService.getUserByIdentity('dev', devUserId);
-    if (internalUser) {
-      req.internalUserId = internalUser.id;
-      console.log(`[AuthGuard] ✅ Dev internal user ID attached: ${internalUser.id}`);
-    } else {
-      console.warn(`[AuthGuard] ⚠️ No internal user found for dev user ${devUserId}`);
-    }
+    // Find or create dev user
+    const internalUserId = await identityService.findOrCreateUser(
+      'dev',
+      devUserId,
+      req.user.email || 'dev@scripttok.local',
+      req.user.name || 'Dev User'
+    );
+    req.internalUserId = internalUserId;
+    console.log(`[AuthGuard] ✅ Dev internal user ID attached: ${internalUserId}`);
     
     next();
   } catch (error) {
@@ -111,15 +116,18 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
       tierHint: req.user.tierHint
     });
     
-    // Try to look up internal user ID for dev user (best effort)
+    // Try to find or create internal user ID for dev user (best effort)
     try {
-      const internalUser = await identityService.getUserByIdentity('dev', devUserId);
-      if (internalUser) {
-        req.internalUserId = internalUser.id;
-        console.log(`[AuthGuard] ✅ Dev internal user ID attached after error: ${internalUser.id}`);
-      }
+      const internalUserId = await identityService.findOrCreateUser(
+        'dev',
+        devUserId,
+        req.user.email || 'dev@scripttok.local',
+        req.user.name || 'Dev User'
+      );
+      req.internalUserId = internalUserId;
+      console.log(`[AuthGuard] ✅ Dev internal user ID attached after error: ${internalUserId}`);
     } catch (e) {
-      console.warn(`[AuthGuard] ⚠️ Could not look up dev internal user ID:`, e);
+      console.warn(`[AuthGuard] ⚠️ Could not create/find dev internal user ID:`, e);
     }
     
     next();
