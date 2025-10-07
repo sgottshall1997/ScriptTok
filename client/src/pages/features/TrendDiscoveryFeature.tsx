@@ -302,10 +302,10 @@ export default function TrendDiscoveryFeature() {
                         {trend.name}
                       </h3>
                       <div className="flex gap-2 flex-wrap mb-3">
-                        <Badge variant="outline" className="text-xs">
+                        <Badge variant="outline" className="text-xs" data-testid={`trend-platform-${index}`}>
                           {trend.platform}
                         </Badge>
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-xs" data-testid={`trend-type-${index}`}>
                           {trend.type}
                         </Badge>
                       </div>

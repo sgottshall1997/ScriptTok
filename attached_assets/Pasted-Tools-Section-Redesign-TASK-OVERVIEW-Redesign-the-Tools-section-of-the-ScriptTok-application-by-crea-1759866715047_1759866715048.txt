@@ -1,0 +1,343 @@
+Tools Section Redesign
+TASK OVERVIEW
+Redesign the Tools section of the ScriptTok application by creating 5 distinct tool tabs that match the structure and presentation style of Pictory's tool pages. DO NOT code anything yourself - carefully review the reference files first, then implement.
+
+REQUIRED FIRST STEP
+CAREFULLY REVIEW these three reference files to understand Pictory's tool page structure:
+
+server/Pictory/Pictory Tools/Pictory Tool - AI Video Generator.html
+server/Pictory/Pictory Tools/Tool - ChatGPT Video Generator.html
+server/Pictory/Pictory Tools/Tool - Script To Video Creation In Minutes with Pictory.html
+Study how Pictory structures each tool page: hero section, how-it-works steps, feature grids, visual demos, use cases, FAQs, and CTAs.
+
+TOOLS TO BUILD (5 TABS)
+1. TREND DISCOVERY TAB
+Replace: Current "Trend Forecaster" tab
+Purpose: Real-time trend analysis, competitor intelligence, and product research
+
+Page Structure (following Pictory pattern):
+
+Hero Section:
+
+Headline: "Discover What's Trending Before It Goes Viral"
+Subheadline: "AI-powered trend analysis that finds real-time opportunities across all platforms and recommends winning products for your niche"
+Primary CTA: "Start Finding Trends"
+Secondary CTA: "See Example Trends"
+How It Works (4-step process with icons):
+
+Real-Time Trend Scanning (Icon: TrendingUp)
+"AI monitors millions of posts across TikTok, Instagram, YouTube Shorts to identify emerging trends in your niche"
+Smart Product Matching (Icon: Package)
+"System analyzes trends and recommends products based on trend alignment AND your selected niche separately"
+Competitor Video Analysis (Icon: Users)
+"Pulls top-performing competitor videos for selected products/trends to understand what's working"
+AI Script Generation (Icon: Sparkles)
+"Feeds all trend data, product info, and competitor insights to ChatGPT to generate smart, viral-ready scripts"
+Key Features Grid (3 columns, 6 features total):
+
+Multi-Platform Trend Tracking (Globe icon)
+Niche-Specific Filtering (Filter icon)
+Product Recommendation Engine (Package icon)
+Competitor Intelligence (Users icon)
+Trend Velocity Scoring (BarChart3 icon)
+One-Click Script Generation (Zap icon)
+Visual Demo Section:
+
+Dashboard screenshot showing trending products
+Live trend data visualization
+Product recommendation cards
+Use Cases (3 examples):
+
+"Beauty Creator finds 'Glass Skin' trend early, gets 2M views"
+"Tech Reviewer discovers viral gadget before saturation, drives 10K sales"
+"Fitness Coach identifies emerging workout trend, builds audience"
+FAQ Section (5-7 questions):
+
+"How often are trends updated?"
+"Can I track trends in my specific niche?"
+"What's the difference between trend and product recommendations?"
+"How does competitor analysis work?"
+"Can I save trends for later?"
+Final CTA:
+
+"Start Discovering Viral Trends Today"
+Gradient background, large button
+2. SCRIPT GENERATOR TAB
+Keep: Existing name
+Purpose: Core content creation tool with viral & affiliate modes
+
+Page Structure:
+
+Hero Section:
+
+Headline: "Generate Scroll-Stopping Scripts in Seconds"
+Subheadline: "AI-powered script generation for viral content and affiliate conversions - choose your mode and watch the magic happen"
+Primary CTA: "Generate Your First Script"
+Secondary CTA: "View Sample Scripts"
+How It Works (4-step process):
+
+Choose Your Mode (Icon: Layers)
+"Select Viral Studio for engagement-focused content or Affiliate Studio for conversion-optimized scripts"
+Input Your Ideas (Icon: Lightbulb)
+"Add product details, trending topic, or use AI suggestions from Trend Discovery"
+AI Script Creation (Icon: Sparkles)
+"ChatGPT generates complete scripts with hooks, story flow, pacing, and platform-specific CTAs"
+Refine & Export (Icon: CheckCircle)
+"Edit, get viral score feedback, regenerate based on AI tips, then export ready-to-film scripts"
+Key Features Grid:
+
+Dual Studio Modes (Layers icon)
+Hook Generator (Zap icon)
+Story Flow Builder (BookOpen icon)
+CTA Optimizer (Target icon)
+Tone Adjuster (Volume2 icon)
+Multi-Platform Output (Share2 icon)
+Visual Demo:
+
+Split view of Viral vs Affiliate modes
+Script generation interface
+Before/after script examples
+Use Cases:
+
+"Creator generates 10 scripts in 10 minutes"
+"Affiliate marketer creates product review series"
+"Brand builds consistent content calendar"
+FAQ:
+
+"What's the difference between Viral and Affiliate modes?"
+"Can I customize generated scripts?"
+"How many scripts can I generate?"
+"Does it work for all platforms?"
+"Can I save my own templates?"
+3. TEMPLATE LIBRARY TAB
+Replace: Current "Template Selector"
+Purpose: Browse all niche-specific and content-type templates
+
+Page Structure:
+
+Hero Section:
+
+Headline: "20+ Proven Templates for Every Niche & Platform"
+Subheadline: "Pre-built viral formulas and affiliate frameworks tested across millions of views - just customize and create"
+Primary CTA: "Browse All Templates"
+Secondary CTA: "See Top Performers"
+How It Works (3-step process):
+
+Filter & Browse (Icon: Filter)
+"Search by niche (beauty, tech, fitness, etc.), content type (unboxing, review, tutorial), or platform"
+Preview Examples (Icon: Eye)
+"View real examples, performance stats, and template structure before selecting"
+Customize & Generate (Icon: Zap)
+"One-click to load template into Script Generator with your product/topic - AI pre-fills everything"
+Key Features Grid:
+
+Niche-Specific Templates (Hash icon)
+Content Type Filtering (Layers icon)
+Platform Optimization (Globe icon)
+Performance Stats (BarChart3 icon)
+Preview Mode (Eye icon)
+Quick Customization (Zap icon)
+Visual Demo:
+
+Template library grid view
+Filter sidebar demonstration
+Template preview cards with stats
+Template Categories Showcase:
+
+By Niche: Beauty (8), Tech (7), Fashion (6), Fitness (5), Food (5), Travel (4), Pets (3)
+By Content Type: Product Showcase, Before/After, Trending Hook, Tutorial, Review, Unboxing
+By Platform: TikTok (15-60s), Instagram Reels (15-90s), YouTube Shorts (15-60s)
+Top Performing Templates (with stats):
+
+"Viral Hook Opener" - 2.4M avg views
+"Product Unboxing Flow" - 15.7% conversion
+"Before & After Transformation" - 3.1M avg views
+FAQ:
+
+"How many templates are included?"
+"Can I create custom templates?"
+"Are templates niche-specific?"
+"Do templates work for both Viral and Affiliate modes?"
+"Which templates perform best?"
+4. VIRAL SCORE ANALYZER TAB
+Replace: Current "Calculator"
+Purpose: Score content and get AI improvement suggestions
+
+Page Structure:
+
+Hero Section:
+
+Headline: "Know Your Content Will Perform Before You Post"
+Subheadline: "AI-powered viral score predicts performance with precision - get specific improvement tips and regenerate scripts based on feedback"
+Primary CTA: "Score Your Content"
+Secondary CTA: "See How It Works"
+How It Works (4-step process):
+
+Paste Your Script (Icon: FileText)
+"Input any script - from Script Generator or external sources"
+AI Analysis (Icon: BarChart3)
+"System evaluates hook strength, story flow, CTA effectiveness, timing, and platform optimization"
+Get Viral Score & Tips (Icon: Target)
+"Receive 0-100 score with detailed breakdown and specific AI-powered improvement suggestions"
+Regenerate with Feedback (Icon: RefreshCw)
+"One-click to regenerate script implementing all AI suggestions - iterate until you hit 80+ score"
+Key Features Grid:
+
+0-100 Viral Score (Target icon)
+Hook Strength Analysis (Zap icon)
+Story Flow Evaluation (BookOpen icon)
+CTA Effectiveness Score (Target icon)
+AI Improvement Tips (Lightbulb icon)
+Auto-Regeneration (RefreshCw icon)
+Score Breakdown Visualization:
+
+Hook Quality (25% weight)
+Story Flow (25% weight)
+CTA Effectiveness (20% weight)
+Timing & Pacing (15% weight)
+Platform Optimization (15% weight)
+Visual Demo:
+
+Score dashboard with breakdown
+Before/after score comparison
+AI suggestions panel
+Regeneration workflow
+Use Cases:
+
+"Creator improves score from 65 to 87, gets 1M+ views"
+"Affiliate marketer optimizes conversion-focused scripts to 15% click-through"
+"Brand ensures all content meets 80+ threshold before posting"
+FAQ:
+
+"How accurate is the viral score?"
+"Can I improve my score?"
+"What's a good viral score to aim for?"
+"Does the score differ by platform?"
+"How does AI regeneration work?"
+5. HISTORY TAB
+Purpose: Store all previous generated content with ratings and trends
+
+Page Structure:
+
+Hero Section:
+
+Headline: "Your Complete Content Creation Archive"
+Subheadline: "Access every script, trend, and viral score - track performance, reuse winners, and learn from your best content"
+Primary CTA: "View History"
+Secondary CTA: "Export Data"
+How It Works (3-step process):
+
+Auto-Save Everything (Icon: Save)
+"Every generated script, trend analysis, and viral score automatically saved with timestamps"
+Search & Filter (Icon: Search)
+"Find content by niche, template, platform, date, or viral score - advanced filtering makes retrieval instant"
+Reuse & Analyze (Icon: BarChart3)
+"Copy successful scripts, view rating trends, export data, and identify your top-performing patterns"
+Key Features Grid:
+
+Content History (FileText icon)
+Trend History (TrendingUp icon)
+Rating System (Star icon)
+Advanced Search (Search icon)
+Performance Analytics (BarChart3 icon)
+Data Export (Download icon)
+History Categories (Tabs within History):
+
+Content History Tab:
+
+All generated scripts with metadata
+Viral scores and ratings
+Template used, niche, platform
+Date created, last modified
+Quick actions: Copy, Regenerate, Rate, Delete
+Trend History Tab:
+
+All discovered trends
+Product recommendations
+Competitor analysis data
+Trend velocity over time
+Quick actions: View Details, Generate Script, Archive
+Visual Demo:
+
+History dashboard interface
+Filter/search functionality
+Performance charts and analytics
+Export options
+Analytics Features:
+
+Top-performing templates
+Best-scoring content by niche
+Rating distribution graph
+Trend adoption success rate
+FAQ:
+
+"How long is history saved?"
+"Can I export my content history?"
+"How do ratings work?"
+"Can I delete old content?"
+"Is there a history limit?"
+IMPLEMENTATION REQUIREMENTS
+1. Component Structure (following Pictory):
+
+Create reusable <ToolPageSection> component
+Build <HowItWorksSteps> component for numbered processes
+Create <FeatureGrid> component for 3-column layouts
+Build <ToolFAQ> accordion component
+Create <ToolCTA> component for call-to-action sections
+2. Visual Design Matching:
+
+Use Pictory's color scheme: Purple/violet gradients for heroes
+White cards with subtle shadows for content blocks
+Consistent icon sizing and positioning
+Numbered circles for "How It Works" steps
+Gradient backgrounds for CTAs
+3. Responsive Behavior:
+
+Mobile: Stack all grids vertically
+Tablet: 2-column grids where applicable
+Desktop: Full 3-column layouts
+Consistent spacing across breakpoints
+4. Navigation Integration:
+
+Update MarketingNav.tsx toolsData array with new 5 tools
+Ensure dropdown shows all 5 tools with icons and descriptions
+Link each tool to its dedicated page/tab
+5. Data Integration:
+
+Connect Trend Discovery to /api/trending endpoints
+Link Script Generator to existing generation APIs
+Connect Template Library to template metadata
+Integrate Viral Score to scoring service
+Link History to content history and trend history APIs
+6. Content Flow:
+
+Each tool should have clear CTA linking to next logical step
+Trend Discovery → Script Generator → Viral Score → History
+Template Library can feed into Script Generator
+Maintain cross-linking between related tools
+7. Testing Checklist:
+
+ All 5 tabs render correctly
+ Navigation dropdowns updated
+ Mobile responsive on all tools
+ CTAs link to correct destinations
+ API integrations functional
+ FAQs expand/collapse properly
+ Visual demos display correctly
+FILES TO UPDATE
+client/src/components/MarketingNav.tsx - Update tools dropdown
+client/src/pages/tools/ - Create 5 new tool pages
+client/src/components/tools/ - Create reusable tool components
+Update routing in main App component
+SUCCESS CRITERIA
+✅ Each tool page follows exact Pictory structure
+✅ All 5 tools clearly explain their purpose and workflow
+✅ Visual consistency across all tool pages
+✅ Seamless navigation between tools
+✅ Mobile-responsive design
+✅ All CTAs and links functional
+✅ FAQ sections comprehensive
+✅ Integration with existing APIs complete
+
+FINAL INSTRUCTION TO REPLIT AGENT:
+Carefully review the three Pictory tool reference files first to fully understand their structure, then implement these 5 tool pages following the exact same pattern. Each tool must have: Hero → How It Works → Features Grid → Visual Demo → Use Cases → FAQ → Final CTA. Match Pictory's visual style, spacing, and component organization precisely.

@@ -272,8 +272,8 @@ export default function TemplateLibraryFeature() {
                           <Icon className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                         </div>
                         <div className="flex-1">
-                          <h3 className="text-lg font-semibold mb-1">{template.name}</h3>
-                          <p className="text-sm text-muted-foreground">{template.description}</p>
+                          <h3 className="text-lg font-semibold mb-1" data-testid={`type-template-name-${index}`}>{template.name}</h3>
+                          <p className="text-sm text-muted-foreground" data-testid={`type-template-description-${index}`}>{template.description}</p>
                         </div>
                       </div>
                     </Card>
@@ -302,14 +302,14 @@ export default function TemplateLibraryFeature() {
                         </div>
                         <div>
                           <div className="flex items-center justify-center gap-2 mb-2">
-                            <h3 className="text-xl font-semibold">{item.platform}</h3>
+                            <h3 className="text-xl font-semibold" data-testid={`platform-template-name-${index}`}>{item.platform}</h3>
                             {item.badge && (
-                              <Badge variant="secondary" className="text-xs">
+                              <Badge variant="secondary" className="text-xs" data-testid={`platform-template-badge-${index}`}>
                                 {item.badge}
                               </Badge>
                             )}
                           </div>
-                          <p className="text-muted-foreground">{item.count} Templates</p>
+                          <p className="text-muted-foreground" data-testid={`platform-template-count-${index}`}>{item.count} Templates</p>
                         </div>
                       </div>
                     </Card>
@@ -334,8 +334,8 @@ export default function TemplateLibraryFeature() {
                       <div className={`${item.color} p-3 rounded-full`}>
                         <Layout className="h-5 w-5" />
                       </div>
-                      <h4 className="font-semibold text-sm">{item.niche}</h4>
-                      <p className="text-xs text-muted-foreground">{item.count} templates</p>
+                      <h4 className="font-semibold text-sm" data-testid={`niche-template-name-${index}`}>{item.niche}</h4>
+                      <p className="text-xs text-muted-foreground" data-testid={`niche-template-count-${index}`}>{item.count} templates</p>
                     </div>
                   </Card>
                 ))}
@@ -361,9 +361,9 @@ export default function TemplateLibraryFeature() {
                           <Icon className="h-5 w-5 text-violet-600 dark:text-violet-400" />
                         </div>
                         <div>
-                          <h3 className="font-semibold mb-1">{item.duration}</h3>
-                          <p className="text-sm text-muted-foreground">{item.count} templates</p>
-                          <Badge variant="outline" className="text-xs mt-2">
+                          <h3 className="font-semibold mb-1" data-testid={`duration-template-duration-${index}`}>{item.duration}</h3>
+                          <p className="text-sm text-muted-foreground" data-testid={`duration-template-count-${index}`}>{item.count} templates</p>
+                          <Badge variant="outline" className="text-xs mt-2" data-testid={`duration-template-recommended-${index}`}>
                             {item.recommended}
                           </Badge>
                         </div>
@@ -397,16 +397,16 @@ export default function TemplateLibraryFeature() {
                     {template.name}
                   </h4>
                   <div className="flex flex-wrap gap-2">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs" data-testid={`all-template-niche-${index}`}>
                       {template.niche}
                     </Badge>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs" data-testid={`all-template-duration-${index}`}>
                       {template.duration}
                     </Badge>
                   </div>
                   <div className="flex gap-1 flex-wrap">
                     {template.platforms.map((platform, pIndex) => (
-                      <Badge key={pIndex} className="text-xs bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300">
+                      <Badge key={pIndex} className="text-xs bg-violet-100 dark:bg-violet-900 text-violet-700 dark:text-violet-300" data-testid={`all-template-platform-${index}-${pIndex}`}>
                         {platform}
                       </Badge>
                     ))}
@@ -457,24 +457,24 @@ export default function TemplateLibraryFeature() {
                 <div className="flex flex-col gap-4">
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
-                      <h3 className="text-lg font-bold mb-1">{template.name}</h3>
-                      <Badge variant="outline" className="text-xs">
+                      <h3 className="text-lg font-bold mb-1" data-testid={`top-performer-name-${index}`}>{template.name}</h3>
+                      <Badge variant="outline" className="text-xs" data-testid={`top-performer-niche-${index}`}>
                         {template.niche}
                       </Badge>
                     </div>
                     <Star className="h-5 w-5 text-yellow-500 fill-yellow-500" />
                   </div>
-                  <p className="text-sm text-muted-foreground">{template.description}</p>
+                  <p className="text-sm text-muted-foreground" data-testid={`top-performer-description-${index}`}>{template.description}</p>
                   <div className="grid grid-cols-2 gap-4 pt-4 border-t">
                     <div>
                       <p className="text-xs text-muted-foreground">Avg. Views</p>
-                      <p className="text-lg font-bold text-violet-600 dark:text-violet-400">
+                      <p className="text-lg font-bold text-violet-600 dark:text-violet-400" data-testid={`top-performer-avg-views-${index}`}>
                         {template.avgViews}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-muted-foreground">Conversion</p>
-                      <p className="text-lg font-bold text-violet-600 dark:text-violet-400">
+                      <p className="text-lg font-bold text-violet-600 dark:text-violet-400" data-testid={`top-performer-conversion-${index}`}>
                         {template.conversionRate}
                       </p>
                     </div>

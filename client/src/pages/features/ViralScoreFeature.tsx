@@ -205,10 +205,10 @@ export default function ViralScoreFeature() {
                   {scoreBreakdown.map((item, index) => (
                     <div key={index} className="border-l-4 border-violet-500 pl-4 py-2" data-testid={`breakdown-item-${index}`}>
                       <div className="flex justify-between items-center mb-2">
-                        <h4 className="font-semibold">{item.category}</h4>
-                        <Badge variant="secondary">{item.percentage}%</Badge>
+                        <h4 className="font-semibold" data-testid={`breakdown-category-${index}`}>{item.category}</h4>
+                        <Badge variant="secondary" data-testid={`breakdown-percentage-${index}`}>{item.percentage}%</Badge>
                       </div>
-                      <p className="text-sm text-muted-foreground">{item.description}</p>
+                      <p className="text-sm text-muted-foreground" data-testid={`breakdown-description-${index}`}>{item.description}</p>
                     </div>
                   ))}
                 </div>
@@ -275,17 +275,17 @@ export default function ViralScoreFeature() {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="border rounded-xl p-4">
-                    <h4 className="font-semibold mb-2">TikTok</h4>
-                    <p className="text-sm text-muted-foreground">Prioritizes hook strength, trending sounds, and watch-time retention. Quick pacing scores higher.</p>
+                  <div className="border rounded-xl p-4" data-testid="platform-scoring-0">
+                    <h4 className="font-semibold mb-2" data-testid="platform-scoring-name-0">TikTok</h4>
+                    <p className="text-sm text-muted-foreground" data-testid="platform-scoring-description-0">Prioritizes hook strength, trending sounds, and watch-time retention. Quick pacing scores higher.</p>
                   </div>
-                  <div className="border rounded-xl p-4">
-                    <h4 className="font-semibold mb-2">Instagram Reels</h4>
-                    <p className="text-sm text-muted-foreground">Values aesthetic appeal, hashtag strategy, and share potential. Visual hooks are weighted heavily.</p>
+                  <div className="border rounded-xl p-4" data-testid="platform-scoring-1">
+                    <h4 className="font-semibold mb-2" data-testid="platform-scoring-name-1">Instagram Reels</h4>
+                    <p className="text-sm text-muted-foreground" data-testid="platform-scoring-description-1">Values aesthetic appeal, hashtag strategy, and share potential. Visual hooks are weighted heavily.</p>
                   </div>
-                  <div className="border rounded-xl p-4">
-                    <h4 className="font-semibold mb-2">YouTube Shorts</h4>
-                    <p className="text-sm text-muted-foreground">Emphasizes retention rate, subscriber conversion, and content depth. Longer retention = higher score.</p>
+                  <div className="border rounded-xl p-4" data-testid="platform-scoring-2">
+                    <h4 className="font-semibold mb-2" data-testid="platform-scoring-name-2">YouTube Shorts</h4>
+                    <p className="text-sm text-muted-foreground" data-testid="platform-scoring-description-2">Emphasizes retention rate, subscriber conversion, and content depth. Longer retention = higher score.</p>
                   </div>
                 </div>
               </Card>
@@ -305,29 +305,29 @@ export default function ViralScoreFeature() {
                   </div>
                 </div>
                 <div className="space-y-4">
-                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4" data-testid="success-story-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary">Beauty Creator</Badge>
-                      <Badge className="bg-green-600">Score: 87</Badge>
+                      <Badge variant="secondary" data-testid="success-story-niche-0">Beauty Creator</Badge>
+                      <Badge className="bg-green-600" data-testid="success-story-score-0">Score: 87</Badge>
                     </div>
-                    <p className="text-sm mb-2">"I went from 50K to 500K followers in 3 months by only posting scripts with 80+ scores."</p>
-                    <p className="text-xs text-muted-foreground">Result: 2.3M views average per video</p>
+                    <p className="text-sm mb-2" data-testid="success-story-quote-0">"I went from 50K to 500K followers in 3 months by only posting scripts with 80+ scores."</p>
+                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-0">Result: 2.3M views average per video</p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4" data-testid="success-story-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary">Tech Reviewer</Badge>
-                      <Badge className="bg-green-600">Score: 82</Badge>
+                      <Badge variant="secondary" data-testid="success-story-niche-1">Tech Reviewer</Badge>
+                      <Badge className="bg-green-600" data-testid="success-story-score-1">Score: 82</Badge>
                     </div>
-                    <p className="text-sm mb-2">"The AI caught weak hooks I would have missed. Now I know before I film if it'll perform."</p>
-                    <p className="text-xs text-muted-foreground">Result: 3x increase in engagement rate</p>
+                    <p className="text-sm mb-2" data-testid="success-story-quote-1">"The AI caught weak hooks I would have missed. Now I know before I film if it'll perform."</p>
+                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-1">Result: 3x increase in engagement rate</p>
                   </div>
-                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4">
+                  <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4" data-testid="success-story-2">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary">Fitness Coach</Badge>
-                      <Badge className="bg-green-600">Score: 91</Badge>
+                      <Badge variant="secondary" data-testid="success-story-niche-2">Fitness Coach</Badge>
+                      <Badge className="bg-green-600" data-testid="success-story-score-2">Score: 91</Badge>
                     </div>
-                    <p className="text-sm mb-2">"Every video above 85 has hit over 1M views. It's like having a crystal ball."</p>
-                    <p className="text-xs text-muted-foreground">Result: 5 viral videos in a row (1M+ views each)</p>
+                    <p className="text-sm mb-2" data-testid="success-story-quote-2">"Every video above 85 has hit over 1M views. It's like having a crystal ball."</p>
+                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-2">Result: 5 viral videos in a row (1M+ views each)</p>
                   </div>
                 </div>
               </Card>
@@ -352,11 +352,11 @@ export default function ViralScoreFeature() {
               {scoreBreakdown.map((item, index) => (
                 <div key={index} data-testid={`framework-item-${index}`}>
                   <div className="flex justify-between items-center mb-2">
-                    <h4 className="font-semibold text-lg">{item.category}</h4>
-                    <span className="text-2xl font-bold text-violet-600 dark:text-violet-400">{item.percentage}%</span>
+                    <h4 className="font-semibold text-lg" data-testid={`framework-category-${index}`}>{item.category}</h4>
+                    <span className="text-2xl font-bold text-violet-600 dark:text-violet-400" data-testid={`framework-percentage-${index}`}>{item.percentage}%</span>
                   </div>
-                  <Progress value={item.percentage} className="h-3 mb-2" />
-                  <p className="text-sm text-muted-foreground">{item.description}</p>
+                  <Progress value={item.percentage} className="h-3 mb-2" data-testid={`framework-progress-${index}`} />
+                  <p className="text-sm text-muted-foreground" data-testid={`framework-description-${index}`}>{item.description}</p>
                 </div>
               ))}
             </div>
@@ -381,7 +381,7 @@ export default function ViralScoreFeature() {
                 <div className={`text-6xl font-bold mb-2 ${getScoreColor(demoScore)}`} data-testid="demo-score-value">
                   {demoScore}
                 </div>
-                <Badge variant="secondary" className="mb-4">{getScoreLabel(demoScore)}</Badge>
+                <Badge variant="secondary" className="mb-4" data-testid="demo-score-label">{getScoreLabel(demoScore)}</Badge>
                 <p className="text-sm text-muted-foreground">
                   Adjust the score to see different performance predictions
                 </p>

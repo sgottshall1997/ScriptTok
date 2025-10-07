@@ -180,8 +180,8 @@ export default function AIScriptGeneratorFeature() {
                     <TrendingUp className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Capitalize on Trending Topics</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-2xl font-bold mb-2" data-testid="trends-tab-title">Capitalize on Trending Topics</h3>
+                    <p className="text-muted-foreground" data-testid="trends-tab-description">
                       Browse our real-time trend discovery feed, select a trending topic, and let AI
                       generate scripts that ride the wave of what's hot right now.
                     </p>
@@ -211,8 +211,8 @@ export default function AIScriptGeneratorFeature() {
                     <Package className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Product-Focused Scripts</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-2xl font-bold mb-2" data-testid="products-tab-title">Product-Focused Scripts</h3>
+                    <p className="text-muted-foreground" data-testid="products-tab-description">
                       Input a product name or URL, and AI creates compelling scripts highlighting
                       features, benefits, and conversion-optimized CTAs.
                     </p>
@@ -242,8 +242,8 @@ export default function AIScriptGeneratorFeature() {
                     <Lightbulb className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Turn Ideas Into Scripts</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-2xl font-bold mb-2" data-testid="ideas-tab-title">Turn Ideas Into Scripts</h3>
+                    <p className="text-muted-foreground" data-testid="ideas-tab-description">
                       Have a content idea? Describe it in a few words and let AI transform it into
                       a fully structured, engaging video script.
                     </p>
@@ -273,8 +273,8 @@ export default function AIScriptGeneratorFeature() {
                     <Users className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Learn From Top Performers</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-2xl font-bold mb-2" data-testid="competitors-tab-title">Learn From Top Performers</h3>
+                    <p className="text-muted-foreground" data-testid="competitors-tab-description">
                       Analyze successful competitor content and generate similar scripts with your
                       unique twist and brand voice.
                     </p>
@@ -320,10 +320,10 @@ export default function AIScriptGeneratorFeature() {
                     {template.name}
                   </h4>
                   <div className="flex gap-2">
-                    <Badge variant="outline" className="text-xs">
+                    <Badge variant="outline" className="text-xs" data-testid={`template-niche-${index}`}>
                       {template.niche}
                     </Badge>
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs" data-testid={`template-duration-${index}`}>
                       {template.duration}
                     </Badge>
                   </div>

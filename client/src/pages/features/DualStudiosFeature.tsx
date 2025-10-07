@@ -183,8 +183,8 @@ export default function DualStudiosFeature() {
 
             <TabsContent value="content-creators" className="mt-8" data-testid="content-creators-content">
               <Card className="rounded-2xl p-8">
-                <h3 className="text-2xl font-bold mb-4">Build Your Audience First</h3>
-                <p className="text-muted-foreground mb-6">
+                <h3 className="text-2xl font-bold mb-4" data-testid="content-creators-tab-title">Build Your Audience First</h3>
+                <p className="text-muted-foreground mb-6" data-testid="content-creators-tab-description">
                   Start with Viral Studio to grow your following with trending, engaging content.
                   Once you've built an audience, seamlessly switch to Affiliate Studio to monetize
                   your influence.
@@ -192,15 +192,15 @@ export default function DualStudiosFeature() {
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Sparkles className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Create viral content that attracts followers and builds community</span>
+                    <span data-testid="content-creators-feature-0">Create viral content that attracts followers and builds community</span>
                   </li>
                   <li className="flex items-start">
                     <Target className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Transition to affiliate content when ready to monetize</span>
+                    <span data-testid="content-creators-feature-1">Transition to affiliate content when ready to monetize</span>
                   </li>
                   <li className="flex items-start">
                     <BarChart className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Track growth metrics across both content types</span>
+                    <span data-testid="content-creators-feature-2">Track growth metrics across both content types</span>
                   </li>
                 </ul>
               </Card>
@@ -208,23 +208,23 @@ export default function DualStudiosFeature() {
 
             <TabsContent value="affiliate-marketers" className="mt-8" data-testid="affiliate-marketers-content">
               <Card className="rounded-2xl p-8">
-                <h3 className="text-2xl font-bold mb-4">Revenue-Focused From Day One</h3>
-                <p className="text-muted-foreground mb-6">
+                <h3 className="text-2xl font-bold mb-4" data-testid="affiliate-marketers-tab-title">Revenue-Focused From Day One</h3>
+                <p className="text-muted-foreground mb-6" data-testid="affiliate-marketers-tab-description">
                   Use Affiliate Studio to create conversion-optimized content for product promotions.
                   Occasionally switch to Viral Studio to expand reach and attract new potential customers.
                 </p>
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Target className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Generate product-focused scripts with built-in conversion tactics</span>
+                    <span data-testid="affiliate-marketers-feature-0">Generate product-focused scripts with built-in conversion tactics</span>
                   </li>
                   <li className="flex items-start">
                     <Sparkles className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Create occasional viral content to grow your audience</span>
+                    <span data-testid="affiliate-marketers-feature-1">Create occasional viral content to grow your audience</span>
                   </li>
                   <li className="flex items-start">
                     <BarChart className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Analyze which content types drive the most sales</span>
+                    <span data-testid="affiliate-marketers-feature-2">Analyze which content types drive the most sales</span>
                   </li>
                 </ul>
               </Card>
@@ -232,8 +232,8 @@ export default function DualStudiosFeature() {
 
             <TabsContent value="hybrid-creators" className="mt-8" data-testid="hybrid-creators-content">
               <Card className="rounded-2xl p-8">
-                <h3 className="text-2xl font-bold mb-4">Best of Both Worlds</h3>
-                <p className="text-muted-foreground mb-6">
+                <h3 className="text-2xl font-bold mb-4" data-testid="hybrid-creators-tab-title">Best of Both Worlds</h3>
+                <p className="text-muted-foreground mb-6" data-testid="hybrid-creators-tab-description">
                   Master creators use both studios strategically—viral content for growth,
                   affiliate content for revenue. Switch between them based on trends, opportunities,
                   and business goals.
@@ -241,15 +241,15 @@ export default function DualStudiosFeature() {
                 <ul className="space-y-3">
                   <li className="flex items-start">
                     <Repeat className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Balance viral engagement with steady affiliate revenue</span>
+                    <span data-testid="hybrid-creators-feature-0">Balance viral engagement with steady affiliate revenue</span>
                   </li>
                   <li className="flex items-start">
                     <Cpu className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Let AI optimize content for each studio's unique goals</span>
+                    <span data-testid="hybrid-creators-feature-1">Let AI optimize content for each studio's unique goals</span>
                   </li>
                   <li className="flex items-start">
                     <BarChart className="h-5 w-5 text-violet-600 mr-3 mt-0.5 flex-shrink-0" />
-                    <span>Unified analytics show complete performance picture</span>
+                    <span data-testid="hybrid-creators-feature-2">Unified analytics show complete performance picture</span>
                   </li>
                 </ul>
               </Card>

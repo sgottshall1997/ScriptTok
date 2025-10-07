@@ -298,10 +298,10 @@ export default function MultiPlatformFeature() {
                 <TableBody>
                   {platformComparison.map((row, index) => (
                     <TableRow key={index} data-testid={`comparison-row-${index}`}>
-                      <TableCell className="font-semibold">{row.feature}</TableCell>
-                      <TableCell className="text-center" data-testid={`tiktok-${index}`}>{row.tiktok}</TableCell>
-                      <TableCell className="text-center" data-testid={`instagram-${index}`}>{row.instagram}</TableCell>
-                      <TableCell className="text-center" data-testid={`youtube-${index}`}>{row.youtube}</TableCell>
+                      <TableCell className="font-semibold" data-testid={`comparison-feature-${index}`}>{row.feature}</TableCell>
+                      <TableCell className="text-center" data-testid={`comparison-tiktok-${index}`}>{row.tiktok}</TableCell>
+                      <TableCell className="text-center" data-testid={`comparison-instagram-${index}`}>{row.instagram}</TableCell>
+                      <TableCell className="text-center" data-testid={`comparison-youtube-${index}`}>{row.youtube}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -347,28 +347,28 @@ export default function MultiPlatformFeature() {
                         <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-xs text-muted-foreground">Duration</p>
-                          <p className="text-sm font-semibold">{platform.specs.duration}</p>
+                          <p className="text-sm font-semibold" data-testid={`platform-duration-${index}`}>{platform.specs.duration}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-xs text-muted-foreground">Aspect Ratio</p>
-                          <p className="text-sm font-semibold">{platform.specs.aspectRatio}</p>
+                          <p className="text-sm font-semibold" data-testid={`platform-aspect-ratio-${index}`}>{platform.specs.aspectRatio}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-xs text-muted-foreground">Hashtags</p>
-                          <p className="text-sm font-semibold">{platform.specs.hashtags}</p>
+                          <p className="text-sm font-semibold" data-testid={`platform-hashtags-${index}`}>{platform.specs.hashtags}</p>
                         </div>
                       </div>
                       <div className="flex items-start gap-2">
                         <CheckCircle className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-xs text-muted-foreground">Caption Style</p>
-                          <p className="text-sm font-semibold">{platform.specs.captionStyle}</p>
+                          <p className="text-sm font-semibold" data-testid={`platform-caption-style-${index}`}>{platform.specs.captionStyle}</p>
                         </div>
                       </div>
                     </div>
