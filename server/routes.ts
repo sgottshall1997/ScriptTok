@@ -171,22 +171,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Basic usage tracking endpoint
-  app.get('/api/usage', async (req, res) => {
-    try {
-      const today = await storage.getTodayApiUsage();
-      
-      res.json({
-        today,
-        weekly: 0, // Simplified for TikTok Viral Product Generator
-        monthly: 0,
-        limit: 500 // Monthly limit
-      });
-    } catch (error) {
-      console.error("Error fetching API usage:", error);
-      res.status(500).json({ error: "Failed to fetch API usage" });
-    }
-  });
+  // DISABLED: Basic usage tracking endpoint - storage.getTodayApiUsage() method doesn't exist
+  // app.get('/api/usage', async (req, res) => {
+  //   try {
+  //     const today = await storage.getTodayApiUsage();
+  //     
+  //     res.json({
+  //       today,
+  //       weekly: 0, // Simplified for TikTok Viral Product Generator
+  //       monthly: 0,
+  //       limit: 500 // Monthly limit
+  //     });
+  //   } catch (error: any) {
+  //     console.error("Error fetching API usage:", error);
+  //     res.status(500).json({ error: "Failed to fetch API usage" });
+  //   }
+  // });
 
   // Prompt structure endpoint for Template Explorer transparency
   app.post('/api/prompt-structure', async (req, res) => {
@@ -232,7 +232,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tone: promptStructure.templateMetadata.tone,
         contentFormat: promptStructure.templateMetadata.contentFormat
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error generating prompt structure:', error);
       res.status(500).json({
         error: 'Failed to generate prompt structure',
@@ -241,36 +241,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // Get scraper health endpoint
-  app.get('/api/scraper-health', async (req, res) => {
-    try {
-      const scraperHealth = await storage.getScraperStatus();
-      res.json(scraperHealth);
-    } catch (error) {
-      console.error("Error fetching scraper health:", error);
-      res.status(500).json({ error: "Failed to fetch scraper health" });
-    }
-  });
+  // DISABLED: Get scraper health endpoint - storage.getScraperStatus() method doesn't exist
+  // app.get('/api/scraper-health', async (req, res) => {
+  //   try {
+  //     const scraperHealth = await storage.getScraperStatus();
+  //     res.json(scraperHealth);
+  //   } catch (error: any) {
+  //     console.error("Error fetching scraper health:", error);
+  //     res.status(500).json({ error: "Failed to fetch scraper health" });
+  //   }
+  // });
   
-  // Get API usage endpoint
-  app.get('/api/usage', async (req, res) => {
-    try {
-      const apiUsage = await storage.getApiUsageStats();
-      const today = await storage.getTodayApiUsage();
-      const weeklyUsage = await storage.getWeeklyApiUsage();
-      const monthlyUsage = await storage.getMonthlyApiUsage();
-      
-      res.json({
-        today,
-        weekly: weeklyUsage,
-        monthly: monthlyUsage,
-        limit: 500 // Monthly limit
-      });
-    } catch (error) {
-      console.error("Error fetching API usage:", error);
-      res.status(500).json({ error: "Failed to fetch API usage" });
-    }
-  });
+  // DISABLED: Get API usage endpoint - multiple storage methods don't exist
+  // app.get('/api/usage', async (req, res) => {
+  //   try {
+  //     const apiUsage = await storage.getApiUsageStats();
+  //     const today = await storage.getTodayApiUsage();
+  //     const weeklyUsage = await storage.getWeeklyApiUsage();
+  //     const monthlyUsage = await storage.getMonthlyApiUsage();
+  //     
+  //     res.json({
+  //       today,
+  //       weekly: weeklyUsage,
+  //       monthly: monthlyUsage,
+  //       limit: 500 // Monthly limit
+  //     });
+  //   } catch (error: any) {
+  //     console.error("Error fetching API usage:", error);
+  //     res.status(500).json({ error: "Failed to fetch API usage" });
+  //   }
+  // });
 
   // Cooking content endpoints
   app.get('/api/cooking/ingredient-of-day', async (req, res) => {
@@ -300,7 +300,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       // Cooking pipeline removed for streamlined TikTok Viral Product Generator
-      const recipes = [];
+      const recipes: any[] = [];
       res.json({ recipes });
     } catch (error) {
       console.error("Error generating recipe:", error);
@@ -322,13 +322,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/cooking/generate-daily-batch', async (req, res) => {
     try {
       // Daily batch generation removed for streamlined TikTok Viral Product Generator
-      const batchRecipes = [];
+      const batchRecipes: any[] = [];
       
       // Group recipes by skill level for better organization
       const groupedBySkill = {
-        'Elite Chef': batchRecipes.filter(recipe => recipe.script.includes('elite chefs')),
-        'Skilled Home Chef': batchRecipes.filter(recipe => recipe.script.includes('skilled home chefs')),
-        'Beginner': batchRecipes.filter(recipe => recipe.script.includes('beginners'))
+        'Elite Chef': batchRecipes.filter((recipe: any) => recipe.script.includes('elite chefs')),
+        'Skilled Home Chef': batchRecipes.filter((recipe: any) => recipe.script.includes('skilled home chefs')),
+        'Beginner': batchRecipes.filter((recipe: any) => recipe.script.includes('beginners'))
       };
       
       res.json({ batchRecipes: groupedBySkill });
@@ -585,51 +585,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Amazon Beauty Products endpoint
-  app.get('/api/trending-amazon-beauty', async (req, res) => {
-    try {
-      const { getTrendingAmazonProducts } = await import('./scrapers/amazonBeauty.js');
-      const products = await getTrendingAmazonProducts();
-      
-      res.json({ 
-        success: true, 
-        data: products,
-        count: products.length,
-        niches: 7,
-        productsPerNiche: 4
-      });
-      
-    } catch (error) {
-      console.error('Amazon beauty scraping error:', error);
-      res.status(500).json({ 
-        success: false, 
-        error: 'Failed to fetch Amazon beauty products' 
-      });
-    }
-  });
+  // DISABLED: Amazon Beauty Products endpoint - './scrapers/amazonBeauty.js' module doesn't exist
+  // app.get('/api/trending-amazon-beauty', async (req, res) => {
+  //   try {
+  //     const { getTrendingAmazonProducts } = await import('./scrapers/amazonBeauty.js');
+  //     const products = await getTrendingAmazonProducts();
+  //     
+  //     res.json({ 
+  //       success: true, 
+  //       data: products,
+  //       count: products.length,
+  //       niches: 7,
+  //       productsPerNiche: 4
+  //     });
+  //     
+  //   } catch (error: any) {
+  //     console.error('Amazon beauty scraping error:', error);
+  //     res.status(500).json({ 
+  //       success: false, 
+  //       error: 'Failed to fetch Amazon beauty products' 
+  //     });
+  //   }
+  // });
 
-  // Amazon Beauty Products by specific niche
-  app.get('/api/trending-amazon-beauty/:niche', async (req, res) => {
-    try {
-      const { getTrendingAmazonProductsByNiche } = await import('./scrapers/amazonBeauty.js');
-      const { niche } = req.params;
-      const products = await getTrendingAmazonProductsByNiche(niche);
-      
-      res.json({ 
-        success: true, 
-        data: products,
-        niche: niche,
-        count: products.length
-      });
-      
-    } catch (error) {
-      console.error(`Amazon beauty scraping error for ${req.params.niche}:`, error);
-      res.status(500).json({ 
-        success: false, 
-        error: `Failed to fetch Amazon beauty products for ${req.params.niche}` 
-      });
-    }
-  });
+  // DISABLED: Amazon Beauty Products by specific niche - './scrapers/amazonBeauty.js' module doesn't exist
+  // app.get('/api/trending-amazon-beauty/:niche', async (req, res) => {
+  //   try {
+  //     const { getTrendingAmazonProductsByNiche } = await import('./scrapers/amazonBeauty.js');
+  //     const { niche } = req.params;
+  //     const products = await getTrendingAmazonProductsByNiche(niche);
+  //     
+  //     res.json({ 
+  //       success: true, 
+  //       data: products,
+  //       niche: niche,
+  //       count: products.length
+  //     });
+  //     
+  //   } catch (error: any) {
+  //     console.error(`Amazon beauty scraping error for ${req.params.niche}:`, error);
+  //     res.status(500).json({ 
+  //       success: false, 
+  //       error: `Failed to fetch Amazon beauty products for ${req.params.niche}` 
+  //     });
+  //   }
+  // });
 
   // NEW FEATURES: Cross-platform scheduling, bulk generation, and performance analytics
   
@@ -702,7 +702,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: testPassed ? 'All scheduled generation tests passed!' : 'Some tests failed - check console logs',
         timestamp: new Date().toISOString()
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Test endpoint error:', error);
       res.status(500).json({
         success: false,
@@ -742,7 +742,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         testResults,
         timestamp: new Date().toISOString()
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Comprehensive safeguard test error:', error);
       res.status(500).json({
         success: false,
@@ -780,25 +780,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         await db.execute('SELECT 1');
         healthStatus.database.connected = true;
-      } catch (dbError) {
+      } catch (dbError: any) {
         healthStatus.database.connected = false;
         healthStatus.database.error = dbError.message;
         healthStatus.status = 'degraded';
       }
       
       // Check if any critical dependencies are missing
-      const criticalDeps = ['openai', 'anthropic', 'database'];
+      const criticalDeps: (keyof typeof healthStatus.dependencies)[] = ['openai', 'anthropic', 'database'];
       const missingDeps = criticalDeps.filter(dep => !healthStatus.dependencies[dep]);
       
       if (missingDeps.length > 0) {
         healthStatus.status = 'degraded';
-        healthStatus.missingDependencies = missingDeps;
+        (healthStatus as any).missingDependencies = missingDeps;
       }
       
       const statusCode = healthStatus.status === 'healthy' ? 200 : 503;
       res.status(statusCode).json(healthStatus);
       
-    } catch (error) {
+    } catch (error: any) {
       res.status(500).json({
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
