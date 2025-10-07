@@ -38,6 +38,9 @@ import TrustSafetyPage from "@/pages/TrustSafety";
 import DualStudiosFeature from "@/pages/features/DualStudiosFeature";
 import AIScriptGeneratorFeature from "@/pages/features/AIScriptGeneratorFeature";
 import TemplateLibraryFeature from "@/pages/features/TemplateLibraryFeature";
+import TrendDiscoveryFeature from "@/pages/features/TrendDiscoveryFeature";
+import ViralScoreFeature from "@/pages/features/ViralScoreFeature";
+import MultiPlatformFeature from "@/pages/features/MultiPlatformFeature";
 
 import Layout from "@/components/Layout";
 import MarketingLayout from "@/components/MarketingLayout";
@@ -81,6 +84,21 @@ function MainAppRouter() {
       <Route path="/features/template-library">
         <MarketingLayout>
           <TemplateLibraryFeature />
+        </MarketingLayout>
+      </Route>
+      <Route path="/features/trend-discovery">
+        <MarketingLayout>
+          <TrendDiscoveryFeature />
+        </MarketingLayout>
+      </Route>
+      <Route path="/features/viral-score">
+        <MarketingLayout>
+          <ViralScoreFeature />
+        </MarketingLayout>
+      </Route>
+      <Route path="/features/multi-platform">
+        <MarketingLayout>
+          <MultiPlatformFeature />
         </MarketingLayout>
       </Route>
       
