@@ -38,7 +38,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Auth endpoint
   app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const user = await storage.getUser(userId);
       res.json(user);
     } catch (error) {
@@ -99,13 +99,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // app.use('/api/product-research', productResearchRouter);
 
   
-  // Content history alias endpoint
-  app.get('/api/content-history', async (req, res) => {
+  // Content history alias endpoint (protected)
+  app.get('/api/content-history', isAuthenticated, async (req: any, res) => {
     try {
+      const userId = req.user.claims.sub;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
       
-      const history = await storage.getAllContentHistory(limit, offset);
+      const history = await storage.getContentHistory(userId, limit);
       
       res.json({
         success: true,

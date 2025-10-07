@@ -3,16 +3,18 @@ import { storage } from '../storage';
 import { insertContentHistorySchema, contentHistory } from '@shared/schema';
 import { z } from 'zod';
 import { db } from '../db';
+import { isAuthenticated } from '../replitAuth';
 
 const router = express.Router();
 
-// GET /api/history - Get all content history with pagination
-router.get('/', async (req, res) => {
+// GET /api/history - Get all content history with pagination (filtered by authenticated user)
+router.get('/', isAuthenticated, async (req, res) => {
   try {
+    const userId = (req as any).user.claims.sub;
     const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
     const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
     
-    const history = await storage.getAllContentHistory(limit, offset);
+    const history = await storage.getContentHistory(userId, limit);
     
     res.json({
       success: true,
@@ -54,9 +56,10 @@ router.post("/clear-all", async (req, res) => {
   }
 });
 
-// GET /api/history/:id - Get content history by id
-router.get('/:id', async (req, res) => {
+// GET /api/history/:id - Get content history by id (filtered by authenticated user)
+router.get('/:id', isAuthenticated, async (req, res) => {
   try {
+    const userId = (req as any).user.claims.sub;
     const id = parseInt(req.params.id);
     if (isNaN(id)) {
       return res.status(400).json({ 
@@ -65,7 +68,7 @@ router.get('/:id', async (req, res) => {
       });
     }
     
-    const historyItem = await storage.getContentHistoryById(id);
+    const historyItem = await storage.getContentHistoryById(id, userId);
     
     if (!historyItem) {
       return res.status(404).json({ 
@@ -88,72 +91,11 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// GET /api/history/niche/:niche - Get content history by niche
-router.get('/niche/:niche', async (req, res) => {
+// POST /api/history - Save content history (protected)
+router.post('/', isAuthenticated, async (req: any, res) => {
   try {
-    const niche = req.params.niche;
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
-    const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+    const userId = req.user.claims.sub;
     
-    const history = await storage.getContentHistoryByNiche(niche, limit, offset);
-    
-    res.json({
-      success: true,
-      history,
-      pagination: {
-        limit,
-        offset,
-        total: history.length
-      }
-    });
-  } catch (error: any) {
-    console.error(`Error fetching content history for niche ${req.params.niche}:`, error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch content history by niche',
-      message: error.message
-    });
-  }
-});
-
-// GET /api/history/user/:userId - Get content history by user ID
-router.get('/user/:userId', async (req, res) => {
-  try {
-    const userId = parseInt(req.params.userId);
-    if (isNaN(userId)) {
-      return res.status(400).json({ 
-        success: false, 
-        error: 'Invalid user ID parameter'
-      });
-    }
-    
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
-    const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
-    
-    const history = await storage.getContentHistoryByUserId(userId, limit, offset);
-    
-    res.json({
-      success: true,
-      history,
-      pagination: {
-        limit,
-        offset,
-        total: history.length
-      }
-    });
-  } catch (error: any) {
-    console.error(`Error fetching content history for user #${req.params.userId}:`, error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to fetch content history by user',
-      message: error.message
-    });
-  }
-});
-
-// POST /api/history - Save content history
-router.post('/', async (req, res) => {
-  try {
     // Validate request body against schema
     const result = insertContentHistorySchema.safeParse(req.body);
     
@@ -165,7 +107,11 @@ router.post('/', async (req, res) => {
       });
     }
     
-    const contentHistoryData = result.data;
+    // Ensure userId is set from authenticated user
+    const contentHistoryData = {
+      ...result.data,
+      userId
+    };
     const savedHistory = await storage.saveContentHistory(contentHistoryData);
     
     res.status(201).json({
@@ -177,33 +123,6 @@ router.post('/', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       error: 'Failed to save content history',
-      message: error.message
-    });
-  }
-});
-
-// DELETE /api/history/:id - Delete content history entry
-router.delete('/:id', async (req, res) => {
-  try {
-    const id = parseInt(req.params.id);
-    if (isNaN(id)) {
-      return res.status(400).json({
-        success: false,
-        error: 'Invalid ID format'
-      });
-    }
-    
-    await storage.deleteContentHistory(id);
-    
-    res.json({
-      success: true,
-      message: 'Content history entry deleted successfully'
-    });
-  } catch (error: any) {
-    console.error('Error deleting content history:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to delete content history entry',
       message: error.message
     });
   }

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
-import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES } from "@shared/constants";
+import { TEMPLATE_TYPES, TONE_OPTIONS, NICHES, TemplateType, ToneOption, Niche } from "@shared/constants";
 import { storage } from "../storage";
 import { generateContent, estimateVideoDuration } from "../services/contentGenerator";
 import { generateVideoContent } from "../services/videoContentGenerator";
@@ -10,6 +10,7 @@ import { insertContentHistorySchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
+import { isAuthenticated } from "../replitAuth";
 
 // Helper function to extract hashtags from text
 function extractHashtags(text: string): string[] {
@@ -186,7 +187,7 @@ const contentCache = new CacheService<CachedContent>({
   maxSize: 500 // Store up to 500 generations
 });
 
-router.post("/", contentGenerationLimiter, async (req, res) => {
+router.post("/", isAuthenticated, contentGenerationLimiter, async (req, res) => {
   try {
     // Validate request body against schema
     const result = generateContentSchema.safeParse(req.body);
@@ -276,8 +277,11 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       }
     }
 
-    const { product, viralTopic, contentMode = 'affiliate', tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength, useSmartStyle, userId } = result.data;
+    const { product, viralTopic, contentMode = 'affiliate', tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength, useSmartStyle } = result.data;
     const templateType = finalTemplateType;
+    
+    // Get authenticated userId
+    const userId = (req as any).user.claims.sub;
     
     // Determine the main subject based on content mode
     const mainSubject = contentMode === 'viral' ? viralTopic : product;
@@ -393,6 +397,26 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
     // Generate regular content using OpenAI with error handling and model fallback
     let content, fallbackLevel, prompt, model, tokens;
 
+    // Handle improvement instructions for AI-powered regeneration (moved outside try block for scope)
+    let enhancedViralInspiration = validatedData.viralInspiration;
+    if (validatedData.improvementInstructions) {
+      // Create base inspiration object if not provided
+      const baseInspiration = validatedData.viralInspiration || {
+        hook: '',
+        format: '',
+        caption: '',
+        hashtags: []
+      };
+
+      // Enhance viral inspiration with improvement instructions
+      enhancedViralInspiration = {
+        ...baseInspiration,
+        format: `Apply these improvements: ${validatedData.improvementInstructions}`,
+        hook: `Enhanced content with: ${validatedData.improvementInstructions.substring(0, 100)}...`
+      };
+      console.log('🔧 Applying improvement instructions:', validatedData.improvementInstructions);
+    }
+
     try {
       // Log template source for debugging
       if (validatedData.templateSource) {
@@ -413,32 +437,12 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
 
       const actualModelId = getActualModelId(validatedData.aiModel);
 
-      // Handle improvement instructions for AI-powered regeneration
-      let enhancedViralInspiration = validatedData.viralInspiration;
-      if (validatedData.improvementInstructions) {
-        // Create base inspiration object if not provided
-        const baseInspiration = validatedData.viralInspiration || {
-          hook: '',
-          format: '',
-          caption: '',
-          hashtags: []
-        };
-
-        // Enhance viral inspiration with improvement instructions
-        enhancedViralInspiration = {
-          ...baseInspiration,
-          format: `Apply these improvements: ${validatedData.improvementInstructions}`,
-          hook: `Enhanced content with: ${validatedData.improvementInstructions.substring(0, 100)}...`
-        };
-        console.log('🔧 Applying improvement instructions:', validatedData.improvementInstructions);
-      }
-
       const result = await generateContent(
         mainSubject || '',
-        templateType,
-        tone,
+        templateType as TemplateType,
+        tone as ToneOption,
         trendingProducts,
-        niche,
+        niche as Niche,
         actualModelId, // Use mapped AI model ID
         enhancedViralInspiration, // Pass enhanced viral inspiration with improvements
         smartStyleRecommendations, // Pass smart style recommendations
@@ -471,10 +475,10 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
 
           const fallbackResult = await generateContent(
             mainSubject || '',
-            templateType as any,
-            tone,
+            templateType as TemplateType,
+            tone as ToneOption,
             trendingProducts,
-            niche,
+            niche as Niche,
             fallbackModelId, // Use proper fallback model ID
             enhancedViralInspiration, // Use enhanced viral inspiration with improvements
             smartStyleRecommendations,
@@ -533,7 +537,7 @@ Experience the difference today! #${niche} #trending`;
     }
 
     // Generate platform-specific content if platforms are specified
-    let platformContent = null;
+    let platformContent: any = null;
     // TODO: Implement platform content generator
     // if (platforms && platforms.length > 0) {
     //   try {
@@ -563,9 +567,10 @@ Experience the difference today! #${niche} #trending`;
 
     console.log(`Cached new content for ${displaySubject}, template: ${templateType}, tone: ${tone}`);
 
-    // Save to database
+    // Save to database with authenticated userId
     await storage.saveContentGeneration({
-      product: mainSubject,
+      userId,
+      product: mainSubject || '',
       templateType,
       tone,
       niche,
@@ -573,34 +578,39 @@ Experience the difference today! #${niche} #trending`;
     });
 
     // Prepare webhook-ready platform data for Make.com automation
-    const webhookData = [];
-    if (platformContent && platformContent.socialCaptions) {
+    const webhookData: any[] = [];
+    if (platformContent && typeof platformContent === 'object' && platformContent.socialCaptions) {
       for (const [platform, contentData] of Object.entries(platformContent.socialCaptions)) {
-        // Generate TikTok caption for saving to history
-        const tiktokCaption = generatePlatformCaptionForSaving('tiktok', contentData, mainSubject || '', '', niche);
-        const platformCaptions = {
-          tiktok: tiktokCaption,
-          tiktokCaption: tiktokCaption // Keep legacy format for backward compatibility
-        };
+        // Type guard to ensure contentData is an object with expected properties
+        if (contentData && typeof contentData === 'object' && 'caption' in contentData) {
+          const typedContentData = contentData as { caption: string; postInstructions?: string };
+          
+          // Generate TikTok caption for saving to history
+          const tiktokCaption = generatePlatformCaptionForSaving('tiktok', typedContentData, mainSubject || '', '', niche);
+          const platformCaptions = {
+            tiktok: tiktokCaption,
+            tiktokCaption: tiktokCaption // Keep legacy format for backward compatibility
+          };
 
-        webhookData.push({
-          platform,
-          contentType,
-          caption: contentData.caption,
-          postInstructions: contentData.postInstructions,
-          videoScript: platformContent.videoScript || null,
-          photoDescription: platformContent.photoDescription || null,
-          product: mainSubject,
-          niche,
-          tone,
-          templateType,
-          hashtags: extractHashtags(contentData.caption),
-          mediaUrl: null, // Ready for user to add media URL
-          scheduledTime: null, // Ready for scheduling
-          makeWebhookReady: true,
-          // Include platform-specific captions here
-          platformCaptions: platformCaptions
-        });
+          webhookData.push({
+            platform,
+            contentType,
+            caption: typedContentData.caption,
+            postInstructions: typedContentData.postInstructions,
+            videoScript: platformContent.videoScript || null,
+            photoDescription: platformContent.photoDescription || null,
+            product: mainSubject,
+            niche,
+            tone,
+            templateType,
+            hashtags: extractHashtags(typedContentData.caption),
+            mediaUrl: null, // Ready for user to add media URL
+            scheduledTime: null, // Ready for scheduling
+            makeWebhookReady: true,
+            // Include platform-specific captions here
+            platformCaptions: platformCaptions
+          });
+        }
       }
     }
 
@@ -629,12 +639,12 @@ Experience the difference today! #${niche} #trending`;
 
     // Save detailed content history record with all metadata including hook and platform content
     const contentHistoryEntry = await storage.saveContentHistory({
-      userId: (req as any).user?.id, // If user is authenticated
+      userId, // Authenticated user ID
       sessionId: `session_${Date.now()}`,
       niche,
       contentType: templateType,
       tone,
-      productName: mainSubject,
+      productName: mainSubject || '',
       promptText: prompt || `Generate ${templateType} content for ${displaySubject} with ${tone} tone in ${niche} niche`,
       outputText: content,
       platformsSelected: platforms || ['tiktok'],

@@ -63,7 +63,7 @@ export async function generateWithAI(prompt: string, config: AIGenerationRequest
     
     return {
       success: false,
-      error: error.message,
+      error: error instanceof Error ? error.message : 'Unknown error occurred',
       model: selectedModel,
       processingTime: Date.now() - startTime
     };
@@ -87,14 +87,17 @@ async function generateWithClaudeRouter(prompt: string, config: AIGenerationRequ
     const claudeResponse = await claudeGenerate(prompt, claudeConfig);
     
     if (claudeResponse.success) {
+      const inputTokens = (claudeResponse.metadata as any)?.inputTokens || 0;
+      const outputTokens = (claudeResponse.metadata as any)?.outputTokens || 0;
       return {
         success: true,
         content: claudeResponse.content,
         model: 'claude',
-        tokensUsed: claudeResponse.metadata?.usage?.input_tokens + claudeResponse.metadata?.usage?.output_tokens || 0
+        tokensUsed: inputTokens + outputTokens
       };
     } else {
-      throw new Error(claudeResponse.error || 'Claude generation failed');
+      const errorMessage = 'error' in claudeResponse ? claudeResponse.error.message : 'Claude generation failed';
+      throw new Error(errorMessage);
     }
   } catch (error) {
     console.error('❌ Claude generation error:', error);
@@ -167,7 +170,7 @@ export async function checkModelAvailability(): Promise<{
     });
     results.claude = claudeTest.success;
   } catch (error) {
-    console.log('Claude availability test failed:', error.message);
+    console.log('Claude availability test failed:', error instanceof Error ? error.message : 'Unknown error');
   }
   
   // Test ChatGPT availability
@@ -179,7 +182,7 @@ export async function checkModelAvailability(): Promise<{
     });
     results.chatgpt = chatgptTest.success;
   } catch (error) {
-    console.log('ChatGPT availability test failed:', error.message);
+    console.log('ChatGPT availability test failed:', error instanceof Error ? error.message : 'Unknown error');
   }
   
   console.log(`🔍 AI Model Availability: Claude: ${results.claude}, ChatGPT: ${results.chatgpt}, Preferred: Claude`);

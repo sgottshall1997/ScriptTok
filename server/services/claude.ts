@@ -94,24 +94,22 @@ export async function generateWithClaude(
     
     console.log(`✅ Claude generation successful (${duration}ms)`);
     
-    return createSuccessResponse({
+    return createSuccessResponse(
       content,
-      model: CLAUDE_MODELS.PRIMARY,
-      duration,
-      tokens: response.usage?.input_tokens + response.usage?.output_tokens || 0,
-      metadata: {
+      CLAUDE_MODELS.PRIMARY,
+      response.usage?.input_tokens || 0,
+      response.usage?.output_tokens || 0,
+      {
         ...metadata,
-        inputTokens: response.usage?.input_tokens || 0,
-        outputTokens: response.usage?.output_tokens || 0,
         stopReason: response.stop_reason
       }
-    });
+    );
     
   } catch (error) {
     console.error(`❌ Claude primary model failed:`, error);
     
     // Check if it's a credit/billing issue
-    const errorMessage = error.message || '';
+    const errorMessage = error instanceof Error ? error.message : '';
     const isCreditsIssue = errorMessage.includes('credit balance') || 
                           errorMessage.includes('billing') || 
                           errorMessage.includes('subscription');
@@ -149,34 +147,32 @@ export async function generateWithClaude(
         
         console.log(`✅ Claude fallback generation successful (${duration}ms)`);
         
-        return createSuccessResponse({
+        return createSuccessResponse(
           content,
-          model: CLAUDE_MODELS.FALLBACK,
-          duration,
-          tokens: response.usage?.input_tokens + response.usage?.output_tokens || 0,
-          metadata: {
+          CLAUDE_MODELS.FALLBACK,
+          response.usage?.input_tokens || 0,
+          response.usage?.output_tokens || 0,
+          {
             ...metadata,
-            inputTokens: response.usage?.input_tokens || 0,
-            outputTokens: response.usage?.output_tokens || 0,
             stopReason: response.stop_reason,
-            usedFallback: true
+            fallbackUsed: true
           }
-        });
+        );
         
       } catch (fallbackError) {
         console.error(`❌ Claude fallback model also failed:`, fallbackError);
         
         return createErrorResponse(
-          ERROR_CODES.API_ERROR,
           fallbackError instanceof Error ? fallbackError.message : "Claude API error",
+          ERROR_CODES.API_ERROR,
           { originalError: error, fallbackError }
         );
       }
     }
     
     return createErrorResponse(
-      ERROR_CODES.API_ERROR,
       error instanceof Error ? error.message : "Claude API error",
+      ERROR_CODES.API_ERROR,
       { originalError: error }
     );
   }
@@ -224,30 +220,18 @@ export async function generateJSONWithClaude(
     }
     
     // Try to parse JSON and clean if needed
-    let content = response.data?.content;
-    
-    // Enhanced debugging for response structure
-    if (!response.data) {
-      console.error("Claude response missing data field entirely:", response);
-      return createErrorResponse(
-        ERROR_CODES.INVALID_RESPONSE,
-        "Claude response missing data field",
-        { fullResponse: response }
-      );
-    }
+    let content = response.content;
     
     // Validate content exists before processing
     if (!content || typeof content !== 'string') {
       console.error("Claude response missing content field:", {
-        hasData: !!response.data,
-        dataKeys: Object.keys(response.data || {}),
         contentType: typeof content,
         contentValue: content
       });
       return createErrorResponse(
-        ERROR_CODES.INVALID_RESPONSE,
         "Claude response missing content field",
-        { responseData: response.data }
+        ERROR_CODES.INVALID_REQUEST,
+        { responseContent: content }
       );
     }
     
@@ -260,29 +244,26 @@ export async function generateJSONWithClaude(
     } catch (jsonError) {
       console.error("Claude JSON parsing failed:", jsonError);
       return createErrorResponse(
-        ERROR_CODES.INVALID_RESPONSE,
         "Invalid JSON response from Claude",
+        ERROR_CODES.INVALID_REQUEST,
         { originalContent: content, parseError: jsonError }
       );
     }
     
     return {
       ...response,
-      data: {
-        ...response.data,
-        content,
-        metadata: {
-          ...response.data.metadata,
-          ...metadata,
-          jsonParsed: true
-        }
+      content,
+      metadata: {
+        ...response.metadata,
+        ...metadata,
+        jsonParsed: true
       }
     };
     
   } catch (error) {
     return createErrorResponse(
-      ERROR_CODES.API_ERROR,
       error instanceof Error ? error.message : "Claude JSON generation error",
+      ERROR_CODES.API_ERROR,
       { originalError: error }
     );
   }

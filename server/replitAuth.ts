@@ -54,16 +54,21 @@ function updateUserSession(
   user.expires_at = user.claims?.exp;
 }
 
-async function upsertUser(
-  claims: any,
-) {
-  await storage.upsertUser({
-    id: claims["sub"],
-    email: claims["email"],
-    firstName: claims["first_name"],
-    lastName: claims["last_name"],
-    profileImageUrl: claims["profile_image_url"],
-  });
+async function upsertUser(claims: any) {
+  const replitAuthId = claims["sub"];
+  let user = await storage.getUserByReplitAuthId(replitAuthId);
+  
+  if (!user) {
+    user = await storage.createReplitAuthUser({
+      replitAuthId,
+      email: claims["email"],
+      firstName: claims["first_name"],
+      lastName: claims["last_name"],
+      profileImageUrl: claims["profile_image_url"],
+    });
+  }
+  
+  return user;
 }
 
 export async function setupAuth(app: Express) {
@@ -78,9 +83,9 @@ export async function setupAuth(app: Express) {
     tokens: client.TokenEndpointResponse & client.TokenEndpointResponseHelpers,
     verified: passport.AuthenticateCallback
   ) => {
-    const user = {};
+    const dbUser = await upsertUser(tokens.claims());
+    const user: any = { id: dbUser.id };
     updateUserSession(user, tokens);
-    await upsertUser(tokens.claims());
     verified(null, user);
   };
 

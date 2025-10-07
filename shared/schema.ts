@@ -17,15 +17,23 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// User storage table for Replit Auth (varchar id for OIDC compatibility)
 export const users = pgTable("users", {
-  id: varchar("id").primaryKey(),
-  email: varchar("email").unique(),
-  firstName: varchar("first_name"),
-  lastName: varchar("last_name"),
-  profileImageUrl: varchar("profile_image_url"),
+  id: serial("id").primaryKey(),
+  username: text("username").notNull(),
+  password: text("password").notNull(),
+  email: text("email"),
+  role: text("role").notNull().default("writer"),
+  firstName: text("first_name"),
+  lastName: text("last_name"),
+  profileImage: text("profile_image"),
+  profileImageUrl: text("profile_image_url"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
+  status: text("status").notNull().default("active"),
+  lastLogin: timestamp("last_login"),
+  loginCount: integer("login_count").default(0),
+  preferences: jsonb("preferences"),
+  replitAuthId: varchar("replit_auth_id").unique(),
 });
 
 // AI Model Configuration schema for content generation
@@ -40,7 +48,7 @@ export const aiModelConfigs = pgTable("ai_model_configs", {
   modelName: text("model_name").notNull().default("gpt-4"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
-  createdBy: varchar("created_by").references(() => users.id),
+  createdBy: integer("created_by").references(() => users.id),
 }, (table) => {
   return {
     unq: unique().on(table.niche, table.templateType, table.tone),
@@ -50,7 +58,7 @@ export const aiModelConfigs = pgTable("ai_model_configs", {
 // Content generated schema - Core content generation
 export const contentGenerations = pgTable("content_generations", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id),
   product: text("product").notNull(),
   niche: text("niche").notNull().default("skincare"),
   templateType: text("template_type").notNull(),
@@ -108,13 +116,13 @@ export const apiUsage = pgTable("api_usage", {
   niche: text("niche"),
   templateType: text("template_type"),
   tone: text("tone"),
-  userId: varchar("user_id").references(() => users.id),
+  userId: integer("user_id").references(() => users.id),
 });
 
 // Content generation history for tracking
 export const contentHistory = pgTable("content_history", {
   id: serial("id").primaryKey(),
-  userId: varchar("user_id").references(() => users.id), // Optional user reference
+  userId: integer("user_id").references(() => users.id), // Optional user reference
   sessionId: text("session_id"), // For preventing duplicates within sessions
   niche: text("niche").notNull(),
   contentType: text("content_type").notNull(), // Maps to templateType

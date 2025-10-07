@@ -233,19 +233,19 @@ export const generateTrendingExplainerPrompt = createPromptFactory('seo_blog');
 export const generateBuyerPersonaPrompt = createPromptFactory('product_comparison');
 export const generateAffiliateEmailPrompt = createPromptFactory('affiliate_email');
 
-// Export factory functions for skincare-specific templates
-export const generateSkincareRoutinePrompt = createPromptFactory('skincare');
-export const generateDermApprovedPrompt = createPromptFactory('skincare');
-export const generateTransformationPrompt = createPromptFactory('skincare');
-export const generateSkinTypeListPrompt = createPromptFactory('skincare');
-export const generateDupeAlertPrompt = createPromptFactory('skincare');
+// Export factory functions for skincare-specific templates (mapped to valid template types)
+export const generateSkincareRoutinePrompt = createPromptFactory('routine_kit');
+export const generateDermApprovedPrompt = createPromptFactory('influencer_caption');
+export const generateTransformationPrompt = createPromptFactory('short_video');
+export const generateSkinTypeListPrompt = createPromptFactory('viral_listicle');
+export const generateDupeAlertPrompt = createPromptFactory('product_comparison');
 
-// Export factory functions for tech-specific templates
-export const generateUnboxingPrompt = createPromptFactory('tech');
-export const generateTopUseCasesPrompt = createPromptFactory('tech');
-export const generateWorthItPrompt = createPromptFactory('tech');
-export const generateSetupGuidePrompt = createPromptFactory('tech');
-export const generateHiddenFeaturesPrompt = createPromptFactory('tech');
+// Export factory functions for tech-specific templates (mapped to valid template types)
+export const generateUnboxingPrompt = createPromptFactory('short_video');
+export const generateTopUseCasesPrompt = createPromptFactory('viral_listicle');
+export const generateWorthItPrompt = createPromptFactory('product_comparison');
+export const generateSetupGuidePrompt = createPromptFactory('routine_kit');
+export const generateHiddenFeaturesPrompt = createPromptFactory('viral_listicle');
 
 // Legacy template factories (for backward compatibility) - mapped to valid template types
 export const generateReviewPrompt = createPromptFactory('product_comparison');

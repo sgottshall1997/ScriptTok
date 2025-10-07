@@ -20,20 +20,28 @@ import { eq, desc, and } from "drizzle-orm";
 // Simplified interface for storage operations
 export interface IStorage {
   // User operations (Replit Auth)
-  getUser(id: string): Promise<User | undefined>;
+  getUser(id: number): Promise<User | undefined>;
+  getUserByReplitAuthId(replitAuthId: string): Promise<User | undefined>;
+  createReplitAuthUser(data: {
+    replitAuthId: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImageUrl?: string;
+  }): Promise<User>;
   upsertUser(user: UpsertUser): Promise<User>;
 
   // Content generation operations
   saveContentGeneration(generation: InsertContentGeneration): Promise<ContentGeneration>;
-  getContentGenerations(limit?: number): Promise<ContentGeneration[]>;
+  getContentGenerations(userId: number, limit?: number): Promise<ContentGeneration[]>;
   getUserContentGenerations(userId: number, limit?: number): Promise<ContentGeneration[]>;
 
   // Content history operations
   saveContentHistory(history: InsertContentHistory): Promise<ContentHistory>;
-  getContentHistory(limit?: number): Promise<ContentHistory[]>;
+  getContentHistory(userId: number, limit?: number): Promise<ContentHistory[]>;
   getAllContentHistory(limit?: number, offset?: number): Promise<ContentHistory[]>;
   getUserContentHistory(userId: number, limit?: number): Promise<ContentHistory[]>;
-  getContentHistoryById(id: number): Promise<ContentHistory | undefined>;
+  getContentHistoryById(id: number, userId: number): Promise<ContentHistory | undefined>;
 
   // Trending products operations
   saveTrendingProduct(product: InsertTrendingProduct): Promise<TrendingProduct>;
@@ -74,9 +82,44 @@ export class MemStorage implements IStorage {
   private nextAffiliateLinkId = 1;
   private nextTrendHistoryId = 1;
 
+  private nextUserId = 1;
+
   // User operations (Replit Auth)
-  async getUser(id: string): Promise<User | undefined> {
+  async getUser(id: number): Promise<User | undefined> {
     return this.users.find(u => u.id === id);
+  }
+
+  async getUserByReplitAuthId(replitAuthId: string): Promise<User | undefined> {
+    return this.users.find(u => u.replitAuthId === replitAuthId);
+  }
+
+  async createReplitAuthUser(data: {
+    replitAuthId: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImageUrl?: string;
+  }): Promise<User> {
+    const newUser: User = {
+      id: this.nextUserId++,
+      username: data.email || `user_${this.nextUserId}`,
+      password: '',
+      email: data.email || null,
+      role: 'writer',
+      firstName: data.firstName || null,
+      lastName: data.lastName || null,
+      profileImage: null,
+      profileImageUrl: data.profileImageUrl || null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      status: 'active',
+      lastLogin: null,
+      loginCount: 0,
+      preferences: null,
+      replitAuthId: data.replitAuthId,
+    };
+    this.users.push(newUser);
+    return newUser;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
@@ -92,11 +135,20 @@ export class MemStorage implements IStorage {
     } else {
       const newUser: User = {
         ...userData,
-        id: userData.id || crypto.randomUUID(),
+        id: userData.id || this.nextUserId++,
+        username: userData.username || `user_${this.nextUserId}`,
+        password: userData.password || '',
         email: userData.email || null,
+        role: userData.role || 'writer',
         firstName: userData.firstName || null,
         lastName: userData.lastName || null,
+        profileImage: userData.profileImage || null,
         profileImageUrl: userData.profileImageUrl || null,
+        status: userData.status || 'active',
+        lastLogin: userData.lastLogin || null,
+        loginCount: userData.loginCount || 0,
+        preferences: userData.preferences || null,
+        replitAuthId: userData.replitAuthId || null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -117,8 +169,11 @@ export class MemStorage implements IStorage {
     return newGeneration;
   }
 
-  async getContentGenerations(limit = 50): Promise<ContentGeneration[]> {
-    return this.contentGenerations.slice(-limit).reverse();
+  async getContentGenerations(userId: number, limit = 50): Promise<ContentGeneration[]> {
+    return this.contentGenerations
+      .filter(c => c.userId === userId)
+      .slice(-limit)
+      .reverse();
   }
 
   async getUserContentGenerations(userId: number, limit = 50): Promise<ContentGeneration[]> {
@@ -157,8 +212,11 @@ export class MemStorage implements IStorage {
     return newHistory;
   }
 
-  async getContentHistory(limit = 50): Promise<ContentHistory[]> {
-    return this.contentHistoryData.slice(-limit).reverse();
+  async getContentHistory(userId: number, limit = 50): Promise<ContentHistory[]> {
+    return this.contentHistoryData
+      .filter(h => h.userId === userId)
+      .slice(-limit)
+      .reverse();
   }
 
   async getUserContentHistory(userId: number, limit = 50): Promise<ContentHistory[]> {
@@ -168,8 +226,8 @@ export class MemStorage implements IStorage {
       .reverse();
   }
 
-  async getContentHistoryById(id: number): Promise<ContentHistory | undefined> {
-    return this.contentHistoryData.find(h => h.id === id);
+  async getContentHistoryById(id: number, userId: number): Promise<ContentHistory | undefined> {
+    return this.contentHistoryData.find(h => h.id === id && h.userId === userId);
   }
 
   async getAllContentHistory(limit = 50, offset = 0): Promise<ContentHistory[]> {
@@ -346,9 +404,39 @@ export class MemStorage implements IStorage {
 // PostgreSQL storage implementation using Drizzle ORM
 export class DatabaseStorage implements IStorage {
   // User operations (Replit Auth)
-  async getUser(id: string): Promise<User | undefined> {
+  async getUser(id: number): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
     return result[0];
+  }
+
+  async getUserByReplitAuthId(replitAuthId: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.replitAuthId, replitAuthId));
+    return result[0];
+  }
+
+  async createReplitAuthUser(data: {
+    replitAuthId: string;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+    profileImageUrl?: string;
+  }): Promise<User> {
+    const [user] = await db
+      .insert(users)
+      .values({
+        username: data.email || `replit_user_${Date.now()}`,
+        password: '',
+        email: data.email || null,
+        role: 'writer',
+        firstName: data.firstName || null,
+        lastName: data.lastName || null,
+        profileImageUrl: data.profileImageUrl || null,
+        replitAuthId: data.replitAuthId,
+        status: 'active',
+        loginCount: 0,
+      })
+      .returning();
+    return user;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
@@ -372,8 +460,11 @@ export class DatabaseStorage implements IStorage {
     return result[0];
   }
 
-  async getContentGenerations(limit = 50): Promise<ContentGeneration[]> {
-    return await db.select().from(contentGenerations).orderBy(desc(contentGenerations.createdAt)).limit(limit);
+  async getContentGenerations(userId: number, limit = 50): Promise<ContentGeneration[]> {
+    return await db.select().from(contentGenerations)
+      .where(eq(contentGenerations.userId, userId))
+      .orderBy(desc(contentGenerations.createdAt))
+      .limit(limit);
   }
 
   async getUserContentGenerations(userId: number, limit = 50): Promise<ContentGeneration[]> {
@@ -389,8 +480,11 @@ export class DatabaseStorage implements IStorage {
     return result[0];
   }
 
-  async getContentHistory(limit = 50): Promise<ContentHistory[]> {
-    return await db.select().from(contentHistory).orderBy(desc(contentHistory.createdAt)).limit(limit);
+  async getContentHistory(userId: number, limit = 50): Promise<ContentHistory[]> {
+    return await db.select().from(contentHistory)
+      .where(eq(contentHistory.userId, userId))
+      .orderBy(desc(contentHistory.createdAt))
+      .limit(limit);
   }
 
   async getAllContentHistory(limit = 50, offset = 0): Promise<ContentHistory[]> {
@@ -407,8 +501,9 @@ export class DatabaseStorage implements IStorage {
       .limit(limit);
   }
 
-  async getContentHistoryById(id: number): Promise<ContentHistory | undefined> {
-    const result = await db.select().from(contentHistory).where(eq(contentHistory.id, id));
+  async getContentHistoryById(id: number, userId: number): Promise<ContentHistory | undefined> {
+    const result = await db.select().from(contentHistory)
+      .where(and(eq(contentHistory.id, id), eq(contentHistory.userId, userId)));
     return result[0];
   }
 
