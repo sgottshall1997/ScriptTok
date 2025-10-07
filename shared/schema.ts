@@ -19,6 +19,7 @@ export const users = pgTable("users", {
   status: text("status").notNull().default("active"), // active, suspended
   lastLogin: timestamp("last_login"),
   preferences: jsonb("preferences"), // User-specific preferences
+  subscriptionTier: text("subscription_tier").notNull().default("free"), // 'free' or 'pro'
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
@@ -262,13 +263,16 @@ export const subscriptions = pgTable("subscriptions", {
 export const monthlyUsage = pgTable("monthly_usage", {
   id: serial("id").primaryKey(),
   userId: integer("user_id").notNull().references(() => users.id),
-  periodYyyymm: varchar("period_yyyymm", { length: 7 }).notNull(),
-  generationsUsed: integer("generations_used").notNull().default(0),
+  periodMonth: text("period_month").notNull(), // YYYY-MM format like "2025-10"
+  gptGenerationsUsed: integer("gpt_generations_used").notNull().default(0),
+  claudeGenerationsUsed: integer("claude_generations_used").notNull().default(0),
+  trendAnalysesUsed: integer("trend_analyses_used").notNull().default(0),
+  userTier: text("user_tier"), // stores tier at time of usage
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 }, (table) => {
   return {
-    userPeriodUnique: unique().on(table.userId, table.periodYyyymm),
+    userPeriodUnique: unique().on(table.userId, table.periodMonth),
   };
 });
 
