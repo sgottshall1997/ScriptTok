@@ -51,6 +51,9 @@ import {
   HistoryTool
 } from "@/pages/tools";
 
+// Use Cases Page
+import UseCasesPage from "@/pages/UseCasesPage";
+
 import Layout from "@/components/Layout";
 import MarketingLayout from "@/components/MarketingLayout";
 import { initScraperConsole } from "./lib/scraperConsole";
@@ -135,6 +138,13 @@ function MainAppRouter() {
       <Route path="/tools/history">
         <MarketingLayout>
           <HistoryTool />
+        </MarketingLayout>
+      </Route>
+
+      {/* Use Cases page with MarketingLayout */}
+      <Route path="/use-cases">
+        <MarketingLayout>
+          <UseCasesPage />
         </MarketingLayout>
       </Route>
       

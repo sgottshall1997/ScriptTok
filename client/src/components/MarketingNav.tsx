@@ -125,57 +125,63 @@ const toolsData: CardItem[] = [
 const useCasesData: CardItem[] = [
   {
     icon: Video,
-    title: "TikTok Creators",
+    title: "Content Creators",
     description: "Generate daily viral ideas and scripts customized for your niche.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: DollarSign,
     title: "Affiliate Marketers",
     description: "Turn product links into performance-driven UGC scripts and ads.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: Users,
     title: "Social Media Managers",
     description: "Scale short-form content calendars for multiple brands.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: Award,
     title: "Influencers",
     description: "Convert audience insights into high-engagement video ideas.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: Briefcase,
     title: "Marketing Agencies",
     description: "Deliver optimized short-form scripts and campaign copy for clients.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: GraduationCap,
     title: "Coaches & Educators",
     description: "Repurpose lessons and insights into bite-sized viral clips.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: ShoppingBag,
     title: "E-Commerce Brands",
     description: "Build product showcase videos and social proof campaigns fast.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: Youtube,
     title: "YouTube Shorts Creators",
     description: "Repurpose long-form ideas into punchy short scripts.",
-    href: "#"
+    href: "/use-cases"
   },
   {
     icon: Users,
     title: "Content Teams",
     description: "Centralize content generation, scoring, and team collaboration.",
-    href: "#"
+    href: "/use-cases"
+  },
+  {
+    icon: Briefcase,
+    title: "SaaS & Tech Companies",
+    description: "Create product demos and feature announcements that drive signups.",
+    href: "/use-cases"
   },
 ];
 
