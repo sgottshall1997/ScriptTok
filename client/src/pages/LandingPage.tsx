@@ -18,8 +18,10 @@ import {
   Sparkles
 } from "lucide-react";
 import { Link } from "wouter";
+import { useAuth } from "@/components/AuthProvider";
 
 export default function LandingPage() {
+  const { isAuthenticated, login } = useAuth();
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       {/* ScriptTok Branding */}
@@ -67,11 +69,26 @@ export default function LandingPage() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
-              <Link href="/dashboard">
-                <Button size="default" className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-lg md:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 min-h-[44px]" data-testid="button-try-free-hero">
-                  Generate My First Script <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+              {!isAuthenticated ? (
+                <Button 
+                  onClick={login}
+                  size="default" 
+                  className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-lg md:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 min-h-[44px]" 
+                  data-testid="button-landing-cta-login"
+                >
+                  Start for Free <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
                 </Button>
-              </Link>
+              ) : (
+                <Link href="/dashboard">
+                  <Button 
+                    size="default" 
+                    className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-lg md:rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 min-h-[44px]" 
+                    data-testid="button-landing-cta-dashboard"
+                  >
+                    Go to Dashboard <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                  </Button>
+                </Link>
+              )}
               <Button variant="outline" size="default" className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-lg md:rounded-xl border-2 border-gray-300 hover:border-purple-400 transition-all duration-300 min-h-[44px]" data-testid="button-watch-demo">
                 <Video className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 Watch Demo

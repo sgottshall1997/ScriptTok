@@ -7,6 +7,8 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
+import { AuthProvider } from "@/components/AuthProvider";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
 
 // Essential Pages for TikTok Viral Product Generator
 import LandingPage from "@/pages/LandingPage";
@@ -53,21 +55,45 @@ function MainAppRouter() {
         {(params) => (
           <Layout>
             <Switch>
-              <Route path="/dashboard" component={Dashboard} />
+              <Route path="/dashboard">
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              </Route>
               
               {/* Core content generation functionality */}
-              <Route path="/generate" component={GenerateContent} />
-              <Route path="/niche/:niche" component={GenerateContent} />
+              <Route path="/generate">
+                <ProtectedRoute>
+                  <GenerateContent />
+                </ProtectedRoute>
+              </Route>
+              <Route path="/niche/:niche">
+                <ProtectedRoute>
+                  <GenerateContent />
+                </ProtectedRoute>
+              </Route>
               <Route path="/trending-ai-picks" component={TrendingAIPicks} />
               
               {/* Content management */}
-              <Route path="/content-history" component={EnhancedContentHistory} />
-              <Route path="/trend-history" component={TrendHistory} />
+              <Route path="/content-history">
+                <ProtectedRoute>
+                  <EnhancedContentHistory />
+                </ProtectedRoute>
+              </Route>
+              <Route path="/trend-history">
+                <ProtectedRoute>
+                  <TrendHistory />
+                </ProtectedRoute>
+              </Route>
               {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}
               
               {/* Settings */}
               <Route path="/compliance" component={CompliancePage} />
-              <Route path="/account" component={Account} />
+              <Route path="/account">
+                <ProtectedRoute>
+                  <Account />
+                </ProtectedRoute>
+              </Route>
               
               {/* Support pages */}
               <Route path="/how-it-works" component={HowItWorksPage} />
@@ -111,10 +137,12 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 }

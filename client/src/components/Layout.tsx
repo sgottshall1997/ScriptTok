@@ -52,7 +52,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             {/* Auth UI */}
             <div className="flex items-center space-x-4">
               {isDev && (
-                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-md">
+                <div className="hidden sm:flex items-center gap-2 px-3 py-1.5 bg-amber-100 dark:bg-amber-900/30 border border-amber-300 dark:border-amber-700 rounded-md" data-testid="badge-dev-mode">
                   <Shield className="h-4 w-4 text-amber-600 dark:text-amber-500" />
                   <span className="text-xs font-medium text-amber-800 dark:text-amber-400">
                     Dev Mode
@@ -66,9 +66,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     <Button
                       variant="ghost"
                       className="relative h-9 w-9 rounded-full"
-                      data-testid="user-menu-trigger"
+                      data-testid="dropdown-user-menu"
                     >
-                      <Avatar className="h-9 w-9">
+                      <Avatar className="h-9 w-9" data-testid="avatar-user">
                         {user.profileImage && (
                           <AvatarImage 
                             src={user.profileImage} 
@@ -117,10 +117,10 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                     variant="default"
                     size="sm"
                     className="gap-2"
-                    data-testid="button-login"
+                    data-testid="button-sign-in"
                   >
                     <User className="h-4 w-4" />
-                    <span className="hidden sm:inline">Log in</span>
+                    <span className="hidden sm:inline">Sign In</span>
                   </Button>
                 )
               )}
