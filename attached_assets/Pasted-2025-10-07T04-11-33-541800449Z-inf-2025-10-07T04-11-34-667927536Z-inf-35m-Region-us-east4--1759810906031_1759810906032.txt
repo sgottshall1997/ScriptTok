@@ -1,0 +1,236 @@
+2025-10-07T04:11:33.541800449Z [inf]  
+2025-10-07T04:11:34.667927536Z [inf]  [35m[Region: us-east4][0m
+2025-10-07T04:11:34.684088339Z [inf]  [35m=========================
+2025-10-07T04:11:34.684118516Z [inf]  Using Detected Dockerfile
+2025-10-07T04:11:34.684122475Z [inf]  =========================
+2025-10-07T04:11:34.684125933Z [inf]  [0m
+2025-10-07T04:11:34.684138935Z [inf]  context: zl04-cEGq
+2025-10-07T04:11:34.831203160Z [inf]  [internal] load build definition from Dockerfile
+2025-10-07T04:11:34.831245919Z [inf]  [internal] load build definition from Dockerfile
+2025-10-07T04:11:34.831261074Z [inf]  [internal] load build definition from Dockerfile
+2025-10-07T04:11:34.846591348Z [inf]  [internal] load build definition from Dockerfile
+2025-10-07T04:11:34.849287831Z [inf]  [internal] load metadata for docker.io/library/node:20-alpine
+2025-10-07T04:11:34.874931493Z [inf]  [auth] library/node:pull token for registry-1.docker.io
+2025-10-07T04:11:34.874966512Z [inf]  [auth] library/node:pull token for registry-1.docker.io
+2025-10-07T04:11:35.121251138Z [inf]  [internal] load metadata for docker.io/library/node:20-alpine
+2025-10-07T04:11:35.122396226Z [inf]  [internal] load .dockerignore
+2025-10-07T04:11:35.122445075Z [inf]  [internal] load .dockerignore
+2025-10-07T04:11:35.122456252Z [inf]  [internal] load .dockerignore
+2025-10-07T04:11:35.131870645Z [inf]  [internal] load .dockerignore
+2025-10-07T04:11:35.135285638Z [inf]  [7/7] RUN NODE_OPTIONS="--max-old-space-size=8192" npm run build
+2025-10-07T04:11:35.135309658Z [inf]  [6/7] COPY . .
+2025-10-07T04:11:35.135316621Z [inf]  [5/7] RUN npm ci --ignore-scripts
+2025-10-07T04:11:35.135323372Z [inf]  [4/7] COPY package.json package-lock.json ./
+2025-10-07T04:11:35.135334325Z [inf]  [internal] load build context
+2025-10-07T04:11:35.135340363Z [inf]  [3/7] RUN apk add --no-cache python3 make g++
+2025-10-07T04:11:35.135346403Z [inf]  [2/7] WORKDIR /app
+2025-10-07T04:11:35.135351688Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.135363639Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.135371562Z [inf]  [internal] load build context
+2025-10-07T04:11:35.135380268Z [inf]  [internal] load build context
+2025-10-07T04:11:35.141774676Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.141879376Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.141901904Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.142080433Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.142089473Z [inf]  [internal] load build context
+2025-10-07T04:11:35.170357000Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.171661249Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:35.223792628Z [inf]  [internal] load build context
+2025-10-07T04:11:35.480861349Z [inf]  [1/7] FROM docker.io/library/node:20-alpine@sha256:eabac870db94f7342d6c33560d6613f188bbcf4bbe1f4eb47d5e2a08e1a37722
+2025-10-07T04:11:36.417021901Z [inf]  [2/7] WORKDIR /app
+2025-10-07T04:11:36.461624928Z [inf]  [2/7] WORKDIR /app
+2025-10-07T04:11:36.462626132Z [inf]  [3/7] RUN apk add --no-cache python3 make g++
+2025-10-07T04:11:36.558792678Z [inf]  fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/main/x86_64/APKINDEX.tar.gz
+
+2025-10-07T04:11:36.641599624Z [inf]  fetch https://dl-cdn.alpinelinux.org/alpine/v3.22/community/x86_64/APKINDEX.tar.gz
+
+2025-10-07T04:11:36.92402949Z [inf]  (1/29) Installing libstdc++-dev (14.2.0-r6)
+
+2025-10-07T04:11:37.056441765Z [inf]  (2/29) Installing jansson (2.14.1-r0)
+
+2025-10-07T04:11:37.059550238Z [inf]  (3/29) Installing zstd-libs (1.5.7-r0)
+
+2025-10-07T04:11:37.068903682Z [inf]  (4/29) Installing binutils (2.44-r3)
+
+2025-10-07T04:11:37.144074063Z [inf]  (5/29) Installing libgomp (14.2.0-r6)
+
+2025-10-07T04:11:37.149456537Z [inf]  (6/29) Installing libatomic (14.2.0-r6)
+
+2025-10-07T04:11:37.151888083Z [inf]  (7/29) Installing gmp (6.3.0-r3)
+
+2025-10-07T04:11:37.158212565Z [inf]  (8/29) Installing isl26 (0.26-r1)
+
+2025-10-07T04:11:37.176886559Z [inf]  (9/29) Installing mpfr4 (4.2.1_p1-r0)
+
+2025-10-07T04:11:37.185279197Z [inf]  (10/29) Installing mpc1 (1.3.1-r1)
+
+2025-10-07T04:11:37.188489663Z [inf]  (11/29) Installing gcc (14.2.0-r6)
+
+2025-10-07T04:11:38.167879496Z [inf]  (12/29) Installing musl-dev (1.2.5-r10)
+
+2025-10-07T04:11:38.242287975Z [inf]  (13/29) Installing g++ (14.2.0-r6)
+
+2025-10-07T04:11:38.535249853Z [inf]  (14/29) Installing make (4.4.1-r3)
+
+2025-10-07T04:11:38.539762647Z [inf]  (15/29) Installing libbz2 (1.0.8-r6)
+
+2025-10-07T04:11:38.543164297Z [inf]  (16/29) Installing libexpat (2.7.3-r0)
+
+2025-10-07T04:11:38.546644316Z [inf]  (17/29) Installing libffi (3.4.8-r0)
+
+2025-10-07T04:11:38.549192723Z [inf]  (18/29) Installing gdbm (1.24-r0)
+
+2025-10-07T04:11:38.551920812Z [inf]  (19/29) Installing xz-libs (5.8.1-r0)
+
+2025-10-07T04:11:38.556460405Z [inf]  (20/29) Installing mpdecimal (4.0.1-r0)
+
+2025-10-07T04:11:38.560622625Z [inf]  (21/29) Installing ncurses-terminfo-base (6.5_p20250503-r0)
+
+2025-10-07T04:11:38.565643835Z [inf]  (22/29) Installing libncursesw (6.5_p20250503-r0)
+
+2025-10-07T04:11:38.571187032Z [inf]  (23/29) Installing libpanelw (6.5_p20250503-r0)
+
+2025-10-07T04:11:38.573602292Z [inf]  (24/29) Installing readline (8.2.13-r1)
+
+2025-10-07T04:11:38.578152849Z [inf]  (25/29) Installing sqlite-libs (3.49.2-r1)
+
+2025-10-07T04:11:38.595070261Z [inf]  (26/29) Installing python3 (3.12.11-r0)
+
+2025-10-07T04:11:38.766614227Z [inf]  (27/29) Installing python3-pycache-pyc0 (3.12.11-r0)
+
+2025-10-07T04:11:38.869421554Z [inf]  (28/29) Installing pyc (3.12.11-r0)
+(29/29) Installing python3-pyc (3.12.11-r0)
+
+2025-10-07T04:11:38.869850916Z [inf]  Executing busybox-1.37.0-r18.trigger
+
+2025-10-07T04:11:38.875891237Z [inf]  OK: 270 MiB in 47 packages
+
+2025-10-07T04:11:39.009195645Z [inf]  [3/7] RUN apk add --no-cache python3 make g++
+2025-10-07T04:11:39.009723461Z [inf]  [4/7] COPY package.json package-lock.json ./
+2025-10-07T04:11:39.038783686Z [inf]  [4/7] COPY package.json package-lock.json ./
+2025-10-07T04:11:39.039485161Z [inf]  [5/7] RUN npm ci --ignore-scripts
+2025-10-07T04:11:42.147838809Z [inf]  npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+
+2025-10-07T04:11:42.612881373Z [inf]  npm warn deprecated npmlog@6.0.2: This package is no longer supported.
+
+2025-10-07T04:11:42.961249372Z [inf]  npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+
+2025-10-07T04:11:43.411328189Z [inf]  npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
+
+2025-10-07T04:11:43.413762824Z [inf]  npm warn deprecated gauge@4.0.4: This package is no longer supported.
+
+2025-10-07T04:11:43.709645179Z [inf]  npm warn deprecated are-we-there-yet@3.0.1: This package is no longer supported.
+
+2025-10-07T04:11:44.321999144Z [inf]  npm warn deprecated @npmcli/move-file@1.1.2: This functionality has been moved to @npmcli/fs
+
+2025-10-07T04:11:44.434042474Z [inf]  npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+
+2025-10-07T04:11:44.476734343Z [inf]  npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+
+2025-10-07T04:11:44.771969041Z [inf]  npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+
+2025-10-07T04:11:44.853182992Z [inf]  npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+
+2025-10-07T04:11:45.007669956Z [inf]  npm warn deprecated glob@7.2.3: Glob versions prior to v9 are no longer supported
+
+2025-10-07T04:11:51.434223093Z [inf]  
+added 891 packages, and audited 892 packages in 12s
+
+124 packages are looking for funding
+
+2025-10-07T04:11:51.434242798Z [inf]    run `npm fund` for details
+
+2025-10-07T04:11:51.530039942Z [inf]  
+15 vulnerabilities (6 low, 7 moderate, 2 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+2025-10-07T04:11:51.531231358Z [inf]  npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.6.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.6.1
+npm notice To update run: npm install -g npm@11.6.1
+npm notice
+
+2025-10-07T04:11:51.995920866Z [inf]  [5/7] RUN npm ci --ignore-scripts
+2025-10-07T04:11:51.996431709Z [inf]  [6/7] COPY . .
+2025-10-07T04:11:52.240380924Z [inf]  [6/7] COPY . .
+2025-10-07T04:11:52.241001053Z [inf]  [7/7] RUN NODE_OPTIONS="--max-old-space-size=8192" npm run build
+2025-10-07T04:11:52.469468969Z [inf]  
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+
+2025-10-07T04:11:52.718591765Z [inf]  vite v5.4.14 building for production...
+
+2025-10-07T04:11:52.772129765Z [inf]  transforming...
+
+2025-10-07T04:11:56.867098712Z [inf]  ✓ 1819 modules transformed.
+
+2025-10-07T04:11:57.102830325Z [inf]  rendering chunks...
+
+2025-10-07T04:11:57.111424088Z [inf]  computing gzip size...
+
+2025-10-07T04:11:57.123959Z [inf]  ../dist/public/index.html                   0.93 kB │ gzip:   0.48 kB
+
+2025-10-07T04:11:57.123971839Z [inf]  ../dist/public/assets/index-CEn-iYAd.css  126.45 kB │ gzip:  19.54 kB
+
+2025-10-07T04:11:57.12407068Z [inf]  ../dist/public/assets/index-Cz6-_LaX.js   401.69 kB │ gzip: 124.23 kB
+
+2025-10-07T04:11:57.12422515Z [inf]  ✓ built in 4.38s
+
+2025-10-07T04:11:57.209552619Z [inf]  ▲ [WARNING] Duplicate key "categoriesWithData" in object literal [duplicate-object-key]
+
+    server/services/perplexity/trendForecaster.ts:775:4:
+      775 │     categoriesWithData: categoriesWithData,
+          ╵     ~~~~~~~~~~~~~~~~~~
+
+  The original key "categoriesWithData" is here:
+
+    server/services/perplexity/trendForecaster.ts:771:4:
+      771 │     categoriesWithData: categoriesWithData.length,
+          ╵     ~~~~~~~~~~~~~~~~~~
+
+
+2025-10-07T04:11:57.215938621Z [inf]  1 warning
+
+  dist/index.js  484.7kb
+
+⚡ Done in 13ms
+
+2025-10-07T04:11:57.477576565Z [inf]  [7/7] RUN NODE_OPTIONS="--max-old-space-size=8192" npm run build
+2025-10-07T04:12:11.325150827Z [inf]  importing to docker
+2025-10-07T04:12:12.161169089Z [inf]  [auth] sharing credentials for production-us-east4-eqdc4a.railway-registry.com
+2025-10-07T04:12:12.161290412Z [inf]  [auth] sharing credentials for production-us-east4-eqdc4a.railway-registry.com
+2025-10-07T04:12:23.681311981Z [inf]  importing to docker
+2025-10-07T04:12:41.314883378Z [inf]  [92mBuild time: 66.63 seconds[0m
+2025-10-07T04:12:59.935756476Z [inf]  
+2025-10-07T04:12:59.935843798Z [inf]  [35m====================
+Starting Healthcheck
+====================
+[0m
+2025-10-07T04:12:59.935849003Z [inf]  [37mPath: /health/server[0m
+2025-10-07T04:12:59.935855706Z [inf]  [37mRetry window: 5m0s[0m
+2025-10-07T04:12:59.935858450Z [inf]  
+2025-10-07T04:13:03.153125881Z [inf]  [93mAttempt #1 failed with service unavailable. Continuing to retry for 4m56s[0m
+2025-10-07T04:13:14.226692143Z [inf]  [93mAttempt #2 failed with service unavailable. Continuing to retry for 4m45s[0m
+2025-10-07T04:13:26.313618782Z [inf]  [93mAttempt #3 failed with service unavailable. Continuing to retry for 4m33s[0m
+2025-10-07T04:13:30.405212029Z [inf]  [93mAttempt #4 failed with service unavailable. Continuing to retry for 4m29s[0m
+2025-10-07T04:13:38.478029043Z [inf]  [93mAttempt #5 failed with service unavailable. Continuing to retry for 4m21s[0m
+2025-10-07T04:13:54.552045734Z [inf]  [93mAttempt #6 failed with service unavailable. Continuing to retry for 4m5s[0m
+2025-10-07T04:14:24.637054249Z [inf]  [93mAttempt #7 failed with service unavailable. Continuing to retry for 3m35s[0m
+2025-10-07T04:14:54.708408162Z [inf]  [93mAttempt #8 failed with service unavailable. Continuing to retry for 3m5s[0m
+2025-10-07T04:15:24.781763670Z [inf]  [93mAttempt #9 failed with service unavailable. Continuing to retry for 2m35s[0m
+2025-10-07T04:15:54.860137672Z [inf]  [93mAttempt #10 failed with service unavailable. Continuing to retry for 2m5s[0m
+2025-10-07T04:16:24.942505223Z [inf]  [93mAttempt #11 failed with service unavailable. Continuing to retry for 1m35s[0m
+2025-10-07T04:16:55.049170270Z [inf]  [93mAttempt #12 failed with service unavailable. Continuing to retry for 1m4s[0m
+2025-10-07T04:17:25.254448238Z [inf]  [93mAttempt #13 failed with service unavailable. Continuing to retry for 34s[0m
+2025-10-07T04:17:55.329281771Z [inf]  [93mAttempt #14 failed with service unavailable. Continuing to retry for 4s[0m
+2025-10-07T04:17:55.385176986Z [inf]  
+2025-10-07T04:17:55.385314627Z [inf]  [91m1/1 replicas never became healthy![0m
+2025-10-07T04:17:55.385319506Z [inf]  [91mHealthcheck failed![0m

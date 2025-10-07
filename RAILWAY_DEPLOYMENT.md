@@ -83,17 +83,19 @@ git push -u origin main
 3. Choose your repository: `tiktok-viral-generator` (or whatever you named it)
 4. Railway will automatically detect it's a Node.js application
 
-### 3.2 Add PostgreSQL Database
+### 3.2 Add PostgreSQL Database ⚠️ CRITICAL - DO THIS FIRST!
 
-Your application requires a PostgreSQL database. Here's how to add it:
+**IMPORTANT**: Your application REQUIRES `DATABASE_URL` to start. You MUST add PostgreSQL before the first deployment, or your app will crash immediately.
 
 1. In your Railway project dashboard, click **"+ New"**
 2. Select **"Database"**
 3. Choose **"Add PostgreSQL"**
-4. Railway will automatically:
+4. Wait for Railway to provision the database (30-60 seconds)
+5. Railway will automatically:
    - Provision a PostgreSQL database
    - Create a `DATABASE_URL` environment variable
    - Link it to your application
+6. **Verify**: Click on your app service → Variables tab → Confirm `DATABASE_URL` appears
 
 ### 3.3 Configure Environment Variables
 
@@ -280,15 +282,43 @@ Verify the main application functionality:
 - Check for unnecessary build steps
 - Review build logs for slow operations
 
-#### 6.2 Database Connection Issues
+#### 6.2 Database Connection Issues ⚠️ MOST COMMON ISSUE
 
-**Problem**: "DATABASE_URL must be set" error
+**Problem**: Health check fails with "service unavailable" - Server crashes on startup
+
+**Error in logs**: 
+```
+DATABASE_URL must be set. Did you forget to provision a database?
+```
+
+**Root Cause**: The application requires `DATABASE_URL` to start. Without it, the server crashes immediately during initialization, preventing the health check from ever responding.
 
 **Solution**:
-1. Verify PostgreSQL service is added to project
-2. Check that DATABASE_URL appears in Variables tab
-3. Ensure database and app are in the same project
-4. Try redeploying the application
+1. **Add PostgreSQL database**:
+   - Railway dashboard → Click **"+ New"** → **"Database"** → **"Add PostgreSQL"**
+   - Wait 30-60 seconds for provisioning
+
+2. **Verify DATABASE_URL is injected**:
+   - Click on your app service (not database)
+   - Go to **"Variables"** tab
+   - Confirm `DATABASE_URL` appears in the list
+
+3. **If DATABASE_URL is missing**:
+   - Click on PostgreSQL database service
+   - Go to **"Connect"** tab
+   - Copy the "Database URL"
+   - Go back to app service → Variables tab
+   - Add new variable: `DATABASE_URL` = (paste the URL)
+
+4. **Redeploy**:
+   - Railway will auto-redeploy when you add/change variables
+   - OR manually click **"Deploy"** in the Deployments tab
+   - Watch logs to confirm server starts successfully
+
+**How to verify it's fixed**:
+- Deployment status shows "Active" (green)
+- Health check succeeds at `/health/server`
+- No crash loops in deployment logs
 
 **Problem**: Database migration fails
 
