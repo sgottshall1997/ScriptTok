@@ -127,6 +127,8 @@ const GenerateContent = () => {
     
     if (productParam && productParam !== selectedProduct) {
       setSelectedProduct(productParam);
+      // Auto-select affiliate mode when product is passed from trend dashboard
+      setContentMode('affiliate');
       // console.log('🔍 Setting product from URL:', productParam);
     }
     
