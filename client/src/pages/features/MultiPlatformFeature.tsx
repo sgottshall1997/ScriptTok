@@ -232,7 +232,7 @@ export default function MultiPlatformFeature() {
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://scripttok.com/features/multi-platform" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Multi-Platform Optimization - One Script, Every Platform | ScriptTok" />
+        <meta name="twitter:title" content="Multi-Platform Optimization - One Script, Every Platform | Pheme" />
         <meta name="twitter:description" content="Automatically adapt content for TikTok, Instagram, YouTube, and more. Platform-specific optimization with perfect formatting." />
       </Helmet>
       

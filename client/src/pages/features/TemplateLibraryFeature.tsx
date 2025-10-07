@@ -10,9 +10,9 @@ import {
 } from "@/components/features";
 import { useLocation } from "wouter";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
-import { 
-  Zap, 
-  Star, 
+import {
+  Zap,
+  Star,
   TrendingUp,
   Heart,
   ShoppingBag,
@@ -210,7 +210,7 @@ export default function TemplateLibraryFeature() {
         <meta name="twitter:title" content="Template Library - 20+ Proven Script Templates | Pheme" />
         <meta name="twitter:description" content="Pre-built viral formulas and affiliate frameworks for every niche. Browse proven templates and customize in seconds." />
       </Helmet>
-      
+
       <div className="min-h-screen">
         <FeatureHero
           title="20+ Proven Templates for Every Niche & Platform"

@@ -200,7 +200,7 @@ export default function TrendDiscoveryFeature() {
         <meta name="twitter:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | Pheme" />
         <meta name="twitter:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
       </Helmet>
-      
+
       <div className="min-h-screen">
         <FeatureHero
           title="Never Miss a Viral Trend Again"
@@ -245,7 +245,7 @@ export default function TrendDiscoveryFeature() {
               Our AI-powered system finds viral trends before they peak.
             </p>
           </div>
-          
+
           <div className="relative">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
               {discoveryProcess.map((step, index) => {
@@ -290,7 +290,7 @@ export default function TrendDiscoveryFeature() {
               See what's trending right now across all platforms.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {liveTrends.map((trend, index) => (
               <Card
@@ -314,7 +314,7 @@ export default function TrendDiscoveryFeature() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Engagement</p>
@@ -329,7 +329,7 @@ export default function TrendDiscoveryFeature() {
                       </p>
                     </div>
                   </div>
-                  
+
                   <Button
                     className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-xl"
                     onClick={() => {
@@ -358,7 +358,7 @@ export default function TrendDiscoveryFeature() {
               Trend discovery works hand-in-hand with our entire content creation suite.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {integrations.map((integration, index) => {
               const Icon = integration.icon;

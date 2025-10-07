@@ -778,7 +778,7 @@ export const phemeSections: PhemeSection[] = [
     icon: HelpCircle,
     path: "/how-it-works",
     category: "Support",
-    whatItDoes: "Provides detailed documentation on ScriptTok functionality, step-by-step guides, workflow explanations, and best practice recommendations for optimal platform usage.",
+    whatItDoes: "Provides detailed documentation on Pheme functionality, step-by-step guides, workflow explanations, and best practice recommendations for optimal platform usage.",
     setupRequirements: ["No setup required"],
     usageInstructions: [
       "Browse feature documentation",
@@ -800,7 +800,7 @@ export const phemeSections: PhemeSection[] = [
   },
   {
     name: "FAQ",
-    description: "Frequently asked questions and answers about ScriptTok features and usage.",
+    description: "Frequently asked questions and answers about Pheme features and usage.",
     icon: MessageCircle,
     path: "/faq",
     category: "Support",

@@ -188,7 +188,7 @@ const AboutPage: React.FC = () => {
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
             <Sparkles className="h-6 w-6 mr-3 text-purple-600" />
-            The ScriptTok Intelligence Process
+            The Pheme Intelligence Process
           </CardTitle>
           <CardDescription>
             How we create trend-aware, viral content using AI

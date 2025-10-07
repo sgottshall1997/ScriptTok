@@ -104,7 +104,7 @@ const TrustSafetyPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Assistive Technology Support</h3>
               <p className="text-gray-700 mb-3">
-                ScriptTok is designed to work with common assistive technologies including:
+                Pheme is designed to work with common assistive technologies including:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>Screen readers (NVDA, JAWS, VoiceOver)</li>
@@ -165,7 +165,7 @@ const TrustSafetyPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">How Our AI Works</h3>
               <p className="text-gray-700 mb-3">
-                ScriptTok uses advanced AI technology to help create TikTok content:
+                Pheme uses advanced AI technology to help create TikTok content:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Claude AI by Anthropic:</strong> Powers our content generation capabilities</li>
