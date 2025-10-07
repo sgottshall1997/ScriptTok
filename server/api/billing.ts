@@ -35,14 +35,15 @@ const quotaService = getQuotaService(storage);
 // GET /api/billing/subscription - Get current user's subscription status
 router.get('/subscription', authGuard, async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.userId;
+    // Use internal user ID from auth middleware (set by authGuard/checkQuota)
+    const internalUserId = (req as any).internalUserId;
     
-    if (!userId) {
-      console.error('[BillingAPI] ❌ No userId found in request');
+    if (!internalUserId) {
+      console.error('[BillingAPI] ❌ No internal userId found in request');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    console.log(`[BillingAPI] Getting subscription for user: ${userId}`);
+    console.log(`[BillingAPI] Getting subscription for internal user ID: ${internalUserId}`);
 
     if (DISABLE_BILLING || !stripe) {
       console.log('[BillingAPI:Mock] Returning mock subscription data');
@@ -54,11 +55,10 @@ router.get('/subscription', authGuard, async (req: Request, res: Response) => {
       });
     }
 
-    const userIdNum = parseInt(userId);
-    const subscription = await storage.getUserSubscription(userIdNum);
+    const subscription = await storage.getUserSubscription(internalUserId);
 
     if (!subscription) {
-      console.log(`[BillingAPI] No subscription found for user ${userId}, returning free tier`);
+      console.log(`[BillingAPI] No subscription found for user ${internalUserId}, returning free tier`);
       return res.json({
         tier: 'free',
         status: 'active',

@@ -46,6 +46,9 @@ export const checkQuota = async (req: Request, res: Response, next: NextFunction
     const internalUserId = user.id;
     console.log(`[CheckQuota] Internal user ID: ${internalUserId}`);
 
+    // Attach internal user ID to request for downstream use
+    (req as any).internalUserId = internalUserId;
+
     // Check quota
     const quotaCheck = await quotaService.checkQuota(internalUserId);
     console.log(`[CheckQuota] Quota check result:`, {
