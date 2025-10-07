@@ -3,8 +3,11 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Crown } from "lucide-react";
 import { TEMPLATE_TYPES, type TemplateType, type ContentMode, getTemplatesByMode } from '@shared/constants';
+import { useUsageData } from '@/hooks/useUsageData';
 
 // Properties for the TemplateSelector component
 interface TemplateSelectorProps {
@@ -34,6 +37,13 @@ export function TemplateSelector({
   multiSelect = false,
   contentMode = 'affiliate'
 }: TemplateSelectorProps) {
+  // Get usage data to determine tier
+  const { data: usageResponse, isLoading: usageLoading } = useUsageData();
+  const usageData = usageResponse?.data;
+  
+  // Determine if user is on free tier (fail-safe: default to free if data unavailable)
+  const isFreeUser = !usageData || usageData.tier === 'free';
+  
   // Filter templates based on content mode
   const modeTemplates = getTemplatesByMode(contentMode) as TemplateType[];
   const options = templateOptions || modeTemplates;
@@ -195,26 +205,31 @@ export function TemplateSelector({
                   {sectionName}
                 </h4>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {sectionTemplates.filter((template): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType) => {
+                  {sectionTemplates.filter((template: string): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType, indexInSection: number): React.ReactElement => {
                     const templateType = template as TemplateType;
                     const isSelected = selectedTemplates.includes(templateType);
+                    const isLocked = isFreeUser && indexInSection >= 3;
+                    
                     return (
                       <Tooltip key={template} delayDuration={300}>
                         <TooltipTrigger asChild>
                           <div className="relative">
                             <Label
                               htmlFor={`template-multi-${template}`}
-                              className={`flex items-center space-x-3 rounded-lg border-2 p-4 cursor-pointer hover:bg-gray-50 transition-all ${
-                                isSelected 
-                                  ? 'border-blue-500 bg-blue-50' 
-                                  : 'border-gray-200'
+                              className={`flex items-center space-x-3 rounded-lg border-2 p-4 transition-all ${
+                                isLocked 
+                                  ? 'cursor-not-allowed opacity-50 border-gray-200 bg-gray-50' 
+                                  : isSelected 
+                                    ? 'border-blue-500 bg-blue-50 cursor-pointer hover:bg-blue-100' 
+                                    : 'border-gray-200 cursor-pointer hover:bg-gray-50'
                               }`}
                             >
                               <Checkbox
                                 id={`template-multi-${template}`}
                                 checked={isSelected}
-                                onCheckedChange={(checked) => handleTemplateToggle(templateType, checked as boolean)}
+                                onCheckedChange={(checked) => !isLocked && handleTemplateToggle(templateType, checked as boolean)}
                                 className="shrink-0"
+                                disabled={isLocked}
                               />
                               <span className="text-2xl">{templateIcons[templateType]}</span>
                               <div className="flex-1">
@@ -222,11 +237,21 @@ export function TemplateSelector({
                                   {templateDisplayNames[templateType]}
                                 </div>
                               </div>
+                              {isLocked && (
+                                <Badge variant="secondary" className="ml-2 bg-amber-100 text-amber-800 border-amber-300">
+                                  <Crown className="w-3 h-3 mr-1" />
+                                  Pro
+                                </Badge>
+                              )}
                             </Label>
                           </div>
                         </TooltipTrigger>
                         <TooltipContent side="bottom" className="max-w-xs">
-                          <p>{descriptions[templateType]}</p>
+                          {isLocked ? (
+                            <p>🔒 Pro Feature: Upgrade to unlock this template</p>
+                          ) : (
+                            <p>{descriptions[templateType]}</p>
+                          )}
                         </TooltipContent>
                       </Tooltip>
                     );
@@ -257,8 +282,10 @@ export function TemplateSelector({
                 {sectionName}
               </h4>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {sectionTemplates.filter((template): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType) => {
+                {sectionTemplates.filter((template: string): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType, indexInSection: number): React.ReactElement => {
                   const templateType = template;
+                  const isLocked = isFreeUser && indexInSection >= 3;
+                  
                   return (
                     <Tooltip key={template} delayDuration={300}>
                       <TooltipTrigger asChild>
@@ -267,10 +294,15 @@ export function TemplateSelector({
                             value={template} 
                             id={`template-${template}`}
                             className="peer sr-only"
+                            disabled={isLocked}
                           />
                           <Label
                             htmlFor={`template-${template}`}
-                            className="flex items-center space-x-3 rounded-lg border-2 border-gray-200 p-4 cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all"
+                            className={`flex items-center space-x-3 rounded-lg border-2 p-4 transition-all ${
+                              isLocked
+                                ? 'cursor-not-allowed opacity-50 border-gray-200 bg-gray-50'
+                                : 'border-gray-200 cursor-pointer hover:bg-gray-50 peer-checked:border-blue-500 peer-checked:bg-blue-50'
+                            }`}
                           >
                             <span className="text-2xl">{templateIcons[templateType]}</span>
                             <div className="flex-1">
@@ -278,11 +310,21 @@ export function TemplateSelector({
                                 {templateDisplayNames[templateType]}
                               </div>
                             </div>
+                            {isLocked && (
+                              <Badge variant="secondary" className="ml-2 bg-amber-100 text-amber-800 border-amber-300">
+                                <Crown className="w-3 h-3 mr-1" />
+                                Pro
+                              </Badge>
+                            )}
                           </Label>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent side="bottom" className="max-w-xs">
-                        <p>{descriptions[templateType]}</p>
+                        {isLocked ? (
+                          <p>🔒 Pro Feature: Upgrade to unlock this template</p>
+                        ) : (
+                          <p>{descriptions[templateType]}</p>
+                        )}
                       </TooltipContent>
                     </Tooltip>
                   );
