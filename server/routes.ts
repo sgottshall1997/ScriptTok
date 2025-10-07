@@ -32,8 +32,8 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup Clerk Auth middleware
-  app.use(clerkMiddleware);
+  // Setup Clerk Auth middleware - only for API routes to avoid blocking frontend HTML
+  app.use('/api', clerkMiddleware);
 
   // Auth endpoint
   app.get('/api/auth/user', requireAuth, async (req: any, res) => {
