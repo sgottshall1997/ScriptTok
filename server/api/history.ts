@@ -3,24 +3,42 @@ import { storage } from '../storage';
 import { insertContentHistorySchema, contentHistory } from '@shared/schema';
 import { z } from 'zod';
 import { db } from '../db';
+import { getQuotaService } from '../services/quotaService';
 
 const router = express.Router();
+const quotaService = getQuotaService(storage);
 
-// GET /api/history - Get all content history with pagination
+// GET /api/history - Get content history with tier-based filtering
 router.get('/', async (req, res) => {
   try {
-    const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
-    const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
+    // Get user ID from authGuard middleware
+    const userId = req.internalUserId;
     
-    const history = await storage.getAllContentHistory(limit, offset);
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: 'Unauthorized - user ID not found'
+      });
+    }
+
+    // Get user's tier
+    const userTier = await quotaService.getUserTier(userId);
+    const isFreeUser = userTier === 'free';
+    
+    // Free users only see last 10, Pro users see all
+    const limit = isFreeUser ? 10 : (req.query.limit ? parseInt(req.query.limit as string) : 50);
+    
+    // Get history filtered by user ID
+    const history = await storage.getUserContentHistory(userId, limit);
     
     res.json({
       success: true,
       history,
+      tier: userTier,
+      isLimited: isFreeUser,
       pagination: {
         limit,
-        offset,
-        total: history.length // In a real app, we would have a count query
+        total: history.length
       }
     });
   } catch (error: any) {

@@ -47,11 +47,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Protected routes with authGuard + checkQuota (content generation and user data)
   app.use('/api/generate-content', authGuard, checkQuota, generateContentRouter);
-  app.use('/api/history', authGuard, checkQuota, historyRouter);
   app.use('/api/perplexity-trends', authGuard, checkQuota, perplexityTrendsRouter);
   
   // Protected routes with authGuard only (reading/research endpoints)
   app.use('/api/statistics', authGuard, statisticsApi);
+  app.use('/api/history', authGuard, historyRouter);
   app.use('/api/trend-forecast', authGuard, trendForecastRouter);
   app.use('/api/product-research', authGuard, productResearchRouter);
   app.use('/api/trend-research', authGuard, trendResearchRouter);
@@ -91,8 +91,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // app.use('/api/product-research', productResearchRouter);
 
   
-  // Content history alias endpoint (protected: authGuard + checkQuota)
-  app.get('/api/content-history', authGuard, checkQuota, async (req, res) => {
+  // Content history alias endpoint (protected: authGuard only - no quota needed for viewing)
+  app.get('/api/content-history', authGuard, async (req, res) => {
     try {
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
