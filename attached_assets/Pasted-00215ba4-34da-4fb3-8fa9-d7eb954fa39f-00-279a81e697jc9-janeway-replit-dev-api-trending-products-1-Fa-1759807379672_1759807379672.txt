@@ -1,0 +1,184 @@
+00215ba4-34da-4fb3-8fa9-d7eb954fa39f-00-279a81e697jc9.janeway.replit.dev/api/trending/products:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+_app-7304bf693aa89125.js:19 An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A78%2C%22args%22%3A%5B%22useLazyQuery%22%2C%22variables%22%2C%22Pass%20all%20%60variables%60%20to%20the%20returned%20%60execute%60%20function%20instead.%22%5D%7D
+(anonymous) @ _app-7304bf693aa89125.js:19Understand this warning
+_app-7304bf693aa89125.js:19 An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A78%2C%22args%22%3A%5B%22useQuery%22%2C%22onCompleted%22%2C%22If%20your%20%60onCompleted%60%20callback%20sets%20local%20state%2C%20switch%20to%20use%20derived%20state%20using%20%60data%60%20returned%20from%20the%20hook%20instead.%20Use%20%60useEffect%60%20to%20perform%20side-effects%20as%20a%20result%20of%20updates%20to%20%60data%60.%22%5D%7D
+(anonymous) @ _app-7304bf693aa89125.js:19Understand this warning
+100_app-7304bf693aa89125.js:19 An error occurred! For more details, see the full error text at https://go.apollo.dev/c/err#%7B%22version%22%3A%223.14.0%22%2C%22message%22%3A78%2C%22args%22%3A%5B%22useLazyQuery%22%2C%22initialFetchPolicy%22%2C%22Use%20the%20%60fetchPolicy%60%20option%20instead.%22%5D%7D
+(anonymous) @ _app-7304bf693aa89125.js:19Understand this warning
+Console.js:61 [vite] connecting...
+Console.js:61 [vite] connected.
+Console.js:61 Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID
+Mt.forEach.n.<computed> @ Console.js:61Understand this warning
+Console.js:61 Add your GA Measurement ID to Replit Secrets with key VITE_GA_MEASUREMENT_ID
+Console.js:61 Scraper console helpers initialized! Available commands:
+Console.js:61 - window.checkScraperHealth() - View scraper status
+Console.js:61 - window.checkTrendingProducts() - View trending products
+Console.js:61 - window.refreshTrendingProducts() - Manually trigger a new product scrape
+Console.js:61 - window.checkTrendingHashtags() - View trending hashtags and emojis
+Console.js:61 Clerk: Clerk has been loaded with development keys. Development instances have strict usage limits and should not be used when deploying your application to production. Learn more: https://clerk.com/docs/deployments/overview
+Mt.forEach.n.<computed> @ Console.js:61Understand this warning
+Console.js:61 Clerk: The prop "afterSignInUrl" is deprecated and should be replaced with the new "fallbackRedirectUrl" or "forceRedirectUrl" props instead. Learn more: https://clerk.com/docs/guides/custom-redirects#redirect-url-props
+Mt.forEach.n.<computed> @ Console.js:61Understand this warning
+stable-mammoth-81.clerk.accounts.dev/v1/client?__clerk_api_version=2025-04-10&_clerk_js_version=5.99.0:1  Failed to load resource: the server responded with a status of 401 ()Understand this error
+stable-mammoth-81.clerk.accounts.dev/v1/environment?__clerk_api_version=2025-04-10&_clerk_js_version=5.99.0&_method=PATCH:1  Failed to load resource: the server responded with a status of 401 ()Understand this error
+stable-mammoth-81.clerk.accounts.dev/v1/environment?__clerk_api_version=2025-04-10&_clerk_js_version=5.99.0&_method=PATCH:1  Failed to load resource: the server responded with a status of 401 ()Understand this error
+stable-mammoth-81.clerk.accounts.dev/v1/client?__clerk_api_version=2025-04-10&_clerk_js_version=5.99.0:1  Failed to load resource: the server responded with a status of 401 ()Understand this error
+Console.js:61 Error: ClerkJS: Something went wrong initializing Clerk.
+    at clerk.headless.browser.js:16:20377
+    at #X (clerk.headless.browser.js:16:20433)
+    at async rg.load (clerk.headless.browser.js:15:12347)
+    at async _IsomorphicClerk2.loadClerkJS (@clerk_clerk-react.js:6846:9)
+Mt.forEach.n.<computed> @ Console.js:61Understand this error
+00215ba4-34da-4fb3-8fa9-d7eb954fa39f-00-279a81e697jc9.janeway.replit.dev/api/scraper-status:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+00215ba4-34da-4fb3-8fa9-d7eb954fa39f-00-279a81e697jc9.janeway.replit.dev/api/trending/products:1  Failed to load resource: the server responded with a status of 401 (Unauthorized)Understand this error
+Console.js:61 Failed to fetch scraper health information: Error: 401: 
+    <head>
+        <meta charset="UTF-8" />
+        <style>
+          @media (prefers-color-scheme: dark) {
+            body {
+              background-color: black;
+            }
+          }
+        </style>
+    </head>
+    <body>
+        <script>
+            window.__clerk_frontend_api = 'stable-mammoth-81.clerk.accounts.dev';
+            window.__clerk_debug = {};
+            
+            
+            window.startClerk = async () => {
+                function formRedirect(){
+                    const form = '<form method="get" action="" name="redirect"></form>';
+                    document.body.innerHTML = document.body.innerHTML + form;
+
+                    const searchParams = new URLSearchParams(window.location.search);
+                    for (let paramTuple of searchParams) {
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = paramTuple[0];
+                        input.value = paramTuple[1];
+                        document.forms.redirect.appendChild(input);
+                    }
+                    const url = new URL(window.location.origin + window.location.pathname + window.location.hash);
+                    window.history.pushState({}, '', url);
+
+                    document.forms.redirect.action = window.location.pathname + window.location.hash;
+                    document.forms.redirect.submit();
+                }
+
+                const Clerk = window.Clerk;
+                try {
+                    await Clerk.load({
+                        isSatellite: false,
+                        isInterstitial: true,
+                        signInUrl: undefined
+                    });
+                    if(Clerk.loaded){
+                      if(window.location.href.indexOf("#") === -1){
+                        window.location.href = window.location.href;
+                      } else if (window.navigator.userAgent.toLowerCase().includes("firefox/")){
+                          formRedirect();
+                      } else {
+                          window.location.reload();
+                      }
+                    }
+                } catch (err) {
+                    console.error('Clerk: ', err);
+                }
+            };
+            (() => {
+                const script = document.createElement('script');
+                script.setAttribute('data-clerk-publishable-key', 'pk_test_c3RhYmxlLW1hbW1vdGgtODEuY2xlcmsuYWNjb3VudHMuZGV2JA');
+
+                
+                ;
+                script.async = true;
+                script.src = 'https://stable-mammoth-81.clerk.accounts.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js';
+                script.crossOrigin = 'anonymous';
+                script.addEventListener('load', startClerk);
+                document.body.appendChild(script);
+            })();
+        </script>
+    </body>
+
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:22:3)
+    at async logScraperHealth (scraperConsole.ts:22:22)
+Mt.forEach.n.<computed> @ Console.js:61Understand this error
+Console.js:61 Failed to fetch trending products: Error: 401: 
+    <head>
+        <meta charset="UTF-8" />
+        <style>
+          @media (prefers-color-scheme: dark) {
+            body {
+              background-color: black;
+            }
+          }
+        </style>
+    </head>
+    <body>
+        <script>
+            window.__clerk_frontend_api = 'stable-mammoth-81.clerk.accounts.dev';
+            window.__clerk_debug = {};
+            
+            
+            window.startClerk = async () => {
+                function formRedirect(){
+                    const form = '<form method="get" action="" name="redirect"></form>';
+                    document.body.innerHTML = document.body.innerHTML + form;
+
+                    const searchParams = new URLSearchParams(window.location.search);
+                    for (let paramTuple of searchParams) {
+                        const input = document.createElement("input");
+                        input.type = "hidden";
+                        input.name = paramTuple[0];
+                        input.value = paramTuple[1];
+                        document.forms.redirect.appendChild(input);
+                    }
+                    const url = new URL(window.location.origin + window.location.pathname + window.location.hash);
+                    window.history.pushState({}, '', url);
+
+                    document.forms.redirect.action = window.location.pathname + window.location.hash;
+                    document.forms.redirect.submit();
+                }
+
+                const Clerk = window.Clerk;
+                try {
+                    await Clerk.load({
+                        isSatellite: false,
+                        isInterstitial: true,
+                        signInUrl: undefined
+                    });
+                    if(Clerk.loaded){
+                      if(window.location.href.indexOf("#") === -1){
+                        window.location.href = window.location.href;
+                      } else if (window.navigator.userAgent.toLowerCase().includes("firefox/")){
+                          formRedirect();
+                      } else {
+                          window.location.reload();
+                      }
+                    }
+                } catch (err) {
+                    console.error('Clerk: ', err);
+                }
+            };
+            (() => {
+                const script = document.createElement('script');
+                script.setAttribute('data-clerk-publishable-key', 'pk_test_c3RhYmxlLW1hbW1vdGgtODEuY2xlcmsuYWNjb3VudHMuZGV2JA');
+
+                
+                ;
+                script.async = true;
+                script.src = 'https://stable-mammoth-81.clerk.accounts.dev/npm/@clerk/clerk-js@4/dist/clerk.browser.js';
+                script.crossOrigin = 'anonymous';
+                script.addEventListener('load', startClerk);
+                document.body.appendChild(script);
+            })();
+        </script>
+    </body>
+
+    at throwIfResNotOk (queryClient.ts:6:11)
+    at async apiRequest (queryClient.ts:22:3)
+    at async logTrendingProducts (scraperConsole.ts:213:22)
