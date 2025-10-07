@@ -120,7 +120,7 @@ export default function LandingPage() {
       <section className="bg-gradient-hero text-white py-20 px-4">
         <div className="container mx-auto max-w-6xl text-center">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            From Trend to Script in 60 Seconds.
+            Make Your Voice Heard
           </h1>
           <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
             AI-powered scripts, trend discovery, and affiliate tools built for creators.
