@@ -1,0 +1,113 @@
+The key insight:
+Uses flat, simple grids — each dropdown is 4–6 concise cards (not subdivided groups or nested sections).
+
+Each card = icon + title + 1-sentence description.
+
+That pattern works best for your app too — since ScriptTok’s tools are fast, visual, and modular.
+
+So below is a revised, Pictory-style version that matches your product scope and visual rhythm while keeping “dual studios” and “AI power” front-and-center.
+
+I want to get the page set up. After the page is set up, we will open up each page and update that page, but for now, lets get the base 
+
+⸻
+
+🧠 FEATURES (6 cards, like Pictory)
+
+Focus on what your platform does automatically.
+
+Feature	Description
+
+Dual Studios	Switch between Viral & Affiliate studios, each optimized for its own format and tone.
+
+Real-Time Trend Discovery	Track and transform trending topics into ready-to-film TikTok scripts.
+
+AI Script Generator	Generate scroll-stopping hooks, stories, and CTAs with a single click.
+
+AI Viral Score System	Instantly score and refine your scripts for clarity, engagement, and timing.
+
+Template Library	Choose from 20+ plug-and-play templates for any niche or platform.
+
+
+CTA bar: Talk to Sales | Get Started Free →
+
+⸻
+
+⚙️ TOOLS (6 cards, just like Pictory)
+
+Each is a practical module inside ScriptTok.
+
+Tool	Description
+Trend Forecaster	Identify real-time viral sounds, hashtags, and topics across platforms.
+
+Script Generator	Create full short-form scripts with hooks, pacing, and CTAs automatically.
+
+Viral Score Calculator	Evaluate scripts with AI feedback and a 0–100 viral potential score.
+
+Affiliate Ad Builder	Generate product-focused UGC reviews, comparisons, and demos.
+
+Template Selector	Pick or customize viral & affiliate templates for your brand.
+
+Content History	Access all your saved scripts, scores, and trend data in one place.
+
+
+Other Tools: Batch Builder • Model Router • Hashtag Generator • Caption Writer • Idea to Script
+
+CTA bar: Talk to Sales | Get Started Now →
+
+⸻
+
+👥 USE CASES (9 cards, identical layout to Pictory)
+
+Tailored audiences — helps new users immediately identify “this is for me.”
+
+User Type	Description
+TikTok Creators	Generate daily viral ideas and scripts customized for your niche.
+
+Affiliate Marketers	Turn product links into performance-driven UGC scripts and ads.
+
+Social Media Managers	Scale short-form content calendars for multiple brands.
+
+Influencers	Convert audience insights into high-engagement video ideas.
+
+Marketing Agencies	Deliver optimized short-form scripts and campaign copy for clients.
+
+Coaches & Educators	Repurpose lessons and insights into bite-sized viral clips.
+
+E-Commerce Brands	Build product showcase videos and social proof campaigns fast.
+
+YouTube Shorts Creators	Repurpose long-form ideas into punchy short scripts.
+
+Content Teams	Centralize content generation, scoring, and team collaboration.
+
+CTA bar: Talk to Sales | Get Started Now →
+
+⸻
+
+(Optional additions if you want full Pictory parity)
+
+📚 LEARN (6 cards)
+
+Item	Description
+Script Templates	Browse viral & affiliate-style templates and examples.
+Blog	Learn short-form growth tactics, trends, and AI content strategies.
+Tutorials	Step-by-step guides on ScriptTok tools and studios.
+Creator Community	Join discussions, share results, and swap templates.
+Showcase	Explore user-generated content made with ScriptTok AI.
+
+
+⸻
+
+💵 PRICING (2 cards)
+
+Item	Description
+Pricing	Compare Free vs Pro features, script limits, and analytics access.
+
+
+⸻
+
+✅ Why this structure works for ScriptTok
+	•	Same visual cadence as Pictory (6/6/9 cards) → easy to recognize and scan.
+	•	Keeps dual studios as the lead differentiator but doesn’t break UI consistency.
+	•	Avoids cognitive overload — no nested headers or long lists.
+	•	Ready to implement as 3 simple grid components using Card from shadcn/ui.
+	•	Scales well on mobile (2 columns stacked).
