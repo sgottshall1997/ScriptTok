@@ -12,10 +12,6 @@ if (!publishableKey) {
 createRoot(document.getElementById("root")!).render(
   <ClerkProvider 
     publishableKey={publishableKey}
-    afterSignInUrl="/"
-    afterSignUpUrl="/"
-    clerkJSVariant="headless"
-    allowedRedirectOrigins={[window.location.origin]}
   >
     <App />
   </ClerkProvider>

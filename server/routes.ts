@@ -32,6 +32,35 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoints (no auth required)
+  app.get('/health/server', (req, res) => {
+    res.json({
+      ok: true,
+      time: new Date().toISOString(),
+      uptime: process.uptime(),
+      envMode: process.env.NODE_ENV || 'development'
+    });
+  });
+
+  app.get('/health/auth', async (req, res) => {
+    try {
+      // Test Clerk server connection
+      const { clerkClient } = await import('@clerk/clerk-sdk-node');
+      await clerkClient.users.getUserList({ limit: 1 });
+      res.json({
+        ok: true,
+        env: process.env.CLERK_PUBLISHABLE_KEY?.startsWith('pk_test') ? 'test' : 'live',
+        message: 'Clerk server connection successful'
+      });
+    } catch (error: any) {
+      res.status(500).json({
+        ok: false,
+        error: error.message,
+        message: 'Clerk server connection failed'
+      });
+    }
+  });
+
   // Setup Clerk Auth middleware - only for API routes to avoid blocking frontend HTML
   app.use('/api', clerkMiddleware);
 
