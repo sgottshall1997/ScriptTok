@@ -19,19 +19,9 @@ import { eq, desc, and } from "drizzle-orm";
 
 // Simplified interface for storage operations
 export interface IStorage {
-  // User operations (Clerk Auth)
-  getUser(id: number): Promise<User | undefined>;
-  getUserByClerkId(clerkId: string): Promise<User | undefined>;
-  createClerkUser(data: {
-    clerkId: string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    profileImageUrl?: string;
-  }): Promise<User>;
-  upsertUser(user: UpsertUser): Promise<User>;
-  
   // User operations (Supabase Auth)
+  getUser(id: number): Promise<User | undefined>;
+  upsertUser(user: UpsertUser): Promise<User>;
   getUserBySupabaseId(supabaseId: string): Promise<User | undefined>;
   createSupabaseUser(data: {
     supabaseId: string;
@@ -94,43 +84,9 @@ export class MemStorage implements IStorage {
 
   private nextUserId = 1;
 
-  // User operations (Clerk Auth)
+  // User operations (Supabase Auth)
   async getUser(id: number): Promise<User | undefined> {
     return this.users.find(u => u.id === id);
-  }
-
-  async getUserByClerkId(clerkId: string): Promise<User | undefined> {
-    return this.users.find(u => u.clerkId === clerkId);
-  }
-
-  async createClerkUser(data: {
-    clerkId: string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    profileImageUrl?: string;
-  }): Promise<User> {
-    const newUser: User = {
-      id: this.nextUserId++,
-      username: data.email || `user_${this.nextUserId}`,
-      password: '',
-      email: data.email || null,
-      role: 'writer',
-      firstName: data.firstName || null,
-      lastName: data.lastName || null,
-      profileImage: null,
-      profileImageUrl: data.profileImageUrl || null,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      status: 'active',
-      lastLogin: null,
-      loginCount: 0,
-      preferences: null,
-      clerkId: data.clerkId,
-      supabaseId: null,
-    };
-    this.users.push(newUser);
-    return newUser;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
@@ -450,40 +406,10 @@ export class MemStorage implements IStorage {
 
 // PostgreSQL storage implementation using Drizzle ORM
 export class DatabaseStorage implements IStorage {
-  // User operations (Clerk Auth)
+  // User operations (Supabase Auth)
   async getUser(id: number): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
     return result[0];
-  }
-
-  async getUserByClerkId(clerkId: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.clerkId, clerkId));
-    return result[0];
-  }
-
-  async createClerkUser(data: {
-    clerkId: string;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    profileImageUrl?: string;
-  }): Promise<User> {
-    const [user] = await db
-      .insert(users)
-      .values({
-        username: data.email || `clerk_user_${Date.now()}`,
-        password: '',
-        email: data.email || null,
-        role: 'writer',
-        firstName: data.firstName || null,
-        lastName: data.lastName || null,
-        profileImageUrl: data.profileImageUrl || null,
-        clerkId: data.clerkId,
-        status: 'active',
-        loginCount: 0,
-      })
-      .returning();
-    return user;
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {

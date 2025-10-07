@@ -109,9 +109,8 @@ You need to set up all required environment variables from your Replit Secrets:
 
 | Variable Name | Description | Where to Find |
 |--------------|-------------|---------------|
-| `CLERK_PUBLISHABLE_KEY` | Clerk public key for authentication | Replit Secrets or Clerk Dashboard |
-| `CLERK_SECRET_KEY` | Clerk secret key for server-side auth | Replit Secrets or Clerk Dashboard |
-| `VITE_CLERK_PUBLISHABLE_KEY` | Clerk public key for frontend | Same as CLERK_PUBLISHABLE_KEY |
+| `VITE_SUPABASE_URL` | Supabase project URL | Replit Secrets or Supabase Dashboard |
+| `VITE_SUPABASE_ANON_KEY` | Supabase anonymous key | Replit Secrets or Supabase Dashboard |
 | `ANTHROPIC_API_KEY` | Claude AI API key | Replit Secrets or Anthropic Console |
 | `OPENAI_API_KEY` | OpenAI API key | Replit Secrets or OpenAI Platform |
 | `NODE_ENV` | Set to `production` | Enter manually: `production` |
@@ -119,10 +118,6 @@ You need to set up all required environment variables from your Replit Secrets:
 **Note about DATABASE_URL**: 
 - ✅ **Already configured** - Railway automatically provides this when you add PostgreSQL
 - ❌ **Do NOT manually set** - Let Railway manage this
-
-**Note about VITE_CLERK_FRONTEND_API**: 
-- ✅ **Not needed** - Clerk auto-detects this from the publishable key
-- ❌ **Do NOT add** - It's deprecated in newer Clerk versions
 
 4. After adding all variables, click **"Deploy"** if prompted, or the deployment will trigger automatically
 
@@ -220,23 +215,23 @@ The `npm run db:push` command will create all necessary database tables:
 3. Click **"Generate Domain"** if not already generated
 4. Open the URL in your browser
 
-### 5.3 Verify Clerk Authentication
+### 5.3 Verify Supabase Authentication
 
-Railway deployment solves the iframe issues common with Replit:
+Railway deployment provides a stable environment for Supabase authentication:
 
 1. Navigate to your deployed application
 2. Click on any "Sign In" or "Sign Up" button
 3. **Verify that**:
-   - ✅ Clerk authentication modal opens properly (no iframe errors)
-   - ✅ You can sign up for a new account
+   - ✅ Supabase authentication works properly
+   - ✅ You can sign up for a new account with email/password or Google
    - ✅ You can log in with existing credentials
    - ✅ After login, you're redirected to the dashboard
 
-4. **Check Clerk Dashboard**:
-   - Go to [Clerk Dashboard](https://dashboard.clerk.com)
-   - Navigate to your application
-   - Go to **"Domains"** section
-   - Add your Railway domain to allowed domains if needed
+4. **Check Supabase Dashboard**:
+   - Go to [Supabase Dashboard](https://supabase.com/dashboard)
+   - Navigate to your project
+   - Go to **"Authentication"** → **"URL Configuration"**
+   - Add your Railway domain to allowed redirect URLs if needed
 
 ### 5.4 Test Core Features
 
@@ -341,15 +336,15 @@ railway run npm run check
 3. Verify all required secrets are set
 4. Check database connection is successful
 
-**Problem**: Clerk authentication not working
+**Problem**: Supabase authentication not working
 
 **Solution**:
-1. Verify `CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` are set
-2. Ensure `VITE_CLERK_PUBLISHABLE_KEY` matches `CLERK_PUBLISHABLE_KEY`
-3. Add Railway domain to Clerk's allowed domains:
-   - Go to Clerk Dashboard
-   - Navigate to **"Domains"** 
-   - Add your Railway URL
+1. Verify `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` are set
+2. Ensure the keys match your Supabase project settings
+3. Add Railway domain to Supabase's allowed redirect URLs:
+   - Go to Supabase Dashboard
+   - Navigate to **"Authentication"** → **"URL Configuration"**
+   - Add your Railway URL to Site URL and Redirect URLs
 
 #### 6.4 Port/Network Issues
 

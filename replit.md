@@ -8,7 +8,7 @@ This project is a comprehensive content generation platform designed to create s
 
 **October 7, 2025 - Railway Deployment Preparation**: Completed comprehensive Railway deployment setup with critical DATABASE_URL documentation. Created railway.json and Procfile configuration files, updated .gitignore for production deployment, and authored detailed deployment guides (RAILWAY_DEPLOYMENT.md, RAILWAY_QUICK_FIX.md). Identified and documented critical startup requirement: application requires DATABASE_URL environment variable to initialize, server crashes immediately without it preventing health checks from responding. Enhanced troubleshooting documentation with specific error patterns and solutions for the most common deployment failure scenario.
 
-**October 7, 2025 - Clerk Authentication**: Successfully implemented Clerk Auth with user isolation for ScriptTok content generator. Completed full authentication system using Google + Email login (users don't need Replit accounts), secured all content routes with isAuthenticated middleware, implemented user-scoped data filtering by userId across all storage methods, updated database schema with users/sessions tables and userId columns on content_generations, contentHistory, and apiUsage tables. Fixed critical security vulnerabilities to prevent cross-user data leakage. All TypeScript errors resolved across 6+ files. Application ready for multi-user deployment with proper content isolation.
+**October 7, 2025 - Supabase Authentication**: Successfully implemented Supabase Auth with user isolation for ScriptTok content generator. Completed full authentication system using Google + Email login, secured all content routes with isAuthenticated middleware, implemented user-scoped data filtering by userId across all storage methods, updated database schema with users/sessions tables and userId columns on content_generations, contentHistory, and apiUsage tables. Fixed critical security vulnerabilities to prevent cross-user data leakage. Application ready for multi-user deployment with proper content isolation.
 
 **September 25, 2025**: Successfully completed comprehensive Amazon monetization infrastructure transformation. Implemented complete smart affiliate link injection system with intelligent product detection using advanced pattern matching algorithms, full database monetization infrastructure (4 core tables: amazon_products, affiliate_links, revenue_tracking, product_performance), extended storage interface with 26+ new methods covering Amazon product management and revenue analytics, comprehensive API ecosystem for affiliate link injection and tracking, and rich frontend testing component. System ready for immediate revenue generation once Amazon API access is restored from current rate limiting issues.
 
@@ -32,12 +32,12 @@ Preferred communication style: Simple, everyday language.
 - **Framework**: Express.js with TypeScript
 - **Database ORM**: Drizzle with PostgreSQL (Neon serverless provider)
 - **API Design**: RESTful endpoints
-- **Authentication**: Replit Auth with Google + Email login, session-based authentication
+- **Authentication**: Supabase Auth with Google + Email login, session-based authentication
 - **Rate Limiting**: Express rate limiter
 - **Middleware**: Request logging, error handling, CORS, authentication middleware
 
 ### Key Components
-- **Authentication & User Isolation**: Replit Auth integration with Google + Email login, session-based authentication, protected routes with isAuthenticated middleware, and user-scoped data filtering to ensure each user sees only their own content history and generations.
+- **Authentication & User Isolation**: Supabase Auth integration with Google + Email login, session-based authentication, protected routes with isAuthenticated middleware, and user-scoped data filtering to ensure each user sees only their own content history and generations.
 - **Content Generation System**: Supports multi-AI providers (OpenAI, Anthropic Claude), uses niche-specific and universal templates, enables platform-specific and bulk generation, and includes safeguards against abuse.
 - **Data Storage Solutions**: Utilizes PostgreSQL for primary storage, manages schema with Drizzle migrations, stores content history, trending products, and supports user management with role-based access control.
 - **Smart Style System**: Integrates user ratings and AI evaluations for content quality assessment, with optimized threshold filtering and normalization for recommendations.
