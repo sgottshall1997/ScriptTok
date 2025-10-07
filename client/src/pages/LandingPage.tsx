@@ -133,11 +133,11 @@ export default function LandingPage() {
                   login();
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
                 data-testid="button-hero-start-free"
               >
-                <Zap className="mr-2 h-5 w-5" />
-                Start Free
+                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
+                <span>Start Free</span>
               </Button>
             ) : (
               <Button
@@ -146,11 +146,11 @@ export default function LandingPage() {
                   navigate('/dashboard');
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
                 data-testid="button-hero-dashboard"
               >
-                <Zap className="mr-2 h-5 w-5" />
-                Go to Dashboard
+                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
+                <span>Go to Dashboard</span>
               </Button>
             )}
             <Button
@@ -160,11 +160,11 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
+              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
               data-testid="button-hero-watch-demo"
             >
-              <Video className="mr-2 h-5 w-5" />
-              Watch Demo
+              <Video className="mr-2 h-5 w-5 flex-shrink-0" />
+              <span>Watch Demo</span>
             </Button>
           </div>
         </div>
@@ -549,11 +549,11 @@ export default function LandingPage() {
                   login();
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
                 data-testid="button-footer-start-free"
               >
-                <Zap className="mr-2 h-5 w-5" />
-                Start Free
+                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
+                <span>Start Free</span>
               </Button>
             ) : (
               <Button
@@ -562,11 +562,11 @@ export default function LandingPage() {
                   navigate('/dashboard');
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
                 data-testid="button-footer-dashboard"
               >
-                <Zap className="mr-2 h-5 w-5" />
-                Go to Dashboard
+                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
+                <span>Go to Dashboard</span>
               </Button>
             )}
             <Button
@@ -576,11 +576,11 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
+              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
               data-testid="button-footer-talk-sales"
             >
-              <MessageSquare className="mr-2 h-5 w-5" />
-              Talk to Sales
+              <MessageSquare className="mr-2 h-5 w-5 flex-shrink-0" />
+              <span>Talk to Sales</span>
             </Button>
           </div>
         </div>
