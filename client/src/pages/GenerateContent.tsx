@@ -1139,14 +1139,14 @@ ${config.hashtags.join(' ')}`;
 
           {/* Tier Badge and Quota Counters */}
           {!usageLoading && usage && (
-            <Card className="shadow-md bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
+            <Card className="rounded-2xl shadow-sm bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
               <CardContent className="pt-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   {/* Tier Badge */}
                   <div className="flex items-center gap-3">
                     <Badge 
                       variant={usage.tier === 'pro' ? 'default' : 'secondary'} 
-                      className={`text-base px-4 py-1.5 ${usage.tier === 'pro' ? 'bg-gradient-to-r from-purple-600 to-blue-600' : 'bg-gray-600'}`}
+                      className={`text-base px-4 py-1.5 ${usage.tier === 'pro' ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gray-600'}`}
                       data-testid="badge-user-tier"
                     >
                       {usage.tier === 'pro' ? <Crown className="h-4 w-4 mr-1" /> : null}
@@ -1264,10 +1264,10 @@ ${config.hashtags.join(' ')}`;
 
           {/* Content Setup - Show only when mode is selected */}
           {contentMode && (
-            <Card className="shadow-lg">
+            <Card className="rounded-2xl shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Sparkles className="h-5 w-5 text-blue-500" />
+                  <Sparkles className="h-5 w-5 text-purple-500" />
                   {contentMode === 'viral' ? '🔥 Viral Content Setup' : '📄 Product Setup'}
                 </CardTitle>
               </CardHeader>
@@ -1382,9 +1382,9 @@ ${config.hashtags.join(' ')}`;
 
         {/* Product Research Card */}
         {selectedProduct && (productResearchLoading || productResearch) && (
-          <Card className="shadow-lg bg-blue-50 border border-blue-200">
+          <Card className="rounded-2xl shadow-sm bg-purple-50 border border-purple-200">
             <CardHeader className="pb-3">
-              <CardTitle className="text-blue-700 flex items-center gap-2">
+              <CardTitle className="text-purple-700 flex items-center gap-2">
                 {productResearchLoading ? (
                   <>
                     <RefreshCw className="h-4 w-4 animate-spin" />
@@ -1398,11 +1398,11 @@ ${config.hashtags.join(' ')}`;
             <CardContent className="space-y-4">
               {productResearchLoading ? (
                 <div className="space-y-2">
-                  <p className="text-sm text-blue-600">Discovering viral hooks, target audience, and trending angles...</p>
+                  <p className="text-sm text-purple-600">Discovering viral hooks, target audience, and trending angles...</p>
                   <div className="grid grid-cols-3 gap-2">
-                    <div className="h-2 bg-blue-200 rounded animate-pulse"></div>
-                    <div className="h-2 bg-blue-200 rounded animate-pulse"></div>
-                    <div className="h-2 bg-blue-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
+                    <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
                   </div>
                 </div>
               ) : productResearch && (
@@ -1442,7 +1442,7 @@ ${config.hashtags.join(' ')}`;
                   {/* Best Time to Post */}
                   {productResearch.bestTimeToPost && productResearch.bestTimeToPost.length > 0 && (
                     <div className="bg-white p-3 rounded-lg border">
-                      <h4 className="font-semibold text-blue-700 mb-2">⏰ Best Time to Post</h4>
+                      <h4 className="font-semibold text-purple-700 mb-2">⏰ Best Time to Post</h4>
                       <ul className="space-y-1">
                         {productResearch.bestTimeToPost.map((time: string, index: number) => (
                           <li key={index} className="text-sm text-gray-700">• {time}</li>
@@ -1480,7 +1480,7 @@ ${config.hashtags.join(' ')}`;
 
         {/* NEW: Viral Trend Research Section */}
         {contentMode === 'viral' && viralTopic && (trendResearchLoading || trendResearch) && (
-          <Card className="shadow-lg bg-orange-50 border border-orange-200">
+          <Card className="rounded-2xl shadow-sm bg-orange-50 border border-orange-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-orange-700 flex items-center gap-2">
                 {trendResearchLoading ? (
@@ -1528,7 +1528,7 @@ ${config.hashtags.join(' ')}`;
                   {/* Trending Angles */}
                   {trendResearch.trendingAngles && trendResearch.trendingAngles.length > 0 && (
                     <div className="bg-white p-3 rounded-lg border">
-                      <h4 className="font-semibold text-blue-700 mb-2">🎆 Trending Angles</h4>
+                      <h4 className="font-semibold text-purple-700 mb-2">🎆 Trending Angles</h4>
                       <ul className="space-y-1">
                         {trendResearch.trendingAngles.map((angle: string, index: number) => (
                           <li key={index} className="text-sm text-gray-700">• {angle}</li>
@@ -1609,7 +1609,7 @@ ${config.hashtags.join(' ')}`;
 
         {/* NEW: Trend Competitor Intel Expandable Section */}
         {trendCompetitorIntelOpen && (
-          <Card className="shadow-lg bg-red-50 border border-red-200">
+          <Card className="rounded-2xl shadow-sm bg-red-50 border border-red-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-red-700 flex items-center gap-2">
                 🔥 Trending Competitor Intelligence
@@ -1673,7 +1673,7 @@ ${config.hashtags.join(' ')}`;
 
         {/* Competitor Intel Expandable Section */}
         {competitorIntelOpen && (
-          <Card className="shadow-lg bg-purple-50 border border-purple-200">
+          <Card className="rounded-2xl shadow-sm bg-purple-50 border border-purple-200">
             <CardHeader className="pb-3">
               <CardTitle className="text-purple-700 flex items-center gap-2">
                 🎯 Competitor Intelligence
@@ -1734,7 +1734,7 @@ ${config.hashtags.join(' ')}`;
 
         {/* Enhanced Viral Research Preview */}
         {selectedProduct && (viralResearchLoading || enhancedViralResearch || viralInspo) && (
-          <Card className="shadow-lg bg-[#fff9f0] border border-orange-300">
+          <Card className="rounded-2xl shadow-sm bg-[#fff9f0] border border-orange-300">
             <CardHeader className="pb-3">
               <CardTitle className="text-orange-700 flex items-center gap-2">
                 {viralResearchLoading ? (
@@ -1916,7 +1916,7 @@ ${config.hashtags.join(' ')}`;
         )}
 
         {/* Content Setup */}
-        <Card className="shadow-lg">
+        <Card className="rounded-2xl shadow-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Zap className="h-5 w-5 text-purple-500" />
@@ -2064,15 +2064,15 @@ ${config.hashtags.join(' ')}`;
             </div>
 
             {/* Total Variations Counter */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="text-sm font-medium text-blue-800">Total Variations</h4>
-                  <p className="text-xs text-blue-600">
+                  <h4 className="text-sm font-medium text-purple-800">Total Variations</h4>
+                  <p className="text-xs text-purple-600">
                     {selectedTemplates.length} template{selectedTemplates.length !== 1 ? 's' : ''} × 1 tone × {aiModel === 'both' ? '2' : '1'} AI model{aiModel === 'both' ? 's' : ''}
                   </p>
                 </div>
-                <div className="text-2xl font-bold text-blue-800">
+                <div className="text-2xl font-bold text-purple-800">
                   {selectedTemplates.length * 1 * (aiModel === 'both' ? 2 : 1)}
                 </div>
               </div>
@@ -2130,7 +2130,7 @@ ${config.hashtags.join(' ')}`;
 
         {/* 3️⃣ Generated Content Output */}
         {generatedContent && (
-          <Card className="shadow-lg">
+          <Card className="rounded-2xl shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-green-500" />
@@ -2146,7 +2146,7 @@ ${config.hashtags.join(' ')}`;
                     <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
                     <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
                     {generatedContent.videoDuration && (
-                      <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
+                      <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded font-medium">
                         ⏱️ Est. Duration: {generatedContent.videoDuration.readableTime} ({generatedContent.videoDuration.wordCount} words)
                       </span>
                     )}
@@ -2169,9 +2169,9 @@ ${config.hashtags.join(' ')}`;
                 </div>
               
                 {generatedContent.hook && (
-                  <div className="bg-blue-50 p-4 rounded-lg border-l-4 border-blue-500">
+                  <div className="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
                     <h4 className="font-semibold mb-2">Viral Hook:</h4>
-                    <p className="text-blue-900 font-medium">{generatedContent.hook}</p>
+                    <p className="text-purple-900 font-medium">{generatedContent.hook}</p>
                   </div>
                 )}
 
@@ -2301,7 +2301,7 @@ ${config.hashtags.join(' ')}`;
 
         {/* Multi-Template Results */}
         {multiTemplateResults.length > 0 && (
-          <Card className="shadow-lg">
+          <Card className="rounded-2xl shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-purple-500" />
@@ -2316,18 +2316,18 @@ ${config.hashtags.join(' ')}`;
                 {multiTemplateResults.map((item) => (
                   <div key={item.id} className="space-y-4">
                     <div className="flex items-center gap-2 mb-4">
-                      <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                      <div className="w-3 h-3 bg-purple-500 rounded-full"></div>
                       <h3 className="font-semibold text-lg capitalize">
                         📄 {item.templateType.replace('_', ' ')} Template
                       </h3>
                     </div>
-                    <div className="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-500">
+                    <div className="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-500">
                       <div className="text-sm text-gray-600 mb-4 flex gap-2 flex-wrap">
                         <span className="bg-white px-2 py-1 rounded">Template: {item.templateType}</span>
                         <span className="bg-white px-2 py-1 rounded">Tone: {tone}</span>
                         <span className="bg-white px-2 py-1 rounded">Niche: {selectedNiche}</span>
                         {item.content.videoDuration && (
-                          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded font-medium">
+                          <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded font-medium">
                             🎥 Duration: {item.content.videoDuration.readableTime}
                           </span>
                         )}
@@ -2388,7 +2388,7 @@ ${config.hashtags.join(' ')}`;
 
         {/* AI Models Comparison Results */}
         {comparisonResults && (
-          <Card className="shadow-lg">
+          <Card className="rounded-2xl shadow-sm">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-purple-500" />
