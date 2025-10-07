@@ -34,7 +34,6 @@ const Dashboard = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [location, setLocation] = useLocation();
-  const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
   const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
@@ -225,40 +224,6 @@ const Dashboard = () => {
     const niches = Array.from(new Set(products.map(product => product.niche).filter(Boolean)));
     return niches.sort();
   };
-
-  // Run Perplexity fetch
-  const handlePerplexityFetch = async () => {
-    setIsPerplexityLoading(true);
-    try {
-      const response = await fetch('/api/pull-perplexity-trends', {
-        method: 'POST',
-      });
-      
-      const result = await response.json();
-      
-      if (response.ok) {
-        const filteredMessage = result.filtered > 0 ? 
-          ` (${result.filtered} products filtered for quality)` : '';
-        
-        toast({
-          title: "Success!",
-          description: `Fresh trending data fetched from Perplexity${filteredMessage}`,
-        });
-        refetchTrending();
-      } else {
-        throw new Error(result.error || 'Failed to fetch');
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: error instanceof Error ? error.message : "Failed to fetch Perplexity trends",
-        variant: "destructive",
-      });
-    } finally {
-      setIsPerplexityLoading(false);
-    }
-  };
-
 
   // Niche color mapping
   const getNicheColor = (niche: string) => {
@@ -549,25 +514,6 @@ const Dashboard = () => {
                 ))}
               </SelectContent>
             </Select>
-            <div className="flex flex-col items-center">
-              <Button 
-                onClick={selectedDataSource === 'perplexity' ? handlePerplexityFetch : () => amazonMutation.mutate()}
-                disabled={selectedDataSource === 'perplexity' ? isPerplexityLoading : amazonMutation.isPending}
-                variant="outline"
-                size="sm"
-                className={selectedDataSource === 'amazon' ? "bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 hover:from-orange-100 hover:to-yellow-100" : ""}
-                data-testid={selectedDataSource === 'perplexity' ? "button-fetch-perplexity" : "button-fetch-amazon"}
-              >
-                {(selectedDataSource === 'perplexity' ? isPerplexityLoading : amazonMutation.isPending) ? (
-                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                ) : selectedDataSource === 'amazon' ? (
-                  <ShoppingBag className="h-4 w-4 mr-2" />
-                ) : (
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                )}
-                {selectedDataSource === 'perplexity' ? 'Run Perplexity Fetch' : '🔄 Run Amazon Fetch'}
-              </Button>
-            </div>
           </div>
         </CardHeader>
         
@@ -730,8 +676,8 @@ const Dashboard = () => {
               <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>
                 {selectedDataSource === 'perplexity' 
-                  ? 'No Perplexity trends available. Click "Run Perplexity Fetch" to get started!'
-                  : 'No Amazon products available. Click "Run Amazon Fetch" to discover trending products!'
+                  ? 'No Perplexity trends available yet. Trends automatically refresh daily at 5 AM ET.'
+                  : 'No Amazon products available yet. Products automatically refresh daily at 5 AM ET.'
                 }
               </p>
             </div>
