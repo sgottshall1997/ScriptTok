@@ -9,6 +9,7 @@ import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
 import { enhanceContentCompliance, ComplianceOptions } from './complianceEnhancer';
 import { validateContent, ValidationResult } from './contentValidator';
+import { logValidation } from './validationLogger';
 
 // Smart style usage logging function (for future Google Sheets integration)
 export function logSmartStyleUsage(params: {
@@ -397,6 +398,9 @@ Apply these successful patterns from your previous high-rated content:
     // Validate content
     const validationResult = validateContent(formattedContent, templateType);
 
+    // Log validation result
+    logValidation(templateType, validationResult);
+
     if (!validationResult.isValid) {
       console.warn('⚠️ Content validation failed:', {
         templateType,
@@ -463,6 +467,9 @@ Apply these successful patterns from your previous high-rated content:
       // Validate fallback content
       const fallbackValidationResult = validateContent(formattedFallbackContent, templateType);
 
+      // Log validation result
+      logValidation(templateType, fallbackValidationResult);
+
       if (!fallbackValidationResult.isValid) {
         console.warn('⚠️ Fallback content validation failed:', {
           templateType,
@@ -520,6 +527,9 @@ Apply these successful patterns from your previous high-rated content:
 
       // Validate legacy fallback content
       const legacyValidationResult = validateContent(formattedLegacyContent, templateType);
+
+      // Log validation result
+      logValidation(templateType, legacyValidationResult);
 
       if (!legacyValidationResult.isValid) {
         console.warn('⚠️ Legacy fallback content validation failed:', {

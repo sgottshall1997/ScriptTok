@@ -25,6 +25,7 @@ import Account from "@/pages/Account";
 import CompliancePage from "@/pages/CompliancePage";
 import HowItWorksPage from "@/pages/how-it-works";
 import PricingPage from "@/pages/PricingPage";
+import { ValidationDashboard } from "@/components/ValidationDashboard";
 
 // New Legal Pages
 import TermsBillingPage from "@/pages/TermsBilling";
@@ -94,6 +95,11 @@ function MainAppRouter() {
               <Route path="/trend-history">
                 <ProtectedRoute>
                   <TrendHistory />
+                </ProtectedRoute>
+              </Route>
+              <Route path="/validation">
+                <ProtectedRoute>
+                  <ValidationDashboard />
                 </ProtectedRoute>
               </Route>
               {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}

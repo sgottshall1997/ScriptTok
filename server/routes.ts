@@ -38,6 +38,7 @@ import { db } from "./db";
 
 // Content validation imports
 import { validateContent } from "./services/contentValidator";
+import { getValidationLogs, getTemplateMetrics, getOverallMetrics } from "./services/validationLogger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Auth routes (handles authentication internally)
@@ -211,6 +212,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: 'Validation failed',
         message: error instanceof Error ? error.message : 'Unknown error'
       });
+    }
+  });
+
+  // Get validation logs
+  app.get('/api/validation/logs', async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const logs = getValidationLogs(limit);
+      res.json(logs);
+    } catch (error) {
+      console.error('Error fetching validation logs:', error);
+      res.status(500).json({ error: 'Failed to fetch validation logs' });
+    }
+  });
+
+  // Get template metrics
+  app.get('/api/validation/metrics/:templateType?', async (req, res) => {
+    try {
+      const templateType = req.params.templateType;
+      const metrics = getTemplateMetrics(templateType);
+      res.json(metrics);
+    } catch (error) {
+      console.error('Error fetching template metrics:', error);
+      res.status(500).json({ error: 'Failed to fetch metrics' });
+    }
+  });
+
+  // Get overall metrics
+  app.get('/api/validation/overall', async (req, res) => {
+    try {
+      const metrics = getOverallMetrics();
+      res.json(metrics);
+    } catch (error) {
+      console.error('Error fetching overall metrics:', error);
+      res.status(500).json({ error: 'Failed to fetch overall metrics' });
     }
   });
   
