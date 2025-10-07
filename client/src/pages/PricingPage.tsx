@@ -211,23 +211,23 @@ export default function PricingPage() {
               <CardContent>
                 <ul className="space-y-3 mb-6">
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <span className="text-sm">Teams (5 seats)</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <span className="text-sm">API access + Make.com integration</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <span className="text-sm">Bulk scheduling</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <span className="text-sm">Custom templates</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                    <CheckCircle className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <span className="text-sm">Dedicated account manager</span>
                   </li>
                 </ul>

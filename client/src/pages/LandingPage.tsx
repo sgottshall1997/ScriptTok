@@ -128,8 +128,8 @@ export default function LandingPage() {
             <Card className="rounded-2xl">
               <CardContent className="p-6">
                 <div className="flex items-start gap-4">
-                  <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
-                    <BarChart3 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+                    <BarChart3 className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold mb-2">📈 AI Performance Analytics</h3>
@@ -185,8 +185,8 @@ export default function LandingPage() {
             </Card>
             <Card className="rounded-2xl">
               <CardContent className="p-6">
-                <div className="bg-blue-100 dark:bg-blue-900 rounded-lg p-4 mb-4 h-40 flex items-center justify-center">
-                  <Target className="h-16 w-16 text-blue-600 dark:text-blue-400" />
+                <div className="bg-purple-100 dark:bg-purple-900 rounded-lg p-4 mb-4 h-40 flex items-center justify-center">
+                  <Target className="h-16 w-16 text-purple-600 dark:text-purple-400" />
                 </div>
                 <h3 className="text-xl font-semibold mb-2">Affiliate Studio</h3>
                 <p className="text-gray-600 dark:text-gray-400">
@@ -302,8 +302,8 @@ export default function LandingPage() {
             <Card className="rounded-2xl">
               <CardContent className="p-6">
                 <div className="flex items-center mb-4">
-                  <div className="bg-blue-100 dark:bg-blue-900 rounded-full w-12 h-12 flex items-center justify-center mr-3">
-                    <Star className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                  <div className="bg-purple-100 dark:bg-purple-900 rounded-full w-12 h-12 flex items-center justify-center mr-3">
+                    <Star className="h-6 w-6 text-purple-600 dark:text-purple-400" />
                   </div>
                   <div>
                     <div className="font-semibold">Creator B</div>

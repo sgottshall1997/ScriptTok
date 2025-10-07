@@ -1116,7 +1116,7 @@ ${config.hashtags.join(' ')}`;
   // Niche data
   const niches = [
     { id: 'beauty', name: 'Beauty & Personal Care', color: 'bg-pink-100 text-pink-800' },
-    { id: 'tech', name: 'Tech', color: 'bg-blue-100 text-blue-800' },
+    { id: 'tech', name: 'Tech', color: 'bg-purple-100 text-purple-800' },
     { id: 'fashion', name: 'Fashion', color: 'bg-purple-100 text-purple-800' },
     { id: 'fitness', name: 'Fitness', color: 'bg-green-100 text-green-800' },
     { id: 'food', name: 'Food', color: 'bg-orange-100 text-orange-800' },
