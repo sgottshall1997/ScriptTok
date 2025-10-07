@@ -47,70 +47,187 @@ function Router() {
 }
 
 function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolean; isLoading: boolean }) {
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-lg">Loading...</div>
+      </div>
+    );
+  }
+
   return (
     <Switch>
       {/* Authentication routes */}
       <Route path="/sign-in">
         {() => (
           <div className="flex min-h-screen items-center justify-center">
-            <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" />
+            <SignIn signUpUrl="/sign-up" />
           </div>
         )}
       </Route>
       <Route path="/sign-up">
         {() => (
           <div className="flex min-h-screen items-center justify-center">
-            <SignUp routing="path" path="/sign-up" signInUrl="/sign-in" />
+            <SignUp signInUrl="/sign-in" />
           </div>
         )}
       </Route>
       
-      {/* Show Landing page for unauthenticated/loading users at root */}
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={LandingPage} />
-      ) : (
-        <Route path="/" component={Dashboard} />
-      )}
+      {/* Root path - Landing or Dashboard based on auth */}
+      <Route path="/">
+        {() => isAuthenticated ? <Dashboard /> : <LandingPage />}
+      </Route>
       
       {/* App pages with layout */}
-      <Route>
-        {(params) => (
+      <Route path="/dashboard">
+        {() => (
           <Layout>
-            <Switch>
-              <Route path="/dashboard" component={Dashboard} />
-              
-              {/* Core content generation functionality */}
-              <Route path="/generate" component={GenerateContent} />
-              <Route path="/niche/:niche" component={GenerateContent} />
-              <Route path="/trending-ai-picks" component={TrendingAIPicks} />
-              
-              {/* Content management */}
-              <Route path="/content-history" component={EnhancedContentHistory} />
-              <Route path="/trend-history" component={TrendHistory} />
-              {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}
-              
-              {/* Settings */}
-              <Route path="/compliance" component={CompliancePage} />
-              <Route path="/account" component={Account} />
-              
-              {/* Support pages */}
-              <Route path="/how-it-works" component={HowItWorksPage} />
-              <Route path="/about" component={AboutPage} />
-              <Route path="/faq" component={FAQPage} />
-              <Route path="/contact" component={ContactPage} />
-              <Route path="/privacy" component={PrivacyPolicyPage} />
-              <Route path="/terms" component={TermsPage} />
-              
-              {/* New Legal Pages */}
-              <Route path="/terms-billing" component={TermsBillingPage} />
-              <Route path="/privacy-cookies" component={PrivacyCookiesPage} />
-              <Route path="/cookie-preferences" component={CookiePreferencesPage} />
-              <Route path="/legal-notices" component={LegalNoticesPage} />
-              <Route path="/trust-safety" component={TrustSafetyPage} />
-              
-              {/* Fallback to 404 */}
-              <Route component={NotFound} />
-            </Switch>
+            <Dashboard />
+          </Layout>
+        )}
+      </Route>
+      
+      {/* Core content generation functionality */}
+      <Route path="/generate">
+        {() => (
+          <Layout>
+            <GenerateContent />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/niche/:niche">
+        {() => (
+          <Layout>
+            <GenerateContent />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/trending-ai-picks">
+        {() => (
+          <Layout>
+            <TrendingAIPicks />
+          </Layout>
+        )}
+      </Route>
+      
+      {/* Content management */}
+      <Route path="/content-history">
+        {() => (
+          <Layout>
+            <EnhancedContentHistory />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/trend-history">
+        {() => (
+          <Layout>
+            <TrendHistory />
+          </Layout>
+        )}
+      </Route>
+      
+      {/* Settings */}
+      <Route path="/compliance">
+        {() => (
+          <Layout>
+            <CompliancePage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/account">
+        {() => (
+          <Layout>
+            <Account />
+          </Layout>
+        )}
+      </Route>
+      
+      {/* Support pages */}
+      <Route path="/how-it-works">
+        {() => (
+          <Layout>
+            <HowItWorksPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/about">
+        {() => (
+          <Layout>
+            <AboutPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/faq">
+        {() => (
+          <Layout>
+            <FAQPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/contact">
+        {() => (
+          <Layout>
+            <ContactPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/privacy">
+        {() => (
+          <Layout>
+            <PrivacyPolicyPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/terms">
+        {() => (
+          <Layout>
+            <TermsPage />
+          </Layout>
+        )}
+      </Route>
+      
+      {/* New Legal Pages */}
+      <Route path="/terms-billing">
+        {() => (
+          <Layout>
+            <TermsBillingPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/privacy-cookies">
+        {() => (
+          <Layout>
+            <PrivacyCookiesPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/cookie-preferences">
+        {() => (
+          <Layout>
+            <CookiePreferencesPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/legal-notices">
+        {() => (
+          <Layout>
+            <LegalNoticesPage />
+          </Layout>
+        )}
+      </Route>
+      <Route path="/trust-safety">
+        {() => (
+          <Layout>
+            <TrustSafetyPage />
+          </Layout>
+        )}
+      </Route>
+      
+      {/* Fallback to 404 */}
+      <Route>
+        {() => (
+          <Layout>
+            <NotFound />
           </Layout>
         )}
       </Route>

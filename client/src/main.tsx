@@ -6,11 +6,18 @@ import "./index.css";
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!publishableKey) {
-  throw new Error("Missing VITE_CLERK_PUBLISHABLE_KEY environment variable");
+  console.warn("Missing VITE_CLERK_PUBLISHABLE_KEY - Clerk disabled");
 }
 
 createRoot(document.getElementById("root")!).render(
-  <ClerkProvider publishableKey={publishableKey}>
-    <App />
-  </ClerkProvider>
+  publishableKey ? (
+    <ClerkProvider publishableKey={publishableKey}>
+      <App />
+    </ClerkProvider>
+  ) : (
+    <div style={{ padding: '20px', textAlign: 'center' }}>
+      <h1>Clerk Configuration Required</h1>
+      <p>Please set up VITE_CLERK_PUBLISHABLE_KEY in your environment variables.</p>
+    </div>
+  )
 );
