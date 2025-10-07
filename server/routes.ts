@@ -5,6 +5,7 @@ import { storage } from "./storage";
 // Middleware imports
 import { authGuard } from "./middleware/authGuard";
 import { checkQuota } from "./middleware/checkQuota";
+import { checkFeatureAccess, checkTrendForecastingAccess, validateBulkGeneration } from "./middleware/checkFeatureAccess";
 
 // Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
@@ -56,7 +57,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Protected routes with authGuard only (reading/research endpoints)
   app.use('/api/statistics', authGuard, statisticsApi);
   app.use('/api/history', authGuard, historyRouter);
-  app.use('/api/trend-forecast', authGuard, trendForecastRouter);
+  app.use('/api/trend-forecast', authGuard, checkTrendForecastingAccess, trendForecastRouter);
   app.use('/api/product-research', authGuard, productResearchRouter);
   app.use('/api/trend-research', authGuard, trendResearchRouter);
   app.use('/api/trending-categorized', authGuard, trendingCategorizedRouter);
@@ -83,7 +84,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
   
-  app.use('/api/affiliate', (req, res) => {
+  app.use('/api/affiliate', authGuard, checkFeatureAccess('affiliate'), (req, res) => {
     res.status(503).json({
       ...amazonDisabledResponse,
       message: 'Affiliate link functionality is temporarily disabled'

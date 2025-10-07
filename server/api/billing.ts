@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import { authGuard } from '../middleware/authGuard';
 import { storage } from '../storage';
 import { getQuotaService } from '../services/quotaService';
+import { migrateTo4Tier } from '../migrations/migrate-tiers-to-4-tier';
 
 const router = Router();
 
@@ -96,23 +97,31 @@ router.get('/subscription', authGuard, async (req: Request, res: Response) => {
   }
 });
 
-// POST /api/billing/create-checkout - Create Stripe checkout session for Pro upgrade
+// POST /api/billing/create-checkout - Create Stripe checkout session for any tier
 router.post('/create-checkout', authGuard, async (req: Request, res: Response) => {
   try {
     const internalUserId = (req as any).internalUserId;
-    const { tier } = req.body;
+    const { tier, billingPeriod = 'monthly' } = req.body;
 
     if (!internalUserId) {
       console.error('[BillingAPI] ❌ No internal userId found in request');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    if (tier !== 'pro') {
+    // Validate tier
+    const validTiers = ['starter', 'creator', 'pro', 'agency'];
+    if (!validTiers.includes(tier)) {
       console.error('[BillingAPI] ❌ Invalid tier requested:', tier);
-      return res.status(400).json({ error: 'Invalid tier. Only "pro" tier is supported.' });
+      return res.status(400).json({ error: 'Invalid tier. Must be one of: starter, creator, pro, agency' });
     }
 
-    console.log(`[BillingAPI] Creating checkout session for internal user ID ${internalUserId}, tier: ${tier}`);
+    // Validate billing period
+    if (billingPeriod !== 'monthly' && billingPeriod !== 'annual') {
+      console.error('[BillingAPI] ❌ Invalid billing period:', billingPeriod);
+      return res.status(400).json({ error: 'Invalid billing period. Must be "monthly" or "annual"' });
+    }
+
+    console.log(`[BillingAPI] Creating checkout session for internal user ID ${internalUserId}, tier: ${tier}, period: ${billingPeriod}`);
 
     if (DISABLE_BILLING || !stripe) {
       console.log('[BillingAPI:Mock] Returning mock checkout session');
@@ -128,6 +137,48 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
       console.error('[BillingAPI] ❌ User not found:', internalUserId);
       return res.status(404).json({ error: 'User not found' });
     }
+
+    // Map tier to Stripe price ID
+    const stripePriceIds: Record<string, Record<string, string | undefined>> = {
+      starter: {
+        monthly: process.env.STRIPE_PRICE_STARTER_MONTHLY,
+        annual: process.env.STRIPE_PRICE_STARTER_ANNUAL
+      },
+      creator: {
+        monthly: process.env.STRIPE_PRICE_CREATOR_MONTHLY,
+        annual: process.env.STRIPE_PRICE_CREATOR_ANNUAL
+      },
+      pro: {
+        monthly: process.env.STRIPE_PRICE_PRO_MONTHLY,
+        annual: process.env.STRIPE_PRICE_PRO_ANNUAL
+      },
+      agency: {
+        monthly: process.env.STRIPE_PRICE_AGENCY_MONTHLY,
+        annual: process.env.STRIPE_PRICE_AGENCY_ANNUAL
+      }
+    };
+
+    const priceId = stripePriceIds[tier]?.[billingPeriod];
+
+    // Tier pricing for mock/fallback mode
+    const tierPricing: Record<string, Record<string, { name: string; description: string; amount: number }>> = {
+      starter: {
+        monthly: { name: 'Starter Plan', description: '15 GPT generations, 10 Claude generations per month', amount: 700 },
+        annual: { name: 'Starter Plan (Annual)', description: '15 GPT generations, 10 Claude generations per month', amount: 500 }
+      },
+      creator: {
+        monthly: { name: 'Creator Plan', description: '50 GPT generations, 30 Claude generations per month', amount: 1500 },
+        annual: { name: 'Creator Plan (Annual)', description: '50 GPT generations, 30 Claude generations per month', amount: 1000 }
+      },
+      pro: {
+        monthly: { name: 'Pro Plan', description: '300 GPT generations, 150 Claude generations per month', amount: 3500 },
+        annual: { name: 'Pro Plan (Annual)', description: '300 GPT generations, 150 Claude generations per month', amount: 2500 }
+      },
+      agency: {
+        monthly: { name: 'Agency Plan', description: 'Unlimited generations, API access, team seats', amount: 6900 },
+        annual: { name: 'Agency Plan (Annual)', description: 'Unlimited generations, API access, team seats', amount: 5000 }
+      }
+    };
 
     let customerId = '';
     const subscription = await storage.getUserSubscription(internalUserId);
@@ -152,21 +203,29 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
       }
     }
 
-    const session = await stripe.checkout.sessions.create({
+    const pricing = tierPricing[tier][billingPeriod];
+    
+    // Create session with either Stripe price ID or inline price data
+    const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
       mode: 'subscription',
       payment_method_types: ['card'],
-      line_items: [
+      line_items: priceId ? [
+        {
+          price: priceId,
+          quantity: 1
+        }
+      ] : [
         {
           price_data: {
             currency: 'usd',
             product_data: {
-              name: 'Pro Plan',
-              description: '500 generations per month'
+              name: pricing.name,
+              description: pricing.description
             },
-            unit_amount: 2000,
+            unit_amount: pricing.amount,
             recurring: {
-              interval: 'month'
+              interval: billingPeriod === 'annual' ? 'year' : 'month'
             }
           },
           quantity: 1
@@ -176,9 +235,12 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
       cancel_url: `${APP_URL}/billing/cancel`,
       metadata: {
         userId: internalUserId.toString(),
-        tier: 'pro'
+        tier,
+        billingPeriod
       }
-    });
+    };
+
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     console.log(`[BillingAPI] ✅ Checkout session created: ${session.id}`);
 
@@ -242,7 +304,7 @@ router.post('/cancel-subscription', authGuard, async (req: Request, res: Respons
   }
 });
 
-// GET /api/billing/usage - Get current month's usage stats with detailed breakdown
+// GET /api/billing/usage - Get current month's usage stats with comprehensive tier-specific data
 router.get('/usage', authGuard, async (req: Request, res: Response) => {
   try {
     const internalUserId = (req as any).internalUserId;
@@ -252,41 +314,52 @@ router.get('/usage', authGuard, async (req: Request, res: Response) => {
       return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
 
-    console.log(`[BillingAPI] Getting detailed usage stats for internal user ID: ${internalUserId}`);
+    console.log(`[BillingAPI] Getting comprehensive usage stats for internal user ID: ${internalUserId}`);
 
     const tier = await quotaService.getUserTier(internalUserId);
     const usage = await quotaService.getOrCreateMonthlyUsage(internalUserId);
     
-    const gptLimit = quotaService.getGptLimit(tier);
-    const claudeLimit = quotaService.getClaudeLimit(tier);
-    const trendAnalysisLimit = quotaService.getTrendAnalysisLimit(tier);
-    
-    const gptUsed = usage.gptGenerationsUsed;
-    const claudeUsed = usage.claudeGenerationsUsed;
-    const trendAnalysesUsed = usage.trendAnalysesUsed;
+    // Get tier-specific limits
+    const limits = {
+      gpt: quotaService.getGptLimit(tier),
+      claude: quotaService.getClaudeLimit(tier),
+      trends: quotaService.getTrendAnalysisLimit(tier)
+    };
 
-    const data = {
+    // Get tier-specific features
+    const features = {
       tier,
-      gpt: {
-        used: gptUsed,
-        limit: gptLimit,
-        remaining: Math.max(0, gptLimit - gptUsed)
-      },
-      claude: {
-        used: claudeUsed,
-        limit: claudeLimit,
-        remaining: Math.max(0, claudeLimit - claudeUsed)
-      },
-      trendAnalyses: {
-        used: trendAnalysesUsed,
-        limit: trendAnalysisLimit,
-        remaining: Math.max(0, trendAnalysisLimit - trendAnalysesUsed)
-      },
+      viralScoreType: quotaService.getViralScoreType(tier),
       canBulkGenerate: quotaService.canBulkGenerate(tier),
+      bulkGenerationLimit: quotaService.getBulkGenerationLimit(tier),
+      unlockedNiches: quotaService.getUnlockedNiches(tier),
+      historyLimit: quotaService.getHistoryLimit(tier),
+      canExportContent: quotaService.canExportContent(tier),
+      canAccessAffiliate: quotaService.canAccessAffiliate(tier),
+      trendForecastingLevel: quotaService.getTrendForecastingLevel(tier),
+      canUseAPI: quotaService.canUseAPI(tier),
+      canUseBrandTemplates: quotaService.canUseBrandTemplates(tier),
+      teamSeats: quotaService.getTeamSeats(tier),
       templatesUnlocked: quotaService.getUnlockedTemplateCount(tier)
     };
 
-    console.log(`[BillingAPI] ✅ Detailed usage stats:`, data);
+    const data = {
+      usage: {
+        gptGenerationsUsed: usage.gptGenerationsUsed,
+        claudeGenerationsUsed: usage.claudeGenerationsUsed,
+        trendAnalysesUsed: usage.trendAnalysesUsed,
+        periodMonth: usage.periodMonth
+      },
+      limits,
+      features,
+      remaining: {
+        gpt: Math.max(0, limits.gpt - usage.gptGenerationsUsed),
+        claude: Math.max(0, limits.claude - usage.claudeGenerationsUsed),
+        trends: Math.max(0, limits.trends - usage.trendAnalysesUsed)
+      }
+    };
+
+    console.log(`[BillingAPI] ✅ Comprehensive usage stats retrieved for tier: ${tier}`);
 
     res.json({ success: true, data });
 
@@ -323,6 +396,157 @@ router.post('/upgrade', authGuard, async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error('[BillingAPI] ❌ Error upgrading user:', error);
     res.status(500).json({ success: false, error: 'Failed to upgrade user' });
+  }
+});
+
+// GET /api/billing/tiers - Get tier comparison data for pricing page
+router.get('/tiers', async (req: Request, res: Response) => {
+  try {
+    console.log('[BillingAPI] Getting tier comparison data');
+
+    const tiers = [
+      {
+        id: 'starter',
+        name: 'Starter',
+        price: { monthly: 7, annual: 5 },
+        limits: {
+          gpt: 15,
+          claude: 10,
+          trends: 10
+        },
+        features: {
+          viralScore: 'basic',
+          templates: '3 per category',
+          niches: ['beauty', 'tech', 'fashion'],
+          nicheCount: 3,
+          history: 10,
+          bulkGeneration: false,
+          bulkLimit: 0,
+          export: false,
+          forecasting: 'none',
+          affiliateStudio: false,
+          apiAccess: false,
+          brandTemplates: false,
+          teamSeats: 1
+        }
+      },
+      {
+        id: 'creator',
+        name: 'Creator',
+        price: { monthly: 15, annual: 10 },
+        limits: {
+          gpt: 50,
+          claude: 30,
+          trends: 25
+        },
+        features: {
+          viralScore: 'full',
+          templates: 'All templates',
+          niches: ['beauty', 'tech', 'fashion', 'health', 'food', 'travel', 'fitness'],
+          nicheCount: 7,
+          history: 50,
+          bulkGeneration: false,
+          bulkLimit: 0,
+          export: true,
+          forecasting: 'basic',
+          affiliateStudio: false,
+          apiAccess: false,
+          brandTemplates: false,
+          teamSeats: 1
+        }
+      },
+      {
+        id: 'pro',
+        name: 'Pro',
+        price: { monthly: 35, annual: 25 },
+        limits: {
+          gpt: 300,
+          claude: 150,
+          trends: 100
+        },
+        features: {
+          viralScore: 'advanced',
+          templates: 'All templates',
+          niches: ['beauty', 'tech', 'fashion', 'health', 'food', 'travel', 'fitness'],
+          nicheCount: 7,
+          history: 'Unlimited',
+          bulkGeneration: true,
+          bulkLimit: 10,
+          export: true,
+          forecasting: 'full',
+          affiliateStudio: true,
+          apiAccess: false,
+          brandTemplates: false,
+          teamSeats: 1
+        }
+      },
+      {
+        id: 'agency',
+        name: 'Agency',
+        price: { monthly: 69, annual: 50 },
+        limits: {
+          gpt: 1000,
+          claude: 500,
+          trends: Infinity
+        },
+        features: {
+          viralScore: 'enterprise',
+          templates: 'All templates + Brand templates',
+          niches: ['beauty', 'tech', 'fashion', 'health', 'food', 'travel', 'fitness'],
+          nicheCount: 7,
+          history: 'Unlimited',
+          bulkGeneration: true,
+          bulkLimit: 50,
+          export: true,
+          forecasting: 'full',
+          affiliateStudio: true,
+          apiAccess: true,
+          brandTemplates: true,
+          teamSeats: 5
+        }
+      }
+    ];
+
+    res.json({ success: true, tiers });
+
+  } catch (error: any) {
+    console.error('[BillingAPI] ❌ Error getting tiers:', error);
+    res.status(500).json({ success: false, error: 'Failed to get tier data' });
+  }
+});
+
+// POST /api/billing/admin/migrate-tiers - Run tier migration (admin endpoint)
+router.post('/admin/migrate-tiers', authGuard, async (req: Request, res: Response) => {
+  try {
+    const internalUserId = (req as any).internalUserId;
+
+    if (!internalUserId) {
+      console.error('[BillingAPI] ❌ No internal userId found in request');
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+
+    // Check if user is admin (you may want to add role check here)
+    const user = await storage.getUser(internalUserId);
+    if (!user || user.role !== 'admin') {
+      console.error('[BillingAPI] ❌ User is not admin:', internalUserId);
+      return res.status(403).json({ success: false, error: 'Forbidden: Admin access required' });
+    }
+
+    console.log('[BillingAPI] Running tier migration by admin user:', internalUserId);
+
+    const result = await migrateTo4Tier();
+
+    console.log(`[BillingAPI] ✅ Migration completed:`, result);
+
+    res.json({ 
+      success: true, 
+      message: `Successfully migrated ${result.usersUpdated} users from 'free' to 'starter'`,
+      usersUpdated: result.usersUpdated
+    });
+
+  } catch (error: any) {
+    console.error('[BillingAPI] ❌ Error running migration:', error);
+    res.status(500).json({ success: false, error: 'Migration failed', message: error.message });
   }
 });
 

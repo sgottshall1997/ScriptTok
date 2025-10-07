@@ -104,11 +104,18 @@ export class QuotaService {
       const user = await this.storage.getUser(userId);
       
       if (!user) {
-        console.log(`[QuotaService] User ${userId} not found, defaulting to 'free' tier`);
-        return 'free';
+        console.log(`[QuotaService] User ${userId} not found, defaulting to 'starter' tier`);
+        return 'starter';
       }
       
-      const tier = user.subscriptionTier || 'free';
+      let tier = user.subscriptionTier || 'starter';
+      
+      // Backward compatibility: map 'free' to 'starter'
+      if (tier === 'free') {
+        console.log(`[QuotaService] User ${userId} has legacy 'free' tier, treating as 'starter'`);
+        tier = 'starter';
+      }
+      
       console.log(`[QuotaService] User ${userId} has tier: ${tier}`);
       return tier;
     } catch (error) {
@@ -121,13 +128,18 @@ export class QuotaService {
     console.log(`[QuotaService] Getting GPT limit for tier: ${tier}`);
     
     switch (tier) {
-      case 'free':
-        return 10;
+      case 'free': // backward compatibility
+      case 'starter':
+        return 15;
+      case 'creator':
+        return 50;
       case 'pro':
         return 300;
+      case 'agency':
+        return 1000;
       default:
-        console.log(`[QuotaService] Unknown tier '${tier}', returning Infinity as safety fallback`);
-        return Infinity;
+        console.log(`[QuotaService] Unknown tier '${tier}', returning 15 as safe default`);
+        return 15;
     }
   }
 
@@ -135,13 +147,18 @@ export class QuotaService {
     console.log(`[QuotaService] Getting Claude limit for tier: ${tier}`);
     
     switch (tier) {
-      case 'free':
-        return 5;
+      case 'free': // backward compatibility
+      case 'starter':
+        return 10;
+      case 'creator':
+        return 30;
       case 'pro':
         return 150;
+      case 'agency':
+        return 500;
       default:
-        console.log(`[QuotaService] Unknown tier '${tier}', returning Infinity as safety fallback`);
-        return Infinity;
+        console.log(`[QuotaService] Unknown tier '${tier}', returning 10 as safe default`);
+        return 10;
     }
   }
 
@@ -149,13 +166,18 @@ export class QuotaService {
     console.log(`[QuotaService] Getting trend analysis limit for tier: ${tier}`);
     
     switch (tier) {
-      case 'free':
+      case 'free': // backward compatibility
+      case 'starter':
         return 10;
+      case 'creator':
+        return 25;
       case 'pro':
-        return 250;
-      default:
-        console.log(`[QuotaService] Unknown tier '${tier}', returning Infinity as safety fallback`);
+        return 100;
+      case 'agency':
         return Infinity;
+      default:
+        console.log(`[QuotaService] Unknown tier '${tier}', returning 10 as safe default`);
+        return 10;
     }
   }
 
@@ -224,18 +246,113 @@ export class QuotaService {
   }
 
   canBulkGenerate(tier: string): boolean {
-    return tier === 'pro';
+    return tier === 'pro' || tier === 'agency';
   }
 
   getUnlockedTemplateCount(tier: string): number {
     switch (tier) {
-      case 'free':
-        return 5;
+      case 'free': // backward compatibility
+      case 'starter':
+        return 3; // 3 templates per category
+      case 'creator':
       case 'pro':
+      case 'agency':
         return Infinity;
       default:
-        return 5;
+        return 3;
     }
+  }
+
+  getViralScoreType(tier: string): 'basic' | 'full' | 'advanced' | 'enterprise' {
+    switch (tier) {
+      case 'free': // backward compatibility
+      case 'starter':
+        return 'basic';
+      case 'creator':
+        return 'full';
+      case 'pro':
+        return 'advanced';
+      case 'agency':
+        return 'enterprise';
+      default:
+        return 'basic';
+    }
+  }
+
+  getBulkGenerationLimit(tier: string): number {
+    switch (tier) {
+      case 'pro':
+        return 10;
+      case 'agency':
+        return 50;
+      default:
+        return 0;
+    }
+  }
+
+  getUnlockedNiches(tier: string): string[] {
+    const allNiches = ['beauty', 'tech', 'fashion', 'health', 'food', 'travel', 'fitness'];
+    switch (tier) {
+      case 'free': // backward compatibility
+      case 'starter':
+        return ['beauty', 'tech', 'fashion']; // first 3
+      case 'creator':
+      case 'pro':
+      case 'agency':
+        return allNiches;
+      default:
+        return ['beauty', 'tech', 'fashion'];
+    }
+  }
+
+  getHistoryLimit(tier: string): number {
+    switch (tier) {
+      case 'free': // backward compatibility
+      case 'starter':
+        return 10;
+      case 'creator':
+        return 50;
+      case 'pro':
+      case 'agency':
+        return Infinity;
+      default:
+        return 10;
+    }
+  }
+
+  canExportContent(tier: string): boolean {
+    return tier === 'creator' || tier === 'pro' || tier === 'agency';
+  }
+
+  canAccessAffiliate(tier: string): boolean {
+    return tier === 'pro' || tier === 'agency';
+  }
+
+  getTrendForecastingLevel(tier: string): 'none' | 'basic' | 'full' {
+    switch (tier) {
+      case 'free': // backward compatibility
+      case 'starter':
+        return 'none';
+      case 'creator':
+        return 'basic'; // hot/rising only
+      case 'pro':
+      case 'agency':
+        return 'full';
+      default:
+        return 'none';
+    }
+  }
+
+  canUseAPI(tier: string): boolean {
+    return tier === 'agency';
+  }
+
+  canUseBrandTemplates(tier: string): boolean {
+    return tier === 'agency';
+  }
+
+  getTeamSeats(tier: string): number {
+    return tier === 'agency' ? 5 : 1;
   }
 }
 

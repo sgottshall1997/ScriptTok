@@ -37,7 +37,7 @@ export class IdentityService {
 
       // In development mode, grant Pro tier automatically
       const isDevelopment = provider === 'dev' || process.env.NODE_ENV === 'development';
-      const subscriptionTier = isDevelopment ? 'pro' : 'free';
+      const subscriptionTier = isDevelopment ? 'pro' : 'starter';
 
       const newUserData: InsertUser = {
         username,

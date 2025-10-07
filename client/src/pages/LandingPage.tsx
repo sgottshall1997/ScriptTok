@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { 
   Zap, 
   Video,
@@ -7,6 +8,8 @@ import {
   Check,
   Star,
   MessageSquare,
+  Rocket,
+  Users,
   type LucideIcon,
 } from "lucide-react";
 import { useLocation } from "wouter";
@@ -270,7 +273,7 @@ export default function LandingPage() {
 
       {/* Pricing Section */}
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Choose Your Plan
@@ -279,54 +282,58 @@ export default function LandingPage() {
               Start for free, upgrade when you're ready.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {/* Free Plan */}
-            <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
-              <CardContent className="p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
-                    <Zap className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+            {/* Starter Plan */}
+            <Card className="rounded-2xl shadow-sm hover:shadow-md transition-all hover:scale-105 relative">
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center mb-4">
+                  <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg mb-3">
+                    <Zap className="h-8 w-8 text-green-600 dark:text-green-400" />
                   </div>
-                  <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Free Plan</div>
-                    <h3 className="text-2xl font-bold">$0</h3>
-                  </div>
+                  <h3 className="text-xl font-bold mb-1">Starter</h3>
+                  <div className="text-3xl font-bold mb-1">$7<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
+                  <div className="text-sm text-gray-500 dark:text-gray-500">or $5/mo annually - Save 29%</div>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  Perfect for getting started with AI content creation.
-                </p>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>5 daily generations</span>
+                <ul className="space-y-2.5 mb-6">
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>15 GPT-4 + 10 Claude generations/month</span>
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Core templates</span>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>10 trend analyses/month</span>
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>3 templates per category</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>3 niches (beauty, tech, fashion)</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <span>Basic viral score</span>
                   </li>
                 </ul>
                 {!isAuthenticated ? (
                   <Button
                     onClick={() => {
-                      trackSignupCTA('pricing_free');
+                      trackSignupCTA('pricing_starter');
                       login();
                     }}
                     className="w-full rounded-xl"
                     variant="outline"
-                    data-testid="button-pricing-free"
+                    data-testid="button-pricing-starter"
                   >
-                    Get Started Free
+                    Start Free Trial
                   </Button>
                 ) : (
                   <Button
                     onClick={() => navigate('/dashboard')}
                     className="w-full rounded-xl"
                     variant="outline"
-                    data-testid="button-pricing-free-dashboard"
+                    data-testid="button-pricing-starter-dashboard"
                   >
                     Go to Dashboard
                   </Button>
@@ -334,58 +341,175 @@ export default function LandingPage() {
               </CardContent>
             </Card>
 
-            {/* Pro Plan */}
-            <Card className="rounded-2xl border-purple-600 border-2 shadow-lg relative">
-              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
-                <div className="bg-gradient-hero text-white px-4 py-1 rounded-full text-sm font-semibold">
-                  Most Popular
-                </div>
-              </div>
-              <CardContent className="p-8">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+            {/* Creator Plan */}
+            <Card className="rounded-2xl border-purple-500 border-2 shadow-lg hover:shadow-xl transition-all hover:scale-105 relative">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 hover:bg-purple-600">
+                Most Popular
+              </Badge>
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center mb-4">
+                  <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg mb-3">
                     <Star className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                   </div>
-                  <div>
-                    <div className="text-sm text-gray-600 dark:text-gray-400">Pro Plan</div>
-                    <h3 className="text-2xl font-bold">Contact Sales</h3>
-                  </div>
+                  <h3 className="text-xl font-bold mb-1">Creator</h3>
+                  <div className="text-3xl font-bold mb-1">$15<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
+                  <div className="text-sm text-gray-500 dark:text-gray-500">or $10/mo annually - Save 33%</div>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-6">
-                  For serious creators and teams who need unlimited power.
-                </p>
-                <ul className="space-y-3 mb-6">
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Unlimited generations</span>
+                <ul className="space-y-2.5 mb-6">
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>50 GPT-4 + 30 Claude generations/month</span>
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Advanced trend engine</span>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>25 trend analyses/month</span>
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Full analytics dashboard</span>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>All templates & niches</span>
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Priority support</span>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Full viral score + suggestions</span>
                   </li>
-                  <li className="flex items-start">
-                    <Check className="h-5 w-5 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Team collaboration</span>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Content export (CSV)</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Basic trend forecasting</span>
                   </li>
                 </ul>
                 <Button
                   onClick={() => {
-                    trackNavigateCTA('pricing_pro', 'upgrade');
-                    navigate('/contact');
+                    trackNavigateCTA('pricing_creator', 'get_creator');
+                    navigate('/account');
                   }}
-                  className="w-full bg-gradient-hero text-white hover:opacity-90 rounded-xl"
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl"
+                  data-testid="button-pricing-creator"
+                >
+                  Get Creator
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Pro Plan */}
+            <Card className="rounded-2xl border-green-500 border-2 shadow-lg hover:shadow-xl transition-all hover:scale-105 relative">
+              <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-600 hover:bg-green-600">
+                Best Value
+              </Badge>
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center mb-4">
+                  <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg mb-3">
+                    <Rocket className="h-8 w-8 text-green-600 dark:text-green-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-1">Pro</h3>
+                  <div className="text-3xl font-bold mb-1">$35<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
+                  <div className="text-sm text-gray-500 dark:text-gray-500">or $25/mo annually - Save 29%</div>
+                </div>
+                <ul className="space-y-2.5 mb-6">
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>300 GPT-4 + 150 Claude generations/month</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>100 trend analyses/month</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Both Studios (Viral + Affiliate)</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Bulk generation (10 items)</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Advanced dual-AI viral score</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Full trend forecasting</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Custom prompts</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Make.com webhooks</span>
+                  </li>
+                </ul>
+                <Button
+                  onClick={() => {
+                    trackNavigateCTA('pricing_pro', 'upgrade_pro');
+                    navigate('/account');
+                  }}
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl"
                   data-testid="button-pricing-pro"
                 >
-                  <Star className="mr-2 h-5 w-5" />
                   Upgrade to Pro
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Agency Plan */}
+            <Card className="rounded-2xl shadow-sm hover:shadow-md transition-all hover:scale-105 relative">
+              <CardContent className="p-6">
+                <div className="flex flex-col items-center text-center mb-4">
+                  <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mb-3">
+                    <Users className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-1">Agency</h3>
+                  <div className="text-3xl font-bold mb-1">$69<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
+                  <div className="text-sm text-gray-500 dark:text-gray-500">or $50/mo annually - Save 28%</div>
+                </div>
+                <ul className="space-y-2.5 mb-6">
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>1000 GPT-4 + 500 Claude generations/month</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Unlimited trend analyses</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>5 team seats</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Enterprise viral score + competitive analysis</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>API access</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Brand templates</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Bulk scheduling (50+ items)</span>
+                  </li>
+                  <li className="flex items-start text-sm">
+                    <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
+                    <span>Dedicated account manager</span>
+                  </li>
+                </ul>
+                <Button
+                  onClick={() => {
+                    trackNavigateCTA('pricing_agency', 'contact_sales');
+                    navigate('/contact');
+                  }}
+                  className="w-full rounded-xl"
+                  variant="outline"
+                  data-testid="button-pricing-agency"
+                >
+                  Contact Sales
                 </Button>
               </CardContent>
             </Card>

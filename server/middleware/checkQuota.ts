@@ -131,15 +131,76 @@ export const checkQuota = async (req: Request, res: Response, next: NextFunction
     });
 
     if (!quotaCheck.allowed) {
-      // Quota exceeded - return tier-specific message
+      // Quota exceeded - return tier-specific message with upgrade suggestions
+      let errorTitle: string;
       let message: string;
+      let suggestedTier: string;
+      let upgradeReason: string;
+      let tierLimits: Record<string, number>;
       
       if (usageType === 'gpt') {
-        message = `You've used ${quotaCheck.used} of ${quotaCheck.limit} GPT generations. Try Claude or upgrade to Pro.`;
+        errorTitle = 'GPT-4 generation limit reached';
+        message = `You've used all ${quotaCheck.limit} GPT-4 generations this month on the ${tier.charAt(0).toUpperCase() + tier.slice(1)} plan.`;
+        tierLimits = {
+          starter: quotaService.getGptLimit('starter'),
+          creator: quotaService.getGptLimit('creator'),
+          pro: quotaService.getGptLimit('pro'),
+          agency: quotaService.getGptLimit('agency')
+        };
+        
+        // Determine suggested tier based on current tier
+        if (tier === 'starter') {
+          suggestedTier = 'creator';
+          upgradeReason = 'Upgrade to Creator for 50 GPT-4 generations/month';
+        } else if (tier === 'creator') {
+          suggestedTier = 'pro';
+          upgradeReason = 'Upgrade to Pro for 300 GPT-4 generations/month + bulk generation';
+        } else {
+          suggestedTier = 'agency';
+          upgradeReason = 'Upgrade to Agency for 1000 GPT-4 generations/month';
+        }
       } else if (usageType === 'claude') {
-        message = `You've used ${quotaCheck.used} of ${quotaCheck.limit} Claude generations. Upgrade to Pro for 150/month.`;
+        errorTitle = 'Claude generation limit reached';
+        message = `You've used all ${quotaCheck.limit} Claude generations this month on the ${tier.charAt(0).toUpperCase() + tier.slice(1)} plan.`;
+        tierLimits = {
+          starter: quotaService.getClaudeLimit('starter'),
+          creator: quotaService.getClaudeLimit('creator'),
+          pro: quotaService.getClaudeLimit('pro'),
+          agency: quotaService.getClaudeLimit('agency')
+        };
+        
+        // Determine suggested tier based on current tier
+        if (tier === 'starter') {
+          suggestedTier = 'creator';
+          upgradeReason = 'Upgrade to Creator for 30 Claude generations/month';
+        } else if (tier === 'creator') {
+          suggestedTier = 'pro';
+          upgradeReason = 'Upgrade to Pro for 150 Claude generations/month + bulk generation';
+        } else {
+          suggestedTier = 'agency';
+          upgradeReason = 'Upgrade to Agency for 500 Claude generations/month';
+        }
       } else {
-        message = `You've used ${quotaCheck.used} of ${quotaCheck.limit} trend analyses. Upgrade to Pro for 250/month.`;
+        errorTitle = 'Trend analysis limit reached';
+        message = `You've used all ${quotaCheck.limit} trend analyses this month on the ${tier.charAt(0).toUpperCase() + tier.slice(1)} plan.`;
+        tierLimits = {
+          starter: quotaService.getTrendAnalysisLimit('starter'),
+          creator: quotaService.getTrendAnalysisLimit('creator'),
+          pro: quotaService.getTrendAnalysisLimit('pro'),
+          agency: Infinity
+        };
+        
+        // Determine suggested tier based on current tier
+        if (tier === 'starter') {
+          suggestedTier = 'creator';
+          upgradeReason = 'Upgrade to Creator for 25 trend analyses/month';
+        } else if (tier === 'creator') {
+          suggestedTier = 'pro';
+          upgradeReason = 'Upgrade to Pro for 100 trend analyses/month';
+        } else {
+          suggestedTier = 'agency';
+          upgradeReason = 'Upgrade to Agency for unlimited trend analyses';
+        }
       }
       
       console.warn(`[CheckQuota] ⚠️ Quota exceeded for user ${internalUserId}:`, {
@@ -150,11 +211,16 @@ export const checkQuota = async (req: Request, res: Response, next: NextFunction
       });
 
       res.status(429).json({
-        error: 'Quota exceeded',
+        error: errorTitle,
         message,
         used: quotaCheck.used,
         limit: quotaCheck.limit,
         tier: quotaCheck.tier,
+        upgrade: {
+          suggestedTier,
+          reason: upgradeReason,
+          tierLimits
+        },
         upgradeUrl: '/billing/upgrade'
       });
       return;
