@@ -6,8 +6,15 @@ const router = Router();
 // GET /api/statistics - Get usage statistics
 router.get('/', async (req, res) => {
   try {
-    // Get all content history for comprehensive statistics
-    const allHistory = await storage.getAllContentHistory();
+    // Get authenticated user's internal ID
+    const internalUserId = (req as any).internalUserId;
+    
+    if (!internalUserId) {
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+    
+    // Get user's content history (not all users)
+    const allHistory = await storage.getUserContentHistory(internalUserId);
     
     if (!allHistory || allHistory.length === 0) {
       return res.json({
