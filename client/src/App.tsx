@@ -6,6 +6,7 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { SignIn, SignUp } from "@clerk/clerk-react";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -48,6 +49,22 @@ function Router() {
 function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolean; isLoading: boolean }) {
   return (
     <Switch>
+      {/* Authentication routes */}
+      <Route path="/sign-in">
+        {() => (
+          <div className="flex min-h-screen items-center justify-center">
+            <SignIn routing="path" path="/sign-in" signUpUrl="/sign-up" />
+          </div>
+        )}
+      </Route>
+      <Route path="/sign-up">
+        {() => (
+          <div className="flex min-h-screen items-center justify-center">
+            <SignUp routing="path" path="/sign-up" signInUrl="/sign-in" />
+          </div>
+        )}
+      </Route>
+      
       {/* Show Landing page for unauthenticated/loading users at root */}
       {isLoading || !isAuthenticated ? (
         <Route path="/" component={LandingPage} />

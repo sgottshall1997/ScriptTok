@@ -33,7 +33,7 @@ export const users = pgTable("users", {
   lastLogin: timestamp("last_login"),
   loginCount: integer("login_count").default(0),
   preferences: jsonb("preferences"),
-  replitAuthId: varchar("replit_auth_id").unique(),
+  clerkId: varchar("clerk_id").unique(),
 });
 
 // AI Model Configuration schema for content generation

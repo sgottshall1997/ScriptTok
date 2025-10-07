@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { requireAuth, clerkMiddleware } from "./clerkAuth";
 
 // Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
@@ -32,11 +32,11 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup Replit Auth
-  await setupAuth(app);
+  // Setup Clerk Auth middleware
+  app.use(clerkMiddleware);
 
   // Auth endpoint
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
+  app.get('/api/auth/user', requireAuth, async (req: any, res) => {
     try {
       const userId = req.user.id;
       const user = await storage.getUser(userId);
@@ -100,9 +100,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   
   // Content history alias endpoint (protected)
-  app.get('/api/content-history', isAuthenticated, async (req: any, res) => {
+  app.get('/api/content-history', requireAuth, async (req: any, res) => {
     try {
-      const userId = req.user.claims.sub;
+      const userId = req.user.id;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
       

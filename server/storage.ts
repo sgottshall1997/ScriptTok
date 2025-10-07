@@ -19,11 +19,11 @@ import { eq, desc, and } from "drizzle-orm";
 
 // Simplified interface for storage operations
 export interface IStorage {
-  // User operations (Replit Auth)
+  // User operations (Clerk Auth)
   getUser(id: number): Promise<User | undefined>;
-  getUserByReplitAuthId(replitAuthId: string): Promise<User | undefined>;
-  createReplitAuthUser(data: {
-    replitAuthId: string;
+  getUserByClerkId(clerkId: string): Promise<User | undefined>;
+  createClerkUser(data: {
+    clerkId: string;
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -84,17 +84,17 @@ export class MemStorage implements IStorage {
 
   private nextUserId = 1;
 
-  // User operations (Replit Auth)
+  // User operations (Clerk Auth)
   async getUser(id: number): Promise<User | undefined> {
     return this.users.find(u => u.id === id);
   }
 
-  async getUserByReplitAuthId(replitAuthId: string): Promise<User | undefined> {
-    return this.users.find(u => u.replitAuthId === replitAuthId);
+  async getUserByClerkId(clerkId: string): Promise<User | undefined> {
+    return this.users.find(u => u.clerkId === clerkId);
   }
 
-  async createReplitAuthUser(data: {
-    replitAuthId: string;
+  async createClerkUser(data: {
+    clerkId: string;
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -116,7 +116,7 @@ export class MemStorage implements IStorage {
       lastLogin: null,
       loginCount: 0,
       preferences: null,
-      replitAuthId: data.replitAuthId,
+      clerkId: data.clerkId,
     };
     this.users.push(newUser);
     return newUser;
@@ -148,7 +148,7 @@ export class MemStorage implements IStorage {
         lastLogin: userData.lastLogin || null,
         loginCount: userData.loginCount || 0,
         preferences: userData.preferences || null,
-        replitAuthId: userData.replitAuthId || null,
+        clerkId: userData.clerkId || null,
         createdAt: new Date(),
         updatedAt: new Date()
       };
@@ -404,19 +404,19 @@ export class MemStorage implements IStorage {
 
 // PostgreSQL storage implementation using Drizzle ORM
 export class DatabaseStorage implements IStorage {
-  // User operations (Replit Auth)
+  // User operations (Clerk Auth)
   async getUser(id: number): Promise<User | undefined> {
     const result = await db.select().from(users).where(eq(users.id, id));
     return result[0];
   }
 
-  async getUserByReplitAuthId(replitAuthId: string): Promise<User | undefined> {
-    const result = await db.select().from(users).where(eq(users.replitAuthId, replitAuthId));
+  async getUserByClerkId(clerkId: string): Promise<User | undefined> {
+    const result = await db.select().from(users).where(eq(users.clerkId, clerkId));
     return result[0];
   }
 
-  async createReplitAuthUser(data: {
-    replitAuthId: string;
+  async createClerkUser(data: {
+    clerkId: string;
     email?: string;
     firstName?: string;
     lastName?: string;
@@ -425,14 +425,14 @@ export class DatabaseStorage implements IStorage {
     const [user] = await db
       .insert(users)
       .values({
-        username: data.email || `replit_user_${Date.now()}`,
+        username: data.email || `clerk_user_${Date.now()}`,
         password: '',
         email: data.email || null,
         role: 'writer',
         firstName: data.firstName || null,
         lastName: data.lastName || null,
         profileImageUrl: data.profileImageUrl || null,
-        replitAuthId: data.replitAuthId,
+        clerkId: data.clerkId,
         status: 'active',
         loginCount: 0,
       })

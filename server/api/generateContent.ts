@@ -10,7 +10,7 @@ import { insertContentHistorySchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
-import { isAuthenticated } from "../replitAuth";
+import { requireAuth } from "../clerkAuth";
 
 // Helper function to extract hashtags from text
 function extractHashtags(text: string): string[] {
@@ -187,7 +187,7 @@ const contentCache = new CacheService<CachedContent>({
   maxSize: 500 // Store up to 500 generations
 });
 
-router.post("/", isAuthenticated, contentGenerationLimiter, async (req, res) => {
+router.post("/", requireAuth, contentGenerationLimiter, async (req, res) => {
   try {
     // Validate request body against schema
     const result = generateContentSchema.safeParse(req.body);
