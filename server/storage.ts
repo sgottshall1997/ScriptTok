@@ -74,9 +74,12 @@ export interface IStorage {
   updateSubscription(userId: number, updates: Partial<InsertSubscription>): Promise<Subscription | undefined>;
 
   // Monthly usage operations
-  getMonthlyUsage(userId: number, periodYyyymm: string): Promise<MonthlyUsage | undefined>;
-  createMonthlyUsage(usage: InsertMonthlyUsage): Promise<MonthlyUsage>;
-  incrementUsage(userId: number, periodYyyymm: string, count?: number): Promise<MonthlyUsage>;
+  getMonthlyUsage(userId: number, periodMonth: string): Promise<MonthlyUsage | null>;
+  createMonthlyUsage(data: InsertMonthlyUsage): Promise<MonthlyUsage>;
+  incrementGptUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage>;
+  incrementClaudeUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage>;
+  incrementTrendAnalysisUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage>;
+  updateUserTier(userId: number, tier: string): Promise<void>;
 }
 
 // In-memory storage implementation for development
@@ -124,6 +127,7 @@ export class MemStorage implements IStorage {
       status: user.status || 'active',
       lastLogin: user.lastLogin || null,
       preferences: user.preferences || null,
+      subscriptionTier: user.subscriptionTier || 'free',
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -440,17 +444,20 @@ export class MemStorage implements IStorage {
   }
 
   // Monthly usage operations
-  async getMonthlyUsage(userId: number, periodYyyymm: string): Promise<MonthlyUsage | undefined> {
+  async getMonthlyUsage(userId: number, periodMonth: string): Promise<MonthlyUsage | null> {
     return this.monthlyUsageData.find(
-      u => u.userId === userId && u.periodYyyymm === periodYyyymm
-    );
+      u => u.userId === userId && u.periodMonth === periodMonth
+    ) || null;
   }
 
-  async createMonthlyUsage(usage: InsertMonthlyUsage): Promise<MonthlyUsage> {
+  async createMonthlyUsage(data: InsertMonthlyUsage): Promise<MonthlyUsage> {
     const newUsage: MonthlyUsage = {
-      ...usage,
+      ...data,
       id: this.nextMonthlyUsageId++,
-      generationsUsed: usage.generationsUsed || 0,
+      gptGenerationsUsed: data.gptGenerationsUsed || 0,
+      claudeGenerationsUsed: data.claudeGenerationsUsed || 0,
+      trendAnalysesUsed: data.trendAnalysesUsed || 0,
+      userTier: data.userTier || null,
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -458,25 +465,86 @@ export class MemStorage implements IStorage {
     return newUsage;
   }
 
-  async incrementUsage(userId: number, periodYyyymm: string, count = 1): Promise<MonthlyUsage> {
-    const existing = await this.getMonthlyUsage(userId, periodYyyymm);
+  async incrementGptUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodMonth);
     
     if (existing) {
       const usageIndex = this.monthlyUsageData.findIndex(
-        u => u.userId === userId && u.periodYyyymm === periodYyyymm
+        u => u.userId === userId && u.periodMonth === periodMonth
       );
       this.monthlyUsageData[usageIndex] = {
         ...this.monthlyUsageData[usageIndex],
-        generationsUsed: this.monthlyUsageData[usageIndex].generationsUsed + count,
+        gptGenerationsUsed: this.monthlyUsageData[usageIndex].gptGenerationsUsed + count,
         updatedAt: new Date()
       };
       return this.monthlyUsageData[usageIndex];
     } else {
       return await this.createMonthlyUsage({
         userId,
-        periodYyyymm,
-        generationsUsed: count
+        periodMonth,
+        gptGenerationsUsed: count,
+        claudeGenerationsUsed: 0,
+        trendAnalysesUsed: 0
       });
+    }
+  }
+
+  async incrementClaudeUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodMonth);
+    
+    if (existing) {
+      const usageIndex = this.monthlyUsageData.findIndex(
+        u => u.userId === userId && u.periodMonth === periodMonth
+      );
+      this.monthlyUsageData[usageIndex] = {
+        ...this.monthlyUsageData[usageIndex],
+        claudeGenerationsUsed: this.monthlyUsageData[usageIndex].claudeGenerationsUsed + count,
+        updatedAt: new Date()
+      };
+      return this.monthlyUsageData[usageIndex];
+    } else {
+      return await this.createMonthlyUsage({
+        userId,
+        periodMonth,
+        gptGenerationsUsed: 0,
+        claudeGenerationsUsed: count,
+        trendAnalysesUsed: 0
+      });
+    }
+  }
+
+  async incrementTrendAnalysisUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodMonth);
+    
+    if (existing) {
+      const usageIndex = this.monthlyUsageData.findIndex(
+        u => u.userId === userId && u.periodMonth === periodMonth
+      );
+      this.monthlyUsageData[usageIndex] = {
+        ...this.monthlyUsageData[usageIndex],
+        trendAnalysesUsed: this.monthlyUsageData[usageIndex].trendAnalysesUsed + count,
+        updatedAt: new Date()
+      };
+      return this.monthlyUsageData[usageIndex];
+    } else {
+      return await this.createMonthlyUsage({
+        userId,
+        periodMonth,
+        gptGenerationsUsed: 0,
+        claudeGenerationsUsed: 0,
+        trendAnalysesUsed: count
+      });
+    }
+  }
+
+  async updateUserTier(userId: number, tier: string): Promise<void> {
+    const userIndex = this.users.findIndex(u => u.id === userId);
+    if (userIndex !== -1) {
+      this.users[userIndex] = {
+        ...this.users[userIndex],
+        subscriptionTier: tier,
+        updatedAt: new Date()
+      };
     }
   }
 }
@@ -678,36 +746,93 @@ export class DatabaseStorage implements IStorage {
   }
 
   // Monthly usage operations
-  async getMonthlyUsage(userId: number, periodYyyymm: string): Promise<MonthlyUsage | undefined> {
+  async getMonthlyUsage(userId: number, periodMonth: string): Promise<MonthlyUsage | null> {
     const result = await db.select().from(monthlyUsage)
-      .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodYyyymm, periodYyyymm)));
+      .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodMonth, periodMonth)));
+    return result[0] || null;
+  }
+
+  async createMonthlyUsage(data: InsertMonthlyUsage): Promise<MonthlyUsage> {
+    const result = await db.insert(monthlyUsage).values(data).returning();
     return result[0];
   }
 
-  async createMonthlyUsage(usage: InsertMonthlyUsage): Promise<MonthlyUsage> {
-    const result = await db.insert(monthlyUsage).values(usage).returning();
-    return result[0];
-  }
-
-  async incrementUsage(userId: number, periodYyyymm: string, count = 1): Promise<MonthlyUsage> {
-    const existing = await this.getMonthlyUsage(userId, periodYyyymm);
+  async incrementGptUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodMonth);
     
     if (existing) {
       const result = await db.update(monthlyUsage)
         .set({
-          generationsUsed: sql`${monthlyUsage.generationsUsed} + ${count}`,
+          gptGenerationsUsed: sql`${monthlyUsage.gptGenerationsUsed} + ${count}`,
           updatedAt: new Date()
         })
-        .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodYyyymm, periodYyyymm)))
+        .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodMonth, periodMonth)))
         .returning();
       return result[0];
     } else {
       return await this.createMonthlyUsage({
         userId,
-        periodYyyymm,
-        generationsUsed: count
+        periodMonth,
+        gptGenerationsUsed: count,
+        claudeGenerationsUsed: 0,
+        trendAnalysesUsed: 0
       });
     }
+  }
+
+  async incrementClaudeUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodMonth);
+    
+    if (existing) {
+      const result = await db.update(monthlyUsage)
+        .set({
+          claudeGenerationsUsed: sql`${monthlyUsage.claudeGenerationsUsed} + ${count}`,
+          updatedAt: new Date()
+        })
+        .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodMonth, periodMonth)))
+        .returning();
+      return result[0];
+    } else {
+      return await this.createMonthlyUsage({
+        userId,
+        periodMonth,
+        gptGenerationsUsed: 0,
+        claudeGenerationsUsed: count,
+        trendAnalysesUsed: 0
+      });
+    }
+  }
+
+  async incrementTrendAnalysisUsage(userId: number, periodMonth: string, count: number): Promise<MonthlyUsage> {
+    const existing = await this.getMonthlyUsage(userId, periodMonth);
+    
+    if (existing) {
+      const result = await db.update(monthlyUsage)
+        .set({
+          trendAnalysesUsed: sql`${monthlyUsage.trendAnalysesUsed} + ${count}`,
+          updatedAt: new Date()
+        })
+        .where(and(eq(monthlyUsage.userId, userId), eq(monthlyUsage.periodMonth, periodMonth)))
+        .returning();
+      return result[0];
+    } else {
+      return await this.createMonthlyUsage({
+        userId,
+        periodMonth,
+        gptGenerationsUsed: 0,
+        claudeGenerationsUsed: 0,
+        trendAnalysesUsed: count
+      });
+    }
+  }
+
+  async updateUserTier(userId: number, tier: string): Promise<void> {
+    await db.update(users)
+      .set({ 
+        subscriptionTier: tier,
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId));
   }
 }
 

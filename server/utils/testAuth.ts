@@ -283,7 +283,7 @@ export async function resetUserQuota(
       return true;
     }
     
-    const currentUsage = usage.generationsUsed;
+    const currentUsage = usage.gptGenerationsUsed + usage.claudeGenerationsUsed + usage.trendAnalysesUsed;
     
     if (currentUsage === 0) {
       console.log(`[TestAuth] ✅ Usage already at 0 for user ${userId}`);
@@ -291,12 +291,16 @@ export async function resetUserQuota(
     }
     
     // Decrement usage to reset to 0
-    console.log(`[TestAuth] Decrementing usage from ${currentUsage} to 0`);
-    await storage.incrementUsage(userId, period, -currentUsage);
+    console.log(`[TestAuth] Decrementing GPT usage from ${usage.gptGenerationsUsed} to 0`);
+    await storage.incrementGptUsage(userId, period, -usage.gptGenerationsUsed);
+    console.log(`[TestAuth] Decrementing Claude usage from ${usage.claudeGenerationsUsed} to 0`);
+    await storage.incrementClaudeUsage(userId, period, -usage.claudeGenerationsUsed);
+    console.log(`[TestAuth] Decrementing Trend Analysis usage from ${usage.trendAnalysesUsed} to 0`);
+    await storage.incrementTrendAnalysisUsage(userId, period, -usage.trendAnalysesUsed);
     
     // Verify reset
     const updatedUsage = await storage.getMonthlyUsage(userId, period);
-    const finalUsage = updatedUsage?.generationsUsed || 0;
+    const finalUsage = updatedUsage ? (updatedUsage.gptGenerationsUsed + updatedUsage.claudeGenerationsUsed + updatedUsage.trendAnalysesUsed) : 0;
     
     if (finalUsage === 0) {
       console.log(`[TestAuth] ✅ Quota reset successfully for user ${userId}`);

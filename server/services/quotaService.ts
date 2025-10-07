@@ -1,13 +1,17 @@
 import type { IStorage } from '../storage';
-import type { MonthlyUsage, Subscription, InsertMonthlyUsage } from '@shared/schema';
+import type { MonthlyUsage } from '@shared/schema';
+
+export interface QuotaCheck {
+  allowed: boolean;
+  used: number;
+  limit: number;
+  remaining: number;
+  tier: string;
+}
 
 export class QuotaService {
   constructor(private storage: IStorage) {}
 
-  /**
-   * Returns current period as 'YYYY-MM' string
-   * Example: '2025-10' for October 2025
-   */
   currentPeriod(): string {
     const now = new Date();
     const year = now.getFullYear();
@@ -15,11 +19,6 @@ export class QuotaService {
     return `${year}-${month}`;
   }
 
-  /**
-   * Gets or creates monthly usage record for user
-   * @param userId - User ID
-   * @returns Monthly usage record
-   */
   async getOrCreateMonthlyUsage(userId: number): Promise<MonthlyUsage> {
     try {
       const period = this.currentPeriod();
@@ -28,15 +27,21 @@ export class QuotaService {
       let usage = await this.storage.getMonthlyUsage(userId, period);
       
       if (usage) {
-        console.log(`[QuotaService] Found existing usage record for user ${userId}: ${usage.generationsUsed} generations used`);
+        console.log(`[QuotaService] Found existing usage record for user ${userId}`);
         return usage;
       }
       
       console.log(`[QuotaService] No usage record found for user ${userId}, creating new record`);
+      const user = await this.storage.getUser(userId);
+      const tier = user?.subscriptionTier || 'free';
+      
       usage = await this.storage.createMonthlyUsage({
         userId,
-        periodYyyymm: period,
-        generationsUsed: 0
+        periodMonth: period,
+        gptGenerationsUsed: 0,
+        claudeGenerationsUsed: 0,
+        trendAnalysesUsed: 0,
+        userTier: tier
       });
       
       console.log(`[QuotaService] Created new usage record for user ${userId}`);
@@ -47,123 +52,198 @@ export class QuotaService {
     }
   }
 
-  /**
-   * Increments usage count for user atomically
-   * @param userId - User ID
-   * @param count - Number to increment by (default: 1)
-   * @returns Updated usage record
-   */
-  async incrementUsage(userId: number, count: number = 1): Promise<MonthlyUsage> {
+  async incrementGptUsage(userId: number, count: number = 1): Promise<MonthlyUsage> {
     try {
       const period = this.currentPeriod();
-      console.log(`[QuotaService] Incrementing usage for user ${userId} by ${count} for period ${period}`);
+      console.log(`[QuotaService] Incrementing GPT usage for user ${userId} by ${count} for period ${period}`);
       
-      const updated = await this.storage.incrementUsage(userId, period, count);
+      const updated = await this.storage.incrementGptUsage(userId, period, count);
       
-      console.log(`[QuotaService] Usage incremented for user ${userId}: ${updated.generationsUsed} total generations used`);
+      console.log(`[QuotaService] GPT usage incremented for user ${userId}: ${updated.gptGenerationsUsed} total`);
       return updated;
     } catch (error) {
-      console.error(`[QuotaService] Error incrementing usage for user ${userId}:`, error);
+      console.error(`[QuotaService] Error incrementing GPT usage for user ${userId}:`, error);
       throw error;
     }
   }
 
-  /**
-   * Gets user's subscription tier
-   * @param userId - User ID
-   * @returns Tier string ('free' or 'pro')
-   */
+  async incrementClaudeUsage(userId: number, count: number = 1): Promise<MonthlyUsage> {
+    try {
+      const period = this.currentPeriod();
+      console.log(`[QuotaService] Incrementing Claude usage for user ${userId} by ${count} for period ${period}`);
+      
+      const updated = await this.storage.incrementClaudeUsage(userId, period, count);
+      
+      console.log(`[QuotaService] Claude usage incremented for user ${userId}: ${updated.claudeGenerationsUsed} total`);
+      return updated;
+    } catch (error) {
+      console.error(`[QuotaService] Error incrementing Claude usage for user ${userId}:`, error);
+      throw error;
+    }
+  }
+
+  async incrementTrendAnalysisUsage(userId: number, count: number = 1): Promise<MonthlyUsage> {
+    try {
+      const period = this.currentPeriod();
+      console.log(`[QuotaService] Incrementing trend analysis usage for user ${userId} by ${count} for period ${period}`);
+      
+      const updated = await this.storage.incrementTrendAnalysisUsage(userId, period, count);
+      
+      console.log(`[QuotaService] Trend analysis usage incremented for user ${userId}: ${updated.trendAnalysesUsed} total`);
+      return updated;
+    } catch (error) {
+      console.error(`[QuotaService] Error incrementing trend analysis usage for user ${userId}:`, error);
+      throw error;
+    }
+  }
+
   async getUserTier(userId: number): Promise<string> {
     try {
-      console.log(`[QuotaService] Getting subscription tier for user ${userId}`);
+      console.log(`[QuotaService] Getting tier for user ${userId}`);
       
-      const subscription = await this.storage.getUserSubscription(userId);
+      const user = await this.storage.getUser(userId);
       
-      if (!subscription) {
-        console.log(`[QuotaService] No subscription found for user ${userId}, defaulting to 'free' tier`);
+      if (!user) {
+        console.log(`[QuotaService] User ${userId} not found, defaulting to 'free' tier`);
         return 'free';
       }
       
-      console.log(`[QuotaService] User ${userId} has tier: ${subscription.tier}`);
-      return subscription.tier;
+      const tier = user.subscriptionTier || 'free';
+      console.log(`[QuotaService] User ${userId} has tier: ${tier}`);
+      return tier;
     } catch (error) {
       console.error(`[QuotaService] Error getting user tier for user ${userId}:`, error);
       throw error;
     }
   }
 
-  /**
-   * Gets generation limit for a tier
-   * @param tier - Tier name ('free', 'pro', etc.)
-   * @returns Generation limit for the tier
-   */
-  getTierLimit(tier: string): number {
-    console.log(`[QuotaService] Getting tier limit for tier: ${tier}`);
+  getGptLimit(tier: string): number {
+    console.log(`[QuotaService] Getting GPT limit for tier: ${tier}`);
     
     switch (tier) {
       case 'free':
-        console.log(`[QuotaService] Tier 'free' has limit: 10 generations/month`);
         return 10;
       case 'pro':
-        console.log(`[QuotaService] Tier 'pro' has limit: 500 generations/month`);
-        return 500;
+        return 300;
       default:
         console.log(`[QuotaService] Unknown tier '${tier}', returning Infinity as safety fallback`);
         return Infinity;
     }
   }
 
-  /**
-   * Checks if user has available quota for generation
-   * @param userId - User ID
-   * @returns Quota check result with allowed flag, used count, limit, and remaining
-   */
-  async checkQuota(userId: number): Promise<{
-    allowed: boolean;
-    used: number;
-    limit: number;
-    remaining: number;
-  }> {
+  getClaudeLimit(tier: string): number {
+    console.log(`[QuotaService] Getting Claude limit for tier: ${tier}`);
+    
+    switch (tier) {
+      case 'free':
+        return 5;
+      case 'pro':
+        return 150;
+      default:
+        console.log(`[QuotaService] Unknown tier '${tier}', returning Infinity as safety fallback`);
+        return Infinity;
+    }
+  }
+
+  getTrendAnalysisLimit(tier: string): number {
+    console.log(`[QuotaService] Getting trend analysis limit for tier: ${tier}`);
+    
+    switch (tier) {
+      case 'free':
+        return 10;
+      case 'pro':
+        return 250;
+      default:
+        console.log(`[QuotaService] Unknown tier '${tier}', returning Infinity as safety fallback`);
+        return Infinity;
+    }
+  }
+
+  getTierLimit(tier: string): number {
+    return this.getGptLimit(tier);
+  }
+
+  async checkModelQuota(userId: number, modelType: 'gpt' | 'claude'): Promise<QuotaCheck> {
     try {
-      console.log(`[QuotaService] Checking quota for user ${userId}`);
+      console.log(`[QuotaService] Checking ${modelType} quota for user ${userId}`);
       
       const tier = await this.getUserTier(userId);
-      const limit = this.getTierLimit(tier);
+      const limit = modelType === 'gpt' ? this.getGptLimit(tier) : this.getClaudeLimit(tier);
       const usage = await this.getOrCreateMonthlyUsage(userId);
-      const used = usage.generationsUsed;
+      const used = modelType === 'gpt' ? usage.gptGenerationsUsed : usage.claudeGenerationsUsed;
       const allowed = used < limit;
       const remaining = Math.max(0, limit - used);
       
-      console.log(`[QuotaService] Quota check for user ${userId}: allowed=${allowed}, used=${used}, limit=${limit}, remaining=${remaining}`);
+      console.log(`[QuotaService] ${modelType} quota check for user ${userId}: allowed=${allowed}, used=${used}, limit=${limit}, remaining=${remaining}`);
       
       return {
         allowed,
         used,
         limit,
-        remaining
+        remaining,
+        tier
       };
     } catch (error) {
-      console.error(`[QuotaService] Error checking quota for user ${userId}:`, error);
+      console.error(`[QuotaService] Error checking ${modelType} quota for user ${userId}:`, error);
       throw error;
+    }
+  }
+
+  async checkTrendAnalysisQuota(userId: number): Promise<QuotaCheck> {
+    try {
+      console.log(`[QuotaService] Checking trend analysis quota for user ${userId}`);
+      
+      const tier = await this.getUserTier(userId);
+      const limit = this.getTrendAnalysisLimit(tier);
+      const usage = await this.getOrCreateMonthlyUsage(userId);
+      const used = usage.trendAnalysesUsed;
+      const allowed = used < limit;
+      const remaining = Math.max(0, limit - used);
+      
+      console.log(`[QuotaService] Trend analysis quota check for user ${userId}: allowed=${allowed}, used=${used}, limit=${limit}, remaining=${remaining}`);
+      
+      return {
+        allowed,
+        used,
+        limit,
+        remaining,
+        tier
+      };
+    } catch (error) {
+      console.error(`[QuotaService] Error checking trend analysis quota for user ${userId}:`, error);
+      throw error;
+    }
+  }
+
+  async checkQuota(userId: number): Promise<QuotaCheck> {
+    return this.checkModelQuota(userId, 'gpt');
+  }
+
+  async incrementUsage(userId: number, count: number = 1): Promise<MonthlyUsage> {
+    return this.incrementGptUsage(userId, count);
+  }
+
+  canBulkGenerate(tier: string): boolean {
+    return tier === 'pro';
+  }
+
+  getUnlockedTemplateCount(tier: string): number {
+    switch (tier) {
+      case 'free':
+        return 5;
+      case 'pro':
+        return Infinity;
+      default:
+        return 5;
     }
   }
 }
 
-/**
- * Factory function to create a new QuotaService instance
- * @param storage - Storage implementation
- * @returns New QuotaService instance
- */
 export function createQuotaService(storage: IStorage): QuotaService {
   console.log('[QuotaService] Creating new QuotaService instance');
   return new QuotaService(storage);
 }
 
-/**
- * Singleton instance - will be initialized when imported with a storage instance
- * To use: import { quotaService } from './quotaService'
- * Or create your own: createQuotaService(storage)
- */
 let quotaServiceInstance: QuotaService | null = null;
 
 export function getQuotaService(storage: IStorage): QuotaService {
