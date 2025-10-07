@@ -269,7 +269,7 @@ const Dashboard = () => {
   const getNicheColor = (niche: string) => {
     const colors: Record<string, string> = {
       'beauty': 'bg-pink-100 text-pink-800',
-      'tech': 'bg-blue-100 text-blue-800', 
+      'tech': 'bg-purple-100 text-purple-800', 
       'fashion': 'bg-purple-100 text-purple-800',
       'fitness': 'bg-green-100 text-green-800',
       'food': 'bg-orange-100 text-orange-800',
@@ -485,9 +485,9 @@ const Dashboard = () => {
                       <h5 className="text-xs font-semibold text-pink-800 dark:text-pink-200 mb-1">🔥 AI-Powered Trending Picks</h5>
                       <p className="text-xs text-pink-600 dark:text-pink-300">Automatic discovery of viral products across all niches using live web research. Gets what's trending now, not what was trending last week.</p>
                     </div>
-                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-blue-100 dark:border-blue-700">
-                      <h5 className="text-xs font-semibold text-blue-800 dark:text-blue-200 mb-1">📱 TikTok Trend Analysis</h5>
-                      <p className="text-xs text-blue-600 dark:text-blue-300">Deep analysis of TikTok's viral patterns, hashtag performance, and content formats to align your content with platform trends.</p>
+                    <div className="bg-white dark:bg-gray-800 p-3 rounded border border-purple-100 dark:border-purple-700">
+                      <h5 className="text-xs font-semibold text-purple-800 dark:text-purple-200 mb-1">📱 TikTok Trend Analysis</h5>
+                      <p className="text-xs text-purple-600 dark:text-purple-300">Deep analysis of TikTok's viral patterns, hashtag performance, and content formats to align your content with platform trends.</p>
                     </div>
                     <div className="bg-white dark:bg-gray-800 p-3 rounded border border-green-100 dark:border-green-700">
                       <h5 className="text-xs font-semibold text-green-800 dark:text-green-200 mb-1">📊 Viral Competitor Analysis</h5>
@@ -545,21 +545,21 @@ const Dashboard = () => {
                       </div>
 
                       {/* Step 2: Product Selection */}
-                      <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-blue-300 dark:border-blue-700 shadow-sm">
-                        <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center mx-auto mb-2">
+                      <div className="flex-1 text-center p-3 bg-white dark:bg-gray-800 rounded-lg border-2 border-purple-300 dark:border-purple-700 shadow-sm">
+                        <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center mx-auto mb-2">
                           <Target className="h-5 w-5 text-white" />
                         </div>
-                        <h5 className="font-bold text-blue-800 dark:text-blue-200 mb-1 text-xs">Select Product</h5>
-                        <p className="text-xs text-blue-700 dark:text-blue-300">Choose from AI-discovered trending products across all niches</p>
+                        <h5 className="font-bold text-purple-800 dark:text-purple-200 mb-1 text-xs">Select Product</h5>
+                        <p className="text-xs text-purple-700 dark:text-purple-300">Choose from AI-discovered trending products across all niches</p>
                       </div>
 
                       {/* Arrow 2 */}
                       <div className="hidden md:block">
-                        <ArrowRight className="h-5 w-5 text-blue-600" />
+                        <ArrowRight className="h-5 w-5 text-purple-600" />
                       </div>
                       <div className="md:hidden">
                         <div className="h-5 w-5 rotate-90">
-                          <ArrowRight className="h-5 w-5 text-blue-600" />
+                          <ArrowRight className="h-5 w-5 text-purple-600" />
                         </div>
                       </div>
 
@@ -613,8 +613,8 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-blue-200 dark:border-blue-800 mt-4">
-                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                <div className="bg-white dark:bg-gray-800 rounded-lg p-3 border border-purple-200 dark:border-purple-800 mt-4">
+                  <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">
                     💡 <strong>Quick Start:</strong> Use the Trend Forecaster to discover viral opportunities, explore trending picks, then generate content with the Unified Generator. Monitor performance through Content History & Analytics.
                   </p>
                 </div>
@@ -829,7 +829,7 @@ const Dashboard = () => {
                               </div>
                             )}
                             {product.asin && (
-                              <div className="text-xs text-blue-600">
+                              <div className="text-xs text-purple-600">
                                 📦 ASIN: {product.asin}
                               </div>
                             )}
