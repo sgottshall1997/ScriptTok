@@ -14,6 +14,8 @@ createRoot(document.getElementById("root")!).render(
     publishableKey={publishableKey}
     afterSignInUrl="/"
     afterSignUpUrl="/"
+    clerkJSVariant="headless"
+    allowedRedirectOrigins={[window.location.origin]}
   >
     <App />
   </ClerkProvider>
