@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'wouter';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,7 +27,10 @@ import {
   Target,
   BarChart3,
   Zap,
-  Package
+  Package,
+  Lock,
+  Crown,
+  ArrowRight
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
@@ -35,6 +39,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger 
 } from "@/components/ui/collapsible";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface TrendHistoryItem {
   id: number;
@@ -61,8 +66,27 @@ interface TrendHistoryItem {
   createdAt: string;
 }
 
+interface UsageData {
+  tier: 'free' | 'pro';
+  gpt: { used: number; limit: number; remaining: number };
+  claude: { used: number; limit: number; remaining: number };
+  trendAnalyses: { used: number; limit: number; remaining: number };
+  canBulkGenerate: boolean;
+  templatesUnlocked: number;
+}
+
+const useUsageData = () => {
+  return useQuery<{ success: boolean; data: UsageData }>({
+    queryKey: ['/api/billing/usage'],
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+};
+
 const TrendHistory = () => {
   const { toast } = useToast();
+  const { data: usageResponse, isLoading: usageLoading, isError: usageError } = useUsageData();
+  const usage = usageResponse?.data;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedNiche, setSelectedNiche] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
@@ -162,6 +186,104 @@ const TrendHistory = () => {
       default:
         return 'bg-purple-100 text-purple-800';
     }
+  };
+
+  // Upgrade CTA Card Component
+  const UpgradeCTACard = () => (
+    <Card className="mb-4 border-2 border-transparent bg-gradient-to-r from-purple-50 to-pink-50 relative overflow-hidden" data-testid="upgrade-cta-card">
+      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10" />
+      <CardHeader className="relative">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
+            <Crown className="h-6 w-6 text-white" />
+          </div>
+          <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            Unlock Full Trend History with Pro
+          </CardTitle>
+        </div>
+        <p className="text-gray-700 text-base">
+          Free users get a preview of recent trends. Upgrade to Pro to access unlimited trend history, export data, and track trends over time!
+        </p>
+      </CardHeader>
+      <CardContent className="relative">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+          <div className="flex items-start gap-2">
+            <span className="text-xl">📊</span>
+            <span className="text-gray-700">Unlimited trend history access</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-xl">📥</span>
+            <span className="text-gray-700">Export trends to CSV</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-xl">📈</span>
+            <span className="text-gray-700">Advanced trend analytics</span>
+          </div>
+          <div className="flex items-start gap-2">
+            <span className="text-xl">🔍</span>
+            <span className="text-gray-700">Full search and filtering</span>
+          </div>
+        </div>
+        <Link href="/account">
+          <Button 
+            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-6 text-lg shadow-lg"
+            data-testid="upgrade-button"
+          >
+            <Crown className="h-5 w-5 mr-2" />
+            Upgrade to Pro
+            <ArrowRight className="h-5 w-5 ml-2" />
+          </Button>
+        </Link>
+      </CardContent>
+    </Card>
+  );
+
+  // Blurred locked item wrapper
+  const LockedTrendItem = ({ item }: { item: TrendHistoryItem }) => (
+    <div className="relative mb-4" data-testid={`locked-trend-${item.id}`}>
+      <div className="blur-md pointer-events-none select-none">
+        {renderTrendItem(item)}
+      </div>
+      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-white/60 to-white/80">
+        <div className="bg-white border-2 border-purple-300 rounded-lg shadow-lg px-6 py-4 flex items-center gap-3">
+          <Lock className="h-6 w-6 text-purple-600" />
+          <div>
+            <div className="font-semibold text-purple-900 text-lg">Pro Only</div>
+            <div className="text-sm text-gray-600">Upgrade to unlock</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // Helper function to render trends with tier restrictions
+  const renderTrendsWithRestrictions = (trends: TrendHistoryItem[]) => {
+    // Conservative approach: Only unlock for confirmed Pro users
+    const isPro = usage?.tier === 'pro';
+    const freeLimit = 5;
+
+    if (isPro) {
+      // Pro users see everything
+      return trends.map(renderTrendItem);
+    }
+
+    // Default to free tier restrictions (safe fallback for undefined/error states)
+    const visibleTrends = trends.slice(0, freeLimit);
+    const lockedTrends = trends.slice(freeLimit);
+
+    return (
+      <>
+        {visibleTrends.map(renderTrendItem)}
+        {lockedTrends.length > 0 && (
+          <>
+            <UpgradeCTACard />
+            {lockedTrends.map(item => (
+              <LockedTrendItem key={item.id} item={item} />
+            ))}
+          </>
+        )}
+      </>
+    );
   };
 
   // Render individual trend history item
@@ -353,6 +475,29 @@ const TrendHistory = () => {
     );
   };
 
+  // Show loading state ONLY while usage data is loading
+  if (usageLoading) {
+    return (
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-4">
+            <Skeleton className="h-12 w-12 rounded-lg" data-testid="skeleton-icon" />
+            <div className="flex-1">
+              <Skeleton className="h-8 w-64 mb-2" data-testid="skeleton-title" />
+              <Skeleton className="h-5 w-96" data-testid="skeleton-subtitle" />
+            </div>
+          </div>
+          <Card className="p-6" data-testid="loading-tier-card">
+            <div className="flex items-center gap-3">
+              <RefreshCw className="h-5 w-5 animate-spin text-blue-600" />
+              <span className="text-gray-600">Loading tier information...</span>
+            </div>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
   if (isLoading) {
     return (
       <div className="container mx-auto px-4 py-8 max-w-7xl">
@@ -515,7 +660,7 @@ const TrendHistory = () => {
                 </CardContent>
               </Card>
             ) : (
-              filteredHistory.map(renderTrendItem)
+              renderTrendsWithRestrictions(filteredHistory)
             )}
           </div>
         </TabsContent>
@@ -535,7 +680,7 @@ const TrendHistory = () => {
                 </CardContent>
               </Card>
             ) : (
-              forecasterHistory.map(renderTrendItem)
+              renderTrendsWithRestrictions(forecasterHistory)
             )}
           </div>
         </TabsContent>
@@ -555,7 +700,7 @@ const TrendHistory = () => {
                 </CardContent>
               </Card>
             ) : (
-              aiPicksHistory.map(renderTrendItem)
+              renderTrendsWithRestrictions(aiPicksHistory)
             )}
           </div>
         </TabsContent>
