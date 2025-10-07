@@ -520,17 +520,20 @@ const Dashboard = () => {
         {/* Status Section - Conditional Based on Data Source */}
         <CardContent className="pt-0 pb-4">
           {selectedDataSource === 'perplexity' ? (
-            <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
+            <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
               <CardContent className="p-4">
-                <div className="flex items-center gap-3">
-                  <Clock className="h-5 w-5 text-blue-600" />
-                  <div className="flex-1">
-                    <span className="font-medium text-blue-900">Last Perplexity Run</span>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="h-5 w-5 text-purple-600" />
+                    <span className="font-medium text-purple-900">AI-Powered Trending Picks</span>
                   </div>
                   <div className="text-right">
                     <p className="text-xs text-gray-500">Last updated</p>
                     <p className="text-xs font-semibold text-gray-700">
                       {perplexityStatus ? perplexityStatus.timeSince : 'Loading...'}
+                    </p>
+                    <p className="text-xs text-purple-600 mt-1">
+                      Auto-refreshes daily at 5 AM ET
                     </p>
                   </div>
                 </div>
