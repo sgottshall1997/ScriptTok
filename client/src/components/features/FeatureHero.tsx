@@ -56,7 +56,7 @@ export function FeatureHero({
               onClick={secondaryCTA.onClick}
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white/10 rounded-xl"
+              className="border-2 border-white text-white hover:bg-white/20 hover:text-white rounded-xl bg-transparent"
               data-testid="hero-secondary-cta"
             >
               {secondaryCTA.text}
