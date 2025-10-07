@@ -3,7 +3,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Flame, TrendingUp, Clock, TrendingDown, Loader2, RefreshCw } from 'lucide-react';
+import { Flame, TrendingUp, Clock, TrendingDown, Loader2, RefreshCw, Lock } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 import { useLocation } from 'wouter';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
@@ -18,9 +28,51 @@ const NICHES = [
   { id: 'pet', name: 'Pets', icon: '🐾' }
 ];
 
+// Free tier gets first 3 niches (beauty, tech, fashion)
+const FREE_NICHES = ['beauty', 'tech', 'fashion'];
+
+interface UsageData {
+  tier: 'free' | 'pro';
+  gpt: { used: number; limit: number; remaining: number };
+  claude: { used: number; limit: number; remaining: number };
+  trendAnalyses: { used: number; limit: number; remaining: number };
+  canBulkGenerate: boolean;
+  templatesUnlocked: number;
+}
+
+const useUsageData = () => {
+  return useQuery<{ success: boolean; data: UsageData }>({
+    queryKey: ['/api/billing/usage'],
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+};
+
 export default function TrendForecaster() {
   const [, setLocation] = useLocation();
   const [selectedNiche, setSelectedNiche] = useState('beauty');
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  
+  // Fetch usage data to determine tier
+  const { data: usageResponse, isLoading: usageLoading } = useUsageData();
+  const usage = usageResponse?.data;
+  const userTier = usage?.tier || 'free';
+  
+  // Determine if a niche is locked
+  const isNicheLocked = (nicheId: string) => {
+    if (userTier === 'pro') return false;
+    return !FREE_NICHES.includes(nicheId);
+  };
+  
+  // Handle niche selection with lock check
+  const handleNicheChange = (nicheId: string) => {
+    const locked = isNicheLocked(nicheId);
+    if (locked) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    setSelectedNiche(nicheId);
+  };
   
   // Primary query: Read existing data from database first
   const { data: forecast, isLoading, isFetching, dataUpdatedAt } = useQuery({
@@ -38,10 +90,10 @@ export default function TrendForecaster() {
       
       if (data.data?.trends) {
         const trends = data.data.trends;
-        console.log(`🔥 HOT ${selectedNiche} trends from DB (${trends.hot?.length || 0}):`, trends.hot?.map(t => t.name) || []);
-        console.log(`📈 RISING ${selectedNiche} trends from DB (${trends.rising?.length || 0}):`, trends.rising?.map(t => t.name) || []);
-        console.log(`🕐 UPCOMING ${selectedNiche} trends from DB (${trends.upcoming?.length || 0}):`, trends.upcoming?.map(t => t.name) || []);
-        console.log(`📉 DECLINING ${selectedNiche} trends from DB (${trends.declining?.length || 0}):`, trends.declining?.map(t => t.name) || []);
+        console.log(`🔥 HOT ${selectedNiche} trends from DB (${trends.hot?.length || 0}):`, trends.hot?.map((t: any) => t.name) || []);
+        console.log(`📈 RISING ${selectedNiche} trends from DB (${trends.rising?.length || 0}):`, trends.rising?.map((t: any) => t.name) || []);
+        console.log(`🕐 UPCOMING ${selectedNiche} trends from DB (${trends.upcoming?.length || 0}):`, trends.upcoming?.map((t: any) => t.name) || []);
+        console.log(`📉 DECLINING ${selectedNiche} trends from DB (${trends.declining?.length || 0}):`, trends.declining?.map((t: any) => t.name) || []);
         
         // Log total trends found
         const totalTrends = (trends.hot?.length || 0) + (trends.rising?.length || 0) + (trends.upcoming?.length || 0) + (trends.declining?.length || 0);
@@ -74,62 +126,114 @@ export default function TrendForecaster() {
   const timeSinceUpdate = lastUpdated ? getTimeSince(lastUpdated) : 'Never';
 
   return (
-    <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              🔮 Trend Forecaster - All Niches
-            </CardTitle>
-            <p className="text-sm text-gray-600 mt-1">
-              Real-time TikTok trends powered by Perplexity AI
-            </p>
+    <>
+      <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                🔮 Trend Forecaster - All Niches
+              </CardTitle>
+              <p className="text-sm text-gray-600 mt-1">
+                Real-time TikTok trends powered by Perplexity AI
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-xs text-gray-500">Last updated</p>
+              <p className="text-xs font-semibold text-gray-700">{timeSinceUpdate}</p>
+              <p className="text-xs text-purple-600 mt-1">
+                Auto-refreshes daily at 5 AM ET
+              </p>
+            </div>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-gray-500">Last updated</p>
-            <p className="text-xs font-semibold text-gray-700">{timeSinceUpdate}</p>
-            <p className="text-xs text-purple-600 mt-1">
-              Auto-refreshes daily at 5 AM ET
-            </p>
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Tabs value={selectedNiche} onValueChange={setSelectedNiche} className="w-full">
-          <TabsList className="grid w-full grid-cols-7 mb-4">
+        </CardHeader>
+        <CardContent>
+          <Tabs value={selectedNiche} onValueChange={handleNicheChange} className="w-full">
+            <TabsList className="grid w-full grid-cols-7 mb-4">
+              {NICHES.map((niche) => {
+                const locked = isNicheLocked(niche.id);
+                return (
+                  <TabsTrigger 
+                    key={niche.id} 
+                    value={niche.id} 
+                    className={`text-xs relative ${locked ? 'opacity-60 cursor-pointer hover:opacity-80 transition-opacity' : ''}`}
+                    data-testid={`tab-${niche.id}`}
+                  >
+                    <span className="hidden sm:inline flex items-center gap-1">
+                      {niche.icon} {niche.name}
+                      {locked && <Lock className="h-3 w-3 ml-1" data-testid={`lock-icon-${niche.id}`} />}
+                    </span>
+                    <span className="sm:hidden flex items-center gap-1">
+                      {niche.icon}
+                      {locked && <Lock className="h-3 w-3" data-testid={`lock-icon-mobile-${niche.id}`} />}
+                    </span>
+                    {locked && (
+                      <Badge 
+                        className="absolute -top-1 -right-1 h-4 px-1 text-[9px] bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0"
+                        data-testid={`pro-badge-${niche.id}`}
+                      >
+                        Pro
+                      </Badge>
+                    )}
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+
             {NICHES.map((niche) => (
-              <TabsTrigger key={niche.id} value={niche.id} className="text-xs">
-                <span className="hidden sm:inline">{niche.icon} {niche.name}</span>
-                <span className="sm:hidden">{niche.icon}</span>
-              </TabsTrigger>
+              <TabsContent key={niche.id} value={niche.id}>
+                {isLoading ? (
+                  <div className="flex items-center justify-center py-8">
+                    <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
+                    <span className="ml-2 text-gray-600">Loading {niche.name} trends...</span>
+                  </div>
+                ) : (
+                  <TrendCategories 
+                    forecast={forecast?.data} 
+                    niche={niche.id}
+                    onProductClick={handleProductClick}
+                  />
+                )}
+              </TabsContent>
             ))}
-          </TabsList>
+          </Tabs>
 
-          {NICHES.map((niche) => (
-            <TabsContent key={niche.id} value={niche.id}>
-              {isLoading ? (
-                <div className="flex items-center justify-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-purple-600" />
-                  <span className="ml-2 text-gray-600">Loading {niche.name} trends...</span>
-                </div>
-              ) : (
-                <TrendCategories 
-                  forecast={forecast?.data} 
-                  niche={niche.id}
-                  onProductClick={handleProductClick}
-                />
-              )}
-            </TabsContent>
-          ))}
-        </Tabs>
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-xs text-blue-800">
+              💡 <strong>Tip:</strong> Trends automatically refresh every morning at 5 AM ET to provide fresh insights while optimizing API usage.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-        <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-          <p className="text-xs text-blue-800">
-            💡 <strong>Tip:</strong> Trends automatically refresh every morning at 5 AM ET to provide fresh insights while optimizing API usage.
-          </p>
-        </div>
-      </CardContent>
-    </Card>
+      {/* Upgrade Modal */}
+      <AlertDialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+        <AlertDialogContent data-testid="upgrade-modal">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-xl">
+              <Lock className="h-5 w-5 text-purple-600" />
+              Unlock All Niches with Pro
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-base pt-2">
+              Free users get 3 niches (Beauty, Tech, Fashion). Upgrade to Pro to access all 7 niches and discover trends across every category!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel data-testid="button-maybe-later">Maybe Later</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setShowUpgradeModal(false);
+                setLocation('/account');
+              }}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              data-testid="button-upgrade"
+            >
+              Upgrade to Pro
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 
