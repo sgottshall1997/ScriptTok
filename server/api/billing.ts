@@ -242,38 +242,87 @@ router.post('/cancel-subscription', authGuard, async (req: Request, res: Respons
   }
 });
 
-// GET /api/billing/usage - Get current month's usage stats
+// GET /api/billing/usage - Get current month's usage stats with detailed breakdown
 router.get('/usage', authGuard, async (req: Request, res: Response) => {
   try {
     const internalUserId = (req as any).internalUserId;
 
     if (!internalUserId) {
       console.error('[BillingAPI] ❌ No internal userId found in request');
-      return res.status(401).json({ error: 'Unauthorized' });
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
     }
 
-    console.log(`[BillingAPI] Getting usage stats for internal user ID: ${internalUserId}`);
+    console.log(`[BillingAPI] Getting detailed usage stats for internal user ID: ${internalUserId}`);
 
-    const quota = await quotaService.checkQuota(internalUserId);
     const tier = await quotaService.getUserTier(internalUserId);
+    const usage = await quotaService.getOrCreateMonthlyUsage(internalUserId);
+    
+    const gptLimit = quotaService.getGptLimit(tier);
+    const claudeLimit = quotaService.getClaudeLimit(tier);
+    const trendAnalysisLimit = quotaService.getTrendAnalysisLimit(tier);
+    
+    const gptUsed = usage.gptGenerationsUsed;
+    const claudeUsed = usage.claudeGenerationsUsed;
+    const trendAnalysesUsed = usage.trendAnalysesUsed;
 
-    console.log(`[BillingAPI] ✅ Usage stats:`, {
-      used: quota.used,
-      limit: quota.limit,
-      remaining: quota.remaining,
-      tier
-    });
+    const data = {
+      tier,
+      gpt: {
+        used: gptUsed,
+        limit: gptLimit,
+        remaining: Math.max(0, gptLimit - gptUsed)
+      },
+      claude: {
+        used: claudeUsed,
+        limit: claudeLimit,
+        remaining: Math.max(0, claudeLimit - claudeUsed)
+      },
+      trendAnalyses: {
+        used: trendAnalysesUsed,
+        limit: trendAnalysisLimit,
+        remaining: Math.max(0, trendAnalysisLimit - trendAnalysesUsed)
+      },
+      canBulkGenerate: quotaService.canBulkGenerate(tier),
+      templatesUnlocked: quotaService.getUnlockedTemplateCount(tier)
+    };
 
-    res.json({
-      used: quota.used,
-      limit: quota.limit,
-      remaining: quota.remaining,
-      tier
-    });
+    console.log(`[BillingAPI] ✅ Detailed usage stats:`, data);
+
+    res.json({ success: true, data });
 
   } catch (error: any) {
     console.error('[BillingAPI] ❌ Error getting usage:', error);
-    res.status(500).json({ error: 'Failed to get usage stats', message: error.message });
+    res.status(500).json({ success: false, error: 'Failed to get usage stats' });
+  }
+});
+
+// POST /api/billing/upgrade - Upgrade user to pro tier
+router.post('/upgrade', authGuard, async (req: Request, res: Response) => {
+  try {
+    const internalUserId = (req as any).internalUserId;
+
+    if (!internalUserId) {
+      console.error('[BillingAPI] ❌ No internal userId found in request');
+      return res.status(401).json({ success: false, error: 'Unauthorized' });
+    }
+
+    console.log(`[BillingAPI] Upgrading user to pro tier for internal user ID: ${internalUserId}`);
+
+    await storage.updateUserTier(internalUserId, 'pro');
+
+    console.log(`[BillingAPI] ✅ User ${internalUserId} upgraded to pro tier`);
+
+    res.json({ 
+      success: true, 
+      data: { 
+        tier: 'pro',
+        message: 'Successfully upgraded to Pro tier'
+      } 
+    });
+
+  } catch (error: any) {
+    console.error('[BillingAPI] ❌ Error upgrading user:', error);
+    res.status(500).json({ success: false, error: 'Failed to upgrade user' });
   }
 });
 
