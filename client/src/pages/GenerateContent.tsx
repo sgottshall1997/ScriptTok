@@ -32,7 +32,10 @@ import { useToast } from "@/hooks/use-toast";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { UsageStatistics } from "@/components/UsageStatistics";
 import { ViralScoreDisplay } from "@/components/ViralScoreDisplay";
+import { TierBadge } from "@/components/TierBadge";
+import { UsageProgress } from "@/components/UsageProgress";
 import { type TemplateType, type ContentMode, TIKTOK_TONE_OPTIONS, templateRequiresProduct } from '@shared/constants';
+import { useUsageData } from '@/hooks/useUsageData';
 
 // Video duration interface
 interface VideoDuration {
@@ -76,28 +79,17 @@ interface GeneratedContent {
   historyId?: number; // NEW: For tracking database record
 }
 
-interface UsageData {
-  tier: 'free' | 'pro';
-  gpt: { used: number; limit: number; remaining: number };
-  claude: { used: number; limit: number; remaining: number };
-  trendAnalyses: { used: number; limit: number; remaining: number };
-  canBulkGenerate: boolean;
-  templatesUnlocked: number;
-}
-
-const useUsageData = () => {
-  return useQuery<{ success: boolean; data: UsageData }>({
-    queryKey: ['/api/billing/usage'],
-    refetchOnMount: true,
-    staleTime: 0,
-  });
-};
 
 const GenerateContent = () => {
   const [location] = useLocation();
   const { toast } = useToast();
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
-  const usage = usageResponse?.data;
+  const usageData = usageResponse?.data;
+  const tier = usageData?.features.tier || 'starter';
+  const usage = usageData?.usage;
+  const limits = usageData?.limits;
+  const remaining = usageData?.remaining;
+  const features = usageData?.features;
   
   // Extract niche from URL path
   const urlParts = location.split('/');
@@ -322,10 +314,10 @@ const GenerateContent = () => {
     }
 
     // Check trend analysis quota before making API call
-    if (usage && usage.trendAnalyses.remaining <= 0) {
+    if (remaining && remaining.trends <= 0) {
       toast({
         title: "Trend Analysis Limit Reached 🔥",
-        description: "You've reached your free trend analysis limit (10/month). Upgrade to Pro for 250/month!",
+        description: `You've reached your trend analysis limit (${limits?.trends}/month). Upgrade for more!`,
         variant: "destructive",
       });
       return;
@@ -376,10 +368,10 @@ const GenerateContent = () => {
     }
 
     // Check trend analysis quota before making API call
-    if (usage && usage.trendAnalyses.remaining <= 0) {
+    if (remaining && remaining.trends <= 0) {
       toast({
         title: "Trend Analysis Limit Reached 🔥",
-        description: "You've reached your free trend analysis limit (10/month). Upgrade to Pro for 250/month!",
+        description: `You've reached your trend analysis limit (${limits?.trends}/month). Upgrade for more!`,
         variant: "destructive",
       });
       return;
@@ -660,7 +652,7 @@ ${config.hashtags.join(' ')}`;
 
   const handleGenerateContent = async () => {
     // Check if usage data is still loading or undefined
-    if (!usage || usageLoading) {
+    if (!usageData || usageLoading) {
       toast({
         title: "Loading your quota info...",
         description: "Please wait while we load your usage data",
@@ -670,39 +662,39 @@ ${config.hashtags.join(' ')}`;
 
     // Check tier-based restrictions and limits
     // Check canBulkGenerate before allowing multiple templates or "both" model
-    if (!usage.canBulkGenerate && (selectedTemplates.length > 1 || aiModel === 'both')) {
+    if (!features?.canBulkGenerate && (selectedTemplates.length > 1 || aiModel === 'both')) {
       toast({
         title: "Pro Feature Required 👑",
-        description: "Bulk generation requires Pro. Upgrade to create up to 50 posts at once!",
+        description: `Bulk generation requires Pro or Agency tier. Upgrade to create multiple posts at once!`,
         variant: "destructive",
       });
       return;
     }
 
     // Check model-specific limits
-    if (aiModel === 'chatgpt' && usage.gpt.remaining === 0) {
+    if (aiModel === 'chatgpt' && remaining?.gpt === 0) {
       toast({
         title: "ChatGPT Limit Reached",
-        description: "You've reached your ChatGPT generation limit for this month. Upgrade to Pro for unlimited generations.",
+        description: `You've reached your ChatGPT generation limit for this month (${limits?.gpt}). Upgrade for more generations.`,
         variant: "destructive",
       });
       return;
     }
 
-    if (aiModel === 'claude' && usage.claude.remaining === 0) {
+    if (aiModel === 'claude' && remaining?.claude === 0) {
       toast({
         title: "Claude Limit Reached",
-        description: "You've reached your Claude generation limit for this month. Upgrade to Pro for unlimited generations.",
+        description: `You've reached your Claude generation limit for this month (${limits?.claude}). Upgrade for more generations.`,
         variant: "destructive",
       });
       return;
     }
 
     // Check if both models are at limit when "both" is selected
-    if (aiModel === 'both' && (usage.gpt.remaining === 0 || usage.claude.remaining === 0)) {
+    if (aiModel === 'both' && (remaining?.gpt === 0 || remaining?.claude === 0)) {
       toast({
         title: "Model Limit Reached",
-        description: "One or both AI models have reached their generation limit. Upgrade to Pro for unlimited generations.",
+        description: "One or both AI models have reached their generation limit. Upgrade for more generations.",
         variant: "destructive",
       });
       return;
@@ -1114,15 +1106,20 @@ ${config.hashtags.join(' ')}`;
 
 
   // Niche data
-  const niches = [
-    { id: 'beauty', name: 'Beauty & Personal Care', color: 'bg-pink-100 text-pink-800' },
-    { id: 'tech', name: 'Tech', color: 'bg-purple-100 text-purple-800' },
-    { id: 'fashion', name: 'Fashion', color: 'bg-purple-100 text-purple-800' },
-    { id: 'fitness', name: 'Fitness', color: 'bg-green-100 text-green-800' },
-    { id: 'food', name: 'Food', color: 'bg-orange-100 text-orange-800' },
-    { id: 'travel', name: 'Travel', color: 'bg-cyan-100 text-cyan-800' },
-    { id: 'pets', name: 'Pets', color: 'bg-yellow-100 text-yellow-800' },
+  const allNiches = [
+    { id: 'beauty', name: 'Beauty & Personal Care', color: 'bg-pink-100 text-pink-800', starterAllowed: true },
+    { id: 'tech', name: 'Tech', color: 'bg-purple-100 text-purple-800', starterAllowed: true },
+    { id: 'fashion', name: 'Fashion', color: 'bg-purple-100 text-purple-800', starterAllowed: true },
+    { id: 'fitness', name: 'Fitness', color: 'bg-green-100 text-green-800', starterAllowed: false },
+    { id: 'food', name: 'Food', color: 'bg-orange-100 text-orange-800', starterAllowed: false },
+    { id: 'travel', name: 'Travel', color: 'bg-cyan-100 text-cyan-800', starterAllowed: false },
+    { id: 'pets', name: 'Pets', color: 'bg-yellow-100 text-yellow-800', starterAllowed: false },
   ];
+  
+  // Filter niches based on tier (Starter tier limited to beauty, tech, fashion)
+  const niches = tier === 'starter' 
+    ? allNiches.filter(niche => niche.starterAllowed)
+    : allNiches;
 
 
   return (
@@ -1138,70 +1135,43 @@ ${config.hashtags.join(' ')}`;
           </div>
 
           {/* Tier Badge and Quota Counters */}
-          {!usageLoading && usage && (
+          {!usageLoading && usageData && (
             <Card className="rounded-2xl shadow-sm bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
               <CardContent className="pt-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   {/* Tier Badge */}
                   <div className="flex items-center gap-3">
-                    <Badge 
-                      variant={usage.tier === 'pro' ? 'default' : 'secondary'} 
-                      className={`text-base px-4 py-1.5 ${usage.tier === 'pro' ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gray-600'}`}
-                      data-testid="badge-user-tier"
-                    >
-                      {usage.tier === 'pro' ? <Crown className="h-4 w-4 mr-1" /> : null}
-                      {usage.tier === 'pro' ? 'Pro Plan' : 'Free Plan'}
-                    </Badge>
-                    {usage.tier === 'free' && (
-                      <Link href="/account">
+                    <TierBadge tier={tier} size="md" />
+                    {(tier === 'starter' || tier === 'creator') && (
+                      <Link href="/pricing">
                         <Button variant="outline" size="sm" className="gap-2" data-testid="button-upgrade-cta">
                           <Crown className="h-4 w-4" />
-                          Upgrade to Pro
+                          Upgrade
                         </Button>
                       </Link>
                     )}
                   </div>
 
                   {/* Quota Counters */}
-                  <div className="flex items-center gap-4 text-sm">
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${usage.gpt.remaining <= 2 ? 'bg-red-100 text-red-700' : 'bg-white'}`} data-testid="text-gpt-quota">
-                          <span className="font-medium">GPT:</span>
-                          <span className="font-bold">{usage.gpt.used}/{usage.gpt.limit}</span>
-                          {usage.gpt.remaining <= 2 && <AlertTriangle className="h-4 w-4" />}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {usage.gpt.remaining} ChatGPT generations remaining this month
-                      </TooltipContent>
-                    </Tooltip>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${usage.claude.remaining <= 1 ? 'bg-red-100 text-red-700' : 'bg-white'}`} data-testid="text-claude-quota">
-                          <span className="font-medium">Claude:</span>
-                          <span className="font-bold">{usage.claude.used}/{usage.claude.limit}</span>
-                          {usage.claude.remaining <= 1 && <AlertTriangle className="h-4 w-4" />}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {usage.claude.remaining} Claude generations remaining this month
-                      </TooltipContent>
-                    </Tooltip>
-
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg ${usage.trendAnalyses.remaining <= 2 ? 'bg-red-100 text-red-700' : 'bg-white'}`} data-testid="text-trends-quota">
-                          <span className="font-medium">Trends:</span>
-                          <span className="font-bold">{usage.trendAnalyses.used}/{usage.trendAnalyses.limit}</span>
-                          {usage.trendAnalyses.remaining <= 2 && <AlertTriangle className="h-4 w-4" />}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        {usage.trendAnalyses.remaining} Trend Analyses remaining this month
-                      </TooltipContent>
-                    </Tooltip>
+                  <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
+                    <UsageProgress
+                      used={usage?.gptGenerationsUsed || 0}
+                      limit={limits?.gpt || 0}
+                      label="GPT-4"
+                      className="w-full md:w-48"
+                    />
+                    <UsageProgress
+                      used={usage?.claudeGenerationsUsed || 0}
+                      limit={limits?.claude || 0}
+                      label="Claude"
+                      className="w-full md:w-48"
+                    />
+                    <UsageProgress
+                      used={usage?.trendAnalysesUsed || 0}
+                      limit={limits?.trends || 0}
+                      label="Trends"
+                      className="w-full md:w-48"
+                    />
                   </div>
                 </div>
               </CardContent>
@@ -1960,10 +1930,11 @@ ${config.hashtags.join(' ')}`;
               <Select 
                 value={aiModel} 
                 onValueChange={(value: 'chatgpt' | 'claude' | 'both') => {
-                  if (value === 'both' && usage?.tier === 'free') {
+                  // Only Pro and Agency can use 'both' (model comparison)
+                  if (value === 'both' && (tier === 'starter' || tier === 'creator')) {
                     toast({
                       title: "Pro Feature 👑",
-                      description: "Bulk generation is a Pro feature. Upgrade to generate up to 50 posts at once!",
+                      description: "AI Model Comparison is available on Pro and Agency tiers. Upgrade to compare outputs!",
                       variant: "destructive",
                     });
                     return;
@@ -1975,61 +1946,73 @@ ${config.hashtags.join(' ')}`;
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="chatgpt" disabled={usage?.gpt.remaining === 0}>
-                    🤖 ChatGPT - Use OpenAI's GPT model only
-                    {usage?.gpt.remaining === 0 && ' (Limit Reached)'}
+                  <SelectItem value="chatgpt" disabled={remaining?.gpt === 0}>
+                    🤖 ChatGPT - {remaining?.gpt || 0} / {limits?.gpt || 0} remaining
+                    {remaining?.gpt === 0 && ' (Limit Reached)'}
                   </SelectItem>
-                  <SelectItem value="claude" disabled={usage?.claude.remaining === 0}>
-                    🧠 Claude - Use Anthropic's Claude model only
-                    {usage?.claude.remaining === 0 && ' (Limit Reached)'}
+                  <SelectItem value="claude" disabled={remaining?.claude === 0}>
+                    🧠 Claude - {remaining?.claude || 0} / {limits?.claude || 0} remaining
+                    {remaining?.claude === 0 && ' (Limit Reached)'}
                   </SelectItem>
-                  <SelectItem value="both" disabled={usage?.tier === 'free'}>
-                    {usage?.tier === 'free' ? <Lock className="h-3 w-3 inline mr-1" /> : null}
-                    ⚡ Both - Generate with both models for comparison
-                    {usage?.tier === 'free' && ' (Pro Only)'}
+                  <SelectItem value="both" disabled={tier === 'starter' || tier === 'creator'}>
+                    {(tier === 'starter' || tier === 'creator') ? <Lock className="h-3 w-3 inline mr-1" /> : null}
+                    ⚡ Both - Compare AI models side-by-side
+                    {(tier === 'starter' || tier === 'creator') && ' (Pro/Agency Only)'}
                   </SelectItem>
                 </SelectContent>
               </Select>
               
-              {/* Model-specific warnings */}
-              {usage && (
+              {/* Approaching Limit Warnings (>80% usage) */}
+              {usage && limits && remaining && (
                 <>
-                  {aiModel === 'chatgpt' && usage.gpt.remaining <= 2 && usage.gpt.remaining > 0 && (
+                  {aiModel === 'chatgpt' && remaining.gpt > 0 && (usage.gptGenerationsUsed / limits.gpt) > 0.8 && (
                     <Alert className="mt-2 bg-orange-50 border-orange-200">
                       <AlertTriangle className="h-4 w-4 text-orange-600" />
+                      <AlertTitle className="text-sm font-semibold text-orange-800">Approaching Limit</AlertTitle>
                       <AlertDescription className="text-sm text-orange-800">
-                        Only {usage.gpt.remaining} ChatGPT generation{usage.gpt.remaining !== 1 ? 's' : ''} remaining. 
-                        <Link href="/account" className="font-semibold underline ml-1">Upgrade to Pro</Link> for unlimited generations.
+                        You've used {usage.gptGenerationsUsed} of {limits.gpt} GPT-4 generations this month.
+                        <Link href="/pricing" className="font-semibold underline ml-1">Upgrade for more</Link>
                       </AlertDescription>
                     </Alert>
                   )}
                   
-                  {aiModel === 'chatgpt' && usage.gpt.remaining === 0 && (
+                  {aiModel === 'chatgpt' && remaining.gpt === 0 && (
                     <Alert className="mt-2 bg-red-50 border-red-200">
                       <AlertTriangle className="h-4 w-4 text-red-600" />
+                      <AlertTitle className="text-sm font-semibold text-red-800">Quota Exhausted</AlertTitle>
                       <AlertDescription className="text-sm text-red-800">
-                        ChatGPT limit reached for this month. 
-                        <Link href="/account" className="font-semibold underline ml-1">Upgrade to Pro</Link> for unlimited generations.
+                        You've used all your GPT-4 generations this month.
+                        <Link href="/pricing">
+                          <Button variant="outline" size="sm" className="ml-2 mt-1">
+                            Upgrade Now
+                          </Button>
+                        </Link>
                       </AlertDescription>
                     </Alert>
                   )}
                   
-                  {aiModel === 'claude' && usage.claude.remaining <= 1 && usage.claude.remaining > 0 && (
+                  {aiModel === 'claude' && remaining.claude > 0 && (usage.claudeGenerationsUsed / limits.claude) > 0.8 && (
                     <Alert className="mt-2 bg-orange-50 border-orange-200">
                       <AlertTriangle className="h-4 w-4 text-orange-600" />
+                      <AlertTitle className="text-sm font-semibold text-orange-800">Approaching Limit</AlertTitle>
                       <AlertDescription className="text-sm text-orange-800">
-                        Only {usage.claude.remaining} Claude generation{usage.claude.remaining !== 1 ? 's' : ''} remaining. 
-                        <Link href="/account" className="font-semibold underline ml-1">Upgrade to Pro</Link> for unlimited generations.
+                        You've used {usage.claudeGenerationsUsed} of {limits.claude} Claude generations this month.
+                        <Link href="/pricing" className="font-semibold underline ml-1">Upgrade for more</Link>
                       </AlertDescription>
                     </Alert>
                   )}
                   
-                  {aiModel === 'claude' && usage.claude.remaining === 0 && (
+                  {aiModel === 'claude' && remaining.claude === 0 && (
                     <Alert className="mt-2 bg-red-50 border-red-200">
                       <AlertTriangle className="h-4 w-4 text-red-600" />
+                      <AlertTitle className="text-sm font-semibold text-red-800">Quota Exhausted</AlertTitle>
                       <AlertDescription className="text-sm text-red-800">
-                        Claude limit reached for this month. 
-                        <Link href="/account" className="font-semibold underline ml-1">Upgrade to Pro</Link> for unlimited generations.
+                        You've used all your Claude generations this month.
+                        <Link href="/pricing">
+                          <Button variant="outline" size="sm" className="ml-2 mt-1">
+                            Upgrade Now
+                          </Button>
+                        </Link>
                       </AlertDescription>
                     </Alert>
                   )}
@@ -2077,21 +2060,48 @@ ${config.hashtags.join(' ')}`;
                 </div>
               </div>
               
-              {/* Bulk Generation Warning for Free Users */}
-              {usage?.tier === 'free' && (selectedTemplates.length > 1 || aiModel === 'both') && (
-                <Alert className="mt-3 bg-yellow-50 border-yellow-200">
-                  <Lock className="h-4 w-4 text-yellow-600" />
-                  <AlertTitle className="text-yellow-800">Bulk Generation Restricted</AlertTitle>
-                  <AlertDescription className="text-sm text-yellow-800">
-                    Bulk generation is a Pro feature. Upgrade to generate up to 50 posts at once!
-                    <Link href="/account">
-                      <Button variant="outline" size="sm" className="ml-2 mt-2" data-testid="button-upgrade-bulk">
-                        <Crown className="h-3 w-3 mr-1" />
-                        Upgrade to Pro
-                      </Button>
-                    </Link>
-                  </AlertDescription>
-                </Alert>
+              {/* Bulk Generation Feature Gates */}
+              {features && (
+                <>
+                  {/* Starter/Creator: Bulk Generation Locked */}
+                  {(tier === 'starter' || tier === 'creator') && (selectedTemplates.length > 1 || aiModel === 'both') && (
+                    <Alert className="mt-3 bg-yellow-50 border-yellow-200">
+                      <Lock className="h-4 w-4 text-yellow-600" />
+                      <AlertTitle className="text-yellow-800">Bulk Generation Locked</AlertTitle>
+                      <AlertDescription className="text-sm text-yellow-800">
+                        Bulk generation is available on Pro and Agency tiers. Upgrade to generate up to 10 posts at once (Pro) or 50 posts (Agency)!
+                        <Link href="/pricing">
+                          <Button variant="outline" size="sm" className="ml-2 mt-2" data-testid="button-upgrade-bulk">
+                            <Crown className="h-3 w-3 mr-1" />
+                            Upgrade Now
+                          </Button>
+                        </Link>
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {/* Pro: Show limit of 10 */}
+                  {tier === 'pro' && features.canBulkGenerate && selectedTemplates.length > features.bulkGenerationLimit && (
+                    <Alert className="mt-3 bg-blue-50 border-blue-200">
+                      <AlertTriangle className="h-4 w-4 text-blue-600" />
+                      <AlertTitle className="text-blue-800">Bulk Limit Reached</AlertTitle>
+                      <AlertDescription className="text-sm text-blue-800">
+                        Pro tier can generate up to {features.bulkGenerationLimit} items at once. Please reduce selections or upgrade to Agency for up to 50 items.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  {/* Agency: Show limit of 50 */}
+                  {tier === 'agency' && features.canBulkGenerate && selectedTemplates.length > features.bulkGenerationLimit && (
+                    <Alert className="mt-3 bg-amber-50 border-amber-200">
+                      <AlertTriangle className="h-4 w-4 text-amber-600" />
+                      <AlertTitle className="text-amber-800">Bulk Limit Reached</AlertTitle>
+                      <AlertDescription className="text-sm text-amber-800">
+                        Agency tier can generate up to {features.bulkGenerationLimit} items at once. Please reduce selections.
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                </>
               )}
             </div>
 
@@ -2105,10 +2115,12 @@ ${config.hashtags.join(' ')}`;
                 (contentMode === 'affiliate' && !selectedProduct) || 
                 (contentMode === 'viral' && !viralTopic) || 
                 selectedTemplates.length === 0 ||
-                (usage?.tier === 'free' && selectedTemplates.length > 1) ||
-                (usage?.tier === 'free' && aiModel === 'both') ||
-                (aiModel === 'chatgpt' && usage?.gpt.remaining === 0) ||
-                (aiModel === 'claude' && usage?.claude.remaining === 0)
+                // Bulk generation restrictions for Starter/Creator
+                ((tier === 'starter' || tier === 'creator') && selectedTemplates.length > 1) ||
+                ((tier === 'starter' || tier === 'creator') && aiModel === 'both') ||
+                // Quota exhausted checks
+                (aiModel === 'chatgpt' && remaining?.gpt === 0) ||
+                (aiModel === 'claude' && remaining?.claude === 0)
               }
               data-testid="button-generate-content"
             >

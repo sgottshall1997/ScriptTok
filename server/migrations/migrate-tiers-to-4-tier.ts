@@ -22,15 +22,4 @@ export async function migrateTo4Tier() {
   }
 }
 
-// Run migration if called directly
-if (require.main === module) {
-  migrateTo4Tier()
-    .then(() => {
-      console.log('[Migration] Migration complete');
-      process.exit(0);
-    })
-    .catch((error) => {
-      console.error('[Migration] Migration failed:', error);
-      process.exit(1);
-    });
-}
+// Migration can be run via API endpoint /api/billing/admin/migrate-tiers
