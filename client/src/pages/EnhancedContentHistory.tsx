@@ -1359,6 +1359,30 @@ const EnhancedContentHistory = () => {
                       )}
                     </div>
                   )}
+
+                  {/* AI Analysis Section - Works for both ChatGPT and Claude */}
+                  {entry.viralAnalysis && !isFreeUser && (
+                    <div className="border-t pt-4 mt-4">
+                      <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+                        <h5 className="font-medium text-gray-700 flex items-center gap-2">
+                          🤖 AI Analysis
+                        </h5>
+                        <p className="text-sm text-gray-600">{entry.viralAnalysis.overallSummary}</p>
+                        
+                        {/* Apply AI Suggestions Button */}
+                        {entry.viralAnalysis.improvementPrompt && (
+                          <Button 
+                            onClick={() => handleRegenerateWithSuggestions(entry)}
+                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                            data-testid="button-apply-ai-suggestions"
+                          >
+                            <Zap className="h-4 w-4 mr-2" />
+                            ✨ Apply AI Suggestions
+                          </Button>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </CollapsibleContent>
             </Collapsible>
