@@ -6,7 +6,6 @@ import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { SignIn, SignUp } from "@clerk/clerk-react";
 import NotFound from "@/pages/not-found";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -66,23 +65,7 @@ function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolea
 
   return (
     <Switch>
-      {/* Authentication routes */}
-      <Route path="/sign-in">
-        {() => (
-          <div className="flex min-h-screen items-center justify-center">
-            <SignIn signUpUrl="/sign-up" />
-          </div>
-        )}
-      </Route>
-      <Route path="/sign-up">
-        {() => (
-          <div className="flex min-h-screen items-center justify-center">
-            <SignUp signInUrl="/sign-in" />
-          </div>
-        )}
-      </Route>
-      
-      {/* Root path - Landing Page for unauthenticated */}
+      {/* Root path - Landing Page */}
       <Route path="/">
         {() => <LandingPage />}
       </Route>
