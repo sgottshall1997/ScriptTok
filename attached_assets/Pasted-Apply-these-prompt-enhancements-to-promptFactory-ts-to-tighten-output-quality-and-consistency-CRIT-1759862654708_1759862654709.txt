@@ -1,0 +1,40 @@
+Apply these prompt enhancements to promptFactory.ts to tighten output quality and consistency:
+
+CRITICAL ADDITIONS (must add):
+
+1. VIRAL HOOKS TEMPLATE (generateViralHooks):
+   - Add to REQUIREMENTS section: "Each hook must be exactly 3-8 words long"
+
+2. PRODUCT COMPARISON TEMPLATE (generateUniversalComparison):
+   - Add to "Key Comparison Points" section: "Address these five points explicitly and compare both products in each: Price, Quality, Results, Ease of Use, Brand Reputation (include one credible signal like certifications, awards, or expert endorsements)"
+
+3. VIRAL SHORT SCRIPT TEMPLATE (generateViralShortScript):
+   - Add to WRITING GUIDELINES: "No products, no affiliate links, no hashtags"
+
+4. VIRAL CAPTION + HASHTAGS TEMPLATE (generateViralCaptionHashtags):
+   - Update HASHTAG REQUIREMENTS to specify: "BROAD hashtags: exactly 6-8 generic/trending tags" and "NICHE hashtags: exactly 6-8 topic/niche-specific tags"
+
+5. SEO BLOG TEMPLATE (generateUniversalSEOBlog):
+   - Add to SEO & Content Quality Standards: "Use related keywords and LSI terms naturally throughout; avoid keyword stuffing"
+
+6. GLOBAL AUDIT FOOTER - Add to ALL template prompts at the end of "Additional Rules" or "Writing Guidelines":
+
+Output Quality Checklist:
+• No semicolons anywhere in the output
+• No asterisks for emphasis
+• No warnings, notes, or disclaimers
+• If hashtags/disclosures are required by the template, ensure they appear; if not required, ensure none appear
+
+
+NICE-TO-HAVE ADDITIONS (add if straightforward):
+
+7. UNIVERSAL SHORT VIDEO SCRIPT (generateUniversalShortVideoScript):
+- Add to Length & Structure: "Return exactly 5 single-sentence paragraphs with clear line breaks between each"
+
+8. BEAUTY SHORT VIDEO (generateBeautyShortVideo):
+- Add explicit structure note: "Follow this exact structure: Hook (0-3s) → 2-3 Key Benefits → How to Use → Who It's For → CTA. Total: 70-140 words"
+
+9. ROUTINE/KIT TEMPLATE (generateUniversalRoutine):
+- Make Results Timeline explicit: "Results Timeline section must include: First use expectations, 30-day consistent use results, Long-term benefits (3+ months)"
+
+Apply these changes systematically to promptFactory.ts. Prioritize the 6 critical additions first, then add the 3 nice-to-haves if they fit cleanly without disrupting existing logic.

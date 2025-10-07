@@ -117,16 +117,11 @@ function enhancePromptWithViralTemplate(
 function addUniversalAuditFooter(basePrompt: string): string {
   const auditFooter = `
 
-OUTPUT VALIDATION CHECKLIST:
-Before returning your response, verify:
-✓ All required sections present and properly formatted
-✓ Word count within specified limits (count total words)
-✓ Emojis removed (unless template explicitly allows them)
-✓ No bracketed notes like [Note:] or [Performance Notes:]
-✓ Required hashtags included (count them: must have exact number specified)
-✓ Compliance disclosures present (#ad, affiliate statement, etc.)
-
-If ANY check fails, revise your output before returning. Do not explain - just output corrected content.`;
+Output Quality Checklist:
+• No semicolons anywhere in the output
+• No asterisks for emphasis
+• No warnings, notes, or disclaimers
+• If hashtags/disclosures are required by the template, ensure they appear; if not required, ensure none appear`;
 
   return basePrompt + auditFooter;
 }
@@ -433,6 +428,7 @@ Length & Structure:
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
 • Make it conversion-oriented and professional across all product types.
+• Return exactly 5 single-sentence paragraphs with clear line breaks between each
 
 STRICT STRUCTURAL REQUIREMENTS:
 • Output exactly 5 paragraphs (one for each section: Hook, Features, Problem-Solution, Target Audience, CTA)
@@ -635,6 +631,7 @@ Routine Variants (Required)
 • Each variant: 2-3 sentence modification guidance
 
 Results Timeline
+• Results Timeline section must include: First use expectations, 30-day consistent use results, Long-term benefits (3+ months)
 • What readers can expect after the first use or first week
 • Typical results after 30 days of consistent use
 • Long-term benefits over months or beyond
@@ -901,7 +898,7 @@ Conclusion (100–150 words)
 SEO & Content Quality Standards
 
 • Use ${config.productName} name naturally and repeatedly — without keyword stuffing
-• Include related keywords and LSI terms throughout the article
+• Use related keywords and LSI terms naturally throughout; avoid keyword stuffing
 • Break up text with clear, descriptive subheadings (H2, H3)
 • Keep paragraphs short (maximum 3 sentences each)
 • Use bullet points or numbered lists where appropriate to improve readability
@@ -1122,6 +1119,7 @@ Length & Structure:
 • Target 70–140 words, spoken naturally in 30–60 seconds.
 • Structured clearly for on-camera delivery or voice-over.
 • Smooth transitions between sections, but keep sentences crisp and impactful.
+• Follow this exact structure: Hook (0-3s) → 2-3 Key Benefits → How to Use → Who It's For → CTA. Total: 70-140 words
 
 Your goal is to equip viewers with clear, actionable reasons to consider ${config.productName}, show how it addresses their skin concerns, and end with a direct, motivating question that encourages them to take action.`;
 
@@ -1470,7 +1468,7 @@ function generateViralHooks(config: PromptConfig): GeneratedPrompt {
     userPrompt: `Create 10 scroll-stopping TikTok hooks for "${topic}" in the ${config.niche} niche.
 
 REQUIREMENTS:
-- Each hook must be 3-8 words long
+- Each hook must be exactly 3-8 words long
 - Easy to say aloud with natural rhythm
 - Use viral patterns like "POV:", "Stop scrolling if...", "Nobody told you...", "This is why...", "Wait until you see..."
 - No emojis, no hashtags, no affiliate language
@@ -1802,8 +1800,8 @@ OUTPUT CLEANLINESS:
 • Each caption MUST be 8-18 words (count and verify)
 
 HASHTAG REQUIREMENTS:
-• BROAD hashtags: 6-8 generic/trending tags (e.g., #fyp, #viral, #trending)
-• NICHE hashtags: 6-8 community-specific tags related to ${config.niche} and "${topic}"
+• BROAD hashtags: exactly 6-8 generic/trending tags (e.g., #fyp, #viral, #trending)
+• NICHE hashtags: exactly 6-8 topic/niche-specific tags related to ${config.niche} and "${topic}"
 • Mix of high-volume and medium-volume tags
 • Current trending hashtags when relevant
 
