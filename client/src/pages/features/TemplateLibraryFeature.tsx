@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -194,25 +195,38 @@ export default function TemplateLibraryFeature() {
   };
 
   return (
-    <div className="min-h-screen">
-      <FeatureHero
-        title="20+ Proven Templates for Every Niche & Platform"
-        subtitle="Professional script templates tested across millions of views. Customize for your brand and start creating in seconds."
-        primaryCTA={{
-          text: "Browse All Templates",
-          onClick: () => {
-            trackNavigateCTA("template_library_hero", "browse_templates");
-            navigate("/dashboard");
-          },
-        }}
-        secondaryCTA={{
-          text: "See Top Performers",
-          onClick: () => {
-            trackNavigateCTA("template_library_hero", "see_top_performers");
-            scrollToTopPerformers();
-          },
-        }}
-      />
+    <>
+      <Helmet>
+        <title>Template Library - 20+ Proven Script Templates | ScriptTok</title>
+        <meta name="description" content="Pre-built viral formulas and affiliate frameworks for every niche. Browse proven templates and customize in seconds." />
+        <meta property="og:title" content="Template Library - 20+ Proven Script Templates | ScriptTok" />
+        <meta property="og:description" content="Pre-built viral formulas and affiliate frameworks for every niche. Browse proven templates and customize in seconds." />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://scripttok.com/features/template-library" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Template Library - 20+ Proven Script Templates | ScriptTok" />
+        <meta name="twitter:description" content="Pre-built viral formulas and affiliate frameworks for every niche. Browse proven templates and customize in seconds." />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <FeatureHero
+          title="20+ Proven Templates for Every Niche & Platform"
+          subtitle="Professional script templates tested across millions of views. Customize for your brand and start creating in seconds."
+          primaryCTA={{
+            text: "Browse All Templates",
+            onClick: () => {
+              trackNavigateCTA("template_library_hero", "browse_templates");
+              navigate("/dashboard");
+            },
+          }}
+          secondaryCTA={{
+            text: "See Top Performers",
+            onClick: () => {
+              trackNavigateCTA("template_library_hero", "see_top_performers");
+              scrollToTopPerformers();
+            },
+          }}
+        />
 
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
@@ -505,6 +519,7 @@ export default function TemplateLibraryFeature() {
           </Button>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

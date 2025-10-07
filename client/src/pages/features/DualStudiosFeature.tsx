@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -105,25 +106,38 @@ export default function DualStudiosFeature() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <FeatureHero
-        title="Switch Between Viral & Affiliate Studios Instantly"
-        subtitle="Two powerful content modes in one platform. Create viral content for engagement or affiliate content for revenue—switch seamlessly as your goals evolve."
-        primaryCTA={{
-          text: "Try Both Studios Free",
-          onClick: () => {
-            trackNavigateCTA("dual_studios_hero", "try_studios");
-            navigate("/dashboard");
-          },
-        }}
-        secondaryCTA={{
-          text: "Watch How It Works",
-          onClick: () => {
-            trackNavigateCTA("dual_studios_hero", "watch_demo");
-            navigate("/how-it-works");
-          },
-        }}
-      />
+    <>
+      <Helmet>
+        <title>Dual Studios - Switch Between Viral & Affiliate Content | ScriptTok</title>
+        <meta name="description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />
+        <meta property="og:title" content="Dual Studios - Switch Between Viral & Affiliate Content | ScriptTok" />
+        <meta property="og:description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://scripttok.com/features/dual-studios" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Dual Studios - Switch Between Viral & Affiliate Content | ScriptTok" />
+        <meta name="twitter:description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <FeatureHero
+          title="Switch Between Viral & Affiliate Studios Instantly"
+          subtitle="Two powerful content modes in one platform. Create viral content for engagement or affiliate content for revenue—switch seamlessly as your goals evolve."
+          primaryCTA={{
+            text: "Try Both Studios Free",
+            onClick: () => {
+              trackNavigateCTA("dual_studios_hero", "try_studios");
+              navigate("/dashboard");
+            },
+          }}
+          secondaryCTA={{
+            text: "Watch How It Works",
+            onClick: () => {
+              trackNavigateCTA("dual_studios_hero", "watch_demo");
+              navigate("/how-it-works");
+            },
+          }}
+        />
 
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
@@ -266,6 +280,7 @@ export default function DualStudiosFeature() {
           </Button>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

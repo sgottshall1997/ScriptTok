@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -219,25 +220,38 @@ export default function MultiPlatformFeature() {
   };
 
   return (
-    <div className="min-h-screen">
-      <FeatureHero
-        title="One Script, Every Platform—Perfectly Optimized"
-        subtitle="Stop manually adapting content for each platform. Our AI automatically optimizes your scripts for TikTok, Instagram, YouTube, and more—maximizing reach with zero extra effort."
-        primaryCTA={{
-          text: "Optimize Your Content",
-          onClick: () => {
-            trackNavigateCTA("multi_platform_hero", "optimize_content");
-            navigate("/dashboard");
-          },
-        }}
-        secondaryCTA={{
-          text: "See Platform Differences",
-          onClick: () => {
-            trackNavigateCTA("multi_platform_hero", "platform_differences");
-            handleScrollToTable();
-          },
-        }}
-      />
+    <>
+      <Helmet>
+        <title>Multi-Platform Optimization - One Script, Every Platform | ScriptTok</title>
+        <meta name="description" content="Automatically adapt content for TikTok, Instagram, YouTube, and more. Platform-specific optimization with perfect formatting." />
+        <meta property="og:title" content="Multi-Platform Optimization - One Script, Every Platform | ScriptTok" />
+        <meta property="og:description" content="Automatically adapt content for TikTok, Instagram, YouTube, and more. Platform-specific optimization with perfect formatting." />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://scripttok.com/features/multi-platform" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Multi-Platform Optimization - One Script, Every Platform | ScriptTok" />
+        <meta name="twitter:description" content="Automatically adapt content for TikTok, Instagram, YouTube, and more. Platform-specific optimization with perfect formatting." />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <FeatureHero
+          title="One Script, Every Platform—Perfectly Optimized"
+          subtitle="Stop manually adapting content for each platform. Our AI automatically optimizes your scripts for TikTok, Instagram, YouTube, and more—maximizing reach with zero extra effort."
+          primaryCTA={{
+            text: "Optimize Your Content",
+            onClick: () => {
+              trackNavigateCTA("multi_platform_hero", "optimize_content");
+              navigate("/dashboard");
+            },
+          }}
+          secondaryCTA={{
+            text: "See Platform Differences",
+            onClick: () => {
+              trackNavigateCTA("multi_platform_hero", "platform_differences");
+              handleScrollToTable();
+            },
+          }}
+        />
 
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
@@ -390,6 +404,7 @@ export default function MultiPlatformFeature() {
           </Button>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -100,25 +101,38 @@ export default function AIScriptGeneratorFeature() {
   ];
 
   return (
-    <div className="min-h-screen">
-      <FeatureHero
-        title="Generate Scroll-Stopping Scripts in Seconds"
-        subtitle="AI-powered script generation that combines trending hooks, engaging storytelling, and conversion-optimized CTAs for maximum impact."
-        primaryCTA={{
-          text: "Generate Your First Script",
-          onClick: () => {
-            trackNavigateCTA("ai_script_generator_hero", "generate_script");
-            navigate("/dashboard");
-          },
-        }}
-        secondaryCTA={{
-          text: "See Examples",
-          onClick: () => {
-            trackNavigateCTA("ai_script_generator_hero", "see_examples");
-            navigate("/content-history");
-          },
-        }}
-      />
+    <>
+      <Helmet>
+        <title>AI Script Generator - Create Viral Scripts in Seconds | ScriptTok</title>
+        <meta name="description" content="Generate scroll-stopping scripts with AI-powered hooks, pacing, and CTAs. Optimized for TikTok, Instagram Reels, and YouTube Shorts." />
+        <meta property="og:title" content="AI Script Generator - Create Viral Scripts in Seconds | ScriptTok" />
+        <meta property="og:description" content="Generate scroll-stopping scripts with AI-powered hooks, pacing, and CTAs. Optimized for TikTok, Instagram Reels, and YouTube Shorts." />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://scripttok.com/features/ai-script-generator" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="AI Script Generator - Create Viral Scripts in Seconds | ScriptTok" />
+        <meta name="twitter:description" content="Generate scroll-stopping scripts with AI-powered hooks, pacing, and CTAs. Optimized for TikTok, Instagram Reels, and YouTube Shorts." />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <FeatureHero
+          title="Generate Scroll-Stopping Scripts in Seconds"
+          subtitle="AI-powered script generation that combines trending hooks, engaging storytelling, and conversion-optimized CTAs for maximum impact."
+          primaryCTA={{
+            text: "Generate Your First Script",
+            onClick: () => {
+              trackNavigateCTA("ai_script_generator_hero", "generate_script");
+              navigate("/dashboard");
+            },
+          }}
+          secondaryCTA={{
+            text: "See Examples",
+            onClick: () => {
+              trackNavigateCTA("ai_script_generator_hero", "see_examples");
+              navigate("/content-history");
+            },
+          }}
+        />
 
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
@@ -354,6 +368,7 @@ export default function AIScriptGeneratorFeature() {
           </Button>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }

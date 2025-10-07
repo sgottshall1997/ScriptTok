@@ -1,3 +1,4 @@
+import { Helmet } from "react-helmet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -184,25 +185,38 @@ export default function TrendDiscoveryFeature() {
   };
 
   return (
-    <div className="min-h-screen">
-      <FeatureHero
-        title="Never Miss a Viral Trend Again"
-        subtitle="AI-powered trend discovery that finds what's about to go viral across every platform—before your competitors do."
-        primaryCTA={{
-          text: "Explore Trends Now",
-          onClick: () => {
-            trackNavigateCTA("trend_discovery_hero", "explore_trends");
-            navigate("/trending-ai-picks");
-          },
-        }}
-        secondaryCTA={{
-          text: "See How It Works",
-          onClick: () => {
-            trackNavigateCTA("trend_discovery_hero", "how_it_works");
-            navigate("/how-it-works");
-          },
-        }}
-      />
+    <>
+      <Helmet>
+        <title>Trend Discovery - Real-Time Viral Trends & Sounds | ScriptTok</title>
+        <meta name="description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
+        <meta property="og:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | ScriptTok" />
+        <meta property="og:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
+        <meta property="og:type" content="article" />
+        <meta property="og:url" content="https://scripttok.com/features/trend-discovery" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | ScriptTok" />
+        <meta name="twitter:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
+      </Helmet>
+      
+      <div className="min-h-screen">
+        <FeatureHero
+          title="Never Miss a Viral Trend Again"
+          subtitle="AI-powered trend discovery that finds what's about to go viral across every platform—before your competitors do."
+          primaryCTA={{
+            text: "Explore Trends Now",
+            onClick: () => {
+              trackNavigateCTA("trend_discovery_hero", "explore_trends");
+              navigate("/trending-ai-picks");
+            },
+          }}
+          secondaryCTA={{
+            text: "See How It Works",
+            onClick: () => {
+              trackNavigateCTA("trend_discovery_hero", "how_it_works");
+              navigate("/how-it-works");
+            },
+          }}
+        />
 
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
@@ -393,6 +407,7 @@ export default function TrendDiscoveryFeature() {
           </Button>
         </div>
       </section>
-    </div>
+      </div>
+    </>
   );
 }
