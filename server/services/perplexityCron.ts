@@ -29,14 +29,43 @@ export function initializePerplexityCron() {
         return;
       }
 
-      // Import and trigger all niche fetchers
-      const { fetchTrendingProducts } = await import('../api/trending');
+      // Import dependencies
+      const { runAllPerplexityFetchers } = await import('./perplexity/runAllFetchers');
+      const { storage } = await import('../storage');
       
       log('🎯 PERPLEXITY AUTOMATION: Fetching trending products for all niches...');
       
-      // Fetch trending products (this will automatically fetch for all niches)
-      await fetchTrendingProducts();
+      // Fetch trending products from Perplexity
+      const result = await runAllPerplexityFetchers();
       
+      log(`✅ Perplexity fetch complete: ${result.summary.totalProducts} products from ${result.summary.successful} niches`);
+      
+      // Save all fetched products to database
+      let savedCount = 0;
+      for (const nicheResult of result.results) {
+        if (nicheResult.success && nicheResult.products.length > 0) {
+          for (const product of nicheResult.products) {
+            try {
+              // Map Perplexity product format to TrendingProduct format
+              await storage.saveTrendingProduct({
+                title: `${product.product} ${product.brand}`.trim(),
+                niche: nicheResult.niche,
+                source: 'perplexity',
+                mentions: product.mentions || 0,
+                dataSource: 'perplexity',
+                reason: product.reason || '',
+                price: product.price || null,
+                asin: product.asin || null,
+              });
+              savedCount++;
+            } catch (saveError) {
+              console.error(`Error saving ${nicheResult.niche} product to database:`, saveError);
+            }
+          }
+        }
+      }
+      
+      log(`💾 Saved ${savedCount} products to database`);
       log('✅ PERPLEXITY AUTOMATION: Daily trend fetch completed successfully');
       
     } catch (error) {
