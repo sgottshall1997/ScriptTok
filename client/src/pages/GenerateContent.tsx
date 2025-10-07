@@ -149,8 +149,6 @@ const GenerateContent = () => {
   const [templateType, setTemplateType] = useState(templateFromUrl || '');
   const [selectedTemplates, setSelectedTemplates] = useState<TemplateType[]>(templateFromUrl ? [templateFromUrl] as TemplateType[] : []);
   const [tone, setTone] = useState('enthusiastic');
-  const [isHookGeneratorOpen, setIsHookGeneratorOpen] = useState(false);
-  const [customHook, setCustomHook] = useState('');
   const [generatedContent, setGeneratedContent] = useState<GeneratedContent | null>(null);
   const [multiTemplateResults, setMultiTemplateResults] = useState<Record<string, GeneratedContent>>({});
   const [comparisonResults, setComparisonResults] = useState<{
@@ -304,7 +302,7 @@ const GenerateContent = () => {
   // Apply competitor style to generation
   const applyCompetitorStyle = (competitor: any) => {
     setSelectedCompetitorStyle(competitor);
-    setCustomHook(competitor.hook);
+
     
     toast({
       title: "Style Applied! ⚡",
@@ -421,7 +419,7 @@ const GenerateContent = () => {
   // NEW: Apply trend competitor style to generation
   const applyTrendCompetitorStyle = (competitor: any) => {
     setSelectedTrendCompetitorStyle(competitor);
-    setCustomHook(competitor.hook);
+
     
     toast({
       title: "Trending Style Applied! 🔥",
@@ -763,7 +761,7 @@ ${config.hashtags.join(' ')}`;
               platforms: ['tiktok'],
               templateType: templateType,
               tone,
-              customHook,
+              customHook: '',
               aiModel: aiModel === 'both' ? 'claude' : aiModel, // Use selected AI model
               contentMode,
             }),
@@ -1061,7 +1059,7 @@ ${config.hashtags.join(' ')}`;
           platforms: ['tiktok'],
           templateType: selectedTemplates[0] || 'short_video',
           tone: tone,
-          customHook: '', // Let AI create new hook based on suggestions
+          customHook: '',
           // Pass improvement instructions
           improvementInstructions: generatedContent.viralAnalysis.improvementPrompt
         }),
@@ -2120,40 +2118,7 @@ ${config.hashtags.join(' ')}`;
           </Card>
         </div>
 
-        {/* 3️⃣ Optional Hook Generator */}
-        <Collapsible open={isHookGeneratorOpen} onOpenChange={setIsHookGeneratorOpen}>
-          <Card className="shadow-lg">
-            <CollapsibleTrigger asChild>
-              <CardHeader className="cursor-pointer hover:bg-gray-50">
-                <CardTitle className="flex items-center justify-between">
-                  <span className="flex items-center gap-2">
-                    <Sparkles className="h-5 w-5 text-yellow-500" />
-                    🎨 Viral Hook Generator (Optional)
-                  </span>
-                  <ChevronDown className={`h-4 w-4 transition-transform ${isHookGeneratorOpen ? 'rotate-180' : ''}`} />
-                </CardTitle>
-              </CardHeader>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <CardContent>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="custom-hook">Custom Hook</Label>
-                  <Textarea
-                    id="custom-hook"
-                    value={customHook}
-                    onChange={(e) => setCustomHook(e.target.value)}
-                    placeholder="Enter a custom hook or leave blank for AI-generated..."
-                    rows={3}
-                  />
-                </div>
-                </div>
-              </CardContent>
-            </CollapsibleContent>
-          </Card>
-        </Collapsible>
-
-        {/* 4️⃣ Generated Content Output */}
+        {/* 3️⃣ Generated Content Output */}
         {generatedContent && (
           <Card className="shadow-lg">
             <CardHeader>
