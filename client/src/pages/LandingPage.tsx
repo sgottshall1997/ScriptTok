@@ -66,6 +66,10 @@ export default function LandingPage() {
               </div>
             </div>
 
+            <p className="text-base md:text-lg text-gray-700 dark:text-gray-300 mb-4 md:mb-6 font-medium">
+              Create your free account with Email or Google
+            </p>
+
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
               <Button 
                 size="default" 
@@ -73,13 +77,17 @@ export default function LandingPage() {
                 data-testid="button-login"
                 onClick={() => window.location.href = '/api/login'}
               >
-                Login to Get Started <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
+                Get Started Free <ArrowRight className="ml-2 h-4 w-4 md:h-5 md:w-5" />
               </Button>
               <Button variant="outline" size="default" className="w-full sm:w-auto px-6 md:px-8 py-3 md:py-4 text-base md:text-lg font-semibold rounded-lg md:rounded-xl border-2 border-gray-300 hover:border-purple-400 transition-all duration-300 min-h-[44px]" data-testid="button-watch-demo">
                 <Video className="mr-2 h-4 w-4 md:h-5 md:w-5" />
                 Watch Demo
               </Button>
             </div>
+
+            <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 mt-3 md:mt-4">
+              No credit card required • Free to start
+            </p>
           </div>
         </div>
       </section>
