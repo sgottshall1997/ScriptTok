@@ -88,6 +88,25 @@ select {
   .bg-theme {
     background-color: hsl(var(--theme-primary));
   }
+  
+  /* ScriptTok wireframe gradients */
+  .bg-gradient-hero {
+    background: linear-gradient(to right, hsl(var(--blue-600)), hsl(var(--purple-600)));
+  }
+  
+  .bg-gradient-cta {
+    background: linear-gradient(to right, hsl(var(--purple-600)), hsl(var(--pink-600)));
+  }
+  
+  .text-gradient-hero {
+    background: linear-gradient(to right, hsl(var(--blue-600)), hsl(var(--purple-600)));
+    @apply text-transparent bg-clip-text;
+  }
+  
+  .text-gradient-cta {
+    background: linear-gradient(to right, hsl(var(--purple-600)), hsl(var(--pink-600)));
+    @apply text-transparent bg-clip-text;
+  }
 }
 
 @keyframes spin {
@@ -117,7 +136,7 @@ select {
 }
 
 :root {
-  --background: 0 0% 98%;
+  --background: 210 20% 98%;
   --foreground: 20 14.3% 4.1%;
   --muted: 60 4.8% 95.9%;
   --muted-foreground: 25 5.3% 44.7%;
