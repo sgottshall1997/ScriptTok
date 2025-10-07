@@ -25,8 +25,8 @@ Preferred communication style: Simple, everyday language.
 - **Middleware**: Request logging, error handling, CORS
 
 ### Key Components
-- **Dual-Tier Subscription System**: Production-ready Free/Pro tier system with granular quota tracking and feature gating.
-- **Content Generation System**: Supports multi-AI providers, niche-specific and universal templates, and platform-specific/bulk generation.
+- **4-Tier Subscription System**: Production-ready Starter/Creator/Pro/Agency tier system with granular quota tracking and feature gating. Quota limits: Starter (15 GPT, 10 Claude, 10 trends), Creator (50 GPT, 30 Claude, 25 trends), Pro (300 GPT, 150 Claude, 100 trends), Agency (1000 GPT, 500 Claude, unlimited trends). Feature gates: Affiliate Studio (Pro/Agency), Bulk generation (Pro: 10, Agency: 50), Export (Creator: CSV, Pro: CSV, Agency: CSV+JSON), API access (Agency only), Brand templates (Agency only).
+- **Dual-Mode Content Generation**: Mode 1 (Viral Content Studio) for universal viral content, Mode 2 (Affiliate Studio) for product-focused content with affiliate links. Supports multi-AI providers, niche-specific and universal templates, platform-specific and bulk generation.
 - **Data Storage Solutions**: PostgreSQL for primary storage, Drizzle for schema management, stores content history and trending products.
 - **Smart Style System**: Integrates user ratings and AI evaluations for content quality assessment.
 - **Automated Bulk Generator**: Supports scheduled and manual bulk content generation.
