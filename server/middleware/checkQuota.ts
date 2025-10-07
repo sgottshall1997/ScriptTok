@@ -51,8 +51,11 @@ function isTrendAnalysisRequest(req: Request): boolean {
 // Helper function to get AI model type
 function getModelType(req: Request): 'gpt' | 'claude' | null {
   const aiModel = req.body?.aiModel;
-  if (aiModel === 'gpt' || aiModel === 'claude') {
-    return aiModel;
+  if (aiModel === 'gpt' || aiModel === 'chatgpt') {
+    return 'gpt';
+  }
+  if (aiModel === 'claude') {
+    return 'claude';
   }
   return null;
 }
