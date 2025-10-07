@@ -30,7 +30,9 @@ import {
   Package,
   Lock,
   Crown,
-  ArrowRight
+  ArrowRight,
+  Rocket,
+  AlertTriangle
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
@@ -40,6 +42,10 @@ import {
   CollapsibleTrigger 
 } from "@/components/ui/collapsible";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TierBadge } from "@/components/TierBadge";
+import { UsageProgress } from "@/components/UsageProgress";
+import { useUsageData } from "@/hooks/useUsageData";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface TrendHistoryItem {
   id: number;
@@ -66,27 +72,14 @@ interface TrendHistoryItem {
   createdAt: string;
 }
 
-interface UsageData {
-  tier: 'free' | 'pro';
-  gpt: { used: number; limit: number; remaining: number };
-  claude: { used: number; limit: number; remaining: number };
-  trendAnalyses: { used: number; limit: number; remaining: number };
-  canBulkGenerate: boolean;
-  templatesUnlocked: number;
-}
-
-const useUsageData = () => {
-  return useQuery<{ success: boolean; data: UsageData }>({
-    queryKey: ['/api/billing/usage'],
-    refetchOnMount: true,
-    staleTime: 0,
-  });
-};
-
 const TrendHistory = () => {
   const { toast } = useToast();
   const { data: usageResponse, isLoading: usageLoading, isError: usageError } = useUsageData();
   const usage = usageResponse?.data;
+  const userTier = usage?.features?.tier || 'starter';
+  const trendQuotaUsed = usage?.usage?.trendAnalysesUsed || 0;
+  const trendQuotaLimit = usage?.limits?.trends || 10;
+  const trendQuotaRemaining = usage?.remaining?.trends || 0;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedNiche, setSelectedNiche] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
@@ -188,55 +181,96 @@ const TrendHistory = () => {
     }
   };
 
-  // Upgrade CTA Card Component
-  const UpgradeCTACard = () => (
-    <Card className="mb-4 border-2 border-transparent bg-gradient-to-r from-purple-50 to-pink-50 relative overflow-hidden" data-testid="upgrade-cta-card">
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10" />
-      <CardHeader className="relative">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
-            <Crown className="h-6 w-6 text-white" />
+  // Tier-specific Upgrade CTA Card Component
+  const UpgradeCTACard = () => {
+    const getTierMessage = () => {
+      switch (userTier) {
+        case 'starter':
+          return {
+            title: 'Unlock Trend History with Creator',
+            description: 'Upgrade to Creator to access trend history, basic forecasting, and more!',
+            price: '$15/mo',
+            targetTier: 'Creator',
+            icon: <Crown className="h-6 w-6 text-white" />,
+          };
+        case 'creator':
+          return {
+            title: 'Upgrade to Pro for Advanced Features',
+            description: 'Get advanced forecasting, unlimited history, and export capabilities!',
+            price: '$35/mo',
+            targetTier: 'Pro',
+            icon: <Rocket className="h-6 w-6 text-white" />,
+          };
+        case 'pro':
+          return {
+            title: 'Unlock Enterprise Features with Agency',
+            description: 'Get unlimited analyses, competitive insights, and team collaboration!',
+            price: '$69/mo',
+            targetTier: 'Agency',
+            icon: <Zap className="h-6 w-6 text-white" />,
+          };
+        default:
+          return {
+            title: 'Unlock Full Trend History',
+            description: 'Upgrade to access trend history and forecasting features!',
+            price: '$15/mo',
+            targetTier: 'Creator',
+            icon: <Crown className="h-6 w-6 text-white" />,
+          };
+      }
+    };
+
+    const tierInfo = getTierMessage();
+
+    return (
+      <Card className="mb-4 border-2 border-transparent bg-gradient-to-r from-purple-50 to-pink-50 relative overflow-hidden" data-testid="upgrade-cta-card">
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 to-pink-500/10" />
+        <CardHeader className="relative">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
+              {tierInfo.icon}
+            </div>
+            <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              {tierInfo.title}
+            </CardTitle>
           </div>
-          <CardTitle className="text-2xl bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Unlock Full Trend History with Pro
-          </CardTitle>
-        </div>
-        <p className="text-gray-700 text-base">
-          Trend history is a Pro-only feature. Upgrade to Pro to access unlimited trend history, export data, and track trends over time!
-        </p>
-      </CardHeader>
-      <CardContent className="relative">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-          <div className="flex items-start gap-2">
-            <span className="text-xl">📊</span>
-            <span className="text-gray-700">Unlimited trend history access</span>
+          <p className="text-gray-700 text-base">
+            {tierInfo.description}
+          </p>
+        </CardHeader>
+        <CardContent className="relative">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+            <div className="flex items-start gap-2">
+              <span className="text-xl">📊</span>
+              <span className="text-gray-700">Full trend history access</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-xl">📥</span>
+              <span className="text-gray-700">Export trends to CSV</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-xl">📈</span>
+              <span className="text-gray-700">Advanced trend analytics</span>
+            </div>
+            <div className="flex items-start gap-2">
+              <span className="text-xl">🔍</span>
+              <span className="text-gray-700">Full search and filtering</span>
+            </div>
           </div>
-          <div className="flex items-start gap-2">
-            <span className="text-xl">📥</span>
-            <span className="text-gray-700">Export trends to CSV</span>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-xl">📈</span>
-            <span className="text-gray-700">Advanced trend analytics</span>
-          </div>
-          <div className="flex items-start gap-2">
-            <span className="text-xl">🔍</span>
-            <span className="text-gray-700">Full search and filtering</span>
-          </div>
-        </div>
-        <Link href="/account">
-          <Button 
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-6 text-lg shadow-lg"
-            data-testid="upgrade-button"
-          >
-            <Crown className="h-5 w-5 mr-2" />
-            Upgrade to Pro
-            <ArrowRight className="h-5 w-5 ml-2" />
-          </Button>
-        </Link>
-      </CardContent>
-    </Card>
-  );
+          <Link href="/account">
+            <Button 
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-semibold py-6 text-lg shadow-lg"
+              data-testid="upgrade-button"
+            >
+              {tierInfo.icon}
+              Upgrade to {tierInfo.targetTier} - {tierInfo.price}
+              <ArrowRight className="h-5 w-5 ml-2" />
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  };
 
   // Blurred locked item wrapper
   const LockedTrendItem = ({ item }: { item: TrendHistoryItem }) => (
@@ -258,25 +292,26 @@ const TrendHistory = () => {
 
   // Helper function to render trends with tier restrictions
   const renderTrendsWithRestrictions = (trends: TrendHistoryItem[]) => {
-    // Conservative approach: Only unlock for confirmed Pro users
-    const isPro = usage?.tier === 'pro';
+    // Tier-based access control
+    const hasAccess = ['creator', 'pro', 'agency'].includes(userTier);
 
-    if (isPro) {
-      // Pro users see everything
+    if (hasAccess) {
+      // Creator, Pro, and Agency users see full content
       return trends.map(renderTrendItem);
     }
 
-    // Free users see NO content, only the upgrade CTA
+    // Starter users see upgrade CTA
     return (
-      <div data-testid="free-user-gate">
+      <div data-testid="starter-user-gate">
         <UpgradeCTACard />
         <Card className="mt-4">
           <CardContent className="py-12">
             <div className="text-center">
               <Lock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">Trend History is a Pro Feature</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Trend History Starts with Creator Tier</h3>
               <p className="text-gray-600 max-w-md mx-auto">
-                Upgrade to Pro to access your complete trend history, track patterns over time, and unlock advanced analytics.
+                Upgrade to Creator to access your trend history, basic forecasting, and track patterns over time. 
+                Pro and Agency tiers unlock even more advanced features!
               </p>
             </div>
           </CardContent>
@@ -508,24 +543,66 @@ const TrendHistory = () => {
     );
   }
 
-  const isPro = usage?.tier === 'pro';
+  const hasAccess = ['creator', 'pro', 'agency'].includes(userTier);
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-blue-100 rounded-lg">
-            <Clock className="h-6 w-6 text-blue-600" />
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Clock className="h-6 w-6 text-blue-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Trend History</h1>
+              <p className="text-gray-600">Historical trend data from Forecaster and AI Picks</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Trend History</h1>
-            <p className="text-gray-600">Historical trend data from Forecaster and AI Picks</p>
-          </div>
+          <TierBadge tier={userTier} size="lg" />
         </div>
 
-        {/* Show controls and stats only for Pro users */}
-        {isPro && (
+        {/* Trend Quota Usage */}
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <UsageProgress 
+              used={trendQuotaUsed} 
+              limit={trendQuotaLimit} 
+              label="Trend Analyses This Month" 
+            />
+            
+            {/* Quota Warning */}
+            {trendQuotaRemaining / trendQuotaLimit <= 0.2 && trendQuotaRemaining > 0 && (
+              <Alert className="mt-4 border-yellow-300 bg-yellow-50">
+                <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                <AlertDescription className="text-yellow-800">
+                  You're running low on trend analyses. Only {trendQuotaRemaining} remaining this month.
+                  {userTier === 'starter' && ' Upgrade to Creator for more analyses.'}
+                  {userTier === 'creator' && ' Upgrade to Pro for more analyses.'}
+                  {userTier === 'pro' && ' Upgrade to Agency for unlimited analyses.'}
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {/* Quota Exhausted */}
+            {trendQuotaRemaining === 0 && (
+              <Alert className="mt-4 border-red-300 bg-red-50">
+                <Lock className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800 flex items-center justify-between">
+                  <span>You've reached your trend analysis limit for this month.</span>
+                  <Link href="/account">
+                    <Button size="sm" variant="destructive">
+                      Upgrade Now
+                    </Button>
+                  </Link>
+                </AlertDescription>
+              </Alert>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Show controls and stats only for users with access (Creator+) */}
+        {hasAccess && (
           <>
             {/* Controls */}
             <div className="flex flex-col lg:flex-row gap-4 mb-6">

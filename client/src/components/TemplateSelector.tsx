@@ -41,11 +41,12 @@ export function TemplateSelector({
   const [, setLocation] = useLocation();
   
   // Get usage data to determine tier
-  const { data: usageData, isLoading: usageLoading } = useUsageData();
+  const usageResponse = useUsageData();
   
   // Extract tier and features from usage data
-  const tier = usageData?.tier || 'starter'; // Default to starter if unavailable
-  const features = usageData?.features;
+  const tier = usageResponse?.data?.data?.features?.tier ?? 'starter';
+  const features = usageResponse?.data?.data?.features;
+  const usageLoading = usageResponse?.isLoading;
   
   // Determine tier-based restrictions
   const isStarterTier = tier === 'starter';

@@ -32,9 +32,16 @@ import {
   MessageSquare,
   ExternalLink,
   Pin,
-  PinOff
+  PinOff,
+  Lock,
+  Rocket,
+  AlertTriangle
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { TierBadge } from '@/components/TierBadge';
+import { UsageProgress } from '@/components/UsageProgress';
+import { useUsageData } from '@/hooks/useUsageData';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ProductData {
   name: string;
@@ -143,6 +150,15 @@ export default function TrendingAIPicks() {
   
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Fetch usage data for tier and quota management
+  const { data: usageResponse } = useUsageData();
+  const usage = usageResponse?.data;
+  const userTier = usage?.features?.tier || 'starter';
+  const trendQuotaUsed = usage?.usage?.trendAnalysesUsed || 0;
+  const trendQuotaLimit = usage?.limits?.trends || 10;
+  const trendQuotaRemaining = usage?.remaining?.trends || 0;
+  const forecastingLevel = usage?.features?.trendForecastingLevel || 'none';
 
   // Fetch all trending products
   const { data: products = [], isLoading } = useQuery<TrendingProduct[]>({
@@ -582,8 +598,8 @@ export default function TrendingAIPicks() {
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
             <div className="flex items-center gap-4">
               <Link href="/">
                 <Button variant="ghost" size="sm">
@@ -592,7 +608,10 @@ export default function TrendingAIPicks() {
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl font-semibold text-gray-900">AI Trending Picks</h1>
+                <div className="flex items-center gap-3">
+                  <h1 className="text-xl font-semibold text-gray-900">AI Trending Picks</h1>
+                  <TierBadge tier={userTier} size="md" />
+                </div>
                 <p className="text-sm text-gray-500">Discover what's trending across social platforms</p>
               </div>
             </div>
@@ -614,6 +633,43 @@ export default function TrendingAIPicks() {
                 </>
               )}
             </Button>
+          </div>
+
+          {/* Trend Quota Usage */}
+          <div className="bg-gray-50 rounded-lg p-4">
+            <UsageProgress 
+              used={trendQuotaUsed} 
+              limit={trendQuotaLimit} 
+              label="Trend Analyses This Month" 
+            />
+            
+            {/* Quota Warning */}
+            {trendQuotaRemaining / trendQuotaLimit <= 0.2 && trendQuotaRemaining > 0 && (
+              <Alert className="mt-3 border-yellow-300 bg-yellow-50">
+                <AlertTriangle className="h-4 w-4 text-yellow-600" />
+                <AlertDescription className="text-yellow-800">
+                  You're running low on trend analyses. Only {trendQuotaRemaining} remaining this month.
+                  {userTier === 'starter' && ' Upgrade to Creator for more analyses.'}
+                  {userTier === 'creator' && ' Upgrade to Pro for more analyses.'}
+                  {userTier === 'pro' && ' Upgrade to Agency for unlimited analyses.'}
+                </AlertDescription>
+              </Alert>
+            )}
+            
+            {/* Quota Exhausted */}
+            {trendQuotaRemaining === 0 && (
+              <Alert className="mt-3 border-red-300 bg-red-50">
+                <Lock className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800 flex items-center justify-between flex-wrap gap-2">
+                  <span>You've reached your trend analysis limit for this month.</span>
+                  <Link href="/account">
+                    <Button size="sm" variant="destructive">
+                      Upgrade Now
+                    </Button>
+                  </Link>
+                </AlertDescription>
+              </Alert>
+            )}
           </div>
         </div>
       </div>

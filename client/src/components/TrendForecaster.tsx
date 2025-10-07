@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Flame, TrendingUp, Clock, TrendingDown, Loader2, RefreshCw, Lock, Crown } from 'lucide-react';
+import { Flame, TrendingUp, Clock, TrendingDown, Loader2, RefreshCw, Lock, Crown, Rocket, Zap } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,6 +17,8 @@ import {
 import { useLocation } from 'wouter';
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { useUsageData } from '@/hooks/useUsageData';
+import { TierBadge } from '@/components/TierBadge';
 
 const NICHES = [
   { id: 'beauty', name: 'Beauty', icon: '💄' },
@@ -28,46 +30,47 @@ const NICHES = [
   { id: 'pet', name: 'Pets', icon: '🐾' }
 ];
 
-// Free tier gets first 3 niches (beauty, tech, fashion)
-const FREE_NICHES = ['beauty', 'tech', 'fashion'];
-
-interface UsageData {
-  tier: 'free' | 'pro';
-  gpt: { used: number; limit: number; remaining: number };
-  claude: { used: number; limit: number; remaining: number };
-  trendAnalyses: { used: number; limit: number; remaining: number };
-  canBulkGenerate: boolean;
-  templatesUnlocked: number;
-}
-
-const useUsageData = () => {
-  return useQuery<{ success: boolean; data: UsageData }>({
-    queryKey: ['/api/billing/usage'],
-    refetchOnMount: true,
-    staleTime: 0,
-  });
-};
+// Niche access by tier
+const STARTER_NICHES = ['beauty'];  // Starter tier gets 1 niche
+const CREATOR_NICHES = ['beauty', 'tech', 'fashion'];  // Creator tier gets 3 niches
+// Pro and Agency tiers get all 7 niches
 
 export default function TrendForecaster() {
   const [, setLocation] = useLocation();
   const [selectedNiche, setSelectedNiche] = useState('beauty');
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeTargetTier, setUpgradeTargetTier] = useState<string>('creator');
   
   // Fetch usage data to determine tier
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
   const usage = usageResponse?.data;
-  const userTier = usage?.tier || 'free';
+  const userTier = usage?.features?.tier || 'starter';
+  const forecastingLevel = usage?.features?.trendForecastingLevel || 'none';
   
-  // Determine if a niche is locked
+  // Determine if a niche is locked based on tier
   const isNicheLocked = (nicheId: string) => {
-    if (userTier === 'pro') return false;
-    return !FREE_NICHES.includes(nicheId);
+    if (userTier === 'agency' || userTier === 'pro') return false;
+    if (userTier === 'creator') return !CREATOR_NICHES.includes(nicheId);
+    if (userTier === 'starter') return !STARTER_NICHES.includes(nicheId);
+    return true;
+  };
+  
+  // Get the appropriate upgrade tier for locked niches
+  const getUpgradeTier = (nicheId: string) => {
+    if (userTier === 'starter' && !STARTER_NICHES.includes(nicheId)) {
+      return 'creator';
+    }
+    if (userTier === 'creator' && !CREATOR_NICHES.includes(nicheId)) {
+      return 'pro';
+    }
+    return 'pro';
   };
   
   // Handle niche selection with lock check
   const handleNicheChange = (nicheId: string) => {
     const locked = isNicheLocked(nicheId);
     if (locked) {
+      setUpgradeTargetTier(getUpgradeTier(nicheId));
       setShowUpgradeModal(true);
       return;
     }
@@ -201,16 +204,39 @@ export default function TrendForecaster() {
         </CardContent>
       </Card>
 
-      {/* Upgrade Modal */}
+      {/* Tier-Specific Upgrade Modal */}
       <AlertDialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
         <AlertDialogContent data-testid="upgrade-modal">
           <AlertDialogHeader>
             <AlertDialogTitle className="flex items-center gap-2 text-xl">
-              <Lock className="h-5 w-5 text-purple-600" />
-              Unlock All Niches with Pro
+              {upgradeTargetTier === 'creator' && <Crown className="h-5 w-5 text-purple-600" />}
+              {upgradeTargetTier === 'pro' && <Rocket className="h-5 w-5 text-blue-600" />}
+              {upgradeTargetTier === 'agency' && <Zap className="h-5 w-5 text-yellow-600" />}
+              Unlock More Niches with {upgradeTargetTier.charAt(0).toUpperCase() + upgradeTargetTier.slice(1)}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-base pt-2">
-              Free users get 3 niches (Beauty, Tech, Fashion). Upgrade to Pro to access all 7 niches and discover trends across every category!
+              {userTier === 'starter' && (
+                <>
+                  <p className="mb-2">Starter users get 1 niche (Beauty). Upgrade to:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li><strong>Creator ($15/mo):</strong> Get 3 niches + basic forecasting</li>
+                    <li><strong>Pro ($35/mo):</strong> Get all 7 niches + full forecasting</li>
+                    <li><strong>Agency ($69/mo):</strong> Everything + enterprise features</li>
+                  </ul>
+                </>
+              )}
+              {userTier === 'creator' && (
+                <>
+                  <p className="mb-2">Creator users get 3 niches (Beauty, Tech, Fashion). Upgrade to:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li><strong>Pro ($35/mo):</strong> Get all 7 niches + advanced forecasting</li>
+                    <li><strong>Agency ($69/mo):</strong> Everything + enterprise features</li>
+                  </ul>
+                </>
+              )}
+              {userTier === 'pro' && (
+                <p>Pro users get all 7 niches. Upgrade to Agency ($69/mo) for enterprise features including competitive analysis and unlimited trend analyses!</p>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -223,7 +249,10 @@ export default function TrendForecaster() {
               className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               data-testid="button-upgrade"
             >
-              Upgrade to Pro
+              {upgradeTargetTier === 'creator' && <Crown className="h-4 w-4 mr-2" />}
+              {upgradeTargetTier === 'pro' && <Rocket className="h-4 w-4 mr-2" />}
+              {upgradeTargetTier === 'agency' && <Zap className="h-4 w-4 mr-2" />}
+              Upgrade to {upgradeTargetTier.charAt(0).toUpperCase() + upgradeTargetTier.slice(1)}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>

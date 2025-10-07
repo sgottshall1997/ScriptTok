@@ -44,6 +44,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from 'wouter';
 import { useUsageData } from '@/hooks/useUsageData';
+import { TierBadge } from '@/components/TierBadge';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Info } from 'lucide-react';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -67,10 +70,25 @@ const EnhancedContentHistory = () => {
   const { data: usageResponse, isLoading: usageLoading, error: usageError } = useUsageData();
   const usage = usageResponse?.data;
   
-  // Fail-safe: default to free tier on error
-  const userTier = usageError ? 'free' : (usage?.tier || 'free');
-  const isFreeUser = userTier === 'free';
-  const FREE_TIER_LIMIT = 10;
+  // Fail-safe: default to starter tier on error
+  const userTier = usageError ? 'starter' : (usage?.features?.tier || 'starter');
+  
+  // Normalize tier (userTier is already one of the 4 tiers from API)
+  const normalizedTier = userTier as 'starter' | 'creator' | 'pro' | 'agency';
+  
+  // Tier-based limits
+  const tierLimits: Record<string, number | null> = {
+    'starter': 10,
+    'creator': 50,
+    'pro': null, // unlimited
+    'agency': null // unlimited
+  };
+  
+  const tierLimit = tierLimits[normalizedTier] || 10;
+  const isStarterTier = normalizedTier === 'starter';
+  const isCreatorTier = normalizedTier === 'creator';
+  const isProTier = normalizedTier === 'pro';
+  const isAgencyTier = normalizedTier === 'agency';
 
   // Load history from database API
   const { data: dbHistory, refetch: refetchDbHistory } = useQuery({
@@ -80,8 +98,7 @@ const EnhancedContentHistory = () => {
       const data = await response.json();
       return data.success ? data.history : [];
     },
-    staleTime: 0,
-    cacheTime: 0
+    staleTime: 0
   });
 
   // Load history on component mount
@@ -417,7 +434,7 @@ const EnhancedContentHistory = () => {
     let errorCount = 0;
 
     try {
-      for (const id of selectedItems) {
+      for (const id of Array.from(selectedItems)) {
         try {
           if (id.startsWith('db_')) {
             const databaseId = id.replace('db_', '');
@@ -576,7 +593,6 @@ const EnhancedContentHistory = () => {
         toast({
           title: "Content Regenerated!",
           description: "New content has been generated based on AI suggestions.",
-          variant: "success",
         });
         // Optionally, update the entry in the history or refetch
         refetchDbHistory(); // Refetch to get the latest data, including potentially updated evaluations
@@ -632,7 +648,6 @@ const EnhancedContentHistory = () => {
         toast({
           title: "Content Updated!",
           description: "Content has been updated based on AI evaluation tips.",
-          variant: "success",
         });
         refetchDbHistory();
         loadHistory();
@@ -649,12 +664,23 @@ const EnhancedContentHistory = () => {
     }
   };
 
-  // Export functionality
+  // Export functionality with tier-based access
   const handleExport = (format: 'csv' | 'json') => {
-    if (isFreeUser) {
+    // Starter tier cannot export
+    if (isStarterTier) {
       toast({
-        title: "Pro Feature",
-        description: "Export requires Pro - Upgrade to export unlimited content",
+        title: "Creator+ Feature",
+        description: "Export is available on Creator tier and above. Upgrade to unlock!",
+        variant: "default",
+      });
+      return;
+    }
+
+    // Agency tier can export JSON, Creator/Pro can only export CSV
+    if (format === 'json' && !isAgencyTier) {
+      toast({
+        title: "Agency Feature",
+        description: "JSON export is available on Agency tier. Upgrade to unlock!",
         variant: "default",
       });
       return;
@@ -670,6 +696,7 @@ const EnhancedContentHistory = () => {
       templateUsed: entry.templateUsed,
       content: extractCleanContent(entry.generatedOutput.content),
       platforms: entry.platformsSelected?.join(', '),
+      aiModel: entry.aiModel || entry.model || 'Unknown',
       viralScore: entry.viralScoreOverall || '',
     }));
 
@@ -684,7 +711,7 @@ const EnhancedContentHistory = () => {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } else if (format === 'csv') {
-      const headers = ['ID', 'Timestamp', 'Product', 'Niche', 'Tone', 'Type', 'Template', 'Content', 'Platforms', 'Viral Score'];
+      const headers = ['ID', 'Timestamp', 'Product', 'Niche', 'Tone', 'Type', 'Template', 'Content', 'Platforms', 'AI Model', 'Viral Score'];
       const csvRows = [
         headers.join(','),
         ...dataToExport.map(row => [
@@ -697,6 +724,7 @@ const EnhancedContentHistory = () => {
           row.templateUsed,
           `"${row.content.replace(/"/g, '""')}"`,
           `"${row.platforms}"`,
+          row.aiModel,
           row.viralScore
         ].join(','))
       ];
@@ -754,20 +782,48 @@ const EnhancedContentHistory = () => {
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-green-100 rounded-lg">
-            <Eye className="h-6 w-6 text-green-600" />
+        <div className="flex items-center justify-between gap-3 mb-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Eye className="h-6 w-6 text-green-600" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Content History</h1>
+              <p className="text-gray-600">View and manage your generated content history</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Content History</h1>
-            <p className="text-gray-600">View and manage your generated content history</p>
-          </div>
+          <TierBadge tier={normalizedTier} size="lg" />
         </div>
+
+        {/* Tier-based history limit messaging */}
+        {(isStarterTier || isCreatorTier) && (
+          <Alert className="mb-4">
+            <Info className="h-4 w-4" />
+            <AlertTitle>
+              {isStarterTier && "Starter tier: Viewing your 10 most recent items"}
+              {isCreatorTier && "Creator tier: Viewing your 50 most recent items"}
+            </AlertTitle>
+            <AlertDescription>
+              {isStarterTier && "Upgrade to Creator for 50 items of history and CSV export, or Pro for unlimited history."}
+              {isCreatorTier && "Upgrade to Pro for unlimited history and advanced features."}
+            </AlertDescription>
+          </Alert>
+        )}
+        
+        {(isProTier || isAgencyTier) && (
+          <Alert className="mb-4 bg-blue-50 border-blue-200">
+            <Info className="h-4 w-4 text-blue-600" />
+            <AlertTitle className="text-blue-900">Unlimited History</AlertTitle>
+            <AlertDescription className="text-blue-700">
+              You have access to your complete content history with no limits.
+            </AlertDescription>
+          </Alert>
+        )}
 
         <div className="flex justify-between items-center mb-4">
           <div></div>
           <div className="flex gap-2">
-            {/* Export Button - Pro Only */}
+            {/* Export CSV Button - Creator+ */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -775,23 +831,24 @@ const EnhancedContentHistory = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => handleExport('csv')}
-                      disabled={isFreeUser}
-                      className={isFreeUser ? "text-gray-400 cursor-not-allowed" : "text-purple-600 hover:text-purple-700"}
+                      disabled={isStarterTier}
+                      className={isStarterTier ? "text-gray-400 cursor-not-allowed opacity-50" : "text-purple-600 hover:text-purple-700"}
+                      data-testid="button-export-csv"
                     >
-                      {isFreeUser && <Lock className="h-4 w-4 mr-2" />}
-                      {!isFreeUser && <Download className="h-4 w-4 mr-2" />}
-                      Export CSV
+                      {isStarterTier ? <Lock className="h-4 w-4 mr-2" /> : <Download className="h-4 w-4 mr-2" />}
+                      Export CSV {isStarterTier && "(Creator+)"}
                     </Button>
                   </div>
                 </TooltipTrigger>
-                {isFreeUser && (
+                {isStarterTier && (
                   <TooltipContent>
-                    <p>Export requires Pro - Upgrade to export unlimited content</p>
+                    <p>Export is available on Creator tier and above</p>
                   </TooltipContent>
                 )}
               </Tooltip>
             </TooltipProvider>
 
+            {/* Export JSON Button - Agency Only */}
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -799,18 +856,18 @@ const EnhancedContentHistory = () => {
                     <Button 
                       variant="outline" 
                       onClick={() => handleExport('json')}
-                      disabled={isFreeUser}
-                      className={isFreeUser ? "text-gray-400 cursor-not-allowed" : "text-purple-600 hover:text-purple-700"}
+                      disabled={!isAgencyTier}
+                      className={!isAgencyTier ? "text-gray-400 cursor-not-allowed opacity-50" : "text-purple-600 hover:text-purple-700"}
+                      data-testid="button-export-json"
                     >
-                      {isFreeUser && <Lock className="h-4 w-4 mr-2" />}
-                      {!isFreeUser && <Download className="h-4 w-4 mr-2" />}
-                      Export JSON
+                      {!isAgencyTier ? <Lock className="h-4 w-4 mr-2" /> : <Download className="h-4 w-4 mr-2" />}
+                      Export JSON {!isAgencyTier && "(Agency)"}
                     </Button>
                   </div>
                 </TooltipTrigger>
-                {isFreeUser && (
+                {!isAgencyTier && (
                   <TooltipContent>
-                    <p>Export requires Pro - Upgrade to export unlimited content</p>
+                    <p>JSON export is available on Agency tier</p>
                   </TooltipContent>
                 )}
               </Tooltip>
@@ -882,12 +939,8 @@ const EnhancedContentHistory = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="newest">Newest First</SelectItem>
-                {!isFreeUser && (
-                  <>
-                    <SelectItem value="viral-highest">Viral Rating: Highest</SelectItem>
-                    <SelectItem value="viral-lowest">Viral Rating: Lowest</SelectItem>
-                  </>
-                )}
+                <SelectItem value="viral-highest">Viral Rating: Highest</SelectItem>
+                <SelectItem value="viral-lowest">Viral Rating: Lowest</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -947,12 +1000,12 @@ const EnhancedContentHistory = () => {
             <Skeleton className="h-5 w-48 ml-auto" />
           ) : (
             <>
-              {isFreeUser && filteredHistory.length > FREE_TIER_LIMIT ? (
+              {(isStarterTier || isCreatorTier) && filteredHistory.length >= (tierLimit || 0) ? (
                 <p className="text-sm text-gray-500">
-                  {FREE_TIER_LIMIT} unlocked, {filteredHistory.length - FREE_TIER_LIMIT} locked items
+                  Showing {tierLimit} most recent items
                   <Badge variant="outline" className="ml-2 text-purple-600 border-purple-300">
                     <Crown className="h-3 w-3 mr-1" />
-                    Pro: Unlock All {filteredHistory.length}
+                    {isStarterTier ? "Upgrade for 50+ items" : "Upgrade for unlimited"}
                   </Badge>
                 </p>
               ) : (
@@ -968,12 +1021,12 @@ const EnhancedContentHistory = () => {
       {/* History Cards */}
       <div className="space-y-4">
         {filteredHistory.map((entry, index) => {
-          const isLocked = isFreeUser && index >= FREE_TIER_LIMIT;
-          const showUpgradeCTA = isFreeUser && index === FREE_TIER_LIMIT && filteredHistory.length > FREE_TIER_LIMIT;
+          const isLocked = (isStarterTier && index >= 10) || (isCreatorTier && index >= 50);
+          const showUpgradeCTA = ((isStarterTier && index === 10) || (isCreatorTier && index === 50)) && filteredHistory.length > (tierLimit || 0);
           
           return (
             <React.Fragment key={entry.id}>
-              {/* Upgrade CTA Card - Insert after 10th item for free users */}
+              {/* Upgrade CTA Card - Insert after tier limit for Starter/Creator users */}
               {showUpgradeCTA && (
                 <Card className="overflow-hidden border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50" data-testid="upgrade-cta-card">
                   <CardHeader className="pb-3">
@@ -983,42 +1036,79 @@ const EnhancedContentHistory = () => {
                       </div>
                       <div>
                         <CardTitle className="text-2xl text-purple-900">
-                          Unlock Full Content History with Pro
+                          {isStarterTier && "Upgrade for More History & Export"}
+                          {isCreatorTier && "Upgrade for Unlimited History"}
                         </CardTitle>
                         <p className="text-purple-700 mt-1">
-                          Free users can view 10 recent items. Upgrade to Pro to access unlimited history, export content, and advanced filtering!
+                          {isStarterTier && "Starter users can view 10 recent items. Upgrade to Creator for 50 items & CSV export, or Pro for unlimited history!"}
+                          {isCreatorTier && "Creator users can view 50 recent items. Upgrade to Pro for unlimited history and advanced analytics!"}
                         </p>
                       </div>
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
-                      <div className="flex items-center gap-2 text-purple-800">
-                        <span className="text-lg">📚</span>
-                        <span className="font-medium">Unlimited content history access</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-purple-800">
-                        <span className="text-lg">📥</span>
-                        <span className="font-medium">Export to CSV/JSON</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-purple-800">
-                        <span className="text-lg">🔍</span>
-                        <span className="font-medium">Advanced search and filtering</span>
-                      </div>
-                      <div className="flex items-center gap-2 text-purple-800">
-                        <span className="text-lg">📊</span>
-                        <span className="font-medium">Content analytics</span>
-                      </div>
-                    </div>
-                    <Link href="/account">
-                      <Button 
-                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-6 text-lg"
-                        data-testid="button-upgrade-to-pro"
-                      >
-                        <Crown className="h-5 w-5 mr-2" />
-                        Upgrade to Pro
-                      </Button>
-                    </Link>
+                    {isStarterTier && (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">📚</span>
+                            <span className="font-medium">50 items of history (Creator)</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">📥</span>
+                            <span className="font-medium">CSV export (Creator+)</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">♾️</span>
+                            <span className="font-medium">Unlimited history (Pro)</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">📊</span>
+                            <span className="font-medium">Advanced analytics (Pro)</span>
+                          </div>
+                        </div>
+                        <Link href="/pricing">
+                          <Button 
+                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-6 text-lg"
+                            data-testid="button-upgrade-to-creator"
+                          >
+                            <Crown className="h-5 w-5 mr-2" />
+                            Upgrade to Creator - $15/mo
+                          </Button>
+                        </Link>
+                      </>
+                    )}
+                    {isCreatorTier && (
+                      <>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">♾️</span>
+                            <span className="font-medium">Unlimited content history</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">📊</span>
+                            <span className="font-medium">Advanced analytics</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">🚀</span>
+                            <span className="font-medium">Priority AI processing</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-purple-800">
+                            <span className="text-lg">🔧</span>
+                            <span className="font-medium">Custom templates</span>
+                          </div>
+                        </div>
+                        <Link href="/pricing">
+                          <Button 
+                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-6 text-lg"
+                            data-testid="button-upgrade-to-pro"
+                          >
+                            <Crown className="h-5 w-5 mr-2" />
+                            Upgrade to Pro - $35/mo
+                          </Button>
+                        </Link>
+                      </>
+                    )}
                   </CardContent>
                 </Card>
               )}
@@ -1035,15 +1125,16 @@ const EnhancedContentHistory = () => {
                       <Lock className="h-12 w-12 mx-auto text-purple-500 mb-3" />
                       <Badge className="mb-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 text-base">
                         <Crown className="h-4 w-4 mr-2" />
-                        Pro Only
+                        {isStarterTier ? "Creator+" : "Pro"}
                       </Badge>
                       <p className="text-gray-700 font-medium mb-4">
-                        Upgrade to Pro to view all your content history
+                        {isStarterTier && "Upgrade to Creator for 50 items or Pro for unlimited history"}
+                        {isCreatorTier && "Upgrade to Pro for unlimited content history"}
                       </p>
-                      <Link href="/account">
+                      <Link href="/pricing">
                         <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
                           <Crown className="h-4 w-4 mr-2" />
-                          Upgrade to Pro
+                          {isStarterTier ? "View Pricing" : "Upgrade to Pro"}
                         </Button>
                       </Link>
                     </div>
@@ -1109,8 +1200,8 @@ const EnhancedContentHistory = () => {
                       <Badge className={getNicheColor(entry.niche)}>
                         {entry.niche.charAt(0).toUpperCase() + entry.niche.slice(1)}
                       </Badge>
-                      {(entry.platformsSelected || []).map(platform => (
-                        <Badge key={platform} className={getPlatformColor(platform)}>
+                      {(entry.platformsSelected || []).map((platform, idx) => (
+                        <Badge key={`${platform}-${idx}`} className={getPlatformColor(platform)}>
                           {platform}
                         </Badge>
                       ))}
@@ -1118,8 +1209,8 @@ const EnhancedContentHistory = () => {
                       {/* AI Model Badge */}
                       {(entry.aiModel || entry.model) && (
                         <Badge className="bg-purple-100 text-purple-800">
-                          {(entry.aiModel || entry.model).includes('gpt') || (entry.aiModel || entry.model).includes('chatgpt') ? 'ChatGPT' : 
-                           (entry.aiModel || entry.model).includes('claude') ? 'Claude' : 
+                          {(entry.aiModel || entry.model || '').includes('gpt') || (entry.aiModel || entry.model || '').includes('chatgpt') ? 'ChatGPT' : 
+                           (entry.aiModel || entry.model || '').includes('claude') ? 'Claude' : 
                            (entry.aiModel || entry.model)}
                         </Badge>
                       )}
@@ -1323,50 +1414,16 @@ const EnhancedContentHistory = () => {
                   {/* Viral Score Display System */}
                   {entry.databaseId && (
                     <div className="border-t pt-4 mt-4">
-                      {isFreeUser ? (
-                        <Card className="w-full bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200">
-                          <CardHeader>
-                            <CardTitle className="flex items-center gap-2">
-                              <TrendingUp className="w-5 h-5 text-purple-600" />
-                              Viral Score Analysis
-                              <Badge variant="outline" className="ml-auto bg-purple-100 text-purple-700 border-purple-300">
-                                <Lock className="w-3 h-3 mr-1" />
-                                Pro Only
-                              </Badge>
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="text-center py-6">
-                              <div className="inline-block p-4 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white mb-4">
-                                <div className="flex items-center justify-center gap-2 mb-2">
-                                  <Lock className="w-6 h-6" />
-                                  <Crown className="w-6 h-6" />
-                                </div>
-                                <h3 className="text-lg font-bold">🔒 Viral Analytics - Pro Only</h3>
-                              </div>
-                              <p className="text-gray-600 mb-4">
-                                Unlock detailed viral score breakdowns, performance metrics, and AI optimization tips
-                              </p>
-                              <Link href="/account">
-                                <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
-                                  <Crown className="w-4 h-4 mr-2" />
-                                  Upgrade to Pro
-                                </Button>
-                              </Link>
-                            </div>
-                          </CardContent>
-                        </Card>
-                      ) : (
-                        <ViralScoreDisplay
-                          viralScore={entry.viralScore || null}
-                          overallScore={entry.viralScoreOverall || null}
-                        />
-                      )}
+                      <ViralScoreDisplay
+                        viralScore={entry.viralScore as any || null}
+                        overallScore={entry.viralScoreOverall || null}
+                        tier={normalizedTier}
+                      />
                     </div>
                   )}
 
                   {/* AI Analysis Section - Works for both ChatGPT and Claude */}
-                  {entry.viralAnalysis && !isFreeUser && (
+                  {entry.viralAnalysis && (
                     <div className="border-t pt-4 mt-4">
                       <div className="bg-gray-50 p-4 rounded-lg space-y-3">
                         <h5 className="font-medium text-gray-700 flex items-center gap-2">
@@ -1397,6 +1454,51 @@ const EnhancedContentHistory = () => {
           );
         })}
       </div>
+
+      {/* Bottom Upgrade Prompts for Starter/Creator Tiers */}
+      {isStarterTier && (
+        <Card className="mt-8 border-dashed border-2 border-purple-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-purple-600" />
+              Upgrade for More History & Export
+            </CardTitle>
+            <p className="text-gray-600">
+              Get access to 50 items of history and CSV export on Creator tier
+            </p>
+          </CardHeader>
+          <CardContent>
+            <Link href="/pricing">
+              <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                <Crown className="h-4 w-4 mr-2" />
+                Upgrade to Creator - $15/mo
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
+      {isCreatorTier && (
+        <Card className="mt-8 border-dashed border-2 border-blue-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Crown className="h-5 w-5 text-blue-600" />
+              Upgrade for Unlimited History
+            </CardTitle>
+            <p className="text-gray-600">
+              Get unlimited content history and advanced analytics on Pro tier
+            </p>
+          </CardHeader>
+          <CardContent>
+            <Link href="/pricing">
+              <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white">
+                <Crown className="h-4 w-4 mr-2" />
+                Upgrade to Pro - $35/mo
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
 
     </div>
   );

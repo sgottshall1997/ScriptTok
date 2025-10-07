@@ -48,7 +48,7 @@ const Dashboard = () => {
   
   // Fetch usage data for the widget
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
-  const usageData = usageResponse?.data;
+  const usageData = usageResponse?.data?.data;
 
   // Fetch trending products for all niches (Perplexity organized by niche)
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({

@@ -2242,6 +2242,7 @@ ${config.hashtags.join(' ')}`;
                     <ViralScoreDisplay
                       viralScore={viralScore || generatedContent?.viralScore || null}
                       overallScore={viralScore?.overall || generatedContent?.viralScore?.overall || null}
+                      tier={tier}
                     />
 
                     {/* AI-Powered Analysis & Auto-Apply */}
@@ -2357,6 +2358,7 @@ ${config.hashtags.join(' ')}`;
                         <ViralScoreDisplay
                           viralScore={{...item.content.viralScore, colorCode: item.content.viralScore.colorCode || 'green'}}
                           overallScore={item.content.viralScore?.overall || null}
+                          tier={tier}
                         />
                       </div>
                     )}
@@ -2442,6 +2444,7 @@ ${config.hashtags.join(' ')}`;
                           <ViralScoreDisplay
                             viralScore={{...comparisonResults.claude.viralScore, colorCode: comparisonResults.claude.viralScore.colorCode || 'green'}}
                             overallScore={comparisonResults.claude.viralScore?.overall || null}
+                            tier={tier}
                           />
                         </div>
                       )}
@@ -2501,6 +2504,7 @@ ${config.hashtags.join(' ')}`;
                           <ViralScoreDisplay
                             viralScore={{...comparisonResults.chatgpt.viralScore, colorCode: comparisonResults.chatgpt.viralScore.colorCode || 'green'}}
                             overallScore={comparisonResults.chatgpt.viralScore?.overall || null}
+                            tier={tier}
                           />
                         </div>
                       )}
