@@ -294,96 +294,85 @@ export function MarketingNav() {
         </Link>
 
         {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-1">
-          <NavigationMenu>
-            <NavigationMenuList>
-              {/* Features Dropdown */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger data-testid="nav-trigger-features" className="text-sm font-normal">
-                  Features
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-[600px] p-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      {featuresData.map((item) => (
-                        <DropdownCard key={item.title} item={item} />
-                      ))}
-                    </div>
+        <NavigationMenu className="hidden lg:flex">
+          <NavigationMenuList>
+            {/* Features Dropdown */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger data-testid="nav-trigger-features">
+                Features
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-[600px] p-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    {featuresData.map((item) => (
+                      <DropdownCard key={item.title} item={item} />
+                    ))}
                   </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
 
-          <NavigationMenu>
-            <NavigationMenuList>
-              {/* Tools Dropdown */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger data-testid="nav-trigger-tools" className="text-sm font-normal">
-                  Tools
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-[600px] p-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      {toolsData.map((item) => (
-                        <DropdownCard key={item.title} item={item} />
-                      ))}
-                    </div>
+            {/* Tools Dropdown */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger data-testid="nav-trigger-tools">
+                Tools
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-[600px] p-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    {toolsData.map((item) => (
+                      <DropdownCard key={item.title} item={item} />
+                    ))}
                   </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
 
-          <NavigationMenu>
-            <NavigationMenuList>
-              {/* Use Cases Dropdown */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger data-testid="nav-trigger-use-cases" className="text-sm font-normal">
-                  Use Cases
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-[700px] p-4">
-                    <div className="grid grid-cols-3 gap-2">
-                      {useCasesData.map((item) => (
-                        <DropdownCard key={item.title} item={item} />
-                      ))}
-                    </div>
+            {/* Use Cases Dropdown */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger data-testid="nav-trigger-use-cases">
+                Use Cases
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-[700px] p-4">
+                  <div className="grid grid-cols-3 gap-2">
+                    {useCasesData.map((item) => (
+                      <DropdownCard key={item.title} item={item} />
+                    ))}
                   </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
 
-          <NavigationMenu>
-            <NavigationMenuList>
-              {/* Learn Dropdown */}
-              <NavigationMenuItem>
-                <NavigationMenuTrigger data-testid="nav-trigger-learn" className="text-sm font-normal">
-                  Learn
-                </NavigationMenuTrigger>
-                <NavigationMenuContent>
-                  <div className="w-[600px] p-4">
-                    <div className="grid grid-cols-2 gap-2">
-                      {learnData.map((item) => (
-                        <DropdownCard key={item.title} item={item} />
-                      ))}
-                    </div>
+            {/* Learn Dropdown */}
+            <NavigationMenuItem>
+              <NavigationMenuTrigger data-testid="nav-trigger-learn">
+                Learn
+              </NavigationMenuTrigger>
+              <NavigationMenuContent>
+                <div className="w-[600px] p-4">
+                  <div className="grid grid-cols-2 gap-2">
+                    {learnData.map((item) => (
+                      <DropdownCard key={item.title} item={item} />
+                    ))}
                   </div>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
-            </NavigationMenuList>
-          </NavigationMenu>
+                </div>
+              </NavigationMenuContent>
+            </NavigationMenuItem>
 
-          <Link href="/pricing">
-            <span
-              className="inline-flex h-10 items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-normal transition-colors hover:bg-accent hover:text-accent-foreground cursor-pointer"
-              data-testid="nav-link-pricing"
-            >
-              Pricing
-            </span>
-          </Link>
-        </div>
+            {/* Pricing */}
+            <NavigationMenuItem>
+              <Link href="/pricing">
+                <span
+                  className="group inline-flex h-10 w-max items-center justify-center rounded-md bg-background px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 cursor-pointer"
+                  data-testid="nav-link-pricing"
+                >
+                  Pricing
+                </span>
+              </Link>
+            </NavigationMenuItem>
+          </NavigationMenuList>
+        </NavigationMenu>
 
         {/* Desktop CTAs */}
         <div className="hidden lg:flex items-center gap-3">
