@@ -24,9 +24,9 @@ export function calculateViralScore(content: string, hooks?: string[], trendingD
     };
 
     const overall = Math.round(
-      (breakdown.hookStrength * 0.25) +
+      (breakdown.hookStrength * 0.30) +
       (breakdown.engagement * 0.25) +
-      (breakdown.clarity * 0.2) +
+      (breakdown.clarity * 0.15) +
       (breakdown.length * 0.15) +
       (breakdown.trending * 0.15)
     );
@@ -43,7 +43,7 @@ export function calculateViralScore(content: string, hooks?: string[], trendingD
 
   } catch (error) {
     console.error('Error calculating viral score:', error);
-    
+
     // Return fallback score
     return {
       overall: 65,
@@ -62,18 +62,31 @@ export function calculateViralScore(content: string, hooks?: string[], trendingD
 
 function calculateHookStrength(content: string, hooks?: string[]): number {
   const firstLine = content.split('\n')[0] || '';
-  let score = 50;
+  let score = 65; // Increased base score
 
-  // Check for strong opening words
-  const strongOpeners = ['stop', 'wait', 'pov:', 'this', 'why', 'how', 'what', 'omg', 'guys'];
+  // Check for strong opening words (more comprehensive list)
+  const strongOpeners = [
+    'stop', 'wait', 'pov:', 'this', 'why', 'how', 'what', 'omg', 'guys',
+    'nobody', 'everyone', 'when', 'if you', 'don\'t', 'can\'t', 'won\'t',
+    'you need', 'i found', 'i tried', 'watch', 'look'
+  ];
   if (strongOpeners.some(opener => firstLine.toLowerCase().includes(opener))) {
-    score += 15;
+    score += 20; // Increased from 15
   }
 
-  // Check for emotional words
-  const emotionalWords = ['amazing', 'obsessed', 'love', 'hate', 'shocked', 'mind-blown', 'game-changer'];
+  // Check for emotional words (expanded list)
+  const emotionalWords = [
+    'amazing', 'obsessed', 'love', 'hate', 'shocked', 'mind-blown', 'game-changer',
+    'insane', 'crazy', 'unbelievable', 'wow', 'finally', 'perfect', 'best', 'worst'
+  ];
   if (emotionalWords.some(word => firstLine.toLowerCase().includes(word))) {
-    score += 10;
+    score += 12; // Increased from 10
+  }
+
+  // Check for urgency/scarcity words
+  const urgencyWords = ['now', 'today', 'finally', 'just', 'new', 'only', 'last chance', 'limited'];
+  if (urgencyWords.some(word => firstLine.toLowerCase().includes(word))) {
+    score += 8;
   }
 
   // Check for numbers
@@ -88,6 +101,12 @@ function calculateHookStrength(content: string, hooks?: string[]): number {
 
   // Check for question marks (engagement)
   if (firstLine.includes('?')) {
+    score += 8; // Increased from 5
+  }
+
+  // Bonus for emojis in hook
+  const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu;
+  if (emojiRegex.test(firstLine)) {
     score += 5;
   }
 
@@ -95,48 +114,72 @@ function calculateHookStrength(content: string, hooks?: string[]): number {
 }
 
 function calculateEngagementPotential(content: string): number {
-  let score = 50;
+  let score = 65; // Increased base score
   const lowerContent = content.toLowerCase();
 
-  // Call-to-action phrases
-  const ctaWords = ['comment', 'like', 'follow', 'share', 'tag', 'try this', 'let me know'];
+  // Call-to-action phrases (expanded list)
+  const ctaWords = [
+    'comment', 'like', 'follow', 'share', 'tag', 'try this', 'let me know',
+    'tell me', 'drop a', 'which one', 'reply', 'dm me', 'check out',
+    'link in bio', 'swipe', 'watch till the end'
+  ];
   const ctaCount = ctaWords.filter(cta => lowerContent.includes(cta)).length;
-  score += Math.min(ctaCount * 8, 24);
+  score += Math.min(ctaCount * 7, 28); // Increased multiplier and cap
 
   // Questions (drive comments)
   const questionCount = (content.match(/\?/g) || []).length;
-  score += Math.min(questionCount * 6, 18);
+  score += Math.min(questionCount * 8, 24); // Increased from 6 and 18
 
   // Personal pronouns (relatability)
   const personalWords = ['you', 'your', 'i', 'my', 'we', 'us'];
   const personalCount = personalWords.filter(word => lowerContent.includes(word)).length;
-  score += Math.min(personalCount * 3, 15);
+  score += Math.min(personalCount * 2, 12);
+
+  // Emoji presence (engagement boost)
+  const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]/gu;
+  const emojiCount = (content.match(emojiRegex) || []).length;
+  if (emojiCount > 0 && emojiCount <= 6) {
+    score += 10;
+  } else if (emojiCount > 6) {
+    score += 5; // Still bonus but not as much
+  }
 
   return Math.min(score, 100);
 }
 
 function calculateClarity(content: string): number {
-  let score = 50;
+  let score = 70; // Increased base score (clarity is often decent)
 
   // Sentence length (shorter = clearer)
   const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-  const avgSentenceLength = sentences.reduce((sum, s) => sum + s.split(' ').length, 0) / sentences.length;
-  
-  if (avgSentenceLength <= 10) score += 20;
-  else if (avgSentenceLength <= 15) score += 10;
-  else if (avgSentenceLength > 25) score -= 10;
+  if (sentences.length > 0) {
+    const avgSentenceLength = sentences.reduce((sum, s) => sum + s.split(' ').length, 0) / sentences.length;
 
-  // Readability indicators
-  const complexWords = content.split(' ').filter(word => word.length > 12).length;
-  const totalWords = content.split(' ').length;
-  const complexityRatio = complexWords / totalWords;
-  
-  if (complexityRatio < 0.1) score += 15;
-  else if (complexityRatio > 0.2) score -= 15;
+    if (avgSentenceLength <= 12) score += 15; // More forgiving threshold
+    else if (avgSentenceLength <= 18) score += 8; // More forgiving threshold
+    else if (avgSentenceLength > 30) score -= 8; // Less harsh penalty
+  }
+
+  // Readability indicators (more forgiving)
+  const words = content.split(/\s+/).filter(w => w.length > 0);
+  const complexWords = words.filter(word => word.length > 13).length; // Slightly higher threshold
+  const totalWords = words.length;
+
+  if (totalWords > 0) {
+    const complexityRatio = complexWords / totalWords;
+
+    if (complexityRatio < 0.15) score += 10; // More forgiving
+    else if (complexityRatio > 0.25) score -= 10; // Less harsh
+  }
 
   // Structure indicators
-  if (content.includes('\n\n') || content.includes('•') || content.includes('-')) {
-    score += 10; // Well-structured content
+  if (content.includes('\n\n') || content.includes('•') || content.includes('-') || content.includes('\n')) {
+    score += 8; // Well-structured content
+  }
+
+  // Short content is generally clear
+  if (content.length < 200) {
+    score += 5;
   }
 
   return Math.min(Math.max(score, 0), 100);
@@ -144,35 +187,39 @@ function calculateClarity(content: string): number {
 
 function calculateLengthScore(content: string): number {
   const charCount = content.length;
-  
-  // Optimal range for TikTok captions: 100-300 characters
-  if (charCount >= 100 && charCount <= 300) return 100;
-  if (charCount >= 80 && charCount <= 400) return 85;
-  if (charCount >= 60 && charCount <= 500) return 70;
-  if (charCount < 50) return 40; // Too short
-  if (charCount > 600) return 30; // Too long
-  
-  return 60;
+
+  // Much more forgiving length ranges
+  if (charCount >= 80 && charCount <= 400) return 95; // Sweet spot
+  if (charCount >= 50 && charCount <= 500) return 85; // Still very good
+  if (charCount >= 30 && charCount <= 600) return 75; // Good
+  if (charCount >= 20 && charCount <= 700) return 65; // Acceptable
+  if (charCount < 20) return 50; // Too short
+  if (charCount > 700) return 55; // Too long but not terrible
+
+  return 70; // Default decent score
 }
 
 function calculateTrendingScore(content: string, trendingData?: any): number {
-  let score = 50;
+  let score = 60; // Increased base score
   const lowerContent = content.toLowerCase();
 
-  // Common trending keywords
+  // Common trending keywords (expanded list)
   const trendingKeywords = [
     'viral', 'trending', 'fyp', 'for you', 'ootd', 'grwm', 'pov', 'asmr',
     'unboxing', 'review', 'haul', 'tutorial', 'hack', 'tip', 'secret',
-    'obsessed', 'aesthetic', 'vibes', 'energy', 'era', 'core'
+    'obsessed', 'aesthetic', 'vibes', 'energy', 'era', 'core',
+    'duet', 'stitch', 'storytime', 'day in the life', 'get ready',
+    'must have', 'obsession', 'fav', 'fave', 'rec', 'recommend'
   ];
 
   const trendingCount = trendingKeywords.filter(keyword => lowerContent.includes(keyword)).length;
-  score += Math.min(trendingCount * 8, 32);
+  score += Math.min(trendingCount * 10, 40); // Increased multiplier and cap
 
-  // Hashtag analysis
+  // Hashtag analysis (more generous)
   const hashtagCount = (content.match(/#\w+/g) || []).length;
-  if (hashtagCount >= 3 && hashtagCount <= 8) score += 18;
-  else if (hashtagCount > 0) score += 8;
+  if (hashtagCount >= 2 && hashtagCount <= 10) score += 20; // More forgiving range
+  else if (hashtagCount === 1) score += 10;
+  else if (hashtagCount > 10) score += 8; // Still some bonus
 
   // Use trending data if provided
   if (trendingData && trendingData.hot) {
@@ -187,24 +234,24 @@ function calculateTrendingScore(content: string, trendingData?: any): number {
 function generateSuggestions(breakdown: ViralScoreBreakdown, overall: number): string[] {
   const suggestions: string[] = [];
 
-  if (overall < 70) {
-    if (breakdown.hookStrength < 70) {
+  if (overall < 75) {
+    if (breakdown.hookStrength < 75) {
       suggestions.push("Try starting with 'POV:', 'Stop doing this', or 'This changed everything'");
     }
-    
-    if (breakdown.engagement < 70) {
+
+    if (breakdown.engagement < 75) {
       suggestions.push("Add more questions or call-to-actions like 'Comment if you agree'");
     }
-    
-    if (breakdown.clarity < 70) {
+
+    if (breakdown.clarity < 75) {
       suggestions.push("Use shorter sentences and simpler words for better readability");
     }
-    
-    if (breakdown.length < 70) {
-      suggestions.push("Aim for 100-300 characters - add more detail or trim excess");
+
+    if (breakdown.length < 75) {
+      suggestions.push("Aim for 80-400 characters - add more detail or trim excess");
     }
-    
-    if (breakdown.trending < 70) {
+
+    if (breakdown.trending < 75) {
       suggestions.push("Include trending hashtags and viral keywords like #fyp #viral");
     }
   }

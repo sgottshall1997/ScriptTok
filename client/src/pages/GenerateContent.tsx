@@ -148,6 +148,7 @@ const GenerateContent = () => {
   }, [contentMode]);
   // Hardcoded to TikTok only for simplified generator
   const selectedPlatforms = ['tiktok'];
+  const customHook = ''; // No custom hook input - using templates only
   const [templateType, setTemplateType] = useState(templateFromUrl || '');
   const [selectedTemplates, setSelectedTemplates] = useState<TemplateType[]>(templateFromUrl ? [templateFromUrl] as TemplateType[] : []);
   const [tone, setTone] = useState('enthusiastic');
