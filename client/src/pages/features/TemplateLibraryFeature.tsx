@@ -26,6 +26,7 @@ import {
   Flame,
 } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from "@/components/Footer";
 
 export default function TemplateLibraryFeature() {
   const [_, navigate] = useLocation();
@@ -521,6 +522,8 @@ export default function TemplateLibraryFeature() {
           </Button>
         </div>
       </section>
+
+      <Footer />
       </div>
     </>
   );

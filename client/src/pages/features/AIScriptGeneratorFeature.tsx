@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { Zap, BookOpen, Target, Volume2, Clock, Share2, TrendingUp, Package, Lightbulb, Users } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from "@/components/Footer";
 
 export default function AIScriptGeneratorFeature() {
   const [_, navigate] = useLocation();
@@ -370,6 +371,8 @@ export default function AIScriptGeneratorFeature() {
           </Button>
         </div>
       </section>
+
+      <Footer />
       </div>
     </>
   );

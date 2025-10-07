@@ -13,6 +13,7 @@ import { useLocation } from "wouter";
 import { useAuth } from "@/components/AuthProvider";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { MarketingNav, featuresData, toolsData, useCasesData, learnData, pricingData } from "@/components/MarketingNav";
+import Footer from "@/components/Footer";
 
 interface GridCardProps {
   icon: LucideIcon;
@@ -460,6 +461,8 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
   );
 }

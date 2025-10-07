@@ -30,6 +30,7 @@ import {
   Share2
 } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from "@/components/Footer";
 
 export default function MultiPlatformFeature() {
   const [_, navigate] = useLocation();
@@ -406,6 +407,8 @@ export default function MultiPlatformFeature() {
           </Button>
         </div>
       </section>
+
+      <Footer />
       </div>
     </>
   );

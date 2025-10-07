@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from "@/components/Footer";
 
 export default function ViralScoreFeature() {
   const [_, navigate] = useLocation();
@@ -459,6 +460,8 @@ export default function ViralScoreFeature() {
           </Button>
         </div>
       </section>
+
+      <Footer />
       </div>
     </>
   );

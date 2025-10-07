@@ -12,6 +12,7 @@ import { useLocation } from "wouter";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { Repeat, Sparkles, Target, Library, BarChart, Cpu, Zap } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from "@/components/Footer";
 
 export default function DualStudiosFeature() {
   const [_, navigate] = useLocation();
@@ -282,6 +283,8 @@ export default function DualStudiosFeature() {
           </Button>
         </div>
       </section>
+
+      <Footer />
       </div>
     </>
   );

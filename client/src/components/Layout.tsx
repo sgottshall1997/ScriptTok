@@ -1,7 +1,6 @@
 import React from 'react';
 import { useLocation } from 'wouter';
 import Sidebar from './Sidebar';
-import Footer from './Footer';
 import { useAuth } from './AuthProvider';
 import { isDevMode } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -151,7 +150,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         <main className="flex-1 overflow-y-auto w-full">
           <div className="p-6 lg:p-8">
             {children}
-            <Footer />
           </div>
         </main>
       </div>

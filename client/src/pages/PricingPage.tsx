@@ -13,6 +13,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { Helmet } from "react-helmet";
 import { MarketingNav } from "@/components/MarketingNav";
+import Footer from "@/components/Footer";
 
 export default function PricingPage() {
   const { isAuthenticated, login } = useAuth();
@@ -347,6 +348,8 @@ export default function PricingPage() {
           </div>
         </div>
       </section>
+
+      <Footer />
     </div>
     </>
   );

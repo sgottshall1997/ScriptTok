@@ -23,6 +23,7 @@ import {
   Zap
 } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from "@/components/Footer";
 
 export default function TrendDiscoveryFeature() {
   const [_, navigate] = useLocation();
@@ -409,6 +410,8 @@ export default function TrendDiscoveryFeature() {
           </Button>
         </div>
       </section>
+
+      <Footer />
       </div>
     </>
   );
