@@ -163,6 +163,7 @@ export class MemStorage implements IStorage {
       ...generation,
       id: this.nextContentId++,
       niche: generation.niche || 'skincare',
+      userId: generation.userId ?? null,
       createdAt: new Date()
     };
     this.contentGenerations.push(newGeneration);
@@ -340,7 +341,7 @@ export class MemStorage implements IStorage {
     const newHistory: TrendHistory = {
       ...history,
       id: this.nextTrendHistoryId++,
-      fetchedAt: history.fetchedAt || new Date(),
+      fetchedAt: (history as any).fetchedAt || new Date(),
       trendCategory: history.trendCategory || null,
       trendName: history.trendName || null,
       trendDescription: history.trendDescription || null,
