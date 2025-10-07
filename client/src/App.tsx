@@ -42,6 +42,15 @@ import TrendDiscoveryFeature from "@/pages/features/TrendDiscoveryFeature";
 import ViralScoreFeature from "@/pages/features/ViralScoreFeature";
 import MultiPlatformFeature from "@/pages/features/MultiPlatformFeature";
 
+// Tool Pages
+import { 
+  TrendDiscoveryTool,
+  ScriptGeneratorTool,
+  TemplateLibraryTool,
+  ViralScoreAnalyzerTool,
+  HistoryTool
+} from "@/pages/tools";
+
 import Layout from "@/components/Layout";
 import MarketingLayout from "@/components/MarketingLayout";
 import { initScraperConsole } from "./lib/scraperConsole";
@@ -99,6 +108,33 @@ function MainAppRouter() {
       <Route path="/features/multi-platform">
         <MarketingLayout>
           <MultiPlatformFeature />
+        </MarketingLayout>
+      </Route>
+
+      {/* Tool pages with MarketingLayout */}
+      <Route path="/tools/trend-discovery">
+        <MarketingLayout>
+          <TrendDiscoveryTool />
+        </MarketingLayout>
+      </Route>
+      <Route path="/tools/script-generator">
+        <MarketingLayout>
+          <ScriptGeneratorTool />
+        </MarketingLayout>
+      </Route>
+      <Route path="/tools/template-library">
+        <MarketingLayout>
+          <TemplateLibraryTool />
+        </MarketingLayout>
+      </Route>
+      <Route path="/tools/viral-score">
+        <MarketingLayout>
+          <ViralScoreAnalyzerTool />
+        </MarketingLayout>
+      </Route>
+      <Route path="/tools/history">
+        <MarketingLayout>
+          <HistoryTool />
         </MarketingLayout>
       </Route>
       
