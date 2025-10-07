@@ -1,0 +1,88 @@
+Updated Tier Strategy (Final Recommended)
+
+🟡 Starter – $7/mo ($5/mo annual)
+
+Philosophy: “Enough to taste the magic, not enough to live in it.”
+
+Generation Limits
+	•	GPT-4 Generations: 15/month
+	•	Claude Generations: 10/month
+	•	Trend Fetcher Calls: 10/month
+	•	Viral Score Analysis: Basic single-AI version (GPT-4 only)
+
+Feature Access
+
+✅ 3 templates per category (hooks, storytelling, educational only)
+✅ 3 niches unlocked (beauty, tech, fashion)
+✅ Last 10 content items in history
+✅ Viral Score preview (shows number only, no detailed breakdown)
+❌ No bulk generation
+❌ No content export
+❌ No trend forecasting
+❌ No custom prompts
+❌ No API access
+
+🧠 Upgrade Trigger: “You’ll immediately hit your generation cap and want full trend forecasting + viral score insights.”
+
+💬 Why $5/$7 works:
+	•	Filters non-serious users but keeps low entry friction.
+	•	Generates meaningful recurring revenue even from testers.
+	•	Aligns with Pictory’s psychological $19 baseline but positions you as the “lightweight, faster, cheaper” alternative.
+
+⸻
+
+Creator - $15/mo ($10/mo annual)
+Philosophy: Perfect for aspiring influencers testing strategies
+Generation Limits:
+* GPT-4 Generations: 50/month
+* Claude Generations: 30/month
+* Trend Fetcher Calls: 25/month
+* Viral Score Analysis: Full scoring + basic AI suggestions
+Feature Access:
+* ✅ All viral content templates (unlimited)
+* ✅ All 7 niches unlocked
+* ✅ Full content history (last 50 items)
+* ✅ Content history export (CSV)
+* ✅ Trend forecasting (basic - hot/rising only)
+* ✅ Viral score with improvement tips
+* ❌ No bulk generation (still manual)
+* ❌ No custom prompts
+* ❌ No API access
+* ❌ No affiliate studio access
+
+Pro - $35/mo ($25/mo annual)
+Philosophy: Power users & agencies need unlimited creation
+Generation Limits:
+* GPT-4 Generations: 300/month
+* Claude Generations: 150/month
+* Trend Fetcher Calls: 100/month
+* Viral Score Analysis: Advanced (dual AI evaluation from Claude + GPT)
+Feature Access:
+* ✅ BOTH Studios: Viral + Affiliate content
+* ✅ Bulk generation: Up to 10 items at once
+* ✅ Trend Dashboard: Full forecasting (hot/rising/upcoming/declining)
+* ✅ Custom prompts: Save & reuse your own templates
+* ✅ Full history: Unlimited with advanced filtering
+* ✅ Priority support: 24hr response time
+* ✅ Make.com webhook integration
+* ❌ No team features
+* ❌ No API access
+* ❌ No brand templates
+
+Agency/Team - $69/mo ($50/mo annual)
+Philosophy: Agencies managing multiple brands/clients
+Generation Limits:
+* GPT-4 Generations: 1000/month (shared across team)
+* Claude Generations: 500/month (shared across team)
+* Trend Fetcher Calls: Unlimited
+* Viral Score Analysis: Enterprise (with competitive analysis)
+Feature Access:
+* ✅ Everything in Pro, PLUS:
+* ✅ 5 Team Seats: Collaborative workspace
+* ✅ Brand Templates: Save client brand voices
+* ✅ API Access: Full REST API for automation
+* ✅ Bulk Scheduling: Generate & schedule 50+ at once
+* ✅ Analytics Dashboard: Performance tracking across all content
+* ✅ Dedicated Account Manager
+* ✅ Custom integrations support
+* ✅ White-label reports (export with your branding)
