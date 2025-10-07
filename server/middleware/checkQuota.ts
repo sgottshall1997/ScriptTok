@@ -24,35 +24,41 @@ export const checkQuota = async (req: Request, res: Response, next: NextFunction
     // Production mode - enforce quotas
     console.log(`[CheckQuota] Checking quota for ${req.method} ${req.path}`);
 
-    // Check authentication
-    if (!req.user) {
-      console.error(`[CheckQuota] ❌ No user in request - authentication required`);
-      res.status(401).json({ error: 'Authentication required' });
-      return;
-    }
-
-    const providerUserId = req.user.userId;
-    console.log(`[CheckQuota] Provider user ID: ${providerUserId}`);
-
-    // Get internal user ID from identity service
-    const user = await identityService.getUserByIdentity(authProvider, providerUserId);
+    // Check authentication - req.internalUserId should be set by authGuard
+    const internalUserId = (req as any).internalUserId;
     
-    if (!user) {
-      console.error(`[CheckQuota] ❌ User not found for provider ${authProvider}, ID: ${providerUserId}`);
-      res.status(401).json({ error: 'Authentication required' });
-      return;
+    if (!internalUserId) {
+      // Fallback: try to look up from req.user if authGuard didn't set it
+      if (!req.user) {
+        console.error(`[CheckQuota] ❌ No user or internalUserId in request - authentication required`);
+        res.status(401).json({ error: 'Authentication required' });
+        return;
+      }
+
+      const providerUserId = req.user.userId;
+      console.log(`[CheckQuota] No internalUserId found, looking up from provider user ID: ${providerUserId}`);
+
+      const user = await identityService.getUserByIdentity(authProvider, providerUserId);
+      
+      if (!user) {
+        console.error(`[CheckQuota] ❌ User not found for provider ${authProvider}, ID: ${providerUserId}`);
+        res.status(401).json({ error: 'Authentication required' });
+        return;
+      }
+
+      (req as any).internalUserId = user.id;
+      console.log(`[CheckQuota] Internal user ID looked up: ${user.id}`);
+    } else {
+      console.log(`[CheckQuota] Using internal user ID from authGuard: ${internalUserId}`);
     }
 
-    const internalUserId = user.id;
-    console.log(`[CheckQuota] Internal user ID: ${internalUserId}`);
-
-    // Attach internal user ID to request for downstream use
-    (req as any).internalUserId = internalUserId;
-
+    // Get final internal user ID
+    const finalInternalUserId = (req as any).internalUserId;
+    
     // Check quota
-    const quotaCheck = await quotaService.checkQuota(internalUserId);
+    const quotaCheck = await quotaService.checkQuota(finalInternalUserId);
     console.log(`[CheckQuota] Quota check result:`, {
-      userId: internalUserId,
+      userId: finalInternalUserId,
       allowed: quotaCheck.allowed,
       used: quotaCheck.used,
       limit: quotaCheck.limit,
@@ -61,10 +67,10 @@ export const checkQuota = async (req: Request, res: Response, next: NextFunction
 
     if (!quotaCheck.allowed) {
       // Quota exceeded
-      const tier = await quotaService.getUserTier(internalUserId);
+      const tier = await quotaService.getUserTier(finalInternalUserId);
       const message = `You've used ${quotaCheck.used} of ${quotaCheck.limit} generations this month. Upgrade to Pro for 500/month.`;
       
-      console.warn(`[CheckQuota] ⚠️ Quota exceeded for user ${internalUserId}:`, {
+      console.warn(`[CheckQuota] ⚠️ Quota exceeded for user ${finalInternalUserId}:`, {
         used: quotaCheck.used,
         limit: quotaCheck.limit,
         tier
@@ -82,8 +88,8 @@ export const checkQuota = async (req: Request, res: Response, next: NextFunction
     }
 
     // Quota available - increment usage
-    await quotaService.incrementUsage(internalUserId);
-    console.log(`[CheckQuota] ✅ Quota check passed for user ${internalUserId} - usage incremented`);
+    await quotaService.incrementUsage(finalInternalUserId);
+    console.log(`[CheckQuota] ✅ Quota check passed for user ${finalInternalUserId} - usage incremented`);
     
     next();
   } catch (error) {

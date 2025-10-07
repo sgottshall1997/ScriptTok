@@ -99,11 +99,11 @@ router.get('/subscription', authGuard, async (req: Request, res: Response) => {
 // POST /api/billing/create-checkout - Create Stripe checkout session for Pro upgrade
 router.post('/create-checkout', authGuard, async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.userId;
+    const internalUserId = (req as any).internalUserId;
     const { tier } = req.body;
 
-    if (!userId) {
-      console.error('[BillingAPI] ❌ No userId found in request');
+    if (!internalUserId) {
+      console.error('[BillingAPI] ❌ No internal userId found in request');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
@@ -112,7 +112,7 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
       return res.status(400).json({ error: 'Invalid tier. Only "pro" tier is supported.' });
     }
 
-    console.log(`[BillingAPI] Creating checkout session for user ${userId}, tier: ${tier}`);
+    console.log(`[BillingAPI] Creating checkout session for internal user ID ${internalUserId}, tier: ${tier}`);
 
     if (DISABLE_BILLING || !stripe) {
       console.log('[BillingAPI:Mock] Returning mock checkout session');
@@ -122,16 +122,15 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
       });
     }
 
-    const userIdNum = parseInt(userId);
-    const user = await storage.getUser(userIdNum);
+    const user = await storage.getUser(internalUserId);
     
     if (!user) {
-      console.error('[BillingAPI] ❌ User not found:', userId);
+      console.error('[BillingAPI] ❌ User not found:', internalUserId);
       return res.status(404).json({ error: 'User not found' });
     }
 
     let customerId = '';
-    const subscription = await storage.getUserSubscription(userIdNum);
+    const subscription = await storage.getUserSubscription(internalUserId);
     
     if (subscription?.stripeCustomerId) {
       customerId = subscription.stripeCustomerId;
@@ -140,14 +139,14 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
       const customer = await stripe.customers.create({
         email: user.email || undefined,
         metadata: {
-          userId: userId
+          userId: internalUserId.toString()
         }
       });
       customerId = customer.id;
       console.log(`[BillingAPI] ✅ Created new Stripe customer: ${customerId}`);
       
       if (subscription) {
-        await storage.updateSubscription(userIdNum, {
+        await storage.updateSubscription(internalUserId, {
           stripeCustomerId: customerId
         });
       }
@@ -176,7 +175,7 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
       success_url: `${APP_URL}/billing/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${APP_URL}/billing/cancel`,
       metadata: {
-        userId: userId,
+        userId: internalUserId.toString(),
         tier: 'pro'
       }
     });
@@ -197,14 +196,14 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
 // POST /api/billing/cancel-subscription - Cancel user's subscription at period end
 router.post('/cancel-subscription', authGuard, async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.userId;
+    const internalUserId = (req as any).internalUserId;
 
-    if (!userId) {
-      console.error('[BillingAPI] ❌ No userId found in request');
+    if (!internalUserId) {
+      console.error('[BillingAPI] ❌ No internal userId found in request');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    console.log(`[BillingAPI] Cancelling subscription for user: ${userId}`);
+    console.log(`[BillingAPI] Cancelling subscription for internal user ID: ${internalUserId}`);
 
     if (DISABLE_BILLING || !stripe) {
       console.log('[BillingAPI:Mock] Returning mock cancellation response');
@@ -215,8 +214,7 @@ router.post('/cancel-subscription', authGuard, async (req: Request, res: Respons
       });
     }
 
-    const userIdNum = parseInt(userId);
-    const subscription = await storage.getUserSubscription(userIdNum);
+    const subscription = await storage.getUserSubscription(internalUserId);
 
     if (!subscription || !subscription.stripeSubscriptionId) {
       console.error('[BillingAPI] ❌ No active subscription found');
@@ -247,18 +245,17 @@ router.post('/cancel-subscription', authGuard, async (req: Request, res: Respons
 // GET /api/billing/usage - Get current month's usage stats
 router.get('/usage', authGuard, async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.userId;
+    const internalUserId = (req as any).internalUserId;
 
-    if (!userId) {
-      console.error('[BillingAPI] ❌ No userId found in request');
+    if (!internalUserId) {
+      console.error('[BillingAPI] ❌ No internal userId found in request');
       return res.status(401).json({ error: 'Unauthorized' });
     }
 
-    console.log(`[BillingAPI] Getting usage stats for user: ${userId}`);
+    console.log(`[BillingAPI] Getting usage stats for internal user ID: ${internalUserId}`);
 
-    const userIdNum = parseInt(userId);
-    const quota = await quotaService.checkQuota(userIdNum);
-    const tier = await quotaService.getUserTier(userIdNum);
+    const quota = await quotaService.checkQuota(internalUserId);
+    const tier = await quotaService.getUserTier(internalUserId);
 
     console.log(`[BillingAPI] ✅ Usage stats:`, {
       used: quota.used,
