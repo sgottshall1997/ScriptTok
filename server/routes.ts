@@ -1,7 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { setupAuth, isAuthenticated } from "./replitAuth";
 
 // Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
@@ -32,21 +31,6 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Setup Replit Auth
-  await setupAuth(app);
-
-  // Auth endpoint
-  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
-    try {
-      const userId = req.user.id;
-      const user = await storage.getUser(userId);
-      res.json(user);
-    } catch (error) {
-      console.error("Error fetching user:", error);
-      res.status(500).json({ message: "Failed to fetch user" });
-    }
-  });
-
   // Essential TikTok Viral Product Generator routes
   app.use('/api/generate-content', generateContentRouter);
   app.use('/api/trending', trendingRouter);
@@ -99,14 +83,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // app.use('/api/product-research', productResearchRouter);
 
   
-  // Content history alias endpoint (protected)
-  app.get('/api/content-history', isAuthenticated, async (req: any, res) => {
+  // Content history alias endpoint
+  app.get('/api/content-history', async (req, res) => {
     try {
-      const userId = req.user.claims.sub;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
       
-      const history = await storage.getContentHistory(userId, limit);
+      const history = await storage.getAllContentHistory(limit, offset);
       
       res.json({
         success: true,

@@ -6,34 +6,28 @@ import { z } from "zod";
 // ESSENTIAL TABLES FOR TIKTOK VIRAL PRODUCT GENERATOR
 // ===============================================================================
 
-// Session storage table for Replit Auth
-export const sessions = pgTable(
-  "sessions",
-  {
-    sid: varchar("sid").primaryKey(),
-    sess: jsonb("sess").notNull(),
-    expire: timestamp("expire").notNull(),
-  },
-  (table) => [index("IDX_session_expire").on(table.expire)],
-);
-
+// Basic user schema (simplified)
 export const users = pgTable("users", {
   id: serial("id").primaryKey(),
-  username: text("username").notNull(),
+  username: text("username").notNull().unique(),
   password: text("password").notNull(),
-  email: text("email"),
-  role: text("role").notNull().default("writer"),
+  email: text("email").unique(),
+  role: text("role").notNull().default("creator"), // creator, admin
   firstName: text("first_name"),
   lastName: text("last_name"),
   profileImage: text("profile_image"),
-  profileImageUrl: text("profile_image_url"),
-  createdAt: timestamp("created_at").defaultNow(),
-  updatedAt: timestamp("updated_at").defaultNow(),
-  status: text("status").notNull().default("active"),
+  status: text("status").notNull().default("active"), // active, suspended
   lastLogin: timestamp("last_login"),
-  loginCount: integer("login_count").default(0),
-  preferences: jsonb("preferences"),
-  replitAuthId: varchar("replit_auth_id").unique(),
+  preferences: jsonb("preferences"), // User-specific preferences
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+// Sessions table for auth
+export const sessions = pgTable("sessions", {
+  sid: varchar("sid").primaryKey(),
+  sess: jsonb("sess").notNull(),
+  expire: timestamp("expire").notNull(),
 });
 
 // AI Model Configuration schema for content generation
@@ -58,7 +52,6 @@ export const aiModelConfigs = pgTable("ai_model_configs", {
 // Content generated schema - Core content generation
 export const contentGenerations = pgTable("content_generations", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").references(() => users.id),
   product: text("product").notNull(),
   niche: text("niche").notNull().default("skincare"),
   templateType: text("template_type").notNull(),
@@ -243,6 +236,7 @@ export const affiliateLinks = pgTable("affiliate_links", {
 
 // Insert schemas using createInsertSchema from drizzle-zod
 export const insertUserSchema = createInsertSchema(users).omit({
+  id: true,
   createdAt: true,
   updatedAt: true,
 });
@@ -284,7 +278,6 @@ export const insertTrendHistorySchema = createInsertSchema(trendHistory).omit({
 // TypeScript types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
-export type UpsertUser = typeof users.$inferInsert;
 
 export type ContentGeneration = typeof contentGenerations.$inferSelect;
 export type InsertContentGeneration = z.infer<typeof insertContentGenerationSchema>;

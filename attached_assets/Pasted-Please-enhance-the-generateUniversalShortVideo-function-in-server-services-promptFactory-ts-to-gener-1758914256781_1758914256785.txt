@@ -1,0 +1,38 @@
+Please enhance the generateUniversalShortVideo function in server/services/promptFactory.ts to generate comprehensive video scripts like the niche-specific templates do. Currently, the universal short video template only generates basic content, but it should create detailed, structured video scripts similar to the Fashion and Fitness templates.
+
+TASK REQUIREMENTS:
+
+Replace the current generateUniversalShortVideo function with a comprehensive implementation that follows the same detailed structure as generateFashionShortVideo and generateFitnessShortVideo.
+
+Video Script Structure: The enhanced universal template should include:
+
+Attention-grabbing hook with multiple variations
+Key features and benefits section
+Problem-solving or value proposition
+Target audience identification
+Strong call-to-action with multiple options
+Proper 30-60 second timing (100-170 words)
+Template Requirements:
+
+Follow the same writing guidelines as niche-specific templates
+Include multiple hook examples that can be rotated
+Provide multiple CTA variations to avoid repetition
+Use clear, specific language without filler words
+Target 100-170 words for 30-60 second delivery
+Remove any markdown, hashtags, or formatting from output
+Maintain Compatibility:
+
+Keep the same function signature: generateUniversalShortVideo(config: PromptConfig): GeneratedPrompt
+Ensure it works as fallback for any niche that doesn't have specific implementation
+Integrate with viral template enhancement system
+Return proper GeneratedPrompt object with systemPrompt, userPrompt, and templateMetadata
+Content Quality:
+
+Make it product-focused and conversion-oriented
+Include specific sections for features, benefits, and use cases
+Provide clear structure for video narration
+Ensure smooth delivery for on-camera or voice-over use
+EXPECTED OUTCOME:
+After implementation, when any niche selects "Short Video" template, they should get a comprehensive, structured video script (either niche-specific or the enhanced universal version) instead of the current basic content. The universal template should be detailed enough to work effectively for any product category while maintaining the same professional quality as the niche-specific templates.
+
+REFERENCE: Use generateFashionShortVideo and generateFitnessShortVideo as templates for the structure, but make the content generic enough to work for any product type across all niches.

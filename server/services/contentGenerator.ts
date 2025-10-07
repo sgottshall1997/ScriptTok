@@ -1,5 +1,5 @@
 import { openai } from './openai';
-import { generateWithAI } from './aiModelRouter';
+import { generateWithAI, AIModel } from './aiModelRouter';
 import { TrendingProduct } from '@shared/schema';
 import { TemplateType, ToneOption, Niche } from '@shared/constants';
 import * as GptTemplates from './gpt-templates';
@@ -7,6 +7,7 @@ import { TEMPLATE_PROMPTS, type PromptConfig } from './promptFactory.js';
 // import { getModelConfig, getTokenLimit } from './aiModelSelector'; // TODO: Implement AI model selector
 import { getMostSuccessfulPatterns } from '../database/feedbackLogger';
 import { getCritiqueFromGPT } from './gptCritic';
+import { enhanceContentCompliance, ComplianceOptions } from './complianceEnhancer';
 
 // Smart style usage logging function (for future Google Sheets integration)
 export function logSmartStyleUsage(params: {
@@ -174,11 +175,11 @@ export async function generateContent(
   templateType: TemplateType,
   tone: ToneOption,
   trendingProducts: TrendingProduct[],
-  niche: Niche = "beauty",
+  niche: Niche = "skincare",
   model: string = "gpt-4o",
   viralInspiration?: ViralInspiration,
   smartStyleRecommendations?: any,
-  aiModel: 'claude' | 'chatgpt' = "chatgpt",
+  aiModel: AIModel = "chatgpt",
   viralTopic?: string
 ): Promise<{ 
   content: string; 
@@ -243,7 +244,7 @@ export async function generateContent(
         templateType: templateType as any,
         tone: tone as any,
         trendingProducts,
-        contentFormat: 'standard'
+        contentFormat: 'regular'
       };
 
       // Get the appropriate template function from TEMPLATE_PROMPTS
@@ -368,9 +369,10 @@ Apply these successful patterns from your previous high-rated content:
       metadata: {
         niche,
         templateType,
-        productName: product,
-        contentFormat: 'standard',
-        platform: 'general'
+        tone,
+        product,
+        fallbackLevel,
+        contentGeneratorModel: aiModel // Track model through pipeline
       }
     });
 
@@ -396,7 +398,7 @@ Apply these successful patterns from your previous high-rated content:
       fallbackLevel,
       prompt,
       model: aiResponse.model || aiModel,
-      tokens: aiResponse.tokensUsed || 0,
+      tokens: aiResponse.tokens || 0,
       videoDuration
     };
 

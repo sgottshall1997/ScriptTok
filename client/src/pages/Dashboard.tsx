@@ -22,8 +22,7 @@ import {
   RotateCcw,
   ShoppingBag,
   ChevronDown,
-  HelpCircle,
-  LogOut
+  HelpCircle
 } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -278,17 +277,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-4 md:space-y-6">
       {/* 1️⃣ Hero Header */}
-      <div className="text-center space-y-2 px-2 relative">
-        <Button 
-          variant="outline" 
-          size="sm" 
-          className="absolute right-2 top-0" 
-          onClick={() => window.location.href = '/api/logout'}
-          data-testid="button-logout"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
-        </Button>
+      <div className="text-center space-y-2 px-2">
         <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
           🚀 ScriptTok AI: Your Content Command Center
         </h1>

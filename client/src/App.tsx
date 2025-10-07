@@ -7,7 +7,6 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
-import { useAuth } from "@/hooks/useAuth";
 
 // Essential Pages for TikTok Viral Product Generator
 import LandingPage from "@/pages/LandingPage";
@@ -37,23 +36,17 @@ import Layout from "@/components/Layout";
 import { initScraperConsole } from "./lib/scraperConsole";
 
 function Router() {
-  const { isAuthenticated, isLoading } = useAuth();
-  
   // Track page views when routes change
   useAnalytics();
   
-  return <MainAppRouter isAuthenticated={isAuthenticated} isLoading={isLoading} />;
+  return <MainAppRouter />;
 }
 
-function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolean; isLoading: boolean }) {
+function MainAppRouter() {
   return (
     <Switch>
-      {/* Show Landing page for unauthenticated/loading users at root */}
-      {isLoading || !isAuthenticated ? (
-        <Route path="/" component={LandingPage} />
-      ) : (
-        <Route path="/" component={Dashboard} />
-      )}
+      {/* Landing page without layout */}
+      <Route path="/" component={LandingPage} />
       
       {/* App pages with layout */}
       <Route>
