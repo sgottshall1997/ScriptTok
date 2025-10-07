@@ -35,6 +35,10 @@ export class IdentityService {
       
       const [firstName, lastName] = this.parseFullName(name);
 
+      // In development mode, grant Pro tier automatically
+      const isDevelopment = provider === 'dev' || process.env.NODE_ENV === 'development';
+      const subscriptionTier = isDevelopment ? 'pro' : 'free';
+
       const newUserData: InsertUser = {
         username,
         password,
@@ -45,9 +49,10 @@ export class IdentityService {
         role: 'creator',
         status: 'active',
         lastLogin: new Date(),
+        subscriptionTier,
       };
 
-      console.log(`[IdentityService] Creating user with username:`, username);
+      console.log(`[IdentityService] Creating user with username:`, username, `tier: ${subscriptionTier} (dev mode: ${isDevelopment})`);
       const newUser = await this.storage.createUser(newUserData);
       console.log(`[IdentityService] ✅ User created with ID:`, newUser.id);
 
@@ -64,12 +69,12 @@ export class IdentityService {
 
       const subscriptionData: InsertSubscription = {
         userId: newUser.id,
-        tier: 'free',
+        tier: subscriptionTier,
         status: 'active',
         startAt: new Date(),
       };
 
-      console.log(`[IdentityService] Creating default 'free' subscription...`);
+      console.log(`[IdentityService] Creating default '${subscriptionTier}' subscription (dev mode: ${isDevelopment})...`);
       await this.storage.createSubscription(subscriptionData);
       console.log(`[IdentityService] ✅ Subscription created`);
 
