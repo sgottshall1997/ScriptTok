@@ -160,7 +160,7 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white/10 rounded-xl"
+              className="border-2 border-white text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
               data-testid="button-hero-watch-demo"
             >
               <Video className="mr-2 h-5 w-5" />
@@ -576,7 +576,7 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="border-white text-white hover:bg-white/10 rounded-xl"
+              className="border-2 border-white text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
               data-testid="button-footer-talk-sales"
             >
               <MessageSquare className="mr-2 h-5 w-5" />
