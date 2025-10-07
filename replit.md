@@ -55,6 +55,9 @@ The platform utilizes Shadcn/ui components on Radix UI primitives, styled with T
 - **Dual AI Evaluation System**: Automatically evaluates generated content using both Claude and other AI models for comprehensive quality assessment.
 - **Parameter Unification**: Standardized `topRatedStyleUsed` parameter across all system layers for consistency.
 - **Scheduled Jobs Persistence**: Scheduled jobs are stored in the PostgreSQL database for persistence across server restarts and automatic resumption.
+- **Content Validation System**: Comprehensive post-generation validation service (contentValidator.ts) with template-specific rules for word counts, emoji/bracket detection, hashtag validation, and structural requirements. Integrated non-blocking validation into content generation pipeline with automatic logging.
+- **Validation Metrics Tracking**: Real-time validation monitoring via validationLogger.ts (in-memory ring buffer, max 1000 entries) tracking pass/fail rates by template, common errors, and overall metrics. Exposed via 3 API endpoints (/api/validation/logs, /api/validation/metrics, /api/validation/overall).
+- **Universal Audit Footer**: All AI prompts now include automated validation checklist footer instructing AI to verify word counts, remove emojis/brackets, validate hashtags, and ensure compliance before returning content.
 
 ## External Dependencies
 
