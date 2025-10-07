@@ -198,12 +198,6 @@ export default function TrendForecaster() {
               </TabsContent>
             ))}
           </Tabs>
-
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-xs text-blue-800">
-              💡 <strong>Tip:</strong> Trends automatically refresh every morning at 5 AM ET to provide fresh insights while optimizing API usage.
-            </p>
-          </div>
         </CardContent>
       </Card>
 
