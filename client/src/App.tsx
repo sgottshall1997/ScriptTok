@@ -26,6 +26,11 @@ import Account from "@/pages/Account";
 import CompliancePage from "@/pages/CompliancePage";
 import HowItWorksPage from "@/pages/how-it-works";
 
+// Auth Pages
+import SignIn from "@/pages/SignIn";
+import SignUp from "@/pages/SignUp";
+import AuthCallback from "@/pages/AuthCallback";
+
 // New Legal Pages
 import TermsBillingPage from "@/pages/TermsBilling";
 import PrivacyCookiesPage from "@/pages/PrivacyCookies";
@@ -65,6 +70,17 @@ function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolea
 
   return (
     <Switch>
+      {/* Auth routes */}
+      <Route path="/sign-in">
+        {() => <SignIn />}
+      </Route>
+      <Route path="/sign-up">
+        {() => <SignUp />}
+      </Route>
+      <Route path="/auth/callback">
+        {() => <AuthCallback />}
+      </Route>
+
       {/* Root path - Landing Page */}
       <Route path="/">
         {() => <LandingPage />}
