@@ -15,6 +15,7 @@ import perplexityTrendsRouter from "./api/perplexity-trends";
 import perplexityStatusRouter from "./api/perplexity-status";
 import statisticsApi from "./api/statistics";
 import billingRouter from "./api/billing";
+import authRouter from "./api/auth";
 
 // Perplexity Intelligence System imports
 import { trendForecastRouter } from "./api/trend-forecast";
@@ -36,6 +37,9 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Auth routes (handles authentication internally)
+  app.use('/api/auth', authRouter);
+  
   // Public routes (no authentication required)
   app.use('/api/trending', trendingRouter);
   app.use('/api/scraper-status', scraperStatusRouter);
