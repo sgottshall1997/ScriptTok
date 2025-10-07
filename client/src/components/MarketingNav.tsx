@@ -53,37 +53,37 @@ const featuresData: CardItem[] = [
     icon: Layers,
     title: "Dual Studios",
     description: "Switch between Viral & Affiliate studios, each optimized for its own format and tone.",
-    href: "#"
+    href: "/features/dual-studios"
   },
   {
     icon: TrendingUp,
     title: "Real-Time Trend Discovery",
     description: "Track and transform trending topics into ready-to-film TikTok scripts.",
-    href: "#"
+    href: "/features/trend-discovery"
   },
   {
     icon: Sparkles,
     title: "AI Script Generator",
     description: "Generate scroll-stopping hooks, stories, and CTAs with a single click.",
-    href: "#"
+    href: "/features/ai-script-generator"
   },
   {
     icon: Flame,
     title: "AI Viral Score System",
     description: "Instantly score and refine your scripts for clarity, engagement, and timing.",
-    href: "#"
+    href: "/features/viral-score"
   },
   {
     icon: Library,
     title: "Template Library",
     description: "Choose from 20+ plug-and-play templates for any niche or platform.",
-    href: "#"
+    href: "/features/template-library"
   },
   {
     icon: Target,
     title: "Multi-Platform Optimization",
     description: "Create content optimized for TikTok, Instagram, YouTube, and more.",
-    href: "#"
+    href: "/features/multi-platform"
   },
 ];
 
