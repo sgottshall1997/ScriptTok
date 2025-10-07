@@ -298,12 +298,12 @@ const Dashboard = () => {
   return (
     <div className="space-y-4 md:space-y-6">
       {/* 1️⃣ Hero Header */}
-      <div className="text-center space-y-2 px-2">
-        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900">
-          🚀 ScriptTok AI: Your Content Command Center
+      <div className="text-center space-y-3 px-2 py-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl border border-purple-100">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+          🚀 ScriptTok AI: Your Viral Content Command Center
         </h1>
-        <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
-          Trend-to-traffic in under 10 minutes. Powered by Perplexity + Claude + GPT.
+        <p className="text-sm sm:text-base md:text-lg text-gray-700 max-w-3xl mx-auto">
+          Discover trends → Generate viral content → Track performance. All powered by Perplexity AI + Claude + GPT.
         </p>
       </div>
 
@@ -674,20 +674,22 @@ const Dashboard = () => {
       <TrendForecaster />
 
       {/* 3️⃣ AI-Powered Trending Picks (Unified) */}
-      <Card data-testid="card-unified-trending-picks">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <div>
-            <CardTitle className="text-xl">🔥 AI-Powered Trending Products</CardTitle>
-            <p className="text-sm text-muted-foreground">
+      <Card data-testid="card-unified-trending-picks" className="border-purple-100">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 pb-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-lg">
+          <div className="space-y-1">
+            <CardTitle className="text-xl md:text-2xl font-bold text-purple-900">
+              🔥 AI-Powered Trending Products
+            </CardTitle>
+            <p className="text-sm text-purple-700">
               {selectedDataSource === 'perplexity' 
-                ? 'Hottest products discovered by Perplexity AI' 
+                ? 'Hottest products discovered by Perplexity AI across all niches' 
                 : 'Real-time product discovery via Amazon PA-API'
               }
             </p>
           </div>
           <div className="flex items-center gap-3">
             <Select value={selectedNicheFilter} onValueChange={setSelectedNicheFilter}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] border-purple-200">
                 <SelectValue placeholder="Filter by niche" />
               </SelectTrigger>
               <SelectContent>
@@ -911,34 +913,34 @@ const Dashboard = () => {
       </Card>
 
       {/* 3️⃣ Fast-Action Buttons Panel */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
-            <CardContent className="p-4 md:p-6 text-center">
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <Wand2 className="h-6 w-6 text-purple-600" />
+          <Card className="hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:border-purple-300">
+            <CardContent className="p-6 md:p-8 text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Wand2 className="h-8 w-8 text-white" />
               </div>
-              <h3 className="font-semibold text-purple-900 mb-2">🎯 Content Generator</h3>
-              <p className="text-sm text-purple-700 mb-4">One-click content generation for all platforms</p>
-              <div className="flex items-center justify-center text-purple-600">
-                <span className="text-sm font-medium">Generate Now</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
+              <h3 className="text-lg font-bold text-purple-900 mb-2">🎯 AI Content Studio</h3>
+              <p className="text-sm text-purple-700 mb-4">Generate viral content for all platforms in seconds</p>
+              <div className="flex items-center justify-center text-purple-600 font-semibold">
+                <span className="text-sm">Start Creating</span>
+                <ArrowRight className="h-4 w-4 ml-2" />
               </div>
             </CardContent>
           </Card>
         </Link>
 
         <Link href="/content-history" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer bg-gradient-to-r from-emerald-50 to-teal-50 border-emerald-200">
-            <CardContent className="p-4 md:p-6 text-center">
-              <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mx-auto mb-4">
-                <BarChart3 className="h-6 w-6 text-emerald-600" />
+          <Card className="hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 hover:border-emerald-300">
+            <CardContent className="p-6 md:p-8 text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <BarChart3 className="h-8 w-8 text-white" />
               </div>
-              <h3 className="font-semibold text-emerald-900 mb-2">📊 Content History & Analytics</h3>
-              <p className="text-sm text-emerald-700 mb-4">Track performance and manage your content</p>
-              <div className="flex items-center justify-center text-emerald-600">
-                <span className="text-sm font-medium">View Analytics</span>
-                <ArrowRight className="h-4 w-4 ml-1" />
+              <h3 className="text-lg font-bold text-emerald-900 mb-2">📊 Performance Analytics</h3>
+              <p className="text-sm text-emerald-700 mb-4">Track viral scores and optimize your content strategy</p>
+              <div className="flex items-center justify-center text-emerald-600 font-semibold">
+                <span className="text-sm">View Analytics</span>
+                <ArrowRight className="h-4 w-4 ml-2" />
               </div>
             </CardContent>
           </Card>
