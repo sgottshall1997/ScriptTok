@@ -22,22 +22,52 @@ router.get('/', async (req, res) => {
     }
 
     // Get user's tier
-    const userTier = await quotaService.getUserTier(userId);
-    const isStarterUser = userTier === 'starter';
+    let userTier = await quotaService.getUserTier(userId);
     
-    // Starter users only see last 10, higher tiers see more
-    const limit = isStarterUser ? 10 : (req.query.limit ? parseInt(req.query.limit as string) : 50);
+    // Map 'free' to 'starter' for backward compatibility
+    if (userTier === 'free') {
+      userTier = 'starter';
+    }
     
-    // Get history filtered by user ID
-    const history = await storage.getUserContentHistory(userId, limit);
+    // Determine history limit based on tier
+    let tierLimit: number | null = null;
+    let isLimited = false;
+    
+    switch (userTier) {
+      case 'starter':
+        tierLimit = 10;
+        isLimited = true;
+        break;
+      case 'creator':
+        tierLimit = 50;
+        isLimited = true;
+        break;
+      case 'pro':
+      case 'agency':
+        tierLimit = null; // Unlimited
+        isLimited = false;
+        break;
+      default:
+        tierLimit = 10;
+        isLimited = true;
+    }
+    
+    // Get all history for user to get total count
+    const allHistory = await storage.getUserContentHistory(userId, 1000);
+    const totalCount = allHistory.length;
+    
+    // Apply tier limit if needed
+    const history = tierLimit ? allHistory.slice(0, tierLimit) : allHistory;
     
     res.json({
       success: true,
       history,
       tier: userTier,
-      isLimited: isStarterUser,
+      isLimited,
+      tierLimit,
+      totalCount,
       pagination: {
-        limit,
+        limit: tierLimit || totalCount,
         total: history.length
       }
     });
