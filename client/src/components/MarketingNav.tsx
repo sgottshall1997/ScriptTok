@@ -391,10 +391,9 @@ export function MarketingNav() {
               trackSignupCTA('nav');
               login();
             }}
-            className="bg-gradient-hero text-white hover:opacity-90"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90"
             data-testid="button-nav-get-started"
           >
-            <Zap className="mr-2 h-4 w-4" />
             Get Started
           </Button>
         </div>
@@ -420,10 +419,9 @@ export function MarketingNav() {
                     login();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full bg-gradient-hero text-white"
+                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white"
                   data-testid="button-mobile-get-started"
                 >
-                  <Zap className="mr-2 h-4 w-4" />
                   Get Started
                 </Button>
                 <Button
