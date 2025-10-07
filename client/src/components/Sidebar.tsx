@@ -67,34 +67,12 @@ interface SidebarCategory {
 // SIMPLIFIED NAVIGATION STRUCTURE - TikTok Viral Product Generator
 const sidebarData: SidebarCategory[] = [
   {
-    name: "Main",
+    name: "",
     items: [
       { name: "Dashboard", href: "/dashboard", icon: Home },
       { name: "AI Content Studio", href: "/generate", icon: Sparkles },
       { name: "Content History", href: "/content-history", icon: History },
-      { name: "Pricing", href: "/pricing", icon: DollarSign },
-    ]
-  },
-  {
-    name: "Tools",
-    items: [
       { name: "Trend History", href: "/trend-history", icon: Clock },
-      { name: "Account", href: "/account", icon: Users },
-    ]
-  },
-  {
-    name: "Support",
-    items: [
-      { name: "How It Works", href: "/how-it-works", icon: HelpCircle },
-      { name: "FAQ", href: "/faq", icon: MessageCircle },
-      { name: "Contact", href: "/contact", icon: Mail },
-    ]
-  },
-  {
-    name: "Legal",
-    items: [
-      { name: "FTC Disclosures", href: "/compliance", icon: Shield },
-      { name: "About", href: "/about", icon: Info },
     ]
   }
 ];

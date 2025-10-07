@@ -78,6 +78,9 @@ const Footer: React.FC = () => {
               <Link href="/trust-safety">
                 <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">Trust & Safety</span>
               </Link>
+              <Link href="/compliance">
+                <span className="block text-sm text-gray-600 hover:text-blue-600 cursor-pointer">FTC Disclosures</span>
+              </Link>
             </div>
           </div>
           

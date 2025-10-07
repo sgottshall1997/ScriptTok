@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLocation } from 'wouter';
 import Sidebar from './Sidebar';
 import Footer from './Footer';
 import { useAuth } from './AuthProvider';
@@ -13,7 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { User, LogOut, Shield } from 'lucide-react';
+import { User, LogOut, Shield, DollarSign, UserCircle } from 'lucide-react';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { user, isAuthenticated, login, logout } = useAuth();
+  const [, navigate] = useLocation();
   const isDev = isDevMode();
 
   const getUserInitials = (name?: string, email?: string) => {
@@ -99,6 +101,23 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                         )}
                       </div>
                     </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={() => navigate('/pricing')}
+                      className="cursor-pointer"
+                      data-testid="dropdown-pricing"
+                    >
+                      <DollarSign className="mr-2 h-4 w-4" />
+                      <span>Pricing</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => navigate('/account')}
+                      className="cursor-pointer"
+                      data-testid="dropdown-account"
+                    >
+                      <UserCircle className="mr-2 h-4 w-4" />
+                      <span>Account</span>
+                    </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
                       onClick={logout}
