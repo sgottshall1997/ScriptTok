@@ -279,7 +279,7 @@ export default function LandingPage() {
               Choose Your Plan
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Start for free, upgrade when you're ready.
+              Start for Free — Get 10 Generations on Us
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -539,7 +539,7 @@ export default function LandingPage() {
             Ready to Go Viral?
           </h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8">
-            Join thousands of creators using ScriptTok to build their audience and grow their business.
+            Creators are using Pheme to grow faster and work smarter.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             {!isAuthenticated ? (
