@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -22,12 +22,44 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Supabase environment variables are required. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY and redeploy.');
 }
 
-console.log('✅ Supabase client initialized successfully');
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: true
+// Singleton pattern to prevent multiple instances during HMR (Hot Module Reload)
+// Store the client on window object in development to persist across reloads
+declare global {
+  interface Window {
+    __supabase?: SupabaseClient;
   }
-});
+}
+
+function getSupabaseClient(): SupabaseClient {
+  if (import.meta.env.DEV) {
+    // In development, reuse the client across HMR reloads
+    if (!window.__supabase) {
+      console.log('✅ Creating new Supabase client instance');
+      window.__supabase = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+          autoRefreshToken: true,
+          persistSession: true,
+          detectSessionInUrl: true,
+          storage: window.localStorage,
+          storageKey: 'supabase.auth.token',
+        }
+      });
+    } else {
+      console.log('♻️ Reusing existing Supabase client instance (HMR)');
+    }
+    return window.__supabase;
+  } else {
+    // In production, create a single instance
+    return createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true,
+        storage: window.localStorage,
+        storageKey: 'supabase.auth.token',
+      }
+    });
+  }
+}
+
+export const supabase = getSupabaseClient();
