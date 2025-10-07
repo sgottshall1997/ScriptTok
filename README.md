@@ -485,6 +485,100 @@ npm run dev
 
 This hybrid mode is useful for testing quota enforcement logic without requiring full authentication or Stripe integration.
 
+### Frontend Authentication Flow
+
+The frontend implements a complete authentication UI with automatic dev/prod switching, protected routes, and seamless login experience.
+
+#### Components
+
+**LoginModal** (`client/src/components/LoginModal.tsx`)
+- Dialog-based login UI using shadcn/ui components
+- Opens Replit Auth in popup window (350x500)
+- Listens for `auth_complete` message from popup
+- Auto-reloads page to pick up authenticated state
+- Props: `open: boolean`, `onOpenChange: (open: boolean) => void`
+
+**ProtectedRoute** (`client/src/components/ProtectedRoute.tsx`)
+- Wraps routes requiring authentication
+- Shows loading skeleton while checking auth
+- Shows login prompt if not authenticated
+- Renders children when authenticated
+- Usage: `<ProtectedRoute><Dashboard /></ProtectedRoute>`
+
+**AuthProvider** (`client/src/components/AuthProvider.tsx`)
+- React context providing auth state to entire app
+- Calls `/api/auth/me` on mount to check authentication
+- Provides `user`, `isLoading`, `isAuthenticated` state
+- Provides `login()` and `logout()` functions
+- Auto-detects dev/prod mode from environment
+
+#### User Experience
+
+**Development Mode (APP_ENV=development)**:
+- No login required - user is auto-authenticated
+- Dev mode badge visible in top-right corner
+- Console logs show dev user details
+- All features accessible immediately
+
+**Production Mode (APP_ENV=production)**:
+- Landing page shows "Start for Free" button
+- Button opens LoginModal with Replit Auth
+- After login, user redirected to dashboard
+- Header shows user profile with logout option
+- Protected routes require authentication
+
+#### Protected Routes
+
+The following routes require authentication:
+- `/dashboard` - Main dashboard
+- `/generate` - Content generation
+- `/content-history` - Generated content history
+- `/trend-history` - Trend analysis history
+- `/account` - User account settings
+
+Public routes (no auth required):
+- `/` - Landing page
+- `/about`, `/how-it-works`, `/faq`, `/contact`
+- `/privacy`, `/terms`, `/compliance`
+- All legal pages
+
+#### Auth-Aware UI Components
+
+**Landing Page** (`client/src/pages/LandingPage.tsx`)
+- NOT authenticated: "Start for Free" button → opens login modal
+- IS authenticated: "Go to Dashboard" button → navigates to /dashboard
+
+**Layout Header** (`client/src/components/Layout.tsx`)
+- NOT authenticated: "Sign In" button → opens login modal
+- IS authenticated: User avatar/name with dropdown menu containing logout
+
+**Dev Mode Indicator**
+- Shows amber "Dev Mode" badge when `APP_ENV=development`
+- Located in header area for visibility
+- Helps developers identify current environment
+
+#### Testing the Flow
+
+**Test Dev Mode**:
+1. Set `APP_ENV=development` in .env
+2. Start app with `npm run dev`
+3. You're automatically logged in as dev user
+4. Dev mode badge visible in header
+5. All routes accessible without login
+
+**Test Production Mode**:
+1. Set `APP_ENV=production` in .env (or don't set it on Replit)
+2. Visit landing page - should see "Start for Free"
+3. Click button to open login modal
+4. Login with Replit Auth
+5. Redirected to dashboard with user profile in header
+
+**Test Protected Routes**:
+1. In production mode (no auth), try visiting `/dashboard` directly
+2. Should see login prompt: "Sign in to continue"
+3. Click "Sign In" button to open login modal
+4. After authentication, content displays
+
 ## 🌐 API Endpoints
 
 ### Content Generation
