@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Flame, TrendingUp, Clock, TrendingDown, Loader2, RefreshCw, Lock } from 'lucide-react';
+import { Flame, TrendingUp, Clock, TrendingDown, Loader2, RefreshCw, Lock, Crown } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -192,6 +192,7 @@ export default function TrendForecaster() {
                     forecast={forecast?.data} 
                     niche={niche.id}
                     onProductClick={handleProductClick}
+                    userTier={userTier}
                   />
                 )}
               </TabsContent>
@@ -250,11 +251,13 @@ function getTimeSince(date: Date): string {
 function TrendCategories({ 
   forecast, 
   niche, 
-  onProductClick 
+  onProductClick,
+  userTier 
 }: { 
   forecast: any; 
   niche: string;
   onProductClick: (product: string, niche: string) => void;
+  userTier: 'free' | 'pro';
 }) {
   if (!forecast) {
     return (
@@ -277,6 +280,24 @@ function TrendCategories({
 
   const getTrendCount = (category: string) => {
     return forecast.trends?.[category]?.length || 0;
+  };
+
+  // Check if this niche should have limited trends for free users
+  const shouldLimitTrends = () => {
+    return userTier === 'free' && FREE_NICHES.includes(niche);
+  };
+
+  // Get limited trends array for free users (only first item)
+  const getLimitedTrends = (trends: any[] | undefined) => {
+    if (!trends) return [];
+    if (!shouldLimitTrends()) return trends;
+    return trends.slice(0, 1);
+  };
+
+  // Check if there are more trends available for pro users
+  const hasMoreTrends = (trends: any[] | undefined) => {
+    if (!trends) return false;
+    return shouldLimitTrends() && trends.length > 1;
   };
 
   // Data source information display
@@ -354,9 +375,29 @@ function TrendCategories({
 
       <TabsContent value="hot" className="space-y-3 mt-4">
         {forecast.trends?.hot?.length > 0 ? (
-          forecast.trends.hot.map((item: any, i: number) => (
-            <TrendCard key={i} item={item} type="hot" niche={niche} onProductClick={onProductClick} />
-          ))
+          <>
+            {getLimitedTrends(forecast.trends.hot).map((item: any, i: number) => (
+              <TrendCard key={i} item={item} type="hot" niche={niche} onProductClick={onProductClick} />
+            ))}
+            {hasMoreTrends(forecast.trends.hot) && (
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  {forecast.trends.hot.length - 1} More Hot Trends Available
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Upgrade to Pro to unlock all trending insights for {niche}
+                </p>
+                <Button
+                  onClick={() => window.location.href = '/account'}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  data-testid="upgrade-hot-trends"
+                >
+                  Upgrade to Pro
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-8 text-gray-500">
             <Flame className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -368,9 +409,29 @@ function TrendCategories({
 
       <TabsContent value="rising" className="space-y-3 mt-4">
         {forecast.trends?.rising?.length > 0 ? (
-          forecast.trends.rising.map((item: any, i: number) => (
-            <TrendCard key={i} item={item} type="rising" niche={niche} onProductClick={onProductClick} />
-          ))
+          <>
+            {getLimitedTrends(forecast.trends.rising).map((item: any, i: number) => (
+              <TrendCard key={i} item={item} type="rising" niche={niche} onProductClick={onProductClick} />
+            ))}
+            {hasMoreTrends(forecast.trends.rising) && (
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  {forecast.trends.rising.length - 1} More Rising Trends Available
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Upgrade to Pro to unlock all trending insights for {niche}
+                </p>
+                <Button
+                  onClick={() => window.location.href = '/account'}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  data-testid="upgrade-rising-trends"
+                >
+                  Upgrade to Pro
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-8 text-gray-500">
             <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -382,9 +443,29 @@ function TrendCategories({
 
       <TabsContent value="upcoming" className="space-y-3 mt-4">
         {forecast.trends?.upcoming?.length > 0 ? (
-          forecast.trends.upcoming.map((item: any, i: number) => (
-            <TrendCard key={i} item={item} type="upcoming" niche={niche} onProductClick={onProductClick} />
-          ))
+          <>
+            {getLimitedTrends(forecast.trends.upcoming).map((item: any, i: number) => (
+              <TrendCard key={i} item={item} type="upcoming" niche={niche} onProductClick={onProductClick} />
+            ))}
+            {hasMoreTrends(forecast.trends.upcoming) && (
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  {forecast.trends.upcoming.length - 1} More Upcoming Trends Available
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Upgrade to Pro to unlock all trending insights for {niche}
+                </p>
+                <Button
+                  onClick={() => window.location.href = '/account'}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  data-testid="upgrade-upcoming-trends"
+                >
+                  Upgrade to Pro
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-8 text-gray-500">
             <Clock className="h-12 w-12 mx-auto mb-4 text-gray-300" />
@@ -396,9 +477,29 @@ function TrendCategories({
 
       <TabsContent value="declining" className="space-y-3 mt-4">
         {forecast.trends?.declining?.length > 0 ? (
-          forecast.trends.declining.map((item: any, i: number) => (
-            <TrendCard key={i} item={item} type="declining" niche={niche} onProductClick={onProductClick} />
-          ))
+          <>
+            {getLimitedTrends(forecast.trends.declining).map((item: any, i: number) => (
+              <TrendCard key={i} item={item} type="declining" niche={niche} onProductClick={onProductClick} />
+            ))}
+            {hasMoreTrends(forecast.trends.declining) && (
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                <h4 className="font-semibold text-gray-900 mb-2">
+                  {forecast.trends.declining.length - 1} More Trends to Avoid
+                </h4>
+                <p className="text-sm text-gray-600 mb-4">
+                  Upgrade to Pro to unlock all trending insights for {niche}
+                </p>
+                <Button
+                  onClick={() => window.location.href = '/account'}
+                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                  data-testid="upgrade-declining-trends"
+                >
+                  Upgrade to Pro
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-8 text-gray-500">
             <TrendingDown className="h-12 w-12 mx-auto mb-4 text-gray-300" />
