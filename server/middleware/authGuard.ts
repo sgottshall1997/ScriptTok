@@ -64,11 +64,18 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
     
     const devUserId = process.env.DEV_USER_ID || '00000000-0000-0000-0000-000000000001';
     
+    const allowedTiers = ['starter', 'creator', 'pro', 'agency'] as const;
+    const requestedTier = process.env.DEV_USER_TIER || 'pro';
+    const tier = allowedTiers.includes(requestedTier as any) ? requestedTier as typeof allowedTiers[number] : 'pro';
+    if (requestedTier !== tier) {
+      console.warn(`[AuthGuard] ⚠️ Invalid DEV_USER_TIER value "${requestedTier}" - falling back to "pro"`);
+    }
+    
     req.user = {
       userId: devUserId,
       email: process.env.DEV_USER_EMAIL || 'dev@scripttok.local',
       name: process.env.DEV_USER_NAME || 'Dev User',
-      tierHint: (process.env.DEV_USER_TIER || 'pro') as 'starter' | 'creator' | 'pro' | 'agency'
+      tierHint: tier
     };
     
     console.log(`[AuthGuard] 🔧 Dev user auto-injected:`, {
@@ -102,11 +109,18 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
     
     const devUserId = process.env.DEV_USER_ID || '00000000-0000-0000-0000-000000000001';
     
+    const allowedTiers = ['starter', 'creator', 'pro', 'agency'] as const;
+    const requestedTier = process.env.DEV_USER_TIER || 'pro';
+    const tier = allowedTiers.includes(requestedTier as any) ? requestedTier as typeof allowedTiers[number] : 'pro';
+    if (requestedTier !== tier) {
+      console.warn(`[AuthGuard] ⚠️ Invalid DEV_USER_TIER value "${requestedTier}" - falling back to "pro"`);
+    }
+    
     req.user = {
       userId: devUserId,
       email: process.env.DEV_USER_EMAIL || 'dev@scripttok.local',
       name: process.env.DEV_USER_NAME || 'Dev User',
-      tierHint: (process.env.DEV_USER_TIER || 'pro') as 'starter' | 'creator' | 'pro' | 'agency'
+      tierHint: tier
     };
     
     console.log(`[AuthGuard] 🔧 Dev user auto-injected after error:`, {
