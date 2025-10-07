@@ -33,7 +33,13 @@ export class QuotaService {
       
       console.log(`[QuotaService] No usage record found for user ${userId}, creating new record`);
       const user = await this.storage.getUser(userId);
-      const tier = user?.subscriptionTier || 'free';
+      let tier = user?.subscriptionTier || 'starter';
+      
+      // Backward compatibility: map legacy 'free' to 'starter'
+      if (tier === 'free') {
+        console.log(`[QuotaService] User ${userId} has legacy 'free' tier in usage creation, treating as 'starter'`);
+        tier = 'starter';
+      }
       
       usage = await this.storage.createMonthlyUsage({
         userId,

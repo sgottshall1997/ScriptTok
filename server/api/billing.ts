@@ -49,7 +49,7 @@ router.get('/subscription', authGuard, async (req: Request, res: Response) => {
     if (DISABLE_BILLING || !stripe) {
       console.log('[BillingAPI:Mock] Returning mock subscription data');
       return res.json({
-        tier: 'free',
+        tier: 'starter',
         status: 'active',
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false
@@ -59,9 +59,9 @@ router.get('/subscription', authGuard, async (req: Request, res: Response) => {
     const subscription = await storage.getUserSubscription(internalUserId);
 
     if (!subscription) {
-      console.log(`[BillingAPI] No subscription found for user ${internalUserId}, returning free tier`);
+      console.log(`[BillingAPI] No subscription found for user ${internalUserId}, returning starter tier`);
       return res.json({
-        tier: 'free',
+        tier: 'starter',
         status: 'active',
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false

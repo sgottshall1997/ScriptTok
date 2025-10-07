@@ -31,19 +31,19 @@ import { createQuotaService } from '../services/quotaService';
  * 
  * @param storage - Storage implementation
  * @param email - User email (default: 'test@example.com')
- * @param tier - Subscription tier (default: 'free')
+ * @param tier - Subscription tier (default: 'starter')
  * @returns The created user with internal ID
  * 
  * @example
  * ```typescript
- * const freeUser = await createTestUser(storage);
+ * const starterUser = await createTestUser(storage);
  * const proUser = await createTestUser(storage, 'pro@example.com', 'pro');
  * ```
  */
 export async function createTestUser(
   storage: IStorage,
   email: string = 'test@example.com',
-  tier: 'free' | 'pro' = 'free'
+  tier: 'starter' | 'creator' | 'pro' | 'agency' = 'starter'
 ): Promise<User> {
   console.log(`[TestAuth] Creating test user with email: ${email}, tier: ${tier}`);
   
@@ -66,8 +66,8 @@ export async function createTestUser(
     
     console.log(`[TestAuth] User created with ID: ${userId}`);
     
-    // Update subscription to specified tier if not 'free'
-    if (tier !== 'free') {
+    // Update subscription to specified tier if not 'starter'
+    if (tier !== 'starter') {
       console.log(`[TestAuth] Updating subscription to tier: ${tier}`);
       await storage.updateSubscription(userId, {
         tier,

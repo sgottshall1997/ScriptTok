@@ -23,10 +23,10 @@ router.get('/', async (req, res) => {
 
     // Get user's tier
     const userTier = await quotaService.getUserTier(userId);
-    const isFreeUser = userTier === 'free';
+    const isStarterUser = userTier === 'starter';
     
-    // Free users only see last 10, Pro users see all
-    const limit = isFreeUser ? 10 : (req.query.limit ? parseInt(req.query.limit as string) : 50);
+    // Starter users only see last 10, higher tiers see more
+    const limit = isStarterUser ? 10 : (req.query.limit ? parseInt(req.query.limit as string) : 50);
     
     // Get history filtered by user ID
     const history = await storage.getUserContentHistory(userId, limit);
@@ -35,7 +35,7 @@ router.get('/', async (req, res) => {
       success: true,
       history,
       tier: userTier,
-      isLimited: isFreeUser,
+      isLimited: isStarterUser,
       pagination: {
         limit,
         total: history.length

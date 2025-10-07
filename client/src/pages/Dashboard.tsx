@@ -34,6 +34,8 @@ import TrendForecaster from "@/components/TrendForecaster";
 import { useUsageData } from "@/hooks/useUsageData";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { TierBadge } from "@/components/TierBadge";
+import { UsageProgress } from "@/components/UsageProgress";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -242,9 +244,10 @@ const Dashboard = () => {
     return grouped;
   };
 
-  // Check if user should see limited products (free tier)
+  // Check if user should see limited products (starter tier)
   const shouldLimitProducts = () => {
-    return usageData?.tier === 'free';
+    if (!usageData?.features) return false;
+    return usageData.features.tier === 'starter';
   };
 
   // Get limited products for a niche (1 for free, all for pro)
@@ -288,10 +291,10 @@ const Dashboard = () => {
 
   // Helper function to check if user is approaching limits
   const isApproachingLimit = (): boolean => {
-    if (!usageData || usageData.tier !== 'free') return false;
-    const gptPercentage = (usageData.gpt.used / usageData.gpt.limit) * 100;
-    const claudePercentage = (usageData.claude.used / usageData.claude.limit) * 100;
-    const trendPercentage = (usageData.trendAnalyses.used / usageData.trendAnalyses.limit) * 100;
+    if (!usageData) return false;
+    const gptPercentage = (usageData.usage.gptGenerationsUsed / usageData.limits.gpt) * 100;
+    const claudePercentage = (usageData.usage.claudeGenerationsUsed / usageData.limits.claude) * 100;
+    const trendPercentage = (usageData.usage.trendAnalysesUsed / usageData.limits.trends) * 100;
     return gptPercentage > 70 || claudePercentage > 70 || trendPercentage > 70;
   };
 
@@ -317,16 +320,7 @@ const Dashboard = () => {
             {usageLoading ? (
               <Skeleton className="h-6 w-24" />
             ) : usageData ? (
-              usageData.tier === 'free' ? (
-                <Badge variant="secondary" className="bg-gray-200 text-gray-700 w-fit" data-testid="badge-tier-free">
-                  Free Plan
-                </Badge>
-              ) : (
-                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white w-fit" data-testid="badge-tier-pro">
-                  <Crown className="h-3 w-3 mr-1" />
-                  Pro Plan
-                </Badge>
-              )
+              <TierBadge tier={usageData.features.tier} size="md" />
             ) : null}
           </div>
         </CardHeader>
@@ -344,62 +338,26 @@ const Dashboard = () => {
           ) : usageData ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {/* GPT Generations */}
-                <div className="space-y-2" data-testid="usage-stat-gpt">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">GPT Generations</span>
-                    <span className="text-xs text-gray-500">
-                      {usageData.gpt.used} / {usageData.gpt.limit}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={(usageData.gpt.used / usageData.gpt.limit) * 100} 
-                    className="h-2"
-                    indicatorClassName={getProgressColor((usageData.gpt.used / usageData.gpt.limit) * 100)}
-                  />
-                  <p className="text-xs text-gray-600">
-                    {usageData.gpt.remaining} remaining
-                  </p>
-                </div>
-
-                {/* Claude Generations */}
-                <div className="space-y-2" data-testid="usage-stat-claude">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Claude Generations</span>
-                    <span className="text-xs text-gray-500">
-                      {usageData.claude.used} / {usageData.claude.limit}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={(usageData.claude.used / usageData.claude.limit) * 100} 
-                    className="h-2"
-                    indicatorClassName={getProgressColor((usageData.claude.used / usageData.claude.limit) * 100)}
-                  />
-                  <p className="text-xs text-gray-600">
-                    {usageData.claude.remaining} remaining
-                  </p>
-                </div>
-
-                {/* Trend Analyses */}
-                <div className="space-y-2" data-testid="usage-stat-trends">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Trend Analyses</span>
-                    <span className="text-xs text-gray-500">
-                      {usageData.trendAnalyses.used} / {usageData.trendAnalyses.limit}
-                    </span>
-                  </div>
-                  <Progress 
-                    value={(usageData.trendAnalyses.used / usageData.trendAnalyses.limit) * 100} 
-                    className="h-2"
-                    indicatorClassName={getProgressColor((usageData.trendAnalyses.used / usageData.trendAnalyses.limit) * 100)}
-                  />
-                  <p className="text-xs text-gray-600">
-                    {usageData.trendAnalyses.remaining} remaining
-                  </p>
-                </div>
+                <UsageProgress
+                  used={usageData.usage.gptGenerationsUsed}
+                  limit={usageData.limits.gpt}
+                  label="GPT Generations"
+                />
+                
+                <UsageProgress
+                  used={usageData.usage.claudeGenerationsUsed}
+                  limit={usageData.limits.claude}
+                  label="Claude Generations"
+                />
+                
+                <UsageProgress
+                  used={usageData.usage.trendAnalysesUsed}
+                  limit={usageData.limits.trends}
+                  label="Trend Analyses"
+                />
               </div>
 
-              {/* Upgrade CTA for free users approaching limits */}
+              {/* Upgrade CTA for users approaching limits */}
               {isApproachingLimit() && (
                 <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg" data-testid="upgrade-cta">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -410,18 +368,18 @@ const Dashboard = () => {
                           Approaching your monthly limit
                         </p>
                         <p className="text-xs text-yellow-700 mt-1">
-                          Upgrade to Pro for unlimited generations and advanced features
+                          Upgrade for more capacity and advanced features
                         </p>
                       </div>
                     </div>
                     <Link href="/account">
                       <Button 
                         className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white whitespace-nowrap"
-                        data-testid="button-upgrade-to-pro"
+                        data-testid="button-upgrade"
                         onClick={() => trackUpgradeCTA('dashboard_usage_widget', 'pro')}
                       >
-                        <Crown className="h-4 w-4 mr-2" />
-                        Upgrade to Pro
+                        <Zap className="h-4 w-4 mr-2" />
+                        Upgrade Plan
                       </Button>
                     </Link>
                   </div>

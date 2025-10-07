@@ -127,7 +127,7 @@ export class MemStorage implements IStorage {
       status: user.status || 'active',
       lastLogin: user.lastLogin || null,
       preferences: user.preferences || null,
-      subscriptionTier: user.subscriptionTier || 'free',
+      subscriptionTier: user.subscriptionTier || 'starter',
       createdAt: new Date(),
       updatedAt: new Date()
     };
@@ -419,7 +419,7 @@ export class MemStorage implements IStorage {
     const newSubscription: Subscription = {
       ...subscription,
       id: this.nextSubscriptionId++,
-      tier: subscription.tier || 'free',
+      tier: subscription.tier || 'starter',
       status: subscription.status || 'active',
       stripeCustomerId: subscription.stripeCustomerId || null,
       stripeSubscriptionId: subscription.stripeSubscriptionId || null,
