@@ -202,7 +202,7 @@ const TrendHistory = () => {
           </CardTitle>
         </div>
         <p className="text-gray-700 text-base">
-          Free users get a preview of recent trends. Upgrade to Pro to access unlimited trend history, export data, and track trends over time!
+          Trend history is a Pro-only feature. Upgrade to Pro to access unlimited trend history, export data, and track trends over time!
         </p>
       </CardHeader>
       <CardContent className="relative">
@@ -260,29 +260,28 @@ const TrendHistory = () => {
   const renderTrendsWithRestrictions = (trends: TrendHistoryItem[]) => {
     // Conservative approach: Only unlock for confirmed Pro users
     const isPro = usage?.tier === 'pro';
-    const freeLimit = 5;
 
     if (isPro) {
       // Pro users see everything
       return trends.map(renderTrendItem);
     }
 
-    // Default to free tier restrictions (safe fallback for undefined/error states)
-    const visibleTrends = trends.slice(0, freeLimit);
-    const lockedTrends = trends.slice(freeLimit);
-
+    // Free users see NO content, only the upgrade CTA
     return (
-      <>
-        {visibleTrends.map(renderTrendItem)}
-        {lockedTrends.length > 0 && (
-          <>
-            <UpgradeCTACard />
-            {lockedTrends.map(item => (
-              <LockedTrendItem key={item.id} item={item} />
-            ))}
-          </>
-        )}
-      </>
+      <div data-testid="free-user-gate">
+        <UpgradeCTACard />
+        <Card className="mt-4">
+          <CardContent className="py-12">
+            <div className="text-center">
+              <Lock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Trend History is a Pro Feature</h3>
+              <p className="text-gray-600 max-w-md mx-auto">
+                Upgrade to Pro to access your complete trend history, track patterns over time, and unlock advanced analytics.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   };
 
@@ -509,6 +508,8 @@ const TrendHistory = () => {
     );
   }
 
+  const isPro = usage?.tier === 'pro';
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-7xl">
       {/* Header */}
@@ -523,109 +524,114 @@ const TrendHistory = () => {
           </div>
         </div>
 
-        {/* Controls */}
-        <div className="flex flex-col lg:flex-row gap-4 mb-6">
-          {/* Search */}
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-            <Input
-              placeholder="Search trends, products, or descriptions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-              data-testid="search-trends"
-            />
-          </div>
-
-          {/* Niche Filter */}
-          <Select value={selectedNiche} onValueChange={setSelectedNiche}>
-            <SelectTrigger className="w-48" data-testid="filter-niche">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue placeholder="Filter by niche" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Niches</SelectItem>
-              {availableNiches.map((niche) => (
-                <SelectItem key={niche} value={niche}>
-                  {niche.charAt(0).toUpperCase() + niche.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Sort */}
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-40" data-testid="sort-trends">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="newest">Newest First</SelectItem>
-              <SelectItem value="oldest">Oldest First</SelectItem>
-              <SelectItem value="niche">By Niche</SelectItem>
-            </SelectContent>
-          </Select>
-
-          {/* Refresh */}
-          <Button 
-            variant="outline" 
-            onClick={() => refetch()}
-            data-testid="refresh-trends"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
-          </Button>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5 text-blue-600" />
-                <div>
-                  <div className="text-2xl font-bold">{trendHistory.length}</div>
-                  <div className="text-xs text-gray-600">Total Records</div>
-                </div>
+        {/* Show controls and stats only for Pro users */}
+        {isPro && (
+          <>
+            {/* Controls */}
+            <div className="flex flex-col lg:flex-row gap-4 mb-6">
+              {/* Search */}
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Input
+                  placeholder="Search trends, products, or descriptions..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                  data-testid="search-trends"
+                />
               </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Target className="h-5 w-5 text-green-600" />
-                <div>
-                  <div className="text-2xl font-bold">{forecasterHistory.length}</div>
-                  <div className="text-xs text-gray-600">Forecaster</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Zap className="h-5 w-5 text-purple-600" />
-                <div>
-                  <div className="text-2xl font-bold">{aiPicksHistory.length}</div>
-                  <div className="text-xs text-gray-600">AI Picks</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          
-          <Card>
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2">
-                <Hash className="h-5 w-5 text-orange-600" />
-                <div>
-                  <div className="text-2xl font-bold">{availableNiches.length}</div>
-                  <div className="text-xs text-gray-600">Niches</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+
+              {/* Niche Filter */}
+              <Select value={selectedNiche} onValueChange={setSelectedNiche}>
+                <SelectTrigger className="w-48" data-testid="filter-niche">
+                  <Filter className="h-4 w-4 mr-2" />
+                  <SelectValue placeholder="Filter by niche" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Niches</SelectItem>
+                  {availableNiches.map((niche) => (
+                    <SelectItem key={niche} value={niche}>
+                      {niche.charAt(0).toUpperCase() + niche.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Sort */}
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="w-40" data-testid="sort-trends">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="newest">Newest First</SelectItem>
+                  <SelectItem value="oldest">Oldest First</SelectItem>
+                  <SelectItem value="niche">By Niche</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Refresh */}
+              <Button 
+                variant="outline" 
+                onClick={() => refetch()}
+                data-testid="refresh-trends"
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Refresh
+              </Button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="text-2xl font-bold">{trendHistory.length}</div>
+                      <div className="text-xs text-gray-600">Total Records</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2">
+                    <Target className="h-5 w-5 text-green-600" />
+                    <div>
+                      <div className="text-2xl font-bold">{forecasterHistory.length}</div>
+                      <div className="text-xs text-gray-600">Forecaster</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-5 w-5 text-purple-600" />
+                    <div>
+                      <div className="text-2xl font-bold">{aiPicksHistory.length}</div>
+                      <div className="text-xs text-gray-600">AI Picks</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2">
+                    <Hash className="h-5 w-5 text-orange-600" />
+                    <div>
+                      <div className="text-2xl font-bold">{availableNiches.length}</div>
+                      <div className="text-xs text-gray-600">Niches</div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Content Tabs */}
