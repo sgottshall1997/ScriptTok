@@ -22,7 +22,7 @@ export class IdentityService {
 
     try {
       const existingIdentity = await this.storage.getUserIdentity(provider, providerUserId);
-      
+
       if (existingIdentity) {
         console.log(`[IdentityService] ✅ Found existing identity, returning userId:`, existingIdentity.userId);
         return existingIdentity.userId;
@@ -32,7 +32,7 @@ export class IdentityService {
 
       const username = this.generateUsername(email, provider, providerUserId);
       const password = this.generateSecurePassword();
-      
+
       const [firstName, lastName] = this.parseFullName(name);
 
       // In development mode, grant Pro tier automatically
@@ -149,7 +149,7 @@ export class IdentityService {
 
     try {
       const identity = await this.storage.getUserIdentity(provider, providerUserId);
-      
+
       if (!identity) {
         console.log(`[IdentityService] ⚠️ No identity found for provider:`, provider, 'userId:', providerUserId);
         return undefined;
@@ -157,7 +157,7 @@ export class IdentityService {
 
       console.log(`[IdentityService] ✅ Identity found, fetching user:`, identity.userId);
       const user = await this.storage.getUser(identity.userId);
-      
+
       if (user) {
         console.log(`[IdentityService] ✅ User retrieved:`, {
           id: user.id,
@@ -194,11 +194,11 @@ export class IdentityService {
 
   private parseFullName(name?: string): [string | null, string | null] {
     if (!name) return [null, null];
-    
+
     const parts = name.trim().split(/\s+/);
     if (parts.length === 0) return [null, null];
     if (parts.length === 1) return [parts[0], null];
-    
+
     const firstName = parts[0];
     const lastName = parts.slice(1).join(' ');
     return [firstName, lastName];
