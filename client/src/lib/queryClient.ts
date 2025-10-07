@@ -1,4 +1,7 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import * as React from "react";
+import { toast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
@@ -52,6 +55,42 @@ export const queryClient = new QueryClient({
     },
     mutations: {
       retry: false,
+      onError: (error: Error) => {
+        if (error.message.includes('429')) {
+          let title = "";
+          let description = "";
+          
+          if (error.message.toLowerCase().includes('gpt')) {
+            title = "⚠️ GPT Generation Limit Reached";
+            description = "You've reached your monthly GPT generation limit. Upgrade to Pro for 300 GPT generations/month.";
+          } else if (error.message.toLowerCase().includes('claude')) {
+            title = "⚠️ Claude Generation Limit Reached";
+            description = "You've reached your monthly Claude generation limit. Upgrade to Pro for 150 Claude generations/month.";
+          } else if (error.message.toLowerCase().includes('trend')) {
+            title = "⚠️ Trend Analysis Limit Reached";
+            description = "You've reached your monthly trend analysis limit. Upgrade to Pro for unlimited trend analyses.";
+          } else if (error.message.toLowerCase().includes('bulk')) {
+            title = "⚠️ Bulk Generation - Pro Only";
+            description = "Bulk content generation is available for Pro users only. Upgrade to unlock this feature.";
+          } else {
+            title = "⚠️ Rate Limit Reached";
+            description = "You've reached your usage limit. Upgrade to Pro for higher limits.";
+          }
+          
+          toast({
+            title,
+            description,
+            action: React.createElement(
+              ToastAction,
+              {
+                altText: "Upgrade to Pro",
+                onClick: () => window.location.href = '/account'
+              },
+              "Upgrade to Pro"
+            ),
+          });
+        }
+      }
     },
   },
 });
