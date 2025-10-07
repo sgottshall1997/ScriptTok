@@ -225,6 +225,37 @@ const Dashboard = () => {
     return products.filter(product => product.niche === selectedNicheFilter);
   };
 
+  // Group products by niche for tier-based display
+  const getProductsByNiche = () => {
+    const products = getFilteredProducts();
+    const grouped: Record<string, TrendingProduct[]> = {};
+    
+    products.forEach(product => {
+      if (!grouped[product.niche]) {
+        grouped[product.niche] = [];
+      }
+      grouped[product.niche].push(product);
+    });
+    
+    return grouped;
+  };
+
+  // Check if user should see limited products (free tier)
+  const shouldLimitProducts = () => {
+    return usageData?.tier === 'free';
+  };
+
+  // Get limited products for a niche (1 for free, all for pro)
+  const getLimitedNicheProducts = (products: TrendingProduct[]) => {
+    if (!shouldLimitProducts()) return products;
+    return products.slice(0, 1);
+  };
+
+  // Check if niche has more products for pro
+  const hasMoreProducts = (products: TrendingProduct[]) => {
+    return shouldLimitProducts() && products.length > 1;
+  };
+
   // Get available niches for dropdown
   const getAvailableNiches = () => {
     const products = getCurrentProducts();
@@ -748,81 +779,118 @@ const Dashboard = () => {
               ))}
             </div>
           ) : getFilteredProducts().length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
-              {getFilteredProducts().map((product) => (
-                <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
-                  <CardContent className="p-4">
-                    <div className="space-y-4">
-                      {/* Product Title */}
-                      <div className="flex items-start justify-between gap-3">
-                        <h3 className="font-semibold text-base leading-tight text-gray-900">
-                          {selectedDataSource === 'amazon' ? '🛒' : '🤖'} {product.title}
-                        </h3>
-                        <Badge className={getNicheColor(product.niche)} variant="secondary">
-                          {product.niche}
-                        </Badge>
-                      </div>
-                      
-                      {/* Why it's hot */}
-                      <div className="text-sm text-gray-600">
-                        <span className="text-yellow-600">✨ Why it's hot:</span>
-                        <span className="ml-1">{product.reason || 'Trending across social platforms'}</span>
-                      </div>
+            <div className="space-y-6">
+              {Object.entries(getProductsByNiche()).map(([niche, nicheProducts]) => (
+                <div key={niche} className="space-y-3">
+                  {/* Niche Header */}
+                  <div className="flex items-center gap-2 mb-3">
+                    <Badge className={getNicheColor(niche)} variant="secondary">
+                      {niche.charAt(0).toUpperCase() + niche.slice(1)}
+                    </Badge>
+                    <span className="text-sm text-gray-500">
+                      {shouldLimitProducts() ? `1 of ${nicheProducts.length}` : nicheProducts.length} products
+                    </span>
+                  </div>
+                  
+                  {/* Products Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+                    {getLimitedNicheProducts(nicheProducts).map((product) => (
+                      <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
+                        <CardContent className="p-4">
+                          <div className="space-y-4">
+                            {/* Product Title */}
+                            <div className="flex items-start justify-between gap-3">
+                              <h3 className="font-semibold text-base leading-tight text-gray-900">
+                                {selectedDataSource === 'amazon' ? '🛒' : '🤖'} {product.title}
+                              </h3>
+                              <Badge className={getNicheColor(product.niche)} variant="secondary">
+                                {product.niche}
+                              </Badge>
+                            </div>
+                            
+                            {/* Why it's hot */}
+                            <div className="text-sm text-gray-600">
+                              <span className="text-yellow-600">✨ Why it's hot:</span>
+                              <span className="ml-1">{product.reason || 'Trending across social platforms'}</span>
+                            </div>
 
-                      {/* Product data */}
-                      {product.price && (
-                        <div className="text-xs text-green-600 font-medium">
-                          💰 Price: {product.price}
-                        </div>
-                      )}
-                      {product.rating && (
-                        <div className="text-xs text-yellow-600">
-                          ⭐ Rating: {product.rating}/5
-                        </div>
-                      )}
-                      {product.asin && (
-                        <div className="text-xs text-blue-600">
-                          📦 ASIN: {product.asin}
-                        </div>
-                      )}
-                      
-                      {/* Action Buttons */}
-                      <div className="flex gap-2 pt-2">
-                        <Button 
-                          size="sm" 
-                          className="flex-1 bg-red-500 hover:bg-red-600 text-white"
-                          onClick={() => {
-                            const url = `/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`;
-                            console.log('🔄 Navigating to:', url);
-                            trackEvent('trending_product_click', 'bulk_generator', `${product.niche}_${product.title}`, 1);
-                            setLocation(url);
-                            // Scroll to top after navigation
-                            setTimeout(() => window.scrollTo(0, 0), 100);
-                          }}
-                        >
-                          <Zap className="h-3 w-3 mr-1" />
-                          Generate Content
-                        </Button>
-                        {selectedDataSource === 'perplexity' && (
-                          <Button 
-                            size="sm" 
-                            variant="outline" 
-                            className="border-gray-300"
-                            onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
-                            disabled={refreshIndividualMutation.isPending}
-                          >
-                            {refreshIndividualMutation.isPending ? (
-                              <Loader2 className="h-3 w-3 animate-spin" />
-                            ) : (
-                              <RotateCcw className="h-3 w-3 mr-1" />
+                            {/* Product data */}
+                            {product.price && (
+                              <div className="text-xs text-green-600 font-medium">
+                                💰 Price: {product.price}
+                              </div>
                             )}
-                            Refresh
-                          </Button>
-                        )}
-                      </div>
+                            {product.rating && (
+                              <div className="text-xs text-yellow-600">
+                                ⭐ Rating: {product.rating}/5
+                              </div>
+                            )}
+                            {product.asin && (
+                              <div className="text-xs text-blue-600">
+                                📦 ASIN: {product.asin}
+                              </div>
+                            )}
+                            
+                            {/* Action Buttons */}
+                            <div className="flex gap-2 pt-2">
+                              <Button 
+                                size="sm" 
+                                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                                onClick={() => {
+                                  const url = `/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`;
+                                  console.log('🔄 Navigating to:', url);
+                                  trackEvent('trending_product_click', 'bulk_generator', `${product.niche}_${product.title}`, 1);
+                                  setLocation(url);
+                                  // Scroll to top after navigation
+                                  setTimeout(() => window.scrollTo(0, 0), 100);
+                                }}
+                              >
+                                <Zap className="h-3 w-3 mr-1" />
+                                Generate Content
+                              </Button>
+                              {selectedDataSource === 'perplexity' && (
+                                <Button 
+                                  size="sm" 
+                                  variant="outline" 
+                                  className="border-gray-300"
+                                  onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
+                                  disabled={refreshIndividualMutation.isPending}
+                                >
+                                  {refreshIndividualMutation.isPending ? (
+                                    <Loader2 className="h-3 w-3 animate-spin" />
+                                  ) : (
+                                    <RotateCcw className="h-3 w-3 mr-1" />
+                                  )}
+                                  Refresh
+                                </Button>
+                              )}
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  
+                  {/* Upgrade CTA for this niche */}
+                  {hasMoreProducts(nicheProducts) && (
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                      <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
+                      <h4 className="font-semibold text-gray-900 mb-2">
+                        {nicheProducts.length - 1} More {niche.charAt(0).toUpperCase() + niche.slice(1)} Products Available
+                      </h4>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Upgrade to Pro to unlock all trending products for {niche}
+                      </p>
+                      <Button
+                        onClick={() => setLocation('/account')}
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                        data-testid={`upgrade-${niche}-products`}
+                      >
+                        Upgrade to Pro
+                      </Button>
                     </div>
-                  </CardContent>
-                </Card>
+                  )}
+                </div>
               ))}
             </div>
           ) : (
