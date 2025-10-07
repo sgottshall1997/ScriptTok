@@ -28,6 +28,8 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
     );
     
     function authComplete(e: MessageEvent) {
+      // Security: Verify message origin is from Replit
+      if (e.origin !== "https://replit.com") return;
       if (e.data !== "auth_complete") return;
       window.removeEventListener("message", authComplete);
       authWindow?.close();
