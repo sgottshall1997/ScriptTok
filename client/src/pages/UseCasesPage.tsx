@@ -472,7 +472,7 @@ const personasData: PersonaTabContent[] = [
       },
       {
         title: '$50K Contracts',
-        description: 'Creative agency lands $50K contracts with ScriptTok deliverables'
+        description: 'Creative agency lands $50K contracts with Pheme deliverables'
       }
     ],
     featureHighlight: {

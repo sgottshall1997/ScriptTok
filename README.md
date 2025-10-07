@@ -1,8 +1,8 @@
-# 🎬 ScriptTok
+# 🎬 Pheme
 
-**AI-powered dual content generator for viral and affiliate TikTok scripts**
+**AI-powered dual content generator for viral and affiliate content**
 
-ScriptTok is a comprehensive content generation platform designed to create high-quality social media content across various niches and platforms using multiple AI models. The platform features two distinct content studios: **Viral Content Studio** for trend-based viral content and **Affiliate Content Studio** for product-focused content, both powered by advanced AI research capabilities.
+Pheme is a comprehensive content generation platform designed to create high-quality social media content across various niches and platforms using multiple AI models. The platform features two distinct content studios: **Viral Content Studio** for trend-based viral content and **Affiliate Content Studio** for product-focused content, both powered by advanced AI research capabilities.
 
 ## ✨ Features Overview
 
@@ -86,8 +86,8 @@ scripttok/
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/scripttok.git
-   cd scripttok
+   git clone https://github.com/your-username/pheme.git
+   cd pheme
    ```
 
 2. **Install dependencies**

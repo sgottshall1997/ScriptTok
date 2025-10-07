@@ -49,7 +49,7 @@ const ContactPage: React.FC = () => {
             <CardHeader>
               <CardTitle>Get in Touch</CardTitle>
               <CardDescription>
-                Have questions about ScriptTok or need help with TikTok content generation? We're here to help.
+                Have questions about Pheme or need help with content generation? We're here to help.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">

@@ -50,7 +50,7 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md" data-testid="dialog-login">
         <DialogHeader>
-          <DialogTitle data-testid="text-login-title">Sign in to ScriptTok</DialogTitle>
+          <DialogTitle data-testid="text-login-title">Sign in to Pheme</DialogTitle>
           <DialogDescription data-testid="text-login-description">
             Sign in with your Replit account to access all features
           </DialogDescription>
