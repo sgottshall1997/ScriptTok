@@ -1489,6 +1489,22 @@ OUTPUT FORMAT:
 9. [Hook 9]
 10. [Hook 10]
 
+CRITICAL OUTPUT REQUIREMENTS:
+• Output ONLY the numbered list (1-10)
+• NO introductory text before the list
+• NO explanatory commentary after the list
+• NO bracketed notes like [Note:] or [Remember:]
+• NO suggestions or tips - just the 10 hooks
+• Example of CORRECT output:
+  1. POV: You just discovered skincare hacks
+  2. Stop scrolling if you struggle with acne
+  [... 3-10 continue]
+
+• Example of WRONG output (do NOT do this):
+  Here are 10 hooks for you: [WRONG - no intro]
+  1. Hook one
+  [Note: These are attention-grabbing] [WRONG - no notes]
+
 Topic: ${topic}
 Niche: ${config.niche}
 Tone: ${config.tone}`,
@@ -1523,6 +1539,14 @@ WRITING GUIDELINES:
 - Conversational and engaging tone
 - No products, no affiliate links, no hashtags
 - Focus on entertainment, education, or relatability
+
+STRICT FORMATTING ENFORCEMENT:
+• NO EMOJIS anywhere in the script (critical rule)
+• NO bracketed notes, performance notes, or instructions like [pause here] or [gesture]
+• NO director's commentary or stage directions
+• Output clean script text only in the 4-section format
+• Each section label must be followed by actual script content only
+• Verify no emojis or brackets before returning
 
 OUTPUT FORMAT:
 HOOK: [0-3s opening line]
@@ -1572,7 +1596,13 @@ Topic: ${topic}
 Niche: ${config.niche}
 Tone: ${config.tone}
 
-Write the complete story script in natural paragraph form.`,
+CRITICAL OUTPUT FORMAT:
+• Output as ONE SINGLE CONTINUOUS PARAGRAPH (no line breaks within story)
+• Word count: EXACTLY 90-130 words (count before returning, adjust if needed)
+• Natural paragraph flow - read as one story block
+• NO section labels like "Setup:" or "Resolution:" in output
+• NO emojis, NO bracketed notes
+• Example format: "Last week I was at the grocery store when something unexpected happened. I reached for the last avocado and so did someone else. We both laughed awkwardly and started talking about cooking. Turns out they were a chef and gave me the best recipe tips I've ever heard. Now I go to that store hoping to run into them again. Have you ever had a random encounter that changed your routine?"`,
 
     templateMetadata: {
       templateType: 'viral_storytime',
@@ -1607,13 +1637,21 @@ WRITING GUIDELINES:
 - Focus on agreeing, disagreeing, or adding perspective
 - Keep it conversational and authentic
 
-OUTPUT FORMAT:
-OPEN: [≤8 words]
-BEAT 1: [≤10 words]  
-BEAT 2: [≤10 words]
-BEAT 3: [≤10 words]
-PAYOFF: [≤10 words]
-QUESTION: [Short engagement prompt]
+STRICT OUTPUT FORMAT (EXACTLY 6 LINES - NO MORE, NO LESS):
+OPEN: [≤8 words - cold open line]
+BEAT 1: [≤10 words - first reaction]  
+BEAT 2: [≤10 words - second reaction]
+BEAT 3: [≤10 words - third reaction]
+PAYOFF: [≤10 words - final reaction]
+QUESTION: [≤10 words - engagement prompt]
+
+CRITICAL RULES:
+• Output EXACTLY these 6 labeled lines only
+• NO additional commentary, tips, or notes
+• NO text before or after the 6 lines
+• NO bracketed suggestions like [adjust timing]
+• Each line must have its label (OPEN:, BEAT 1:, etc.) followed by content
+• Count words per line - enforce limits strictly
 
 Topic: ${topic}
 Niche: ${config.niche}
@@ -1649,6 +1687,17 @@ WRITING GUIDELINES:
 - No products, hashtags, or sales language
 - Focus on education, entertainment, or tips
 - Make each point valuable and memorable
+
+STRICT VALIDATION REQUIREMENTS:
+• NO COMMENTARY before or after the listicle
+• NO phrases like "Here are the top 3..." or "These tips will help..."
+• Output format: Start directly with "Top [3-5] Things About [Topic]:"
+• Title limit: ≤6 words (hard cap - count and enforce)
+• Explanation limit: ≤14 words (hard cap - count and enforce)
+• Micro-example limit: ≤10 words if included (hard cap - count and enforce)
+• Total word count: 90-140 words (verify before returning)
+• NO bracketed notes or suggestions
+• NO emojis
 
 OUTPUT FORMAT:
 Top [3-5] Things About [Topic]:
@@ -1736,6 +1785,21 @@ CAPTION REQUIREMENTS:
 • Conversational and engaging
 • Invite comments and interaction
 • No emojis, no affiliate language
+
+HASHTAG VALIDATION:
+• BROAD hashtags: Must be EXACTLY 6-8 hashtags (count them)
+• NICHE hashtags: Must be EXACTLY 6-8 hashtags (count them)
+• All hashtags must start with # symbol
+• No duplicate hashtags between BROAD and NICHE sets
+• Verify hashtag counts before returning
+
+OUTPUT CLEANLINESS:
+• NO explanatory notes like [Note: These are trending]
+• NO commentary before or after the output
+• NO bracketed suggestions or tips
+• NO emojis in captions (this is required)
+• Output exactly 3 captions + 2 hashtag sets - nothing else
+• Each caption MUST be 8-18 words (count and verify)
 
 HASHTAG REQUIREMENTS:
 • BROAD hashtags: 6-8 generic/trending tags (e.g., #fyp, #viral, #trending)
