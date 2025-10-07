@@ -1,0 +1,49 @@
+please carefully review through the three use case files here (server/Pictory/Uses Cases). I want you to build me an extremely comprehensive prompt for the replit agent to create my uses cases tabs. (Do not code anything yourself). Please have the agent build each use case tab tab using the same method pictory did for their use cases tabs. 
+
+
+✅ Content Creators (instead of Tik Tok)
+Description: Generate daily viral ideas and scripts customized for your niche.
+Why it's great: ScriptTok's core strength - viral script generation with trend discovery, viral score analysis, and niche-specific templates. Perfect match for creators who need consistent, high-performing content.
+
+✅ Affiliate Marketers
+Description: Turn product links into performance-driven UGC scripts and ads.
+Why it's great: The Affiliate Studio is specifically built for this. Product research integration, conversion-focused scripts, and CTA optimization directly solve their monetization needs.
+
+✅ Social Media Managers
+Description: Scale short-form content calendars for multiple brands.
+Why it's great: Bulk generation capabilities, template library, and content history make managing multiple clients/brands efficient. Time-saving is the key value prop here.
+
+✅ Influencers
+Description: Convert audience insights into high-engagement video ideas.
+Why it's great: Combines trend discovery with viral scoring to help influencers maintain relevance and grow their following. Smart style learning adapts to their proven content patterns.
+
+✅ Marketing Agencies
+Description: Deliver optimized short-form scripts and campaign copy for clients.
+Why it's great: Professional-grade features like AI evaluation, multi-platform optimization, and white-label-friendly outputs make this perfect for agencies delivering client work.
+
+✅ Coaches & Educators
+Description: Repurpose lessons and insights into bite-sized viral clips.
+Why it's great: Educational content templates, clarity scoring, and script-to-video optimization help educators reach wider audiences through digestible short-form content.
+
+✅ E-Commerce Brands
+Description: Build product showcase videos and social proof campaigns fast.
+Why it's great: Product research tools, UGC-style templates, and affiliate ad builder create ready-to-film product content that drives conversions.
+
+✅ YouTube Shorts Creators
+Description: Repurpose long-form ideas into punchy short scripts.
+Why it's great: Platform-specific optimization for YouTube Shorts (retention focus, hook strength) plus trend discovery helps long-form creators tap into short-form growth.
+
+✅ Content Teams
+Description: Centralize content generation, scoring, and team collaboration.
+Why it's great: Content history, evaluation system, and bulk generation streamline team workflows. Pro tier supports collaborative content creation at scale.
+
+Please add: 
+
+SaaS & Tech Companies"
+Description: "Create product demo videos, feature announcements, and social proof content that drives signups."
+Why: Your tech niche support + viral scoring + multi-platform optimization would help SaaS companies create effective product marketing content.
+
+
+Make sure each section gives a full compelling reasons of how each tool fits with the use case, how it will benefit these people, and how it will make their lives way easier. 
+
+Analyze the structure of the pictory use cases pages and match my use case pages to these structures. Please also ask the replit agent to carefully review these files (server/Pictory/Uses Cases) for an extra eye.
