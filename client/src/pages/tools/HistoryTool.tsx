@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
-import MarketingLayout from '@/components/MarketingLayout';
+import { MarketingNav } from '@/components/MarketingNav';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { Save, Search, BarChart3, FileText, TrendingUp, Star, Download } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -112,7 +112,8 @@ export default function HistoryTool() {
   ];
 
   return (
-    <MarketingLayout>
+    <>
+      <MarketingNav />
       <Helmet>
         <title>Content History - Track All Your Scripts & Trends | ScriptTok</title>
         <meta
@@ -238,6 +239,6 @@ export default function HistoryTool() {
         primaryCTA={{ text: 'View Your History', onClick: handleFinalCTA }}
         gradient={true}
       />
-    </MarketingLayout>
+    </>
   );
 }

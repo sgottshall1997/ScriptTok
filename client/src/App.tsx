@@ -55,7 +55,6 @@ import {
 import UseCasesPage from "@/pages/UseCasesPage";
 
 import Layout from "@/components/Layout";
-import MarketingLayout from "@/components/MarketingLayout";
 import { initScraperConsole } from "./lib/scraperConsole";
 
 function Router() {
@@ -68,84 +67,56 @@ function Router() {
 function MainAppRouter() {
   return (
     <Switch>
-      {/* Landing page with MarketingLayout */}
+      {/* Landing page */}
       <Route path="/">
-        <MarketingLayout>
-          <LandingPage />
-        </MarketingLayout>
+        <LandingPage />
       </Route>
 
-      {/* Pricing page with MarketingLayout */}
+      {/* Pricing page */}
       <Route path="/pricing">
-        <MarketingLayout>
-          <PricingPage />
-        </MarketingLayout>
+        <PricingPage />
       </Route>
 
-      {/* Feature pages with MarketingLayout */}
+      {/* Feature pages */}
       <Route path="/features/dual-studios">
-        <MarketingLayout>
-          <DualStudiosFeature />
-        </MarketingLayout>
+        <DualStudiosFeature />
       </Route>
       <Route path="/features/ai-script-generator">
-        <MarketingLayout>
-          <AIScriptGeneratorFeature />
-        </MarketingLayout>
+        <AIScriptGeneratorFeature />
       </Route>
       <Route path="/features/template-library">
-        <MarketingLayout>
-          <TemplateLibraryFeature />
-        </MarketingLayout>
+        <TemplateLibraryFeature />
       </Route>
       <Route path="/features/trend-discovery">
-        <MarketingLayout>
-          <TrendDiscoveryFeature />
-        </MarketingLayout>
+        <TrendDiscoveryFeature />
       </Route>
       <Route path="/features/viral-score">
-        <MarketingLayout>
-          <ViralScoreFeature />
-        </MarketingLayout>
+        <ViralScoreFeature />
       </Route>
       <Route path="/features/multi-platform">
-        <MarketingLayout>
-          <MultiPlatformFeature />
-        </MarketingLayout>
+        <MultiPlatformFeature />
       </Route>
 
-      {/* Tool pages with MarketingLayout */}
+      {/* Tool pages */}
       <Route path="/tools/trend-discovery">
-        <MarketingLayout>
-          <TrendDiscoveryTool />
-        </MarketingLayout>
+        <TrendDiscoveryTool />
       </Route>
       <Route path="/tools/script-generator">
-        <MarketingLayout>
-          <ScriptGeneratorTool />
-        </MarketingLayout>
+        <ScriptGeneratorTool />
       </Route>
       <Route path="/tools/template-library">
-        <MarketingLayout>
-          <TemplateLibraryTool />
-        </MarketingLayout>
+        <TemplateLibraryTool />
       </Route>
       <Route path="/tools/viral-score">
-        <MarketingLayout>
-          <ViralScoreAnalyzerTool />
-        </MarketingLayout>
+        <ViralScoreAnalyzerTool />
       </Route>
       <Route path="/tools/history">
-        <MarketingLayout>
-          <HistoryTool />
-        </MarketingLayout>
+        <HistoryTool />
       </Route>
 
-      {/* Use Cases page with MarketingLayout */}
+      {/* Use Cases page */}
       <Route path="/use-cases">
-        <MarketingLayout>
-          <UseCasesPage />
-        </MarketingLayout>
+        <UseCasesPage />
       </Route>
       
       {/* App pages with Layout */}

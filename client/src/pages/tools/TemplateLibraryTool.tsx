@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
-import MarketingLayout from '@/components/MarketingLayout';
+import { MarketingNav } from '@/components/MarketingNav';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { Filter, Eye, Zap, Hash, Layers, Globe, BarChart3 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -145,7 +145,8 @@ export default function TemplateLibraryTool() {
   ];
 
   return (
-    <MarketingLayout>
+    <>
+      <MarketingNav />
       <Helmet>
         <title>Template Library - 20+ Proven Viral Templates | ScriptTok</title>
         <meta
@@ -276,6 +277,6 @@ export default function TemplateLibraryTool() {
         primaryCTA={{ text: 'Explore Templates', onClick: handleFinalCTA }}
         gradient={true}
       />
-    </MarketingLayout>
+    </>
   );
 }

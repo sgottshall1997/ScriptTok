@@ -23,6 +23,7 @@ import {
   Award
 } from "lucide-react";
 import { useState } from "react";
+import { MarketingNav } from '@/components/MarketingNav';
 
 export default function ViralScoreFeature() {
   const [_, navigate] = useLocation();
@@ -115,6 +116,7 @@ export default function ViralScoreFeature() {
 
   return (
     <>
+      <MarketingNav />
       <Helmet>
         <title>AI Viral Score - Predict Content Performance | ScriptTok</title>
         <meta name="description" content="Know your content will perform before you post. AI-powered viral prediction scores with actionable feedback to maximize reach." />

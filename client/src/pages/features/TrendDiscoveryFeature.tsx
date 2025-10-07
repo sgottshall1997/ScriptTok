@@ -22,6 +22,7 @@ import {
   BarChart3,
   Zap
 } from "lucide-react";
+import { MarketingNav } from '@/components/MarketingNav';
 
 export default function TrendDiscoveryFeature() {
   const [_, navigate] = useLocation();
@@ -186,6 +187,7 @@ export default function TrendDiscoveryFeature() {
 
   return (
     <>
+      <MarketingNav />
       <Helmet>
         <title>Trend Discovery - Real-Time Viral Trends & Sounds | ScriptTok</title>
         <meta name="description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />

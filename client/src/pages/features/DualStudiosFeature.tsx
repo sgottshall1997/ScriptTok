@@ -11,6 +11,7 @@ import {
 import { useLocation } from "wouter";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { Repeat, Sparkles, Target, Library, BarChart, Cpu, Zap } from "lucide-react";
+import { MarketingNav } from '@/components/MarketingNav';
 
 export default function DualStudiosFeature() {
   const [_, navigate] = useLocation();
@@ -107,6 +108,7 @@ export default function DualStudiosFeature() {
 
   return (
     <>
+      <MarketingNav />
       <Helmet>
         <title>Dual Studios - Switch Between Viral & Affiliate Content | ScriptTok</title>
         <meta name="description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />

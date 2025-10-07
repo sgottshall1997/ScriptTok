@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
-import MarketingLayout from '@/components/MarketingLayout';
+import { MarketingNav } from '@/components/MarketingNav';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { FileText, BarChart3, Target, RefreshCw, Zap, BookOpen, Lightbulb } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -129,7 +129,8 @@ export default function ViralScoreAnalyzerTool() {
   ];
 
   return (
-    <MarketingLayout>
+    <>
+      <MarketingNav />
       <Helmet>
         <title>Viral Score Analyzer - Predict Content Performance | ScriptTok</title>
         <meta
@@ -220,6 +221,6 @@ export default function ViralScoreAnalyzerTool() {
         primaryCTA={{ text: 'Try Viral Score Analyzer', onClick: handleFinalCTA }}
         gradient={true}
       />
-    </MarketingLayout>
+    </>
   );
 }

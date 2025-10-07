@@ -25,6 +25,7 @@ import {
   Target,
   Flame,
 } from "lucide-react";
+import { MarketingNav } from '@/components/MarketingNav';
 
 export default function TemplateLibraryFeature() {
   const [_, navigate] = useLocation();
@@ -196,6 +197,7 @@ export default function TemplateLibraryFeature() {
 
   return (
     <>
+      <MarketingNav />
       <Helmet>
         <title>Template Library - 20+ Proven Script Templates | ScriptTok</title>
         <meta name="description" content="Pre-built viral formulas and affiliate frameworks for every niche. Browse proven templates and customize in seconds." />

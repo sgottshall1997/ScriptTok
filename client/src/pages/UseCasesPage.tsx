@@ -3,7 +3,7 @@ import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
-import MarketingLayout from '@/components/MarketingLayout';
+import { MarketingNav } from '@/components/MarketingNav';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -951,7 +951,8 @@ export default function UseCasesPage() {
   };
 
   return (
-    <MarketingLayout>
+    <>
+      <MarketingNav />
       <Helmet>
         <title>ScriptTok Use Cases - Tools for Every Creator Type</title>
         <meta
@@ -1250,6 +1251,6 @@ export default function UseCasesPage() {
           </Tabs>
         </div>
       </section>
-    </MarketingLayout>
+    </>
   );
 }

@@ -1,7 +1,7 @@
 import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
-import MarketingLayout from '@/components/MarketingLayout';
+import { MarketingNav } from '@/components/MarketingNav';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { Layers, Lightbulb, Sparkles, CheckCircle, Zap, BookOpen, Target, Volume2, Share2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -120,7 +120,8 @@ export default function ScriptGeneratorTool() {
   ];
 
   return (
-    <MarketingLayout>
+    <>
+      <MarketingNav />
       <Helmet>
         <title>Script Generator - AI-Powered Viral Scripts in Seconds | ScriptTok</title>
         <meta
@@ -179,6 +180,6 @@ export default function ScriptGeneratorTool() {
         primaryCTA={{ text: 'Try Script Generator', onClick: handleFinalCTA }}
         gradient={true}
       />
-    </MarketingLayout>
+    </>
   );
 }

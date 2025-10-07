@@ -11,6 +11,7 @@ import {
 import { useLocation } from "wouter";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { Zap, BookOpen, Target, Volume2, Clock, Share2, TrendingUp, Package, Lightbulb, Users } from "lucide-react";
+import { MarketingNav } from '@/components/MarketingNav';
 
 export default function AIScriptGeneratorFeature() {
   const [_, navigate] = useLocation();
@@ -102,6 +103,7 @@ export default function AIScriptGeneratorFeature() {
 
   return (
     <>
+      <MarketingNav />
       <Helmet>
         <title>AI Script Generator - Create Viral Scripts in Seconds | ScriptTok</title>
         <meta name="description" content="Generate scroll-stopping scripts with AI-powered hooks, pacing, and CTAs. Optimized for TikTok, Instagram Reels, and YouTube Shorts." />

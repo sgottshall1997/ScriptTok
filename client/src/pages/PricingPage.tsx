@@ -12,6 +12,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/components/AuthProvider";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { Helmet } from "react-helmet";
+import { MarketingNav } from "@/components/MarketingNav";
 
 export default function PricingPage() {
   const { isAuthenticated, login } = useAuth();
@@ -36,6 +37,7 @@ export default function PricingPage() {
 
   return (
     <>
+      <MarketingNav />
       <Helmet>
         <title>Pricing Plans - ScriptTok | Start Free or Upgrade to Pro</title>
         <meta name="description" content="Choose the perfect plan for your content creation needs. Start free with 10 GPT + 5 Claude generations per month, or upgrade to Pro for unlimited access and advanced analytics." />

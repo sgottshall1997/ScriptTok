@@ -29,6 +29,7 @@ import {
   Video,
   Share2
 } from "lucide-react";
+import { MarketingNav } from '@/components/MarketingNav';
 
 export default function MultiPlatformFeature() {
   const [_, navigate] = useLocation();
@@ -221,6 +222,7 @@ export default function MultiPlatformFeature() {
 
   return (
     <>
+      <MarketingNav />
       <Helmet>
         <title>Multi-Platform Optimization - One Script, Every Platform | ScriptTok</title>
         <meta name="description" content="Automatically adapt content for TikTok, Instagram, YouTube, and more. Platform-specific optimization with perfect formatting." />
