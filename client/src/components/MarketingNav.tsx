@@ -287,11 +287,8 @@ export function MarketingNav() {
         {/* Logo */}
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer" data-testid="link-logo">
-            <div className="bg-gradient-hero rounded-lg p-2">
-              <Zap className="h-5 w-5 text-white" />
-            </div>
-            <span className="font-bold text-xl bg-gradient-hero bg-clip-text text-transparent">
-              ScriptTok
+            <span className="font-bold text-xl">
+              ✏️ ScriptTok
             </span>
           </div>
         </Link>
