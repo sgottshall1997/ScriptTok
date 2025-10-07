@@ -94,18 +94,19 @@ export async function generateWithClaude(
     
     console.log(`✅ Claude generation successful (${duration}ms)`);
     
-    return createSuccessResponse({
+    return createSuccessResponse(
       content,
-      model: CLAUDE_MODELS.PRIMARY,
-      duration,
-      tokens: response.usage?.input_tokens + response.usage?.output_tokens || 0,
-      metadata: {
+      CLAUDE_MODELS.PRIMARY,
+      response.usage?.input_tokens || 0,
+      response.usage?.output_tokens || 0,
+      {
         ...metadata,
         inputTokens: response.usage?.input_tokens || 0,
         outputTokens: response.usage?.output_tokens || 0,
-        stopReason: response.stop_reason
+        stopReason: response.stop_reason,
+        duration
       }
-    });
+    );
     
   } catch (error) {
     console.error(`❌ Claude primary model failed:`, error);
@@ -149,19 +150,22 @@ export async function generateWithClaude(
         
         console.log(`✅ Claude fallback generation successful (${duration}ms)`);
         
-        return createSuccessResponse({
+        return createSuccessResponse(
           content,
-          model: CLAUDE_MODELS.FALLBACK,
-          duration,
-          tokens: response.usage?.input_tokens + response.usage?.output_tokens || 0,
-          metadata: {
+          CLAUDE_MODELS.FALLBACK,
+          response.usage?.input_tokens || 0,
+          response.usage?.output_tokens || 0,
+          {
             ...metadata,
             inputTokens: response.usage?.input_tokens || 0,
             outputTokens: response.usage?.output_tokens || 0,
             stopReason: response.stop_reason,
-            usedFallback: true
+            usedFallback: true,
+            fallbackUsed: true,
+            originalModel: CLAUDE_MODELS.PRIMARY,
+            duration
           }
-        });
+        );
         
       } catch (fallbackError) {
         console.error(`❌ Claude fallback model also failed:`, fallbackError);

@@ -344,7 +344,8 @@ router.post("/", contentGenerationLimiter, async (req, res) => {
       tone,
       niche,
       contentMode: contentMode || 'affiliate',
-      useSmartStyle: useSmartStyle || false
+      useSmartStyle: useSmartStyle || false,
+      aiModel: validatedData.aiModel || 'claude' // Include AI model in cache key so ChatGPT/Claude are cached separately
     };
 
     // Generate cache key from parameters
