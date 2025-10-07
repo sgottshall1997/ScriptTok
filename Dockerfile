@@ -12,6 +12,10 @@ RUN npm ci
 # Copy the rest of the application
 COPY . .
 
+# Make Vite environment variables available during build
+ARG VITE_CLERK_PUBLISHABLE_KEY
+ENV VITE_CLERK_PUBLISHABLE_KEY=$VITE_CLERK_PUBLISHABLE_KEY
+
 # Build the application with increased memory limit
 RUN NODE_OPTIONS="--max-old-space-size=8192" npm run build
 
