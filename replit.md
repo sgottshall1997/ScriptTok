@@ -3,25 +3,6 @@
 ## Overview
 This project is a comprehensive content generation platform designed to create social media content across various niches and platforms using multiple AI models. It features a full-stack TypeScript architecture with a React frontend, Express backend, and PostgreSQL database with Drizzle ORM. The platform aims to provide a robust solution for automated and optimized content creation, with a business vision to achieve significant engagement and conversion improvements for users.
 
-## Recent Changes
-**October 7, 2025**: ✅ **PHASE 2 COMPLETE - Landing Page Redesign** - Successfully redesigned entire landing page matching wireframe specifications exactly with 6 sections: (1) Hero Section with bg-gradient-hero gradient, headline "Create Viral & Affiliate TikTok Content in Seconds", and tracked CTAs; (2) Key Features Section with 2-column responsive grid showcasing Dual Studios, Viral Score System, Real-Time Trend Discovery, AI Performance Analytics, and Multi-Platform Optimization using lucide-react icons; (3) Visual Demo Section with 3 cards showcasing studio views and caption; (4) Pricing Teaser with Free vs Pro comparison and Compare Plans CTA; (5) Testimonials with 3 social proof cards; (6) Final CTA Banner with bg-gradient-cta gradient and conversion CTAs. Integrated comprehensive analytics tracking using useCTATracking() hook with all CTAs properly instrumented (trackSignupCTA for signup flows, trackNavigateCTA for navigation with correct parameter order). Fixed critical analytics parameter reversal bug identified in architect review. All wireframe design requirements met: rounded-xl buttons, rounded-2xl cards, mobile responsive layouts, authentication logic preserved. Architect verified zero tier logic regressions. Next: Phase 3 (Pricing Page redesign with 3-column cards).
-
-**October 7, 2025**: ✅ **PHASE 1 COMPLETE - UI Redesign Shared Foundation** - Successfully completed all Phase 1 shared infrastructure work for comprehensive UI/UX overhaul following detailed wireframe specifications. Implemented: (1.1) Theme system migration from blue to violet/purple gradient design system with CSS utility classes (.bg-gradient-hero, .bg-gradient-cta), neutral backgrounds, and standardized spacing tokens in index.css; (1.2) MarketingLayout component with wireframe-compliant marketing navbar (logo, Features/Pricing links, auth UI, mobile responsive) and routing integration separating marketing pages (landing, pricing) from authenticated dashboard pages; (1.3) Centralized button/card styling with rounded-xl buttons and rounded-2xl cards across all shadcn components for consistent wireframe compliance; (1.4) Enhanced analytics infrastructure with ConversionEvents constants, useCTATracking() hook, and specialized tracking functions (trackSignup, trackUpgrade, trackGeneration, trackCTAClick) ready for CTA measurement in upcoming page redesigns. All tier restrictions (Free/Pro quotas, template limits, feature gates) preserved and verified through comprehensive architect review with zero regressions.
-
-**October 7, 2025**: Successfully implemented comprehensive dual-tier subscription system (Free/Pro) with model-specific quota tracking, tier-based feature restrictions, and seamless upgrade pathways. Database extended with subscription_tier field and monthly_usage table tracking GPT/Claude/trend usage separately. Backend quotaService and checkQuota middleware enforce model-specific limits with 429 error handling. Frontend implements tier restrictions across all features: Content Generator (quota counters, bulk generation blocks), Template Selector (first 3 per section free), Trend Forecaster (first 3 niches free), Trend History (5 items preview), Content History (10 records visible, export disabled), Viral Analytics (hidden for free), and Dashboard usage widget (tier badge, progress bars). Global 429 error handler shows tier-specific upgrade CTAs. System operational with fail-safe defaults protecting against tier bypass.
-
-**October 7, 2025**: Fixed critical Perplexity cron job automation bug that prevented daily trend fetching. Updated perplexityCron.ts to correctly import runAllPerplexityFetchers and save fetched products to database using storage.saveTrendingProduct. Also updated AI-Powered Trending Picks UI to match Trend Forecaster styling with purple/pink gradient, showing "Last updated X ago" and "Auto-refreshes daily at 5 AM ET" in purple text. Both components now display consistent refresh information.
-
-**October 7, 2025**: Successfully completed comprehensive frontend Replit Auth integration with production-ready authentication flow. Implemented LoginModal component using Replit Auth popup pattern (window.open + postMessage listener with origin validation), ProtectedRoute wrapper for route protection, API-based AuthProvider using /api/auth/me endpoint, auth-aware UI components (Landing page CTAs and Layout header with user profile dropdown), and dev mode visual indicator badge. All protected routes (/dashboard, /generate, /content-history, /trend-history, /account) properly wrapped. Architect review: Pass verdict with security improvements applied (origin check for postMessage). Comprehensive frontend authentication flow documentation added to README (~100 lines).
-
-**October 7, 2025**: Removed all manual refresh options from Trend Forecaster and AI-Powered Trending Picks components to optimize API usage and prevent unnecessary token consumption. Both sections now rely exclusively on automatic daily refresh at 5 AM ET via scheduled cron job. Updated UI to clearly communicate the automatic refresh schedule to users, replacing manual "Refresh" and "Refresh All" buttons with informational text about the automated update process.
-
-**September 25, 2025**: Successfully completed comprehensive Amazon monetization infrastructure transformation. Implemented complete smart affiliate link injection system with intelligent product detection using advanced pattern matching algorithms, full database monetization infrastructure (4 core tables: amazon_products, affiliate_links, revenue_tracking, product_performance), extended storage interface with 26+ new methods covering Amazon product management and revenue analytics, comprehensive API ecosystem for affiliate link injection and tracking, and rich frontend testing component. System ready for immediate revenue generation once Amazon API access is restored from current rate limiting issues.
-
-**September 20, 2025**: Achieved complete feature parity between CookAIng and GlowBot content persistence and rating systems. Successfully implemented comprehensive CookAIng content persistence with 5 new API endpoints (history listing, individual content retrieval, rating submission, rating retrieval, top-rated content discovery), extended database schema with 16 new fields in cookaingContentVersions table and 6 new fields in cookaingContentRatings table, and verified full functionality through comprehensive testing cycle covering content generation with persistence, history retrieval, and rating submission/retrieval with complete data integrity.
-
-**September 19, 2025**: Successfully implemented comprehensive CookAIng Unified Content Generator page at `/cookaing-generator`, completing a fully functional recipe content generation interface that mirrors GlowBot's structure but is adapted for food/recipe content. The generator features four main tabs (Smart Generate, Recipe Templates, Jobs, Enhance), complete stats dashboard, and all required components implemented as functional stubs. Fixed all TypeScript errors and established working API routes for unified content management. Also completed unified trending picks interface with Amazon and Perplexity data source integration.
-
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
@@ -44,27 +25,27 @@ Preferred communication style: Simple, everyday language.
 - **Middleware**: Request logging, error handling, CORS
 
 ### Key Components
-- **Dual-Tier Subscription System**: Production-ready Free/Pro tier system with granular quota tracking (GPT/Claude/trend analyses), comprehensive feature gating across all major components, fail-safe defaults, and tier-specific upgrade CTAs. Free tier: 10 GPT + 5 Claude generations + 10 trend analyses/month, first 3 templates per section, first 3 niches, 10 content history records, viral analytics hidden. Pro tier: 300 GPT + 150 Claude + unlimited trends, all templates unlocked, all niches, full content history with export, viral analytics visible, bulk generation enabled. Monthly usage resets automatically via period-based tracking.
-- **Content Generation System**: Supports multi-AI providers (OpenAI, Anthropic Claude), uses niche-specific and universal templates, enables platform-specific and bulk generation, and includes safeguards against abuse.
-- **Data Storage Solutions**: Utilizes PostgreSQL for primary storage, manages schema with Drizzle migrations, stores content history, trending products, and supports user management with role-based access control.
-- **Smart Style System**: Integrates user ratings and AI evaluations for content quality assessment, with optimized threshold filtering and normalization for recommendations.
-- **Automated Bulk Generator**: Supports scheduled and manual bulk content generation with customizable parameters (niche, template, tone, AI model, content format), robust error handling, and server restart resilience.
+- **Dual-Tier Subscription System**: Production-ready Free/Pro tier system with granular quota tracking for AI models and trend analyses, comprehensive feature gating, and upgrade CTAs.
+- **Content Generation System**: Supports multi-AI providers, uses niche-specific and universal templates, enables platform-specific and bulk generation.
+- **Data Storage Solutions**: Utilizes PostgreSQL for primary storage, manages schema with Drizzle migrations, stores content history, trending products, and supports user management.
+- **Smart Style System**: Integrates user ratings and AI evaluations for content quality assessment and recommendations.
+- **Automated Bulk Generator**: Supports scheduled and manual bulk content generation with customizable parameters and robust error handling.
 - **Perplexity Automation**: Scheduled cron job to automatically fetch trending product data daily.
-- **Webhook System**: Consolidates multiple platform captions into a single webhook payload for efficient integration with external automation platforms like Make.com.
-- **Spartan Format Enforcement**: A system that automatically cleans and transforms casual language into a professional tone, removing common filler words.
-- **Claude AI Suggestions System**: Stores and applies AI-generated recommendations by niche during content creation to enhance quality.
-- **CookAIng Marketing Engine**: Comprehensive multi-channel marketing platform with dedicated sidebar section featuring 15+ individual tool links including segments, A/B testing, personalization, form submissions, trends/seasonal campaigns, reports, cost tracking, attribution analysis, webhooks monitoring, email delivery testing, and developer tools. All pages are fully scaffolded with shadcn/ui components, mock data, responsive design, and consistent UX patterns.
+- **Webhook System**: Consolidates multiple platform captions into a single webhook payload for efficient integration.
+- **Spartan Format Enforcement**: Automatically cleans and transforms casual language into a professional tone.
+- **Claude AI Suggestions System**: Stores and applies AI-generated recommendations by niche during content creation.
+- **CookAIng Marketing Engine**: Comprehensive multi-channel marketing platform with dedicated sidebar section featuring 15+ individual tool links.
 
 ### UI/UX Decisions
-The platform utilizes Shadcn/ui components on Radix UI primitives, styled with Tailwind CSS for a modern and customizable interface. The user experience is enhanced with features like trending product auto-population, confirmation toasts, and clear display of generated content, including main content and platform-specific captions. Legal documentation and support pages are also integrated to provide transparency and assistance.
+The platform utilizes Shadcn/ui components on Radix UI primitives, styled with Tailwind CSS. The design incorporates a violet/purple gradient theme, neutral backgrounds, standardized spacing tokens, and consistent component styling (e.g., rounded-xl buttons, rounded-2xl cards). It includes a MarketingLayout for marketing pages and an enhanced analytics infrastructure for tracking conversions. UI/UX also features trending product auto-population, confirmation toasts, clear display of generated content, and integrated legal documentation.
 
 ### Technical Implementations
 - **AI Model Routing**: Logic to route content generation requests to appropriate AI models, with an emphasis on Claude AI.
 - **Platform Optimization**: Adapts generated content for specific platforms (TikTok, Instagram, YouTube, Twitter, Facebook) with strict length controls and prompt optimization.
-- **Affiliate Link Streamlining**: Shortens affiliate link formatting to optimize caption length.
-- **Dual AI Evaluation System**: Automatically evaluates generated content using both Claude and other AI models for comprehensive quality assessment, saving scores to the database.
-- **Parameter Unification**: Standardized `topRatedStyleUsed` parameter across frontend, backend, database, and webhooks for consistency.
-- **Scheduled Jobs Persistence**: Scheduled jobs are stored in the PostgreSQL database to ensure persistence across server restarts, with automatic resumption of interrupted jobs.
+- **Affiliate Link Streamlining**: Shortens affiliate link formatting for caption optimization.
+- **Dual AI Evaluation System**: Automatically evaluates generated content using both Claude and other AI models for comprehensive quality assessment.
+- **Parameter Unification**: Standardized `topRatedStyleUsed` parameter across all system layers for consistency.
+- **Scheduled Jobs Persistence**: Scheduled jobs are stored in the PostgreSQL database for persistence across server restarts and automatic resumption.
 
 ## External Dependencies
 
@@ -82,8 +63,11 @@ The platform utilizes Shadcn/ui components on Radix UI primitives, styled with T
 - **@tanstack/react-query**: Server state management and caching.
 - **tailwindcss**: Utility-first CSS framework.
 - **react-hook-form**: Form validation and management.
+- **wouter**: Fast and tiny client-side router.
+- **react-helmet**: For managing document head tags, including SEO metadata.
 
 ### Integrations
-- **Amazon Associates, ShareASale, Commission Junction**: Affiliate networks for monetization.
+- **Amazon Associates, ShareASale, Commission Junction**: Affiliate networks for monetization (currently experiencing rate limiting issues).
 - **Make.com**: For webhook automation.
 - **Google Analytics**: For custom event tracking and analytics.
+- **Replit Auth**: For user authentication.
