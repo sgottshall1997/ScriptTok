@@ -68,7 +68,7 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
       userId: devUserId,
       email: process.env.DEV_USER_EMAIL || 'dev@scripttok.local',
       name: process.env.DEV_USER_NAME || 'Dev User',
-      tierHint: 'pro'
+      tierHint: (process.env.DEV_USER_TIER || 'pro') as 'starter' | 'creator' | 'pro' | 'agency'
     };
     
     console.log(`[AuthGuard] 🔧 Dev user auto-injected:`, {
@@ -106,7 +106,7 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
       userId: devUserId,
       email: process.env.DEV_USER_EMAIL || 'dev@scripttok.local',
       name: process.env.DEV_USER_NAME || 'Dev User',
-      tierHint: 'pro'
+      tierHint: (process.env.DEV_USER_TIER || 'pro') as 'starter' | 'creator' | 'pro' | 'agency'
     };
     
     console.log(`[AuthGuard] 🔧 Dev user auto-injected after error:`, {
