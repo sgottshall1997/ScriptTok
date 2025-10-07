@@ -29,7 +29,10 @@ import {
   Square,
   Trash,
   Eye,
-  RefreshCw // Import RefreshCw for regeneration icon
+  RefreshCw,
+  Download,
+  Crown,
+  Lock
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import { useQuery } from '@tanstack/react-query';
@@ -37,6 +40,28 @@ import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
 import { ContentRating, SmartLearningToggle } from '@/components/ContentRating';
 import { ViralScoreDisplay } from '@/components/ViralScoreDisplay';
+import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Link } from 'wouter';
+
+// Usage data interface
+interface UsageData {
+  tier: 'free' | 'pro';
+  gpt: { used: number; limit: number; remaining: number };
+  claude: { used: number; limit: number; remaining: number };
+  trendAnalyses: { used: number; limit: number; remaining: number };
+  canBulkGenerate: boolean;
+  templatesUnlocked: number;
+}
+
+// Hook to fetch usage data
+const useUsageData = () => {
+  return useQuery<{ success: boolean; data: UsageData }>({
+    queryKey: ['/api/billing/usage'],
+    refetchOnMount: true,
+    staleTime: 0,
+  });
+};
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
@@ -55,6 +80,15 @@ const EnhancedContentHistory = () => {
   });
   const [sortBy, setSortBy] = useState('newest');
   const [evaluationData, setEvaluationData] = useState<Record<string, any>>({});
+
+  // Fetch usage data for tier detection
+  const { data: usageResponse, isLoading: usageLoading, error: usageError } = useUsageData();
+  const usage = usageResponse?.data;
+  
+  // Fail-safe: default to free tier on error
+  const userTier = usageError ? 'free' : (usage?.tier || 'free');
+  const isFreeUser = userTier === 'free';
+  const FREE_TIER_LIMIT = 10;
 
   // Load history from database API
   const { data: dbHistory, refetch: refetchDbHistory } = useQuery({
@@ -245,6 +279,7 @@ const EnhancedContentHistory = () => {
       });
     }
 
+    // Don't slice the array - keep full history so locked items can be shown with blur overlay
     setFilteredHistory(filtered);
   };
 
@@ -627,6 +662,74 @@ const EnhancedContentHistory = () => {
     }
   };
 
+  // Export functionality
+  const handleExport = (format: 'csv' | 'json') => {
+    if (isFreeUser) {
+      toast({
+        title: "Pro Feature",
+        description: "Export requires Pro - Upgrade to export unlimited content",
+        variant: "default",
+      });
+      return;
+    }
+
+    const dataToExport = filteredHistory.map(entry => ({
+      id: entry.id,
+      timestamp: formatDate(entry.timestamp),
+      productName: entry.productName,
+      niche: entry.niche,
+      tone: entry.tone,
+      contentType: entry.contentType,
+      templateUsed: entry.templateUsed,
+      content: extractCleanContent(entry.generatedOutput.content),
+      platforms: entry.platformsSelected?.join(', '),
+      viralScore: entry.viralScoreOverall || '',
+    }));
+
+    if (format === 'json') {
+      const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `content-history-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } else if (format === 'csv') {
+      const headers = ['ID', 'Timestamp', 'Product', 'Niche', 'Tone', 'Type', 'Template', 'Content', 'Platforms', 'Viral Score'];
+      const csvRows = [
+        headers.join(','),
+        ...dataToExport.map(row => [
+          row.id,
+          row.timestamp,
+          `"${row.productName}"`,
+          row.niche,
+          row.tone,
+          row.contentType,
+          row.templateUsed,
+          `"${row.content.replace(/"/g, '""')}"`,
+          `"${row.platforms}"`,
+          row.viralScore
+        ].join(','))
+      ];
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `content-history-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    toast({
+      title: "Export Complete",
+      description: `Content history exported as ${format.toUpperCase()}`,
+    });
+  };
+
 
   if (history.length === 0) {
     return (
@@ -677,6 +780,55 @@ const EnhancedContentHistory = () => {
         <div className="flex justify-between items-center mb-4">
           <div></div>
           <div className="flex gap-2">
+            {/* Export Button - Pro Only */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleExport('csv')}
+                      disabled={isFreeUser}
+                      className={isFreeUser ? "text-gray-400 cursor-not-allowed" : "text-purple-600 hover:text-purple-700"}
+                    >
+                      {isFreeUser && <Lock className="h-4 w-4 mr-2" />}
+                      {!isFreeUser && <Download className="h-4 w-4 mr-2" />}
+                      Export CSV
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                {isFreeUser && (
+                  <TooltipContent>
+                    <p>Export requires Pro - Upgrade to export unlimited content</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => handleExport('json')}
+                      disabled={isFreeUser}
+                      className={isFreeUser ? "text-gray-400 cursor-not-allowed" : "text-purple-600 hover:text-purple-700"}
+                    >
+                      {isFreeUser && <Lock className="h-4 w-4 mr-2" />}
+                      {!isFreeUser && <Download className="h-4 w-4 mr-2" />}
+                      Export JSON
+                    </Button>
+                  </div>
+                </TooltipTrigger>
+                {isFreeUser && (
+                  <TooltipContent>
+                    <p>Export requires Pro - Upgrade to export unlimited content</p>
+                  </TooltipContent>
+                )}
+              </Tooltip>
+            </TooltipProvider>
+
             {!bulkDeleteMode ? (
               <Button 
                 variant="outline" 
@@ -800,16 +952,115 @@ const EnhancedContentHistory = () => {
         </div>
 
         <div className="text-right mb-4">
-          <p className="text-sm text-gray-500">
-            Showing {filteredHistory.length} of {history.length} entries
-          </p>
+          {usageLoading ? (
+            <Skeleton className="h-5 w-48 ml-auto" />
+          ) : (
+            <>
+              {isFreeUser && filteredHistory.length > FREE_TIER_LIMIT ? (
+                <p className="text-sm text-gray-500">
+                  {FREE_TIER_LIMIT} unlocked, {filteredHistory.length - FREE_TIER_LIMIT} locked items
+                  <Badge variant="outline" className="ml-2 text-purple-600 border-purple-300">
+                    <Crown className="h-3 w-3 mr-1" />
+                    Pro: Unlock All {filteredHistory.length}
+                  </Badge>
+                </p>
+              ) : (
+                <p className="text-sm text-gray-500">
+                  Showing {filteredHistory.length} of {history.length} entries
+                </p>
+              )}
+            </>
+          )}
         </div>
       </div>
 
       {/* History Cards */}
       <div className="space-y-4">
-        {filteredHistory.map((entry) => (
-          <Card key={entry.id} className="overflow-hidden">
+        {filteredHistory.map((entry, index) => {
+          const isLocked = isFreeUser && index >= FREE_TIER_LIMIT;
+          const showUpgradeCTA = isFreeUser && index === FREE_TIER_LIMIT && filteredHistory.length > FREE_TIER_LIMIT;
+          
+          return (
+            <React.Fragment key={entry.id}>
+              {/* Upgrade CTA Card - Insert after 10th item for free users */}
+              {showUpgradeCTA && (
+                <Card className="overflow-hidden border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50" data-testid="upgrade-cta-card">
+                  <CardHeader className="pb-3">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-3 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg">
+                        <Crown className="h-6 w-6 text-white" />
+                      </div>
+                      <div>
+                        <CardTitle className="text-2xl text-purple-900">
+                          Unlock Full Content History with Pro
+                        </CardTitle>
+                        <p className="text-purple-700 mt-1">
+                          Free users can view 10 recent items. Upgrade to Pro to access unlimited history, export content, and advanced filtering!
+                        </p>
+                      </div>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                      <div className="flex items-center gap-2 text-purple-800">
+                        <span className="text-lg">📚</span>
+                        <span className="font-medium">Unlimited content history access</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-purple-800">
+                        <span className="text-lg">📥</span>
+                        <span className="font-medium">Export to CSV/JSON</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-purple-800">
+                        <span className="text-lg">🔍</span>
+                        <span className="font-medium">Advanced search and filtering</span>
+                      </div>
+                      <div className="flex items-center gap-2 text-purple-800">
+                        <span className="text-lg">📊</span>
+                        <span className="font-medium">Content analytics</span>
+                      </div>
+                    </div>
+                    <Link href="/account">
+                      <Button 
+                        className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-6 text-lg"
+                        data-testid="button-upgrade-to-pro"
+                      >
+                        <Crown className="h-5 w-5 mr-2" />
+                        Upgrade to Pro
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* History Item Card */}
+              <Card 
+                className={`overflow-hidden ${isLocked ? 'relative' : ''}`}
+                data-testid={`card-history-${entry.id}`}
+              >
+                {/* Blur overlay for locked items */}
+                {isLocked && (
+                  <div className="absolute inset-0 z-10 backdrop-blur-sm bg-white/40 flex items-center justify-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-sm">
+                      <Lock className="h-12 w-12 mx-auto text-purple-500 mb-3" />
+                      <Badge className="mb-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 text-base">
+                        <Crown className="h-4 w-4 mr-2" />
+                        Pro Only
+                      </Badge>
+                      <p className="text-gray-700 font-medium mb-4">
+                        Upgrade to Pro to view all your content history
+                      </p>
+                      <Link href="/account">
+                        <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                          <Crown className="h-4 w-4 mr-2" />
+                          Upgrade to Pro
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Card Content - apply blur if locked */}
+                <div className={isLocked ? 'blur-[2px]' : ''}>
             <CardHeader className="pb-3">
               <div className="flex justify-between items-start">
                 <div className="flex items-start gap-3 flex-1">
@@ -1090,8 +1341,11 @@ const EnhancedContentHistory = () => {
                 </CardContent>
               </CollapsibleContent>
             </Collapsible>
-          </Card>
-        ))}
+                </div>
+              </Card>
+            </React.Fragment>
+          );
+        })}
       </div>
 
     </div>
