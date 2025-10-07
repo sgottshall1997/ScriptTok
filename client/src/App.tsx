@@ -17,8 +17,6 @@ import EnhancedContentHistory from "@/pages/EnhancedContentHistory";
 import TrendHistory from "@/pages/TrendHistory";
 import AboutPage from "@/pages/about";
 import FAQPage from "@/pages/faq";
-import PrivacyPolicyPage from "@/pages/privacy";
-import TermsPage from "@/pages/terms";
 import ContactPage from "@/pages/contact";
 import GenerateContent from "@/pages/GenerateContent";
 import TrendingAIPicks from "@/pages/TrendingAIPicks";
@@ -113,8 +111,6 @@ function MainAppRouter() {
               <Route path="/about" component={AboutPage} />
               <Route path="/faq" component={FAQPage} />
               <Route path="/contact" component={ContactPage} />
-              <Route path="/privacy" component={PrivacyPolicyPage} />
-              <Route path="/terms" component={TermsPage} />
               
               {/* New Legal Pages */}
               <Route path="/terms-billing" component={TermsBillingPage} />

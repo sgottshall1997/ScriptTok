@@ -706,8 +706,8 @@ export const scriptTokSections: ScriptTokSection[] = [
       "Track regulatory compliance status"
     ],
     relatedLinks: [
-      { name: "Privacy Policy", path: "/privacy" },
-      { name: "Terms of Service", path: "/terms" }
+      { name: "Privacy Policy", path: "/privacy-cookies" },
+      { name: "Terms of Service", path: "/terms-billing" }
     ],
     notes: [
       "Compliance requirements vary by jurisdiction",
@@ -720,7 +720,7 @@ export const scriptTokSections: ScriptTokSection[] = [
     name: "Privacy Policy",
     description: "Comprehensive privacy policy covering data collection, usage, and protection practices.",
     icon: Shield,
-    path: "/privacy",
+    path: "/privacy-cookies",
     category: "Legal & Compliance",
     whatItDoes: "Details how user data is collected, stored, processed, and protected within the ScriptTok platform, including third-party integrations, data retention policies, and user rights regarding personal information.",
     setupRequirements: ["Review privacy practices", "Understand data handling"],
@@ -732,7 +732,7 @@ export const scriptTokSections: ScriptTokSection[] = [
       "Know your rights regarding personal data"
     ],
     relatedLinks: [
-      { name: "Terms of Service", path: "/terms" },
+      { name: "Terms of Service", path: "/terms-billing" },
       { name: "Compliance Center", path: "/compliance" },
       { name: "Contact", path: "/contact" }
     ],
@@ -747,7 +747,7 @@ export const scriptTokSections: ScriptTokSection[] = [
     name: "Terms of Service",
     description: "Legal terms and conditions governing the use of the GlowBot platform and services.",
     icon: FileCheck,
-    path: "/terms",
+    path: "/terms-billing",
     category: "Legal & Compliance",
     whatItDoes: "Establishes the legal agreement between users and ScriptTok, covering service usage, user responsibilities, limitations, intellectual property rights, and dispute resolution procedures.",
     setupRequirements: ["Read and understand terms", "Accept agreement to use services"],
@@ -759,7 +759,7 @@ export const scriptTokSections: ScriptTokSection[] = [
       "Understand dispute resolution procedures"
     ],
     relatedLinks: [
-      { name: "Privacy Policy", path: "/privacy" },
+      { name: "Privacy Policy", path: "/privacy-cookies" },
       { name: "Compliance Center", path: "/compliance" },
       { name: "Contact", path: "/contact" }
     ],

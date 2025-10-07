@@ -237,11 +237,11 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
               © {new Date().getFullYear()} ScriptTok. All rights reserved.
             </div>
             <div className="flex items-center space-x-6">
-              <Link href="/terms" className="text-sm text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-terms">
+              <Link href="/terms-billing" className="text-sm text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-terms">
                 Terms
               </Link>
               <span className="text-gray-400">|</span>
-              <Link href="/privacy" className="text-sm text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-privacy">
+              <Link href="/privacy-cookies" className="text-sm text-gray-600 hover:text-gray-900 transition-colors" data-testid="link-privacy">
                 Privacy
               </Link>
               <span className="text-gray-400">|</span>

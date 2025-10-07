@@ -797,13 +797,13 @@ const AboutPage: React.FC = () => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <Link href="/privacy">
+            <Link href="/privacy-cookies">
               <Button variant="outline" className="w-full justify-start">
                 <Shield className="h-4 w-4 mr-2" />
                 Privacy Policy
               </Button>
             </Link>
-            <Link href="/terms">
+            <Link href="/terms-billing">
               <Button variant="outline" className="w-full justify-start">
                 <Shield className="h-4 w-4 mr-2" />
                 Terms of Service
