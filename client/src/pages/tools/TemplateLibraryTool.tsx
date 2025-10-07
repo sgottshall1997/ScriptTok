@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { Filter, Eye, Zap, Hash, Layers, Globe, BarChart3 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -277,6 +278,8 @@ export default function TemplateLibraryTool() {
         primaryCTA={{ text: 'Explore Templates', onClick: handleFinalCTA }}
         gradient={true}
       />
+
+      <Footer />
     </>
   );
 }

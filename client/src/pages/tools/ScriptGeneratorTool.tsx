@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { Layers, Lightbulb, Sparkles, CheckCircle, Zap, BookOpen, Target, Volume2, Share2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -180,6 +181,8 @@ export default function ScriptGeneratorTool() {
         primaryCTA={{ text: 'Try Script Generator', onClick: handleFinalCTA }}
         gradient={true}
       />
+
+      <Footer />
     </>
   );
 }

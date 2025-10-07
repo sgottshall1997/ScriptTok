@@ -2,6 +2,7 @@ import { Helmet } from 'react-helmet';
 import { useLocation } from 'wouter';
 import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
+import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { Save, Search, BarChart3, FileText, TrendingUp, Star, Download } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -239,6 +240,8 @@ export default function HistoryTool() {
         primaryCTA={{ text: 'View Your History', onClick: handleFinalCTA }}
         gradient={true}
       />
+
+      <Footer />
     </>
   );
 }
