@@ -1,0 +1,83 @@
+Replit Agent Prompt: Adapt BuildAIde Authentication for ScriptTok
+Please review and update all files in the AuthForFutureIntegration folder to be ScriptTok-ready. These files are currently configured for a BuildAIde application and need comprehensive updates for ScriptTok branding, functionality, and integration preparation. Do NOT integrate these files into the main app yet - just prepare them for future integration.
+
+Required Changes:
+1. Branding & Terminology Updates
+Replace all "BuildAIde" references with "ScriptTok"
+Update all "renovation" and "construction" related copy to content creation/TikTok script generation terminology
+Change taglines from renovation/building themes to viral content/AI scriptwriting themes
+Update welcome messages and descriptions to reflect ScriptTok's purpose (AI-powered TikTok script generation)
+2. Visual & Design Updates
+Replace BuildAIde logo references (logoImage) with ScriptTok branding
+Update the auth layout background image (rectangle43Image) to reflect content creation/social media theme instead of construction
+Change color scheme from yellow accent (#F6E001) to ScriptTok's purple/pink gradient theme
+Update the royal blue (royalBlue) references to match ScriptTok's brand colors (purple-600/pink-600)
+3. Email Service Configuration
+Update email templates in server/services/email.service.ts:
+Change sender branding from "BuildAIde Team" to "ScriptTok Team"
+Update email subject lines for ScriptTok context
+Modify email HTML templates to reflect content creation/viral content themes
+Update frontend URL references to ScriptTok domains
+Keep the Gmail/Outlook configuration intact
+4. Interface & Type Updates
+Review server/interfaces/auth.interface.ts to ensure all types align with ScriptTok's user model
+Verify phone number field is still needed for ScriptTok (may want email-only signup)
+Ensure all auth response types match ScriptTok's expected data structure
+5. Controller Logic Updates
+In server/controllers/auth.controller.ts:
+Update all console log prefixes from BuildAIde context to ScriptTok
+Verify JWT secret environment variable names match ScriptTok's conventions
+Ensure cookie settings align with ScriptTok's security requirements
+Review OTP expiration times (currently 10 minutes) for ScriptTok's needs
+6. Frontend Component Updates
+Update all auth component copy in client/components/auth/:
+signup.tsx: Change "Register Your Account" messaging to ScriptTok context
+login.tsx: Update "Where Every Home Project Feels in Control" to viral content theme
+forgot-password.tsx: Update "Lost Your Password? We've Got You" messaging
+create-new-password.tsx: Keep security messaging but update branding
+password-reset-success.tsx: Update success messaging
+two-step-verification.tsx: Update verification flow copy
+auth-layout.tsx: Complete overhaul of promotional visual content
+7. Route & API Alignment
+Verify server/routes/auth.routes.ts endpoint paths match ScriptTok's API structure
+Ensure all /auth/* routes are namespaced appropriately for future integration
+Keep test email endpoint for development purposes
+8. Security & Environment Variables
+Document all required environment variables in the README:
+JWT_SECRET
+JWT_REFRESH_SECRET
+EMAIL_USER
+EMAIL_PASSWORD
+EMAIL_SERVICE
+FRONTEND_URL
+Add ScriptTok-specific security considerations
+9. Mobile Responsiveness
+Verify all auth forms work on mobile (already has some mobile styles)
+Ensure ScriptTok branding displays correctly on smaller screens
+Test that the auth layout promotional section hides properly on mobile
+10. Documentation Updates
+Update AuthForFutureIntegration/README.md:
+Change all BuildAIde references to ScriptTok
+Add specific ScriptTok integration notes
+Document any ScriptTok-specific auth flows or requirements
+List files ready for integration vs. files needing more work
+Key Files to Update (in order of priority):
+client/components/auth/auth-layout.tsx - Primary branding/visual changes
+server/services/email.service.ts - Email templates and branding
+All client/components/auth/*.tsx files - Copy and messaging
+server/controllers/auth.controller.ts - Logging and branding
+AuthForFutureIntegration/README.md - Documentation
+Do NOT Change:
+Authentication logic and security implementations
+Database schema references (keep as-is for now)
+Core JWT token handling
+OTP generation and validation logic
+Email transport configuration structure
+Testing Checklist to Include in README:
+ All ScriptTok branding references are correct
+ Email templates render with ScriptTok branding
+ All user-facing copy reflects content creation context
+ Mobile responsive design maintained
+ Environment variables documented
+ Integration instructions updated
+Please make these files ScriptTok-ready while keeping them isolated in the AuthForFutureIntegration folder for future integration.

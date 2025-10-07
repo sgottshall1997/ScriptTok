@@ -10,8 +10,7 @@ import { insertContentHistorySchema } from "@shared/schema";
 import rateLimit from "express-rate-limit";
 import { logFeedback } from "../database/feedbackLogger";
 import { selectBestTemplate } from "../services/surpriseMeSelector";
-import { isAuthenticated, AuthenticatedRequest } from "../middleware/supabaseAuth";
-import { getUserIdFromSupabaseId } from "../middleware/supabaseUserHelper";
+import { isAuthenticated } from "../replitAuth";
 
 // Helper function to extract hashtags from text
 function extractHashtags(text: string): string[] {
@@ -188,7 +187,7 @@ const contentCache = new CacheService<CachedContent>({
   maxSize: 500 // Store up to 500 generations
 });
 
-router.post("/", isAuthenticated, contentGenerationLimiter, async (req: AuthenticatedRequest, res) => {
+router.post("/", isAuthenticated, contentGenerationLimiter, async (req, res) => {
   try {
     // Validate request body against schema
     const result = generateContentSchema.safeParse(req.body);
@@ -281,15 +280,8 @@ router.post("/", isAuthenticated, contentGenerationLimiter, async (req: Authenti
     const { product, viralTopic, contentMode = 'affiliate', tone, niche, platforms, contentType, isVideoContent, videoDuration: videoLength, useSmartStyle } = result.data;
     const templateType = finalTemplateType;
     
-    // Get authenticated userId from Supabase and convert to database integer ID
-    if (!req.userId) {
-      return res.status(401).json({
-        success: false,
-        error: "Unauthorized - user ID not found"
-      });
-    }
-    
-    const userId = await getUserIdFromSupabaseId(req.userId, req.user?.email);
+    // Get authenticated userId
+    const userId = (req as any).user.claims.sub;
     
     // Determine the main subject based on content mode
     const mainSubject = contentMode === 'viral' ? viralTopic : product;

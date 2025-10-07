@@ -1,11 +1,11 @@
 import cron from 'node-cron';
 import { log } from '../vite';
 
-let perplexityCronJob: ReturnType<typeof cron.schedule> | null = null;
+let perplexityCronJob: cron.ScheduledTask | null = null;
 
 /**
- * Initialize the Automated Daily Trend Fetcher cron job
- * Runs daily at midnight UTC to fetch all trends and save to cache
+ * Initialize the Perplexity automation cron job
+ * Runs daily at 5:00 AM ET to fetch trending products
  */
 export function initializePerplexityCron() {
   // Stop existing job if running
@@ -14,60 +14,61 @@ export function initializePerplexityCron() {
     perplexityCronJob.destroy();
   }
 
-  // Schedule daily at midnight UTC
-  // Cron pattern: "0 0 * * *" = every day at midnight UTC
-  perplexityCronJob = cron.schedule('0 0 * * *', async () => {
+  // Schedule daily at 5:00 AM ET (09:00 UTC)
+  // Cron pattern: "0 9 * * *" = every day at 9:00 AM UTC (5:00 AM ET)
+  perplexityCronJob = cron.schedule('0 9 * * *', async () => {
     try {
-      log('🔄 DAILY TREND AUTOMATION: Starting daily trend fetch at midnight UTC');
+      log('🔄 PERPLEXITY AUTOMATION: Starting daily trend fetch at 5:00 AM ET');
       
       // Import and check safeguards
       const { getSafeguardStatus } = await import('../config/generation-safeguards');
       const safeguards = getSafeguardStatus();
       
       if (!safeguards.ALLOW_TREND_FETCHING) {
-        log('🚫 DAILY TREND AUTOMATION: Trend fetching disabled - skipping');
+        log('🚫 PERPLEXITY AUTOMATION: Trend fetching disabled - skipping');
         return;
       }
 
-      // Import and trigger the new daily trend fetcher
-      const { fetchDailyTrends } = await import('./dailyTrendFetcher');
+      // Import and trigger all niche fetchers
+      const { fetchTrendingProducts } = await import('../api/trending');
       
-      log('🎯 DAILY TREND AUTOMATION: Fetching trends for all niches...');
+      log('🎯 PERPLEXITY AUTOMATION: Fetching trending products for all niches...');
       
-      // Run the comprehensive daily trend fetch
-      const result = await fetchDailyTrends();
+      // Fetch trending products (this will automatically fetch for all niches)
+      await fetchTrendingProducts();
       
-      log(`✅ DAILY TREND AUTOMATION: Completed - ${result.successCount} successful, ${result.failureCount} failed`);
+      log('✅ PERPLEXITY AUTOMATION: Daily trend fetch completed successfully');
       
     } catch (error) {
-      console.error('❌ DAILY TREND AUTOMATION: Daily trend fetch failed:', error);
+      console.error('❌ PERPLEXITY AUTOMATION: Daily trend fetch failed:', error);
     }
   }, {
-    timezone: 'UTC'
+    scheduled: true,
+    timezone: 'America/New_York' // ET timezone
   });
 
-  log('✅ DAILY TREND AUTOMATION: Daily cron job scheduled for midnight UTC');
+  log('✅ PERPLEXITY AUTOMATION: Daily cron job scheduled for 5:00 AM ET');
 }
 
 /**
- * Stop the daily trend automation cron job
+ * Stop the Perplexity automation cron job
  */
 export function stopPerplexityCron() {
   if (perplexityCronJob) {
     perplexityCronJob.stop();
     perplexityCronJob.destroy();
     perplexityCronJob = null;
-    log('🚫 DAILY TREND AUTOMATION: Cron job stopped');
+    log('🚫 PERPLEXITY AUTOMATION: Daily cron job stopped');
   }
 }
 
 /**
- * Get the status of the daily trend automation cron job
+ * Get the status of the Perplexity cron job
  */
 export function getPerplexityCronStatus() {
   return {
-    isRunning: perplexityCronJob !== null,
+    isRunning: perplexityCronJob ? perplexityCronJob.running : false,
     scheduled: perplexityCronJob !== null,
-    nextRun: perplexityCronJob ? 'Midnight UTC daily' : null
+    nextRun: perplexityCronJob ? '5:00 AM ET daily' : null
   };
 }

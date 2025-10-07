@@ -253,233 +253,149 @@ router.post("/refresh/:platform", async (req, res) => {
   }
 });
 
-// Get trending products from trendHistory cache
+// Get trending products from storage
 router.get("/products", async (req, res) => {
   try {
-    console.log("🔄 Reading cached AI trending picks from trendHistory");
+    // Get product limit from query param or use default
+    const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
 
     // Get specific niche if provided
     const niche = req.query.niche as string;
 
-    let cachedProducts: any[] = [];
-    let lastUpdated: Date | null = null;
-
+    let trendingProducts;
     if (niche) {
-      // Get products for specific niche from cache
-      const cached = await storage.getTrendHistoryBySourceAndNiche(
-        'ai_trending_picks',
-        niche,
-        50,
-        0
-      );
+      // Always get exactly 3 products per niche when a specific niche is requested
+      const EXACT_NICHE_PRODUCT_COUNT = 3;
+      trendingProducts = await storage.getTrendingProductsByNiche(niche, EXACT_NICHE_PRODUCT_COUNT);
 
-      if (cached.length > 0) {
-        lastUpdated = cached[0].fetchedAt;
-        
-        // Reconstruct product objects from cached data
-        cachedProducts = cached.map(entry => {
-          const productData = entry.productData as any || {};
-          return {
-            id: entry.id,
-            title: entry.productTitle || 'Unknown Product',
-            mentions: entry.productMentions || 0,
-            engagement: entry.productEngagement || 0,
-            source: entry.productSource || 'perplexity',
-            reason: entry.productReason || '',
-            description: entry.productDescription || '',
-            viralKeywords: entry.viralKeywords || [],
-            niche: entry.niche,
-            // Extract from productData JSON
-            price: productData.price || null,
-            priceNumeric: productData.priceNumeric || null,
-            priceCurrency: productData.priceCurrency || 'USD',
-            priceType: productData.priceType || 'one-time',
-            asin: productData.asin || null,
-            brand: productData.brand || null,
-            // Metadata
-            fetchedAt: entry.fetchedAt,
-            dataSource: entry.productSource || 'perplexity',
-            sourceType: 'cached'
-          };
-        });
-      }
-    } else {
-      // Get products for all niches from cache
-      for (const nicheItem of NICHES) {
-        const cached = await storage.getTrendHistoryBySourceAndNiche(
-          'ai_trending_picks',
-          nicheItem,
-          10,
-          0
-        );
+      // If we don't have exactly 3 products, make sure we get exactly 3
+      if (trendingProducts.length !== EXACT_NICHE_PRODUCT_COUNT) {
+        // If we have more than 3, truncate to exactly 3
+        if (trendingProducts.length > EXACT_NICHE_PRODUCT_COUNT) {
+          trendingProducts = trendingProducts.slice(0, EXACT_NICHE_PRODUCT_COUNT);
+        }
+        // If we have fewer than 3, we need to make sure we have exactly 3
+        else if (trendingProducts.length < EXACT_NICHE_PRODUCT_COUNT) {
+          // Get all products of this niche from all scrapers to ensure we have enough options
+          const allProducts = await storage.getTrendingProductsByNiche(niche, 100);
 
-        if (cached.length > 0) {
-          if (!lastUpdated || cached[0].fetchedAt > lastUpdated) {
-            lastUpdated = cached[0].fetchedAt;
+          // If we have enough products, just take the top 3
+          if (allProducts.length >= EXACT_NICHE_PRODUCT_COUNT) {
+            trendingProducts = allProducts.slice(0, EXACT_NICHE_PRODUCT_COUNT);
           }
+          // If we still don't have enough, we'll need to fill in with products from other niches
+          else {
+            // Get all products and filter for those that could be relevant to this niche
+            const allAvailableProducts = await storage.getTrendingProducts(100);
 
-          // Add products from this niche
-          const nicheProducts = cached.map(entry => {
-            const productData = entry.productData as any || {};
-            return {
-              id: entry.id,
-              title: entry.productTitle || 'Unknown Product',
-              mentions: entry.productMentions || 0,
-              engagement: entry.productEngagement || 0,
-              source: entry.productSource || 'perplexity',
-              reason: entry.productReason || '',
-              description: entry.productDescription || '',
-              viralKeywords: entry.viralKeywords || [],
-              niche: entry.niche,
-              price: productData.price || null,
-              priceNumeric: productData.priceNumeric || null,
-              priceCurrency: productData.priceCurrency || 'USD',
-              priceType: productData.priceType || 'one-time',
-              asin: productData.asin || null,
-              brand: productData.brand || null,
-              fetchedAt: entry.fetchedAt,
-              dataSource: entry.productSource || 'perplexity',
-              sourceType: 'cached'
-            };
-          });
+            // Prioritize products with matching niche, then add additional ones until we have 3
+            const existingIds = new Set(trendingProducts.map(p => p.id));
 
-          cachedProducts.push(...nicheProducts);
+            for (const product of allAvailableProducts) {
+              // Skip products we already have
+              if (existingIds.has(product.id)) continue;
+
+              // Add this product
+              trendingProducts.push(product);
+              existingIds.add(product.id);
+
+              // Stop when we reach the target count
+              if (trendingProducts.length >= EXACT_NICHE_PRODUCT_COUNT) break;
+            }
+
+            // Limit to exactly 3 (just in case)
+            trendingProducts = trendingProducts.slice(0, EXACT_NICHE_PRODUCT_COUNT);
+          }
         }
       }
-    }
-
-    if (cachedProducts.length === 0) {
-      return res.status(404).json({
-        error: "No cached AI trending picks available. Run daily trend fetcher first.",
-        niche: niche || 'all'
-      });
-    }
-
-    console.log(`📦 Returning ${cachedProducts.length} cached products, last updated: ${lastUpdated}`);
-
-    res.json({
-      success: true,
-      count: cachedProducts.length,
-      data: cachedProducts,
-      lastUpdated: lastUpdated?.toISOString() || new Date().toISOString(),
-      source: 'cached'
-    });
-  } catch (error) {
-    console.error("Error reading AI trending picks from cache:", error);
-    res.status(500).json({
-      error: "Failed to read cached trending products",
-      details: error instanceof Error ? error.message : "Unknown error"
-    });
-  }
-});
-
-// GET /api/trends/status - Get status of cached trends
-router.get("/status", async (req, res) => {
-  try {
-    console.log("🔍 Checking trends cache status");
-
-    // Get the most recent entry from trendHistory to determine last update
-    const allHistory = await storage.getTrendHistory(1, 0);
-    
-    if (allHistory.length === 0) {
-      return res.json({
-        lastUpdate: null,
-        trendsInCache: 0,
-        status: 'empty',
-        message: 'No trends cached yet. Run daily trend fetcher first.',
-        niches: []
-      });
-    }
-
-    const lastUpdate = allHistory[0].fetchedAt;
-    const lastUpdateTime = new Date(lastUpdate).getTime();
-    const now = Date.now();
-    const hoursSinceUpdate = (now - lastUpdateTime) / (1000 * 60 * 60);
-
-    // Check status based on age
-    let status: 'healthy' | 'stale' | 'outdated';
-    if (hoursSinceUpdate < 24) {
-      status = 'healthy';
-    } else if (hoursSinceUpdate < 48) {
-      status = 'stale';
     } else {
-      status = 'outdated';
+      trendingProducts = await storage.getTrendingProducts(limit);
     }
 
-    // Get counts per niche and source type
-    const nicheStats: any[] = [];
-    
-    for (const niche of NICHES) {
-      // Count trend forecaster entries
-      const forecasterEntries = await storage.getTrendHistoryBySourceAndNiche(
-        'trend_forecaster',
-        niche,
-        1000,
-        0
-      );
+    // Save to trend history if we have products and haven't saved recently
+    if (trendingProducts.length > 0) {
+      try {
+        // Group products by niche for history saving
+        const productsByNiche: Record<string, any[]> = {};
 
-      // Count AI trending picks entries
-      const aiPicksEntries = await storage.getTrendHistoryBySourceAndNiche(
-        'ai_trending_picks',
-        niche,
-        1000,
-        0
-      );
+        trendingProducts.forEach(product => {
+          const niche = product.niche || 'unknown';
+          if (!productsByNiche[niche]) {
+            productsByNiche[niche] = [];
+          }
+          productsByNiche[niche].push(product);
+        });
 
-      nicheStats.push({
-        niche,
-        trendForecasterCount: forecasterEntries.length,
-        aiTrendingPicksCount: aiPicksEntries.length,
-        totalCount: forecasterEntries.length + aiPicksEntries.length,
-        lastUpdate: forecasterEntries.length > 0 
-          ? forecasterEntries[0].fetchedAt 
-          : (aiPicksEntries.length > 0 ? aiPicksEntries[0].fetchedAt : null)
-      });
+        // Save each niche separately, checking for recent entries
+        for (const [niche, nicheProducts] of Object.entries(productsByNiche)) {
+          const recentHistory = await storage.getTrendHistoryBySourceAndNiche(
+            'ai_trending_picks',
+            niche,
+            1,
+            0
+          );
+
+          const lastSavedTime = recentHistory.length > 0
+            ? new Date(recentHistory[0].fetchedAt).getTime()
+            : 0;
+
+          const sixHoursAgo = Date.now() - (6 * 60 * 60 * 1000);
+
+          // Only save if we don't have recent entries (within 6 hours for this endpoint)
+          if (lastSavedTime < sixHoursAgo) {
+            for (const product of nicheProducts.slice(0, 5)) { // Limit to 5 products per niche
+              const historyEntry = {
+                sourceType: 'ai_trending_picks' as const,
+                niche: niche,
+                productTitle: product.title,
+                productMentions: product.mentions || 0,
+                productEngagement: product.engagement || 0,
+                productSource: product.dataSource || 'perplexity',
+                productReason: product.reason || '',
+                productDescription: product.description || '',
+                viralKeywords: product.viralKeywords || [],
+                productData: {
+                  price: product.price || null,
+                  priceNumeric: product.priceNumeric || null,
+                  priceCurrency: product.priceCurrency || 'USD',
+                  priceType: product.priceType || 'one-time',
+                  asin: product.asin || null,
+                  trendCategory: product.trendCategory || null,
+                  videoCount: product.videoCount || null,
+                  growthPercentage: product.growthPercentage || null,
+                  trendMomentum: product.trendMomentum || null,
+                  // Ensure we capture all available pricing data
+                  title: product.title,
+                  source: product.source,
+                  mentions: product.mentions,
+                  engagement: product.engagement,
+                  dataSource: product.dataSource
+                },
+                rawData: {
+                  sourceUrl: product.sourceUrl || null,
+                  perplexityNotes: product.perplexityNotes || null,
+                  fetchedAt: product.fetchedAt || product.createdAt,
+                  // Include the complete product object for debugging
+                  fullProduct: product
+                }
+              };
+
+              await storage.saveTrendHistory(historyEntry);
+            }
+            console.log(`💾 Saved AI trending picks for ${niche} to history via /products endpoint`);
+          }
+        }
+      } catch (saveError) {
+        console.error('❌ Error saving AI trending picks to history via /products endpoint:', saveError);
+        // Don't fail the main request if saving fails
+      }
     }
 
-    const totalTrends = nicheStats.reduce((sum, stat) => sum + stat.totalCount, 0);
-
-    res.json({
-      lastUpdate: lastUpdate,
-      hoursSinceUpdate: Math.round(hoursSinceUpdate * 10) / 10,
-      trendsInCache: totalTrends,
-      status,
-      message: status === 'healthy' 
-        ? 'Trends are up to date' 
-        : status === 'stale' 
-          ? 'Trends are getting old, consider refreshing'
-          : 'Trends are outdated, refresh recommended',
-      niches: nicheStats
-    });
-
+    res.json(trendingProducts);
   } catch (error) {
-    console.error("Error checking trends cache status:", error);
+    console.error("Error fetching trending products from storage:", error);
     res.status(500).json({
-      error: "Failed to check trends cache status",
-      details: error instanceof Error ? error.message : "Unknown error"
-    });
-  }
-});
-
-// POST /api/trends/fetch-daily - Manually trigger daily trend fetch (for testing)
-router.post("/fetch-daily", async (req, res) => {
-  try {
-    console.log("🚀 Manual trigger: Starting daily trend fetch...");
-
-    const { fetchDailyTrends } = await import("../services/dailyTrendFetcher");
-    
-    const status = await fetchDailyTrends();
-
-    res.json({
-      success: true,
-      message: "Daily trend fetch completed",
-      status
-    });
-  } catch (error) {
-    console.error("Error in manual daily trend fetch:", error);
-    res.status(500).json({
-      success: false,
-      error: "Failed to fetch daily trends",
+      error: "Failed to fetch trending products",
       details: error instanceof Error ? error.message : "Unknown error"
     });
   }

@@ -47,7 +47,8 @@ import {
   Send,
   Wrench,
   BookOpen,
-  Building
+  Building,
+  Lightbulb
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { isAmazonEnabled } from '@shared/constants';
@@ -68,6 +69,7 @@ const sidebarData: SidebarCategory[] = [
   {
     name: "",
     items: [
+      { name: "Landing Page", href: "/", icon: Lightbulb },
       { name: "Trend Dashboard", href: "/dashboard", icon: Home },
       { name: "AI Content Studio", href: "/generate", icon: Sparkles },
       { name: "Content History & Analytics", href: "/content-history", icon: History },

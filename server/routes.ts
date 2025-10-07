@@ -1,8 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { isAuthenticated, AuthenticatedRequest } from "./middleware/supabaseAuth";
-import { getUserIdFromSupabaseId } from "./middleware/supabaseUserHelper";
+import { setupAuth, isAuthenticated } from "./replitAuth";
 
 // Essential imports for TikTok Viral Product Generator
 import { generateContentRouter } from "./api/generateContent";
@@ -33,53 +32,32 @@ import { eq } from "drizzle-orm";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Health check endpoints (no auth required)
-  app.get('/health/server', (req, res) => {
-    res.json({
-      ok: true,
-      time: new Date().toISOString(),
-      uptime: process.uptime(),
-      envMode: process.env.NODE_ENV || 'development'
-    });
-  });
+  // Setup Replit Auth
+  await setupAuth(app);
 
-  // Auth endpoints (with Supabase middleware)
-  app.get('/api/auth/user', isAuthenticated, async (req: AuthenticatedRequest, res) => {
+  // Auth endpoint
+  app.get('/api/auth/user', isAuthenticated, async (req: any, res) => {
     try {
-      const userId = req.userId;
-      if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
-      }
-      res.json(req.user);
+      const userId = req.user.id;
+      const user = await storage.getUser(userId);
+      res.json(user);
     } catch (error) {
       console.error("Error fetching user:", error);
       res.status(500).json({ message: "Failed to fetch user" });
     }
   });
 
-  // Logout endpoint - client-side handles Supabase logout
-  app.post('/api/logout', async (req, res) => {
-    try {
-      // Supabase logout is handled on the client side
-      res.json({ success: true, message: 'Logout successful' });
-    } catch (error) {
-      console.error("Logout error:", error);
-      res.status(500).json({ success: false, message: 'Logout failed' });
-    }
-  });
-
   // Essential TikTok Viral Product Generator routes
-  // Apply Supabase middleware only to routes that need authentication
   app.use('/api/generate-content', generateContentRouter);
-  app.use('/api/trending', trendingRouter); // Public - no auth needed
-  app.use('/api/scraper-status', scraperStatusRouter); // Public - no auth needed
-  app.use('/api/history', historyRouter); // Protected - auth handled within router
+  app.use('/api/trending', trendingRouter);
+  app.use('/api/scraper-status', scraperStatusRouter);
+  app.use('/api/history', historyRouter);
   
-  // Perplexity trends for viral research (public - no auth)
+  // Perplexity trends for viral research
   app.use('/api/perplexity-trends', perplexityTrendsRouter);
   app.use('/api/perplexity-status', perplexityStatusRouter);
   
-  // Perplexity Intelligence System routes (public - no auth for trend data)
+  // Perplexity Intelligence System routes
   app.use('/api/trend-forecast', trendForecastRouter);
   app.use('/api/product-research', productResearchRouter);
   app.use('/api/trend-research', trendResearchRouter);
@@ -122,14 +100,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   
   // Content history alias endpoint (protected)
-  app.get('/api/content-history', isAuthenticated, async (req: AuthenticatedRequest, res) => {
+  app.get('/api/content-history', isAuthenticated, async (req: any, res) => {
     try {
-      if (!req.userId) {
-        return res.status(401).json({ success: false, error: 'Unauthorized' });
-      }
-      
-      const userId = await getUserIdFromSupabaseId(req.userId, req.user?.email);
-      
+      const userId = req.user.claims.sub;
       const limit = req.query.limit ? parseInt(req.query.limit as string) : 50;
       const offset = req.query.offset ? parseInt(req.query.offset as string) : 0;
       
@@ -154,22 +127,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // DISABLED: Basic usage tracking endpoint - storage.getTodayApiUsage() method doesn't exist
-  // app.get('/api/usage', async (req, res) => {
-  //   try {
-  //     const today = await storage.getTodayApiUsage();
-  //     
-  //     res.json({
-  //       today,
-  //       weekly: 0, // Simplified for TikTok Viral Product Generator
-  //       monthly: 0,
-  //       limit: 500 // Monthly limit
-  //     });
-  //   } catch (error: any) {
-  //     console.error("Error fetching API usage:", error);
-  //     res.status(500).json({ error: "Failed to fetch API usage" });
-  //   }
-  // });
+  // Basic usage tracking endpoint
+  app.get('/api/usage', async (req, res) => {
+    try {
+      const today = await storage.getTodayApiUsage();
+      
+      res.json({
+        today,
+        weekly: 0, // Simplified for TikTok Viral Product Generator
+        monthly: 0,
+        limit: 500 // Monthly limit
+      });
+    } catch (error) {
+      console.error("Error fetching API usage:", error);
+      res.status(500).json({ error: "Failed to fetch API usage" });
+    }
+  });
 
   // Prompt structure endpoint for Template Explorer transparency
   app.post('/api/prompt-structure', async (req, res) => {
@@ -215,7 +188,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         tone: promptStructure.templateMetadata.tone,
         contentFormat: promptStructure.templateMetadata.contentFormat
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('Error generating prompt structure:', error);
       res.status(500).json({
         error: 'Failed to generate prompt structure',
@@ -224,36 +197,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
-  // DISABLED: Get scraper health endpoint - storage.getScraperStatus() method doesn't exist
-  // app.get('/api/scraper-health', async (req, res) => {
-  //   try {
-  //     const scraperHealth = await storage.getScraperStatus();
-  //     res.json(scraperHealth);
-  //   } catch (error: any) {
-  //     console.error("Error fetching scraper health:", error);
-  //     res.status(500).json({ error: "Failed to fetch scraper health" });
-  //   }
-  // });
+  // Get scraper health endpoint
+  app.get('/api/scraper-health', async (req, res) => {
+    try {
+      const scraperHealth = await storage.getScraperStatus();
+      res.json(scraperHealth);
+    } catch (error) {
+      console.error("Error fetching scraper health:", error);
+      res.status(500).json({ error: "Failed to fetch scraper health" });
+    }
+  });
   
-  // DISABLED: Get API usage endpoint - multiple storage methods don't exist
-  // app.get('/api/usage', async (req, res) => {
-  //   try {
-  //     const apiUsage = await storage.getApiUsageStats();
-  //     const today = await storage.getTodayApiUsage();
-  //     const weeklyUsage = await storage.getWeeklyApiUsage();
-  //     const monthlyUsage = await storage.getMonthlyApiUsage();
-  //     
-  //     res.json({
-  //       today,
-  //       weekly: weeklyUsage,
-  //       monthly: monthlyUsage,
-  //       limit: 500 // Monthly limit
-  //     });
-  //   } catch (error: any) {
-  //     console.error("Error fetching API usage:", error);
-  //     res.status(500).json({ error: "Failed to fetch API usage" });
-  //   }
-  // });
+  // Get API usage endpoint
+  app.get('/api/usage', async (req, res) => {
+    try {
+      const apiUsage = await storage.getApiUsageStats();
+      const today = await storage.getTodayApiUsage();
+      const weeklyUsage = await storage.getWeeklyApiUsage();
+      const monthlyUsage = await storage.getMonthlyApiUsage();
+      
+      res.json({
+        today,
+        weekly: weeklyUsage,
+        monthly: monthlyUsage,
+        limit: 500 // Monthly limit
+      });
+    } catch (error) {
+      console.error("Error fetching API usage:", error);
+      res.status(500).json({ error: "Failed to fetch API usage" });
+    }
+  });
 
   // Cooking content endpoints
   app.get('/api/cooking/ingredient-of-day', async (req, res) => {
@@ -283,7 +256,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       };
       
       // Cooking pipeline removed for streamlined TikTok Viral Product Generator
-      const recipes: any[] = [];
+      const recipes = [];
       res.json({ recipes });
     } catch (error) {
       console.error("Error generating recipe:", error);
@@ -305,13 +278,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post('/api/cooking/generate-daily-batch', async (req, res) => {
     try {
       // Daily batch generation removed for streamlined TikTok Viral Product Generator
-      const batchRecipes: any[] = [];
+      const batchRecipes = [];
       
       // Group recipes by skill level for better organization
       const groupedBySkill = {
-        'Elite Chef': batchRecipes.filter((recipe: any) => recipe.script.includes('elite chefs')),
-        'Skilled Home Chef': batchRecipes.filter((recipe: any) => recipe.script.includes('skilled home chefs')),
-        'Beginner': batchRecipes.filter((recipe: any) => recipe.script.includes('beginners'))
+        'Elite Chef': batchRecipes.filter(recipe => recipe.script.includes('elite chefs')),
+        'Skilled Home Chef': batchRecipes.filter(recipe => recipe.script.includes('skilled home chefs')),
+        'Beginner': batchRecipes.filter(recipe => recipe.script.includes('beginners'))
       };
       
       res.json({ batchRecipes: groupedBySkill });
@@ -568,51 +541,51 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // DISABLED: Amazon Beauty Products endpoint - './scrapers/amazonBeauty.js' module doesn't exist
-  // app.get('/api/trending-amazon-beauty', async (req, res) => {
-  //   try {
-  //     const { getTrendingAmazonProducts } = await import('./scrapers/amazonBeauty.js');
-  //     const products = await getTrendingAmazonProducts();
-  //     
-  //     res.json({ 
-  //       success: true, 
-  //       data: products,
-  //       count: products.length,
-  //       niches: 7,
-  //       productsPerNiche: 4
-  //     });
-  //     
-  //   } catch (error: any) {
-  //     console.error('Amazon beauty scraping error:', error);
-  //     res.status(500).json({ 
-  //       success: false, 
-  //       error: 'Failed to fetch Amazon beauty products' 
-  //     });
-  //   }
-  // });
+  // Amazon Beauty Products endpoint
+  app.get('/api/trending-amazon-beauty', async (req, res) => {
+    try {
+      const { getTrendingAmazonProducts } = await import('./scrapers/amazonBeauty.js');
+      const products = await getTrendingAmazonProducts();
+      
+      res.json({ 
+        success: true, 
+        data: products,
+        count: products.length,
+        niches: 7,
+        productsPerNiche: 4
+      });
+      
+    } catch (error) {
+      console.error('Amazon beauty scraping error:', error);
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to fetch Amazon beauty products' 
+      });
+    }
+  });
 
-  // DISABLED: Amazon Beauty Products by specific niche - './scrapers/amazonBeauty.js' module doesn't exist
-  // app.get('/api/trending-amazon-beauty/:niche', async (req, res) => {
-  //   try {
-  //     const { getTrendingAmazonProductsByNiche } = await import('./scrapers/amazonBeauty.js');
-  //     const { niche } = req.params;
-  //     const products = await getTrendingAmazonProductsByNiche(niche);
-  //     
-  //     res.json({ 
-  //       success: true, 
-  //       data: products,
-  //       niche: niche,
-  //       count: products.length
-  //     });
-  //     
-  //   } catch (error: any) {
-  //     console.error(`Amazon beauty scraping error for ${req.params.niche}:`, error);
-  //     res.status(500).json({ 
-  //       success: false, 
-  //       error: `Failed to fetch Amazon beauty products for ${req.params.niche}` 
-  //     });
-  //   }
-  // });
+  // Amazon Beauty Products by specific niche
+  app.get('/api/trending-amazon-beauty/:niche', async (req, res) => {
+    try {
+      const { getTrendingAmazonProductsByNiche } = await import('./scrapers/amazonBeauty.js');
+      const { niche } = req.params;
+      const products = await getTrendingAmazonProductsByNiche(niche);
+      
+      res.json({ 
+        success: true, 
+        data: products,
+        niche: niche,
+        count: products.length
+      });
+      
+    } catch (error) {
+      console.error(`Amazon beauty scraping error for ${req.params.niche}:`, error);
+      res.status(500).json({ 
+        success: false, 
+        error: `Failed to fetch Amazon beauty products for ${req.params.niche}` 
+      });
+    }
+  });
 
   // NEW FEATURES: Cross-platform scheduling, bulk generation, and performance analytics
   
@@ -685,7 +658,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         message: testPassed ? 'All scheduled generation tests passed!' : 'Some tests failed - check console logs',
         timestamp: new Date().toISOString()
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('❌ Test endpoint error:', error);
       res.status(500).json({
         success: false,
@@ -725,7 +698,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         testResults,
         timestamp: new Date().toISOString()
       });
-    } catch (error: any) {
+    } catch (error) {
       console.error('❌ Comprehensive safeguard test error:', error);
       res.status(500).json({
         success: false,
@@ -763,25 +736,25 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         await db.execute('SELECT 1');
         healthStatus.database.connected = true;
-      } catch (dbError: any) {
+      } catch (dbError) {
         healthStatus.database.connected = false;
         healthStatus.database.error = dbError.message;
         healthStatus.status = 'degraded';
       }
       
       // Check if any critical dependencies are missing
-      const criticalDeps: (keyof typeof healthStatus.dependencies)[] = ['openai', 'anthropic', 'database'];
+      const criticalDeps = ['openai', 'anthropic', 'database'];
       const missingDeps = criticalDeps.filter(dep => !healthStatus.dependencies[dep]);
       
       if (missingDeps.length > 0) {
         healthStatus.status = 'degraded';
-        (healthStatus as any).missingDependencies = missingDeps;
+        healthStatus.missingDependencies = missingDeps;
       }
       
       const statusCode = healthStatus.status === 'healthy' ? 200 : 503;
       res.status(statusCode).json(healthStatus);
       
-    } catch (error: any) {
+    } catch (error) {
       res.status(500).json({
         status: 'unhealthy',
         timestamp: new Date().toISOString(),

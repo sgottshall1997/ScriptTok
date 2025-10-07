@@ -4,14 +4,12 @@ import AboutThisPage from '@/components/AboutThisPage';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Slider } from '@/components/ui/slider';
 import { Switch } from '@/components/ui/switch';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Link } from 'wouter';
-import { formatDistanceToNow } from 'date-fns';
 import { 
   Sparkles, 
   TrendingUp, 
@@ -20,6 +18,7 @@ import {
   Star, 
   ArrowLeft, 
   Home, 
+  RefreshCw, 
   Loader2,
   ChevronDown,
   ChevronUp,
@@ -33,9 +32,7 @@ import {
   MessageSquare,
   ExternalLink,
   Pin,
-  PinOff,
-  Info,
-  RefreshCw
+  PinOff
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
@@ -147,32 +144,11 @@ export default function TrendingAIPicks() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch all trending products with last updated timestamp
-  const { data: productsResponse, isLoading } = useQuery<{
-    success: boolean;
-    count: number;
-    data: TrendingProduct[];
-    lastUpdated: string;
-    source: string;
-  }>({
+  // Fetch all trending products
+  const { data: products = [], isLoading } = useQuery<TrendingProduct[]>({
     queryKey: ['/api/trending/products'],
-    staleTime: 1000 * 60 * 60 * 24, // 24 hours - data updates daily
-    gcTime: 1000 * 60 * 60 * 24,    // Keep in cache for 24 hours
-  });
-
-  // Extract products and metadata
-  const products = productsResponse?.data || [];
-  const lastUpdated = productsResponse?.lastUpdated;
-
-  // Fetch trending status for automated update info
-  const { data: trendingStatus } = useQuery<{
-    success: boolean;
-    status: string;
-    lastUpdate: string;
-    hoursSinceUpdate: number;
-  }>({
-    queryKey: ['/api/trending/status'],
-    refetchInterval: 60000, // Refresh every minute
+    staleTime: 0, // Force fresh data
+    gcTime: 0,    // Don't cache
   });
 
   // Fetch user favorites
@@ -200,20 +176,40 @@ export default function TrendingAIPicks() {
     enabled: selectedTab === 'categorized',
   });
 
-  // Format last update timestamp
-  const formatLastUpdate = () => {
-    const updateTime = lastUpdated || trendingStatus?.lastUpdate;
-    if (!updateTime || updateTime === 'Never') {
-      return 'Never updated';
-    }
-    
-    try {
-      const lastUpdateDate = new Date(updateTime);
-      return formatDistanceToNow(lastUpdateDate, { addSuffix: true });
-    } catch {
-      return 'Unknown';
-    }
-  };
+  // Perplexity Fetch Mutation
+  const perplexityMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/pull-perplexity-trends', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
+      return await response.json();
+    },
+    onSuccess: (data) => {
+      toast({
+        title: "Perplexity Fetch Complete",
+        description: `Added ${data.productsAdded} new trending products from Perplexity`,
+      });
+      // Invalidate all related caches
+      queryClient.invalidateQueries({ queryKey: ['/api/trending/products'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/trending-categorized'] });
+      // Force refetch by removing from cache
+      queryClient.removeQueries({ queryKey: ['/api/trending/products'] });
+    },
+    onError: (error) => {
+      toast({
+        title: "Fetch Failed",
+        description: error instanceof Error ? error.message : "Failed to fetch from Perplexity",
+        variant: "destructive",
+      });
+    },
+  });
 
   // Individual product refresh mutation
   const refreshIndividualMutation = useMutation({
@@ -600,40 +596,29 @@ export default function TrendingAIPicks() {
                 <p className="text-sm text-gray-500">Discover what's trending across social platforms</p>
               </div>
             </div>
+
+            <Button
+              onClick={() => perplexityMutation.mutate()}
+              disabled={perplexityMutation.isPending}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {perplexityMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Fetching...
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Run Perplexity Fetch
+                </>
+              )}
+            </Button>
           </div>
         </div>
       </div>
 
-      {/* Automated Update Info Banner */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-        <Alert className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200 mb-6">
-          <Info className="h-4 w-4 text-blue-600" />
-          <AlertDescription className="text-sm text-blue-900">
-            <div className="flex items-center justify-between">
-              <div>
-                <span className="font-medium">Trends are automatically updated daily.</span>
-                <span className="ml-1">
-                  Last update: <span className="font-semibold text-blue-700">{formatLastUpdate()}</span>
-                </span>
-              </div>
-              {trendingStatus && (
-                <Badge 
-                  variant="outline" 
-                  className={
-                    trendingStatus.status === 'healthy' ? 'bg-green-100 text-green-800 border-green-300' :
-                    trendingStatus.status === 'stale' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-                    'bg-red-100 text-red-800 border-red-300'
-                  }
-                >
-                  {trendingStatus.status}
-                </Badge>
-              )}
-            </div>
-          </AlertDescription>
-        </Alert>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           {/* Sidebar Filters */}
           <div className="lg:col-span-1">

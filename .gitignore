@@ -1,27 +1,7 @@
-# Dependencies
 node_modules
-
-# Build artifacts
 dist
-*.tar.gz
-
-# Environment files
-.env
-.env.local
-.env.*.local
-
-# Logs
-*.log
-
-# Testing
-coverage/
-
-# Cache
-.cache/
-
-# IDE and OS files
 .DS_Store
-
-# Project-specific
 server/public
 vite.config.ts.*
+*.tar.gz
+.env

@@ -5,7 +5,7 @@ import { storage } from "../storage";
 
 const router = Router();
 
-// GET /api/trend-forecast/:niche - Get cached trend forecast for a specific niche
+// GET /api/trend-forecast/:niche - Get trend forecast for a specific niche
 router.get("/:niche", async (req, res) => {
   try {
     const { niche } = req.params;
@@ -18,86 +18,75 @@ router.get("/:niche", async (req, res) => {
       });
     }
 
-    console.log(`🔍 Reading cached trend forecast for niche: ${niche}`);
+    console.log(`🔍 Fetching trend forecast for niche: ${niche}`);
     
-    // Read from trendHistory cache
-    const cachedTrends = await storage.getTrendHistoryBySourceAndNiche(
-      'trend_forecaster',
-      niche,
-      50,
-      0
-    );
-
-    if (cachedTrends.length === 0) {
-      return res.status(404).json({
-        success: false,
-        error: `No cached trend forecast available for ${niche}. Run daily trend fetcher first.`,
-        niche
-      });
-    }
-
-    // Extract lastUpdated from newest entry
-    const lastUpdated = cachedTrends[0].fetchedAt;
+    const forecastResult = await getTrendForecast(niche as Niche);
     
-    // Reconstruct trends object from cached data
-    const trends: any = {
-      hot: [],
-      rising: [],
-      upcoming: [],
-      declining: []
-    };
-
-    let dataSource = null;
-
-    for (const entry of cachedTrends) {
-      const category = entry.trendCategory || 'hot';
+    // Extract trends and dataSource metadata
+    const { dataSource, ...trends } = forecastResult;
+    
+    // Save trend forecast results to history
+    try {
+      // Clear existing trend forecast data for this niche to keep only the latest generation
+      console.log(`🗑️ Clearing existing trend forecast data for ${niche}...`);
+      await storage.clearTrendHistoryBySourceAndNiche('trend_forecaster', niche);
       
-      if (!trends[category]) {
-        trends[category] = [];
-      }
-
-      // Reconstruct trend object
-      const trend: any = {
-        name: entry.trendName || '',
-        products: entry.productData || []
-      };
-
-      // Add category-specific fields from rawData
-      if (entry.rawData) {
-        const raw = entry.rawData as any;
-        if (raw.volume) trend.volume = raw.volume;
-        if (raw.growth) trend.growth = raw.growth;
-        if (raw.when) trend.when = raw.when;
-        if (raw.why) trend.why = raw.why;
-        if (raw.reason) trend.reason = raw.reason;
-        if (raw.opportunity) trend.opportunity = raw.opportunity;
-        if (raw.prepNow) trend.prepNow = raw.prepNow;
-        
-        // Extract dataSource from first entry
-        if (!dataSource && raw.dataSource) {
-          dataSource = raw.dataSource;
+      // Save each trend category (hot, rising, upcoming, declining)
+      const savePromises = [];
+      
+      for (const [category, trendList] of Object.entries(trends)) {
+        if (Array.isArray(trendList)) {
+          for (const trend of trendList) {
+            const historyEntry = {
+              sourceType: 'trend_forecaster' as const,
+              niche: niche,
+              trendCategory: category,
+              trendName: trend.name,
+              trendDescription: trend.why || trend.reason || trend.opportunity || trend.prepNow || 'No description available',
+              // Store products as JSON for forecaster trends (plain objects, not strings)
+              productData: trend.products || null,
+                      // Additional metadata as JSON (plain object, not string)
+              rawData: {
+                volume: trend.volume,
+                growth: trend.growth,
+                when: trend.when,
+                why: trend.why,
+                reason: trend.reason,
+                opportunity: trend.opportunity,
+                prepNow: trend.prepNow,
+                // Include dataSource metadata for transparency
+                dataSource: dataSource || null
+              }
+            };
+            
+            savePromises.push(storage.saveTrendHistory(historyEntry));
+          }
         }
       }
-
-      trends[category].push(trend);
+      
+      await Promise.all(savePromises);
+      console.log(`💾 Saved ${savePromises.length} new trend forecast entries to history for ${niche} (replaced previous generation)`);
+      
+    } catch (saveError) {
+      console.error('Error saving trend forecast to history:', saveError);
+      // Don't fail the request if saving to history fails
     }
-
+    
     res.json({
       success: true,
       data: {
         niche,
         trends,
-        dataSource: dataSource || { type: 'cached', reliability: 'unknown' },
-        lastUpdated: lastUpdated,
-        source: 'cached'
+        dataSource: dataSource || null,
+        timestamp: new Date().toISOString()
       }
     });
 
   } catch (error) {
-    console.error("Error reading trend forecast from cache:", error);
+    console.error("Error in trend forecast API:", error);
     res.status(500).json({
       success: false,
-      error: "Failed to read cached trend forecast. Please try again later."
+      error: "Failed to fetch trend forecast. Please try again later."
     });
   }
 });

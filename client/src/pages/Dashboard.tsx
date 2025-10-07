@@ -4,10 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Link, useLocation } from "wouter";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { formatDistanceToNow } from 'date-fns';
 
 import { 
   ArrowRight, 
@@ -15,6 +13,7 @@ import {
   BarChart3, 
   Clock, 
   Loader2, 
+  RefreshCw, 
   Sparkles,
   Wand2,
   Eye,
@@ -24,8 +23,7 @@ import {
   ShoppingBag,
   ChevronDown,
   HelpCircle,
-  LogOut,
-  Info
+  LogOut
 } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
@@ -37,41 +35,34 @@ const Dashboard = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [location, setLocation] = useLocation();
+  const [isPerplexityLoading, setIsPerplexityLoading] = useState(false);
   const [selectedNicheFilter, setSelectedNicheFilter] = useState('all');
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
   const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
   
 
   // Fetch trending products for all niches (Perplexity organized by niche)
-  const { data: trendingProducts, isLoading: trendingLoading } = useQuery<DashboardTrendingResponse>({
+  const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
     queryKey: ['/api/trending'],
     retry: false,
-    staleTime: 1000 * 60 * 60 * 24, // 24 hours - data updates daily
-    gcTime: 1000 * 60 * 60 * 24, // Keep in cache for 24 hours
+    staleTime: 0, // Always consider data stale
+    gcTime: 0, // Don't cache the data (updated from cacheTime)
   });
 
   // Fetch all trending products (includes Amazon products)
   const { data: allTrendingProducts = [], isLoading: allTrendingLoading } = useQuery<TrendingProduct[]>({
     queryKey: ['/api/trending/products'],
-    staleTime: 1000 * 60 * 60 * 24, // 24 hours - data updates daily
   });
 
-  // Fetch trending status for automated update info
-  const { data: trendingStatus, isLoading: statusLoading } = useQuery<{
+  // Fetch Perplexity status for last run display
+  const { data: perplexityStatus } = useQuery<{
     success: boolean;
-    status: string;
-    lastUpdate: string;
-    hoursSinceUpdate: number;
-    cachedTrends: {
-      count: number;
-      byNiche: Record<string, number>;
-      bySource: {
-        trend_forecaster: number;
-        ai_trending_picks: number;
-      };
-    };
+    lastRun: string;
+    timeSince: string;
+    nextScheduled: string;
+    totalProducts: number;
   }>({
-    queryKey: ['/api/trending/status'],
+    queryKey: ['/api/perplexity-status/last-run'],
     refetchInterval: 60000, // Refresh every minute
   });
 
@@ -236,17 +227,36 @@ const Dashboard = () => {
     return niches.sort();
   };
 
-  // Format last update timestamp
-  const formatLastUpdate = () => {
-    if (!trendingStatus?.lastUpdate || trendingStatus.lastUpdate === 'Never') {
-      return 'Never updated';
-    }
-    
+  // Run Perplexity fetch
+  const handlePerplexityFetch = async () => {
+    setIsPerplexityLoading(true);
     try {
-      const lastUpdateDate = new Date(trendingStatus.lastUpdate);
-      return formatDistanceToNow(lastUpdateDate, { addSuffix: true });
-    } catch {
-      return 'Unknown';
+      const response = await fetch('/api/pull-perplexity-trends', {
+        method: 'POST',
+      });
+      
+      const result = await response.json();
+      
+      if (response.ok) {
+        const filteredMessage = result.filtered > 0 ? 
+          ` (${result.filtered} products filtered for quality)` : '';
+        
+        toast({
+          title: "Success!",
+          description: `Fresh trending data fetched from Perplexity${filteredMessage}`,
+        });
+        refetchTrending();
+      } else {
+        throw new Error(result.error || 'Failed to fetch');
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to fetch Perplexity trends",
+        variant: "destructive",
+      });
+    } finally {
+      setIsPerplexityLoading(false);
     }
   };
 
@@ -550,60 +560,47 @@ const Dashboard = () => {
                 ))}
               </SelectContent>
             </Select>
-            {selectedDataSource === 'amazon' && (
-              <div className="flex flex-col items-center">
-                <Button 
-                  onClick={() => amazonMutation.mutate()}
-                  disabled={amazonMutation.isPending}
-                  variant="outline"
-                  size="sm"
-                  className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 hover:from-orange-100 hover:to-yellow-100"
-                  data-testid="button-fetch-amazon"
-                >
-                  {amazonMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  ) : (
-                    <ShoppingBag className="h-4 w-4 mr-2" />
-                  )}
-                  🔄 Run Amazon Fetch
-                </Button>
-              </div>
-            )}
+            <div className="flex flex-col items-center">
+              <Button 
+                onClick={selectedDataSource === 'perplexity' ? handlePerplexityFetch : () => amazonMutation.mutate()}
+                disabled={selectedDataSource === 'perplexity' ? isPerplexityLoading : amazonMutation.isPending}
+                variant="outline"
+                size="sm"
+                className={selectedDataSource === 'amazon' ? "bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 hover:from-orange-100 hover:to-yellow-100" : ""}
+                data-testid={selectedDataSource === 'perplexity' ? "button-fetch-perplexity" : "button-fetch-amazon"}
+              >
+                {(selectedDataSource === 'perplexity' ? isPerplexityLoading : amazonMutation.isPending) ? (
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                ) : selectedDataSource === 'amazon' ? (
+                  <ShoppingBag className="h-4 w-4 mr-2" />
+                ) : (
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                )}
+                {selectedDataSource === 'perplexity' ? 'Run Perplexity Fetch' : '🔄 Run Amazon Fetch'}
+              </Button>
+            </div>
           </div>
         </CardHeader>
         
-        {/* Automated Update Info Banner */}
+        {/* Status Section - Conditional Based on Data Source */}
         <CardContent className="pt-0 pb-4">
           {selectedDataSource === 'perplexity' ? (
-            <Alert className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
-              <Info className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-sm text-blue-900">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-medium">Trends updated daily at midnight UTC.</span>
-                    <span className="ml-1">
-                      Last update: {statusLoading ? (
-                        <span className="text-blue-700">Loading...</span>
-                      ) : (
-                        <span className="font-semibold text-blue-700">{formatLastUpdate()}</span>
-                      )}
-                    </span>
+            <Card className="bg-gradient-to-r from-blue-50 to-cyan-50 border-blue-200">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-blue-600" />
+                  <div className="flex-1">
+                    <span className="font-medium text-blue-900">Last Perplexity Run</span>
                   </div>
-                  {trendingStatus && (
-                    <Badge 
-                      variant="outline" 
-                      className={
-                        trendingStatus.status === 'healthy' ? 'bg-green-100 text-green-800 border-green-300' :
-                        trendingStatus.status === 'stale' ? 'bg-yellow-100 text-yellow-800 border-yellow-300' :
-                        'bg-red-100 text-red-800 border-red-300'
-                      }
-                    >
-                      {trendingStatus.status}
-                    </Badge>
-                  )}
+                  <div className="text-right">
+                    <p className="text-xs text-gray-500">Last updated</p>
+                    <p className="text-xs font-semibold text-gray-700">
+                      {perplexityStatus ? perplexityStatus.timeSince : 'Loading...'}
+                    </p>
+                  </div>
                 </div>
-              </AlertDescription>
-            </Alert>
+              </CardContent>
+            </Card>
           ) : (
             <Card className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200" data-testid="card-amazon-status">
               <CardContent className="p-4">
@@ -744,7 +741,7 @@ const Dashboard = () => {
               <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
               <p>
                 {selectedDataSource === 'perplexity' 
-                  ? 'No trends available yet. Trends are automatically updated daily at midnight UTC.'
+                  ? 'No Perplexity trends available. Click "Run Perplexity Fetch" to get started!'
                   : 'No Amazon products available. Click "Run Amazon Fetch" to discover trending products!'
                 }
               </p>

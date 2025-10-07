@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { initGA } from "./lib/analytics";
 import { useAnalytics } from "./hooks/use-analytics";
-import { Switch, Route, useLocation } from "wouter";
+import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -26,11 +26,6 @@ import Account from "@/pages/Account";
 import CompliancePage from "@/pages/CompliancePage";
 import HowItWorksPage from "@/pages/how-it-works";
 
-// Auth Pages
-import SignIn from "@/pages/SignIn";
-import SignUp from "@/pages/SignUp";
-import AuthCallback from "@/pages/AuthCallback";
-
 // New Legal Pages
 import TermsBillingPage from "@/pages/TermsBilling";
 import PrivacyCookiesPage from "@/pages/PrivacyCookies";
@@ -51,191 +46,54 @@ function Router() {
 }
 
 function MainAppRouter({ isAuthenticated, isLoading }: { isAuthenticated: boolean; isLoading: boolean }) {
-  const [location, setLocation] = useLocation();
-  
-  // Redirect authenticated users from root to dashboard
-  useEffect(() => {
-    if (!isLoading && isAuthenticated && location === '/') {
-      setLocation('/dashboard');
-    }
-  }, [isAuthenticated, isLoading, location, setLocation]);
-
-  if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg">Loading...</div>
-      </div>
-    );
-  }
-
   return (
     <Switch>
-      {/* Auth routes */}
-      <Route path="/sign-in">
-        {() => <SignIn />}
-      </Route>
-      <Route path="/sign-up">
-        {() => <SignUp />}
-      </Route>
-      <Route path="/auth/callback">
-        {() => <AuthCallback />}
-      </Route>
-
-      {/* Root path - Landing Page */}
-      <Route path="/">
-        {() => <LandingPage />}
-      </Route>
+      {/* Show Landing page for unauthenticated/loading users at root */}
+      {isLoading || !isAuthenticated ? (
+        <Route path="/" component={LandingPage} />
+      ) : (
+        <Route path="/" component={Dashboard} />
+      )}
       
       {/* App pages with layout */}
-      <Route path="/dashboard">
-        {() => (
-          <Layout>
-            <Dashboard />
-          </Layout>
-        )}
-      </Route>
-      
-      {/* Core content generation functionality */}
-      <Route path="/generate">
-        {() => (
-          <Layout>
-            <GenerateContent />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/niche/:niche">
-        {() => (
-          <Layout>
-            <GenerateContent />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/trending-ai-picks">
-        {() => (
-          <Layout>
-            <TrendingAIPicks />
-          </Layout>
-        )}
-      </Route>
-      
-      {/* Content management */}
-      <Route path="/content-history">
-        {() => (
-          <Layout>
-            <EnhancedContentHistory />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/trend-history">
-        {() => (
-          <Layout>
-            <TrendHistory />
-          </Layout>
-        )}
-      </Route>
-      
-      {/* Settings */}
-      <Route path="/compliance">
-        {() => (
-          <Layout>
-            <CompliancePage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/account">
-        {() => (
-          <Layout>
-            <Account />
-          </Layout>
-        )}
-      </Route>
-      
-      {/* Support pages */}
-      <Route path="/how-it-works">
-        {() => (
-          <Layout>
-            <HowItWorksPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/about">
-        {() => (
-          <Layout>
-            <AboutPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/faq">
-        {() => (
-          <Layout>
-            <FAQPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/contact">
-        {() => (
-          <Layout>
-            <ContactPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/privacy">
-        {() => (
-          <Layout>
-            <PrivacyPolicyPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/terms">
-        {() => (
-          <Layout>
-            <TermsPage />
-          </Layout>
-        )}
-      </Route>
-      
-      {/* New Legal Pages */}
-      <Route path="/terms-billing">
-        {() => (
-          <Layout>
-            <TermsBillingPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/privacy-cookies">
-        {() => (
-          <Layout>
-            <PrivacyCookiesPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/cookie-preferences">
-        {() => (
-          <Layout>
-            <CookiePreferencesPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/legal-notices">
-        {() => (
-          <Layout>
-            <LegalNoticesPage />
-          </Layout>
-        )}
-      </Route>
-      <Route path="/trust-safety">
-        {() => (
-          <Layout>
-            <TrustSafetyPage />
-          </Layout>
-        )}
-      </Route>
-      
-      {/* Fallback to 404 */}
       <Route>
-        {() => (
+        {(params) => (
           <Layout>
-            <NotFound />
+            <Switch>
+              <Route path="/dashboard" component={Dashboard} />
+              
+              {/* Core content generation functionality */}
+              <Route path="/generate" component={GenerateContent} />
+              <Route path="/niche/:niche" component={GenerateContent} />
+              <Route path="/trending-ai-picks" component={TrendingAIPicks} />
+              
+              {/* Content management */}
+              <Route path="/content-history" component={EnhancedContentHistory} />
+              <Route path="/trend-history" component={TrendHistory} />
+              {/* <Route path="/affiliate-links" component={AffiliateLinks} /> */} {/* DISABLED: Amazon Associates functionality disabled */}
+              
+              {/* Settings */}
+              <Route path="/compliance" component={CompliancePage} />
+              <Route path="/account" component={Account} />
+              
+              {/* Support pages */}
+              <Route path="/how-it-works" component={HowItWorksPage} />
+              <Route path="/about" component={AboutPage} />
+              <Route path="/faq" component={FAQPage} />
+              <Route path="/contact" component={ContactPage} />
+              <Route path="/privacy" component={PrivacyPolicyPage} />
+              <Route path="/terms" component={TermsPage} />
+              
+              {/* New Legal Pages */}
+              <Route path="/terms-billing" component={TermsBillingPage} />
+              <Route path="/privacy-cookies" component={PrivacyCookiesPage} />
+              <Route path="/cookie-preferences" component={CookiePreferencesPage} />
+              <Route path="/legal-notices" component={LegalNoticesPage} />
+              <Route path="/trust-safety" component={TrustSafetyPage} />
+              
+              {/* Fallback to 404 */}
+              <Route component={NotFound} />
+            </Switch>
           </Layout>
         )}
       </Route>
@@ -259,10 +117,12 @@ function App() {
   }, []);
 
   return (
-    <TooltipProvider>
-      <Toaster />
-      <Router />
-    </TooltipProvider>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Router />
+      </TooltipProvider>
+    </QueryClientProvider>
   );
 }
 
