@@ -22,13 +22,17 @@ import {
   RotateCcw,
   ShoppingBag,
   ChevronDown,
-  HelpCircle
+  HelpCircle,
+  Crown
 } from "lucide-react";
 import { DashboardTrendingResponse, TrendingProduct } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/analytics";
 import { isAmazonEnabled } from '@shared/constants';
 import TrendForecaster from "@/components/TrendForecaster";
+import { useUsageData } from "@/hooks/useUsageData";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Dashboard = () => {
   const { toast } = useToast();
@@ -38,6 +42,9 @@ const Dashboard = () => {
   const [selectedDataSource, setSelectedDataSource] = useState<'perplexity' | 'amazon'>('perplexity');
   const [isDashboardInfoOpen, setIsDashboardInfoOpen] = useState(false);
   
+  // Fetch usage data for the widget
+  const { data: usageResponse, isLoading: usageLoading } = useUsageData();
+  const usageData = usageResponse?.data;
 
   // Fetch trending products for all niches (Perplexity organized by niche)
   const { data: trendingProducts, isLoading: trendingLoading, refetch: refetchTrending } = useQuery<DashboardTrendingResponse>({
@@ -239,6 +246,22 @@ const Dashboard = () => {
     return colors[niche] || 'bg-gray-100 text-gray-800';
   };
 
+  // Helper function to determine progress bar color based on usage percentage
+  const getProgressColor = (percentage: number): string => {
+    if (percentage > 90) return 'bg-red-500';
+    if (percentage >= 70) return 'bg-yellow-500';
+    return 'bg-green-500';
+  };
+
+  // Helper function to check if user is approaching limits
+  const isApproachingLimit = (): boolean => {
+    if (!usageData || usageData.tier !== 'free') return false;
+    const gptPercentage = (usageData.gpt.used / usageData.gpt.limit) * 100;
+    const claudePercentage = (usageData.claude.used / usageData.claude.limit) * 100;
+    const trendPercentage = (usageData.trendAnalyses.used / usageData.trendAnalyses.limit) * 100;
+    return gptPercentage > 70 || claudePercentage > 70 || trendPercentage > 70;
+  };
+
   return (
     <div className="space-y-4 md:space-y-6">
       {/* 1️⃣ Hero Header */}
@@ -250,6 +273,134 @@ const Dashboard = () => {
           Trend-to-traffic in under 10 minutes. Powered by Perplexity + Claude + GPT.
         </p>
       </div>
+
+      {/* 📊 Usage Widget */}
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200" data-testid="card-usage-widget">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <CardTitle className="text-xl flex items-center gap-2">
+              📊 Your Usage & Limits
+            </CardTitle>
+            {usageLoading ? (
+              <Skeleton className="h-6 w-24" />
+            ) : usageData ? (
+              usageData.tier === 'free' ? (
+                <Badge variant="secondary" className="bg-gray-200 text-gray-700 w-fit" data-testid="badge-tier-free">
+                  Free Plan
+                </Badge>
+              ) : (
+                <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white w-fit" data-testid="badge-tier-pro">
+                  <Crown className="h-3 w-3 mr-1" />
+                  Pro Plan
+                </Badge>
+              )
+            ) : null}
+          </div>
+        </CardHeader>
+        <CardContent>
+          {usageLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="space-y-2">
+                  <Skeleton className="h-4 w-32" />
+                  <Skeleton className="h-2 w-full" />
+                  <Skeleton className="h-4 w-24" />
+                </div>
+              ))}
+            </div>
+          ) : usageData ? (
+            <>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {/* GPT Generations */}
+                <div className="space-y-2" data-testid="usage-stat-gpt">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">GPT Generations</span>
+                    <span className="text-xs text-gray-500">
+                      {usageData.gpt.used} / {usageData.gpt.limit}
+                    </span>
+                  </div>
+                  <Progress 
+                    value={(usageData.gpt.used / usageData.gpt.limit) * 100} 
+                    className="h-2"
+                    indicatorClassName={getProgressColor((usageData.gpt.used / usageData.gpt.limit) * 100)}
+                  />
+                  <p className="text-xs text-gray-600">
+                    {usageData.gpt.remaining} remaining
+                  </p>
+                </div>
+
+                {/* Claude Generations */}
+                <div className="space-y-2" data-testid="usage-stat-claude">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">Claude Generations</span>
+                    <span className="text-xs text-gray-500">
+                      {usageData.claude.used} / {usageData.claude.limit}
+                    </span>
+                  </div>
+                  <Progress 
+                    value={(usageData.claude.used / usageData.claude.limit) * 100} 
+                    className="h-2"
+                    indicatorClassName={getProgressColor((usageData.claude.used / usageData.claude.limit) * 100)}
+                  />
+                  <p className="text-xs text-gray-600">
+                    {usageData.claude.remaining} remaining
+                  </p>
+                </div>
+
+                {/* Trend Analyses */}
+                <div className="space-y-2" data-testid="usage-stat-trends">
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm font-medium text-gray-700">Trend Analyses</span>
+                    <span className="text-xs text-gray-500">
+                      {usageData.trendAnalyses.used} / {usageData.trendAnalyses.limit}
+                    </span>
+                  </div>
+                  <Progress 
+                    value={(usageData.trendAnalyses.used / usageData.trendAnalyses.limit) * 100} 
+                    className="h-2"
+                    indicatorClassName={getProgressColor((usageData.trendAnalyses.used / usageData.trendAnalyses.limit) * 100)}
+                  />
+                  <p className="text-xs text-gray-600">
+                    {usageData.trendAnalyses.remaining} remaining
+                  </p>
+                </div>
+              </div>
+
+              {/* Upgrade CTA for free users approaching limits */}
+              {isApproachingLimit() && (
+                <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-lg" data-testid="upgrade-cta">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-start gap-2">
+                      <span className="text-yellow-600 text-lg">⚠️</span>
+                      <div>
+                        <p className="text-sm font-semibold text-yellow-800">
+                          Approaching your monthly limit
+                        </p>
+                        <p className="text-xs text-yellow-700 mt-1">
+                          Upgrade to Pro for unlimited generations and advanced features
+                        </p>
+                      </div>
+                    </div>
+                    <Link href="/account">
+                      <Button 
+                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white whitespace-nowrap"
+                        data-testid="button-upgrade-to-pro"
+                      >
+                        <Crown className="h-4 w-4 mr-2" />
+                        Upgrade to Pro
+                      </Button>
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center text-gray-500">
+              <p className="text-sm">Unable to load usage data</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Dashboard Overview Dropdown */}
       <Collapsible open={isDashboardInfoOpen} onOpenChange={setIsDashboardInfoOpen} className="w-full">
