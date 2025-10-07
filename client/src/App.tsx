@@ -26,6 +26,7 @@ import TrendingAIPicks from "@/pages/TrendingAIPicks";
 import Account from "@/pages/Account";
 import CompliancePage from "@/pages/CompliancePage";
 import HowItWorksPage from "@/pages/how-it-works";
+import PricingPage from "@/pages/PricingPage";
 
 // New Legal Pages
 import TermsBillingPage from "@/pages/TermsBilling";
@@ -52,6 +53,13 @@ function MainAppRouter() {
       <Route path="/">
         <MarketingLayout>
           <LandingPage />
+        </MarketingLayout>
+      </Route>
+
+      {/* Pricing page with MarketingLayout */}
+      <Route path="/pricing">
+        <MarketingLayout>
+          <PricingPage />
         </MarketingLayout>
       </Route>
       
