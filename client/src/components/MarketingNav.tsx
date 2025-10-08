@@ -37,8 +37,11 @@ import {
   FileText,
   DollarSign,
   type LucideIcon,
+  ChevronDown,
 } from "lucide-react";
 import PhemeLogo from "@/Pheme Logo/Pheme Logo.png";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+
 
 interface CardItem {
   icon: LucideIcon;
@@ -244,13 +247,13 @@ const pricingData: CardItem[] = [
 function DropdownCard({ item }: { item: CardItem }) {
   const Icon = item.icon;
   const [, navigate] = useLocation();
-  
+
   const handleClick = () => {
     if (item.href && item.href !== "#") {
       navigate(item.href);
     }
   };
-  
+
   return (
     <div
       onClick={handleClick}
@@ -277,26 +280,26 @@ function DropdownCard({ item }: { item: CardItem }) {
 }
 
 export function MarketingNav() {
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [, navigate] = useLocation();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
+      <div className="container mx-auto px-4 h-16 flex items-center">
         {/* Logo */}
         <Link href="/">
           <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" data-testid="link-logo">
-            <img 
-              src={PhemeLogo} 
-              alt="Pheme" 
+            <img
+              src={PhemeLogo}
+              alt="Pheme"
               className="h-14 w-auto"
             />
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
+        {/* Desktop Navigation - Centered */}
         <NavigationMenu className="hidden lg:flex">
           <NavigationMenuList>
             {/* Features Dropdown */}
@@ -377,28 +380,43 @@ export function MarketingNav() {
           </NavigationMenuList>
         </NavigationMenu>
 
-        {/* Desktop CTAs */}
-        <div className="hidden lg:flex items-center gap-3">
-          <Button
-            variant="ghost"
-            onClick={() => {
-              trackNavigateCTA('nav', 'login');
-              login();
-            }}
-            data-testid="button-nav-login"
-          >
-            Login
-          </Button>
-          <Button
-            onClick={() => {
-              trackSignupCTA('nav');
-              login();
-            }}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90"
-            data-testid="button-nav-get-started"
-          >
-            Get Started
-          </Button>
+        {/* Auth Buttons - Right aligned */}
+        <div className="flex items-center gap-3 ml-auto">
+          {!isAuthenticated ? (
+            <>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  trackNavigateCTA('nav', 'login');
+                  login();
+                }}
+                data-testid="button-nav-login"
+              >
+                Login
+              </Button>
+              <Button
+                onClick={() => {
+                  trackSignupCTA('nav');
+                  login();
+                }}
+                className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90"
+                data-testid="button-nav-get-started"
+              >
+                Get Started
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={() => {
+                trackNavigateCTA('nav', 'logout');
+                // Implement logout logic here
+              }}
+              variant="outline"
+              data-testid="button-nav-logout"
+            >
+              Logout
+            </Button>
+          )}
         </div>
 
         {/* Mobile Menu Button */}
@@ -412,33 +430,50 @@ export function MarketingNav() {
             <SheetHeader>
               <SheetTitle>Menu</SheetTitle>
             </SheetHeader>
-            
+
             <div className="mt-6 flex flex-col gap-4">
               {/* Mobile CTAs */}
               <div className="flex flex-col gap-2 pb-4 border-b">
-                <Button
-                  onClick={() => {
-                    trackSignupCTA('mobile_nav');
-                    login();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white"
-                  data-testid="button-mobile-get-started"
-                >
-                  Get Started
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    trackNavigateCTA('mobile_nav', 'login');
-                    login();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="w-full"
-                  data-testid="button-mobile-login"
-                >
-                  Login
-                </Button>
+                {!isAuthenticated ? (
+                  <>
+                    <Button
+                      onClick={() => {
+                        trackSignupCTA('mobile_nav');
+                        login();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white"
+                      data-testid="button-mobile-get-started"
+                    >
+                      Get Started
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        trackNavigateCTA('mobile_nav', 'login');
+                        login();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="w-full"
+                      data-testid="button-mobile-login"
+                    >
+                      Login
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    onClick={() => {
+                      trackNavigateCTA('mobile_nav', 'logout');
+                      // Implement logout logic here
+                      setMobileMenuOpen(false);
+                    }}
+                    variant="outline"
+                    className="w-full"
+                    data-testid="button-mobile-logout"
+                  >
+                    Logout
+                  </Button>
+                )}
               </div>
 
               {/* Mobile Navigation Accordion */}
