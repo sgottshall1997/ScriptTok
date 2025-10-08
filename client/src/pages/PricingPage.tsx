@@ -59,7 +59,7 @@ export default function PricingPage() {
         { text: "Custom prompts", included: false },
         { text: "API access", included: false }
       ],
-      cta: "Start Free",
+      cta: "Try 5 Free Generations",
       ctaVariant: "outline" as const,
       popular: false
     },
