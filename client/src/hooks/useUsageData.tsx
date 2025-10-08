@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
 
 export interface UsageData {
   usage: {
@@ -34,9 +34,23 @@ export interface UsageData {
   };
 }
 
-export const useUsageData = () => {
-  return useQuery<{ success: boolean; data: UsageData }>({
+export interface UsageResponse {
+  success: boolean;
+  data: UsageData;
+}
+
+export const useUsageData = (): UseQueryResult<UsageResponse> => {
+  return useQuery<UsageResponse>({
     queryKey: ['/api/billing/usage'],
+    queryFn: async () => {
+      const res = await fetch('/api/billing/usage', {
+        credentials: 'include',
+      });
+      if (!res.ok) {
+        throw new Error(`${res.status}: ${await res.text()}`);
+      }
+      return res.json();
+    },
     refetchOnMount: true,
     staleTime: 0,
   });

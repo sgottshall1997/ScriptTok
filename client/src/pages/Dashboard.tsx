@@ -48,6 +48,12 @@ const Dashboard = () => {
 
   // Fetch usage data for the widget
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
+  
+  // Debug: Log the response structure
+  console.log('Usage Response:', usageResponse);
+  console.log('Usage Data (?.data?.data):', usageResponse?.data?.data);
+  console.log('Usage Data (?.data only):', usageResponse?.data);
+  
   const usageData = usageResponse?.data?.data;
 
   // Fetch trending products for all niches (Perplexity organized by niche)
