@@ -94,7 +94,7 @@ const AboutPage: React.FC = () => {
     {
       icon: FileText,
       title: 'How It Works',
-      description: 'Learn the complete ScriptTok workflow and best practices',
+      description: 'Learn the complete Pheme workflow and best practices',
       path: '/how-it-works',
       category: 'Help'
     },

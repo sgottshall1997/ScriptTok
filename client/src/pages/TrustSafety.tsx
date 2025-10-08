@@ -300,7 +300,7 @@ const TrustSafetyPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Prohibited Content Types</h3>
               <p className="text-gray-700 mb-3">
-                ScriptTok's AI systems are designed to avoid generating content that includes:
+                Pheme's AI systems are designed to avoid generating content that includes:
               </p>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>

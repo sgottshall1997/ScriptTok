@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Zap, 
+import {
+  Zap,
   Video,
   ArrowRight,
   Check,
@@ -190,6 +190,7 @@ export default function LandingPage() {
               />
             ))}
           </div>
+          {/* Pheme features */}
           <CTABar section="features" />
         </div>
       </section>

@@ -246,7 +246,7 @@ const CompliancePage: React.FC = () => {
               <div className="space-y-3">
                 <h4 className="font-semibold">Pheme Guidelines:</h4>
                 <div className="space-y-2">
-                  <a 
+                  <a
                     href="https://www.tiktok.com/community-guidelines"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -255,7 +255,7 @@ const CompliancePage: React.FC = () => {
                     <ExternalLink className="h-3 w-3 mr-2" />
                     Pheme Community Guidelines
                   </a>
-                  <a 
+                  <a
                     href="https://www.tiktok.com/creators/creator-portal/en-us/"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -264,7 +264,7 @@ const CompliancePage: React.FC = () => {
                     <ExternalLink className="h-3 w-3 mr-2" />
                     Pheme Creator Portal
                   </a>
-                  <a 
+                  <a
                     href="https://support.tiktok.com/en/safety-hc/report-a-problem"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -279,7 +279,7 @@ const CompliancePage: React.FC = () => {
               <div className="space-y-3">
                 <h4 className="font-semibold">AI Content Guidelines:</h4>
                 <div className="space-y-2">
-                  <a 
+                  <a
                     href="https://www.anthropic.com/safety"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -288,7 +288,7 @@ const CompliancePage: React.FC = () => {
                     <ExternalLink className="h-3 w-3 mr-2" />
                     Claude AI Safety Guidelines
                   </a>
-                  <a 
+                  <a
                     href="https://www.ftc.gov/business-guidance/resources/disclosures-101-social-media-influencers"
                     target="_blank"
                     rel="noopener noreferrer"

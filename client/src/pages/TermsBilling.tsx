@@ -103,7 +103,7 @@ const TermsBillingPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">5. Limitation of Liability</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>ScriptTok is provided "as-is" without warranties of any kind</li>
+                <li>Pheme is provided "as-is" without warranties of any kind</li>
                 <li>We are not liable for any indirect, incidental, or consequential damages</li>
                 <li>Our total liability shall not exceed the amount paid by you in the last 12 months</li>
                 <li>We do not guarantee viral success or specific engagement rates</li>

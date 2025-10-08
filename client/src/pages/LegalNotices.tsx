@@ -215,7 +215,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Security Best Practices</h3>
               <p className="text-gray-700 mb-3">
-                While using ScriptTok, please follow these security best practices:
+                While using Pheme, please follow these security best practices:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>Use strong, unique passwords for your account</li>
