@@ -1,0 +1,67 @@
+; Domain: phemeai.io
+; Exported (y-m-d hh:mm:ss): 2025-10-08 13:10:31
+;
+; This file is intended for use for informational and archival
+; purposes ONLY and MUST be edited before use on a production
+; DNS server.
+;
+; In particular, you must update the SOA record with the correct
+; authoritative name server and contact e-mail address information,
+; and add the correct NS records for the name servers which will
+; be authoritative for this domain.
+;
+; For further information, please consult the BIND documentation
+; located on the following website:
+;
+; http://www.isc.org/
+;
+; And RFC 1035:
+;
+; http://www.ietf.org/rfc/rfc1035.txt
+;
+; Please note that we do NOT offer technical support for any use
+; of this zone data, the BIND name server, or any other third-
+; party DNS software.
+;
+; Use at your own risk.
+
+
+$ORIGIN phemeai.io.
+
+; SOA Record
+@	3600	 IN 	SOA	ns65.domaincontrol.com.	dns.jomax.net. (
+					2025100812
+					28800
+					7200
+					604800
+					3600
+					) 
+
+; A Record
+@	3600	 IN 	A	34.111.179.208
+
+; TXT Record
+@	3600	 IN 	TXT	"NETORGFT19775492.onmicrosoft.com"
+@	3600	 IN 	TXT	"replit-verify=a77d03f4-c779-4977-86a7-4c39310403bf"
+@	3600	 IN 	TXT	"v=spf1 include:secureserver.net -all"
+_dmarc	3600	 IN 	TXT	"v=DMARC1; p=quarantine; adkim=r; aspf=r; rua=mailto:dmarc_rua@onsecureserver.net;"
+
+; CNAME Record
+autodiscover	3600	 IN 	CNAME	autodiscover.outlook.com.
+email	3600	 IN 	CNAME	email.secureserver.net.
+msoid	3600	 IN 	CNAME	clientconfig.microsoftonline-p.net.
+pay	3600	 IN 	CNAME	paylinks.commerce.godaddy.com.
+sip	3600	 IN 	CNAME	sipdir.online.lync.com.
+_domainconnect	3600	 IN 	CNAME	_domainconnect.gd.domaincontrol.com.
+
+; SRV Record
+_sip._tls.@	3600	 IN 	SRV	100	1	443	sipdir.online.lync.com.
+_sipfederationtls._tcp.@	3600	 IN 	SRV	100	1	5061	sipfed.online.lync.com.
+
+; NS Record
+@	3600	 IN 	NS	ns65.domaincontrol.com.
+@	3600	 IN 	NS	ns66.domaincontrol.com.
+
+; MX Record
+@	3600	 IN 	MX	0	phemeai-io.mail.protection.outlook.com.
+
