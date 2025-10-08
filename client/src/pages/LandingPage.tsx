@@ -15,7 +15,7 @@ import {
 import { useLocation } from "wouter";
 import { useAuth } from "@/components/AuthProvider";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
-import { MarketingNav, featuresData, toolsData, useCasesData, learnData, pricingData } from "@/components/MarketingNav";
+import { MarketingNav, featuresData, toolsData, useCasesData, pricingData } from "@/components/MarketingNav";
 import Footer from "@/components/Footer";
 import SampleFlowDemonstration from "@/components/SampleFlowDemonstration";
 
@@ -110,7 +110,6 @@ export default function LandingPage() {
   const featureColors = ["purple", "red", "yellow", "green", "blue", "orange"];
   const toolColors = ["purple", "blue", "green", "red", "yellow", "orange"];
   const useCaseColors = ["purple", "red", "yellow", "green", "blue", "orange", "purple", "red", "yellow"];
-  const learnColors = ["purple", "blue", "green", "red", "yellow", "orange"];
 
   return (
     <div className="min-h-screen">
@@ -248,30 +247,6 @@ export default function LandingPage() {
             ))}
           </div>
           <CTABar section="use-cases" />
-        </div>
-      </section>
-
-      {/* Learn Section */}
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-5">
-            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">Learn</h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-              Resources, templates, and community to help you succeed.
-            </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {learnData.map((item, index) => (
-              <GridCard
-                key={item.title}
-                icon={item.icon}
-                title={item.title}
-                description={item.description}
-                colorClass={learnColors[index % learnColors.length]}
-              />
-            ))}
-          </div>
-          <CTABar section="learn" />
         </div>
       </section>
 

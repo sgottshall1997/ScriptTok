@@ -185,46 +185,6 @@ const useCasesData: CardItem[] = [
   },
 ];
 
-// Learn Data
-const learnData: CardItem[] = [
-  {
-    icon: FileText,
-    title: "Script Templates",
-    description: "Browse viral & affiliate-style templates and examples.",
-    href: "#"
-  },
-  {
-    icon: BookOpen,
-    title: "Blog",
-    description: "Learn short-form growth tactics, trends, and AI content strategies.",
-    href: "#"
-  },
-  {
-    icon: Video,
-    title: "Tutorials",
-    description: "Step-by-step guides on Pheme tools and studios.",
-    href: "#"
-  },
-  {
-    icon: MessageSquare,
-    title: "Creator Community",
-    description: "Join discussions, share results, and swap templates.",
-    href: "#"
-  },
-  {
-    icon: Award,
-    title: "Showcase",
-    description: "Explore user-generated content made with Pheme AI.",
-    href: "#"
-  },
-  {
-    icon: Library,
-    title: "Resources",
-    description: "Access guides, cheat sheets, and growth resources.",
-    href: "#"
-  },
-];
-
 // Pricing Data
 const pricingData: CardItem[] = [
   {
@@ -340,22 +300,6 @@ export function MarketingNav() {
                 <div className="w-full md:w-[700px] p-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {useCasesData.map((item) => (
-                      <DropdownCard key={item.title} item={item} />
-                    ))}
-                  </div>
-                </div>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-
-            {/* Learn Dropdown */}
-            <NavigationMenuItem>
-              <NavigationMenuTrigger data-testid="nav-trigger-learn">
-                Learn
-              </NavigationMenuTrigger>
-              <NavigationMenuContent>
-                <div className="w-full md:w-[600px] p-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                    {learnData.map((item) => (
                       <DropdownCard key={item.title} item={item} />
                     ))}
                   </div>
@@ -563,45 +507,6 @@ export function MarketingNav() {
                   </AccordionContent>
                 </AccordionItem>
 
-                <AccordionItem value="learn">
-                  <AccordionTrigger data-testid="mobile-accordion-learn">
-                    Learn
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <div className="flex flex-col gap-1">
-                      {learnData.map((item) => (
-                        <div
-                          key={item.title}
-                          onClick={() => {
-                            setMobileMenuOpen(false);
-                            if (item.href && item.href !== "#") {
-                              navigate(item.href);
-                            }
-                          }}
-                          className="flex items-start gap-3 p-3 rounded-lg hover:bg-accent cursor-pointer"
-                          data-testid={`mobile-link-${item.title.toLowerCase().replace(/\s+/g, '-')}`}
-                          role="button"
-                          tabIndex={0}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              setMobileMenuOpen(false);
-                              if (item.href && item.href !== "#") {
-                                navigate(item.href);
-                              }
-                            }
-                          }}
-                        >
-                          <item.icon className="h-5 w-5 text-purple-600 flex-shrink-0 mt-0.5" />
-                          <div>
-                            <div className="font-medium text-sm">{item.title}</div>
-                            <div className="text-xs text-muted-foreground">{item.description}</div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
               </Accordion>
 
               <Button
@@ -624,4 +529,4 @@ export function MarketingNav() {
 }
 
 // Export data for use in landing page
-export { featuresData, toolsData, useCasesData, learnData, pricingData };
+export { featuresData, toolsData, useCasesData, pricingData };
