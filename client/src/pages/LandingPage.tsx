@@ -36,7 +36,7 @@ function GridCard({ icon: Icon, title, description, colorClass = "purple" }: Gri
   };
 
   return (
-    <Card className="rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+    <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift">
       <CardContent className="p-6">
         <div className="flex items-start gap-4">
           <div className={`${colorClasses[colorClass as keyof typeof colorClasses] || colorClasses.purple} p-3 rounded-lg flex-shrink-0`}>
@@ -66,7 +66,7 @@ function CTABar({ section }: { section: string }) {
         }}
         size="lg"
         variant="outline"
-        className="rounded-xl"
+        className="rounded-xl hover-lift transition-all-smooth"
         data-testid={`button-${section}-talk-sales`}
       >
         <MessageSquare className="mr-2 h-5 w-5" />
@@ -79,7 +79,7 @@ function CTABar({ section }: { section: string }) {
             login();
           }}
           size="lg"
-          className="bg-gradient-hero text-white hover:opacity-90 rounded-xl"
+          className="bg-gradient-hero text-white hover:opacity-90 rounded-xl btn-glow hover-lift"
           data-testid={`button-${section}-get-started`}
         >
           Get Started Free
@@ -89,7 +89,7 @@ function CTABar({ section }: { section: string }) {
         <Button
           onClick={() => navigate('/dashboard')}
           size="lg"
-          className="bg-gradient-hero text-white hover:opacity-90 rounded-xl"
+          className="bg-gradient-hero text-white hover:opacity-90 rounded-xl btn-glow hover-lift"
           data-testid={`button-${section}-dashboard`}
         >
           Go to Dashboard
@@ -117,9 +117,10 @@ export default function LandingPage() {
       <MarketingNav />
 
       {/* Hero Section */}
-      <section className="bg-gradient-hero text-white py-20 px-4">
-        <div className="container mx-auto max-w-6xl text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+      <section className="relative bg-gradient-hero text-white py-20 px-4">
+        <div className="absolute inset-0 glow-purple opacity-30 pointer-events-none"></div>
+        <div className="container mx-auto max-w-6xl text-center relative z-10">
+          <h1 className="text-display text-gradient-purple mb-6">
             Make Your Voice Heard
           </h1>
           <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
@@ -133,7 +134,7 @@ export default function LandingPage() {
                   login();
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
                 data-testid="button-hero-start-free"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -146,7 +147,7 @@ export default function LandingPage() {
                   navigate('/dashboard');
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
                 data-testid="button-hero-dashboard"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -160,7 +161,7 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
+              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold hover-lift transition-all-smooth"
               data-testid="button-hero-watch-demo"
             >
               <Video className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -171,8 +172,8 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
-        <div className="container mx-auto max-w-6xl">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">From Trend to Script in 60 Seconds.</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -196,8 +197,8 @@ export default function LandingPage() {
       </section>
 
       {/* Tools Section */}
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto max-w-6xl">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Tools</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -225,8 +226,8 @@ export default function LandingPage() {
       </section>
 
       {/* Use Cases Section */}
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
-        <div className="container mx-auto max-w-6xl">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Use Cases</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -249,8 +250,8 @@ export default function LandingPage() {
       </section>
 
       {/* Learn Section */}
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto max-w-6xl">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Learn</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -273,7 +274,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -285,7 +286,7 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {/* Starter Plan */}
-            <Card className="rounded-2xl shadow-sm hover:shadow-md transition-all hover:scale-105 relative">
+            <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift relative">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center mb-4">
                   <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg mb-3">
@@ -323,7 +324,7 @@ export default function LandingPage() {
                       trackSignupCTA('pricing_starter');
                       login();
                     }}
-                    className="w-full rounded-xl"
+                    className="w-full rounded-xl hover-lift transition-all-smooth"
                     variant="outline"
                     data-testid="button-pricing-starter"
                   >
@@ -332,7 +333,7 @@ export default function LandingPage() {
                 ) : (
                   <Button
                     onClick={() => navigate('/dashboard')}
-                    className="w-full rounded-xl"
+                    className="w-full rounded-xl hover-lift transition-all-smooth"
                     variant="outline"
                     data-testid="button-pricing-starter-dashboard"
                   >
@@ -343,7 +344,7 @@ export default function LandingPage() {
             </Card>
 
             {/* Creator Plan */}
-            <Card className="rounded-2xl border-purple-500 border-2 shadow-lg hover:shadow-xl transition-all hover:scale-105 relative">
+            <Card className="rounded-2xl border-purple-500 border-2 shadow-card hover:shadow-card-hover hover-lift relative">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 hover:bg-purple-600">
                 Most Popular
               </Badge>
@@ -387,7 +388,7 @@ export default function LandingPage() {
                     trackNavigateCTA('pricing_creator', 'get_creator');
                     navigate('/account');
                   }}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl"
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl btn-glow hover-lift"
                   data-testid="button-pricing-creator"
                 >
                   Get Creator
@@ -396,7 +397,7 @@ export default function LandingPage() {
             </Card>
 
             {/* Pro Plan */}
-            <Card className="rounded-2xl border-green-500 border-2 shadow-lg hover:shadow-xl transition-all hover:scale-105 relative">
+            <Card className="rounded-2xl border-green-500 border-2 shadow-card hover:shadow-card-hover hover-lift relative">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-600 hover:bg-green-600">
                 Best Value
               </Badge>
@@ -448,7 +449,7 @@ export default function LandingPage() {
                     trackNavigateCTA('pricing_pro', 'upgrade_pro');
                     navigate('/account');
                   }}
-                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                  className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl btn-glow hover-lift"
                   data-testid="button-pricing-pro"
                 >
                   Upgrade to Pro
@@ -457,7 +458,7 @@ export default function LandingPage() {
             </Card>
 
             {/* Agency Plan */}
-            <Card className="rounded-2xl shadow-sm hover:shadow-md transition-all hover:scale-105 relative">
+            <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift relative">
               <CardContent className="p-6">
                 <div className="flex flex-col items-center text-center mb-4">
                   <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mb-3">
@@ -506,7 +507,7 @@ export default function LandingPage() {
                     trackNavigateCTA('pricing_agency', 'contact_sales');
                     navigate('/contact');
                   }}
-                  className="w-full rounded-xl"
+                  className="w-full rounded-xl hover-lift transition-all-smooth"
                   variant="outline"
                   data-testid="button-pricing-agency"
                 >
@@ -523,7 +524,7 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="rounded-xl"
+              className="rounded-xl hover-lift transition-all-smooth"
               data-testid="button-compare-plans"
             >
               Compare All Plans
@@ -534,7 +535,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Banner */}
-      <section className="bg-gradient-cta text-white py-16 px-4">
+      <section className="bg-gradient-cta text-white py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Go Viral?
@@ -550,7 +551,7 @@ export default function LandingPage() {
                   login();
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
                 data-testid="button-footer-start-free"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -563,7 +564,7 @@ export default function LandingPage() {
                   navigate('/dashboard');
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold"
+                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
                 data-testid="button-footer-dashboard"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -577,7 +578,7 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold"
+              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold hover-lift transition-all-smooth"
               data-testid="button-footer-talk-sales"
             >
               <MessageSquare className="mr-2 h-5 w-5 flex-shrink-0" />

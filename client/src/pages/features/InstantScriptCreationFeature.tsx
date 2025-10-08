@@ -539,6 +539,113 @@ export default function InstantScriptCreationFeature() {
         </div>
       </section>
 
+      {/* Before/After Comparison */}
+      <section className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900">
+        <div className="container mx-auto max-w-6xl px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
+            Manual Scripting vs AI-Powered Scripts
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            <Card className="p-8 bg-red-50/50 dark:bg-red-950/20 border-red-200 dark:border-red-900">
+              <div className="flex items-center mb-6">
+                <div className="h-12 w-12 rounded-full bg-red-100 dark:bg-red-900 flex items-center justify-center mr-4">
+                  <Clock className="h-6 w-6 text-red-600 dark:text-red-400" />
+                </div>
+                <h3 className="text-2xl font-bold">Manual Method</h3>
+              </div>
+              <ul className="space-y-4">
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-3 mt-1">✗</span>
+                  <span>Hours spent researching trends and competitors</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-3 mt-1">✗</span>
+                  <span>Starting from a blank page every time</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-3 mt-1">✗</span>
+                  <span>Guessing which hooks will work</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-red-500 mr-3 mt-1">✗</span>
+                  <span>Inconsistent quality across videos</span>
+                </li>
+              </ul>
+            </Card>
+
+            <Card className="p-8 bg-green-50/50 dark:bg-green-950/20 border-green-200 dark:border-green-900">
+              <div className="flex items-center mb-6">
+                <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-4">
+                  <Zap className="h-6 w-6 text-green-600 dark:text-green-400" />
+                </div>
+                <h3 className="text-2xl font-bold">With ScriptTok</h3>
+              </div>
+              <ul className="space-y-4">
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-3 mt-1">✓</span>
+                  <span>Instant script generation in seconds</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-3 mt-1">✓</span>
+                  <span>Professional foundation to build upon</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-3 mt-1">✓</span>
+                  <span>Multiple hook variations included</span>
+                </li>
+                <li className="flex items-start">
+                  <span className="text-green-500 mr-3 mt-1">✓</span>
+                  <span>Consistent quality and brand voice</span>
+                </li>
+              </ul>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Time Savings Calculator */}
+      <section className="py-20 md:py-28 bg-gradient-to-br from-violet-600 to-purple-600 dark:from-violet-800 dark:to-purple-800">
+        <div className="container mx-auto max-w-4xl px-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">
+            Calculate Your Time Savings
+          </h2>
+          <Card className="p-8">
+            <div className="space-y-6">
+              <div>
+                <label className="block font-semibold mb-3 text-gray-700 dark:text-gray-300">
+                  How many scripts do you write per week?
+                </label>
+                <input 
+                  type="number" 
+                  className="w-full p-4 rounded-lg border border-gray-300 dark:border-gray-600 dark:bg-gray-800 text-lg"
+                  defaultValue={5}
+                  min={1}
+                  max={100}
+                  onChange={(e) => {
+                    const scripts = Number(e.target.value);
+                    const manualHours = scripts * 2;
+                    const aiMinutes = scripts * 2;
+                    const savedHours = manualHours - (aiMinutes / 60);
+                    const resultEl = document.getElementById('time-saved-result');
+                    if (resultEl) {
+                      resultEl.textContent = `${savedHours.toFixed(1)} hours per week`;
+                    }
+                  }}
+                />
+              </div>
+              <div className="bg-green-50 dark:bg-green-950/30 p-6 rounded-lg border border-green-200 dark:border-green-900">
+                <h3 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-2">
+                  You Save: <span id="time-saved-result">10.0 hours per week</span>
+                </h3>
+                <p className="text-green-600 dark:text-green-500">
+                  That's time you can spend creating more content, engaging with your audience, or focusing on strategy.
+                </p>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
       <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
