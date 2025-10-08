@@ -35,9 +35,8 @@ export class IdentityService {
 
       const [firstName, lastName] = this.parseFullName(name);
 
-      // In development mode, grant Pro tier automatically
-      const isDevelopment = provider === 'dev' || process.env.NODE_ENV === 'development';
-      const subscriptionTier = isDevelopment ? 'pro' : 'starter';
+      // Grant Pro tier to all new users automatically
+      const subscriptionTier = 'pro';
 
       const newUserData: InsertUser = {
         username,
