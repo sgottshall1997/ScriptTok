@@ -174,7 +174,7 @@ export default function ProvenViralTemplatesFeature() {
     {
       question: "How do templates help with content creation?",
       answer:
-        "Templates give you proven content structures for different formats (product showcase, tutorial, before/after, etc.). Each template includes hook patterns, story beats, and CTA placements that you can customize with your specific content. This helps maintain quality and consistency across all your scripts.",
+        "Templates give you tested content structures for different formats (product showcase, tutorial, before/after, etc.). Each template includes hook patterns, story beats, and CTA placements that you can customize with your specific content. This helps maintain quality and consistency across all your scripts.",
     },
     {
       question: "How do templates maintain brand consistency across my team?",
@@ -189,7 +189,7 @@ export default function ProvenViralTemplatesFeature() {
     {
       question: "What benefits do templates provide?",
       answer:
-        "Templates help you create content faster by providing proven structures. You get pre-built hooks, story flows, and CTAs that you can customize. This reduces planning time, maintains consistency, and helps you scale content production without sacrificing quality.",
+        "Templates help you create content faster by providing established structures. You get pre-built hooks, story flows, and CTAs that you can customize. This reduces planning time, maintains consistency, and helps you scale content production without sacrificing quality.",
     },
     {
       question: "How do niche-specific templates help my business?",
@@ -214,21 +214,21 @@ export default function ProvenViralTemplatesFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Proven Viral Templates - Pre-Built Script Structures for Faster Content | Pheme</title>
-        <meta name="description" content="Access pre-built templates with proven content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
-        <meta property="og:title" content="Proven Viral Templates - Pre-Built Script Structures for Faster Content | Pheme" />
-        <meta property="og:description" content="Access pre-built templates with proven content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
+        <title>Viral Templates - Pre-Built Script Structures for Faster Content | Pheme</title>
+        <meta name="description" content="Access pre-built templates with tested content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
+        <meta property="og:title" content="Viral Templates - Pre-Built Script Structures for Faster Content | Pheme" />
+        <meta property="og:description" content="Access pre-built templates with tested content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://pheme.com/features/proven-viral-templates" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Proven Viral Templates - Pre-Built Script Structures for Faster Content | Pheme" />
-        <meta name="twitter:description" content="Access pre-built templates with proven content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
+        <meta name="twitter:title" content="Viral Templates - Pre-Built Script Structures for Faster Content | Pheme" />
+        <meta name="twitter:description" content="Access pre-built templates with tested content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
       </Helmet>
 
       <div className="min-h-screen">
         <FeatureHero
           title="Pre-Built Templates for Faster Content Creation"
-          subtitle="Stop starting from scratch. Access proven content structures with hooks, story flows, and CTAs. Customize quickly with AI and maintain brand consistency across all your content."
+          subtitle="Stop starting from scratch. Access tested content structures with hooks, story flows, and CTAs. Customize quickly with AI and maintain brand consistency across all your content."
           primaryCTA={{
             text: "Browse Template Library →",
             onClick: () => {
@@ -251,7 +251,7 @@ export default function ProvenViralTemplatesFeature() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Use Templates?</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Templates provide proven content structures that help you create faster and maintain consistency.
+              Templates provide tested content structures that help you create faster and maintain consistency.
             </p>
           </div>
           
@@ -301,7 +301,7 @@ export default function ProvenViralTemplatesFeature() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold mb-2">Quality Scripts</h3>
-                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">Proven</p>
+                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">Effective</p>
                   <p className="text-sm text-muted-foreground">
                     Templates use effective content structures
                   </p>
@@ -379,7 +379,7 @@ export default function ProvenViralTemplatesFeature() {
             <div className="mt-8 p-6 bg-gradient-to-r from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 rounded-xl text-center">
               <p className="text-sm text-muted-foreground mb-2">Key Benefit</p>
               <p className="text-3xl font-bold text-violet-600 dark:text-violet-400">Save Significant Time</p>
-              <p className="text-sm text-muted-foreground mt-2">Create content faster with proven structures</p>
+              <p className="text-sm text-muted-foreground mt-2">Create content faster with tested structures</p>
             </div>
           </div>
 
@@ -541,7 +541,7 @@ export default function ProvenViralTemplatesFeature() {
                 <div className="flex-1">
                   <h3 className="font-bold mb-2">50+ Pre-Built Viral Templates</h3>
                   <p className="text-sm text-muted-foreground">
-                    Proven templates tested across millions of views. Product showcases, tutorials, reviews, transformations, and more.
+                    Tested templates for various content formats. Product showcases, tutorials, reviews, transformations, and more.
                   </p>
                 </div>
               </div>
@@ -788,7 +788,7 @@ export default function ProvenViralTemplatesFeature() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">All Templates</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Browse our complete library of proven script templates.
+              Browse our complete library of script templates.
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -850,7 +850,7 @@ export default function ProvenViralTemplatesFeature() {
               <h2 className="text-3xl md:text-4xl font-bold">Top Performing Templates</h2>
             </div>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our highest-converting templates with proven results across millions of views.
+              Our highest-converting templates for various content formats.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
