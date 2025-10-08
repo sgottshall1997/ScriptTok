@@ -35,8 +35,8 @@ export class IdentityService {
 
       const [firstName, lastName] = this.parseFullName(name);
 
-      // Grant Pro tier to all new users automatically
-      const subscriptionTier = 'pro';
+      // Grant free tier to all new users (3 free generations trial)
+      const subscriptionTier = 'free';
 
       const newUserData: InsertUser = {
         username,
