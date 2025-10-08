@@ -59,7 +59,7 @@ function CTABar({ section }: { section: string }) {
   const [_, navigate] = useLocation();
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-8">
+    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-6">
       <Button
         onClick={() => {
           trackNavigateCTA(section, 'talk_to_sales');
@@ -118,13 +118,13 @@ export default function LandingPage() {
       <MarketingNav />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-hero text-white py-20 px-4">
+      <section className="relative bg-gradient-hero text-white py-12 px-4">
         <div className="absolute inset-0 glow-purple opacity-30 pointer-events-none"></div>
         <div className="container mx-auto max-w-6xl text-center relative z-10">
-          <h1 className="text-display text-gradient-purple mb-6">
+          <h1 className="text-display text-gradient-purple mb-4">
             Make Your Voice Heard
           </h1>
-          <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-200 mb-6 max-w-3xl mx-auto">
             AI-powered scripts, trend discovery, and affiliate tools built for creators.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -173,9 +173,9 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
+      <section className="py-12 md:py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">From Trend to Script in 60 Seconds.</h2>
             <SampleFlowDemonstration />
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -199,9 +199,9 @@ export default function LandingPage() {
       </section>
 
       {/* Tools Section */}
-      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-12 md:py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Tools</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Powerful AI tools to streamline your content creation workflow.
@@ -228,9 +228,9 @@ export default function LandingPage() {
       </section>
 
       {/* Use Cases Section */}
-      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
+      <section className="py-12 md:py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Use Cases</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Perfect for creators, marketers, and teams of all sizes.
@@ -252,9 +252,9 @@ export default function LandingPage() {
       </section>
 
       {/* Learn Section */}
-      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-12 md:py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Learn</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Resources, templates, and community to help you succeed.
@@ -276,9 +276,9 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
+      <section className="py-12 md:py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Choose Your Plan
             </h2>
