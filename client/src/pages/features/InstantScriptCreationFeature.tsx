@@ -167,37 +167,37 @@ export default function InstantScriptCreationFeature() {
     {
       question: "How much time will AI Script Generator actually save me?",
       answer:
-        "Most creators save 10-15 hours per week. A typical video script that takes 2-3 hours to research, write, and refine can be generated in 30 seconds. If you create 5 videos per week, that's 10-15 hours saved—time you can use to film more content, engage with your audience, or close brand deals.",
+        "The AI generates complete scripts in seconds, significantly reducing the time needed for script creation. A script that typically takes hours to research, write, and refine is ready in under a minute. This time savings allows you to focus on filming, engaging with your audience, or other business activities.",
     },
     {
-      question: "What kind of revenue increase can I expect?",
+      question: "How does AI help with content creation?",
       answer:
-        "Results vary, but our users report significant gains: content creators see $5K-$15K additional monthly revenue from increased posting frequency and better engagement. Affiliate marketers report 40-125% increases in conversion rates thanks to optimized CTAs. The key is using AI to create more high-quality content consistently.",
+        "The AI provides complete scripts with hooks, story flow, and CTAs already structured. This helps you create content more consistently and efficiently. Each script is optimized for your chosen platform and includes elements designed to engage viewers.",
     },
     {
       question: "How does it help with audience growth?",
       answer:
-        "AI scripts are optimized for virality using proven hooks, pacing, and engagement techniques. We've seen creators grow from 10K to 500K followers in 6 months by using AI scripts to post 2-3x more frequently without sacrificing quality. The consistent, engaging content feeds platform algorithms and keeps audiences coming back.",
+        "AI scripts include hooks, pacing, and engagement techniques designed to capture attention. By helping you create more content consistently, the tool supports regular posting schedules that can benefit algorithmic reach and audience retention.",
     },
     {
       question: "Can I maintain my brand voice with AI scripts?",
       answer:
-        "Absolutely. Every script is generated in 5 tone variations (casual, professional, energetic, educational, humorous) so you can choose what matches your brand. Plus, all scripts are fully editable—use them as-is or customize to add your unique personality. Brands using our tool create 100+ videos monthly while maintaining perfect consistency.",
+        "Yes. Every script is generated in 5 tone variations (casual, professional, energetic, educational, humorous) so you can choose what matches your brand. All scripts are fully editable—use them as-is or customize to add your unique personality while maintaining a professional foundation.",
     },
     {
-      question: "What makes the CTAs more effective than what I write myself?",
+      question: "What makes the AI-generated CTAs effective?",
       answer:
-        "Our AI analyzes millions of high-converting videos to understand what CTAs work best for different products, audiences, and platforms. It factors in psychology, urgency, clarity, and platform-specific best practices. Users report 40% higher conversion rates on average because the CTAs are data-backed, not guesswork.",
+        "The AI creates CTAs based on analysis of successful video content across platforms. It considers psychological principles, clarity, and platform-specific best practices to structure calls-to-action that are clear and compelling.",
     },
     {
       question: "How do viral scores help me create better content?",
       answer:
-        "The viral score gives you a data-backed prediction of how well your script will perform before you film anything. It breaks down hook effectiveness, story engagement, and CTA conversion separately. If your score is low, you know exactly what to improve. This means you only film scripts with high viral potential—saving time and maximizing ROI.",
+        "The viral score provides an AI analysis of your script's potential before filming. It breaks down hook effectiveness, story engagement, and CTA strength separately. If your score is low, you can see exactly which elements need improvement, helping you refine scripts before investing time in production.",
     },
     {
       question: "What if I need help getting started?",
       answer:
-        "We provide a complete step-by-step guide showing exactly how to use the Script Generator for maximum results. You'll see live examples, best practices, and tips from top-performing creators. Plus, you can generate your first script in under 60 seconds—no learning curve required.",
+        "We provide a complete step-by-step guide showing exactly how to use the Script Generator. You'll see live examples, best practices, and practical tips. Plus, you can generate your first script in under 60 seconds—minimal learning curve required.",
     },
   ];
 
@@ -361,7 +361,7 @@ export default function InstantScriptCreationFeature() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">What You Achieve With Each Approach</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Multiple paths to success—each delivers measurable results in engagement, revenue, and growth.
+              Multiple approaches to script generation—each optimized for different content goals and strategies.
             </p>
           </div>
 
@@ -388,17 +388,17 @@ export default function InstantScriptCreationFeature() {
                     <TrendingUp className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="trends-tab-title">3x Higher Engagement From Viral Momentum</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="trends-tab-title">Capitalize on Trending Topics</h3>
                     <p className="text-muted-foreground mb-4" data-testid="trends-tab-description">
-                      Trending content achieves 3x higher engagement rates by capitalizing on existing viral momentum. Your scripts are optimized with hooks proven to be working right now—not guesswork, but real-time viral patterns that drive views and shares.
+                      Trending scripts use hooks and angles from current viral topics, helping you create timely content. Scripts are optimized with structures that work well for trending content—based on real-time patterns and popular formats.
                     </p>
                     <div className="space-y-2">
                       <Badge className="bg-green-600 text-white mr-2">
                         <TrendingUp className="h-3 w-3 mr-1" />
-                        300% engagement boost
+                        Timely content creation
                       </Badge>
                       <Badge className="bg-blue-600 text-white">
-                        500K+ avg views per trending video
+                        Current viral patterns included
                       </Badge>
                     </div>
                   </div>
@@ -413,17 +413,17 @@ export default function InstantScriptCreationFeature() {
                     <Package className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="products-tab-title">40% Higher Conversions = Direct Revenue Growth</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="products-tab-title">Product-Focused Scripts with Strong CTAs</h3>
                     <p className="text-muted-foreground mb-4" data-testid="products-tab-description">
-                      Product-focused scripts convert at 40% higher rates because AI identifies the exact benefit angles and psychological triggers that drive purchases. Every CTA is profit-optimized, turning viewers into customers and boosting affiliate commissions by an average of $5K/month.
+                      Product-focused scripts highlight key benefits and features that drive interest. AI structures content with clear CTAs and persuasive angles designed to convert viewers into customers. Each script emphasizes value propositions and includes natural product integration.
                     </p>
                     <div className="space-y-2">
                       <Badge className="bg-green-600 text-white mr-2">
                         <DollarSign className="h-3 w-3 mr-1" />
-                        +$5K monthly revenue
+                        Conversion-optimized structure
                       </Badge>
                       <Badge className="bg-blue-600 text-white">
-                        40% conversion rate increase
+                        Clear, compelling CTAs
                       </Badge>
                     </div>
                   </div>
@@ -438,17 +438,17 @@ export default function InstantScriptCreationFeature() {
                     <Lightbulb className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="ideas-tab-title">10+ Hours Saved Weekly While Maintaining Quality</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="ideas-tab-title">Transform Ideas into Scripts Quickly</h3>
                     <p className="text-muted-foreground mb-4" data-testid="ideas-tab-description">
-                      Original ideas become viral-ready scripts in 30 seconds instead of 2-3 hours of manual writing. The quality doesn't drop—it improves. AI structures your ideas with proven engagement techniques, viral hooks, and optimized pacing that you'd spend hours researching. That's 10+ hours saved per week to create more content or close brand deals.
+                      Original ideas become complete scripts in seconds instead of hours of manual writing. AI structures your concepts with engagement techniques, hooks, and optimized pacing. This streamlined process allows you to create more content and spend time on other business priorities.
                     </p>
                     <div className="space-y-2">
                       <Badge className="bg-green-600 text-white mr-2">
                         <Clock className="h-3 w-3 mr-1" />
-                        10+ hours saved weekly
+                        Rapid script creation
                       </Badge>
                       <Badge className="bg-blue-600 text-white">
-                        20x more content in same time
+                        Professional structure instantly
                       </Badge>
                     </div>
                   </div>
@@ -463,17 +463,17 @@ export default function InstantScriptCreationFeature() {
                     <Users className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="competitors-tab-title">Instant Competitive Advantage From Proven Structures</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="competitors-tab-title">Learn From Successful Content Structures</h3>
                     <p className="text-muted-foreground mb-4" data-testid="competitors-tab-description">
-                      Leverage what's already working without copying. AI analyzes millions of top-performing videos to extract winning structures—then applies them to your unique brand voice. Get the competitive intelligence that would take months of manual analysis, delivered instantly. Creators using competitor-informed scripts see 2.5x faster audience growth.
+                      Leverage successful patterns without copying. AI analyzes top-performing videos to extract effective structures—then applies them to your unique brand voice. Get competitive intelligence instantly that would otherwise require extensive manual analysis.
                     </p>
                     <div className="space-y-2">
                       <Badge className="bg-green-600 text-white mr-2">
                         <BarChart3 className="h-3 w-3 mr-1" />
-                        2.5x faster growth
+                        Data-driven structures
                       </Badge>
                       <Badge className="bg-blue-600 text-white">
-                        Learn from millions of viral videos
+                        Learn from successful videos
                       </Badge>
                     </div>
                   </div>
@@ -519,10 +519,10 @@ export default function InstantScriptCreationFeature() {
       <section className="bg-gradient-cta text-white py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Start Generating Viral Scripts That Drive Results
+            Start Generating Scripts in Seconds
           </h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8">
-            Join creators earning $5K+ monthly, growing to 500K followers, and saving 10+ hours per week with AI-powered scripts.
+            Join creators using AI-powered scripts to create content faster, more consistently, and with professional quality.
           </p>
           <Button
             onClick={() => {

@@ -71,28 +71,28 @@ export default function TrendDiscoveryFeature() {
   const intelligenceOutcomes = [
     {
       icon: TrendingUp,
-      title: "Catch Trends 48 Hours Before Competition",
-      description: "Real-time AI monitoring ensures you're creating content on emerging trends before they peak—giving you first-mover advantage and 5x higher viral potential compared to late adopters.",
+      title: "Discover Emerging Trends Early",
+      description: "Real-time AI monitoring helps you identify trending topics as they emerge, giving you time to create content before trends peak.",
     },
     {
       icon: Target,
-      title: "Zero Research Time, 100% Data Accuracy",
-      description: "Complete intelligence packages eliminate 10+ hours of manual research per trend. Every data point—hooks, audiences, timing—is AI-verified for accuracy, not guesswork.",
+      title: "Comprehensive Trend Intelligence",
+      description: "Complete intelligence packages include hooks, target audiences, trending angles, and optimal posting times—all organized in one report for easy reference.",
     },
     {
       icon: Package,
-      title: "$15K+ in Matched Product Revenue Monthly",
-      description: "Automatic product-to-trend matching identifies high-converting affiliate opportunities you'd never find manually. Users report $15K+ monthly revenue from AI-matched products alone.",
+      title: "Automatic Product Matching",
+      description: "AI finds products that align with trending topics and your niche, complete with images, descriptions, and affiliate links ready to include in your content.",
     },
     {
       icon: Video,
-      title: "2.5x Faster Content Optimization",
-      description: "Instant access to top-performing competitor videos means you learn what's working in minutes, not weeks. Adapt proven strategies 2.5x faster than manual competitive analysis.",
+      title: "Competitor Insights",
+      description: "Instant access to top-performing competitor videos shows you what's working. See thumbnails, view counts, and engagement data to inform your strategy.",
     },
     {
       icon: Database,
-      title: "Complete Intelligence = 89% Viral Success Rate",
-      description: "Scripts generated from full trend packages (hooks + audience + products + competitor insights) achieve 89% viral success rate—content that consistently hits 100K+ views.",
+      title: "Complete Trend Packages",
+      description: "Scripts generated from full trend packages include hooks, audience insights, matched products, and competitor analysis—everything in one place.",
     },
   ];
 
@@ -257,7 +257,7 @@ export default function TrendDiscoveryFeature() {
               What You Achieve With Trend Intelligence
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Real business outcomes from comprehensive trend packages—measurable results in speed, revenue, and viral success.
+              How comprehensive trend packages help you create better content with complete intelligence and insights.
             </p>
           </div>
 

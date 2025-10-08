@@ -662,10 +662,10 @@ export default function TemplateLibraryTool() {
           <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800">
             <div className="text-center mb-6">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">
-                Why Do Templates Save 10+ Hours Per Week?
+                Why Do Templates Streamline Content Creation?
               </h2>
               <p className="text-lg text-muted-foreground">
-                Discover the business value, proven ROI, and real creator success stories showing how templates deliver 2.5x better conversions and $10K+ monthly revenue impact.
+                Learn how templates provide professional structures, reduce creation time, and help you maintain consistency across all your content.
               </p>
             </div>
             <div className="flex justify-center">
@@ -676,7 +676,7 @@ export default function TemplateLibraryTool() {
                 data-testid="button-view-benefits"
               >
                 <Sparkles className="mr-2 h-5 w-5" />
-                See Why Templates Increase ROI
+                See How Templates Work
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>

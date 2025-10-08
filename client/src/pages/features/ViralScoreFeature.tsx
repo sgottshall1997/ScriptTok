@@ -303,36 +303,36 @@ export default function ViralScoreFeature() {
                     <Award className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Real Success Stories</h3>
+                    <h3 className="text-2xl font-bold mb-2">How Creators Use Viral Score</h3>
                     <p className="text-muted-foreground">
-                      See how creators use Viral Score to consistently produce high-performing content.
+                      See how different content creators use Viral Score to optimize their scripts.
                     </p>
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4" data-testid="success-story-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" data-testid="success-story-niche-0">Beauty Creator</Badge>
-                      <Badge className="bg-green-600" data-testid="success-story-score-0">Score: 87</Badge>
+                      <Badge variant="secondary" data-testid="success-story-niche-0">Beauty Creators</Badge>
+                      <Badge className="bg-green-600" data-testid="success-story-score-0">Target: 80+</Badge>
                     </div>
-                    <p className="text-sm mb-2" data-testid="success-story-quote-0">"I went from 50K to 500K followers in 3 months by only posting scripts with 80+ scores."</p>
-                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-0">Result: 2.3M views average per video</p>
+                    <p className="text-sm mb-2" data-testid="success-story-quote-0">Focus on scripts with high scores before filming to ensure hook strength and CTA effectiveness.</p>
+                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-0">Use Case: Pre-production script validation</p>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4" data-testid="success-story-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" data-testid="success-story-niche-1">Tech Reviewer</Badge>
-                      <Badge className="bg-green-600" data-testid="success-story-score-1">Score: 82</Badge>
+                      <Badge variant="secondary" data-testid="success-story-niche-1">Tech Reviewers</Badge>
+                      <Badge className="bg-green-600" data-testid="success-story-score-1">Target: 75+</Badge>
                     </div>
-                    <p className="text-sm mb-2" data-testid="success-story-quote-1">"The AI caught weak hooks I would have missed. Now I know before I film if it'll perform."</p>
-                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-1">Result: 3x increase in engagement rate</p>
+                    <p className="text-sm mb-2" data-testid="success-story-quote-1">Use AI feedback to identify weak hooks and improve them before recording, saving time on reshoots.</p>
+                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-1">Use Case: Hook optimization and refinement</p>
                   </div>
                   <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-4" data-testid="success-story-2">
                     <div className="flex items-center gap-2 mb-2">
-                      <Badge variant="secondary" data-testid="success-story-niche-2">Fitness Coach</Badge>
-                      <Badge className="bg-green-600" data-testid="success-story-score-2">Score: 91</Badge>
+                      <Badge variant="secondary" data-testid="success-story-niche-2">Fitness Coaches</Badge>
+                      <Badge className="bg-green-600" data-testid="success-story-score-2">Target: 85+</Badge>
                     </div>
-                    <p className="text-sm mb-2" data-testid="success-story-quote-2">"Every video above 85 has hit over 1M views. It's like having a crystal ball."</p>
-                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-2">Result: 5 viral videos in a row (1M+ views each)</p>
+                    <p className="text-sm mb-2" data-testid="success-story-quote-2">Aim for high scores to ensure scripts have strong viral elements and platform optimization.</p>
+                    <p className="text-xs text-muted-foreground" data-testid="success-story-result-2">Use Case: Quality threshold for content publishing</p>
                   </div>
                 </div>
               </Card>

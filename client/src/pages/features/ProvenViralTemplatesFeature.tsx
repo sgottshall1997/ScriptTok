@@ -167,39 +167,39 @@ export default function ProvenViralTemplatesFeature() {
 
   const faqs = [
     {
-      question: "How much time will I actually save with templates?",
+      question: "How much time will templates save me?",
       answer:
-        "Users report 90% time savings on script creation. Instead of spending 45 minutes per script from scratch, templates reduce this to 4 minutes. That's creating 50 videos in the time it previously took to create 5. One agency client saved 30 hours per week using our template system across 20 client accounts.",
+        "Templates provide a pre-built structure so you don't start from scratch. Instead of planning hooks, story flow, and CTAs each time, you start with a complete framework and customize it. This significantly reduces the time spent on script planning and structure.",
     },
     {
-      question: "What's the actual revenue impact of using templates?",
+      question: "How do templates help with content creation?",
       answer:
-        "Our templates convert at 13.8% on average—2.5x the industry standard of 5.2%. Users report revenue increases of 300-500% within 90 days. Example: A solopreneur went from $2,400/month to $12,800/month by scaling from 3 to 30 posts per week using our viral templates. Templates eliminate guesswork and use proven frameworks that work.",
+        "Templates give you proven content structures for different formats (product showcase, tutorial, before/after, etc.). Each template includes hook patterns, story beats, and CTA placements that you can customize with your specific content. This helps maintain quality and consistency across all your scripts.",
     },
     {
       question: "How do templates maintain brand consistency across my team?",
       answer:
-        "Templates include brand voice presets that ensure 95% consistency across all team members and content. Each template can be customized with your brand's tone, terminology, and style guidelines. Teams can import/export templates, ensuring everyone creates on-brand content even when scaling from 1 to 20 creators.",
+        "Templates include brand voice presets that you can customize with your tone, terminology, and style guidelines. Teams can save and share templates, ensuring everyone uses the same structures and messaging approach for consistent content across all creators.",
     },
     {
       question: "Can I create custom templates from my best-performing content?",
       answer:
-        "Yes! Our custom template builder lets you turn your winning scripts into reusable templates in minutes. AI analyzes your top performers and suggests structural elements to save. You can build a library of templates proven to work for YOUR audience, then scale those winners infinitely.",
+        "Yes! The custom template builder lets you turn your successful scripts into reusable templates. You can extract the structure, hooks, and flow from your best content and save it as a template for future use. Build a library of formats that work for your specific audience.",
     },
     {
-      question: "What ROI can I expect from the template library?",
+      question: "What benefits do templates provide?",
       answer:
-        "Based on user data: Save 3.25 hours/week on content creation while earning 5.3x more revenue. Templates reduce content creation costs by 70% (less time = lower costs) while increasing output by 400% and conversion rates by 250%. Most users see positive ROI within the first week of using templates.",
+        "Templates help you create content faster by providing proven structures. You get pre-built hooks, story flows, and CTAs that you can customize. This reduces planning time, maintains consistency, and helps you scale content production without sacrificing quality.",
     },
     {
       question: "How do niche-specific templates help my business?",
       answer:
-        "Our niche templates (beauty, tech, finance, fitness, etc.) are pre-optimized for your industry's unique audience, pain points, and conversion patterns. A beauty template converts at 18.2% because it uses hooks, angles, and CTAs proven in the beauty space. Generic templates can't match this level of niche-specific optimization.",
+        "Niche templates (beauty, tech, finance, fitness, etc.) are pre-configured with hooks, angles, and CTAs commonly used in that industry. They follow content patterns that resonate with specific audiences, saving you time on researching what works in your niche.",
     },
     {
-      question: "What makes these templates better than free ones online?",
+      question: "What makes these templates different from free ones online?",
       answer:
-        "Free templates are generic and unproven. Our templates are tested across millions of views with documented performance data (avg. views, conversion rates, engagement metrics). Plus, you get AI customization, brand voice matching, performance analytics, and regular updates based on current trends. It's the difference between guessing and using proven formulas.",
+        "Our templates include AI customization that adapts them to your specific product, brand voice, and platform. You also get brand voice matching, the ability to save custom variations, and integration with our viral score system for feedback on your scripts.",
     },
   ];
 
@@ -227,8 +227,8 @@ export default function ProvenViralTemplatesFeature() {
 
       <div className="min-h-screen">
         <FeatureHero
-          title="Create 50 Videos in the Time It Takes to Script 5"
-          subtitle="Stop starting from scratch. Our proven templates convert at 2.5x industry average while maintaining 95% brand voice consistency. Scale your content without scaling your workload."
+          title="Pre-Built Templates for Faster Content Creation"
+          subtitle="Stop starting from scratch. Access proven content structures with hooks, story flows, and CTAs. Customize quickly with AI and maintain brand consistency across all your content."
           primaryCTA={{
             text: "Browse Template Library →",
             onClick: () => {
@@ -237,7 +237,7 @@ export default function ProvenViralTemplatesFeature() {
             },
           }}
           secondaryCTA={{
-            text: "See ROI Calculator",
+            text: "See Template Benefits",
             onClick: () => {
               trackNavigateCTA("template_library_hero", "see_roi");
               const element = document.getElementById("roi-benefits");
@@ -249,9 +249,9 @@ export default function ProvenViralTemplatesFeature() {
       <section id="roi-benefits" className="py-16 px-4 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Templates = More Money, Growth & Time Saved</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Use Templates?</h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              Stop wondering if your content will work. Use proven frameworks that deliver measurable business results.
+              Templates provide proven content structures that help you create faster and maintain consistency.
             </p>
           </div>
           
@@ -262,15 +262,15 @@ export default function ProvenViralTemplatesFeature() {
                   <Clock className="h-8 w-8 text-violet-600 dark:text-violet-400" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold mb-2">10x Time Savings</h3>
-                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">50 Videos</p>
+                  <h3 className="text-2xl font-bold mb-2">Save Time</h3>
+                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">Faster</p>
                   <p className="text-sm text-muted-foreground">
-                    Create 50 videos in the time it takes to script 5 from scratch
+                    Start with complete structure instead of blank page
                   </p>
                 </div>
                 <div className="pt-4 border-t w-full">
-                  <p className="text-xs text-muted-foreground mb-2">Time Saved Per Video</p>
-                  <p className="text-lg font-semibold">45 minutes → 4 minutes</p>
+                  <p className="text-xs text-muted-foreground mb-2">What You Get</p>
+                  <p className="text-lg font-semibold">Pre-built hooks, flow, CTAs</p>
                 </div>
               </div>
             </Card>
@@ -282,14 +282,14 @@ export default function ProvenViralTemplatesFeature() {
                 </div>
                 <div>
                   <h3 className="text-2xl font-bold mb-2">Brand Consistency</h3>
-                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">95%</p>
+                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">Unified</p>
                   <p className="text-sm text-muted-foreground">
-                    Maintain 95% brand voice consistency across all content
+                    Maintain consistent voice across all content
                   </p>
                 </div>
                 <div className="pt-4 border-t w-full">
-                  <p className="text-xs text-muted-foreground mb-2">Consistency Improvement</p>
-                  <p className="text-lg font-semibold">60% → 95%</p>
+                  <p className="text-xs text-muted-foreground mb-2">How It Works</p>
+                  <p className="text-lg font-semibold">Shared brand voice presets</p>
                 </div>
               </div>
             </Card>
@@ -297,51 +297,51 @@ export default function ProvenViralTemplatesFeature() {
             <Card className="rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-900" data-testid="benefit-conversion">
               <div className="flex flex-col items-center text-center gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full">
-                  <DollarSign className="h-8 w-8 text-violet-600 dark:text-violet-400" />
+                  <Sparkles className="h-8 w-8 text-violet-600 dark:text-violet-400" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold mb-2">Revenue Impact</h3>
-                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">2.5x</p>
+                  <h3 className="text-2xl font-bold mb-2">Quality Scripts</h3>
+                  <p className="text-4xl font-bold text-violet-600 dark:text-violet-400 mb-2">Proven</p>
                   <p className="text-sm text-muted-foreground">
-                    Templates that convert at 2.5x industry average
+                    Templates use effective content structures
                   </p>
                 </div>
                 <div className="pt-4 border-t w-full">
-                  <p className="text-xs text-muted-foreground mb-2">Avg. Conversion Rate</p>
-                  <p className="text-lg font-semibold">5.2% → 13.8%</p>
+                  <p className="text-xs text-muted-foreground mb-2">What's Included</p>
+                  <p className="text-lg font-semibold">Hook patterns & story beats</p>
                 </div>
               </div>
             </Card>
           </div>
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800" data-testid="roi-calculator">
-            <h3 className="text-2xl font-bold mb-6 text-center">Your ROI Breakdown</h3>
+            <h3 className="text-2xl font-bold mb-6 text-center">Template Workflow Comparison</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h4 className="font-semibold mb-4 flex items-center gap-2">
                   <BarChart className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                  Without Templates (Traditional Approach)
+                  Without Templates
                 </h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex justify-between">
-                    <span>Time per script:</span>
-                    <span className="font-semibold">45 minutes</span>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Start from blank page each time</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span>Videos per week:</span>
-                    <span className="font-semibold">7 videos</span>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Plan hook, flow, and CTA manually</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span>Total time weekly:</span>
-                    <span className="font-semibold">5.25 hours</span>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Inconsistent structure across content</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span>Avg. conversion rate:</span>
-                    <span className="font-semibold">5.2%</span>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Team members use different styles</span>
                   </li>
-                  <li className="flex justify-between pt-2 border-t">
-                    <span className="font-bold text-foreground">Monthly revenue:</span>
-                    <span className="font-bold text-foreground">$2,400</span>
+                  <li className="flex items-start gap-2">
+                    <span>•</span>
+                    <span>Spend time planning each script</span>
                   </li>
                 </ul>
               </div>
@@ -349,37 +349,37 @@ export default function ProvenViralTemplatesFeature() {
               <div>
                 <h4 className="font-semibold mb-4 flex items-center gap-2">
                   <Rocket className="h-5 w-5 text-violet-600 dark:text-violet-400" />
-                  With Templates (Pheme Approach)
+                  With Templates
                 </h4>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  <li className="flex justify-between">
-                    <span>Time per script:</span>
-                    <span className="font-semibold text-violet-600 dark:text-violet-400">4 minutes</span>
+                  <li className="flex items-start gap-2">
+                    <span className="text-violet-600 dark:text-violet-400">•</span>
+                    <span>Start with complete structure</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span>Videos per week:</span>
-                    <span className="font-semibold text-violet-600 dark:text-violet-400">30+ videos</span>
+                  <li className="flex items-start gap-2">
+                    <span className="text-violet-600 dark:text-violet-400">•</span>
+                    <span>Pre-built hooks, flow, and CTAs</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span>Total time weekly:</span>
-                    <span className="font-semibold text-violet-600 dark:text-violet-400">2 hours</span>
+                  <li className="flex items-start gap-2">
+                    <span className="text-violet-600 dark:text-violet-400">•</span>
+                    <span>Consistent format across all content</span>
                   </li>
-                  <li className="flex justify-between">
-                    <span>Avg. conversion rate:</span>
-                    <span className="font-semibold text-violet-600 dark:text-violet-400">13.8%</span>
+                  <li className="flex items-start gap-2">
+                    <span className="text-violet-600 dark:text-violet-400">•</span>
+                    <span>Shared templates for team alignment</span>
                   </li>
-                  <li className="flex justify-between pt-2 border-t">
-                    <span className="font-bold text-foreground">Monthly revenue:</span>
-                    <span className="font-bold text-violet-600 dark:text-violet-400">$12,800</span>
+                  <li className="flex items-start gap-2">
+                    <span className="text-violet-600 dark:text-violet-400">•</span>
+                    <span>AI auto-fills variables quickly</span>
                   </li>
                 </ul>
               </div>
             </div>
 
             <div className="mt-8 p-6 bg-gradient-to-r from-violet-100 to-purple-100 dark:from-violet-900/30 dark:to-purple-900/30 rounded-xl text-center">
-              <p className="text-sm text-muted-foreground mb-2">Total Impact</p>
-              <p className="text-3xl font-bold text-violet-600 dark:text-violet-400">+$10,400/month</p>
-              <p className="text-sm text-muted-foreground mt-2">Save 3.25 hours/week while earning 5.3x more</p>
+              <p className="text-sm text-muted-foreground mb-2">Key Benefit</p>
+              <p className="text-3xl font-bold text-violet-600 dark:text-violet-400">Save Significant Time</p>
+              <p className="text-sm text-muted-foreground mt-2">Create content faster with proven structures</p>
             </div>
           </div>
 
@@ -427,16 +427,16 @@ export default function ProvenViralTemplatesFeature() {
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm">Maintain 95% brand consistency across 20 accounts</p>
+                    <p className="text-sm">Maintain brand consistency across multiple client accounts</p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm">Scale from 60 to 400+ videos/month without hiring</p>
+                    <p className="text-sm">Increase content output with AI template automation</p>
                   </div>
                 </div>
                 <div className="pt-4 border-t">
                   <p className="text-xs text-muted-foreground mb-1">Result</p>
-                  <p className="font-semibold text-violet-600 dark:text-violet-400">+$45K MRR, 70% time savings</p>
+                  <p className="font-semibold text-violet-600 dark:text-violet-400">Scalable, consistent client content</p>
                 </div>
               </div>
             </Card>
@@ -455,20 +455,20 @@ export default function ProvenViralTemplatesFeature() {
                 <div className="space-y-3">
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm">Go from 3 struggling posts to 30 viral-ready scripts weekly</p>
+                    <p className="text-sm">Generate multiple ready-to-use scripts quickly each week</p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm">Use niche templates (beauty, tech) that convert at 14.2%</p>
+                    <p className="text-sm">Use niche-specific templates (beauty, tech) customized for your audience</p>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                    <p className="text-sm">Save 8 hours/week on content creation</p>
+                    <p className="text-sm">Reduce time spent on content creation with templates</p>
                   </div>
                 </div>
                 <div className="pt-4 border-t">
                   <p className="text-xs text-muted-foreground mb-1">Result</p>
-                  <p className="font-semibold text-violet-600 dark:text-violet-400">$8K/mo passive income, 10x output</p>
+                  <p className="font-semibold text-violet-600 dark:text-violet-400">Consistent, high-volume content output</p>
                 </div>
               </div>
             </Card>
@@ -500,7 +500,7 @@ export default function ProvenViralTemplatesFeature() {
                 </div>
                 <div className="pt-4 border-t">
                   <p className="text-xs text-muted-foreground mb-1">Result</p>
-                  <p className="font-semibold text-violet-600 dark:text-violet-400">Unified voice, 3x content velocity</p>
+                  <p className="font-semibold text-violet-600 dark:text-violet-400">Unified voice, faster content creation</p>
                 </div>
               </div>
             </Card>
@@ -939,28 +939,28 @@ export default function ProvenViralTemplatesFeature() {
         <div className="container mx-auto max-w-5xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Ready to 10x Your Content Output?
+              Ready to Streamline Your Content Workflow?
             </h2>
             <p className="text-lg md:text-xl text-violet-100 mb-4 max-w-3xl mx-auto">
-              Stop spending 45 minutes per script. Start creating 50 videos in the time it takes to script 5.
+              Stop starting from scratch. Use professional templates to create content faster and more consistently.
             </p>
             <p className="text-base text-violet-200 max-w-2xl mx-auto">
-              Join thousands of creators, agencies, and brands using templates to scale revenue while saving time.
+              Join creators, agencies, and brands using templates to create content more efficiently.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl">
-              <p className="text-4xl font-bold mb-2">90%</p>
-              <p className="text-sm text-violet-100">Time Saved</p>
+              <p className="text-4xl font-bold mb-2">⚡</p>
+              <p className="text-sm text-violet-100">Faster Creation</p>
             </div>
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl">
-              <p className="text-4xl font-bold mb-2">2.5x</p>
-              <p className="text-sm text-violet-100">Better Conversions</p>
+              <p className="text-4xl font-bold mb-2">✨</p>
+              <p className="text-sm text-violet-100">Consistent Quality</p>
             </div>
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl">
-              <p className="text-4xl font-bold mb-2">$10K+</p>
-              <p className="text-sm text-violet-100">Monthly Impact</p>
+              <p className="text-4xl font-bold mb-2">🎯</p>
+              <p className="text-sm text-violet-100">Proven Structures</p>
             </div>
           </div>
 
