@@ -60,7 +60,7 @@ const TermsBillingPage: React.FC = () => {
               <h3 className="text-lg font-semibold mb-3">1. Service Description</h3>
               <p className="text-gray-700 mb-2">
                 Pheme is an AI-powered content generation platform that helps users create viral short-form content 
-                for TikTok, Instagram Reels, and YouTube Shorts using Claude AI by Anthropic. The platform offers 
+                for TikTok, Instagram Reels, and YouTube Shorts using Claude AI and ChatGPT. The platform offers 
                 two studios: Viral Content Studio for trend-based content and Affiliate Content Studio for product-focused content.
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">

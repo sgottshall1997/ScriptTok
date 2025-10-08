@@ -168,7 +168,7 @@ const TrustSafetyPage: React.FC = () => {
                 Pheme uses advanced AI technology to help create multi-platform short-form content for TikTok, Instagram Reels, and YouTube Shorts:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li><strong>Claude AI by Anthropic:</strong> Powers our content generation capabilities</li>
+                <li><strong>Claude AI & ChatGPT:</strong> Power our content generation capabilities</li>
                 <li><strong>Viral Score Analysis:</strong> Algorithmic analysis of content engagement potential</li>
                 <li><strong>Template System:</strong> Structured approaches for different content types</li>
                 <li><strong>Niche Optimization:</strong> Specialized algorithms for different market segments</li>

@@ -98,7 +98,7 @@ const PrivacyCookiesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Service Provision</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>Generate multi-platform short-form content using Claude AI by Anthropic</li>
+                <li>Generate multi-platform short-form content using Claude AI and ChatGPT</li>
                 <li>Provide viral score analysis and optimization recommendations</li>
                 <li>Maintain your content history and performance tracking</li>
                 <li>Process payments and manage subscriptions</li>
@@ -146,7 +146,7 @@ const PrivacyCookiesPage: React.FC = () => {
               <h3 className="text-lg font-semibold mb-3">Limited Sharing</h3>
               <p className="text-gray-700 mb-3">We may share information in these specific circumstances:</p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li><strong>Service Providers:</strong> Claude AI for content generation, payment processors</li>
+                <li><strong>Service Providers:</strong> Claude AI and ChatGPT for content generation, payment processors</li>
                 <li><strong>Legal Requirements:</strong> When required by law or legal process</li>
                 <li><strong>Safety & Security:</strong> To protect rights, property, or safety</li>
                 <li><strong>Business Transfers:</strong> In case of merger, acquisition, or asset sale</li>
@@ -157,12 +157,12 @@ const PrivacyCookiesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">AI Partner Disclosure</h3>
               <p className="text-gray-700 mb-3">
-                Pheme uses Claude AI by Anthropic for content generation. When you generate content:
+                Pheme uses Claude AI and ChatGPT for content generation. When you generate content:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>Your prompts are sent to Claude AI for processing</li>
-                <li>Claude AI generates content based on your inputs</li>
-                <li>We do not store your prompts with Claude AI beyond the generation session</li>
+                <li>Your prompts are sent to our AI providers (Claude AI and ChatGPT) for processing</li>
+                <li>Our AI models generate content based on your inputs</li>
+                <li>We do not store your prompts with our AI providers beyond the generation session</li>
                 <li>Generated content is returned to you and stored in your Pheme account</li>
               </ul>
             </div>

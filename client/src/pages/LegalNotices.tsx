@@ -258,7 +258,7 @@ const LegalNoticesPage: React.FC = () => {
                   Pheme is committed to responsible AI development and deployment:
                 </p>
                 <ul className="list-disc pl-6 text-purple-600 space-y-1">
-                  <li>We use Claude AI by Anthropic, which follows strict AI safety guidelines</li>
+                  <li>We use Claude AI and ChatGPT, which follow strict AI safety guidelines</li>
                   <li>Content generation includes appropriate safeguards against harmful outputs</li>
                   <li>We continuously monitor and improve our AI systems</li>
                   <li>Users are informed that content is AI-generated</li>

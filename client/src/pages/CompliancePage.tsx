@@ -78,7 +78,7 @@ const CompliancePage: React.FC = () => {
                 <div>
                   <h4 className="font-semibold text-blue-800 mb-2">Important AI Content Notice</h4>
                   <p className="text-sm text-blue-700 mb-2">
-                    Pheme uses advanced AI technology (Claude AI by Anthropic) to generate content suggestions across two studios: Viral Content Studio for trend-based content and Affiliate Content Studio for product-focused content. All content is AI-generated and should be reviewed before posting.
+                    Pheme uses advanced AI technology (Claude AI and ChatGPT) to generate content suggestions across two studios: Viral Content Studio for trend-based content and Affiliate Content Studio for product-focused content. All content is AI-generated and should be reviewed before posting.
                   </p>
                   <p className="text-sm text-blue-700 font-medium">
                     ⚠️ AI-generated content outputs are probabilistic and not guaranteed to go viral or achieve specific engagement rates.
@@ -148,12 +148,12 @@ const CompliancePage: React.FC = () => {
             </p>
 
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h4 className="font-semibold text-blue-800 mb-3">Claude AI-Powered Content Creation</h4>
+              <h4 className="font-semibold text-blue-800 mb-3">AI-Powered Content Creation (Claude AI & ChatGPT)</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
                   <strong className="text-blue-700">Content Generation:</strong>
                   <ul className="text-sm text-blue-600 mt-1 space-y-1">
-                    <li>• Claude AI for high-quality content</li>
+                    <li>• Claude AI and ChatGPT for high-quality content</li>
                     <li>• Niche-specific content templates</li>
                     <li>• Viral score analysis and optimization</li>
                     <li>• Content length optimization</li>
@@ -205,7 +205,7 @@ const CompliancePage: React.FC = () => {
                 <div>
                   <strong className="text-purple-700">AI Technology:</strong>
                   <ul className="text-sm text-purple-600 mt-1 space-y-1">
-                    <li>• Claude AI for content generation</li>
+                    <li>• Claude AI and ChatGPT for content generation</li>
                     <li>• Viral score analysis algorithms</li>
                     <li>• Content quality assessment</li>
                     <li>• Template-based generation system</li>
@@ -287,6 +287,15 @@ const CompliancePage: React.FC = () => {
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
                     Claude AI Safety Guidelines
+                  </a>
+                  <a
+                    href="https://openai.com/policies/usage-policies"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
+                  >
+                    <ExternalLink className="h-3 w-3 mr-2" />
+                    OpenAI Usage Policies
                   </a>
                   <a
                     href="https://www.ftc.gov/business-guidance/resources/disclosures-101-social-media-influencers"

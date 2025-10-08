@@ -71,7 +71,7 @@ const FAQPage: React.FC = () => {
             </AccordionTrigger>
             <AccordionContent>
               Pheme is an AI-powered content generator that helps creators make viral content.
-              Using Claude AI technology, it generates engaging scripts with instant viral score
+              Using Claude AI and ChatGPT, it generates engaging scripts with instant viral score
               analysis to help you create content that resonates with your audience and has the potential to go viral.
             </AccordionContent>
           </AccordionItem>
@@ -87,7 +87,7 @@ const FAQPage: React.FC = () => {
               <ol className="list-decimal pl-6 space-y-2">
                 <li>Select your content niche (beauty, tech, fashion, etc.)</li>
                 <li>Choose a template designed for viral content</li>
-                <li>Generate content using Claude AI</li>
+                <li>Generate content using Claude AI and ChatGPT</li>
                 <li>Get instant viral score analysis and save to content history</li>
               </ol>
               <p className="mt-4">
