@@ -231,36 +231,36 @@ const PrivacyCookiesPage: React.FC = () => {
               <h3 className="text-lg font-semibold mb-3">Types of Cookies We Use</h3>
               
               <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-800 mb-2">Essential Cookies (Required)</h4>
-                  <p className="text-sm text-blue-700 mb-2">
+                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                  <h4 className="font-semibold text-blue-800 dark:text-blue-200 mb-2">Essential Cookies (Required)</h4>
+                  <p className="text-sm text-blue-700 dark:text-blue-300 mb-2">
                     These cookies are necessary for the website to function properly.
                   </p>
-                  <ul className="text-sm text-blue-600 list-disc pl-4">
+                  <ul className="text-sm text-blue-600 dark:text-blue-400 list-disc pl-4">
                     <li>Authentication and session management</li>
                     <li>Security and fraud prevention</li>
                     <li>Basic functionality and navigation</li>
                   </ul>
                 </div>
 
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-green-800 mb-2">Functional Cookies (Optional)</h4>
-                  <p className="text-sm text-green-700 mb-2">
+                <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-lg p-4">
+                  <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2">Functional Cookies (Optional)</h4>
+                  <p className="text-sm text-green-700 dark:text-green-300 mb-2">
                     These cookies enhance your experience but are not required.
                   </p>
-                  <ul className="text-sm text-green-600 list-disc pl-4">
+                  <ul className="text-sm text-green-600 dark:text-green-400 list-disc pl-4">
                     <li>Remember your preferences and settings</li>
                     <li>Personalize content recommendations</li>
                     <li>Language and region preferences</li>
                   </ul>
                 </div>
 
-                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                  <h4 className="font-semibold text-purple-800 mb-2">Analytics Cookies (Optional)</h4>
-                  <p className="text-sm text-purple-700 mb-2">
+                <div className="bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg p-4">
+                  <h4 className="font-semibold text-purple-800 dark:text-purple-200 mb-2">Analytics Cookies (Optional)</h4>
+                  <p className="text-sm text-purple-700 dark:text-purple-300 mb-2">
                     These cookies help us understand how you use our service.
                   </p>
-                  <ul className="text-sm text-purple-600 list-disc pl-4">
+                  <ul className="text-sm text-purple-600 dark:text-purple-400 list-disc pl-4">
                     <li>Track page views and user interactions</li>
                     <li>Analyze feature usage and performance</li>
                     <li>Improve user experience based on data</li>

@@ -37,14 +37,14 @@ interface Step {
 }
 
 const steps: Step[] = [
-  { id: 1, title: 'Find Trend', icon: Search, color: 'text-purple-600', bgColor: 'bg-purple-100' },
-  { id: 2, title: 'Select Product', icon: ShoppingBag, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-  { id: 3, title: 'AI Intelligence', icon: Brain, color: 'text-purple-600', bgColor: 'bg-purple-100' },
-  { id: 4, title: 'Choose Template', icon: FileText, color: 'text-green-600', bgColor: 'bg-green-100' },
-  { id: 5, title: 'Generate Content', icon: Sparkles, color: 'text-purple-600', bgColor: 'bg-purple-100' },
-  { id: 6, title: 'Viral Score', icon: BarChart3, color: 'text-green-600', bgColor: 'bg-green-100' },
-  { id: 7, title: 'Save to History', icon: Save, color: 'text-blue-600', bgColor: 'bg-blue-100' },
-  { id: 8, title: 'Smart Learning', icon: GraduationCap, color: 'text-purple-600', bgColor: 'bg-purple-100' },
+  { id: 1, title: 'Find Trend', icon: Search, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-100 dark:bg-purple-900' },
+  { id: 2, title: 'Select Product', icon: ShoppingBag, color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-100 dark:bg-blue-900' },
+  { id: 3, title: 'AI Intelligence', icon: Brain, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-100 dark:bg-purple-900' },
+  { id: 4, title: 'Choose Template', icon: FileText, color: 'text-green-600 dark:text-green-400', bgColor: 'bg-green-100 dark:bg-green-900' },
+  { id: 5, title: 'Generate Content', icon: Sparkles, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-100 dark:bg-purple-900' },
+  { id: 6, title: 'Viral Score', icon: BarChart3, color: 'text-green-600 dark:text-green-400', bgColor: 'bg-green-100 dark:bg-green-900' },
+  { id: 7, title: 'Save to History', icon: Save, color: 'text-blue-600 dark:text-blue-400', bgColor: 'bg-blue-100 dark:bg-blue-900' },
+  { id: 8, title: 'Smart Learning', icon: GraduationCap, color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-100 dark:bg-purple-900' },
 ];
 
 export default function SampleFlowDemonstration() {
@@ -121,10 +121,10 @@ export default function SampleFlowDemonstration() {
             >
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 currentStep === step.id 
-                  ? `${step.bgColor} ${step.color} ring-4 ring-purple-200` 
+                  ? `${step.bgColor} ${step.color} ring-4 ring-purple-200 dark:ring-purple-800` 
                   : currentStep > step.id 
-                  ? 'bg-green-100 text-green-600' 
-                  : 'bg-gray-100 text-gray-400'
+                  ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400' 
+                  : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-500'
               }`}>
                 {currentStep > step.id ? (
                   <Check className="w-5 h-5" />
@@ -179,8 +179,8 @@ function Step1FindTrend({ navigate }: { navigate: (path: string) => void }) {
     <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <CardContent className="p-6">
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-purple-100 p-3 rounded-lg">
-            <Search className="w-6 h-6 text-purple-600" />
+          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+            <Search className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div className="flex-1">
             <h3 className="text-xl font-semibold mb-2">Step 1: Discover Trending Topics</h3>
@@ -194,9 +194,9 @@ function Step1FindTrend({ navigate }: { navigate: (path: string) => void }) {
           <div className="p-4 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
             <div className="flex items-center justify-between mb-2">
               <div className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-purple-600" />
+                <TrendingUp className="w-5 h-5 text-purple-600 dark:text-purple-400" />
                 <span className="font-semibold">Glass Skin Routine</span>
-                <Badge className="bg-purple-600 text-white">Beauty</Badge>
+                <Badge className="bg-purple-600 hover:bg-purple-700 text-white">Beauty</Badge>
               </div>
               <div className="flex items-center gap-2">
                 <Flame className="w-4 h-4 text-orange-500" />
@@ -254,8 +254,8 @@ function Step2SelectProduct() {
     <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <CardContent className="p-6">
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-blue-100 p-3 rounded-lg">
-            <ShoppingBag className="w-6 h-6 text-blue-600" />
+          <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg">
+            <ShoppingBag className="w-6 h-6 text-blue-600 dark:text-blue-400" />
           </div>
           <div className="flex-1">
             <h3 className="text-xl font-semibold mb-2">Step 2: Select Trending Product</h3>
@@ -273,7 +273,7 @@ function Step2SelectProduct() {
               className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-lg ${
                 selectedProduct === product.name
                   ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 hover:border-blue-300'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600'
               }`}
               data-testid={`product-card-${product.id}`}
             >
@@ -285,7 +285,7 @@ function Step2SelectProduct() {
                 <span>{product.mentions} mentions</span>
               </div>
               {selectedProduct === product.name && (
-                <div className="mt-3 flex items-center gap-2 text-blue-600">
+                <div className="mt-3 flex items-center gap-2 text-blue-600 dark:text-blue-400">
                   <Check className="w-4 h-4" />
                   <span className="text-sm font-medium">Selected</span>
                 </div>
@@ -310,8 +310,8 @@ function Step3AIIntelligence() {
     <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <CardContent className="p-6">
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-purple-100 p-3 rounded-lg">
-            <Brain className="w-6 h-6 text-purple-600" />
+          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+            <Brain className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div className="flex-1">
             <h3 className="text-xl font-semibold mb-2">Step 3: AI Trending Intelligence</h3>
@@ -319,7 +319,7 @@ function Step3AIIntelligence() {
               AI analyzes viral patterns and trending data
             </p>
           </div>
-          <Badge className="bg-purple-600 text-white">Perplexity Intelligence</Badge>
+          <Badge className="bg-purple-600 hover:bg-purple-700 text-white">Perplexity Intelligence</Badge>
         </div>
 
         {isLoading ? (
@@ -332,9 +332,9 @@ function Step3AIIntelligence() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200">
+            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 mb-2">
-                <Check className="w-5 h-5 text-green-600" />
+                <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
                 <h4 className="font-semibold">Viral Hook</h4>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -342,9 +342,9 @@ function Step3AIIntelligence() {
               </p>
             </div>
 
-            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200">
+            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 mb-2">
-                <Check className="w-5 h-5 text-green-600" />
+                <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
                 <h4 className="font-semibold">Target Audience</h4>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -352,9 +352,9 @@ function Step3AIIntelligence() {
               </p>
             </div>
 
-            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200">
+            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 mb-2">
-                <Check className="w-5 h-5 text-green-600" />
+                <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
                 <h4 className="font-semibold">Trending Angle</h4>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -362,9 +362,9 @@ function Step3AIIntelligence() {
               </p>
             </div>
 
-            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200">
+            <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800">
               <div className="flex items-center gap-2 mb-2">
-                <Check className="w-5 h-5 text-green-600" />
+                <Check className="w-5 h-5 text-green-600 dark:text-green-400" />
                 <h4 className="font-semibold">Best Time to Post</h4>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -392,8 +392,8 @@ function Step4SelectTemplate({ navigate }: { navigate: (path: string) => void })
     <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <CardContent className="p-6">
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-green-100 p-3 rounded-lg">
-            <FileText className="w-6 h-6 text-green-600" />
+          <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+            <FileText className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
           <div className="flex-1">
             <h3 className="text-xl font-semibold mb-2">Step 4: Choose Content Template</h3>
@@ -411,7 +411,7 @@ function Step4SelectTemplate({ navigate }: { navigate: (path: string) => void })
               className={`p-4 rounded-lg border-2 cursor-pointer transition-all hover:shadow-lg ${
                 selectedTemplate === template.id
                   ? 'border-green-500 bg-green-50 dark:bg-green-900/20'
-                  : 'border-gray-200 hover:border-green-300'
+                  : 'border-gray-200 dark:border-gray-700 hover:border-green-300 dark:hover:border-green-600'
               }`}
               data-testid={`template-card-${template.id}`}
             >
@@ -425,7 +425,7 @@ function Step4SelectTemplate({ navigate }: { navigate: (path: string) => void })
                   <div className="flex items-center gap-2">
                     <Badge variant="outline" className="text-xs">{template.estimatedLength}</Badge>
                     {selectedTemplate === template.id && template.id === 'short_video' && (
-                      <Badge className="bg-green-600 text-white text-xs">Recommended</Badge>
+                      <Badge className="bg-green-600 hover:bg-green-700 text-white text-xs">Recommended</Badge>
                     )}
                   </div>
                 </div>
@@ -435,7 +435,7 @@ function Step4SelectTemplate({ navigate }: { navigate: (path: string) => void })
         </div>
 
         <Button 
-          className="w-full bg-green-600 hover:bg-green-700 text-white"
+          className="w-full bg-green-600 hover:bg-green-700 text-white dark:bg-green-600 dark:hover:bg-green-700"
           onClick={() => navigate('/tools/template-library')}
           data-testid="button-browse-templates"
         >
@@ -458,8 +458,8 @@ function Step5GenerateContent() {
     <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <CardContent className="p-6">
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-purple-100 p-3 rounded-lg">
-            <Sparkles className="w-6 h-6 text-purple-600" />
+          <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg">
+            <Sparkles className="w-6 h-6 text-purple-600 dark:text-purple-400" />
           </div>
           <div className="flex-1">
             <h3 className="text-xl font-semibold mb-2">Step 5: GPT Generates Content</h3>
@@ -485,8 +485,8 @@ function Step5GenerateContent() {
           <div className="space-y-4">
             <div className="p-6 bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 rounded-lg border-2 border-purple-200">
               <div className="flex items-center gap-2 mb-4">
-                <Sparkles className="w-5 h-5 text-purple-600" />
-                <Badge className="bg-purple-600 text-white">Generated Content</Badge>
+                <Sparkles className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                <Badge className="bg-purple-600 hover:bg-purple-700 text-white">Generated Content</Badge>
               </div>
               <div className="space-y-2 text-gray-800 dark:text-gray-200">
                 <p className="font-medium">POV: You discover the $12 moisturizer dermatologists don't want you to know about 🤫</p>
@@ -497,7 +497,7 @@ function Step5GenerateContent() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 text-sm text-green-600">
+            <div className="flex items-center gap-2 text-sm text-green-600 dark:text-green-400">
               <Check className="w-5 h-5" />
               <span className="font-medium">Content generated successfully!</span>
             </div>
@@ -534,8 +534,8 @@ function Step6ViralScore({ navigate }: { navigate: (path: string) => void }) {
     <Card className="animate-in fade-in slide-in-from-bottom-4 duration-500">
       <CardContent className="p-6">
         <div className="flex items-start gap-4 mb-6">
-          <div className="bg-green-100 p-3 rounded-lg">
-            <BarChart3 className="w-6 h-6 text-green-600" />
+          <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg">
+            <BarChart3 className="w-6 h-6 text-green-600 dark:text-green-400" />
           </div>
           <div className="flex-1">
             <h3 className="text-xl font-semibold mb-2">Step 6: AI Viral Score & Feedback</h3>
@@ -565,7 +565,7 @@ function Step6ViralScore({ navigate }: { navigate: (path: string) => void }) {
                 <span className={`text-4xl font-bold ${getScoreColor(score)}`}>{score}</span>
               </div>
             </div>
-            <Badge className="bg-green-600 text-white">Excellent Viral Potential</Badge>
+            <Badge className="bg-green-600 hover:bg-green-700 text-white">Excellent Viral Potential</Badge>
           </div>
 
           <div className="space-y-3">

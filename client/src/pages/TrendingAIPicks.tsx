@@ -103,15 +103,15 @@ type SourceFilter = 'all' | 'perplexity';
 
 const getNicheColor = (niche: string) => {
   const colors = {
-    beauty: 'bg-pink-100 text-pink-800 border-pink-300',
-    tech: 'bg-blue-100 text-blue-800 border-blue-300',
-    fashion: 'bg-purple-100 text-purple-800 border-purple-300',
-    fitness: 'bg-green-100 text-green-800 border-green-300',
-    food: 'bg-orange-100 text-orange-800 border-orange-300',
-    travel: 'bg-cyan-100 text-cyan-800 border-cyan-300',
-    pets: 'bg-amber-100 text-amber-800 border-amber-300',
+    beauty: 'bg-pink-100 dark:bg-pink-900 text-pink-800 dark:text-pink-200 border-pink-300 dark:border-pink-700',
+    tech: 'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 border-blue-300 dark:border-blue-700',
+    fashion: 'bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 border-purple-300 dark:border-purple-700',
+    fitness: 'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 border-green-300 dark:border-green-700',
+    food: 'bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 border-orange-300 dark:border-orange-700',
+    travel: 'bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 border-cyan-300 dark:border-cyan-700',
+    pets: 'bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-200 border-amber-300 dark:border-amber-700',
   };
-  return colors[niche as keyof typeof colors] || 'bg-gray-100 text-gray-800 border-gray-300';
+  return colors[niche as keyof typeof colors] || 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 border-gray-300 dark:border-gray-700';
 };
 
 const formatMentions = (mentions: number) => {

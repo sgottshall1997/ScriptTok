@@ -85,7 +85,7 @@ const AboutThisPage: React.FC<AboutThisPageProps> = ({
             <ul className="space-y-2">
               {usageInstructions.map((step, index) => (
                 <li key={index} className="flex items-start gap-3">
-                  <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                   <span className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                     {step}
                   </span>
@@ -134,7 +134,7 @@ const AboutThisPage: React.FC<AboutThisPageProps> = ({
                 <ul className="space-y-2">
                   {notes.map((note, index) => (
                     <li key={index} className="flex items-start gap-3">
-                      <span className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0" />
+                      <span className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full mt-2 flex-shrink-0" />
                       <span className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
                         {note}
                       </span>

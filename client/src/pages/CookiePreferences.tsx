@@ -138,11 +138,11 @@ const CookiePreferencesPage: React.FC = () => {
 
         {/* Success Message */}
         {saved && (
-          <Card className="border-green-200 bg-green-50">
+          <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
             <CardContent className="py-4">
               <div className="flex items-center justify-center space-x-2">
-                <CheckCircle className="h-5 w-5 text-green-600" />
-                <span className="text-green-800 font-medium">
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400" />
+                <span className="text-green-800 dark:text-green-200 font-medium">
                   Cookie preferences saved successfully!
                 </span>
               </div>
@@ -162,7 +162,7 @@ const CookiePreferencesPage: React.FC = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 onClick={acceptAll}
-                className="bg-green-600 hover:bg-green-700"
+                className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700"
               >
                 Accept All Cookies
               </Button>
@@ -195,9 +195,9 @@ const CookiePreferencesPage: React.FC = () => {
                   They include authentication, security, and basic navigation features.
                 </p>
                 <div className="mt-2">
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded">Authentication</span>
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded ml-2">Security</span>
-                  <span className="text-xs bg-gray-100 px-2 py-1 rounded ml-2">Session Management</span>
+                  <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Authentication</span>
+                  <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded ml-2">Security</span>
+                  <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded ml-2">Session Management</span>
                 </div>
               </div>
               <div className="ml-4">
@@ -231,9 +231,9 @@ const CookiePreferencesPage: React.FC = () => {
                   and personalizing content recommendations. They are not required but improve usability.
                 </p>
                 <div className="mt-2">
-                  <span className="text-xs bg-blue-100 px-2 py-1 rounded text-blue-800">Preferences</span>
-                  <span className="text-xs bg-blue-100 px-2 py-1 rounded text-blue-800 ml-2">Personalization</span>
-                  <span className="text-xs bg-blue-100 px-2 py-1 rounded text-blue-800 ml-2">Language Settings</span>
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-blue-800 dark:text-blue-200">Preferences</span>
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-blue-800 dark:text-blue-200 ml-2">Personalization</span>
+                  <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-blue-800 dark:text-blue-200 ml-2">Language Settings</span>
                 </div>
               </div>
               <div className="ml-4">
@@ -266,9 +266,9 @@ const CookiePreferencesPage: React.FC = () => {
                   They collect anonymous usage data and help us fix bugs and optimize features.
                 </p>
                 <div className="mt-2">
-                  <span className="text-xs bg-purple-100 px-2 py-1 rounded text-purple-800">Page Views</span>
-                  <span className="text-xs bg-purple-100 px-2 py-1 rounded text-purple-800 ml-2">Feature Usage</span>
-                  <span className="text-xs bg-purple-100 px-2 py-1 rounded text-purple-800 ml-2">Performance</span>
+                  <span className="text-xs bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-purple-800 dark:text-purple-200">Page Views</span>
+                  <span className="text-xs bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-purple-800 dark:text-purple-200 ml-2">Feature Usage</span>
+                  <span className="text-xs bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-purple-800 dark:text-purple-200 ml-2">Performance</span>
                 </div>
               </div>
               <div className="ml-4">
@@ -298,8 +298,8 @@ const CookiePreferencesPage: React.FC = () => {
                   This setting ensures compliance with CCPA requirements and your privacy preferences.
                 </p>
                 <div className="mt-2">
-                  <span className="text-xs bg-red-100 px-2 py-1 rounded text-red-800">CCPA Compliance</span>
-                  <span className="text-xs bg-red-100 px-2 py-1 rounded text-red-800 ml-2">No Data Sales</span>
+                  <span className="text-xs bg-red-100 dark:bg-red-900 px-2 py-1 rounded text-red-800 dark:text-red-200">CCPA Compliance</span>
+                  <span className="text-xs bg-red-100 dark:bg-red-900 px-2 py-1 rounded text-red-800 dark:text-red-200 ml-2">No Data Sales</span>
                 </div>
               </div>
               <div className="ml-4">

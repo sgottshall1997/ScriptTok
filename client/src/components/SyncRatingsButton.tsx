@@ -156,16 +156,16 @@ const SyncRatingsButton: React.FC<SyncRatingsButtonProps> = ({ className = '' })
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Main Sync Button */}
-      <Card className="border-blue-200 bg-blue-50/30">
+      <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/20">
         <CardContent className="p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <FileSpreadsheet className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-blue-100 dark:bg-blue-900 rounded-lg">
+                <FileSpreadsheet className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               </div>
               <div>
-                <h3 className="font-medium text-blue-900">Sync Ratings to Google Sheet</h3>
-                <p className="text-sm text-blue-700">
+                <h3 className="font-medium text-blue-900 dark:text-blue-100">Sync Ratings to Google Sheet</h3>
+                <p className="text-sm text-blue-700 dark:text-blue-300">
                   Updates rating columns for existing content in your Google Sheet
                 </p>
               </div>
@@ -174,7 +174,7 @@ const SyncRatingsButton: React.FC<SyncRatingsButtonProps> = ({ className = '' })
             <Button
               onClick={handleSyncRatings}
               disabled={isLoading}
-              className="bg-blue-600 hover:bg-blue-700 text-white"
+              className="bg-blue-600 hover:bg-blue-700 dark:bg-blue-600 dark:hover:bg-blue-700 text-white"
               size="sm"
             >
               {isLoading ? (
@@ -195,18 +195,18 @@ const SyncRatingsButton: React.FC<SyncRatingsButtonProps> = ({ className = '' })
 
       {/* Sync Results Display */}
       {lastSyncResult && (
-        <Card className={`border ${lastSyncResult.success ? 'border-green-200 bg-green-50/30' : 'border-red-200 bg-red-50/30'}`}>
+        <Card className={`border ${lastSyncResult.success ? 'border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-900/20' : 'border-red-200 dark:border-red-800 bg-red-50/30 dark:bg-red-900/20'}`}>
           <CardContent className="p-4">
             <div className="flex items-start gap-3">
               {lastSyncResult.success ? (
-                <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
+                <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5" />
               ) : (
-                <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+                <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400 mt-0.5" />
               )}
               
               <div className="flex-1 space-y-2">
                 <div className="flex items-center gap-2">
-                  <h4 className={`font-medium ${lastSyncResult.success ? 'text-green-900' : 'text-red-900'}`}>
+                  <h4 className={`font-medium ${lastSyncResult.success ? 'text-green-900 dark:text-green-100' : 'text-red-900 dark:text-red-100'}`}>
                     {lastSyncResult.success ? 'Sync Completed' : 'Sync Failed'}
                   </h4>
                   <Badge variant={lastSyncResult.success ? 'default' : 'destructive'}>
@@ -214,7 +214,7 @@ const SyncRatingsButton: React.FC<SyncRatingsButtonProps> = ({ className = '' })
                   </Badge>
                 </div>
                 
-                <p className={`text-sm ${lastSyncResult.success ? 'text-green-700' : 'text-red-700'}`}>
+                <p className={`text-sm ${lastSyncResult.success ? 'text-green-700 dark:text-green-300' : 'text-red-700 dark:text-red-300'}`}>
                   {lastSyncResult.message}
                 </p>
                 

@@ -11,17 +11,17 @@ export function TierBadge({ tier, size = 'md', className }: TierBadgeProps) {
   const tierConfig: Record<string, { icon: string; colorClass: string; label: string }> = {
     starter: { 
       icon: '🌱', 
-      colorClass: 'bg-green-500 hover:bg-green-600 text-white border-green-600', 
+      colorClass: 'bg-green-600 hover:bg-green-700 text-white border-green-600', 
       label: 'Starter' 
     },
     creator: { 
       icon: '⭐', 
-      colorClass: 'bg-purple-500 hover:bg-purple-600 text-white border-purple-600', 
+      colorClass: 'bg-purple-600 hover:bg-purple-700 text-white border-purple-600', 
       label: 'Creator' 
     },
     pro: { 
       icon: '🚀', 
-      colorClass: 'bg-blue-500 hover:bg-blue-600 text-white border-blue-600', 
+      colorClass: 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600', 
       label: 'Pro' 
     },
     agency: { 

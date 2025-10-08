@@ -1,0 +1,457 @@
+
+# COMPREHENSIVE UI/UX STANDARDIZATION & POLISH PROMPT FOR REPLIT AGENT
+
+## 🎯 OBJECTIVE
+Review and standardize ALL UI/UX elements across the Pheme application to ensure production-ready quality. Focus on visual consistency, spacing, colors, typography, responsive design, and user experience WITHOUT changing any content or functionality.
+
+## 📋 SCOPE OF WORK
+
+### PHASE 1: DESIGN SYSTEM AUDIT & STANDARDIZATION
+
+#### 1.1 COLOR PALETTE CONSISTENCY
+**Task:** Review and standardize all color usage across the application.
+
+**Files to Review:**
+- `client/src/index.css` (primary source of truth for color variables)
+- `tailwind.config.ts` (Tailwind color extensions)
+- All component files in `client/src/components/`
+- All page files in `client/src/pages/`
+
+**Standards to Enforce:**
+- **Primary Brand Colors:**
+  - Purple gradient: `from-purple-600 to-blue-600` (hero sections, primary CTAs)
+  - Purple accent: `purple-600` (highlights, badges, "Most Popular" tags)
+  - Green accent: `green-600` (success states, "Best Value" badges)
+  - Blue accent: `blue-600` (info, secondary actions)
+
+- **Neutral Colors:**
+  - Backgrounds: `bg-white dark:bg-gray-900` or `bg-gray-50 dark:bg-gray-800`
+  - Text primary: `text-gray-900 dark:text-white`
+  - Text secondary: `text-gray-600 dark:text-gray-400`
+  - Borders: `border-gray-200 dark:border-gray-700`
+
+- **Action Items:**
+  - [ ] Audit every instance of hardcoded colors (e.g., `text-blue-500`, `bg-purple-100`)
+  - [ ] Replace inconsistent color choices with standardized palette
+  - [ ] Ensure all color combinations meet WCAG AA contrast requirements
+  - [ ] Verify dark mode colors are properly implemented everywhere
+  - [ ] Check that hover states use consistent opacity/shade changes
+
+#### 1.2 SPACING & LAYOUT STANDARDIZATION
+**Task:** Ensure consistent spacing, padding, and margins throughout the app.
+
+**Standards to Enforce:**
+- **Section Spacing:**
+  - Hero sections: `py-20 md:py-28 px-4`
+  - Content sections: `py-16 px-4` or `py-6 md:py-10 px-4`
+  - Container: `container mx-auto max-w-6xl` or `max-w-7xl` (standardize which)
+
+- **Component Spacing:**
+  - Cards: `p-6` for CardContent, `gap-6` between cards
+  - Buttons: Standard sizes - `sm`, `default`, `lg`
+  - Form elements: `space-y-4` for form groups
+  - Grid gaps: `gap-6` for main grids, `gap-4` for tighter layouts
+
+- **Action Items:**
+  - [ ] Audit all section padding/margins for consistency
+  - [ ] Standardize container max-widths (choose 6xl or 7xl consistently)
+  - [ ] Ensure responsive spacing scales properly (base → md → lg → xl)
+  - [ ] Check vertical rhythm - consistent spacing between elements
+  - [ ] Verify no cramped or overly spacious sections
+
+#### 1.3 TYPOGRAPHY CONSISTENCY
+**Task:** Standardize font sizes, weights, and line heights.
+
+**Standards to Enforce:**
+- **Headings:**
+  - H1: `text-4xl md:text-5xl lg:text-6xl font-bold` (hero titles)
+  - H2: `text-3xl md:text-4xl font-bold` (section titles)
+  - H3: `text-2xl md:text-3xl font-semibold` (subsection titles)
+  - H4: `text-xl font-semibold` (card titles)
+
+- **Body Text:**
+  - Large: `text-lg md:text-xl` (hero descriptions)
+  - Base: `text-base` (default body text)
+  - Small: `text-sm` (secondary text, captions)
+  - Extra small: `text-xs` (labels, metadata)
+
+- **Action Items:**
+  - [ ] Audit all text elements for size consistency
+  - [ ] Ensure font-weight is appropriate (bold for headings, semibold for subheadings)
+  - [ ] Check line-height for readability (especially for long-form content)
+  - [ ] Verify responsive text sizing works on all breakpoints
+  - [ ] Ensure no orphaned text or widows in key sections
+
+### PHASE 2: COMPONENT-LEVEL REVIEW
+
+#### 2.1 BUTTON STANDARDIZATION
+**Files to Review:** 
+- `client/src/components/ui/button.tsx`
+- All components using `<Button>` component
+
+**Standards to Enforce:**
+- **Variants:**
+  - Primary CTA: `bg-gradient-hero` or solid brand color
+  - Secondary: `variant="outline"`
+  - Ghost: `variant="ghost"` for subtle actions
+
+- **Sizes:** Consistent use of `sm`, `default`, `lg`
+- **Styling:**
+  - Rounded corners: `rounded-xl` for primary buttons
+  - Hover effects: `hover-lift` class or consistent transform
+  - Icon spacing: `gap-2` between icon and text
+  - Disabled states: proper opacity and cursor
+
+- **Action Items:**
+  - [ ] Check all button instances for consistent variant usage
+  - [ ] Ensure icon placement is consistent (before or after text)
+  - [ ] Verify hover/active states work properly
+  - [ ] Check button sizing on mobile vs desktop
+  - [ ] Ensure loading states are implemented consistently
+
+#### 2.2 CARD COMPONENT STANDARDIZATION
+**Files to Review:**
+- `client/src/components/ui/card.tsx`
+- `client/src/pages/LandingPage.tsx` (pricing cards, feature cards)
+- `client/src/pages/PricingPage.tsx`
+
+**Standards to Enforce:**
+- **Structure:**
+  - Border radius: `rounded-2xl` consistently
+  - Shadow: `shadow-card` default, `shadow-card-hover` on hover
+  - Padding: `p-6` for CardContent
+  - Border: `border` or `border-2` for highlighted cards
+
+- **Hover Effects:**
+  - `hover:shadow-card-hover` for elevation
+  - `hover-lift` for subtle transform
+  - Smooth transitions: `transition-all-smooth`
+
+- **Action Items:**
+  - [ ] Audit all Card components for consistent styling
+  - [ ] Check highlighted cards (Creator plan, Pro plan) use consistent border treatment
+  - [ ] Ensure card heights are equal in grids (`h-full flex flex-col`)
+  - [ ] Verify responsive card layouts (1 col mobile → 2-4 cols desktop)
+  - [ ] Check icon placement and sizing within cards
+
+#### 2.3 NAVIGATION CONSISTENCY
+**Files to Review:**
+- `client/src/components/MarketingNav.tsx`
+- `client/src/components/Sidebar.tsx`
+- `client/src/components/Layout.tsx`
+
+**Standards to Enforce:**
+- **Desktop Navigation:**
+  - Sticky header: `sticky top-0 z-50`
+  - Backdrop blur: `backdrop-blur supports-[backdrop-filter]:bg-background/60`
+  - Dropdown menus: consistent width and grid layout
+  - Hover states: `hover:bg-accent`
+
+- **Mobile Navigation:**
+  - Sheet/drawer implementation
+  - Touch-friendly tap targets (min 44px)
+  - Accordion for nested menus
+  - Proper close behavior
+
+- **Action Items:**
+  - [ ] Ensure navigation height is consistent
+  - [ ] Check dropdown menu widths and grid layouts match design
+  - [ ] Verify mobile menu works on all devices
+  - [ ] Test keyboard navigation
+  - [ ] Ensure active/current page indicators work
+
+#### 2.4 FORM ELEMENTS
+**Files to Review:**
+- `client/src/components/ui/input.tsx`
+- `client/src/components/ui/select.tsx`
+- `client/src/components/ui/textarea.tsx`
+- `client/src/pages/GenerateContent.tsx`
+- `client/src/pages/Account.tsx`
+
+**Standards to Enforce:**
+- **Input Styling:**
+  - Border: `border border-input`
+  - Focus ring: `focus-visible:ring-2 focus-visible:ring-ring`
+  - Height: `h-10` for inputs
+  - Border radius: `rounded-md`
+  - Font size: `text-base md:text-sm` (prevents iOS zoom)
+
+- **Form Layout:**
+  - Label spacing: `space-y-2`
+  - Form groups: `space-y-4`
+  - Field descriptions: `text-sm text-muted-foreground`
+
+- **Action Items:**
+  - [ ] Check all form inputs for consistent styling
+  - [ ] Ensure error states are properly styled
+  - [ ] Verify placeholder text is readable
+  - [ ] Test autofill styling
+  - [ ] Check disabled states
+
+### PHASE 3: PAGE-SPECIFIC REVIEWS
+
+#### 3.1 LANDING PAGE (`client/src/pages/LandingPage.tsx`)
+**Action Items:**
+- [ ] **Hero Section:** Verify gradient background, text sizing, CTA button placement
+- [ ] **Features Grid:** Check 1/2/3 column layout responsiveness, icon sizing, card consistency
+- [ ] **Tools Section:** Verify grid layout, ensure "Other Tools" text is properly styled
+- [ ] **Use Cases Grid:** Check 1/2/3 column layout, ensure all cards have equal height
+- [ ] **Pricing Cards:** 
+  - Verify 1/2/4 column responsive layout
+  - Check "Most Popular" and "Best Value" badge positioning
+  - Ensure pricing text hierarchy is clear
+  - Verify feature list checkmarks are aligned
+- [ ] **Final CTA Banner:** Check gradient background, button sizing, text contrast
+
+#### 3.2 PRICING PAGE (`client/src/pages/PricingPage.tsx`)
+**Action Items:**
+- [ ] **Hero Section:** Match landing page hero styling
+- [ ] **Toggle Switch:** Verify annual/monthly toggle styling and badge
+- [ ] **Pricing Cards:** 
+  - Ensure 1/2/4 column layout works on all breakpoints
+  - Check Creator card purple border (`border-purple-600`) and scale (`md:scale-105`)
+  - Verify Pro card green border
+  - Check Agency custom pricing display
+- [ ] **Comparison Table:** 
+  - Verify table responsiveness
+  - Check alternating row backgrounds
+  - Ensure Creator column highlight works
+  - Verify checkmark/X icon alignment
+- [ ] **Upgrade Triggers Section:** Check card styling consistency
+- [ ] **FAQ Accordion:** Verify expand/collapse animations, proper spacing
+
+#### 3.3 FEATURE PAGES (`client/src/pages/features/`)
+**Action Items:**
+- [ ] **FeatureHero Component:** Consistent hero layout across all feature pages
+- [ ] **FeatureGrid Component:** Standardized feature card layout
+- [ ] **HowItWorksSection Component:** Step-by-step visual consistency
+- [ ] **FAQAccordion Component:** Styling matches pricing page FAQ
+- [ ] Check all 6 feature pages use components consistently
+
+#### 3.4 TOOL PAGES (`client/src/pages/tools/`)
+**Action Items:**
+- [ ] **ToolHero Component:** Consistent with feature pages
+- [ ] **ToolFeatureGrid Component:** Match feature page grids
+- [ ] **HowItWorksSteps Component:** Visual consistency with feature pages
+- [ ] **ToolCTA Component:** Button sizing and placement
+- [ ] **ToolFAQ Component:** Accordion styling consistency
+- [ ] Verify all 5 tool pages use components consistently
+
+#### 3.5 USE CASES PAGE (`client/src/pages/UseCasesPage.tsx`)
+**Action Items:**
+- [ ] Check grid layout (1/2/3 columns responsive)
+- [ ] Verify card hover effects
+- [ ] Ensure icon sizing and coloring is consistent
+- [ ] Check CTA section at bottom
+
+#### 3.6 DASHBOARD & APP PAGES
+**Action Items:**
+- [ ] **Dashboard** (`client/src/pages/Dashboard.tsx`): Check card layouts, stats display
+- [ ] **Generate Content** (`client/src/pages/GenerateContent.tsx`): Form layout, button placement
+- [ ] **Content History** (`client/src/pages/EnhancedContentHistory.tsx`): Table/card view consistency
+- [ ] **Account Page** (`client/src/pages/Account.tsx`): Form styling, section spacing
+
+### PHASE 4: RESPONSIVE DESIGN REVIEW
+
+#### 4.1 MOBILE (< 640px)
+**Action Items:**
+- [ ] Verify all text is readable (minimum 16px for inputs to prevent zoom)
+- [ ] Check touch targets are minimum 44px × 44px
+- [ ] Ensure proper padding on mobile (px-4)
+- [ ] Verify mobile navigation works smoothly
+- [ ] Check hero sections don't overflow
+- [ ] Test all forms are usable on mobile
+- [ ] Verify cards stack properly (1 column)
+
+#### 4.2 TABLET (640px - 1024px)
+**Action Items:**
+- [ ] Check 2-column layouts work properly
+- [ ] Verify pricing cards display correctly
+- [ ] Test navigation dropdowns
+- [ ] Ensure images/icons scale appropriately
+- [ ] Check modal/dialog sizing
+
+#### 4.3 DESKTOP (≥ 1024px)
+**Action Items:**
+- [ ] Verify max-width containers center properly
+- [ ] Check 3-4 column grids display correctly
+- [ ] Test all hover effects work smoothly
+- [ ] Verify dropdown menus don't overflow viewport
+- [ ] Check that content doesn't get too wide (max-w-6xl or 7xl)
+
+### PHASE 5: INTERACTION & ANIMATION POLISH
+
+#### 5.1 TRANSITIONS & ANIMATIONS
+**Action Items:**
+- [ ] Ensure all transitions use consistent duration (0.3s or defined in config)
+- [ ] Check hover effects use `transition-all-smooth` class
+- [ ] Verify button hover states have consistent transforms
+- [ ] Test loading states and spinners
+- [ ] Check accordion expand/collapse animations
+- [ ] Verify modal/dialog enter/exit animations
+- [ ] Test page transitions (if applicable)
+
+#### 5.2 HOVER STATES
+**Action Items:**
+- [ ] All interactive elements have visible hover states
+- [ ] Cards use `hover:shadow-card-hover` and `hover-lift`
+- [ ] Buttons have appropriate hover effects
+- [ ] Links have underline or color change on hover
+- [ ] Icon buttons show background change on hover
+- [ ] Dropdown menu items highlight on hover
+
+#### 5.3 FOCUS STATES (Accessibility)
+**Action Items:**
+- [ ] All interactive elements have visible focus rings
+- [ ] Focus ring color is consistent (use `focus-visible:ring-2 focus-visible:ring-ring`)
+- [ ] Keyboard navigation works properly
+- [ ] Skip-to-content link (if needed)
+- [ ] Modal trap focus works correctly
+
+### PHASE 6: DARK MODE CONSISTENCY
+
+**Action Items:**
+- [ ] Verify all sections have proper dark mode colors
+- [ ] Check text contrast in dark mode (WCAG AA)
+- [ ] Ensure borders are visible in dark mode
+- [ ] Verify card backgrounds in dark mode
+- [ ] Test gradient overlays in dark mode
+- [ ] Check shadow visibility in dark mode
+- [ ] Verify icon colors work in both modes
+- [ ] Test form elements in dark mode
+
+### PHASE 7: FINAL POLISH & EDGE CASES
+
+#### 7.1 LOADING STATES
+**Action Items:**
+- [ ] Skeleton loaders match content layout
+- [ ] Loading spinners are centered and sized appropriately
+- [ ] Button loading states disable interaction
+- [ ] Page-level loading indicators
+
+#### 7.2 EMPTY STATES
+**Action Items:**
+- [ ] Empty state messages are centered and styled consistently
+- [ ] Icons/illustrations for empty states
+- [ ] Clear CTAs for empty states
+
+#### 7.3 ERROR STATES
+**Action Items:**
+- [ ] Error messages are clearly visible
+- [ ] Form validation errors are inline and helpful
+- [ ] Error colors are consistent (use destructive variant)
+- [ ] Toast notifications for errors
+
+#### 7.4 EDGE CASES
+**Action Items:**
+- [ ] Very long text handling (truncation, ellipsis)
+- [ ] Very short content (minimum heights)
+- [ ] No data scenarios
+- [ ] Network error scenarios
+
+## 🔍 SELF-CHECK VALIDATION PROTOCOL
+
+After completing all changes, the Replit Agent must perform this validation:
+
+### VALIDATION CHECKLIST
+
+#### Visual Consistency Check
+- [ ] Open every page and verify color palette is consistent
+- [ ] Check all headings use the same size hierarchy
+- [ ] Verify all cards have the same border radius and shadow treatment
+- [ ] Ensure spacing between sections is uniform
+- [ ] Confirm buttons use consistent variants and sizes
+
+#### Responsive Design Check
+- [ ] Test mobile view (375px width): All content readable, no overflow
+- [ ] Test tablet view (768px width): Grid layouts work properly
+- [ ] Test desktop view (1440px width): Content doesn't stretch too wide
+- [ ] Test ultra-wide (1920px+): Content is centered with proper max-width
+
+#### Interaction Check
+- [ ] Hover over all buttons - verify consistent effects
+- [ ] Hover over all cards - verify lift/shadow effects
+- [ ] Tab through interactive elements - verify focus rings
+- [ ] Test all dropdowns/accordions - verify smooth animations
+- [ ] Click all CTAs - verify they're functional (navigation/actions)
+
+#### Dark Mode Check
+- [ ] Toggle dark mode on every page
+- [ ] Verify text is readable
+- [ ] Check borders are visible
+- [ ] Ensure no white backgrounds leak through
+- [ ] Verify gradients look good in dark mode
+
+#### Cross-Browser Check (if possible)
+- [ ] Chrome: All features work
+- [ ] Firefox: Visual consistency
+- [ ] Safari: No rendering issues
+- [ ] Mobile Safari: Touch targets work
+
+#### Accessibility Check
+- [ ] All images have alt text
+- [ ] Color contrast meets WCAG AA
+- [ ] Keyboard navigation works
+- [ ] Focus indicators are visible
+- [ ] Form labels are properly associated
+
+## 📝 FINAL REPORT
+
+After completing all work and validation, create a summary report with:
+
+1. **Changes Made:** List of files modified and why
+2. **Standardizations Applied:** 
+   - Color palette decisions
+   - Spacing standards implemented
+   - Typography hierarchy
+   - Component patterns
+3. **Issues Fixed:** Specific UI/UX problems resolved
+4. **Remaining Considerations:** Any edge cases or future improvements
+5. **Screenshots/Examples:** Key before/after changes (if possible in text description)
+
+## ⚠️ CRITICAL RULES
+
+1. **DO NOT CHANGE ANY CONTENT:** Only modify styling, spacing, colors, and structure
+2. **DO NOT CHANGE FUNCTIONALITY:** Keep all existing features and logic intact
+3. **DO NOT MODIFY:**
+   - API routes or backend logic
+   - Database schemas
+   - Business logic in services
+   - Content text (headings, descriptions, copy)
+4. **ONLY MODIFY:**
+   - CSS classes (Tailwind utilities)
+   - Component structure for layout
+   - Spacing, padding, margins
+   - Colors and visual styling
+   - Responsive breakpoints
+   - Hover/focus states
+
+## 🚀 EXECUTION ORDER
+
+1. **Start with Design System** (Phase 1): Establish standards
+2. **Component Library** (Phase 2): Standardize base components
+3. **Page-by-Page** (Phase 3): Apply standards to all pages
+4. **Responsive Polish** (Phase 4): Ensure all breakpoints work
+5. **Interactions** (Phase 5): Polish animations and transitions
+6. **Dark Mode** (Phase 6): Ensure consistent dark mode
+7. **Final Polish** (Phase 7): Edge cases and special states
+8. **Validation** (Self-Check): Thoroughly test everything
+9. **Report**: Document all changes
+
+## 📋 SUCCESS CRITERIA
+
+The UI is production-ready when:
+- ✅ All colors come from a consistent, defined palette
+- ✅ Spacing is uniform and follows a clear rhythm
+- ✅ Typography hierarchy is clear and consistent
+- ✅ All components use the same styling patterns
+- ✅ Responsive design works flawlessly on all devices
+- ✅ Hover and focus states are consistent and accessible
+- ✅ Dark mode is fully implemented and tested
+- ✅ Loading, empty, and error states are polished
+- ✅ No visual bugs or layout shifts
+- ✅ App feels cohesive and professional
+
+---
+
+**BEGIN EXECUTION NOW. Work methodically through each phase, document your changes, and perform thorough validation before declaring completion.**
