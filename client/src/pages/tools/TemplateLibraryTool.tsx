@@ -38,27 +38,27 @@ export default function TemplateLibraryTool() {
     {
       icon: Filter,
       title: 'Step 1: Browse Pre-Built Templates',
-      description: 'Navigate to Template Library → Find perfect templates in 5 minutes vs 2 hours of trial-and-error. Filter by niche, platform, or viral score (85+ templates average 2.1M views)',
+      description: 'Navigate to Template Library and find templates quickly using filters. Search by niche, platform, or content type to match your needs.',
     },
     {
       icon: Eye,
       title: 'Step 2: Preview Template Details',
-      description: 'Click "Preview" to see proven performance: 2.4M avg views for viral hooks, 15.7% conversion for product templates. Review structure tested across 500K+ videos before selecting',
+      description: 'Click "Preview" to see the template structure, including hooks, story flow, and CTAs. Review the format before selecting.',
     },
     {
       icon: Edit3,
       title: 'Step 3: Customize for Your Brand',
-      description: 'Customize in 5 minutes vs hours of scripting—AI auto-populates variables, adjusts tone, optimizes pacing. Creators using templates produce content 65% faster',
+      description: 'Customize templates with AI assistance—auto-populates variables, adjusts tone settings, and optimizes pacing for your selected platform.',
     },
     {
       icon: Save,
       title: 'Step 4: Save as Custom Template',
-      description: 'Save unlimited custom templates—agencies create 50+ client-specific templates, reducing onboarding from 2 weeks to 2 days. Organize with tags for instant reuse',
+      description: 'Save unlimited custom templates for future use. Organize with tags and categories for easy access across your team.',
     },
     {
       icon: Zap,
       title: 'Step 5: Generate Content with Template',
-      description: 'Generate scripts in seconds with proven structures—affiliate marketers using templates see 62% higher conversion rates vs custom scripts',
+      description: 'Generate scripts in seconds using your saved template structures. Maintain consistent quality across all your content.',
     },
   ];
 
@@ -66,32 +66,32 @@ export default function TemplateLibraryTool() {
     {
       icon: Hash,
       title: 'Niche-Specific Templates',
-      description: 'Pre-built templates tested across 500K+ videos with proven engagement patterns—templates with 85+ viral score average 2.1M views vs 180K for custom scripts',
+      description: 'Pre-built templates organized by niche including beauty, tech, fashion, fitness, and more. Each template follows proven content structures.',
     },
     {
       icon: Layers,
       title: 'Content Type Filtering',
-      description: 'Find templates by format in 5 minutes vs 2 hours of trial-and-error—Product Showcase, Before/After, Tutorial templates optimized for conversions',
+      description: 'Find templates quickly by format—Product Showcase, Before/After, Tutorial, Review, Unboxing, and more. Filter to match your content goals.',
     },
     {
       icon: Globe,
       title: 'Platform Optimization',
-      description: 'Templates pre-configured for TikTok (15-60s), Instagram Reels (15-90s), YouTube Shorts—creators using platform-optimized templates see 78% higher completion rates',
+      description: 'Templates pre-configured for different platforms: TikTok (15-60s), Instagram Reels (15-90s), and YouTube Shorts with appropriate pacing for each.',
     },
     {
       icon: BarChart3,
-      title: 'Performance Stats Included',
-      description: 'Each template shows proven metrics: average 2.4M views for viral hooks, 15.7% conversion for product templates, 3.1M views for transformations',
+      title: 'Structured Formats',
+      description: 'Each template includes defined sections for hooks, story flow, and CTAs. See the complete structure before customizing.',
     },
     {
       icon: Edit3,
       title: 'Visual Editing Interface',
-      description: 'Customize templates in 5 minutes vs hours of scripting—drag-and-drop editor with live preview saves creators 10+ hours/week',
+      description: 'Customize templates using a drag-and-drop editor with live preview. Edit any section and see changes in real-time.',
     },
     {
       icon: Save,
       title: 'Custom Template Library',
-      description: 'Agencies create 50+ client-specific templates, reducing onboarding from 2 weeks to 2 days—unlimited saves, team sharing, version control',
+      description: 'Save unlimited custom templates for reuse. Share with your team, organize with tags, and maintain version control.',
     },
   ];
 
@@ -132,8 +132,8 @@ export default function TemplateLibraryTool() {
     },
     {
       title: 'Example 2: Viral Script → Reusable Template',
-      before: 'YOUR VIRAL SCRIPT: Specific story about iPhone 15 Pro review that got 2M views',
-      after: 'SAVED TEMPLATE: "Tech Product Deep Dive" - reusable structure for any tech product with proven viral formula',
+      before: 'YOUR VIRAL SCRIPT: Specific story about iPhone 15 Pro review with detailed structure',
+      after: 'SAVED TEMPLATE: "Tech Product Deep Dive" - reusable structure for any tech product review',
       description: 'Extracted successful elements (hook style, story beats, CTA) and turned them into a template with variables',
       actionSteps: [
         '1. Open your successful script in History',
@@ -162,7 +162,7 @@ export default function TemplateLibraryTool() {
       icon: CheckCircle,
       tips: [
         'Match content type to your goal: Product Showcase for sales, Tutorial for education, Before/After for transformations',
-        'Check performance stats: Templates with 1M+ avg views are proven winners',
+        'Review template structure: Check if the hook, flow, and CTA style align with your content strategy',
         'Consider platform: TikTok templates are punchier, YouTube Shorts allow more story depth',
         'Review example scripts: Make sure the tone matches your brand before customizing',
       ],
@@ -227,18 +227,18 @@ export default function TemplateLibraryTool() {
   const topPerformers = [
     {
       title: 'Viral Hook Opener',
-      stat: '2.4M avg views',
-      description: 'Proven formula for capturing attention in the first 3 seconds—tested across 120K+ videos with 89% completion rate',
+      stat: 'Attention-Grabbing',
+      description: 'Template designed to capture attention in the first 3 seconds with proven hook structures and pattern interrupts.',
     },
     {
       title: 'Product Unboxing Flow',
-      stat: '15.7% conversion',
-      description: 'Optimized structure for product reviews and affiliate sales—62% higher conversion vs custom scripts',
+      stat: 'Conversion-Focused',
+      description: 'Structured template for product reviews and affiliate sales with natural CTA placement and benefit highlighting.',
     },
     {
       title: 'Before & After Transformation',
-      stat: '3.1M avg views',
-      description: 'Perfect for beauty, fitness, and lifestyle transformations—used by 15K+ creators with proven engagement patterns',
+      stat: 'Story-Driven',
+      description: 'Template perfect for beauty, fitness, and lifestyle content with clear problem-solution-result narrative flow.',
     },
   ];
 
@@ -288,8 +288,8 @@ export default function TemplateLibraryTool() {
 
       <ToolHero
         eyebrowText="TEMPLATE LIBRARY - HOW TO USE IT"
-        headline="Step-by-Step Guide: Browse, Customize & Save Viral Templates"
-        subheadline="Create custom templates in 5 minutes vs 2 hours of trial-and-error—templates with 85+ viral score average 2.1M views, tested across 500K+ videos"
+        headline="Step-by-Step Guide: Browse, Customize & Save Templates"
+        subheadline="Access pre-built templates with proven structures for hooks, story flow, and CTAs. Customize quickly with AI-powered variable replacement and save for future use."
         primaryCTA={{ text: 'Start Using Templates', onClick: handlePrimaryCTA }}
         secondaryCTA={{ text: 'See How Templates Work', onClick: handleSecondaryCTA }}
       />
@@ -476,15 +476,15 @@ export default function TemplateLibraryTool() {
 
       <ToolFeatureGrid features={features} sectionTitle="Template Library Features" />
 
-      {/* Success Metrics & ROI Section */}
+      {/* Template Benefits Section */}
       <section className="py-16 md:py-20 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="template-success-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              Proven Results: Templates Drive Real ROI
+              Why Use Templates?
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Data-backed success stories showing measurable efficiency gains and revenue impact
+              Templates help you create better content faster with proven structures and consistent quality
             </p>
           </div>
 
@@ -492,12 +492,12 @@ export default function TemplateLibraryTool() {
             <Card className="border-2 border-green-200">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
-                  <div className="text-4xl font-bold text-green-600 mb-2">2.1M vs 180K</div>
-                  <Badge className="bg-green-600 text-white">Average Views</Badge>
+                  <Sparkles className="h-12 w-12 text-green-600 mx-auto mb-2" />
+                  <Badge className="bg-green-600 text-white">Structured Approach</Badge>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">High-Performing Templates Win</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Proven Formats</h3>
                 <p className="text-gray-600">
-                  Templates with 85+ viral score average 2.1M views vs 180K for custom scripts—tested across 500K+ videos with proven patterns
+                  Templates follow content structures that have worked well, including hook patterns, story flows, and CTA placements
                 </p>
               </CardContent>
             </Card>
@@ -505,12 +505,12 @@ export default function TemplateLibraryTool() {
             <Card className="border-2 border-green-200">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
-                  <div className="text-4xl font-bold text-green-600 mb-2">62% Higher</div>
-                  <Badge className="bg-green-600 text-white">Conversion Rate</Badge>
+                  <Clock className="h-12 w-12 text-green-600 mx-auto mb-2" />
+                  <Badge className="bg-green-600 text-white">Time Savings</Badge>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Affiliate Success</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Faster Creation</h3>
                 <p className="text-gray-600">
-                  Affiliate marketers using proven templates see 62% higher conversion rates—product showcase templates drive 15.7% avg conversions
+                  Start with a complete structure instead of a blank page. Customize quickly with AI variable replacement
                 </p>
               </CardContent>
             </Card>
@@ -518,12 +518,12 @@ export default function TemplateLibraryTool() {
             <Card className="border-2 border-green-200">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
-                  <div className="text-4xl font-bold text-green-600 mb-2">2 Weeks → 2 Days</div>
-                  <Badge className="bg-green-600 text-white">Onboarding Time</Badge>
+                  <Target className="h-12 w-12 text-green-600 mx-auto mb-2" />
+                  <Badge className="bg-green-600 text-white">Consistency</Badge>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Agency Scale</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Brand Voice</h3>
                 <p className="text-gray-600">
-                  Agencies create 50+ client-specific templates, reducing onboarding from 2 weeks to 2 days—save 80+ hours per client
+                  Maintain consistent quality and tone across all content. Share templates with your team for unified messaging
                 </p>
               </CardContent>
             </Card>
@@ -531,32 +531,26 @@ export default function TemplateLibraryTool() {
 
           <Card className="max-w-4xl mx-auto border-2 border-green-200">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Time & Cost Savings Analysis</h3>
+              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Template Workflow Comparison</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
                   <h4 className="font-semibold text-gray-900 mb-3">❌ Without Templates</h4>
                   <ul className="space-y-2 text-gray-600">
-                    <li>• 2 hours per script trial-and-error</li>
-                    <li>• Inconsistent results (180K avg views)</li>
-                    <li>• Lower conversion rates (9.5% avg)</li>
-                    <li>• 2 weeks to onboard new clients</li>
+                    <li>• Start from scratch each time</li>
+                    <li>• Inconsistent structure and quality</li>
+                    <li>• Spend time planning hook/flow/CTA</li>
+                    <li>• Team members create different styles</li>
                   </ul>
-                  <div className="mt-4 pt-4 border-t border-gray-200">
-                    <p className="text-red-600 font-bold">Total: 10+ hours wasted/week</p>
-                  </div>
                 </div>
 
                 <div className="bg-green-50 rounded-lg p-6 border border-green-200">
                   <h4 className="font-semibold text-gray-900 mb-3">✅ With Templates</h4>
                   <ul className="space-y-2 text-gray-600">
-                    <li>• 5 minutes to customize template</li>
-                    <li>• Proven results (2.1M avg views for 85+ templates)</li>
-                    <li>• Higher conversions (15.7% with product templates)</li>
-                    <li>• 2 days to onboard with template library</li>
+                    <li>• Start with proven structure</li>
+                    <li>• Consistent format across content</li>
+                    <li>• AI auto-fills variables quickly</li>
+                    <li>• Team uses shared templates</li>
                   </ul>
-                  <div className="mt-4 pt-4 border-t border-green-200">
-                    <p className="text-green-600 font-bold">Total: 10+ hours saved/week</p>
-                  </div>
                 </div>
               </div>
             </CardContent>

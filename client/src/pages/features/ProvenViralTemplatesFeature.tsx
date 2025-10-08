@@ -45,7 +45,7 @@ export default function ProvenViralTemplatesFeature() {
     {
       number: 1,
       title: 'Choose Your Template',
-      description: 'Browse 85+ proven templates by niche, platform, or content type. Each template shows average views and conversion rates.',
+      description: 'Browse pre-built templates by niche, platform, or content type. Each template includes hook structure, story flow, and CTA format.',
     },
     {
       number: 2,
@@ -55,12 +55,12 @@ export default function ProvenViralTemplatesFeature() {
     {
       number: 3,
       title: 'Generate & Refine',
-      description: 'Create viral-ready scripts instantly. Get AI suggestions, viral score feedback, and iterate until perfect.',
+      description: 'Create scripts instantly with the template structure. Get AI suggestions, viral score feedback, and iterate until perfect.',
     },
     {
       number: 4,
       title: 'Save & Reuse',
-      description: 'Turn your best scripts into custom templates. Build a library of proven winners for unlimited reuse.',
+      description: 'Turn your best scripts into custom templates. Build a library of formats that work for your content style.',
     },
   ];
 
@@ -124,44 +124,44 @@ export default function ProvenViralTemplatesFeature() {
     {
       name: "Viral Hook Opener",
       niche: "Lifestyle",
-      avgViews: "2.4M",
-      conversionRate: "12.3%",
-      description: "Proven hook that stops scrollers in the first 3 seconds",
+      format: "Attention-Grabbing",
+      structure: "Pattern Interrupt",
+      description: "Template designed to capture attention in the first 3 seconds with strong hooks",
     },
     {
       name: "Product Unboxing Flow",
       niche: "Tech",
-      avgViews: "1.8M",
-      conversionRate: "15.7%",
-      description: "Perfect for affiliate content with built-in CTAs",
+      format: "Product-Focused",
+      structure: "First Impressions",
+      description: "Structured for product reveals with natural CTA placement",
     },
     {
       name: "Before & After Transformation",
       niche: "Beauty",
-      avgViews: "3.1M",
-      conversionRate: "18.2%",
-      description: "High engagement with visual transformation reveals",
+      format: "Transformation",
+      structure: "Visual Reveal",
+      description: "Story-driven template with clear problem-solution-result flow",
     },
     {
       name: "Quick Tutorial",
       niche: "DIY",
-      avgViews: "1.5M",
-      conversionRate: "9.8%",
-      description: "Educational content that builds trust and authority",
+      format: "Educational",
+      structure: "Step-by-Step",
+      description: "Instructional template that breaks down processes clearly",
     },
     {
       name: "Problem-Solution",
       niche: "Business",
-      avgViews: "2.2M",
-      conversionRate: "14.5%",
-      description: "Addresses pain points and presents clear solutions",
+      format: "Value-Driven",
+      structure: "Pain-to-Gain",
+      description: "Template that identifies pain points and presents clear solutions",
     },
     {
       name: "5 Tips Quick List",
       niche: "Education",
-      avgViews: "1.9M",
-      conversionRate: "11.2%",
-      description: "Easy to follow, highly shareable format",
+      format: "List-Based",
+      structure: "Listicle",
+      description: "Easy-to-follow format that organizes information in digestible chunks",
     },
   ];
 
@@ -214,15 +214,15 @@ export default function ProvenViralTemplatesFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Proven Viral Templates - Create 50 Videos in the Time It Takes to Script 5 | Pheme</title>
-        <meta name="description" content="Save 90% of your time with proven viral templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency. See +$10K/month revenue impact." />
-        <meta property="og:title" content="Proven Viral Templates - Create 50 Videos in the Time It Takes to Script 5 | Pheme" />
-        <meta property="og:description" content="Save 90% of your time with proven viral templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency. See +$10K/month revenue impact." />
+        <title>Proven Viral Templates - Pre-Built Script Structures for Faster Content | Pheme</title>
+        <meta name="description" content="Access pre-built templates with proven content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
+        <meta property="og:title" content="Proven Viral Templates - Pre-Built Script Structures for Faster Content | Pheme" />
+        <meta property="og:description" content="Access pre-built templates with proven content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://pheme.com/features/proven-viral-templates" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Proven Viral Templates - Create 50 Videos in the Time It Takes to Script 5 | Pheme" />
-        <meta name="twitter:description" content="Save 90% of your time with proven viral templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency." />
+        <meta name="twitter:title" content="Proven Viral Templates - Pre-Built Script Structures for Faster Content | Pheme" />
+        <meta name="twitter:description" content="Access pre-built templates with proven content structures. Choose from niche-specific formats, customize quickly with AI, and maintain brand consistency across all content." />
       </Helmet>
 
       <div className="min-h-screen">

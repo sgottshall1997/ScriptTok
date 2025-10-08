@@ -37,61 +37,61 @@ export default function InstantScriptCreationFeature() {
 
   const benefits = [
     {
+      icon: Zap,
+      title: "Generate Scripts in Seconds",
+      description: "AI creates complete scripts instantly with hooks, story flow, and CTAs. Get a professional foundation without staring at a blank page.",
+    },
+    {
+      icon: BookOpen,
+      title: "Never Start from Scratch",
+      description: "Always have a professional script foundation to build from. Customize and refine AI-generated content to match your unique style.",
+    },
+    {
+      icon: Share2,
+      title: "Optimize for Each Platform",
+      description: "Get platform-specific script variations automatically. Each version is tailored for TikTok, Instagram, YouTube, or other platforms.",
+    },
+    {
+      icon: Sparkles,
+      title: "Built-in Viral Elements",
+      description: "Scripts include attention-grabbing hooks, engaging story structures, and clear calls-to-action based on proven content patterns.",
+    },
+    {
       icon: Clock,
-      title: "Save 10+ Hours Per Week",
-      description: "Eliminate script writing time. What used to take 2-3 hours per video now takes 30 seconds—letting you create 20x more content in the same time.",
-    },
-    {
-      icon: TrendingUp,
-      title: "3x Higher Engagement Rates",
-      description: "AI-optimized hooks and story flows proven to stop scrollers. Our users see 3x more views, shares, and comments compared to manually written scripts.",
-    },
-    {
-      icon: DollarSign,
-      title: "Generate $5K+ Monthly Revenue",
-      description: "Conversion-optimized CTAs and affiliate placements drive real revenue. Creators report earning $5,000-$15,000/month from AI-scripted content.",
-    },
-    {
-      icon: Rocket,
-      title: "Scale from 10K to 500K Followers",
-      description: "Consistent, high-quality scripts fuel growth. Multiple creators have grown from 10K to 500K+ followers in 6 months using our AI scripts daily.",
+      title: "Save Significant Time",
+      description: "Reduce script writing from hours to minutes. Spend more time creating content and less time planning what to say.",
     },
     {
       icon: Target,
-      title: "40% Higher Conversion Rates",
-      description: "Data-backed CTAs tailored to your audience psychology increase clicks, sales, and affiliate commissions by an average of 40%.",
-    },
-    {
-      icon: BarChart3,
-      title: "Maintain Quality Across 100+ Videos",
-      description: "Never sacrifice quality for quantity. Brands create 100+ consistent, on-brand videos monthly while maintaining viral potential in every script.",
+      title: "Maintain Brand Consistency",
+      description: "Keep your brand voice consistent across all content. Choose from multiple tone options or customize to match your style.",
     },
   ];
 
   const useCases = [
     {
       icon: "📈",
-      title: "Content Creator Growth",
-      story: "Sarah's Journey",
-      metric: "10K → 500K Followers in 6 Months",
-      description: "Sarah used AI scripts to post 3x daily on TikTok. The consistent, engaging content helped her grow from 10,000 to 500,000 followers, landing brand deals worth $20K/month.",
-      outcome: "$20K/month in brand deals",
+      title: "Content Creators",
+      story: "Consistent Output",
+      metric: "Multiple Scripts Daily",
+      description: "Generate multiple script variations quickly for A/B testing different hooks and approaches. Create consistent content without spending hours on each script.",
+      outcome: "Faster content production workflow",
     },
     {
       icon: "💰",
-      title: "Affiliate Marketing Success",
-      story: "Mike's Revenue Leap",
-      metric: "125% Increase in Affiliate Sales",
-      description: "Mike implemented AI-optimized CTAs in his product review scripts. His conversion rate jumped from 2.1% to 4.7%, increasing monthly affiliate earnings from $4K to $9K.",
-      outcome: "$5K additional monthly revenue",
+      title: "Affiliate Marketers",
+      story: "Product-Focused Content",
+      metric: "Natural CTA Integration",
+      description: "Get product-focused scripts with naturally integrated calls-to-action. AI helps structure product benefits and recommendations in an engaging way.",
+      outcome: "Better-structured affiliate content",
     },
     {
       icon: "🏢",
-      title: "Brand Consistency at Scale",
-      story: "TechBrand Studios",
-      metric: "150 Videos/Month, Zero Quality Loss",
-      description: "TechBrand needed consistent messaging across 150 monthly videos. AI scripts maintained their brand voice perfectly, reducing production costs by 60% while improving engagement by 35%.",
-      outcome: "60% cost reduction, 35% engagement boost",
+      title: "Marketing Teams",
+      story: "Brand Consistency",
+      metric: "Unified Team Voice",
+      description: "Maintain brand consistency across multiple team members. Everyone can generate on-brand scripts that match your company's tone and messaging.",
+      outcome: "Consistent brand voice across creators",
     },
   ];
 
@@ -205,30 +205,30 @@ export default function InstantScriptCreationFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Instant Script Creation - Save 10+ Hours/Week & 3x Your Engagement | Pheme</title>
-        <meta name="description" content="Generate viral scripts that drive $5K+ monthly revenue. Save 10 hours per week, grow from 10K to 500K followers, and increase conversions by 40%. AI-powered instant script creation that delivers results." />
-        <meta property="og:title" content="Instant Script Creation - Save 10+ Hours/Week & 3x Your Engagement | Pheme" />
-        <meta property="og:description" content="Generate viral scripts that drive $5K+ monthly revenue. Save 10 hours per week, grow from 10K to 500K followers, and increase conversions by 40%." />
+        <title>Instant Script Creation - AI-Powered Video Script Generator | Pheme</title>
+        <meta name="description" content="Generate complete video scripts in seconds with AI. Get platform-optimized scripts with hooks, story flow, and CTAs. Never start from scratch again." />
+        <meta property="og:title" content="Instant Script Creation - AI-Powered Video Script Generator | Pheme" />
+        <meta property="og:description" content="Generate complete video scripts in seconds with AI. Get platform-optimized scripts with hooks, story flow, and CTAs. Never start from scratch again." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://pheme.com/features/instant-script-creation" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Instant Script Creation - Save 10+ Hours/Week & 3x Your Engagement | Pheme" />
-        <meta name="twitter:description" content="Generate viral scripts that drive $5K+ monthly revenue. Save 10 hours per week, grow from 10K to 500K followers, and increase conversions by 40%." />
+        <meta name="twitter:title" content="Instant Script Creation - AI-Powered Video Script Generator | Pheme" />
+        <meta name="twitter:description" content="Generate complete video scripts in seconds with AI. Get platform-optimized scripts with hooks, story flow, and CTAs. Never start from scratch again." />
       </Helmet>
       
       <div className="min-h-screen">
         <FeatureHero
-          title="Save 10+ Hours Per Week While 3x Your Engagement"
-          subtitle="AI-powered scripts proven to grow creators from 10K to 500K followers and generate $5K+ in monthly revenue. Stop writing, start earning."
+          title="Generate Complete Video Scripts in Seconds"
+          subtitle="AI-powered script generation with platform-optimized hooks, story flow, and CTAs. Get a professional foundation to build from—never start with a blank page."
           primaryCTA={{
-            text: "Generate Your First Viral Script",
+            text: "Generate Your First Script",
             onClick: () => {
               trackNavigateCTA("ai_script_generator_hero", "generate_script");
               navigate("/dashboard");
             },
           }}
           secondaryCTA={{
-            text: "See Success Stories",
+            text: "See Use Cases",
             onClick: () => {
               trackNavigateCTA("ai_script_generator_hero", "success_stories");
               const element = document.getElementById('success-stories');
@@ -244,7 +244,7 @@ export default function InstantScriptCreationFeature() {
               Why Choose AI Script Generator?
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Real results from creators and brands using AI scripts to scale their content and revenue.
+              Powerful features that help you create better content faster.
             </p>
           </div>
           <FeatureGrid features={benefits} />
@@ -255,10 +255,10 @@ export default function InstantScriptCreationFeature() {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Real Success Stories
+              Real Use Cases
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See how creators and brands are using AI scripts to achieve breakthrough results.
+              See how different creators use AI scripts to streamline their content workflow.
             </p>
           </div>
 
