@@ -791,7 +791,7 @@ const personasData: PersonaTabContent[] = [
       { step: 'Template assignment' },
       { step: 'Team generation' },
       { step: 'Peer review' },
-      { step: 'Score → Approve → Schedule' }
+      { step: 'Score - Approve - Schedule' }
     ],
     useCases: [
       {

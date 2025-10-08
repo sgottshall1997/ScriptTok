@@ -707,7 +707,7 @@ Call-to-Action (1–2 sentences)
 • Encourage engagement by asking a question they can answer in the comments.
 • Refer explicitly to the link in bio if applicable.
 • Example:
-• "Have you tried anything like this? Let me know what you think in the comments — and check the link in my bio if you want to see what I'm talking about."
+• "Have you tried anything like this? Let me know what you think in the comments - and check the link in my bio if you want to see what I'm talking about."
 
 Hashtag Strategy
 • Include exactly 15–20 hashtags combining:
