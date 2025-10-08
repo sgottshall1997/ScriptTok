@@ -21,7 +21,7 @@ export default function RotatingValueProps() {
   }, []);
 
   return (
-    <div className="h-28 md:h-36 lg:h-40 flex items-center justify-center mb-4">
+    <div className="h-24 md:h-28 lg:h-32 flex items-center justify-center mb-2">
       <AnimatePresence mode="wait">
         <motion.h1
           key={currentIndex}
