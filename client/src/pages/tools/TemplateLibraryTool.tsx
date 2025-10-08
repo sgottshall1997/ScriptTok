@@ -66,7 +66,7 @@ export default function TemplateLibraryTool() {
     {
       icon: Hash,
       title: 'Niche-Specific Templates',
-      description: 'Pre-built templates organized by niche including beauty, tech, fashion, fitness, and more. Each template follows proven content structures.',
+      description: 'Pre-built templates organized by niche including beauty, tech, fashion, fitness, and more. Each template follows tested content structures.',
     },
     {
       icon: Layers,

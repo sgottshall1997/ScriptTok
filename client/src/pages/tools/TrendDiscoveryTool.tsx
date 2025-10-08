@@ -32,7 +32,7 @@ export default function TrendDiscoveryTool() {
     {
       icon: TrendingUp,
       title: 'Comprehensive Trend Research',
-      description: 'AI scans millions of posts and delivers a complete research package: viral hooks, trending angles, target audiences, popularity scores, peak times, and related trends—all in one place',
+      description: 'AI scans trending content and delivers a complete research package: viral hooks, trending angles, target audiences, popularity scores, peak times, and related trends—all in one place',
     },
     {
       icon: Package,

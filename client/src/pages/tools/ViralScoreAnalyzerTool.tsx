@@ -66,7 +66,7 @@ export default function ViralScoreAnalyzerTool() {
     {
       icon: Target,
       title: '0-100 Viral Score',
-      description: 'Precise performance prediction based on proven viral patterns',
+      description: 'Performance prediction based on viral content analysis',
     },
     {
       icon: Zap,
