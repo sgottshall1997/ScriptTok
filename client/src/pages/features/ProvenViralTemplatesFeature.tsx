@@ -103,13 +103,6 @@ export default function ProvenViralTemplatesFeature() {
     },
   ];
 
-  const scrollToTopPerformers = () => {
-    const element = document.getElementById("top-performers");
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
-
   return (
     <>
       <MarketingNav />
