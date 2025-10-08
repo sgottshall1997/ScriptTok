@@ -246,7 +246,7 @@ export default function ProvenViralTemplatesFeature() {
           }}
         />
 
-      <section id="roi-benefits" className="py-16 px-4 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <section id="roi-benefits" className="py-20 md:py-28 px-4 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Why Use Templates?</h2>
@@ -256,7 +256,7 @@ export default function ProvenViralTemplatesFeature() {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <Card className="rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-900" data-testid="benefit-time-savings">
+            <Card className="rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-900 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="benefit-time-savings">
               <div className="flex flex-col items-center text-center gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full">
                   <Clock className="h-8 w-8 text-violet-600 dark:text-violet-400" />
@@ -275,7 +275,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-900" data-testid="benefit-consistency">
+            <Card className="rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-900 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="benefit-consistency">
               <div className="flex flex-col items-center text-center gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full">
                   <CheckCircle2 className="h-8 w-8 text-violet-600 dark:text-violet-400" />
@@ -294,7 +294,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-900" data-testid="benefit-conversion">
+            <Card className="rounded-2xl p-8 border-2 border-violet-200 dark:border-violet-800 bg-white dark:bg-gray-900 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="benefit-conversion">
               <div className="flex flex-col items-center text-center gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full">
                   <Sparkles className="h-8 w-8 text-violet-600 dark:text-violet-400" />
@@ -386,7 +386,7 @@ export default function ProvenViralTemplatesFeature() {
           <div className="text-center mt-8">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:opacity-90"
+              className="bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:opacity-90 btn-glow hover-lift"
               onClick={() => {
                 trackNavigateCTA("roi_benefits", "start_template_library");
                 navigate("/tools/template-library");
@@ -399,7 +399,7 @@ export default function ProvenViralTemplatesFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Real-World Use Cases</h2>
@@ -409,7 +409,7 @@ export default function ProvenViralTemplatesFeature() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <Card className="rounded-2xl p-6" data-testid="use-case-agency">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="use-case-agency">
               <div className="flex flex-col gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full w-fit">
                   <Building2 className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -441,7 +441,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-6" data-testid="use-case-solopreneur">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="use-case-solopreneur">
               <div className="flex flex-col gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full w-fit">
                   <Users className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -473,7 +473,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-6" data-testid="use-case-brand">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="use-case-brand">
               <div className="flex flex-col gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full w-fit">
                   <Trophy className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -510,7 +510,7 @@ export default function ProvenViralTemplatesFeature() {
             <Button
               size="lg"
               variant="outline"
-              className="border-violet-600 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20"
+              className="border-violet-600 text-violet-600 hover:bg-violet-50 dark:hover:bg-violet-900/20 hover-lift transition-all-smooth"
               onClick={() => {
                 trackNavigateCTA("use_cases", "learn_custom_templates");
                 navigate("/tools/template-library");
@@ -523,7 +523,7 @@ export default function ProvenViralTemplatesFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">What You Get</h2>
@@ -533,7 +533,7 @@ export default function ProvenViralTemplatesFeature() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="rounded-2xl p-6" data-testid="deliverable-templates">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="deliverable-templates">
               <div className="flex items-start gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-3 rounded-full">
                   <Layout className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -547,7 +547,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-6" data-testid="deliverable-builder">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="deliverable-builder">
               <div className="flex items-start gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-3 rounded-full">
                   <Sparkles className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -561,7 +561,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-6" data-testid="deliverable-niche">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="deliverable-niche">
               <div className="flex items-start gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-3 rounded-full">
                   <Target className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -575,7 +575,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-6" data-testid="deliverable-analytics">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="deliverable-analytics">
               <div className="flex items-start gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-3 rounded-full">
                   <BarChart className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -589,7 +589,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-6" data-testid="deliverable-voice">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="deliverable-voice">
               <div className="flex items-start gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-3 rounded-full">
                   <Users className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -603,7 +603,7 @@ export default function ProvenViralTemplatesFeature() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl p-6" data-testid="deliverable-collaboration">
+            <Card className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="deliverable-collaboration">
               <div className="flex items-start gap-4">
                 <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-3 rounded-full">
                   <Rocket className="h-6 w-6 text-violet-600 dark:text-violet-400" />
@@ -621,7 +621,7 @@ export default function ProvenViralTemplatesFeature() {
           <div className="text-center mt-10">
             <Button
               size="lg"
-              className="bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:opacity-90"
+              className="bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:opacity-90 btn-glow hover-lift"
               onClick={() => {
                 trackNavigateCTA("what_you_get", "explore_templates");
                 navigate("/tools/template-library");
@@ -634,7 +634,7 @@ export default function ProvenViralTemplatesFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Template Categories</h2>
@@ -666,7 +666,7 @@ export default function ProvenViralTemplatesFeature() {
                   return (
                     <Card
                       key={index}
-                      className="rounded-2xl p-6 hover:shadow-md transition-shadow cursor-pointer"
+                      className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth cursor-pointer"
                       onClick={() => {
                         trackNavigateCTA("template_library_type", `use_${template.name}`);
                         navigate("/dashboard");
@@ -695,7 +695,7 @@ export default function ProvenViralTemplatesFeature() {
                   return (
                     <Card
                       key={index}
-                      className="rounded-2xl p-6 hover:shadow-md transition-shadow cursor-pointer"
+                      className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth cursor-pointer"
                       onClick={() => {
                         trackNavigateCTA("template_library_platform", `browse_${item.platform}`);
                         navigate("/dashboard");
@@ -729,7 +729,7 @@ export default function ProvenViralTemplatesFeature() {
                 {templatesByNiche.map((item, index) => (
                   <Card
                     key={index}
-                    className="rounded-2xl p-4 hover:shadow-md transition-shadow cursor-pointer"
+                    className="rounded-2xl p-4 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth cursor-pointer"
                     onClick={() => {
                       trackNavigateCTA("template_library_niche", `browse_${item.niche}`);
                       navigate("/dashboard");
@@ -755,7 +755,7 @@ export default function ProvenViralTemplatesFeature() {
                   return (
                     <Card
                       key={index}
-                      className="rounded-2xl p-6 hover:shadow-md transition-shadow cursor-pointer"
+                      className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth cursor-pointer"
                       onClick={() => {
                         trackNavigateCTA("template_library_duration", `browse_${item.duration}`);
                         navigate("/dashboard");
@@ -783,7 +783,7 @@ export default function ProvenViralTemplatesFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">All Templates</h2>
@@ -795,7 +795,7 @@ export default function ProvenViralTemplatesFeature() {
             {allTemplates.map((template, index) => (
               <Card
                 key={index}
-                className="rounded-2xl p-4 hover:shadow-md transition-shadow"
+                className="rounded-2xl p-4 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth"
                 data-testid={`all-template-${index}`}
               >
                 <div className="flex flex-col gap-3">
@@ -842,7 +842,7 @@ export default function ProvenViralTemplatesFeature() {
         className="bg-white dark:bg-gray-900"
       />
 
-      <section id="top-performers" className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section id="top-performers" className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-2 mb-4">
@@ -857,7 +857,7 @@ export default function ProvenViralTemplatesFeature() {
             {topPerformers.map((template, index) => (
               <Card
                 key={index}
-                className="rounded-2xl p-6 hover:shadow-lg transition-shadow border-2 border-violet-200 dark:border-violet-800"
+                className="rounded-2xl p-6 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth border-2 border-violet-200 dark:border-violet-800"
                 data-testid={`top-performer-${index}`}
               >
                 <div className="flex flex-col gap-4">
@@ -886,7 +886,7 @@ export default function ProvenViralTemplatesFeature() {
                     </div>
                   </div>
                   <Button
-                    className="w-full bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:opacity-90"
+                    className="w-full bg-gradient-to-r from-violet-600 to-purple-600 text-white hover:opacity-90 btn-glow hover-lift"
                     onClick={() => {
                       trackNavigateCTA("template_library_top_performer", `use_${template.name}`);
                       navigate("/dashboard");
@@ -903,7 +903,7 @@ export default function ProvenViralTemplatesFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
+      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
         <div className="container mx-auto max-w-4xl">
           <Card className="rounded-2xl p-8 md:p-12 border-2 border-orange-200 dark:border-orange-800">
             <div className="text-center mb-6">
@@ -921,7 +921,7 @@ export default function ProvenViralTemplatesFeature() {
                   navigate("/tools/template-library");
                 }}
                 size="lg"
-                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl btn-glow hover-lift"
                 data-testid="button-template-guide"
               >
                 <BookOpen className="mr-2 h-5 w-5" />
@@ -971,7 +971,7 @@ export default function ProvenViralTemplatesFeature() {
                 navigate("/tools/template-library");
               }}
               size="lg"
-              className="bg-white text-violet-600 hover:bg-violet-50 rounded-xl text-lg px-8 py-6 h-auto"
+              className="bg-white text-violet-600 hover:bg-violet-50 rounded-xl text-lg px-8 py-6 h-auto btn-glow hover-lift"
               data-testid="button-browse-template-library-cta"
             >
               <Layout className="mr-2 h-5 w-5" />
@@ -984,7 +984,7 @@ export default function ProvenViralTemplatesFeature() {
               }}
               size="lg"
               variant="outline"
-              className="border-2 border-white text-white hover:bg-white/20 rounded-xl text-lg px-8 py-6 h-auto"
+              className="border-2 border-white text-white hover:bg-white/20 rounded-xl text-lg px-8 py-6 h-auto hover-lift transition-all-smooth"
               data-testid="button-learn-custom-templates-cta"
             >
               <Sparkles className="mr-2 h-5 w-5" />
@@ -994,7 +994,7 @@ export default function ProvenViralTemplatesFeature() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Get Hands-On?
@@ -1008,7 +1008,7 @@ export default function ProvenViralTemplatesFeature() {
               navigate("/tools/template-library");
             }}
             size="lg"
-            className="bg-violet-600 hover:bg-violet-700 text-white"
+            className="bg-violet-600 hover:bg-violet-700 text-white glow-purple-sm hover-lift"
             data-testid="button-try-template-library"
           >
             Try the Template Library →

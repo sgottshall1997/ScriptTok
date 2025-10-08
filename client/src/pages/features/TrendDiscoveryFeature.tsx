@@ -236,7 +236,7 @@ export default function TrendDiscoveryFeature() {
           }}
         />
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -250,7 +250,7 @@ export default function TrendDiscoveryFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -267,7 +267,7 @@ export default function TrendDiscoveryFeature() {
                 const Icon = outcome.icon;
                 return (
                   <div key={index} className="relative" data-testid={`discovery-step-${index}`}>
-                    <Card className="rounded-2xl shadow-sm h-full">
+                    <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift transition-all-smooth h-full">
                       <div className="p-6">
                         <div className="flex flex-col items-center text-center">
                           <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full mb-4">
@@ -295,7 +295,7 @@ export default function TrendDiscoveryFeature() {
         </div>
       </section>
 
-      <section id="trend-package-example" className="py-16 px-4 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+      <section id="trend-package-example" className="py-20 md:py-28 px-4 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -402,7 +402,7 @@ export default function TrendDiscoveryFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -419,7 +419,7 @@ export default function TrendDiscoveryFeature() {
               return (
                 <Card
                   key={index}
-                  className="rounded-2xl shadow-sm hover:shadow-md transition-shadow"
+                  className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift transition-all-smooth"
                   data-testid={`integration-card-${index}`}
                 >
                   <div className="p-6">
@@ -440,7 +440,7 @@ export default function TrendDiscoveryFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
+      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
         <div className="container mx-auto max-w-4xl">
           <Card className="rounded-2xl p-8 md:p-12 border-2 border-orange-200 dark:border-orange-800">
             <div className="text-center mb-6">
@@ -458,7 +458,7 @@ export default function TrendDiscoveryFeature() {
                   navigate("/tools/trend-discovery");
                 }}
                 size="lg"
-                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl btn-glow hover-lift"
                 data-testid="button-view-guide"
               >
                 <BookOpen className="mr-2 h-5 w-5" />
@@ -472,7 +472,7 @@ export default function TrendDiscoveryFeature() {
 
       <FAQAccordion faqs={faqs} className="bg-gray-50 dark:bg-gray-800" />
 
-      <section className="bg-gradient-cta text-white py-16 px-4">
+      <section className="bg-gradient-cta text-white py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Start Getting Complete Trend Intelligence
