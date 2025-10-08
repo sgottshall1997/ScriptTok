@@ -1136,11 +1136,11 @@ ${config.hashtags.join(' ')}`;
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gray-50 pb-32">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-32">
         <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
           {/* Header */}
           <div className="text-center space-y-2 px-2">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900"> Pheme Content Generator</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-gray-100"> Pheme Content Generator</h1>
             <p className="text-sm sm:text-base md:text-lg text-muted-foreground">
               Generate viral content in under 60 seconds
             </p>
@@ -1148,7 +1148,7 @@ ${config.hashtags.join(' ')}`;
 
           {/* Tier Badge and Quota Counters */}
           {!usageLoading && usageData && (
-            <Card className="rounded-2xl shadow-sm bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200">
+            <Card className="rounded-2xl shadow-sm bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800">
               <CardContent className="pt-6">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-4">
                   {/* Tier Badge */}

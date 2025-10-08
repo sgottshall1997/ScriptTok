@@ -130,21 +130,21 @@ export default function TrendForecaster() {
 
   return (
     <>
-      <Card className="border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50">
+      <Card className="border-purple-200 dark:border-purple-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="flex items-center gap-2">
                 🔮 Trend Forecaster
               </CardTitle>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                 Real-time viral trends powered by Perplexity AI
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-gray-500">Last updated</p>
-              <p className="text-xs font-semibold text-gray-700">{timeSinceUpdate}</p>
-              <p className="text-xs text-purple-600 mt-1">
+              <p className="text-xs text-gray-500 dark:text-gray-400">Last updated</p>
+              <p className="text-xs font-semibold text-gray-700 dark:text-gray-300">{timeSinceUpdate}</p>
+              <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
                 Auto-refreshes daily at 5 AM ET
               </p>
             </div>

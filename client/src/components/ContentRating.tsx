@@ -31,8 +31,8 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
   if (!contentHistoryId || isNaN(contentHistoryId)) {
     console.warn('ContentRating: Invalid contentHistoryId:', contentHistoryId);
     return (
-      <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50">
-        <span className="text-sm text-gray-500">Rating unavailable - invalid content ID</span>
+      <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50 dark:bg-gray-800">
+        <span className="text-sm text-gray-500 dark:text-gray-400">Rating unavailable - invalid content ID</span>
       </div>
     );
   }
@@ -160,12 +160,12 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
 
   if (!isExpanded) {
     return (
-      <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50">
+      <div className="flex items-center gap-2 p-2 border rounded-lg bg-gray-50 dark:bg-gray-800">
         <Star className="w-4 h-4 text-yellow-500" />
         <span className="text-sm font-medium">Rate Content</span>
         {averageRating && (
           <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-blue-600">{averageRating}</span>
+            <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{averageRating}</span>
             {getRatingBadge(averageRating)}
           </div>
         )}
@@ -218,7 +218,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                 ★
               </button>
             ))}
-            <span className="ml-2 text-sm text-gray-600">
+            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
               {ratings.overallRating ? `${ratings.overallRating}/5 stars` : 'Not rated'}
             </span>
           </div>
@@ -245,7 +245,7 @@ export function ContentRating({ contentHistoryId, userId, isExpanded = false, on
                 ★
               </button>
             ))}
-            <span className="ml-2 text-sm text-gray-600">
+            <span className="ml-2 text-sm text-gray-600 dark:text-gray-400">
               {ratings.captionRating ? `${ratings.captionRating}/5 stars` : 'Not rated'}
             </span>
           </div>
@@ -339,7 +339,7 @@ export function SmartLearningToggle({ userId }: SmartLearningToggleProps) {
               <TrendingUp className="w-5 h-5 text-blue-500" />
               <Label className="text-base font-medium">Use my best-rated style</Label>
             </div>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-600 dark:text-gray-400">
               Automatically apply patterns from your highest-rated content to new generations
             </p>
           </div>
