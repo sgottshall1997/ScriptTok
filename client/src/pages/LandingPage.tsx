@@ -275,7 +275,7 @@ export default function LandingPage() {
               Choose Your Plan
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-              Start for Free - Get 10 Generations on Us
+              Start for Free - 10 Generations on Us
             </p>
             
             {/* Monthly/Annual Toggle */}
