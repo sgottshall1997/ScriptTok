@@ -41,102 +41,82 @@ export function ToolHero({
       className="relative bg-gradient-to-br from-violet-600 to-purple-600 text-white py-16 md:py-24 lg:py-32"
       data-testid="tool-hero-section"
     >
-      <div className="container mx-auto px-4 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          {/* Left Column - Content */}
-          <div className="space-y-6" data-testid="hero-content">
-            {/* Eyebrow Text */}
-            <p 
-              className="text-sm font-semibold tracking-wide uppercase text-violet-200"
-              data-testid="hero-eyebrow"
-            >
-              {eyebrowText}
-            </p>
+      <div className="container mx-auto px-4 max-w-6xl text-center">
+        <div className="space-y-6" data-testid="hero-content">
+          {/* Eyebrow Text */}
+          <p 
+            className="text-sm font-semibold tracking-wide uppercase text-violet-200"
+            data-testid="hero-eyebrow"
+          >
+            {eyebrowText}
+          </p>
 
-            {/* Headline with Optional Rotating Personas */}
-            <h1 
-              className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
-              data-testid="hero-headline"
-            >
-              {headline}
-              {rotatingPersonas && rotatingPersonas.length > 0 && (
-                <span className="block mt-2 min-h-[1.2em]">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={currentPersonaIndex}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -20 }}
-                      transition={{ duration: 0.5 }}
-                      className="inline-block text-violet-200"
-                      data-testid={`rotating-persona-${currentPersonaIndex}`}
-                    >
-                      {rotatingPersonas[currentPersonaIndex]}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-              )}
-            </h1>
+          {/* Headline with Optional Rotating Personas */}
+          <h1 
+            className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
+            data-testid="hero-headline"
+          >
+            {headline}
+            {rotatingPersonas && rotatingPersonas.length > 0 && (
+              <span className="block mt-2 min-h-[1.2em]">
+                <AnimatePresence mode="wait">
+                  <motion.span
+                    key={currentPersonaIndex}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    transition={{ duration: 0.5 }}
+                    className="inline-block text-violet-200"
+                    data-testid={`rotating-persona-${currentPersonaIndex}`}
+                  >
+                    {rotatingPersonas[currentPersonaIndex]}
+                  </motion.span>
+                </AnimatePresence>
+              </span>
+            )}
+          </h1>
 
-            {/* Subheadline */}
-            <p 
-              className="text-lg md:text-xl text-violet-100"
-              data-testid="hero-subheadline"
-            >
-              {subheadline}
-            </p>
+          {/* Subheadline */}
+          <p 
+            className="text-lg md:text-xl text-violet-100 max-w-3xl mx-auto"
+            data-testid="hero-subheadline"
+          >
+            {subheadline}
+          </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+          {/* CTAs */}
+          <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center">
+            <Button
+              onClick={primaryCTA.onClick}
+              size="lg"
+              className="bg-white text-violet-600 hover:bg-violet-50 font-semibold"
+              data-testid="hero-primary-cta"
+            >
+              {primaryCTA.text}
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+
+            {secondaryCTA && (
               <Button
-                onClick={primaryCTA.onClick}
+                onClick={secondaryCTA.onClick}
                 size="lg"
-                className="bg-white text-violet-600 hover:bg-violet-50 font-semibold"
-                data-testid="hero-primary-cta"
+                variant="outline"
+                className="border-2 border-white text-white hover:bg-white/10"
+                data-testid="hero-secondary-cta"
               >
-                {primaryCTA.text}
-                <ArrowRight className="ml-2 h-5 w-5" />
+                {secondaryCTA.text}
               </Button>
-
-              {secondaryCTA && (
-                <Button
-                  onClick={secondaryCTA.onClick}
-                  size="lg"
-                  variant="outline"
-                  className="border-2 border-white text-white hover:bg-white/10"
-                  data-testid="hero-secondary-cta"
-                >
-                  {secondaryCTA.text}
-                </Button>
-              )}
-            </div>
-
-            {/* Reassurance Text */}
-            {reassuranceText && (
-              <p 
-                className="text-sm text-violet-200"
-                data-testid="hero-reassurance"
-              >
-                {reassuranceText}
-              </p>
             )}
           </div>
 
-          {/* Right Column - Demo Visual */}
-          {demoImage && (
-            <div 
-              className="relative"
-              data-testid="hero-demo"
+          {/* Reassurance Text */}
+          {reassuranceText && (
+            <p 
+              className="text-sm text-violet-200"
+              data-testid="hero-reassurance"
             >
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-video">
-                <img
-                  src={demoImage}
-                  alt="Demo"
-                  className="w-full h-full object-cover"
-                  data-testid="hero-demo-image"
-                />
-              </div>
-            </div>
+              {reassuranceText}
+            </p>
           )}
         </div>
       </div>
