@@ -200,7 +200,7 @@ export default function TrendDiscoveryTool() {
             <CardContent className="p-8 md:p-12">
               <div className="mb-8">
                 <Badge className="bg-violet-600 text-white mb-4">📊 Trend Research Complete</Badge>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">{trendPackageDemo.title}</h3>
+                <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-2">{trendPackageDemo.title}</h3>
               </div>
 
               <div className="space-y-6">
@@ -309,7 +309,7 @@ export default function TrendDiscoveryTool() {
             {useCases.map((useCase, index) => (
               <Card key={index} className="shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`use-case-card-${index}`}>
                 <CardContent className="p-8">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3" data-testid={`use-case-title-${index}`}>
+                  <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-3" data-testid={`use-case-title-${index}`}>
                     {useCase.title}
                   </h3>
                   <p className="text-gray-600" data-testid={`use-case-description-${index}`}>

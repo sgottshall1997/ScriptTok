@@ -31,7 +31,7 @@ export function FeatureHero({
     >
       <div className="container mx-auto max-w-6xl text-center">
         <h1
-          className="text-4xl md:text-5xl font-bold mb-6"
+          className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6"
           data-testid="hero-title"
         >
           {title}

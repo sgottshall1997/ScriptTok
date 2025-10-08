@@ -27,7 +27,7 @@ export function ToolFeatureGrid({ features, columns = 3, sectionTitle }: ToolFea
         {sectionTitle && (
           <div className="text-center mb-12">
             <h2 
-              className="text-3xl md:text-4xl font-bold text-gray-900"
+              className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900"
               data-testid="feature-grid-title"
             >
               {sectionTitle}

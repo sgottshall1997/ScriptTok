@@ -41,7 +41,7 @@ const ContactPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-5xl">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Contact Us</h1>
+      <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 text-gray-800">Contact Us</h1>
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-1">
@@ -56,14 +56,14 @@ const ContactPage: React.FC = () => {
               <div className="flex items-start space-x-3">
                 <Mail className="h-5 w-5 text-blue-600 mt-1" />
                 <div>
-                  <h3 className="font-medium">Email</h3>
+                  <h3 className="font-semibold">Email</h3>
                   <p className="text-sm text-gray-600">shallsdigital@gmail.com</p>
                   <p className="text-xs text-gray-500 mt-1">For general inquiries and support</p>
                 </div>
               </div>
               
               <div className="pt-4 border-t border-gray-100">
-                <h3 className="font-medium mb-2">Connect With Us</h3>
+                <h3 className="font-semibold mb-2">Connect With Us</h3>
                 <div className="flex space-x-3">
                   <Button variant="outline" size="icon" className="rounded-full">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-twitter" viewBox="0 0 16 16">
@@ -98,7 +98,7 @@ const ContactPage: React.FC = () => {
               {isSubmitted ? (
                 <div className="flex flex-col items-center justify-center py-12 text-center">
                   <CheckCircle2 className="h-16 w-16 text-green-500 mb-4" />
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Thank You!</h3>
+                  <h3 className="text-2xl md:text-3xl font-semibold text-gray-800 mb-2">Thank You!</h3>
                   <p className="text-gray-600 mb-6">
                     Your message has been sent successfully. We'll get back to you shortly.
                   </p>

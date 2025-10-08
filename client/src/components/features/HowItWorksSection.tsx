@@ -23,7 +23,7 @@ export function HowItWorksSection({
     <section className={cn("py-16 px-4", className)} data-testid="how-it-works-section">
       <div className="container mx-auto max-w-6xl">
         <h2
-          className="text-3xl font-bold text-center mb-12"
+          className="text-3xl md:text-4xl lg:text-display-sm font-bold text-center mb-12"
           data-testid="how-it-works-title"
         >
           {title}

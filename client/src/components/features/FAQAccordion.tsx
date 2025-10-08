@@ -21,7 +21,7 @@ export function FAQAccordion({ faqs, className }: FAQAccordionProps) {
     <section className={cn("py-16 px-4", className)} data-testid="faq-section">
       <div className="container mx-auto max-w-4xl">
         <h2
-          className="text-3xl font-bold text-center mb-12"
+          className="text-3xl md:text-4xl lg:text-display-sm font-bold text-center mb-12"
           data-testid="faq-title"
         >
           Frequently Asked Questions

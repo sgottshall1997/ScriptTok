@@ -342,7 +342,7 @@ export default function PricingPage() {
         <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">Compare All Features</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4">Compare All Features</h2>
               <p className="text-gray-600 dark:text-gray-400">
                 See exactly what's included in each plan
               </p>
@@ -476,7 +476,7 @@ export default function PricingPage() {
         <section className="py-16 px-4">
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">When to Upgrade</h2>
+              <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4">When to Upgrade</h2>
               <p className="text-gray-600 dark:text-gray-400">
                 Know the perfect time to level up your plan
               </p>
@@ -570,7 +570,7 @@ export default function PricingPage() {
         {/* FAQ Section */}
         <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
           <div className="container mx-auto max-w-3xl">
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-center mb-12">Frequently Asked Questions</h2>
             <Accordion type="single" collapsible className="w-full space-y-4">
               <AccordionItem value="item-1" className="border rounded-lg px-6 bg-white dark:bg-gray-900" data-testid="faq-item-1">
                 <AccordionTrigger className="text-left hover:no-underline" data-testid="faq-trigger-1">
@@ -641,7 +641,7 @@ export default function PricingPage() {
         {/* Final CTA Banner */}
         <section className="bg-gradient-cta text-white py-16 px-4">
           <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4">
               Ready to Create Viral Content?
             </h2>
             <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">

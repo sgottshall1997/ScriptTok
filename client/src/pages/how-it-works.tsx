@@ -26,8 +26,8 @@ const HowItWorksPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-5xl">
       <div className="mb-12">
-        <h1 className="text-3xl font-bold mb-3 text-gray-800">How Pheme Works</h1>
-        <p className="text-lg text-gray-600 max-w-3xl">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-gray-800">How Pheme Works</h1>
+        <p className="text-lg md:text-xl text-gray-600 max-w-3xl">
           Create viral content with AI-powered generation, viral score analysis, and performance tracking. 
           Turn your ideas into engaging scripts in seconds.
         </p>
@@ -118,7 +118,7 @@ const HowItWorksPage: React.FC = () => {
       
       {/* Feature Highlights */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Pheme Features</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6 text-gray-800">Pheme Features</h2>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="flex">
@@ -126,7 +126,7 @@ const HowItWorksPage: React.FC = () => {
               <Zap className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Viral Score Analysis</h3>
+              <h3 className="text-2xl md:text-3xl font-semibold mb-2">Viral Score Analysis</h3>
               <p className="text-gray-700">
                 Every generated script gets an instant viral score based on engagement patterns, 
                 trending elements, and content structure to help you pick winning content.
@@ -139,7 +139,7 @@ const HowItWorksPage: React.FC = () => {
               <Brain className="h-6 w-6 text-purple-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Claude AI Generation</h3>
+              <h3 className="text-2xl md:text-3xl font-semibold mb-2">Claude AI Generation</h3>
               <p className="text-gray-700">
                 Powered by GPT and Claude AI for high-quality, engaging content that feels natural 
                 and authentic while maintaining viral potential.
@@ -152,7 +152,7 @@ const HowItWorksPage: React.FC = () => {
               <Video className="h-6 w-6 text-red-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Platform Optimized</h3>
+              <h3 className="text-2xl md:text-3xl font-semibold mb-2">Platform Optimized</h3>
               <p className="text-gray-700">
                 All content is intelligently structured for high engagement across platforms — 
                 optimized length, trending topics, and proven formats that perform on TikTok, 
@@ -166,7 +166,7 @@ const HowItWorksPage: React.FC = () => {
               <BarChart3 className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h3 className="text-xl font-semibold mb-2">Content History & Tracking</h3>
+              <h3 className="text-2xl md:text-3xl font-semibold mb-2">Content History & Tracking</h3>
               <p className="text-gray-700">
                 Save all your generated content, rate performance, and build a library of your 
                 highest-performing scripts for future reference.
@@ -178,7 +178,7 @@ const HowItWorksPage: React.FC = () => {
       
       {/* FAQ Section */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Frequently Asked Questions</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6 text-gray-800">Frequently Asked Questions</h2>
         
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
@@ -262,7 +262,7 @@ const HowItWorksPage: React.FC = () => {
       <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-none shadow-md">
         <CardContent className="p-8">
           <div className="text-center max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4 bg-gradient-to-r from-purple-600 to-pink-600 text-transparent bg-clip-text">
               Ready to Go Viral?
             </h2>
             <p className="text-gray-700 mb-6">

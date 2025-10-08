@@ -356,7 +356,7 @@ export default function TemplateLibraryTool() {
             {interactiveExamples.map((example, index) => (
               <Card key={index} className="border-2 border-gray-200 hover:border-violet-300 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`example-card-${index}`}>
                 <CardContent className="p-8">
-                  <h3 className="text-2xl font-bold text-gray-900 mb-6" data-testid={`example-title-${index}`}>
+                  <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6" data-testid={`example-title-${index}`}>
                     {example.title}
                   </h3>
 
@@ -490,7 +490,7 @@ export default function TemplateLibraryTool() {
 
           <Card className="max-w-4xl mx-auto border-2 border-green-200 shadow-card hover:shadow-card-hover transition-all-smooth">
             <CardContent className="p-8">
-              <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Template Workflow Comparison</h3>
+              <h3 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6 text-center">Template Workflow Comparison</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white rounded-lg p-6 border border-gray-200">
                   <h4 className="font-semibold text-gray-900 mb-3">❌ Without Templates</h4>

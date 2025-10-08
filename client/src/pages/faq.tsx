@@ -14,8 +14,8 @@ const FAQPage: React.FC = () => {
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-4xl">
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-3 text-gray-800">Frequently Asked Questions</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-gray-800">Frequently Asked Questions</h1>
+        <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
           Find answers to common questions about Pheme and how it helps you create
           viral content with AI-powered generation and viral score analysis.
         </p>
@@ -62,7 +62,7 @@ const FAQPage: React.FC = () => {
 
       {/* General FAQs */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Getting Started</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6 text-gray-800">Getting Started</h2>
 
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="what-is-pheme">
@@ -137,7 +137,7 @@ const FAQPage: React.FC = () => {
 
       {/* TikTok Content FAQs */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Pheme Content Generation</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6 text-gray-800">Pheme Content Generation</h2>
 
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="templates">
@@ -203,7 +203,7 @@ const FAQPage: React.FC = () => {
 
       {/* Viral Score FAQs */}
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">Viral Score Analysis</h2>
+        <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6 text-gray-800">Viral Score Analysis</h2>
 
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="viral-score-meaning">

@@ -24,7 +24,7 @@ const CompliancePage: React.FC = () => {
               <Video className="h-3 w-3 mr-1" />
               Social Media Content Compliant
             </Badge>
-            <h1 className="text-4xl font-bold text-gray-900">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">
               Pheme Compliance Center
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -312,7 +312,7 @@ const CompliancePage: React.FC = () => {
         {/* Contact & Support */}
         <Card className="bg-gray-900 text-white">
           <CardContent className="text-center py-8">
-            <h3 className="text-xl font-semibold mb-2">Ready to Create Viral Content?</h3>
+            <h3 className="text-2xl md:text-3xl font-semibold mb-2">Ready to Create Viral Content?</h3>
             <p className="text-gray-300 mb-4">
               Pheme helps you create engaging content with AI-powered viral score analysis.
             </p>

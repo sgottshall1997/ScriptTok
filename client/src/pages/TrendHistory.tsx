@@ -555,7 +555,7 @@ const TrendHistory = () => {
               <Clock className="h-6 w-6 text-blue-600" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Trend History</h1>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">Trend History</h1>
               <p className="text-gray-600">Historical trend data from Forecaster and AI Picks</p>
             </div>
           </div>

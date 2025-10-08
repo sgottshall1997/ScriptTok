@@ -302,7 +302,7 @@ const Dashboard = () => {
     <div className="space-y-4 md:space-y-6">
       {/* 1️⃣ Hero Header */}
       <div className="text-center space-y-3 px-2 py-6 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 rounded-2xl border border-purple-100">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
           🚀 Pheme AI: Your Viral Content Command Center
         </h1>
         <p className="text-sm sm:text-base md:text-lg text-gray-700 max-w-3xl mx-auto">

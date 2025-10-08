@@ -37,7 +37,7 @@ export function FeatureGrid({ features, className }: FeatureGridProps) {
                 </div>
                 <div className="flex-1">
                   <h3
-                    className="text-xl font-semibold mb-2"
+                    className="text-2xl md:text-3xl font-semibold mb-2"
                     data-testid={`feature-title-${index}`}
                   >
                     {feature.title}

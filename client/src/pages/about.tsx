@@ -123,7 +123,7 @@ const AboutPage: React.FC = () => {
             <Video className="h-8 w-8 text-white" />
           </div>
           <div className="text-left">
-            <h1 className="text-4xl font-bold text-gray-900">Pheme</h1>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">Pheme</h1>
             <p className="text-lg text-gray-600">TikTok Viral Content Generator</p>
           </div>
         </div>
@@ -137,7 +137,7 @@ const AboutPage: React.FC = () => {
       {/* What Pheme Does */}
       <Card className="mb-12 border-l-4 border-l-pink-600">
         <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
+          <CardTitle className="flex items-center text-3xl md:text-4xl lg:text-display-sm font-bold">
             <Target className="h-6 w-6 mr-3 text-pink-600" />
             What Pheme Does
           </CardTitle>
@@ -186,7 +186,7 @@ const AboutPage: React.FC = () => {
       {/* The Pheme Intelligence Process */}
       <Card className="mb-12 border-l-4 border-l-purple-600">
         <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
+          <CardTitle className="flex items-center text-3xl md:text-4xl lg:text-display-sm font-bold">
             <Sparkles className="h-6 w-6 mr-3 text-purple-600" />
             The Pheme Intelligence Process
           </CardTitle>
@@ -320,7 +320,7 @@ const AboutPage: React.FC = () => {
       {/* How to Use Pheme */}
       <Card className="mb-12 border-l-4 border-l-blue-600">
         <CardHeader>
-          <CardTitle className="flex items-center text-2xl">
+          <CardTitle className="flex items-center text-3xl md:text-4xl lg:text-display-sm font-bold">
             <Play className="h-6 w-6 mr-3 text-blue-600" />
             How to Use Pheme
           </CardTitle>

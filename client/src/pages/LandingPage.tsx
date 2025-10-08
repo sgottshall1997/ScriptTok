@@ -44,7 +44,7 @@ function GridCard({ icon: Icon, title, description, colorClass = "purple" }: Gri
             <Icon className="h-6 w-6" />
           </div>
           <div>
-            <h3 className="text-xl font-semibold mb-2">{title}</h3>
+            <h3 className="text-2xl md:text-3xl font-semibold mb-2">{title}</h3>
             <p className="text-gray-600 dark:text-gray-400">{description}</p>
           </div>
         </div>
@@ -176,7 +176,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">From Trend to Script in 60 Seconds.</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">From Trend to Script in 60 Seconds.</h2>
             <SampleFlowDemonstration />
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Everything you need to create viral content and grow your audience.
@@ -202,7 +202,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">Tools</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">Tools</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Powerful AI tools to streamline your content creation workflow.
             </p>
@@ -231,7 +231,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">Use Cases</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">Use Cases</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Perfect for creators, marketers, and teams of all sizes.
             </p>
@@ -255,7 +255,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">Learn</h2>
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">Learn</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Resources, templates, and community to help you succeed.
             </p>
@@ -279,7 +279,7 @@ export default function LandingPage() {
       <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
-            <h2 className="text-3xl md:text-4xl font-bold mb-2">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">
               Choose Your Plan
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
@@ -539,7 +539,7 @@ export default function LandingPage() {
       {/* Final CTA Banner */}
       <section className="bg-gradient-cta text-white py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+          <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6">
             Ready to Go Viral?
           </h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8">

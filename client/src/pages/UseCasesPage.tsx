@@ -1079,7 +1079,7 @@ export default function UseCasesPage() {
                 {/* Tool Mapping Grid */}
                 <div>
                   <h3 
-                    className="text-2xl font-bold text-gray-900 mb-6 text-center"
+                    className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6 text-center"
                     data-testid={`tool-mapping-title-${persona.id}`}
                   >
                     Your Essential Tools
@@ -1115,7 +1115,7 @@ export default function UseCasesPage() {
                 {/* Benefits Breakdown */}
                 <div className="bg-gray-50 rounded-2xl p-8">
                   <h3 
-                    className="text-2xl font-bold text-gray-900 mb-6 text-center"
+                    className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6 text-center"
                     data-testid={`benefits-title-${persona.id}`}
                   >
                     Key Benefits
@@ -1147,7 +1147,7 @@ export default function UseCasesPage() {
                 {/* Workflow Visualization */}
                 <div>
                   <h3 
-                    className="text-2xl font-bold text-gray-900 mb-6 text-center"
+                    className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6 text-center"
                     data-testid={`workflow-title-${persona.id}`}
                   >
                     Your Workflow
@@ -1180,7 +1180,7 @@ export default function UseCasesPage() {
                 {/* Use Case Examples */}
                 <div>
                   <h3 
-                    className="text-2xl font-bold text-gray-900 mb-6 text-center"
+                    className="text-2xl md:text-3xl font-semibold text-gray-900 mb-6 text-center"
                     data-testid={`use-case-examples-title-${persona.id}`}
                   >
                     Real Success Stories
@@ -1212,7 +1212,7 @@ export default function UseCasesPage() {
                   <div className="flex items-start gap-4">
                     <Zap className="h-12 w-12 flex-shrink-0" data-testid={`feature-highlight-icon-${persona.id}`} />
                     <div>
-                      <h3 className="text-2xl font-bold mb-2" data-testid={`feature-highlight-title-${persona.id}`}>
+                      <h3 className="text-2xl md:text-3xl font-semibold mb-2" data-testid={`feature-highlight-title-${persona.id}`}>
                         {persona.featureHighlight.title}
                       </h3>
                       <p className="text-violet-100 text-lg" data-testid={`feature-highlight-description-${persona.id}`}>

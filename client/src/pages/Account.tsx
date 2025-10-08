@@ -91,7 +91,7 @@ export default function Account() {
     <div className="space-y-6">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight">Account Settings</h1>
           <p className="text-muted-foreground mt-1">
             Manage your subscription and view usage statistics
           </p>

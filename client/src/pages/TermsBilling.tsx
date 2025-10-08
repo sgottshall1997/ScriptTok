@@ -19,7 +19,7 @@ const TermsBillingPage: React.FC = () => {
           </Link>
           
           <div className="space-y-2">
-            <h1 className="text-4xl font-bold text-gray-900">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">
               Terms of Service & Billing
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
