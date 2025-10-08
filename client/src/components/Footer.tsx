@@ -22,15 +22,6 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 uppercase tracking-wider">Product</h4>
             <div className="space-y-2">
-              <Link href="/generate">
-                <span className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">Content Generator</span>
-              </Link>
-              <Link href="/content-history">
-                <span className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">Content History</span>
-              </Link>
-              <Link href="/how-it-works">
-                <span className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">How It Works</span>
-              </Link>
               <Link href="/compliance">
                 <span className="block text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 cursor-pointer">Compliance</span>
               </Link>
