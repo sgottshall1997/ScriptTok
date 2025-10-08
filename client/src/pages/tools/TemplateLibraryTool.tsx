@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { TEMPLATE_METADATA, getViralTemplates, getTemplatesByMode } from '@shared/templateMetadata';
 
 export default function TemplateLibraryTool() {
   const [, setLocation] = useLocation();
@@ -71,7 +72,7 @@ export default function TemplateLibraryTool() {
     {
       icon: Layers,
       title: 'Content Type Filtering',
-      description: 'Find templates quickly by format—Product Showcase, Before/After, Tutorial, Review, Unboxing, and more. Filter to match your content goals.',
+      description: 'Find templates by mode—Viral or Affiliate—or browse all templates at once. Filter to match your content goals and product needs.',
     },
     {
       icon: Globe,
@@ -124,7 +125,7 @@ export default function TemplateLibraryTool() {
       after: 'YOUR BRAND: "This CeraVe Moisturizer saved my dry skin! Here\'s the 3-step routine that works..."',
       description: 'AI replaced [PRODUCT_NAME] with your product, adapted hook for beauty niche, and added specific benefit (dry skin)',
       actionSteps: [
-        '1. Select "Product Showcase" template',
+        '1. Select "Influencer Caption" template from Affiliate mode',
         '2. Enter product: "CeraVe Moisturizer"',
         '3. Choose niche: "Beauty"',
         '4. Click "Generate" → AI customizes instantly',
@@ -161,7 +162,7 @@ export default function TemplateLibraryTool() {
       category: 'Choosing the Right Template',
       icon: CheckCircle,
       tips: [
-        'Match content type to your goal: Product Showcase for sales, Tutorial for education, Before/After for transformations',
+        'Match template mode to your goal: Viral templates for content-first approach, Affiliate templates for product-focused content',
         'Review template structure: Check if the hook, flow, and CTA style align with your content strategy',
         'Consider platform: TikTok templates are punchier, YouTube Shorts allow more story depth',
         'Review example scripts: Make sure the tone matches your brand before customizing',
@@ -199,48 +200,6 @@ export default function TemplateLibraryTool() {
     },
   ];
 
-  const nicheTemplates = [
-    { niche: 'Beauty', count: 8 },
-    { niche: 'Tech', count: 7 },
-    { niche: 'Fashion', count: 6 },
-    { niche: 'Fitness', count: 5 },
-    { niche: 'Food', count: 5 },
-    { niche: 'Travel', count: 4 },
-    { niche: 'Pets', count: 3 },
-  ];
-
-  const contentTypes = [
-    'Product Showcase',
-    'Before/After',
-    'Trending Hook',
-    'Tutorial',
-    'Review',
-    'Unboxing',
-  ];
-
-  const platforms = [
-    { name: 'TikTok', duration: '15-60s' },
-    { name: 'Instagram Reels', duration: '15-90s' },
-    { name: 'YouTube Shorts', duration: '15-60s' },
-  ];
-
-  const topPerformers = [
-    {
-      title: 'Viral Hook Opener',
-      stat: 'Attention-Grabbing',
-      description: 'Template designed to capture attention in the first 3 seconds with effective hook structures and pattern interrupts.',
-    },
-    {
-      title: 'Product Unboxing Flow',
-      stat: 'Conversion-Focused',
-      description: 'Structured template for product reviews and affiliate sales with natural CTA placement and benefit highlighting.',
-    },
-    {
-      title: 'Before & After Transformation',
-      stat: 'Story-Driven',
-      description: 'Template perfect for beauty, fitness, and lifestyle content with clear problem-solution-result narrative flow.',
-    },
-  ];
 
   const faqs = [
     {
@@ -558,102 +517,97 @@ export default function TemplateLibraryTool() {
         </div>
       </section>
 
-      {/* Template Categories Showcase */}
-      <section className="py-20 md:py-28 bg-gray-50" data-testid="template-categories-section">
+      {/* Actual Template Catalog */}
+      <section className="py-20 md:py-28 bg-gray-50" data-testid="template-catalog-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="categories-title">
-              Browse Templates by Category
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="catalog-title">
+              Complete Template Catalog (20 Templates)
             </h2>
-            <p className="text-gray-600 mt-2">Filter by niche, content type, or platform to find the perfect template</p>
+            <p className="text-gray-600 mt-2">7 viral templates + 13 affiliate templates = complete content toolkit</p>
           </div>
           
-          <Tabs defaultValue="niche" className="w-full" data-testid="category-tabs">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
-              <TabsTrigger value="niche" data-testid="tab-niche">By Niche</TabsTrigger>
-              <TabsTrigger value="content" data-testid="tab-content">By Type</TabsTrigger>
-              <TabsTrigger value="platform" data-testid="tab-platform">By Platform</TabsTrigger>
+          <Tabs defaultValue="viral" className="w-full" data-testid="template-mode-tabs">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+              <TabsTrigger value="viral" data-testid="tab-viral">Viral Templates (7)</TabsTrigger>
+              <TabsTrigger value="affiliate" data-testid="tab-affiliate">Affiliate Templates (13)</TabsTrigger>
             </TabsList>
 
-            <TabsContent value="niche" data-testid="niche-content">
-              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4">
-                {nicheTemplates.map((item, index) => (
-                  <Card key={index} data-testid={`niche-card-${index}`}>
-                    <CardContent className="p-6 text-center">
-                      <h3 className="font-semibold text-gray-900 mb-2" data-testid={`niche-name-${index}`}>
-                        {item.niche}
-                      </h3>
-                      <Badge variant="secondary" data-testid={`niche-count-${index}`}>
-                        {item.count} templates
-                      </Badge>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </TabsContent>
-
-            <TabsContent value="content" data-testid="content-content">
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {contentTypes.map((type, index) => (
-                  <Card key={index} data-testid={`content-card-${index}`}>
-                    <CardContent className="p-6 text-center">
-                      <p className="font-semibold text-gray-900" data-testid={`content-type-${index}`}>
-                        {type}
+            <TabsContent value="viral" data-testid="viral-templates-content">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {getViralTemplates().map((template, index) => (
+                  <Card key={template.id} className="border-2 border-blue-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`viral-template-${index}`}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <span className="text-3xl">{template.icon}</span>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900 mb-1" data-testid={`viral-template-name-${index}`}>
+                            {template.name}
+                          </h3>
+                          <Badge variant="secondary" className="text-xs" data-testid={`viral-template-length-${index}`}>
+                            {template.estimatedLength}
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3" data-testid={`viral-template-description-${index}`}>
+                        {template.description}
                       </p>
+                      <div className="space-y-2">
+                        <div className="text-xs text-gray-500">
+                          <strong>Use Case:</strong> {template.useCase}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          <strong>Example:</strong> {template.example}
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             </TabsContent>
 
-            <TabsContent value="platform" data-testid="platform-content">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {platforms.map((platform, index) => (
-                  <Card key={index} data-testid={`platform-card-${index}`}>
-                    <CardContent className="p-8 text-center">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2" data-testid={`platform-name-${index}`}>
-                        {platform.name}
-                      </h3>
-                      <Badge variant="outline" data-testid={`platform-duration-${index}`}>
-                        {platform.duration}
-                      </Badge>
+            <TabsContent value="affiliate" data-testid="affiliate-templates-content">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {getTemplatesByMode('affiliate').map((template, index) => (
+                  <Card key={template.id} className="border-2 border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`affiliate-template-${index}`}>
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-3 mb-4">
+                        <span className="text-3xl">{template.icon}</span>
+                        <div className="flex-1">
+                          <h3 className="font-bold text-gray-900 mb-1" data-testid={`affiliate-template-name-${index}`}>
+                            {template.name}
+                          </h3>
+                          <Badge variant="secondary" className="text-xs" data-testid={`affiliate-template-length-${index}`}>
+                            {template.estimatedLength}
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-3" data-testid={`affiliate-template-description-${index}`}>
+                        {template.description}
+                      </p>
+                      <div className="space-y-2">
+                        <div className="text-xs text-gray-500">
+                          <strong>Use Case:</strong> {template.useCase}
+                        </div>
+                        <div className="text-xs text-gray-500">
+                          <strong>Example:</strong> {template.example}
+                        </div>
+                        {template.platforms && template.platforms.length > 0 && (
+                          <div className="flex gap-1 flex-wrap mt-2">
+                            {template.platforms.map((platform, pIndex) => (
+                              <Badge key={pIndex} variant="outline" className="text-xs">
+                                {platform}
+                              </Badge>
+                            ))}
+                          </div>
+                        )}
+                      </div>
                     </CardContent>
                   </Card>
                 ))}
               </div>
             </TabsContent>
           </Tabs>
-        </div>
-      </section>
-
-      {/* Top Performing Templates */}
-      <section className="py-20 md:py-28 bg-white" data-testid="top-performers-section">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="top-performers-title">
-              Top Performing Templates
-            </h2>
-            <p className="text-gray-600 mt-2">Start with these top-performing templates for immediate results</p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="top-performers-grid">
-            {topPerformers.map((template, index) => (
-              <Card key={index} className="border-2 border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`top-performer-card-${index}`}>
-                <CardContent className="p-8">
-                  <div className="text-center mb-4">
-                    <Badge className="bg-violet-600 text-white mb-4" data-testid={`top-performer-stat-${index}`}>
-                      {template.stat}
-                    </Badge>
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3 text-center" data-testid={`top-performer-title-${index}`}>
-                    {template.title}
-                  </h3>
-                  <p className="text-gray-600 text-center" data-testid={`top-performer-description-${index}`}>
-                    {template.description}
-                  </p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
         </div>
       </section>
 
