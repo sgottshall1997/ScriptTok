@@ -313,7 +313,7 @@ export function TemplateSelector({
                       Upgrade to Creator for all standard templates, or Pro for brand templates
                     </p>
                     <Button
-                      onClick={() => setLocation('/pricing')}
+                      onClick={() => setLocation('/account')}
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                       data-testid="upgrade-marketing-templates"
                     >
@@ -410,7 +410,7 @@ export function TemplateSelector({
                     Upgrade to Creator for all standard templates, or Pro for brand templates
                   </p>
                   <Button
-                    onClick={() => setLocation('/pricing')}
+                    onClick={() => setLocation('/account')}
                     className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                     data-testid="upgrade-marketing-templates-single"
                   >
