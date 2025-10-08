@@ -21,8 +21,8 @@ export function ToolFeatureGrid({ features, columns = 3, sectionTitle }: ToolFea
   };
 
   return (
-    <section className="py-16 md:py-20 bg-white" data-testid="feature-grid-section">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <section className="py-16 bg-white" data-testid="feature-grid-section">
+      <div className="container mx-auto px-4 max-w-6xl">
         {/* Section Title */}
         {sectionTitle && (
           <div className="text-center mb-12">

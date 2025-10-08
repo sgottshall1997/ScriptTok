@@ -256,8 +256,8 @@ export default function TemplateLibraryTool() {
       <HowItWorksSteps steps={steps} />
 
       {/* How Templates Work Section */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="how-templates-work-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="how-templates-work-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="how-templates-work-title">
               How Templates Work: Technical Workflow
@@ -341,8 +341,8 @@ export default function TemplateLibraryTool() {
       </section>
 
       {/* Interactive Examples Section */}
-      <section className="py-20 md:py-28 bg-white" data-testid="interactive-examples-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-white" data-testid="interactive-examples-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="interactive-examples-title">
               Interactive Examples: See It In Action
@@ -397,8 +397,8 @@ export default function TemplateLibraryTool() {
       </section>
 
       {/* Practical Tips Section */}
-      <section className="py-20 md:py-28 bg-gray-50" data-testid="practical-tips-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gray-50" data-testid="practical-tips-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="practical-tips-title">
               Practical Tips & Best Practices
@@ -436,8 +436,8 @@ export default function TemplateLibraryTool() {
       <ToolFeatureGrid features={features} sectionTitle="Template Library Features" />
 
       {/* Template Benefits Section */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="template-success-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="template-success-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4">
               Why Use Templates?
@@ -518,8 +518,8 @@ export default function TemplateLibraryTool() {
       </section>
 
       {/* Actual Template Catalog */}
-      <section className="py-20 md:py-28 bg-gray-50" data-testid="template-catalog-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gray-50" data-testid="template-catalog-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="catalog-title">
               Complete Template Catalog (20 Templates)
@@ -611,7 +611,7 @@ export default function TemplateLibraryTool() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
         <div className="container mx-auto max-w-4xl">
           <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800 shadow-card hover:shadow-card-hover transition-all-smooth">
             <div className="text-center mb-6">

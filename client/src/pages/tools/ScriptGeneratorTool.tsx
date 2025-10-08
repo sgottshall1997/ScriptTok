@@ -151,8 +151,8 @@ export default function ScriptGeneratorTool() {
       <ToolFeatureGrid features={features} sectionTitle="Advanced Script Generation Features" />
 
       {/* Use Cases Section */}
-      <section className="py-20 md:py-28 bg-gray-50" data-testid="use-cases-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gray-50" data-testid="use-cases-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="use-cases-title">
               See What Creators Are Achieving
@@ -175,8 +175,8 @@ export default function ScriptGeneratorTool() {
         </div>
       </section>
 
-      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
-        <div className="container mx-auto max-w-4xl">
+      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+        <div className="container mx-auto max-w-6xl">
           <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800 shadow-card hover:shadow-card-hover transition-all-smooth">
             <div className="text-center mb-6">
               <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4">

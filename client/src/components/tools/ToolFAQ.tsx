@@ -17,7 +17,7 @@ interface ToolFAQProps {
 
 export function ToolFAQ({ faqs, sectionTitle = 'Frequently Asked Questions' }: ToolFAQProps) {
   return (
-    <section className="py-16 md:py-20 bg-white" data-testid="faq-section">
+    <section className="py-16 bg-white" data-testid="faq-section">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Section Title */}
         <div className="text-center mb-12">

@@ -20,8 +20,8 @@ export function HowItWorksSteps({ steps, sectionTitle }: HowItWorksStepsProps) {
   };
 
   return (
-    <section className="py-16 md:py-20 bg-gray-50" data-testid="how-it-works-section">
-      <div className="container mx-auto px-4 max-w-7xl">
+    <section className="py-16 bg-gray-50" data-testid="how-it-works-section">
+      <div className="container mx-auto px-4 max-w-6xl">
         {/* Section Header */}
         <div className="text-center mb-12">
           <p 

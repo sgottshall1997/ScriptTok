@@ -319,8 +319,8 @@ export default function HistoryTool() {
       <HowItWorksSteps steps={steps} />
 
       {/* Complete Workflow Demo */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="workflow-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="workflow-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="workflow-title">
               Complete Workflow: {workflowDemo.scenario}
@@ -368,8 +368,8 @@ export default function HistoryTool() {
       </section>
 
       {/* How History Tracking Works */}
-      <section className="py-20 md:py-28 bg-white" data-testid="tracking-system-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-white" data-testid="tracking-system-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="tracking-title">
               How History Tracking Works
@@ -405,8 +405,8 @@ export default function HistoryTool() {
       <ToolFeatureGrid features={features} sectionTitle="Powerful History Management Features" />
 
       {/* Practical Examples */}
-      <section className="py-20 md:py-28 bg-gray-50" data-testid="examples-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gray-50" data-testid="examples-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="examples-title">
               Practical Examples: Real Usage Scenarios
@@ -443,8 +443,8 @@ export default function HistoryTool() {
       </section>
 
       {/* Best Practices */}
-      <section className="py-20 md:py-28 bg-white" data-testid="best-practices-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-white" data-testid="best-practices-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="best-practices-title">
               Best Practices: Maximize Your History
@@ -482,8 +482,8 @@ export default function HistoryTool() {
       </section>
 
       {/* Success Metrics & ROI Section */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="success-metrics-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="success-metrics-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="success-metrics-title">
               Real Success Stories with Concrete Results
@@ -570,8 +570,8 @@ export default function HistoryTool() {
       </section>
 
       {/* Cross-Links to Related Tools */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-blue-50 to-indigo-50" data-testid="related-tools-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-gradient-to-br from-blue-50 to-indigo-50" data-testid="related-tools-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="related-tools-title">
               What's Next? Create More Viral Content
