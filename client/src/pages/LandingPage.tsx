@@ -19,7 +19,6 @@ import { MarketingNav, featuresData, toolsData, useCasesData, pricingData } from
 import Footer from "@/components/Footer";
 import SampleFlowDemonstration from "@/components/SampleFlowDemonstration";
 import RotatingValueProps from "@/components/marketing/RotatingValueProps";
-import MetricsCounter from "@/components/marketing/MetricsCounter";
 import GradientDivider from "@/components/marketing/GradientDivider";
 
 interface GridCardProps {
@@ -123,8 +122,10 @@ export default function LandingPage() {
       <section className="relative bg-gradient-hero text-white py-6 px-4">
         <div className="absolute inset-0 glow-purple opacity-30 pointer-events-none"></div>
         <div className="container mx-auto max-w-6xl text-center relative z-10">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+            Pheme - Make Your Voice Heard
+          </h1>
           <RotatingValueProps />
-          <MetricsCounter />
           <p className="text-lg md:text-xl text-gray-200 mb-4 max-w-3xl mx-auto">
             AI-powered scripts, trend discovery, and affiliate tools built for creators.
           </p>
