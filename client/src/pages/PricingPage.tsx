@@ -230,7 +230,7 @@ export default function PricingPage() {
               {pricingTiers.map((tier) => (
                 <Card 
                   key={tier.id}
-                  className={`rounded-2xl relative transition-all hover:shadow-xl ${
+                  className={`rounded-2xl relative transition-all hover:shadow-xl h-full flex flex-col ${
                     tier.highlighted 
                       ? 'border-2 border-purple-600 shadow-lg md:scale-105 z-10' 
                       : tier.emphasized
@@ -276,11 +276,9 @@ export default function PricingPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">
                       {tier.philosophy}
                     </p>
-                    {tier.id === 'agency' && 
-                    }
                   </CardHeader>
                   
-                  <CardContent className="space-y-4">
+                  <CardContent className="space-y-4 flex-1 flex flex-col">
                     {/* Generation Limits */}
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 space-y-2">
                       <p className="font-semibold text-sm text-gray-900 dark:text-white">Generation Limits:</p>
@@ -298,7 +296,7 @@ export default function PricingPage() {
                     </div>
                     
                     {/* Features */}
-                    <ul className="space-y-2">
+                    <ul className="space-y-2 flex-1">
                       {tier.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-sm">
                           {feature.included ? (
