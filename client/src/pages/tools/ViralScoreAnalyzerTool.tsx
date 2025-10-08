@@ -274,10 +274,10 @@ export default function ViralScoreAnalyzerTool() {
       />
 
       {/* Step-by-Step Usage Guide */}
-      <section className="py-16 md:py-20 bg-white" data-testid="usage-guide-section">
+      <section className="py-20 md:py-28 bg-white" data-testid="usage-guide-section">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4">
               Complete Usage Workflow
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -287,7 +287,7 @@ export default function ViralScoreAnalyzerTool() {
           
           <div className="space-y-8">
             {steps.map((step, index) => (
-              <Card key={index} className="border-2 border-violet-100 hover:border-violet-300 transition-colors">
+              <Card key={index} className="border-2 border-violet-100 hover:border-violet-300 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <CardContent className="p-8">
                   <div className="flex items-start gap-6">
                     <div className="flex-shrink-0">
@@ -324,10 +324,10 @@ export default function ViralScoreAnalyzerTool() {
       </section>
 
       {/* Understanding Your Score - Expanded */}
-      <section className="py-16 md:py-20 bg-gray-50" data-testid="score-breakdown-section">
+      <section className="py-20 md:py-28 bg-gray-50" data-testid="score-breakdown-section">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900" data-testid="breakdown-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="breakdown-title">
               Understanding Your Viral Score
             </h2>
             <p className="text-lg text-gray-600 mt-4" data-testid="breakdown-description">
@@ -339,7 +339,7 @@ export default function ViralScoreAnalyzerTool() {
           <div className="mb-12">
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">Score Breakdown Components</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="border-violet-200">
+              <Card className="border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-lg font-semibold text-gray-900">Hook Quality</h4>
@@ -350,7 +350,7 @@ export default function ViralScoreAnalyzerTool() {
                 </CardContent>
               </Card>
 
-              <Card className="border-violet-200">
+              <Card className="border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-lg font-semibold text-gray-900">Story Flow</h4>
@@ -361,7 +361,7 @@ export default function ViralScoreAnalyzerTool() {
                 </CardContent>
               </Card>
 
-              <Card className="border-violet-200">
+              <Card className="border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-lg font-semibold text-gray-900">CTA Effectiveness</h4>
@@ -372,7 +372,7 @@ export default function ViralScoreAnalyzerTool() {
                 </CardContent>
               </Card>
 
-              <Card className="border-violet-200">
+              <Card className="border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-lg font-semibold text-gray-900">Timing & Pacing</h4>
@@ -383,7 +383,7 @@ export default function ViralScoreAnalyzerTool() {
                 </CardContent>
               </Card>
 
-              <Card className="border-violet-200">
+              <Card className="border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between mb-3">
                     <h4 className="text-lg font-semibold text-gray-900">Platform Optimization</h4>
@@ -401,7 +401,7 @@ export default function ViralScoreAnalyzerTool() {
             <h3 className="text-2xl font-semibold text-gray-900 mb-6">What Each Score Range Means</h3>
             <div className="space-y-4">
               {scoreRanges.map((range, index) => (
-                <Card key={index} className={`border-2 ${range.color}`}>
+                <Card key={index} className={`border-2 ${range.color} shadow-card hover:shadow-card-hover transition-all-smooth`}>
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div>
@@ -489,10 +489,10 @@ export default function ViralScoreAnalyzerTool() {
       </section>
 
       {/* Practical Optimization Examples */}
-      <section className="py-16 md:py-20 bg-white" data-testid="practical-examples-section">
+      <section className="py-20 md:py-28 bg-white" data-testid="practical-examples-section">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900">
               Real Optimization Workflows
             </h2>
             <p className="text-lg text-gray-600 mt-4">
@@ -502,7 +502,7 @@ export default function ViralScoreAnalyzerTool() {
 
           <div className="space-y-12">
             {/* Example 1: Low to Viral */}
-            <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50">
+            <Card className="border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 shadow-card hover:shadow-card-hover transition-all-smooth">
               <CardContent className="p-8 md:p-10">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   {optimizationExamples[0].title}
@@ -546,7 +546,7 @@ export default function ViralScoreAnalyzerTool() {
             </Card>
 
             {/* Example 2: Platform-Specific */}
-            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50">
+            <Card className="border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-sky-50 shadow-card hover:shadow-card-hover transition-all-smooth">
               <CardContent className="p-8 md:p-10">
                 <h3 className="text-2xl font-bold text-gray-900 mb-4">
                   {optimizationExamples[1].title}
@@ -577,7 +577,7 @@ export default function ViralScoreAnalyzerTool() {
             </Card>
 
             {/* Example 3: Hook Strengthening */}
-            <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-violet-50">
+            <Card className="border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-violet-50 shadow-card hover:shadow-card-hover transition-all-smooth">
               <CardContent className="p-8 md:p-10">
                 <h3 className="text-2xl font-bold text-gray-900 mb-6">
                   {optimizationExamples[2].title}
@@ -613,10 +613,10 @@ export default function ViralScoreAnalyzerTool() {
       </section>
 
       {/* Troubleshooting Guide */}
-      <section className="py-16 md:py-20 bg-gray-50" data-testid="troubleshooting-section">
+      <section className="py-20 md:py-28 bg-gray-50" data-testid="troubleshooting-section">
         <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900">
               Troubleshooting Common Issues
             </h2>
             <p className="text-lg text-gray-600 mt-4">
@@ -626,7 +626,7 @@ export default function ViralScoreAnalyzerTool() {
 
           <div className="space-y-6">
             {troubleshootingGuide.map((item, index) => (
-              <Card key={index} className="border-2 border-orange-200 hover:border-orange-300 transition-colors">
+              <Card key={index} className="border-2 border-orange-200 hover:border-orange-300 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <CardContent className="p-8">
                   <div className="flex items-start gap-4 mb-4">
                     <AlertCircle className="h-6 w-6 text-orange-600 flex-shrink-0 mt-1" />
@@ -657,11 +657,11 @@ export default function ViralScoreAnalyzerTool() {
 
       <ToolFeatureGrid features={features} sectionTitle="Viral Score Analysis Features" />
 
-      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
         <div className="container mx-auto max-w-4xl">
-          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800 shadow-card hover:shadow-card-hover transition-all-smooth">
             <div className="text-center mb-6">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4">
                 Why Does Viral Score Predict Success So Accurately?
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -672,7 +672,7 @@ export default function ViralScoreAnalyzerTool() {
               <Button
                 onClick={handleFeatureCTA}
                 size="lg"
-                className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-xl glow-purple-sm hover-lift"
                 data-testid="button-view-benefits"
               >
                 <TrendingUp className="mr-2 h-5 w-5" />

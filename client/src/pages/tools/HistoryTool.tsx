@@ -319,10 +319,10 @@ export default function HistoryTool() {
       <HowItWorksSteps steps={steps} />
 
       {/* Complete Workflow Demo */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="workflow-section">
+      <section className="py-20 md:py-28 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="workflow-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="workflow-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="workflow-title">
               Complete Workflow: {workflowDemo.scenario}
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -330,7 +330,7 @@ export default function HistoryTool() {
             </p>
           </div>
 
-          <Card className="max-w-5xl mx-auto border-2 border-violet-200">
+          <Card className="max-w-5xl mx-auto border-2 border-violet-200 shadow-card hover:shadow-card-hover transition-all-smooth">
             <CardContent className="p-8 md:p-12">
               <div className="space-y-6">
                 {workflowDemo.steps.map((item, index) => (
@@ -368,10 +368,10 @@ export default function HistoryTool() {
       </section>
 
       {/* How History Tracking Works */}
-      <section className="py-16 md:py-20 bg-white" data-testid="tracking-system-section">
+      <section className="py-20 md:py-28 bg-white" data-testid="tracking-system-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="tracking-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="tracking-title">
               How History Tracking Works
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -381,7 +381,7 @@ export default function HistoryTool() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8" data-testid="tracking-grid">
             {trackingSystemInfo.map((section, index) => (
-              <Card key={index} data-testid={`tracking-card-${index}`}>
+              <Card key={index} className="shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`tracking-card-${index}`}>
                 <CardContent className="p-8">
                   <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
                     <div className="w-2 h-2 bg-violet-600 rounded-full"></div>
@@ -405,10 +405,10 @@ export default function HistoryTool() {
       <ToolFeatureGrid features={features} sectionTitle="Powerful History Management Features" />
 
       {/* Practical Examples */}
-      <section className="py-16 md:py-20 bg-gray-50" data-testid="examples-section">
+      <section className="py-20 md:py-28 bg-gray-50" data-testid="examples-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="examples-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="examples-title">
               Practical Examples: Real Usage Scenarios
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -418,7 +418,7 @@ export default function HistoryTool() {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8" data-testid="examples-grid">
             {practicalExamples.map((example, index) => (
-              <Card key={index} className="border-2 border-gray-200" data-testid={`example-card-${index}`}>
+              <Card key={index} className="border-2 border-gray-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`example-card-${index}`}>
                 <CardContent className="p-8">
                   <h3 className="text-xl font-semibold text-gray-900 mb-4" data-testid={`example-title-${index}`}>
                     {example.title}
@@ -443,10 +443,10 @@ export default function HistoryTool() {
       </section>
 
       {/* Best Practices */}
-      <section className="py-16 md:py-20 bg-white" data-testid="best-practices-section">
+      <section className="py-20 md:py-28 bg-white" data-testid="best-practices-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="best-practices-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="best-practices-title">
               Best Practices: Maximize Your History
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -456,7 +456,7 @@ export default function HistoryTool() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8" data-testid="best-practices-grid">
             {bestPractices.map((practice, index) => (
-              <Card key={index} data-testid={`practice-card-${index}`}>
+              <Card key={index} className="shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`practice-card-${index}`}>
                 <CardContent className="p-8">
                   <div className="flex items-start gap-4 mb-4">
                     <div className="p-3 bg-violet-100 rounded-lg">
@@ -482,10 +482,10 @@ export default function HistoryTool() {
       </section>
 
       {/* Success Metrics & ROI Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="success-metrics-section">
+      <section className="py-20 md:py-28 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="success-metrics-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="success-metrics-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="success-metrics-title">
               Real Success Stories with Concrete Results
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -494,7 +494,7 @@ export default function HistoryTool() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <Card className="border-2 border-green-200" data-testid="success-story-1">
+            <Card className="border-2 border-green-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="success-story-1">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
                   <div className="text-4xl font-bold text-green-600 mb-2">50K → 300K</div>
@@ -507,7 +507,7 @@ export default function HistoryTool() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-green-200" data-testid="success-story-2">
+            <Card className="border-2 border-green-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="success-story-2">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
                   <div className="text-4xl font-bold text-green-600 mb-2">$800/mo</div>
@@ -520,7 +520,7 @@ export default function HistoryTool() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-green-200" data-testid="success-story-3">
+            <Card className="border-2 border-green-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="success-story-3">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
                   <div className="text-4xl font-bold text-green-600 mb-2">45% Faster</div>
@@ -534,7 +534,7 @@ export default function HistoryTool() {
             </Card>
           </div>
 
-          <Card className="max-w-4xl mx-auto border-2 border-green-200">
+          <Card className="max-w-4xl mx-auto border-2 border-green-200 shadow-card hover:shadow-card-hover transition-all-smooth">
             <CardContent className="p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Time Savings Breakdown</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -570,10 +570,10 @@ export default function HistoryTool() {
       </section>
 
       {/* Cross-Links to Related Tools */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-blue-50 to-indigo-50" data-testid="related-tools-section">
+      <section className="py-20 md:py-28 bg-gradient-to-br from-blue-50 to-indigo-50" data-testid="related-tools-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="related-tools-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="related-tools-title">
               What's Next? Create More Viral Content
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -582,7 +582,7 @@ export default function HistoryTool() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <Card className="border-2 border-blue-200 hover:border-blue-400 transition-colors" data-testid="cta-template-library">
+            <Card className="border-2 border-blue-200 hover:border-blue-400 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="cta-template-library">
               <CardContent className="p-8">
                 <div className="flex items-start gap-4 mb-6">
                   <div className="p-4 bg-blue-100 rounded-lg">
@@ -599,7 +599,7 @@ export default function HistoryTool() {
                 </div>
                 <Button 
                   onClick={handleTemplateLibraryCTA}
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                  className="w-full bg-blue-600 hover:bg-blue-700 text-white hover-lift transition-all-smooth"
                   data-testid="btn-template-library"
                 >
                   Browse Template Library <ArrowRight className="w-4 h-4 ml-2" />
@@ -607,7 +607,7 @@ export default function HistoryTool() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-purple-200 hover:border-purple-400 transition-colors" data-testid="cta-script-generator">
+            <Card className="border-2 border-purple-200 hover:border-purple-400 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="cta-script-generator">
               <CardContent className="p-8">
                 <div className="flex items-start gap-4 mb-6">
                   <div className="p-4 bg-purple-100 rounded-lg">
@@ -624,7 +624,7 @@ export default function HistoryTool() {
                 </div>
                 <Button 
                   onClick={handleScriptGeneratorCTA}
-                  className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                  className="w-full bg-purple-600 hover:bg-purple-700 text-white hover-lift transition-all-smooth"
                   data-testid="btn-script-generator"
                 >
                   Start Generating Scripts <ArrowRight className="w-4 h-4 ml-2" />

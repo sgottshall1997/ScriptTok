@@ -256,7 +256,7 @@ export default function MultiPlatformFeature() {
           }}
         />
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -276,7 +276,7 @@ export default function MultiPlatformFeature() {
         className="bg-gray-50 dark:bg-gray-800"
       />
 
-      <section id="platform-comparison" className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section id="platform-comparison" className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -287,7 +287,7 @@ export default function MultiPlatformFeature() {
             </p>
           </div>
           
-          <Card className="rounded-2xl overflow-hidden">
+          <Card className="rounded-2xl overflow-hidden shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
@@ -314,7 +314,7 @@ export default function MultiPlatformFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -331,7 +331,7 @@ export default function MultiPlatformFeature() {
               return (
                 <Card
                   key={index}
-                  className="rounded-2xl shadow-sm hover:shadow-lg transition-all overflow-hidden"
+                  className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift transition-all-smooth overflow-hidden"
                   data-testid={`platform-card-${index}`}
                 >
                   <div className={`h-2 bg-gradient-to-r ${platform.color}`} />
@@ -385,7 +385,7 @@ export default function MultiPlatformFeature() {
 
       <FAQAccordion faqs={faqs} className="bg-white dark:bg-gray-900" />
 
-      <section className="bg-gradient-cta text-white py-16 px-4">
+      <section className="bg-gradient-cta text-white py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Optimize For All Platforms
@@ -399,7 +399,7 @@ export default function MultiPlatformFeature() {
               navigate("/dashboard");
             }}
             size="lg"
-            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl btn-glow hover-lift"
             data-testid="button-multi-platform-cta"
           >
             <Share2 className="mr-2 h-5 w-5" />
@@ -408,7 +408,7 @@ export default function MultiPlatformFeature() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Get Hands-On?
@@ -422,7 +422,7 @@ export default function MultiPlatformFeature() {
               navigate("/dashboard");
             }}
             size="lg"
-            className="bg-violet-600 hover:bg-violet-700 text-white"
+            className="bg-violet-600 hover:bg-violet-700 text-white glow-purple-sm hover-lift"
             data-testid="button-try-multi-platform"
           >
             Try Multi-Platform Optimization →

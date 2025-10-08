@@ -152,7 +152,7 @@ export default function ViralScoreFeature() {
           }}
         />
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -166,7 +166,7 @@ export default function ViralScoreFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -341,7 +341,7 @@ export default function ViralScoreFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -369,7 +369,7 @@ export default function ViralScoreFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-20 md:py-28 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -438,7 +438,7 @@ export default function ViralScoreFeature() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
+      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
         <div className="container mx-auto max-w-4xl">
           <Card className="rounded-2xl p-8 md:p-12 border-2 border-orange-200 dark:border-orange-800">
             <div className="text-center mb-6">
@@ -456,7 +456,7 @@ export default function ViralScoreFeature() {
                   navigate("/tools/viral-score-analyzer");
                 }}
                 size="lg"
-                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl btn-glow hover-lift"
                 data-testid="button-view-guide"
               >
                 <BookOpen className="mr-2 h-5 w-5" />
@@ -470,7 +470,7 @@ export default function ViralScoreFeature() {
 
       <FAQAccordion faqs={faqs} className="bg-white dark:bg-gray-900" />
 
-      <section className="bg-gradient-cta text-white py-16 px-4">
+      <section className="bg-gradient-cta text-white py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Get Your Viral Score
@@ -484,7 +484,7 @@ export default function ViralScoreFeature() {
               navigate("/dashboard");
             }}
             size="lg"
-            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl btn-glow hover-lift"
             data-testid="button-viral-score-cta"
           >
             <Target className="mr-2 h-5 w-5" />
@@ -493,7 +493,7 @@ export default function ViralScoreFeature() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Get Hands-On?
@@ -507,7 +507,7 @@ export default function ViralScoreFeature() {
               navigate("/tools/viral-score-analyzer");
             }}
             size="lg"
-            className="bg-violet-600 hover:bg-violet-700 text-white"
+            className="bg-violet-600 hover:bg-violet-700 text-white glow-purple-sm hover-lift"
             data-testid="button-try-viral-score"
           >
             Try the Viral Score Analyzer →

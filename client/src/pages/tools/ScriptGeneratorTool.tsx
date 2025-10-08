@@ -151,16 +151,16 @@ export default function ScriptGeneratorTool() {
       <ToolFeatureGrid features={features} sectionTitle="Advanced Script Generation Features" />
 
       {/* Use Cases Section */}
-      <section className="py-16 md:py-20 bg-gray-50" data-testid="use-cases-section">
+      <section className="py-20 md:py-28 bg-gray-50" data-testid="use-cases-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900" data-testid="use-cases-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="use-cases-title">
               See What Creators Are Achieving
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="use-cases-grid">
             {useCases.map((useCase, index) => (
-              <Card key={index} data-testid={`use-case-card-${index}`}>
+              <Card key={index} className="shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`use-case-card-${index}`}>
                 <CardContent className="p-8">
                   <h3 className="text-xl font-semibold text-gray-900 mb-3" data-testid={`use-case-title-${index}`}>
                     {useCase.title}
@@ -175,11 +175,11 @@ export default function ScriptGeneratorTool() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
         <div className="container mx-auto max-w-4xl">
-          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800 shadow-card hover:shadow-card-hover transition-all-smooth">
             <div className="text-center mb-6">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4">
                 Why Do AI Scripts Drive 3x More Engagement?
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -193,7 +193,7 @@ export default function ScriptGeneratorTool() {
                   setLocation("/features/instant-script-creation");
                 }}
                 size="lg"
-                className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-xl glow-purple-sm hover-lift"
                 data-testid="button-view-benefits"
               >
                 <Sparkles className="mr-2 h-5 w-5" />

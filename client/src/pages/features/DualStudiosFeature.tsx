@@ -142,7 +142,7 @@ export default function DualStudiosFeature() {
           }}
         />
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -162,7 +162,7 @@ export default function DualStudiosFeature() {
         className="bg-gray-50 dark:bg-gray-800"
       />
 
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Perfect For Every Creator</h2>
@@ -185,7 +185,7 @@ export default function DualStudiosFeature() {
             </TabsList>
 
             <TabsContent value="content-creators" className="mt-8" data-testid="content-creators-content">
-              <Card className="rounded-2xl p-8">
+              <Card className="rounded-2xl p-8 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <h3 className="text-2xl font-bold mb-4" data-testid="content-creators-tab-title">Build Your Audience First</h3>
                 <p className="text-muted-foreground mb-6" data-testid="content-creators-tab-description">
                   Start with Viral Studio to grow your following with trending, engaging content.
@@ -210,7 +210,7 @@ export default function DualStudiosFeature() {
             </TabsContent>
 
             <TabsContent value="affiliate-marketers" className="mt-8" data-testid="affiliate-marketers-content">
-              <Card className="rounded-2xl p-8">
+              <Card className="rounded-2xl p-8 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <h3 className="text-2xl font-bold mb-4" data-testid="affiliate-marketers-tab-title">Revenue-Focused From Day One</h3>
                 <p className="text-muted-foreground mb-6" data-testid="affiliate-marketers-tab-description">
                   Use Affiliate Studio to create conversion-optimized content for product promotions.
@@ -234,7 +234,7 @@ export default function DualStudiosFeature() {
             </TabsContent>
 
             <TabsContent value="hybrid-creators" className="mt-8" data-testid="hybrid-creators-content">
-              <Card className="rounded-2xl p-8">
+              <Card className="rounded-2xl p-8 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <h3 className="text-2xl font-bold mb-4" data-testid="hybrid-creators-tab-title">Best of Both Worlds</h3>
                 <p className="text-muted-foreground mb-6" data-testid="hybrid-creators-tab-description">
                   Master creators use both studios strategically—viral content for growth,
@@ -263,7 +263,7 @@ export default function DualStudiosFeature() {
 
       <FAQAccordion faqs={faqs} className="bg-gray-50 dark:bg-gray-800" />
 
-      <section className="bg-gradient-cta text-white py-16 px-4">
+      <section className="bg-gradient-cta text-white py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Switch Studios?</h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8">
@@ -275,7 +275,7 @@ export default function DualStudiosFeature() {
               navigate("/dashboard");
             }}
             size="lg"
-            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl btn-glow hover-lift"
             data-testid="button-dual-studios-cta"
           >
             <Zap className="mr-2 h-5 w-5" />
@@ -284,7 +284,7 @@ export default function DualStudiosFeature() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Get Hands-On?
@@ -298,7 +298,7 @@ export default function DualStudiosFeature() {
               navigate("/dashboard");
             }}
             size="lg"
-            className="bg-violet-600 hover:bg-violet-700 text-white"
+            className="bg-violet-600 hover:bg-violet-700 text-white glow-purple-sm hover-lift"
             data-testid="button-try-studios"
           >
             Try Both Studios →

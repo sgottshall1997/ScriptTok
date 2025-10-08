@@ -297,10 +297,10 @@ export default function TemplateLibraryTool() {
       <HowItWorksSteps steps={steps} />
 
       {/* How Templates Work Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="how-templates-work-section">
+      <section className="py-20 md:py-28 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="how-templates-work-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="how-templates-work-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="how-templates-work-title">
               How Templates Work: Technical Workflow
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -309,7 +309,7 @@ export default function TemplateLibraryTool() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-            <Card className="border-2 border-violet-200" data-testid="template-structure-card">
+            <Card className="border-2 border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="template-structure-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Settings className="h-5 w-5 text-violet-600" />
@@ -328,7 +328,7 @@ export default function TemplateLibraryTool() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-violet-200" data-testid="variable-placeholders-card">
+            <Card className="border-2 border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="variable-placeholders-card">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Edit3 className="h-5 w-5 text-violet-600" />
@@ -353,7 +353,7 @@ export default function TemplateLibraryTool() {
             </Card>
           </div>
 
-          <Card className="border-2 border-violet-200" data-testid="ai-adaptation-card">
+          <Card className="border-2 border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid="ai-adaptation-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <RefreshCw className="h-5 w-5 text-violet-600" />
@@ -382,10 +382,10 @@ export default function TemplateLibraryTool() {
       </section>
 
       {/* Interactive Examples Section */}
-      <section className="py-16 md:py-20 bg-white" data-testid="interactive-examples-section">
+      <section className="py-20 md:py-28 bg-white" data-testid="interactive-examples-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="interactive-examples-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="interactive-examples-title">
               Interactive Examples: See It In Action
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -395,7 +395,7 @@ export default function TemplateLibraryTool() {
 
           <div className="space-y-8">
             {interactiveExamples.map((example, index) => (
-              <Card key={index} className="border-2 border-gray-200 hover:border-violet-300 transition-colors" data-testid={`example-card-${index}`}>
+              <Card key={index} className="border-2 border-gray-200 hover:border-violet-300 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`example-card-${index}`}>
                 <CardContent className="p-8">
                   <h3 className="text-2xl font-bold text-gray-900 mb-6" data-testid={`example-title-${index}`}>
                     {example.title}
@@ -438,10 +438,10 @@ export default function TemplateLibraryTool() {
       </section>
 
       {/* Practical Tips Section */}
-      <section className="py-16 md:py-20 bg-gray-50" data-testid="practical-tips-section">
+      <section className="py-20 md:py-28 bg-gray-50" data-testid="practical-tips-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="practical-tips-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4" data-testid="practical-tips-title">
               Practical Tips & Best Practices
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -451,7 +451,7 @@ export default function TemplateLibraryTool() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {practicalTips.map((tipCategory, index) => (
-              <Card key={index} className="border-2 border-gray-200" data-testid={`tip-category-${index}`}>
+              <Card key={index} className="border-2 border-gray-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`tip-category-${index}`}>
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <tipCategory.icon className="h-5 w-5 text-violet-600" />
@@ -477,10 +477,10 @@ export default function TemplateLibraryTool() {
       <ToolFeatureGrid features={features} sectionTitle="Template Library Features" />
 
       {/* Template Benefits Section */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="template-success-section">
+      <section className="py-20 md:py-28 bg-gradient-to-br from-green-50 to-emerald-50" data-testid="template-success-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900 mb-4">
               Why Use Templates?
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
@@ -489,7 +489,7 @@ export default function TemplateLibraryTool() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
-            <Card className="border-2 border-green-200">
+            <Card className="border-2 border-green-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
                   <Sparkles className="h-12 w-12 text-green-600 mx-auto mb-2" />
@@ -502,7 +502,7 @@ export default function TemplateLibraryTool() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-green-200">
+            <Card className="border-2 border-green-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
                   <Clock className="h-12 w-12 text-green-600 mx-auto mb-2" />
@@ -515,7 +515,7 @@ export default function TemplateLibraryTool() {
               </CardContent>
             </Card>
 
-            <Card className="border-2 border-green-200">
+            <Card className="border-2 border-green-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
               <CardContent className="p-8">
                 <div className="text-center mb-4">
                   <Target className="h-12 w-12 text-green-600 mx-auto mb-2" />
@@ -529,7 +529,7 @@ export default function TemplateLibraryTool() {
             </Card>
           </div>
 
-          <Card className="max-w-4xl mx-auto border-2 border-green-200">
+          <Card className="max-w-4xl mx-auto border-2 border-green-200 shadow-card hover:shadow-card-hover transition-all-smooth">
             <CardContent className="p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-6 text-center">Template Workflow Comparison</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -559,10 +559,10 @@ export default function TemplateLibraryTool() {
       </section>
 
       {/* Template Categories Showcase */}
-      <section className="py-16 md:py-20 bg-gray-50" data-testid="template-categories-section">
+      <section className="py-20 md:py-28 bg-gray-50" data-testid="template-categories-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900" data-testid="categories-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="categories-title">
               Browse Templates by Category
             </h2>
             <p className="text-gray-600 mt-2">Filter by niche, content type, or platform to find the perfect template</p>
@@ -627,17 +627,17 @@ export default function TemplateLibraryTool() {
       </section>
 
       {/* Top Performing Templates */}
-      <section className="py-16 md:py-20 bg-white" data-testid="top-performers-section">
+      <section className="py-20 md:py-28 bg-white" data-testid="top-performers-section">
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900" data-testid="top-performers-title">
+            <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="top-performers-title">
               Top Performing Templates
             </h2>
             <p className="text-gray-600 mt-2">Start with these proven high-performers for immediate results</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="top-performers-grid">
             {topPerformers.map((template, index) => (
-              <Card key={index} className="border-2 border-violet-200" data-testid={`top-performer-card-${index}`}>
+              <Card key={index} className="border-2 border-violet-200 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth" data-testid={`top-performer-card-${index}`}>
                 <CardContent className="p-8">
                   <div className="text-center mb-4">
                     <Badge className="bg-violet-600 text-white mb-4" data-testid={`top-performer-stat-${index}`}>
@@ -657,11 +657,11 @@ export default function TemplateLibraryTool() {
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+      <section className="py-20 md:py-28 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
         <div className="container mx-auto max-w-4xl">
-          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800 shadow-card hover:shadow-card-hover transition-all-smooth">
             <div className="text-center mb-6">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-4">
                 Why Do Templates Streamline Content Creation?
               </h2>
               <p className="text-lg text-muted-foreground">
@@ -672,7 +672,7 @@ export default function TemplateLibraryTool() {
               <Button
                 onClick={handleFeaturePageCTA}
                 size="lg"
-                className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-xl glow-purple-sm hover-lift"
                 data-testid="button-view-benefits"
               >
                 <Sparkles className="mr-2 h-5 w-5" />

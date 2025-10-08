@@ -486,7 +486,7 @@ export default function TrendDiscoveryFeature() {
               navigate("/dashboard");
             }}
             size="lg"
-            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
+            className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl btn-glow hover-lift"
             data-testid="button-trend-discovery-cta"
           >
             <Database className="mr-2 h-5 w-5" />
@@ -495,7 +495,7 @@ export default function TrendDiscoveryFeature() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-20 md:py-28 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Get Hands-On?
@@ -509,7 +509,7 @@ export default function TrendDiscoveryFeature() {
               navigate("/tools/trend-discovery");
             }}
             size="lg"
-            className="bg-violet-600 hover:bg-violet-700 text-white"
+            className="bg-violet-600 hover:bg-violet-700 text-white glow-purple-sm hover-lift"
             data-testid="button-try-trend-discovery"
           >
             Try Trend Discovery →
