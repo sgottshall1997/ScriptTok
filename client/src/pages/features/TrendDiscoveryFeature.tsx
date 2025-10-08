@@ -11,8 +11,8 @@ import { useLocation } from "wouter";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { 
   Globe, 
-  Music, 
-  Hash, 
+  Package, 
+  Users, 
   TrendingUp, 
   Filter, 
   FileText,
@@ -20,7 +20,12 @@ import {
   Sparkles,
   ArrowRight,
   BarChart3,
-  Zap
+  Zap,
+  Target,
+  Clock,
+  Video,
+  Image,
+  Database
 } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from "@/components/Footer";
@@ -31,156 +36,165 @@ export default function TrendDiscoveryFeature() {
 
   const features = [
     {
-      icon: Globe,
-      title: "Multi-Platform Tracking",
-      description: "Monitor trending content across TikTok, Instagram, YouTube Shorts, and more—all in one dashboard.",
+      icon: Database,
+      title: "Complete Trend Research Packages",
+      description: "Every trend delivers a comprehensive intelligence report: viral hooks, target audiences, trending angles, popularity scores, peak times, related trends, and more—all in one place.",
     },
     {
-      icon: Music,
-      title: "Trending Sounds Library",
-      description: "Access the hottest sounds and audio tracks before they peak, giving you a competitive edge.",
+      icon: Target,
+      title: "Target Audience Intelligence",
+      description: "Get detailed demographic data, interests, engagement patterns, and psychographics for each trend so you can tailor content perfectly.",
     },
     {
-      icon: Hash,
-      title: "Hashtag Intelligence",
-      description: "Discover emerging hashtags with growth potential and avoid oversaturated ones.",
+      icon: Package,
+      title: "Trend-Matched Product Engine",
+      description: "AI automatically finds products that align with trending topics AND your niche, complete with photos, pricing, descriptions, and affiliate links.",
     },
     {
-      icon: TrendingUp,
-      title: "Topic Forecaster",
-      description: "AI-powered predictions of what topics will trend next in your niche.",
+      icon: Video,
+      title: "Competitor Video Analysis",
+      description: "Automatically pulls top-performing competitor videos with thumbnails, view counts, and engagement data so you can see what's working.",
     },
     {
-      icon: Filter,
-      title: "Niche-Specific Trends",
-      description: "Filter trends by your specific niche—beauty, tech, fitness, food, and 20+ more categories.",
+      icon: Clock,
+      title: "Optimal Posting Times",
+      description: "AI determines the best days and times to post each trend based on when it gets maximum engagement across platforms.",
     },
     {
-      icon: FileText,
-      title: "Trend-to-Script",
-      description: "Generate scripts directly from trending topics with one click—no research needed.",
+      icon: Image,
+      title: "Visual Trend Intelligence",
+      description: "Every trend package includes visual data—competitor video previews, product images, and trend visualizations for complete context.",
     },
   ];
 
   const discoveryProcess = [
     {
       icon: Search,
-      title: "Real-Time Scanning",
-      description: "AI monitors millions of posts across platforms every hour to identify emerging patterns.",
+      title: "1. AI Trend Scanning",
+      description: "Our AI monitors millions of posts across TikTok, Instagram, YouTube Shorts to identify emerging viral patterns and topics in real-time.",
     },
     {
-      icon: BarChart3,
-      title: "Engagement Analysis",
-      description: "Algorithms analyze view counts, engagement rates, and growth velocity to spot viral potential.",
+      icon: Database,
+      title: "2. Complete Research Package",
+      description: "For each trend, AI compiles: viral hooks, target audience data, trending angles, popularity scores, peak timing, related trends, and best posting times.",
     },
     {
-      icon: Filter,
-      title: "Niche Filtering",
-      description: "Trends are categorized by niche, platform, and content type for easy discovery.",
+      icon: Package,
+      title: "3. Product Matching",
+      description: "System automatically finds and matches products to each trend based on relevance to both the trending topic AND your selected niche, with full product data and images.",
+    },
+    {
+      icon: Video,
+      title: "4. Competitor Intelligence",
+      description: "AI pulls top-performing competitor videos for each trend/product, providing visual previews and performance analysis of what's converting.",
     },
     {
       icon: Sparkles,
-      title: "Instant Notifications",
-      description: "Get alerted when a trend matches your niche before it hits mainstream saturation.",
+      title: "5. AI Script Generation",
+      description: "All trend data (hooks, angles, audience, products, competitor insights) feeds into AI to generate data-backed viral scripts tailored to your niche.",
     },
   ];
 
-  const liveTrends = [
-    {
-      name: "Glow-Up Transformations",
-      platform: "TikTok",
-      engagement: "12.3M views",
-      growth: "+340%",
-      type: "Video Format",
-    },
-    {
-      name: "#ThatGirlMorning",
-      platform: "Instagram",
-      engagement: "8.7M posts",
-      growth: "+215%",
-      type: "Hashtag",
-    },
-    {
-      name: "Storytime + B-Roll",
-      platform: "YouTube Shorts",
-      engagement: "45M views",
-      growth: "+180%",
-      type: "Content Style",
-    },
-    {
-      name: "Product Dupes Under $20",
-      platform: "TikTok",
-      engagement: "19.2M views",
-      growth: "+290%",
-      type: "Topic",
-    },
-    {
-      name: "Before & After Edits",
-      platform: "Instagram Reels",
-      engagement: "6.4M posts",
-      growth: "+165%",
-      type: "Video Format",
-    },
-    {
-      name: "Viral Sound: 'Original Audio'",
-      platform: "Multi-Platform",
-      engagement: "23.1M uses",
-      growth: "+420%",
-      type: "Audio",
-    },
-  ];
+  const trendPackageExample = {
+    category: "Anime & Pop Culture",
+    trend: "One Piece Live-Action Reactions",
+    components: [
+      {
+        icon: "🔥",
+        title: "Viral Hooks",
+        items: [
+          "Reacting to iconic One Piece moments with live emotions",
+          "Cosplaying as favorite characters and sharing transformation",
+          "Ranking devil fruits and debating their powers"
+        ]
+      },
+      {
+        icon: "👥",
+        title: "Target Audience",
+        description: "Gen Z and Millennials (ages 16-34), anime enthusiasts, cosplayers, meme creators, and pop culture fans who enjoy long-running series and community engagement"
+      },
+      {
+        icon: "📐",
+        title: "Trending Angles",
+        items: [
+          "Comparing live-action adaptation scenes to anime originals",
+          "Fan theories about upcoming story arcs and character fates",
+          "Sharing personal journeys of watching One Piece from episode 1"
+        ]
+      },
+      {
+        icon: "✨",
+        title: "Trend Insights",
+        data: {
+          "Popularity Score": "85/100",
+          "Peak Time": "August-September 2025 (post live-action release)",
+          "Related Trends": "Live-action anime adaptations, Anime reaction videos"
+        }
+      },
+      {
+        icon: "📅",
+        title: "Best Time to Post",
+        times: ["Friday evenings (6-9 PM local time)", "Sunday afternoons (2-5 PM local time)"]
+      },
+      {
+        icon: "🔥",
+        title: "Competitor Videos",
+        description: "View trending competitor videos with visual previews and performance data"
+      }
+    ]
+  };
 
   const integrations = [
     {
-      title: "Instant Script Generation",
-      description: "Click any trend to automatically generate a script tailored to that topic with optimized hooks and CTAs.",
+      title: "One-Click Script Generation",
+      description: "Generate complete scripts with all trend data, product info, and competitor insights automatically baked in—no manual research needed.",
       icon: Zap,
     },
     {
-      title: "Viral Score Preview",
-      description: "See the predicted viral score of content based on each trend before you create it.",
-      icon: TrendingUp,
+      title: "Product-to-Script Integration",
+      description: "Matched products flow directly into script generation with descriptions, benefits, and CTAs already optimized for your niche.",
+      icon: Package,
     },
     {
-      title: "Platform Optimization",
-      description: "Trends come with platform-specific tips to maximize performance on TikTok, Instagram, or YouTube.",
-      icon: Globe,
+      title: "Competitor-Informed Scripts",
+      description: "Scripts incorporate insights from top-performing competitor videos—hooks, storytelling techniques, and CTAs that convert.",
+      icon: Video,
     },
   ];
 
   const faqs = [
     {
-      question: "How often are trends updated?",
-      answer: "Our AI scans platforms every hour and updates the trend dashboard in real-time. You'll always see the freshest trending topics, sounds, and hashtags as they emerge.",
+      question: "What exactly is included in each trend research package?",
+      answer: "Every trend delivers a comprehensive intelligence report including: viral hooks (specific content ideas), target audience (demographics, interests, engagement patterns), trending angles (unique approaches to the topic), popularity score (0-100 rating), peak timing (when trend hits maximum engagement), related trends, best posting times (day/time recommendations), matched products with images and affiliate links, and competitor video analysis with visual previews. It's everything you need to create viral content in one instant report.",
     },
     {
-      question: "Can I track trends in my specific niche?",
-      answer: "Absolutely! Filter trends by 20+ niches including beauty, tech, fitness, food, travel, pets, fashion, and more. You can also set niche preferences to only see relevant trends.",
+      question: "How does the AI find and match products to trends?",
+      answer: "Our AI analyzes each trending topic and identifies products that align with both the trend AND your selected niche. For example, if there's a 'Morning Routine' trend in the Beauty niche, it will find skincare and beauty products related to morning routines. You get product photos, pricing, descriptions, purchase links, and suggested talking points—all ready to use in your content.",
     },
     {
-      question: "What's the difference between trending and saturated?",
-      answer: "Our AI identifies trends in their growth phase—before they become oversaturated. We show growth velocity and current competition levels so you can jump on trends at the perfect time.",
+      question: "What competitor intelligence do I get with each trend?",
+      answer: "For every trend and matched product, our system automatically pulls the top-performing competitor videos across platforms. You see visual thumbnails, view counts, engagement rates, and we analyze what hooks, storytelling techniques, and CTAs they're using successfully. This gives you a blueprint of what's working right now.",
     },
     {
-      question: "Can I use trends from other platforms?",
-      answer: "Yes! Many trends start on one platform and migrate to others. We track cross-platform trends and show you which ones are gaining traction on multiple channels.",
+      question: "How are the 'best posting times' determined for each trend?",
+      answer: "Our AI analyzes millions of posts related to each specific trend to identify when it gets maximum engagement. Unlike generic 'best time to post' advice, these recommendations are tailored to each individual trend based on real performance data. You get specific day-of-week and time-of-day windows optimized for that trend.",
     },
     {
-      question: "Do I need to research trends manually?",
-      answer: "Not at all. Our AI does all the research for you—monitoring engagement, identifying patterns, and categorizing trends. Just browse, select, and create.",
+      question: "How detailed is the target audience data?",
+      answer: "For each trend, you get comprehensive audience profiles including: age ranges, gender distribution, geographic hotspots, interests and hobbies, platform preferences (TikTok vs Instagram vs YouTube), engagement patterns (when they're most active), and psychographic data (what motivates them). This lets you tailor your script, tone, visuals, and CTAs to resonate perfectly with the exact people engaging with that trend.",
     },
     {
-      question: "Can I generate scripts directly from trends?",
-      answer: "Yes! Every trend has a 'Generate Script' button that instantly creates a full video script optimized for that specific trend, complete with hooks, story flow, and CTAs.",
+      question: "Can I see visual examples before creating content?",
+      answer: "Absolutely! Every trend package includes rich visual data: competitor video thumbnails (so you can see what successful videos look like), product images (with clear photos of matched products), trend visualization charts (showing popularity over time), and related content examples. You have complete visual context before filming a single second.",
     },
     {
-      question: "How do I know which trends will work for my content?",
-      answer: "Each trend shows platform, niche, engagement stats, and growth rate. Our AI also provides suggestions on how to adapt trends to your unique brand voice and audience.",
+      question: "How does this all flow into script generation?",
+      answer: "When you click 'Generate Script' on any trend, all the research data (viral hooks, target audience, trending angles, matched products, competitor insights, posting times) automatically feeds into our AI. The script is crafted using this comprehensive intelligence—hooks that are proven viral, angles that resonate with the audience, products presented with benefits your viewers care about, and CTAs modeled after top performers. It's data-backed content creation.",
     },
   ];
 
-  const handleScrollToTable = () => {
-    const element = document.getElementById('live-trends-dashboard');
+  const handleScrollToExample = () => {
+    const element = document.getElementById('trend-package-example');
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -190,33 +204,33 @@ export default function TrendDiscoveryFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Trend Discovery - Real-Time Viral Trends & Sounds | Pheme</title>
-        <meta name="description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
-        <meta property="og:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | Pheme" />
-        <meta property="og:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
+        <title>Trend Discovery - Comprehensive Trend Intelligence Packages | Pheme</title>
+        <meta name="description" content="Get complete trend research packages with viral hooks, target audiences, product matches, competitor videos, and optimal posting times. AI-powered trend intelligence delivered instantly." />
+        <meta property="og:title" content="Trend Discovery - Comprehensive Trend Intelligence Packages | Pheme" />
+        <meta property="og:description" content="Get complete trend research packages with viral hooks, target audiences, product matches, competitor videos, and optimal posting times. AI-powered trend intelligence delivered instantly." />
         <meta property="og:type" content="article" />
         <meta property="og:url" content="https://pheme.com/features/trend-discovery" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | Pheme" />
-        <meta name="twitter:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
+        <meta name="twitter:title" content="Trend Discovery - Comprehensive Trend Intelligence Packages | Pheme" />
+        <meta name="twitter:description" content="Get complete trend research packages with viral hooks, target audiences, product matches, competitor videos, and optimal posting times. AI-powered trend intelligence delivered instantly." />
       </Helmet>
 
       <div className="min-h-screen">
         <FeatureHero
-          title="Never Miss a Viral Trend Again"
-          subtitle="AI-powered trend discovery that finds what's about to go viral across every platform—before your competitors do."
+          title="Complete Trend Intelligence Packages"
+          subtitle="From viral hooks to matched products to competitor videos—get everything you need to create viral content in one comprehensive AI-powered research report"
           primaryCTA={{
-            text: "Explore Trends Now",
+            text: "Get Full Trend Packages",
             onClick: () => {
               trackNavigateCTA("trend_discovery_hero", "explore_trends");
               navigate("/trending-ai-picks");
             },
           }}
           secondaryCTA={{
-            text: "See How It Works",
+            text: "See Example Package",
             onClick: () => {
-              trackNavigateCTA("trend_discovery_hero", "how_it_works");
-              navigate("/how-it-works");
+              trackNavigateCTA("trend_discovery_hero", "example_package");
+              handleScrollToExample();
             },
           }}
         />
@@ -225,10 +239,10 @@ export default function TrendDiscoveryFeature() {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Powerful Trend Discovery Features
+              Comprehensive Trend Research Features
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to stay ahead of the viral curve.
+              Every trend delivers a complete intelligence package—no manual research required.
             </p>
           </div>
           <FeatureGrid features={features} />
@@ -239,15 +253,15 @@ export default function TrendDiscoveryFeature() {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              How Trend Discovery Works
+              How Comprehensive Trend Intelligence Works
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Our AI-powered system finds viral trends before they peak.
+              Our AI delivers complete trend research packages—from viral patterns to products to competitor analysis—all in seconds.
             </p>
           </div>
 
           <div className="relative">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
               {discoveryProcess.map((step, index) => {
                 const Icon = step.icon;
                 return (
@@ -258,7 +272,7 @@ export default function TrendDiscoveryFeature() {
                           <div className="bg-gradient-to-br from-violet-100 to-purple-100 dark:from-violet-900 dark:to-purple-900 p-4 rounded-full mb-4">
                             <Icon className="h-8 w-8 text-violet-600 dark:text-violet-400" />
                           </div>
-                          <h3 className="text-xl font-semibold mb-3" data-testid={`discovery-title-${index}`}>
+                          <h3 className="text-lg font-semibold mb-3" data-testid={`discovery-title-${index}`}>
                             {step.title}
                           </h3>
                           <p className="text-muted-foreground text-sm" data-testid={`discovery-description-${index}`}>
@@ -268,8 +282,8 @@ export default function TrendDiscoveryFeature() {
                       </div>
                     </Card>
                     {index < discoveryProcess.length - 1 && (
-                      <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2 z-10">
-                        <ArrowRight className="h-6 w-6 text-violet-600" />
+                      <div className="hidden lg:block absolute top-1/2 -right-3 transform -translate-y-1/2 z-10">
+                        <ArrowRight className="h-5 w-5 text-violet-600" />
                       </div>
                     )}
                   </div>
@@ -280,82 +294,121 @@ export default function TrendDiscoveryFeature() {
         </div>
       </section>
 
-      <section id="live-trends-dashboard" className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section id="trend-package-example" className="py-16 px-4 bg-gradient-to-br from-violet-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Live Trends Dashboard Preview
+              Complete Trend Package Example
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See what's trending right now across all platforms.
+              See exactly what you get with each trend—a comprehensive intelligence report delivered instantly
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {liveTrends.map((trend, index) => (
-              <Card
-                key={index}
-                className="rounded-2xl shadow-sm hover:shadow-lg transition-all border-2 border-transparent hover:border-violet-200 dark:hover:border-violet-800"
-                data-testid={`trend-card-${index}`}
-              >
-                <div className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-bold mb-2" data-testid={`trend-name-${index}`}>
-                        {trend.name}
-                      </h3>
-                      <div className="flex gap-2 flex-wrap mb-3">
-                        <Badge variant="outline" className="text-xs" data-testid={`trend-platform-${index}`}>
-                          {trend.platform}
-                        </Badge>
-                        <Badge variant="secondary" className="text-xs" data-testid={`trend-type-${index}`}>
-                          {trend.type}
-                        </Badge>
+          <Card className="border-2 border-violet-200 dark:border-violet-800">
+            <div className="p-8 md:p-12">
+              <div className="mb-8">
+                <Badge className="bg-violet-600 text-white mb-4 text-sm">
+                  {trendPackageExample.category}
+                </Badge>
+                <h3 className="text-2xl md:text-3xl font-bold mb-2">
+                  📊 {trendPackageExample.trend}
+                </h3>
+                <p className="text-muted-foreground">Complete research package delivered in seconds</p>
+              </div>
+
+              <div className="space-y-6">
+                {trendPackageExample.components.map((component, index) => (
+                  <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
+                    <h4 className="text-lg font-semibold mb-3 flex items-center gap-2">
+                      <span className="text-2xl">{component.icon}</span>
+                      {component.title}
+                    </h4>
+                    
+                    {component.items && (
+                      <ul className="space-y-2">
+                        {component.items.map((item, i) => (
+                          <li key={i} className="text-muted-foreground flex items-start gap-2">
+                            <span className="text-violet-600 mt-1">•</span>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                    
+                    {component.description && (
+                      <p className="text-muted-foreground">{component.description}</p>
+                    )}
+                    
+                    {component.data && (
+                      <div className="space-y-2">
+                        {Object.entries(component.data).map(([key, value]) => (
+                          <p key={key} className="text-muted-foreground">
+                            <span className="font-medium text-gray-900 dark:text-white">{key}:</span> {value}
+                          </p>
+                        ))}
                       </div>
-                    </div>
+                    )}
+                    
+                    {component.times && (
+                      <div className="flex gap-3 flex-wrap">
+                        {component.times.map((time, i) => (
+                          <Badge key={i} variant="secondary">
+                            {time}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
                   </div>
+                ))}
 
-                  <div className="grid grid-cols-2 gap-3 mb-4">
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20 rounded-xl p-6 border-2 border-orange-200 dark:border-orange-800">
+                  <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Engagement</p>
-                      <p className="font-semibold text-sm" data-testid={`trend-engagement-${index}`}>
-                        {trend.engagement}
+                      <h4 className="text-lg font-semibold mb-2">
+                        🔥 View Trending Competitor Videos
+                      </h4>
+                      <p className="text-muted-foreground text-sm">
+                        Automatically pulled with thumbnails, engagement data, and performance analysis
                       </p>
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Growth</p>
-                      <p className="font-semibold text-sm text-green-600 dark:text-green-400" data-testid={`trend-growth-${index}`}>
-                        {trend.growth}
-                      </p>
-                    </div>
+                    <Button 
+                      className="bg-orange-600 hover:bg-orange-700 text-white"
+                      onClick={() => navigate("/dashboard")}
+                    >
+                      View Videos →
+                    </Button>
                   </div>
-
-                  <Button
-                    className="w-full bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white rounded-xl"
-                    onClick={() => {
-                      trackNavigateCTA("trend_discovery_dashboard", `generate_from_trend_${trend.name}`);
-                      navigate("/dashboard");
-                    }}
-                    data-testid={`button-generate-script-${index}`}
-                  >
-                    <Zap className="mr-2 h-4 w-4" />
-                    Generate Script
-                  </Button>
                 </div>
-              </Card>
-            ))}
-          </div>
+
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl p-6 border-2 border-green-200 dark:border-green-800">
+                  <div className="flex items-center justify-center gap-3">
+                    <Sparkles className="h-6 w-6 text-green-600" />
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      ⚡ Plus: Matched Products with Images + One-Click Script Generation
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700 text-center">
+                <Badge className="bg-violet-600 text-white text-base px-6 py-3">
+                  ✅ Complete Content Intelligence Package - Ready to Create
+                </Badge>
+              </div>
+            </div>
+          </Card>
         </div>
       </section>
 
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Seamless Integration With Other Features
+              Seamless Integration With Script Generation
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Trend discovery works hand-in-hand with our entire content creation suite.
+              All trend intelligence flows directly into AI script generation—creating data-backed viral content
             </p>
           </div>
 
@@ -386,15 +439,15 @@ export default function TrendDiscoveryFeature() {
         </div>
       </section>
 
-      <FAQAccordion faqs={faqs} className="bg-white dark:bg-gray-900" />
+      <FAQAccordion faqs={faqs} className="bg-gray-50 dark:bg-gray-800" />
 
       <section className="bg-gradient-cta text-white py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
-            Start Discovering Trends
+            Start Getting Complete Trend Intelligence
           </h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8">
-            Never miss a viral opportunity again. Find trending topics, sounds, and hashtags in real-time.
+            Viral hooks, target audiences, products, competitor videos, and optimal timing—all in one comprehensive AI report
           </p>
           <Button
             onClick={() => {
@@ -405,8 +458,8 @@ export default function TrendDiscoveryFeature() {
             className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl"
             data-testid="button-trend-discovery-cta"
           >
-            <TrendingUp className="mr-2 h-5 w-5" />
-            Explore Trending Content Now
+            <Database className="mr-2 h-5 w-5" />
+            Get Full Trend Packages Now
           </Button>
         </div>
       </section>

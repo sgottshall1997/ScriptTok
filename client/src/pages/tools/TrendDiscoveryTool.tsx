@@ -4,8 +4,9 @@ import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
-import { TrendingUp, Package, Users, Sparkles, Globe, Filter, BarChart3, Zap } from 'lucide-react';
+import { TrendingUp, Package, Users, Sparkles, Globe, Filter, BarChart3, Zap, Target, Clock, Video, Image, Database } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 export default function TrendDiscoveryTool() {
   const [, setLocation] = useLocation();
@@ -29,94 +30,129 @@ export default function TrendDiscoveryTool() {
   const steps = [
     {
       icon: TrendingUp,
-      title: 'Real-Time Trend Scanning',
-      description: 'AI monitors millions of posts across TikTok, Instagram, YouTube Shorts to identify emerging trends in your niche',
+      title: 'Comprehensive Trend Research',
+      description: 'AI scans millions of posts and delivers a complete research package: viral hooks, trending angles, target audiences, popularity scores, peak times, and related trends—all in one place',
     },
     {
       icon: Package,
       title: 'Smart Product Matching',
-      description: 'System analyzes trends and recommends products based on trend alignment AND your selected niche separately',
+      description: 'System automatically finds and recommends products that align perfectly with each trend AND your selected niche, with detailed product data and affiliate links ready to use',
     },
     {
-      icon: Users,
-      title: 'Competitor Video Analysis',
-      description: 'Pulls top-performing competitor videos for selected products/trends to understand what\'s working',
+      icon: Video,
+      title: 'Competitor Video Intelligence',
+      description: 'Automatically pulls top-performing competitor videos for each trend/product with visual previews, analyzing what hooks, storytelling, and CTAs are converting',
     },
     {
       icon: Sparkles,
       title: 'AI Script Generation',
-      description: 'Feeds all trend data, product info, and competitor insights to ChatGPT to generate smart, viral-ready scripts',
+      description: 'Feeds the complete trend package (hooks, angles, audience, products, competitor insights) to AI to generate smart, data-backed viral scripts',
     },
   ];
 
   const features = [
     {
-      icon: Globe,
-      title: 'Multi-Platform Trend Tracking',
-      description: 'Monitor trends across TikTok, Instagram, YouTube Shorts in real-time',
+      icon: Database,
+      title: 'Complete Trend Research Package',
+      description: 'Get viral hooks, target audiences, trending angles, popularity scores, peak posting times, and related trends—everything you need in one comprehensive report',
     },
     {
-      icon: Filter,
-      title: 'Niche-Specific Filtering',
-      description: 'Filter trends by your specific niche for relevant opportunities',
+      icon: Target,
+      title: 'Target Audience Intelligence',
+      description: 'Discover exactly who engages with each trend—demographics, interests, engagement patterns—so you can tailor content perfectly',
+    },
+    {
+      icon: Clock,
+      title: 'Best Time to Post Analytics',
+      description: 'AI determines optimal posting times based on when each trend gets maximum engagement across platforms',
     },
     {
       icon: Package,
-      title: 'Product Recommendation Engine',
-      description: 'Get AI-powered product recommendations aligned with trends',
+      title: 'Trend-Matched Product Engine',
+      description: 'Automatically finds products that align with trending topics and your niche, with photos, pricing, and affiliate links',
     },
     {
-      icon: Users,
-      title: 'Competitor Intelligence',
-      description: 'Analyze top-performing competitor videos for insights',
+      icon: Video,
+      title: 'Competitor Video Analysis',
+      description: 'View top-performing competitor videos with thumbnails and performance data to understand what\'s working',
+    },
+    {
+      icon: Image,
+      title: 'Visual Trend Data',
+      description: 'Every trend includes visual data, competitor video previews, and product images for complete context',
     },
     {
       icon: BarChart3,
-      title: 'Trend Velocity Scoring',
-      description: 'See how fast trends are rising with velocity metrics',
+      title: 'Trend Velocity & Timing',
+      description: 'See exactly when trends peak, how fast they\'re rising, and the best window to capitalize',
     },
     {
       icon: Zap,
-      title: 'One-Click Script Generation',
-      description: 'Generate scripts directly from trend data instantly',
+      title: 'One-Click Full Script',
+      description: 'Generate complete scripts with all trend data, product info, and competitor insights baked in',
     },
   ];
+
+  const trendPackageDemo = {
+    title: 'One Piece Live-Action Reactions',
+    viralHooks: [
+      'Reacting to iconic One Piece moments with live emotions',
+      'Cosplaying as favorite One Piece characters and sharing transformation',
+      'Ranking devil fruits and debating their powers'
+    ],
+    targetAudience: 'Gen Z and Millennials (ages 16-34), anime enthusiasts, cosplayers, meme creators, and pop culture fans who enjoy long-running series and community engagement',
+    trendingAngles: [
+      'Comparing live-action adaptation scenes to anime originals',
+      'Fan theories about upcoming story arcs and character fates',
+      'Sharing personal journeys of watching One Piece from episode 1'
+    ],
+    insights: {
+      popularityScore: '85/100',
+      peakTime: 'August-September 2025 (post live-action release)',
+      relatedTrends: ['Live-action anime adaptations', 'Anime reaction videos']
+    },
+    bestTimeToPost: ['Friday evenings (6-9 PM local time)', 'Sunday afternoons (2-5 PM local time)']
+  };
 
   const useCases = [
     {
       title: 'Beauty Creator Success',
-      description: 'Beauty Creator finds \'Glass Skin\' trend early, gets 2M views',
+      description: 'Beauty Creator gets complete trend package for "Glass Skin" including hooks, audience data, product matches, competitor videos, and optimal posting times—hits 2M views',
     },
     {
       title: 'Tech Reviewer Win',
-      description: 'Tech Reviewer discovers viral gadget before saturation, drives 10K sales',
+      description: 'Tech Reviewer discovers viral gadget trend with full research report, matched products with affiliate links, and competitor analysis—drives 10K sales',
     },
     {
       title: 'Fitness Coach Growth',
-      description: 'Fitness Coach identifies emerging workout trend, builds audience',
+      description: 'Fitness Coach uses comprehensive trend data including target audience insights and trending angles to create perfectly timed content—builds massive following',
     },
   ];
 
   const faqs = [
     {
-      question: 'How often are trends updated?',
-      answer: 'Trends are updated in real-time as our AI monitors millions of posts across platforms. The dashboard refreshes every 15 minutes with the latest trending content.',
+      question: 'What exactly is included in each trend research package?',
+      answer: 'Every trend includes: viral hooks (specific content ideas), target audience (demographics and interests), trending angles (unique approaches), popularity score, peak timing, related trends, best posting times, matched products with images, and competitor video analysis. It\'s a complete research report delivered instantly.',
     },
     {
-      question: 'Can I track trends in my specific niche?',
-      answer: 'Yes! Our niche-specific filtering allows you to focus on trends in beauty, tech, fitness, fashion, food, travel, and pets. You can also combine niches for broader coverage.',
+      question: 'How does product matching work?',
+      answer: 'Our AI analyzes each trend and automatically finds products that align with both the trending topic AND your selected niche. You get product photos, pricing, descriptions, and affiliate links ready to use in your content.',
     },
     {
-      question: 'What\'s the difference between trend and product recommendations?',
-      answer: 'Trends show what\'s viral right now, while product recommendations are AI-matched items that align with those trends AND your niche. You get both for maximum opportunity.',
+      question: 'What competitor intelligence do I get?',
+      answer: 'For every trend and product, we automatically pull top-performing competitor videos with visual previews, view counts, and engagement data. You can see exactly what hooks, storytelling techniques, and CTAs are working right now.',
     },
     {
-      question: 'How does competitor analysis work?',
-      answer: 'We automatically pull top-performing videos for any trend or product, analyzing hooks, storytelling, and CTAs to help you understand what\'s working.',
+      question: 'How are best posting times determined?',
+      answer: 'Our AI analyzes millions of posts to identify when each specific trend gets maximum engagement. You get day-of-week and time-of-day recommendations tailored to each trend, not generic advice.',
     },
     {
-      question: 'Can I save trends for later?',
-      answer: 'Yes! You can save trends to your history and come back to generate scripts from them anytime. Your trend history shows velocity changes over time.',
+      question: 'Can I see visual examples of trends?',
+      answer: 'Yes! Every trend package includes visual data—competitor video thumbnails, product images, and trend visualizations—so you have complete context before creating content.',
+    },
+    {
+      question: 'How comprehensive is the audience data?',
+      answer: 'For each trend, you get detailed target audience profiles including age ranges, interests, platform preferences, and engagement patterns. This helps you tailor your script, tone, and CTAs perfectly.',
     },
   ];
 
@@ -124,30 +160,141 @@ export default function TrendDiscoveryTool() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Trend Discovery - Find Viral Trends Before They Peak | Pheme</title>
+        <title>Comprehensive Trend Research - Full Trend Intelligence Package | Pheme</title>
         <meta
           name="description"
-          content="AI-powered trend discovery tool that monitors TikTok, Instagram, and YouTube Shorts in real-time. Find viral trends before they peak and get AI-matched product recommendations for your niche."
+          content="Get complete trend research packages with viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal posting times—all delivered instantly by AI."
         />
-        <meta property="og:title" content="Trend Discovery - Find Viral Trends Before They Peak | Pheme" />
+        <meta property="og:title" content="Comprehensive Trend Research - Full Trend Intelligence Package | Pheme" />
         <meta
           property="og:description"
-          content="AI-powered trend discovery tool that monitors TikTok, Instagram, and YouTube Shorts in real-time. Find viral trends before they peak and get AI-matched product recommendations for your niche."
+          content="Get complete trend research packages with viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal posting times—all delivered instantly by AI."
         />
         <meta property="og:type" content="website" />
       </Helmet>
 
       <ToolHero
-        eyebrowText="TREND DISCOVERY"
-        headline="Discover What's Trending Before It Goes Viral"
-        subheadline="AI-powered trend analysis that finds real-time opportunities across all platforms and recommends winning products for your niche"
-        primaryCTA={{ text: 'Start Finding Trends', onClick: handlePrimaryCTA }}
-        secondaryCTA={{ text: 'See Example Trends', onClick: handleSecondaryCTA }}
+        eyebrowText="COMPREHENSIVE TREND INTELLIGENCE"
+        headline="Complete Trend Research Packages, Delivered Instantly"
+        subheadline="Get viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal timing—everything you need to create viral content in one comprehensive AI-powered report"
+        primaryCTA={{ text: 'Get Full Trend Intelligence', onClick: handlePrimaryCTA }}
+        secondaryCTA={{ text: 'See Example Package', onClick: handleSecondaryCTA }}
       />
 
       <HowItWorksSteps steps={steps} />
 
-      <ToolFeatureGrid features={features} sectionTitle="Powerful Trend Discovery Features" />
+      {/* Complete Trend Package Demo */}
+      <section className="py-16 md:py-20 bg-gradient-to-br from-violet-50 to-purple-50">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              What You Get: Complete Trend Research Package
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Every trend delivers a comprehensive intelligence report with everything you need to create viral content
+            </p>
+          </div>
+
+          <Card className="max-w-5xl mx-auto border-2 border-violet-200">
+            <CardContent className="p-8 md:p-12">
+              <div className="mb-8">
+                <Badge className="bg-violet-600 text-white mb-4">📊 Trend Research Complete</Badge>
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{trendPackageDemo.title}</h3>
+              </div>
+
+              <div className="space-y-6">
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    🔥 Viral Hooks
+                  </h4>
+                  <ul className="space-y-2">
+                    {trendPackageDemo.viralHooks.map((hook, i) => (
+                      <li key={i} className="text-gray-700 flex items-start gap-2">
+                        <span className="text-violet-600">•</span>
+                        {hook}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    👥 Target Audience
+                  </h4>
+                  <p className="text-gray-700">{trendPackageDemo.targetAudience}</p>
+                </div>
+
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    📐 Trending Angles
+                  </h4>
+                  <ul className="space-y-2">
+                    {trendPackageDemo.trendingAngles.map((angle, i) => (
+                      <li key={i} className="text-gray-700 flex items-start gap-2">
+                        <span className="text-violet-600">•</span>
+                        {angle}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    ✨ Trend Insights
+                  </h4>
+                  <div className="space-y-2">
+                    <p className="text-gray-700">
+                      <span className="font-medium">Popularity Score:</span> {trendPackageDemo.insights.popularityScore}
+                    </p>
+                    <p className="text-gray-700">
+                      <span className="font-medium">Peak Time:</span> {trendPackageDemo.insights.peakTime}
+                    </p>
+                    <p className="text-gray-700">
+                      <span className="font-medium">Related Trends:</span> {trendPackageDemo.insights.relatedTrends.join(', ')}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-lg p-6 border border-gray-200">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    📅 Best Time to Post
+                  </h4>
+                  <div className="flex gap-3 flex-wrap">
+                    {trendPackageDemo.bestTimeToPost.map((time, i) => (
+                      <Badge key={i} variant="secondary" className="text-sm">
+                        {time}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-lg p-6 border border-orange-200">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                    🔥 View Trending Competitor Videos →
+                  </h4>
+                  <p className="text-gray-700 mb-4">
+                    Automatically pulls top-performing videos with thumbnails, engagement data, and performance analysis
+                  </p>
+                  <Badge className="bg-orange-600 text-white">Click to view competitor intelligence</Badge>
+                </div>
+              </div>
+
+              <div className="mt-8 pt-8 border-t border-gray-200">
+                <p className="text-center text-gray-600 mb-4">
+                  ⚡ Plus: Matched products with images + One-click script generation
+                </p>
+                <div className="text-center">
+                  <Badge className="bg-green-600 text-white text-base px-6 py-2">
+                    ✅ Content Setup Complete - Ready to Film
+                  </Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <ToolFeatureGrid features={features} sectionTitle="Comprehensive Trend Intelligence Features" />
 
       {/* Use Cases Section */}
       <section className="py-16 md:py-20 bg-gray-50" data-testid="use-cases-section">
@@ -177,8 +324,9 @@ export default function TrendDiscoveryTool() {
       <ToolFAQ faqs={faqs} />
 
       <ToolCTA
-        headline="Start Discovering Viral Trends Today"
-        primaryCTA={{ text: 'Get Started Free', onClick: handleFinalCTA }}
+        headline="Get Complete Trend Intelligence Packages Today"
+        description="Viral hooks, audiences, products, competitor videos, and timing—all in one comprehensive AI report"
+        primaryCTA={{ text: 'Start Getting Full Trend Reports', onClick: handleFinalCTA }}
         gradient={true}
       />
 

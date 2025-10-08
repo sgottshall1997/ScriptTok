@@ -6,6 +6,13 @@ This project is a comprehensive content generation platform designed to create s
 ## User Preferences
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes
+- **Marketing Pages Enhancement (Oct 2025)**: Updated Tools and Features pages to showcase comprehensive Viral Trend Fetcher capabilities as a complete intelligence package. Now emphasizes that each trend delivers: viral hooks, target audiences, trending angles, popularity scores, peak timing, related trends, best posting times, matched products with images, and competitor video analysis - all in one comprehensive AI-powered report. Includes interactive demo showing real trend package example.
+- Fixed critical tier detection bug in TrendForecaster causing all users to be detected as 'starter' tier (corrected data path from `usageResponse?.data?.data` to `usageResponse?.data`)
+- Fixed upgrade button redirects in TemplateSelector (now correctly points to /account instead of /pricing)
+- Completed comprehensive tier-based subscription audit verifying all restrictions work correctly across all tiers
+- Fixed apostrophe syntax errors in marketing content (replaced smart quotes with regular apostrophes)
+
 ## System Architecture
 
 ### Frontend Architecture
