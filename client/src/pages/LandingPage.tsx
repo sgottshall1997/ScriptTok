@@ -279,7 +279,7 @@ export default function LandingPage() {
               Choose Your Plan
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
-              Start for Free — Get 10 Generations on Us
+              Start for Free - Get 10 Generations on Us
             </p>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">

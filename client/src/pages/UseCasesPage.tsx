@@ -988,7 +988,7 @@ export default function UseCasesPage() {
               className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight"
               data-testid="hero-headline"
             >
-              Transform Your Content Creation — No Matter Your Niche
+              Transform Your Content Creation - No Matter Your Niche
             </h1>
 
             {/* Rotating Personas */}
