@@ -134,7 +134,7 @@ const AboutPage: React.FC = () => {
         </p>
       </div>
 
-      {/* What ScriptTok Does */}
+      {/* What Pheme Does */}
       <Card className="mb-12 border-l-4 border-l-pink-600">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
@@ -183,7 +183,7 @@ const AboutPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* The ScriptTok Intelligence Process */}
+      {/* The Pheme Intelligence Process */}
       <Card className="mb-12 border-l-4 border-l-purple-600">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">
@@ -317,7 +317,7 @@ const AboutPage: React.FC = () => {
         </CardContent>
       </Card>
 
-      {/* How to Use ScriptTok */}
+      {/* How to Use Pheme */}
       <Card className="mb-12 border-l-4 border-l-blue-600">
         <CardHeader>
           <CardTitle className="flex items-center text-2xl">

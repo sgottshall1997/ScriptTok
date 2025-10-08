@@ -103,7 +103,7 @@ export const phemeSections: PhemeSection[] = [
     description: "Primary content generation tool supporting multiple AI models, platforms, and content formats.",
     icon: Sparkles,
     path: "/unified-generator",
-    category: "Core", 
+    category: "Core",
     whatItDoes: "Generates high-quality content for multiple social media platforms using advanced AI models. Supports various content types, tones, and formats with platform-specific optimization and bulk generation capabilities.",
     setupRequirements: ["AI API keys (OpenAI, Claude)", "Select preferred AI model", "Choose target platforms"],
     usageInstructions: [
@@ -127,7 +127,7 @@ export const phemeSections: PhemeSection[] = [
     keyFeatures: ["Multi-platform generation", "AI model selection", "Bulk generation", "Webhook integration", "Content optimization"]
   },
   {
-    name: "Template Explorer", 
+    name: "Template Explorer",
     description: "Browse, manage, and customize content generation templates for different niches and styles.",
     icon: Layers,
     path: "/templates",
@@ -213,7 +213,7 @@ export const phemeSections: PhemeSection[] = [
     name: "Content History",
     description: "View, manage, and analyze all your generated content with advanced filtering and export options.",
     icon: History,
-    path: "/content-history", 
+    path: "/content-history",
     category: "Content Management",
     whatItDoes: "Provides comprehensive access to all generated content with advanced search, filtering, and management capabilities. Track performance, export content, and analyze generation patterns.",
     setupRequirements: ["Generated content in the system"],
@@ -240,7 +240,7 @@ export const phemeSections: PhemeSection[] = [
     description: "Performance metrics and insights for your content generation and engagement tracking.",
     icon: BarChart3,
     path: "/analytics",
-    category: "Content Management", 
+    category: "Content Management",
     whatItDoes: "Displays comprehensive analytics including content performance, generation trends, platform effectiveness, and ROI metrics. Provides actionable insights for content strategy optimization.",
     setupRequirements: ["Content generation history", "Optional: tracking integration"],
     usageInstructions: [
@@ -272,7 +272,7 @@ export const phemeSections: PhemeSection[] = [
     usageInstructions: [
       "View content calendar by day, week, or month",
       "Schedule new content generation",
-      "Plan content campaigns and themes", 
+      "Plan content campaigns and themes",
       "Manage posting schedules across platforms",
       "Track scheduled vs published content"
     ],
@@ -722,7 +722,7 @@ export const phemeSections: PhemeSection[] = [
     icon: Shield,
     path: "/privacy-cookies",
     category: "Legal & Compliance",
-    whatItDoes: "Details how user data is collected, stored, processed, and protected within the ScriptTok platform, including third-party integrations, data retention policies, and user rights regarding personal information.",
+    whatItDoes: "Details how user data is collected, stored, processed, and protected within the Pheme platform, including third-party integrations, data retention policies, and user rights regarding personal information.",
     setupRequirements: ["Review privacy practices", "Understand data handling"],
     usageInstructions: [
       "Read through data collection practices",
@@ -749,7 +749,7 @@ export const phemeSections: PhemeSection[] = [
     icon: FileCheck,
     path: "/terms-billing",
     category: "Legal & Compliance",
-    whatItDoes: "Establishes the legal agreement between users and ScriptTok, covering service usage, user responsibilities, limitations, intellectual property rights, and dispute resolution procedures.",
+    whatItDoes: "Establishes the legal agreement between users and Pheme, covering service usage, user responsibilities, limitations, intellectual property rights, and dispute resolution procedures.",
     setupRequirements: ["Read and understand terms", "Accept agreement to use services"],
     usageInstructions: [
       "Read through service terms and conditions",
@@ -774,8 +774,8 @@ export const phemeSections: PhemeSection[] = [
   // Support
   {
     name: "How It Works",
-    description: "Comprehensive guide to GlowBot features, workflows, and best practices.",
-    icon: HelpCircle,
+    description: "Learn the complete Pheme workflow and best practices.",
+    icon: FileText,
     path: "/how-it-works",
     category: "Support",
     whatItDoes: "Provides detailed documentation on Pheme functionality, step-by-step guides, workflow explanations, and best practice recommendations for optimal platform usage.",
@@ -800,8 +800,8 @@ export const phemeSections: PhemeSection[] = [
   },
   {
     name: "FAQ",
-    description: "Frequently asked questions and answers about Pheme features and usage.",
-    icon: MessageCircle,
+    description: "Frequently asked questions about Pheme features",
+    icon: HelpCircle,
     path: "/faq",
     category: "Support",
     whatItDoes: "Comprehensive FAQ section covering common questions about features, troubleshooting, billing, integrations, and best practices with searchable content and categorized topics.",
@@ -826,7 +826,7 @@ export const phemeSections: PhemeSection[] = [
   },
   {
     name: "Contact",
-    description: "Get support, report issues, and connect with the ScriptTok team for assistance.",
+    description: "Get support, report issues, and connect with the Pheme team for assistance.",
     icon: MessageCircle,
     path: "/contact",
     category: "Support",
@@ -854,14 +854,14 @@ export const phemeSections: PhemeSection[] = [
 
 export const getPhemeSectionsByCategory = () => {
   const categories: { [key: string]: PhemeSection[] } = {};
-  
+
   phemeSections.forEach(section => {
     if (!categories[section.category]) {
       categories[section.category] = [];
     }
     categories[section.category].push(section);
   });
-  
+
   return categories;
 };
 
@@ -871,7 +871,7 @@ export const getPhemeSectionByPath = (path: string): PhemeSection | undefined =>
 
 export const getPhemeSectionsByKeyword = (keyword: string): PhemeSection[] => {
   const lowercaseKeyword = keyword.toLowerCase();
-  return phemeSections.filter(section => 
+  return phemeSections.filter(section =>
     section.name.toLowerCase().includes(lowercaseKeyword) ||
     section.description.toLowerCase().includes(lowercaseKeyword) ||
     section.whatItDoes.toLowerCase().includes(lowercaseKeyword) ||

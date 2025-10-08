@@ -111,9 +111,9 @@ export default function AIScriptGeneratorFeature() {
         <meta property="og:title" content="AI Script Generator - Create Viral Scripts in Seconds | Pheme" />
         <meta property="og:description" content="Generate scroll-stopping scripts with AI-powered hooks, pacing, and CTAs. Optimized for TikTok, Instagram Reels, and YouTube Shorts." />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://scripttok.com/features/ai-script-generator" />
+        <meta property="og:url" content="https://pheme.com/features/ai-script-generator" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="AI Script Generator - Create Viral Scripts in Seconds | ScriptTok" />
+        <meta name="twitter:title" content="AI Script Generator - Create Viral Scripts in Seconds | Pheme" />
         <meta name="twitter:description" content="Generate scroll-stopping scripts with AI-powered hooks, pacing, and CTAs. Optimized for TikTok, Instagram Reels, and YouTube Shorts." />
       </Helmet>
       
