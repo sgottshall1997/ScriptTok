@@ -200,7 +200,7 @@ export default function LandingPage() {
 
       {/* Tools Section */}
       <section className="py-6 md:py-10 px-4 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Tools</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -229,7 +229,7 @@ export default function LandingPage() {
 
       {/* Use Cases Section */}
       <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Use Cases</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -253,7 +253,7 @@ export default function LandingPage() {
 
       {/* Learn Section */}
       <section className="py-6 md:py-10 px-4 bg-gray-50 dark:bg-gray-800">
-        <div className="container mx-auto max-w-7xl">
+        <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Learn</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
@@ -288,8 +288,8 @@ export default function LandingPage() {
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {/* Starter Plan */}
-            <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift relative">
-              <CardContent className="p-6">
+            <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift relative h-full flex flex-col">
+              <CardContent className="p-6 flex-1 flex flex-col">
                 <div className="flex flex-col items-center text-center mb-4">
                   <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg mb-3">
                     <Zap className="h-8 w-8 text-green-600 dark:text-green-400" />
@@ -298,7 +298,7 @@ export default function LandingPage() {
                   <div className="text-3xl font-bold mb-1">$7<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
                   <div className="text-sm text-gray-500 dark:text-gray-500">or $5/mo annually - Save 29%</div>
                 </div>
-                <ul className="space-y-2.5 mb-6">
+                <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <span>15 GPT-4 + 10 Claude generations/month</span>
@@ -346,11 +346,11 @@ export default function LandingPage() {
             </Card>
 
             {/* Creator Plan */}
-            <Card className="rounded-2xl border-purple-500 border-2 shadow-card hover:shadow-card-hover hover-lift relative">
+            <Card className="rounded-2xl border-purple-500 border-2 shadow-card hover:shadow-card-hover hover-lift relative h-full flex flex-col">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-purple-600 hover:bg-purple-600">
                 Most Popular
               </Badge>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex-1 flex flex-col">
                 <div className="flex flex-col items-center text-center mb-4">
                   <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-lg mb-3">
                     <Star className="h-8 w-8 text-purple-600 dark:text-purple-400" />
@@ -359,7 +359,7 @@ export default function LandingPage() {
                   <div className="text-3xl font-bold mb-1">$15<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
                   <div className="text-sm text-gray-500 dark:text-gray-500">or $10/mo annually - Save 33%</div>
                 </div>
-                <ul className="space-y-2.5 mb-6">
+                <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <span>50 GPT-4 + 30 Claude generations/month</span>
@@ -399,11 +399,11 @@ export default function LandingPage() {
             </Card>
 
             {/* Pro Plan */}
-            <Card className="rounded-2xl border-green-500 border-2 shadow-card hover:shadow-card-hover hover-lift relative">
+            <Card className="rounded-2xl border-green-500 border-2 shadow-card hover:shadow-card-hover hover-lift relative h-full flex flex-col">
               <Badge className="absolute -top-3 left-1/2 transform -translate-x-1/2 bg-green-600 hover:bg-green-600">
                 Best Value
               </Badge>
-              <CardContent className="p-6">
+              <CardContent className="p-6 flex-1 flex flex-col">
                 <div className="flex flex-col items-center text-center mb-4">
                   <div className="bg-green-100 dark:bg-green-900 p-3 rounded-lg mb-3">
                     <Rocket className="h-8 w-8 text-green-600 dark:text-green-400" />
@@ -412,7 +412,7 @@ export default function LandingPage() {
                   <div className="text-3xl font-bold mb-1">$35<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
                   <div className="text-sm text-gray-500 dark:text-gray-500">or $25/mo annually - Save 29%</div>
                 </div>
-                <ul className="space-y-2.5 mb-6">
+                <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <span>300 GPT-4 + 150 Claude generations/month</span>
@@ -460,8 +460,8 @@ export default function LandingPage() {
             </Card>
 
             {/* Agency Plan */}
-            <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift relative">
-              <CardContent className="p-6">
+            <Card className="rounded-2xl shadow-card hover:shadow-card-hover hover-lift relative h-full flex flex-col">
+              <CardContent className="p-6 flex-1 flex flex-col">
                 <div className="flex flex-col items-center text-center mb-4">
                   <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mb-3">
                     <Users className="h-8 w-8 text-blue-600 dark:text-blue-400" />
@@ -470,7 +470,7 @@ export default function LandingPage() {
                   <div className="text-3xl font-bold mb-1">$69<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
                   <div className="text-sm text-gray-500 dark:text-gray-500">or $50/mo annually - Save 28%</div>
                 </div>
-                <ul className="space-y-2.5 mb-6">
+                <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
                     <span>1000 GPT-4 + 500 Claude generations/month</span>
