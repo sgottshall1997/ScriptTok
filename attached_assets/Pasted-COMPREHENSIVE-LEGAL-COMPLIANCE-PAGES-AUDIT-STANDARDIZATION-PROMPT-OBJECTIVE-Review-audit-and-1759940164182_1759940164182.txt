@@ -1,0 +1,142 @@
+COMPREHENSIVE LEGAL & COMPLIANCE PAGES AUDIT & STANDARDIZATION PROMPT
+
+OBJECTIVE:
+Review, audit, and standardize all legal, compliance, and support pages in the Pheme application to ensure they are production-ready, accurate, consistent, and free of duplications.
+
+PAGES TO AUDIT:
+
+/compliance - CompliancePage.tsx
+/faq - faq.tsx
+/contact - contact.tsx
+/about - about.tsx
+/terms-billing - TermsBilling.tsx
+/privacy-cookies - PrivacyCookies.tsx
+/cookie-preferences - CookiePreferences.tsx
+/legal-notices - LegalNotices.tsx
+/trust-safety - TrustSafety.tsx
+REVIEW CRITERIA:
+
+1. BRAND CONSISTENCY:
+
+Ensure ALL pages reference "Pheme" (not ScriptTok, GlowBot, or any other legacy names)
+Verify product descriptions accurately reflect Pheme's dual-studio model:
+Viral Content Studio (trend-based content)
+Affiliate Content Studio (product-focused content with affiliate links)
+Confirm AI technology references are correct (Claude AI by Anthropic, with Perplexity trend data)
+Verify all feature descriptions match current functionality
+2. CONTENT ACCURACY:
+
+Review each page for outdated information or legacy product references
+Ensure pricing tiers match current structure (check against actual tier definitions in codebase)
+Verify all technical descriptions align with actual implementation
+Confirm email addresses are correct (shallsdigital@gmail.com)
+Check that all external links are valid and relevant
+3. DUPLICATION ELIMINATION:
+
+Identify and remove duplicate content across pages
+Ensure each page has a unique, focused purpose
+Consolidate redundant information into the most appropriate page
+Create cross-references instead of duplicating content
+4. LEGAL COMPLIANCE:
+
+Verify GDPR compliance statements are accurate
+Confirm CCPA/California privacy rights are properly documented
+Ensure DMCA procedures are clearly outlined
+Check that age restrictions (under 13 prohibited, 13-17 parental consent) are consistently stated
+Verify security disclosure procedures are complete
+5. UI/UX STANDARDIZATION:
+
+Ensure consistent component usage across all pages (Card, Button, Badge, etc.)
+Verify responsive design patterns are implemented consistently
+Check that navigation/breadcrumbs back to relevant pages work correctly
+Ensure consistent color schemes and visual hierarchy
+Verify all pages use the same layout wrapper (MarketingLayout or standard Layout)
+6. FOOTER & NAVIGATION INTEGRATION:
+
+Review Footer.tsx to ensure all legal pages are properly linked
+Verify navigation paths in App.tsx match actual page routes
+Check that glowbot-sections.ts has accurate descriptions for these pages
+Ensure consistent categorization in navigation menus
+7. SPECIFIC PAGE REQUIREMENTS:
+
+CompliancePage.tsx:
+
+Focus on AI content disclosure, social media compliance, content guidelines
+Remove any TikTok-specific references that don't apply broadly
+Ensure viral score disclaimers are prominent
+FAQ.tsx:
+
+Update Q&A to reflect current Pheme features
+Remove outdated questions about legacy features
+Add questions about new dual-studio model if missing
+About.tsx:
+
+Ensure comprehensive overview of Pheme's purpose and features
+Verify template listings match actual templateMetadata.ts
+Confirm niche descriptions are accurate
+Contact.tsx:
+
+Verify contact form functionality
+Ensure email addresses are current
+Check social media links are valid
+TermsBilling.tsx:
+
+Verify billing terms match actual pricing structure
+Ensure AI content disclaimers are prominent
+Check dispute resolution procedures are complete
+PrivacyCookies.tsx:
+
+Verify data collection practices match actual implementation
+Ensure third-party integrations (Claude AI, Perplexity) are disclosed
+Check GDPR/CCPA rights are accurately described
+CookiePreferences.tsx:
+
+Ensure cookie categories are accurate
+Verify localStorage implementation works correctly
+Check that preferences are actually applied
+LegalNotices.tsx:
+
+Verify DMCA procedures are complete
+Ensure security disclosure process is clear
+Check contact information is correct
+TrustSafety.tsx:
+
+Verify accessibility statement is comprehensive
+Ensure AI transparency disclosures are clear
+Check age restrictions and parental consent requirements
+8. CROSS-PAGE CONSISTENCY:
+
+Ensure all pages use consistent:
+Date formats for "Last updated"
+Language/tone (professional, friendly, clear)
+Legal disclaimers about AI content
+Contact information
+Privacy/security terminology
+9. PRODUCTION READINESS:
+
+Remove any TODO comments or placeholder text
+Ensure all links work and point to correct destinations
+Verify all images/assets load correctly
+Check that error states are handled gracefully
+Ensure mobile responsiveness is perfect
+10. DOCUMENTATION:
+
+After making changes, provide a summary of:
+What duplications were removed and where content was consolidated
+What outdated information was updated
+What standardizations were applied
+Any recommendations for future maintenance
+DELIVERABLES:
+
+Updated versions of all 9 pages listed above
+Updated Footer.tsx if navigation changes are needed
+Updated glowbot-sections.ts if descriptions need correction
+A summary report of all changes made
+IMPORTANT NOTES:
+
+Do NOT change core functionality or business logic
+Do NOT modify API endpoints or backend services
+Focus on content accuracy, consistency, and presentation
+Preserve all existing legal protections and compliance measures
+When in doubt about legal language, keep existing wording but flag for human review
+Please thoroughly review each page, eliminate duplications, ensure brand consistency, verify accuracy, and make all pages production-ready with a cohesive, professional presentation.

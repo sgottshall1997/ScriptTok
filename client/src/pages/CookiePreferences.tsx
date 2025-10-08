@@ -6,6 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
 import { ArrowLeft, Cookie, Shield, BarChart3, Settings, CheckCircle } from 'lucide-react';
 
+declare global {
+  interface Window {
+    gtag?: (command: string, action: string, params: Record<string, string>) => void;
+  }
+}
+
+declare const gtag: typeof window.gtag;
+
 interface CookiePreferences {
   essential: boolean;
   functional: boolean;

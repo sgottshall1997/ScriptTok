@@ -43,8 +43,8 @@ const AboutPage: React.FC = () => {
   const keyFeatures = [
     {
       icon: Video,
-      title: 'TikTok-Optimized Content',
-      description: 'Generate viral-ready scripts and captions specifically designed for TikTok\'s algorithm and audience'
+      title: 'Short-Form Video Content',
+      description: 'Generate viral-ready scripts and captions optimized for TikTok, Instagram Reels, and YouTube Shorts'
     },
     {
       icon: BarChart3,
@@ -124,7 +124,7 @@ const AboutPage: React.FC = () => {
           </div>
           <div className="text-left">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">Pheme</h1>
-            <p className="text-lg text-gray-600">TikTok Viral Content Generator</p>
+            <p className="text-lg text-gray-600">Viral Short-Form Content Generator</p>
           </div>
         </div>
         <p className="text-gray-700 max-w-3xl mx-auto text-lg leading-relaxed">
@@ -731,7 +731,7 @@ const AboutPage: React.FC = () => {
               </div>
               <h3 className="font-semibold text-gray-900 mb-2">Generate Content</h3>
               <p className="text-sm text-gray-600 mb-4">
-                Create your first viral TikTok script with our AI-powered generator
+                Create your first viral short-form script with our AI-powered generator
               </p>
               <Link href="/generate-content">
                 <Button size="sm" variant="outline">

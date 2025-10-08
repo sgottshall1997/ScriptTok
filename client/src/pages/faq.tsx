@@ -135,7 +135,7 @@ const FAQPage: React.FC = () => {
         </Accordion>
       </div>
 
-      {/* TikTok Content FAQs */}
+      {/* Content Generation FAQs */}
       <div className="mb-12">
         <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6 text-gray-800">Pheme Content Generation</h2>
 

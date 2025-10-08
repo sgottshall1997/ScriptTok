@@ -61,7 +61,7 @@ const PrivacyCookiesPage: React.FC = () => {
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Account Information:</strong> Email address, username, password</li>
                 <li><strong>Profile Information:</strong> Display name, preferences, settings</li>
-                <li><strong>Content Data:</strong> TikTok content you generate, ratings, and feedback</li>
+                <li><strong>Content Data:</strong> Short-form content you generate (TikTok, Instagram Reels, YouTube Shorts), ratings, and feedback</li>
                 <li><strong>Communication:</strong> Messages you send through our contact forms</li>
                 <li><strong>Payment Information:</strong> Billing details for subscription services</li>
               </ul>
@@ -98,7 +98,7 @@ const PrivacyCookiesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Service Provision</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>Generate TikTok content using Claude AI technology</li>
+                <li>Generate multi-platform short-form content using Claude AI by Anthropic</li>
                 <li>Provide viral score analysis and optimization recommendations</li>
                 <li>Maintain your content history and performance tracking</li>
                 <li>Process payments and manage subscriptions</li>

@@ -78,7 +78,7 @@ const CompliancePage: React.FC = () => {
                 <div>
                   <h4 className="font-semibold text-blue-800 mb-2">Important AI Content Notice</h4>
                   <p className="text-sm text-blue-700 mb-2">
-                    Pheme uses advanced AI technology (Claude AI) to generate content suggestions. All content is AI-generated and should be reviewed before posting.
+                    Pheme uses advanced AI technology (Claude AI by Anthropic) to generate content suggestions across two studios: Viral Content Studio for trend-based content and Affiliate Content Studio for product-focused content. All content is AI-generated and should be reviewed before posting.
                   </p>
                   <p className="text-sm text-blue-700 font-medium">
                     ⚠️ AI-generated content outputs are probabilistic and not guaranteed to go viral or achieve specific engagement rates.
@@ -89,7 +89,7 @@ const CompliancePage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* TikTok Content Guidelines */}
+        {/* Content Guidelines & AI Transparency */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -244,7 +244,7 @@ const CompliancePage: React.FC = () => {
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-3">
-                <h4 className="font-semibold">Pheme Guidelines:</h4>
+                <h4 className="font-semibold">Platform Guidelines:</h4>
                 <div className="space-y-2">
                   <a
                     href="https://www.tiktok.com/community-guidelines"
@@ -253,25 +253,25 @@ const CompliancePage: React.FC = () => {
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    Pheme Community Guidelines
+                    TikTok Community Guidelines
                   </a>
                   <a
-                    href="https://www.tiktok.com/creators/creator-portal/en-us/"
+                    href="https://help.instagram.com/477434105621119"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    Pheme Creator Portal
+                    Instagram Community Guidelines
                   </a>
                   <a
-                    href="https://support.tiktok.com/en/safety-hc/report-a-problem"
+                    href="https://www.youtube.com/howyoutubeworks/policies/community-guidelines/"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center text-blue-600 hover:text-blue-800 text-sm"
                   >
                     <ExternalLink className="h-3 w-3 mr-2" />
-                    Pheme Safety Guidelines
+                    YouTube Community Guidelines
                   </a>
                 </div>
               </div>

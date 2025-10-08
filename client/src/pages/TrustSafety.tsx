@@ -165,7 +165,7 @@ const TrustSafetyPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">How Our AI Works</h3>
               <p className="text-gray-700 mb-3">
-                Pheme uses advanced AI technology to help create TikTok content:
+                Pheme uses advanced AI technology to help create multi-platform short-form content for TikTok, Instagram Reels, and YouTube Shorts:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li><strong>Claude AI by Anthropic:</strong> Powers our content generation capabilities</li>
@@ -290,10 +290,10 @@ const TrustSafetyPage: React.FC = () => {
           </CardHeader>
           <CardContent className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold mb-3">TikTok Content Safety</h3>
+              <h3 className="text-lg font-semibold mb-3">Social Media Content Safety</h3>
               <p className="text-gray-700 mb-4">
-                Pheme helps you create content that aligns with TikTok's Community Guidelines and promotes 
-                a positive, safe environment for all users.
+                Pheme helps you create content that aligns with major platform Community Guidelines (TikTok, Instagram, YouTube) 
+                and promotes a positive, safe environment for all users.
               </p>
             </div>
 
