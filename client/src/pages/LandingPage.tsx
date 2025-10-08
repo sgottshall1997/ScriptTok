@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import {
   Zap,
   Video,
@@ -104,6 +106,7 @@ function CTABar({ section, ctaText = "Get Started Free" }: { section: string; ct
 }
 
 export default function LandingPage() {
+  const [isAnnual, setIsAnnual] = useState(false);
   const { isAuthenticated, login } = useAuth();
   const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
   const [_, navigate] = useLocation();
@@ -268,9 +271,30 @@ export default function LandingPage() {
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">
               Choose Your Plan
             </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400">
+            <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
               Start for Free - Get 10 Generations on Us
             </p>
+            
+            {/* Monthly/Annual Toggle */}
+            <div className="flex items-center justify-center gap-4 mb-6">
+              <span className={`text-base font-medium ${!isAnnual ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                Monthly
+              </span>
+              <Switch
+                checked={isAnnual}
+                onCheckedChange={setIsAnnual}
+                className="data-[state=checked]:bg-green-500"
+                data-testid="toggle-billing-period-landing"
+              />
+              <span className={`text-base font-medium ${isAnnual ? 'text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}>
+                Annual
+              </span>
+              {isAnnual && (
+                <Badge className="bg-green-500 text-white ml-2" data-testid="badge-annual-savings-landing">
+                  Save up to 33%
+                </Badge>
+              )}
+            </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             {/* Starter Plan */}
@@ -281,8 +305,9 @@ export default function LandingPage() {
                     <Zap className="h-8 w-8 text-green-600 dark:text-green-400" />
                   </div>
                   <h3 className="text-xl font-bold mb-1">Starter</h3>
-                  <div className="text-3xl font-bold mb-1">$7<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
-                  <div className="text-sm text-gray-500 dark:text-gray-500">or $5/mo annually - Save 29%</div>
+                  <div className="text-3xl font-bold mb-1">${isAnnual ? '5' : '7'}<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
+                  {isAnnual && <div className="text-sm text-green-600 font-medium">Save 29%</div>}
+                  {!isAnnual && <div className="text-sm text-gray-500 dark:text-gray-500">or $5/mo annually</div>}
                 </div>
                 <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
@@ -342,8 +367,9 @@ export default function LandingPage() {
                     <Star className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                   </div>
                   <h3 className="text-xl font-bold mb-1">Creator</h3>
-                  <div className="text-3xl font-bold mb-1">$15<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
-                  <div className="text-sm text-gray-500 dark:text-gray-500">or $10/mo annually - Save 33%</div>
+                  <div className="text-3xl font-bold mb-1">${isAnnual ? '10' : '15'}<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
+                  {isAnnual && <div className="text-sm text-green-600 font-medium">Save 33%</div>}
+                  {!isAnnual && <div className="text-sm text-gray-500 dark:text-gray-500">or $10/mo annually</div>}
                 </div>
                 <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
@@ -395,8 +421,9 @@ export default function LandingPage() {
                     <Rocket className="h-8 w-8 text-green-600 dark:text-green-400" />
                   </div>
                   <h3 className="text-xl font-bold mb-1">Pro</h3>
-                  <div className="text-3xl font-bold mb-1">$35<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
-                  <div className="text-sm text-gray-500 dark:text-gray-500">or $25/mo annually - Save 29%</div>
+                  <div className="text-3xl font-bold mb-1">${isAnnual ? '25' : '35'}<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
+                  {isAnnual && <div className="text-sm text-green-600 font-medium">Save 29%</div>}
+                  {!isAnnual && <div className="text-sm text-gray-500 dark:text-gray-500">or $25/mo annually</div>}
                 </div>
                 <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
