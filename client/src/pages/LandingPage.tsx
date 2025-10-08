@@ -123,7 +123,7 @@ export default function LandingPage() {
         <div className="absolute inset-0 glow-purple opacity-30 pointer-events-none"></div>
         <div className="container mx-auto max-w-6xl text-center relative z-10">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-2">
-            Pheme - Make Your Voice Heard
+            Pheme: Make Your Voice Heard
           </h1>
           <RotatingValueProps />
           <p className="text-lg md:text-xl text-gray-200 mb-3 max-w-3xl mx-auto">
