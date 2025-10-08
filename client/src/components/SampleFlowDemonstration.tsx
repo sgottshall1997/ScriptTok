@@ -78,7 +78,7 @@ export default function SampleFlowDemonstration() {
       {/* Section Header */}
       <div className="text-center mb-4">
         <h3 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
-          From Trending Topic to Viral Content in 60 Seconds
+          Pheme Sample Workflow
         </h3>
         <p className="text-gray-600 dark:text-gray-400 mb-3">
           Watch how AI transforms trends into high-performing scripts with built-in virality analysis

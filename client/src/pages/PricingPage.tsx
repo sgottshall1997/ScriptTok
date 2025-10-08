@@ -268,7 +268,7 @@ export default function PricingPage() {
                         </>
                       ) : (
                         <div className="text-lg font-semibold text-gray-900 dark:text-white">
-                          Custom Pricing
+                          Contact our team to design a tailored setup that fits your workflow.
                         </div>
                       )}
                     </div>
@@ -276,11 +276,6 @@ export default function PricingPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">
                       {tier.philosophy}
                     </p>
-                    {tier.id === 'agency' && (
-                      <p className="text-xs text-gray-500 dark:text-gray-500">
-                        Contact our team to design a tailored setup that fits your workflow.
-                      </p>
-                    )}
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
