@@ -129,33 +129,33 @@ export default function PricingPage() {
     },
     {
       id: "agency",
-      name: "Agency/Team",
+      name: "Agency",
       icon: Users,
       emoji: "🏢",
-      philosophy: "Agencies managing multiple brands",
-      priceMonthly: 69,
-      priceAnnual: 50,
-      savings: 28,
+      philosophy: "Teams and creators managing multiple brands",
+      priceMonthly: null,
+      priceAnnual: null,
+      savings: null,
       generationLimits: {
-        gpt4: "1000/month (shared)",
-        claude: "500/month (shared)",
-        trends: "Unlimited",
-        viralScore: "Enterprise (with competitive analysis)"
+        gpt4: "Custom volume based on your team's needs",
+        claude: "",
+        trends: "",
+        viralScore: ""
       },
       features: [
         { text: "Everything in Pro", included: true },
-        { text: "5 Team Seats", included: true },
-        { text: "Brand Templates", included: true },
-        { text: "API Access", included: true, detail: "full REST" },
-        { text: "Bulk Scheduling", included: true, detail: "50+ items" },
-        { text: "Analytics Dashboard", included: true },
-        { text: "Dedicated Account Manager", included: true },
-        { text: "Custom integrations", included: true },
-        { text: "White-label reports", included: true }
+        { text: "Multiple team seats", included: true, detail: "shared workspace access" },
+        { text: "Bulk content generation & export", included: true },
+        { text: "Custom prompt templates", included: true, detail: "niche onboarding" },
+        { text: "Early access to experimental AI features", included: true },
+        { text: "White-label or co-branded content", included: true },
+        { text: "Personalized support and setup", included: true },
+        { text: "Flexible billing & partnership agreements", included: true }
       ],
       cta: "Contact Sales",
       ctaVariant: "outline" as const,
-      popular: false
+      popular: false,
+      customPricing: true
     }
   ];
 
@@ -252,33 +252,52 @@ export default function PricingPage() {
                     </div>
                     
                     <div className="mb-3">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                          ${isAnnual ? tier.priceAnnual : tier.priceMonthly}
-                        </span>
-                        <span className="text-base text-gray-600 dark:text-gray-400">/month</span>
-                      </div>
-                      {isAnnual && (
-                        <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                          Save {tier.savings}% annually
-                        </p>
+                      {tier.priceMonthly !== null ? (
+                        <>
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-4xl font-bold text-gray-900 dark:text-white">
+                              ${isAnnual ? tier.priceAnnual : tier.priceMonthly}
+                            </span>
+                            <span className="text-base text-gray-600 dark:text-gray-400">/month</span>
+                          </div>
+                          {isAnnual && tier.savings && (
+                            <p className="text-sm text-green-600 dark:text-green-400 mt-1">
+                              Save {tier.savings}% annually
+                            </p>
+                          )}
+                        </>
+                      ) : (
+                        <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Custom Pricing
+                        </div>
                       )}
                     </div>
                     
-                    <p className="text-sm text-gray-600 dark:text-gray-400 italic">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">
                       {tier.philosophy}
                     </p>
+                    {tier.id === 'agency' && (
+                      <p className="text-xs text-gray-500 dark:text-gray-500">
+                        Contact our team to design a tailored setup that fits your workflow.
+                      </p>
+                    )}
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
                     {/* Generation Limits */}
                     <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 space-y-2">
                       <p className="font-semibold text-sm text-gray-900 dark:text-white">Generation Limits:</p>
-                      <ul className="text-xs space-y-1 text-gray-700 dark:text-gray-300">
-                        <li>• GPT-4: {tier.generationLimits.gpt4}</li>
-                        <li>• Claude: {tier.generationLimits.claude}</li>
-                        <li>• Trends: {tier.generationLimits.trends}</li>
-                      </ul>
+                      {tier.generationLimits.claude ? (
+                        <ul className="text-xs space-y-1 text-gray-700 dark:text-gray-300">
+                          <li>• GPT-4: {tier.generationLimits.gpt4}</li>
+                          <li>• Claude: {tier.generationLimits.claude}</li>
+                          <li>• Trends: {tier.generationLimits.trends}</li>
+                        </ul>
+                      ) : (
+                        <p className="text-xs text-gray-700 dark:text-gray-300">
+                          {tier.generationLimits.gpt4}
+                        </p>
+                      )}
                     </div>
                     
                     {/* Features */}
