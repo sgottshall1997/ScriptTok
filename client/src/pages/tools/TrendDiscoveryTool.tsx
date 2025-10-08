@@ -32,7 +32,7 @@ export default function TrendDiscoveryTool() {
     {
       icon: TrendingUp,
       title: 'Comprehensive Trend Research',
-      description: 'AI scans trending content and delivers a complete research package: viral hooks, trending angles, target audiences, popularity scores, peak times, and related trends—all in one place',
+      description: 'AI scans trending content and delivers a complete research package: viral hooks, trending angles, target audiences, popularity scores, peak times, and related trends - all in one place',
     },
     {
       icon: Package,
@@ -55,12 +55,12 @@ export default function TrendDiscoveryTool() {
     {
       icon: Database,
       title: 'Complete Trend Research Package',
-      description: 'Get viral hooks, target audiences, trending angles, popularity scores, peak posting times, and related trends—everything you need in one comprehensive report',
+      description: 'Get viral hooks, target audiences, trending angles, popularity scores, peak posting times, and related trends - everything you need in one comprehensive report',
     },
     {
       icon: Target,
       title: 'Target Audience Intelligence',
-      description: 'Discover exactly who engages with each trend—demographics, interests, engagement patterns—so you can tailor content perfectly',
+      description: 'Discover exactly who engages with each trend - demographics, interests, engagement patterns - so you can tailor content perfectly',
     },
     {
       icon: Clock,
@@ -118,15 +118,15 @@ export default function TrendDiscoveryTool() {
   const useCases = [
     {
       title: 'Beauty Creator Success',
-      description: 'Beauty Creator gets complete trend package for "Glass Skin" including hooks, audience data, product matches, competitor videos, and optimal posting times—hits 2M views',
+      description: 'Beauty Creator gets complete trend package for "Glass Skin" including hooks, audience data, product matches, competitor videos, and optimal posting times - hits 2M views',
     },
     {
       title: 'Tech Reviewer Win',
-      description: 'Tech Reviewer discovers viral gadget trend with full research report, matched products with affiliate links, and competitor analysis—drives 10K sales',
+      description: 'Tech Reviewer discovers viral gadget trend with full research report, matched products with affiliate links, and competitor analysis - drives 10K sales',
     },
     {
       title: 'Fitness Coach Growth',
-      description: 'Fitness Coach uses comprehensive trend data including target audience insights and trending angles to create perfectly timed content—builds massive following',
+      description: 'Fitness Coach uses comprehensive trend data including target audience insights and trending angles to create perfectly timed content - builds massive following',
     },
   ];
 
@@ -149,7 +149,7 @@ export default function TrendDiscoveryTool() {
     },
     {
       question: 'Can I see visual examples of trends?',
-      answer: 'Yes! Every trend package includes visual data—competitor video thumbnails, product images, and trend visualizations—so you have complete context before creating content.',
+      answer: 'Yes! Every trend package includes visual data - competitor video thumbnails, product images, and trend visualizations - so you have complete context before creating content.',
     },
     {
       question: 'How comprehensive is the audience data?',
@@ -164,12 +164,12 @@ export default function TrendDiscoveryTool() {
         <title>Comprehensive Trend Research - Full Trend Intelligence Package | Pheme</title>
         <meta
           name="description"
-          content="Get complete trend research packages with viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal posting times—all delivered instantly by AI."
+          content="Get complete trend research packages with viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal posting times - all delivered instantly by AI."
         />
         <meta property="og:title" content="Comprehensive Trend Research - Full Trend Intelligence Package | Pheme" />
         <meta
           property="og:description"
-          content="Get complete trend research packages with viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal posting times—all delivered instantly by AI."
+          content="Get complete trend research packages with viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal posting times - all delivered instantly by AI."
         />
         <meta property="og:type" content="website" />
       </Helmet>
@@ -177,7 +177,7 @@ export default function TrendDiscoveryTool() {
       <ToolHero
         eyebrowText="COMPREHENSIVE TREND INTELLIGENCE"
         headline="Complete Trend Research Packages, Delivered Instantly"
-        subheadline="Get viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal timing—everything you need to create viral content in one comprehensive AI-powered report"
+        subheadline="Get viral hooks, target audiences, trending angles, product matches, competitor videos, and optimal timing - everything you need to create viral content in one comprehensive AI-powered report"
         primaryCTA={{ text: 'Get Full Trend Intelligence', onClick: handlePrimaryCTA }}
         secondaryCTA={{ text: 'See Example Package', onClick: handleSecondaryCTA }}
       />
@@ -356,7 +356,7 @@ export default function TrendDiscoveryTool() {
 
       <ToolCTA
         headline="Get Complete Trend Intelligence Packages Today"
-        description="Viral hooks, audiences, products, competitor videos, and timing—all in one comprehensive AI report"
+        description="Viral hooks, audiences, products, competitor videos, and timing - all in one comprehensive AI report"
         primaryCTA={{ text: 'Start Getting Full Trend Reports', onClick: handleFinalCTA }}
         gradient={true}
       />

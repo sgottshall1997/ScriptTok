@@ -39,7 +39,7 @@ export default function TrendDiscoveryFeature() {
     {
       icon: Database,
       title: "Complete Trend Research Packages",
-      description: "Every trend delivers a comprehensive intelligence report: viral hooks, target audiences, trending angles, popularity scores, peak times, related trends, and more—all in one place.",
+      description: "Every trend delivers a comprehensive intelligence report: viral hooks, target audiences, trending angles, popularity scores, peak times, related trends, and more - all in one place.",
     },
     {
       icon: Target,
@@ -64,7 +64,7 @@ export default function TrendDiscoveryFeature() {
     {
       icon: Image,
       title: "Visual Trend Intelligence",
-      description: "Every trend package includes visual data—competitor video previews, product images, and trend visualizations for complete context.",
+      description: "Every trend package includes visual data - competitor video previews, product images, and trend visualizations for complete context.",
     },
   ];
 
@@ -77,7 +77,7 @@ export default function TrendDiscoveryFeature() {
     {
       icon: Target,
       title: "Comprehensive Trend Intelligence",
-      description: "Complete intelligence packages include hooks, target audiences, trending angles, and optimal posting times—all organized in one report for easy reference.",
+      description: "Complete intelligence packages include hooks, target audiences, trending angles, and optimal posting times - all organized in one report for easy reference.",
     },
     {
       icon: Package,
@@ -92,7 +92,7 @@ export default function TrendDiscoveryFeature() {
     {
       icon: Database,
       title: "Complete Trend Packages",
-      description: "Scripts generated from full trend packages include hooks, audience insights, matched products, and competitor analysis—everything in one place.",
+      description: "Scripts generated from full trend packages include hooks, audience insights, matched products, and competitor analysis - everything in one place.",
     },
   ];
 
@@ -148,7 +148,7 @@ export default function TrendDiscoveryFeature() {
   const integrations = [
     {
       title: "One-Click Script Generation",
-      description: "Generate complete scripts with all trend data, product info, and competitor insights automatically baked in—no manual research needed.",
+      description: "Generate complete scripts with all trend data, product info, and competitor insights automatically baked in - no manual research needed.",
       icon: Zap,
     },
     {
@@ -158,7 +158,7 @@ export default function TrendDiscoveryFeature() {
     },
     {
       title: "Competitor-Informed Scripts",
-      description: "Scripts incorporate insights from top-performing competitor videos—hooks, storytelling techniques, and CTAs that convert.",
+      description: "Scripts incorporate insights from top-performing competitor videos - hooks, storytelling techniques, and CTAs that convert.",
       icon: Video,
     },
   ];
@@ -170,7 +170,7 @@ export default function TrendDiscoveryFeature() {
     },
     {
       question: "How does the AI find and match products to trends?",
-      answer: "Our AI analyzes each trending topic and identifies products that align with both the trend AND your selected niche. For example, if there's a 'Morning Routine' trend in the Beauty niche, it will find skincare and beauty products related to morning routines. You get product photos, pricing, descriptions, purchase links, and suggested talking points—all ready to use in your content.",
+      answer: "Our AI analyzes each trending topic and identifies products that align with both the trend AND your selected niche. For example, if there's a 'Morning Routine' trend in the Beauty niche, it will find skincare and beauty products related to morning routines. You get product photos, pricing, descriptions, purchase links, and suggested talking points - all ready to use in your content.",
     },
     {
       question: "What competitor intelligence do I get with each trend?",
@@ -190,7 +190,7 @@ export default function TrendDiscoveryFeature() {
     },
     {
       question: "How does this all flow into script generation?",
-      answer: "When you click 'Generate Script' on any trend, all the research data (viral hooks, target audience, trending angles, matched products, competitor insights, posting times) automatically feeds into our AI. The script is crafted using this comprehensive intelligence—hooks that capture attention, angles that resonate with the audience, products presented with benefits your viewers care about, and CTAs modeled after top performers. It's data-backed content creation.",
+      answer: "When you click 'Generate Script' on any trend, all the research data (viral hooks, target audience, trending angles, matched products, competitor insights, posting times) automatically feeds into our AI. The script is crafted using this comprehensive intelligence-hooks that capture attention, angles that resonate with the audience, products presented with benefits your viewers care about, and CTAs modeled after top performers. It's data-backed content creation.",
     },
   ];
 
@@ -219,7 +219,7 @@ export default function TrendDiscoveryFeature() {
       <div className="min-h-screen">
         <FeatureHero
           title="Complete Trend Intelligence Packages"
-          subtitle="From viral hooks to matched products to competitor videos—get everything you need to create viral content in one comprehensive AI-powered research report"
+          subtitle="From viral hooks to matched products to competitor videos - get everything you need to create viral content in one comprehensive AI-powered research report"
           primaryCTA={{
             text: "Get Full Trend Packages",
             onClick: () => {
@@ -243,7 +243,7 @@ export default function TrendDiscoveryFeature() {
               Comprehensive Trend Research Features
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Every trend delivers a complete intelligence package—no manual research required.
+              Every trend delivers a complete intelligence package - no manual research required.
             </p>
           </div>
           <FeatureGrid features={features} />
@@ -302,7 +302,7 @@ export default function TrendDiscoveryFeature() {
               Complete Trend Package Example
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              See exactly what you get with each trend—a comprehensive intelligence report delivered instantly
+              See exactly what you get with each trend - a comprehensive intelligence report delivered instantly
             </p>
           </div>
 
@@ -409,7 +409,7 @@ export default function TrendDiscoveryFeature() {
               Seamless Integration With Script Generation
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              All trend intelligence flows directly into AI script generation—creating data-backed viral content
+              All trend intelligence flows directly into AI script generation-creating data-backed viral content
             </p>
           </div>
 
@@ -478,7 +478,7 @@ export default function TrendDiscoveryFeature() {
             Start Getting Complete Trend Intelligence
           </h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8">
-            Viral hooks, target audiences, products, competitor videos, and optimal timing—all in one comprehensive AI report
+            Viral hooks, target audiences, products, competitor videos, and optimal timing-all in one comprehensive AI report
           </p>
           <Button
             onClick={() => {

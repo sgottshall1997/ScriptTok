@@ -298,7 +298,7 @@ export async function generateSurpriseMe(
     ),
     gptPrompt(
       openai,
-      `Generate a fun and unexpected piece of skincare content about "${product}" in a ${toneDescription} tone. It could be a weird tip, a story, or a bold claim — surprise the viewer in a positive way. Keep it between 80-120 words total to fit within a 30-60 second video.`
+      `Generate a fun and unexpected piece of skincare content about "${product}" in a ${toneDescription} tone. It could be a weird tip, a story, or a bold claim - surprise the viewer in a positive way. Keep it between 80-120 words total to fit within a 30-60 second video.`
     ),
     gptPrompt(
       openai,

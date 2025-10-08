@@ -52,7 +52,7 @@ export default function ViralScoreFeature() {
     {
       icon: CheckCircle,
       title: "Clarity Score",
-      description: "Measures how easy your message is to understand—critical for retention and shares.",
+      description: "Measures how easy your message is to understand - critical for retention and shares.",
     },
     {
       icon: Clock,
@@ -109,7 +109,7 @@ export default function ViralScoreFeature() {
     },
     {
       question: "Can I see a breakdown of my score?",
-      answer: "Yes! Click into any score to see a detailed breakdown across Hook Quality, Story Flow, CTA Effectiveness, Timing & Pacing, and Platform Optimization—each with specific improvement tips.",
+      answer: "Yes! Click into any score to see a detailed breakdown across Hook Quality, Story Flow, CTA Effectiveness, Timing & Pacing, and Platform Optimization - each with specific improvement tips.",
     },
     {
       question: "Is Viral Score available for both studios?",

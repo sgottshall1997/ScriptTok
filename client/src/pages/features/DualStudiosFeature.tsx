@@ -125,7 +125,7 @@ export default function DualStudiosFeature() {
       <div className="min-h-screen">
         <FeatureHero
           title="Switch Between Viral & Affiliate Studios Instantly"
-          subtitle="Two powerful content modes in one platform. Create viral content for engagement or affiliate content for revenue—switch seamlessly as your goals evolve."
+          subtitle="Two powerful content modes in one platform. Create viral content for engagement or affiliate content for revenue - switch seamlessly as your goals evolve."
           primaryCTA={{
             text: "Try Both Studios Free",
             onClick: () => {
@@ -237,7 +237,7 @@ export default function DualStudiosFeature() {
               <Card className="rounded-2xl p-8 shadow-card hover:shadow-card-hover hover-lift transition-all-smooth">
                 <h3 className="text-2xl font-bold mb-4" data-testid="hybrid-creators-tab-title">Best of Both Worlds</h3>
                 <p className="text-muted-foreground mb-6" data-testid="hybrid-creators-tab-description">
-                  Master creators use both studios strategically—viral content for growth,
+                  Master creators use both studios strategically - viral content for growth,
                   affiliate content for revenue. Switch between them based on trends, opportunities,
                   and business goals.
                 </p>

@@ -41,6 +41,13 @@ Preferred communication style: Simple, everyday language.
 - Fixed upgrade button redirects in TemplateSelector (now correctly points to /account instead of /pricing)
 - Completed comprehensive tier-based subscription audit verifying all restrictions work correctly across all tiers
 - Fixed apostrophe syntax errors in marketing content (replaced smart quotes with regular apostrophes)
+- **Typography Enhancement - Em Dash Normalization (Oct 8, 2025)**: Completed comprehensive hyphenation spacing standardization across entire codebase for improved readability:
+  - Replaced all em dashes (—) with properly spaced hyphens ( - ) for clause separation in 17 files (5 server, 12 client)
+  - Fixed 20+ instances where clause-separating hyphens needed spacing (e.g., "revenue-switch" → "revenue - switch", "content-based on" → "content - based on")
+  - Preserved all legitimate compound adjectives with hyphens (platform-specific, AI-powered, attention-grabbing, etc.)
+  - Verified zero remaining em dashes via grep search
+  - Architect-reviewed and approved for production-ready readability with natural clause separation
+  - **Files Modified**: server/ (prompts/index.ts, api/generateContent.ts, services/promptFactory.ts, services/contentGenerator.ts, services/gpt-templates.ts), client/ (GenerateContent.tsx, faq.tsx, how-it-works.tsx, about.tsx, TrendDiscoveryTool.tsx, TemplateLibraryTool.tsx, HistoryTool.tsx, MultiPlatformFeature.tsx, DualStudiosFeature.tsx, ViralScoreFeature.tsx, TrendDiscoveryFeature.tsx, InstantScriptCreationFeature.tsx)
 
 ## System Architecture
 

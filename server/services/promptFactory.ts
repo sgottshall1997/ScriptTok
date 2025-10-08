@@ -144,7 +144,7 @@ Choose a different hook each time you write a new script do not reuse the same o
 
 Examples:
 • "Wearing ${config.productName} wrong? Big mistake."
-• "Most people ignore ${config.productName} — here's why you shouldn't."
+• "Most people ignore ${config.productName} - here's why you shouldn't."
 • "Stop buying ${config.productName} before you know this."
 • "Overpaying for low-quality jewelry? Here's what makes ${config.productName} worth it."
 • "Think all ${config.productName} are the same? You're wasting your money."
@@ -356,7 +356,7 @@ Choose a different hook each time you write a new script do not reuse the same o
 
 Examples:
 • "Still using alternatives to ${config.productName}? You're missing out."
-• "Most people overlook ${config.productName} — here's why they're wrong."
+• "Most people overlook ${config.productName} - here's why they're wrong."
 • "Stop buying products before you know this about ${config.productName}."
 • "Wasting money on subpar options? Here's why ${config.productName} delivers."
 • "Think ${config.productName} is overhyped? Think again."
@@ -409,7 +409,7 @@ Examples:
 • "Think this could solve your X problem?"
 • "When's the last time you invested in quality X?"
 • "What would you do with the X you'd save?"
-• "Your move — are you ready to make the switch?"
+• "Your move - are you ready to make the switch?"
 • "How much longer will you settle for less?"
 
 Writing Guidelines:
@@ -459,7 +459,7 @@ Your goal is to give viewers clear, actionable reasons to consider buying ${conf
 function generateUniversalComparison(config: PromptConfig): GeneratedPrompt {
   const basePrompt = `Write an objective, informative, and persuasive product comparison between ${config.productName} and its top alternative in the ${config.niche} niche.
 
-Your task is to help readers make an informed decision by clearly presenting strengths, weaknesses, and recommendations — written like advice from a knowledgeable, trusted expert, not a sales pitch.
+Your task is to help readers make an informed decision by clearly presenting strengths, weaknesses, and recommendations - written like advice from a knowledgeable, trusted expert, not a sales pitch.
 
 The comparison must include the following components, in this exact structure, with the quality controls and rules below:
 
@@ -477,7 +477,7 @@ Quick Summary (50–75 words)
 • Highlight the most important difference between them.
 • Give an immediate, actionable recommendation.
 
-Just an example — don't always use this exact phrasing:
+Just an example - don't always use this exact phrasing:
 "Both ${config.productName} and its main competitor offer excellent solutions for ${config.niche}, but they differ in price and ease of use. ${config.productName} shines for beginners thanks to its simplicity, while the alternative suits advanced users seeking more features. If you value convenience over customization, ${config.productName} is the better choice."
 
 Product Story (2–4 sentences each)
@@ -529,7 +529,7 @@ Avoid:
 • Metaphors and idioms
 • Generalizations
 • Common setup phrases such as in conclusion, in closing, etc.
-• Warnings, notes, or disclaimers — just deliver the requested comparison.
+• Warnings, notes, or disclaimers - just deliver the requested comparison.
 • Hashtags, emojis, or asterisks
 • Semicolons
 
@@ -542,7 +542,7 @@ Readers comparing similar ${config.niche} products who value trustworthy, action
 
 Goal
 
-Write a balanced, informative, and actionable comparison that earns trust, motivates readers to make a choice, and helps them feel confident about their decision — while remaining objective, specific, and easy to read.`;
+Write a balanced, informative, and actionable comparison that earns trust, motivates readers to make a choice, and helps them feel confident about their decision - while remaining objective, specific, and easy to read.`;
 
   return {
     systemPrompt: `You are an expert content creator specializing in product comparisons.`,
@@ -559,7 +559,7 @@ Write a balanced, informative, and actionable comparison that earns trust, motiv
 function generateUniversalRoutine(config: PromptConfig): GeneratedPrompt {
   const basePrompt = `You are a ${config.niche} expert creating a comprehensive routine or kit guide featuring ${config.productName} as a key component.
 
-Your task is to write an actionable, easy-to-follow, and persuasive guide that positions ${config.productName} as an essential part of a complete solution — written like advice from a trusted expert, not a sales pitch.
+Your task is to write an actionable, easy-to-follow, and persuasive guide that positions ${config.productName} as an essential part of a complete solution - written like advice from a trusted expert, not a sales pitch.
 
 The guide must include the following components, in this exact structure, with the quality standards and rules below:
 
@@ -638,10 +638,10 @@ Results Timeline
 
 Content Quality Standards
 
-• Tone: ${config.tone} — professional, approachable, and helpful without being pushy
+• Tone: ${config.tone} - professional, approachable, and helpful without being pushy
 • Audience: ${config.niche} enthusiasts looking for a complete, trustworthy solution
 • Keep it scannable with clear sections and line breaks
-• Use specific, actionable language — avoid vague claims or jargon
+• Use specific, actionable language - avoid vague claims or jargon
 • Back up claims with realistic expectations and practical advice
 
 Goal
@@ -653,7 +653,7 @@ Additional Rules
 • Avoid metaphors and clichés
 • Avoid generalizations
 • Do not include common setup language in any sentence, including: in conclusion, in closing, etc.
-• Do not output warnings or notes — just deliver the requested content
+• Do not output warnings or notes - just deliver the requested content
 • Do not use hashtags
 • Do not use semicolons
 • Do not use emojis
@@ -696,7 +696,7 @@ Product Story (2–4 sentences)
 • "I started using ${config.productName} last month when my [problem] became too frustrating to ignore. At first, I doubted it would work, but now it's a non-negotiable part of my daily ${config.niche} routine. It has solved problems I didn't even realize I had."
 
 Value & Benefits (2–3 sentences)
-• Highlight what makes ${config.productName} stand out — beyond your personal story.
+• Highlight what makes ${config.productName} stand out - beyond your personal story.
 • Add one credibility marker (e.g., expert-recommended, thousands sold, viral).
 • Address a common question or hesitation directly.
 • Example:
@@ -727,12 +727,12 @@ Structural Requirements:
 
 Content Quality Controls
 
-• Tone: ${config.tone} — relatable, warm, authentic, and persuasive without being pushy.
+• Tone: ${config.tone} - relatable, warm, authentic, and persuasive without being pushy.
 • Structure: Break into 2–4 short paragraphs with clear line breaks for readability.
 • Do not include any emojis anywhere in the caption.
 • Affiliate disclosure: Always include at the end (e.g., "#ad" or "#affiliate").
 • Avoid: jargon, overhyping, clichés, fake urgency ("limited stock!!!"), or walls of text.
-• Keep it skimmable on mobile — no large blocks of text.
+• Keep it skimmable on mobile - no large blocks of text.
 
 Target Audience
 
@@ -740,7 +740,7 @@ Target Audience
 
 Goal
 
-Write a concise, authentic, and engaging caption that draws readers in, earns their trust, motivates them to engage (like, comment, share), and inspires them to click through — while keeping it free of emojis and easy to read.`;
+Write a concise, authentic, and engaging caption that draws readers in, earns their trust, motivates them to engage (like, comment, share), and inspires them to click through - while keeping it free of emojis and easy to read.`;
 
   return {
     systemPrompt: `You are an expert social media content creator specializing in influencer-style captions.`,
@@ -828,7 +828,7 @@ Your goal is to write a concise, compelling email that builds trust, sparks curi
 function generateUniversalSEOBlog(config: PromptConfig): GeneratedPrompt {
   const basePrompt = `You are an SEO content writer creating a comprehensive, engaging, and keyword-optimized blog post about ${config.productName} for the ${config.niche} niche.
 
-Your task is to write a 1000+ word article that is informative, persuasive, easy to read, and optimized for search engines — while remaining authentic and helpful to readers.
+Your task is to write a 1000+ word article that is informative, persuasive, easy to read, and optimized for search engines - while remaining authentic and helpful to readers.
 
 Follow this exact structure and meet all quality standards and rules below:
 
@@ -842,7 +842,7 @@ Example:
 "How ${config.productName} Can Transform Your ${config.niche} Routine"
 
 Introduction (150–200 words)
-• Hook the reader with a compelling opening — a relatable question, surprising fact, or strong statement
+• Hook the reader with a compelling opening - a relatable question, surprising fact, or strong statement
 • Briefly introduce ${config.productName} and its main benefits
 • Preview what the reader will learn in the article
 
@@ -897,7 +897,7 @@ Conclusion (100–150 words)
 
 SEO & Content Quality Standards
 
-• Use ${config.productName} name naturally and repeatedly — without keyword stuffing
+• Use ${config.productName} name naturally and repeatedly - without keyword stuffing
 • Use related keywords and LSI terms naturally throughout; avoid keyword stuffing
 • Break up text with clear, descriptive subheadings (H2, H3)
 • Keep paragraphs short (maximum 3 sentences each)
@@ -906,19 +906,19 @@ SEO & Content Quality Standards
 
 Tone & Audience
 
-Tone: ${config.tone} — engaging, credible, and approachable
+Tone: ${config.tone} - engaging, credible, and approachable
 Target Audience: People interested in ${config.niche} products who want trustworthy, detailed, and actionable information
 
 Goal
 
-Deliver a 1000+ word blog post that ranks well on search engines, builds reader trust, and motivates them to take the next step — while being clear, informative, and enjoyable to read.
+Deliver a 1000+ word blog post that ranks well on search engines, builds reader trust, and motivates them to take the next step - while being clear, informative, and enjoyable to read.
 
 Additional Rules
 
 • Avoid metaphors and clichés
 • Avoid generalizations
 • Do not include common setup language in any sentence, including: in conclusion, in closing, etc.
-• Do not output warnings or notes — just deliver the requested content
+• Do not output warnings or notes - just deliver the requested content
 • Do not use hashtags
 • Do not use semicolons
 • Do not use emojis
@@ -1052,11 +1052,11 @@ The script must include the following sections, in order:
 
 1. Attention-grabbing hook
 Start with a negative or surprising statement that mentions the product name and stops the viewer from scrolling.
-Choose a different hook each time you write a new script — do not reuse the same one repeatedly.
+Choose a different hook each time you write a new script - do not reuse the same one repeatedly.
 
 Examples:
 • "Still using harsh products instead of ${config.productName}? Big mistake."
-• "Most people skip ${config.productName} — here's why they shouldn't."
+• "Most people skip ${config.productName} - here's why they shouldn't."
 • "Stop buying skincare before you know this about ${config.productName}."
 • "Think ${config.productName} is overhyped? Your skin disagrees."
 • "Is ${config.productName} worth it? Let me show you."
@@ -1072,7 +1072,7 @@ Include details like:
 • Application method (e.g., pat gently, massage in circular motions, layer under moisturizer)
 • Formulation quality (e.g., fragrance-free, non-comedogenic, dermatologist-tested)
 
-Avoid vague statements like "makes skin glow" — be specific about what it does and how.
+Avoid vague statements like "makes skin glow" - be specific about what it does and how.
 
 3. Problem-solving and skin concerns
 Explain what skin concern this product addresses and how it delivers results.
@@ -1096,7 +1096,7 @@ Examples:
 
 5. Motivational call-to-action
 End with a clear, engaging question or challenge addressed directly to the viewer.
-Always pick a different CTA each time — do not reuse the same one repeatedly.
+Always pick a different CTA each time - do not reuse the same one repeatedly.
 
 Examples:
 • "Ready to see what your skin's been missing?"
@@ -1104,7 +1104,7 @@ Examples:
 • "What would clearer skin mean to you?"
 • "Is your current routine giving you results?"
 • "When are you upgrading your skincare game?"
-• "Your move — will you try it?"
+• "Your move - will you try it?"
 
 Writing Guidelines:
 • Use clear, simple, specific language, appropriate for skincare enthusiasts.
@@ -1149,11 +1149,11 @@ The script must include the following sections, in order:
 
 1. Attention-grabbing hook
 Start with a negative or surprising statement that mentions the product name and stops the viewer from scrolling.
-Choose a different hook each time you write a new script — do not reuse the same one repeatedly.
+Choose a different hook each time you write a new script - do not reuse the same one repeatedly.
 
 Examples:
 • "Still using outdated tech instead of ${config.productName}? You're missing out."
-• "Most people overlook ${config.productName} — here's why they shouldn't."
+• "Most people overlook ${config.productName} - here's why they shouldn't."
 • "Stop buying devices before you know this about ${config.productName}."
 • "Think ${config.productName} is like every other gadget? Think again."
 • "Is ${config.productName} worth the money? Let's check."
@@ -1169,7 +1169,7 @@ Include technical and functional details, such as:
 • Battery life and charging (if applicable)
 • Software features or OS integrations (e.g., cross-device syncing, AI-powered tools)
 
-Avoid vague statements like "great features" — be specific.
+Avoid vague statements like "great features" - be specific.
 
 3. Honest assessment of performance and user experience
 Give a clear, concise evaluation of how it performs in real use.
@@ -1202,7 +1202,7 @@ Also include 2–3 specific use cases showing its value:
 
 6. Motivational call-to-action
 End with a clear, engaging question or invitation that works naturally with affiliate links.
-Always pick a different CTA each time — do not reuse the same one repeatedly.
+Always pick a different CTA each time - do not reuse the same one repeatedly.
 
 Examples:
 • "Ready to upgrade your setup?"
@@ -1258,7 +1258,7 @@ Choose a different hook each time you write a new script do not reuse the same o
 
 Examples:
 • "Still traveling without ${config.productName}? You're making it harder than it needs to be."
-• "Most travelers ignore ${config.productName} — here's why that's a mistake."
+• "Most travelers ignore ${config.productName} - here's why that's a mistake."
 • "Stop packing your bag before you know this about ${config.productName}."
 • "Think ${config.productName} is optional? Not if you value comfort."
 • "Is ${config.productName} worth it? Let's find out."
@@ -1357,7 +1357,7 @@ Choose a different hook each time you write a new script do not reuse the same o
 
 Examples:
 • "Still not using ${config.productName} for your pet? You're missing out."
-• "Most pet owners overlook ${config.productName} — here's why that's a mistake."
+• "Most pet owners overlook ${config.productName} - here's why that's a mistake."
 • "Stop buying pet products before you know this about ${config.productName}."
 • "Think ${config.productName} is just another pet product? Think again."
 • "Is ${config.productName} worth it for your furry friend? Let's see."

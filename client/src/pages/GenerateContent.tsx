@@ -1920,7 +1920,7 @@ ${config.hashtags.join(' ')}`;
                   <p><strong>Hashtags:</strong> {viralInspo.hashtags?.join(" ")}</p>
                 </>
               ) : (
-                <p className="text-sm text-orange-600">No recent viral examples found — try refreshing or selecting another product.</p>
+                <p className="text-sm text-orange-600">No recent viral examples found - try refreshing or selecting another product.</p>
               )}
             </CardContent>
           </Card>

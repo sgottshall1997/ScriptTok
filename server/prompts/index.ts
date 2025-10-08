@@ -168,7 +168,7 @@ export async function generatePrompt(params: PromptParams): Promise<string> {
       'TikTok': {
         style: 'Hook-driven, uses slang, emojis, and short punchy sentences. Encourages trends, humor, or urgency.',
         audience: 'Gen Z audience that responds to viral trends, authenticity, and quick entertainment',
-        example: '✨ TikTok made me buy it — again. #acnehack'
+        example: '✨ TikTok made me buy it - again. #acnehack'
       },
       'Instagram': {
         style: 'Aesthetic, lifestyle-driven language focusing on visuals and routines. Clean CTA with light emoji use.',

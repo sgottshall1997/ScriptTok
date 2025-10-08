@@ -45,7 +45,7 @@ export default function MultiPlatformFeature() {
     {
       icon: Maximize,
       title: "Aspect Ratio Optimizer",
-      description: "Perfect formatting for 9:16 vertical, 1:1 square, or 16:9 horizontal—automatically adjusted.",
+      description: "Perfect formatting for 9:16 vertical, 1:1 square, or 16:9 horizontal - automatically adjusted.",
     },
     {
       icon: Type,
@@ -55,7 +55,7 @@ export default function MultiPlatformFeature() {
     {
       icon: Hash,
       title: "Hashtag Strategies",
-      description: "Optimized hashtag count and selection per platform—3-5 for Instagram, more for TikTok.",
+      description: "Optimized hashtag count and selection per platform - 3-5 for Instagram, more for TikTok.",
     },
     {
       icon: MousePointer,
@@ -73,7 +73,7 @@ export default function MultiPlatformFeature() {
     {
       number: 1,
       title: "Create Base Script",
-      description: "Generate your core script with AI—hook, story, and CTA included.",
+      description: "Generate your core script with AI - hook, story, and CTA included.",
     },
     {
       number: 2,
@@ -88,7 +88,7 @@ export default function MultiPlatformFeature() {
     {
       number: 4,
       title: "Export All Versions",
-      description: "Download platform-specific versions ready to post—no manual editing needed.",
+      description: "Download platform-specific versions ready to post - no manual editing needed.",
     },
   ];
 
@@ -194,7 +194,7 @@ export default function MultiPlatformFeature() {
     },
     {
       question: "Do I need separate accounts for each platform?",
-      answer: "You'll need accounts on each platform where you want to post, but our tool streamlines the process by generating platform-ready versions with one click—saving hours of manual adaptation.",
+      answer: "You'll need accounts on each platform where you want to post, but our tool streamlines the process by generating platform-ready versions with one click - saving hours of manual adaptation.",
     },
     {
       question: "Which platforms are supported?",
@@ -238,8 +238,8 @@ export default function MultiPlatformFeature() {
       
       <div className="min-h-screen">
         <FeatureHero
-          title="One Script, Every Platform—Perfectly Optimized"
-          subtitle="Stop manually adapting content for each platform. Our AI automatically optimizes your scripts for TikTok, Instagram, YouTube, and more—maximizing reach with zero extra effort."
+          title="One Script, Every Platform - Perfectly Optimized"
+          subtitle="Stop manually adapting content for each platform. Our AI automatically optimizes your scripts for TikTok, Instagram, YouTube, and more - maximizing reach with zero extra effort."
           primaryCTA={{
             text: "Optimize Your Content",
             onClick: () => {

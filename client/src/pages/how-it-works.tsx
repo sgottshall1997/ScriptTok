@@ -154,7 +154,7 @@ const HowItWorksPage: React.FC = () => {
             <div>
               <h3 className="text-2xl md:text-3xl font-semibold mb-2">Platform Optimized</h3>
               <p className="text-gray-700">
-                All content is intelligently structured for high engagement across platforms — 
+                All content is intelligently structured for high engagement across platforms - 
                 optimized length, trending topics, and proven formats that perform on TikTok, 
                 Instagram Reels, YouTube Shorts, and beyond
               </p>
@@ -197,7 +197,7 @@ const HowItWorksPage: React.FC = () => {
               How does the viral score work?
             </AccordionTrigger>
             <AccordionContent>
-              Our Viral Score algorithm analyzes each piece of content for key performance factors — 
+              Our Viral Score algorithm analyzes each piece of content for key performance factors - 
               engagement hooks, trending patterns, optimal length, and audience appeal. 
               A higher score means stronger viral potential.
             </AccordionContent>

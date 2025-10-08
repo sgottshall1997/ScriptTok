@@ -170,8 +170,8 @@ const FAQPage: React.FC = () => {
             </AccordionTrigger>
             <AccordionContent>
               Pheme optimizes every piece of content for high engagement across TikTok, Reels, Shorts, and more.
-                Our AI studies successful posts to identify proven viral patterns—strong hooks, ideal length,
-                trending topics, and audience appeal—then generates scripts that stay authentic to your voice
+                Our AI studies successful posts to identify proven viral patterns - strong hooks, ideal length,
+                trending topics, and audience appeal - then generates scripts that stay authentic to your voice
                 and niche.
             </AccordionContent>
           </AccordionItem>

@@ -49,7 +49,7 @@ export default function TemplateLibraryTool() {
     {
       icon: Edit3,
       title: 'Step 3: Customize for Your Brand',
-      description: 'Customize templates with AI assistance—auto-populates variables, adjusts tone settings, and optimizes pacing for your selected platform.',
+      description: 'Customize templates with AI assistance - auto-populates variables, adjusts tone settings, and optimizes pacing for your selected platform.',
     },
     {
       icon: Save,
@@ -72,7 +72,7 @@ export default function TemplateLibraryTool() {
     {
       icon: Layers,
       title: 'Content Type Filtering',
-      description: 'Find templates by mode—Viral or Affiliate—or browse all templates at once. Filter to match your content goals and product needs.',
+      description: 'Find templates by mode - Viral or Affiliate - or browse all templates at once. Filter to match your content goals and product needs.',
     },
     {
       icon: Globe,

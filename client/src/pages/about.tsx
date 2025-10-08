@@ -302,7 +302,7 @@ const AboutPage: React.FC = () => {
             <div className="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
               <h4 className="font-semibold text-yellow-800 mb-2">🎯 Why This Matters:</h4>
               <p className="text-sm text-yellow-700">
-                Your content isn't just well-written—it's intelligently informed about what's actually viral right now, 
+                Your content isn't just well-written - it's intelligently informed about what's actually viral right now, 
                 giving you the competitive edge to create content that resonates with audiences.
               </p>
             </div>

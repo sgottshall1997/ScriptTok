@@ -182,7 +182,7 @@ export default function InstantScriptCreationFeature() {
     {
       question: "Can I maintain my brand voice with AI scripts?",
       answer:
-        "Yes. Every script is generated in 5 tone variations (casual, professional, energetic, educational, humorous) so you can choose what matches your brand. All scripts are fully editable—use them as-is or customize to add your unique personality while maintaining a professional foundation.",
+        "Yes. Every script is generated in 5 tone variations (casual, professional, energetic, educational, humorous) so you can choose what matches your brand. All scripts are fully editable - use them as-is or customize to add your unique personality while maintaining a professional foundation.",
     },
     {
       question: "What makes the AI-generated CTAs effective?",
@@ -197,7 +197,7 @@ export default function InstantScriptCreationFeature() {
     {
       question: "What if I need help getting started?",
       answer:
-        "We provide a complete step-by-step guide showing exactly how to use the Script Generator. You'll see live examples, best practices, and practical tips. Plus, you can generate your first script in under 60 seconds—minimal learning curve required.",
+        "We provide a complete step-by-step guide showing exactly how to use the Script Generator. You'll see live examples, best practices, and practical tips. Plus, you can generate your first script in under 60 seconds - minimal learning curve required.",
     },
   ];
 
@@ -219,7 +219,7 @@ export default function InstantScriptCreationFeature() {
       <div className="min-h-screen">
         <FeatureHero
           title="Generate Complete Video Scripts in Seconds"
-          subtitle="AI-powered script generation with platform-optimized hooks, story flow, and CTAs. Get a professional foundation to build from—never start with a blank page."
+          subtitle="AI-powered script generation with platform-optimized hooks, story flow, and CTAs. Get a professional foundation to build from - never start with a blank page."
           primaryCTA={{
             text: "Generate Your First Script",
             onClick: () => {
@@ -361,7 +361,7 @@ export default function InstantScriptCreationFeature() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">What You Achieve With Each Approach</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Multiple approaches to script generation—each optimized for different content goals and strategies.
+              Multiple approaches to script generation - each optimized for different content goals and strategies.
             </p>
           </div>
 
@@ -390,7 +390,7 @@ export default function InstantScriptCreationFeature() {
                   <div>
                     <h3 className="text-2xl font-bold mb-2" data-testid="trends-tab-title">Capitalize on Trending Topics</h3>
                     <p className="text-muted-foreground mb-4" data-testid="trends-tab-description">
-                      Trending scripts use hooks and angles from current viral topics, helping you create timely content. Scripts are optimized with structures that work well for trending content—based on real-time patterns and popular formats.
+                      Trending scripts use hooks and angles from current viral topics, helping you create timely content. Scripts are optimized with structures that work well for trending content - based on real-time patterns and popular formats.
                     </p>
                     <div className="space-y-2">
                       <Badge className="bg-green-600 text-white mr-2">
@@ -465,7 +465,7 @@ export default function InstantScriptCreationFeature() {
                   <div>
                     <h3 className="text-2xl font-bold mb-2" data-testid="competitors-tab-title">Learn From Successful Content Structures</h3>
                     <p className="text-muted-foreground mb-4" data-testid="competitors-tab-description">
-                      Leverage successful patterns without copying. AI analyzes top-performing videos to extract effective structures—then applies them to your unique brand voice. Get competitive intelligence instantly that would otherwise require extensive manual analysis.
+                      Leverage successful patterns without copying. AI analyzes top-performing videos to extract effective structures-then applies them to your unique brand voice. Get competitive intelligence instantly that would otherwise require extensive manual analysis.
                     </p>
                     <div className="space-y-2">
                       <Badge className="bg-green-600 text-white mr-2">
