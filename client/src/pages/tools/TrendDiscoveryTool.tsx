@@ -145,7 +145,7 @@ export default function TrendDiscoveryTool() {
     },
     {
       question: 'How are best posting times determined?',
-      answer: 'Our AI analyzes millions of posts to identify when each specific trend gets maximum engagement. You get day-of-week and time-of-day recommendations tailored to each trend, not generic advice.',
+      answer: 'Our AI analyzes trending content to identify when each specific trend gets maximum engagement. You get day-of-week and time-of-day recommendations tailored to each trend, not generic advice.',
     },
     {
       question: 'Can I see visual examples of trends?',

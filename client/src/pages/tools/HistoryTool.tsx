@@ -57,7 +57,7 @@ export default function HistoryTool() {
     {
       icon: Copy,
       title: 'Step 4: Reuse Successful Content',
-      description: 'Click "Duplicate" on high-performers to recreate with new products. Creators who reuse top scripts produce content 45% faster with proven viral structures',
+      description: 'Click "Duplicate" on high-performers to recreate with new products. Creators who reuse top scripts can produce content more efficiently with tested viral structures',
     },
     {
       icon: FileDown,
@@ -85,7 +85,7 @@ export default function HistoryTool() {
     {
       icon: Star,
       title: 'Rating & Tagging',
-      description: 'Rate scripts 1-5 stars, mark favorites—creators who track top performers produce 45% faster content',
+      description: 'Rate scripts 1-5 stars, mark favorites—creators who track top performers can produce content more efficiently',
     },
     {
       icon: BarChart3,
@@ -206,7 +206,7 @@ export default function HistoryTool() {
         '→ Keep viral hook structure intact',
         '→ Generate new script with AI'
       ],
-      outcome: 'New script achieved 88 viral score using proven framework'
+      outcome: 'New script achieved 88 viral score using tested framework'
     },
     {
       title: 'Example 4: Exporting Monthly Content for Client Reporting',
@@ -247,7 +247,7 @@ export default function HistoryTool() {
       title: 'Template Creation from Winners',
       tips: [
         'Find your top 5 scripts and extract common structures',
-        'Create custom templates based on proven patterns',
+        'Create custom templates based on tested patterns',
         'Document successful hook formulas for reuse',
         'Build a "swipe file" of viral elements'
       ]
@@ -593,7 +593,7 @@ export default function HistoryTool() {
                       Create from Templates
                     </h3>
                     <p className="text-gray-600">
-                      Use proven templates based on your successful patterns
+                      Use tested templates based on your successful patterns
                     </p>
                   </div>
                 </div>

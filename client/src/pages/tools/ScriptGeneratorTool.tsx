@@ -59,7 +59,7 @@ export default function ScriptGeneratorTool() {
     {
       icon: Zap,
       title: 'Hook Generator',
-      description: 'AI creates scroll-stopping hooks proven to capture attention',
+      description: 'AI creates scroll-stopping hooks designed to capture attention',
     },
     {
       icon: BookOpen,
@@ -183,7 +183,7 @@ export default function ScriptGeneratorTool() {
                 Why Do AI Scripts Drive 3x More Engagement?
               </h2>
               <p className="text-lg text-muted-foreground">
-                Learn about the business value, proven ROI, and real creator success stories showing how AI-generated scripts save 10+ hours per week while increasing engagement and revenue.
+                Learn about the business value and real creator success stories showing how AI-generated scripts save 10+ hours per week while increasing engagement and revenue.
               </p>
             </div>
             <div className="flex justify-center">

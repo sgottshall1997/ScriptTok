@@ -665,7 +665,7 @@ export default function ViralScoreAnalyzerTool() {
                 Why Does Viral Score Predict Success So Accurately?
               </h2>
               <p className="text-lg text-muted-foreground">
-                Discover the science, proven ROI, and real creator success stories showing how viral scoring helps you know your content will perform before you post.
+                Discover the science and real creator success stories showing how viral scoring helps you know your content will perform before you post.
               </p>
             </div>
             <div className="flex justify-center">

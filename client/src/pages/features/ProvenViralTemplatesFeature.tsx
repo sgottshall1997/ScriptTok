@@ -960,7 +960,7 @@ export default function ProvenViralTemplatesFeature() {
             </div>
             <div className="text-center p-6 bg-white/10 backdrop-blur-sm rounded-xl">
               <p className="text-4xl font-bold mb-2">🎯</p>
-              <p className="text-sm text-violet-100">Proven Structures</p>
+              <p className="text-sm text-violet-100">Tested Structures</p>
             </div>
           </div>
 

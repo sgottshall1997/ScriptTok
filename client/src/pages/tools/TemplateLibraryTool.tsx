@@ -4,7 +4,7 @@ import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
-import { Filter, Eye, Edit3, Save, Zap, Hash, Layers, Globe, BarChart3, Settings, ArrowRight, CheckCircle, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
+import { Filter, Eye, Edit3, Save, Zap, Hash, Layers, Globe, BarChart3, Settings, ArrowRight, CheckCircle, RefreshCw, AlertCircle, Sparkles, Clock, Target } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -144,7 +144,7 @@ export default function TemplateLibraryTool() {
     },
     {
       title: 'Example 3: Team Collaboration Workflow',
-      before: 'TEAM MEMBER A creates "Fitness Transformation" template with proven hook',
+      before: 'TEAM MEMBER A creates "Fitness Transformation" template with tested hook',
       after: 'TEAM MEMBER B imports template → customizes for their client → saves variant → shares back to team library',
       description: 'Export template as JSON → Share with team → Import → Customize → Re-save → Build template library together',
       actionSteps: [
@@ -171,7 +171,7 @@ export default function TemplateLibraryTool() {
       category: 'Customization for Viral Potential',
       icon: Zap,
       tips: [
-        'Keep the proven hook structure, only swap in your product/topic',
+        'Keep the tested hook structure, only swap in your product/topic',
         'Adjust tone settings to match your audience (Gen Z = casual, B2B = professional)',
         'Add trending audio/visual cues in the template notes section',
         'Test 2-3 CTA variations: "Comment below" vs "Link in bio" vs "Follow for Part 2"',
@@ -191,7 +191,7 @@ export default function TemplateLibraryTool() {
       category: 'Common Mistakes to Avoid',
       icon: AlertCircle,
       tips: [
-        '❌ Over-customizing: Don\'t change proven hook structures that work',
+        '❌ Over-customizing: Don\'t change effective hook structures that work',
         '❌ Wrong platform: Don\'t use 90s Instagram template for 15s TikTok',
         '❌ Ignoring stats: Templates with low engagement need more editing, not just topic swap',
         '❌ Not saving variants: Always save customized versions as new templates for reuse',
@@ -228,7 +228,7 @@ export default function TemplateLibraryTool() {
     {
       title: 'Viral Hook Opener',
       stat: 'Attention-Grabbing',
-      description: 'Template designed to capture attention in the first 3 seconds with proven hook structures and pattern interrupts.',
+      description: 'Template designed to capture attention in the first 3 seconds with effective hook structures and pattern interrupts.',
     },
     {
       title: 'Product Unboxing Flow',
@@ -289,7 +289,7 @@ export default function TemplateLibraryTool() {
       <ToolHero
         eyebrowText="TEMPLATE LIBRARY - HOW TO USE IT"
         headline="Step-by-Step Guide: Browse, Customize & Save Templates"
-        subheadline="Access pre-built templates with proven structures for hooks, story flow, and CTAs. Customize quickly with AI-powered variable replacement and save for future use."
+        subheadline="Access pre-built templates with tested structures for hooks, story flow, and CTAs. Customize quickly with AI-powered variable replacement and save for future use."
         primaryCTA={{ text: 'Start Using Templates', onClick: handlePrimaryCTA }}
         secondaryCTA={{ text: 'See How Templates Work', onClick: handleSecondaryCTA }}
       />
@@ -484,7 +484,7 @@ export default function TemplateLibraryTool() {
               Why Use Templates?
             </h2>
             <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Templates help you create better content faster with proven structures and consistent quality
+              Templates help you create better content faster with tested structures and consistent quality
             </p>
           </div>
 
@@ -495,7 +495,7 @@ export default function TemplateLibraryTool() {
                   <Sparkles className="h-12 w-12 text-green-600 mx-auto mb-2" />
                   <Badge className="bg-green-600 text-white">Structured Approach</Badge>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">Proven Formats</h3>
+                <h3 className="text-lg font-semibold text-gray-900 mb-2">Effective Formats</h3>
                 <p className="text-gray-600">
                   Templates follow content structures that have worked well, including hook patterns, story flows, and CTA placements
                 </p>
@@ -546,7 +546,7 @@ export default function TemplateLibraryTool() {
                 <div className="bg-green-50 rounded-lg p-6 border border-green-200">
                   <h4 className="font-semibold text-gray-900 mb-3">✅ With Templates</h4>
                   <ul className="space-y-2 text-gray-600">
-                    <li>• Start with proven structure</li>
+                    <li>• Start with tested structure</li>
                     <li>• Consistent format across content</li>
                     <li>• AI auto-fills variables quickly</li>
                     <li>• Team uses shared templates</li>
@@ -633,7 +633,7 @@ export default function TemplateLibraryTool() {
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold text-gray-900" data-testid="top-performers-title">
               Top Performing Templates
             </h2>
-            <p className="text-gray-600 mt-2">Start with these proven high-performers for immediate results</p>
+            <p className="text-gray-600 mt-2">Start with these top-performing templates for immediate results</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="top-performers-grid">
             {topPerformers.map((template, index) => (
@@ -688,7 +688,7 @@ export default function TemplateLibraryTool() {
 
       <ToolCTA
         headline="Ready to Start Using Templates?"
-        description="Browse 20+ proven templates, customize for your brand, and save hours on content creation"
+        description="Browse 20+ templates, customize for your brand, and save hours on content creation"
         primaryCTA={{ text: 'Access Template Library Now', onClick: handleFinalCTA }}
         gradient={true}
       />
