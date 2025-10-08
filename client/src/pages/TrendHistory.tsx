@@ -512,7 +512,7 @@ const TrendHistory = () => {
   // Show loading state ONLY while usage data is loading
   if (usageLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             <Skeleton className="h-12 w-12 rounded-lg" data-testid="skeleton-icon" />
@@ -534,7 +534,7 @@ const TrendHistory = () => {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="flex items-center justify-center py-12">
           <RefreshCw className="h-8 w-8 animate-spin text-blue-600" />
           <span className="ml-2 text-gray-600">Loading trend history...</span>
@@ -546,7 +546,7 @@ const TrendHistory = () => {
   const hasAccess = ['creator', 'pro', 'agency'].includes(userTier);
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between mb-4">

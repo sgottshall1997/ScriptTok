@@ -970,10 +970,10 @@ export default function UseCasesPage() {
 
       {/* Hero Section */}
       <section 
-        className="relative bg-gradient-to-br from-violet-600 to-purple-600 text-white py-16 md:py-24"
+        className="relative bg-gradient-to-br from-violet-600 to-purple-600 text-white py-16"
         data-testid="use-cases-hero-section"
       >
-        <div className="container mx-auto px-4 max-w-7xl">
+        <div className="container mx-auto px-4 max-w-6xl">
           <div className="text-center space-y-6">
             {/* Eyebrow */}
             <p 
@@ -1032,8 +1032,8 @@ export default function UseCasesPage() {
       </section>
 
       {/* Tabbed Interface */}
-      <section className="py-16 md:py-20 bg-white" data-testid="use-cases-tabs-section">
-        <div className="container mx-auto px-4 max-w-7xl">
+      <section className="py-16 bg-white" data-testid="use-cases-tabs-section">
+        <div className="container mx-auto px-4 max-w-6xl">
           <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
             {/* Tabs List - Sticky on Scroll */}
             <div className="sticky top-16 bg-white z-40 pb-6 border-b">

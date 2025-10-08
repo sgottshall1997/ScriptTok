@@ -30,7 +30,7 @@ export function ToolCTA({
 
   return (
     <section 
-      className={`py-16 md:py-20 ${bgClass}`}
+      className={`py-16 ${bgClass}`}
       data-testid="tool-cta-section"
     >
       <div className="container mx-auto px-4 max-w-4xl">

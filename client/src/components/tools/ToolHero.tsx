@@ -38,7 +38,7 @@ export function ToolHero({
 
   return (
     <section 
-      className="relative bg-gradient-to-br from-violet-600 to-purple-600 text-white py-16 md:py-24 lg:py-32"
+      className="relative bg-gradient-to-br from-violet-600 to-purple-600 text-white py-16"
       data-testid="tool-hero-section"
     >
       <div className="container mx-auto px-4 max-w-6xl text-center">

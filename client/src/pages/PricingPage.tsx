@@ -191,7 +191,7 @@ export default function PricingPage() {
       
       <div className="min-h-screen bg-white dark:bg-gray-900">
         {/* Hero Section */}
-        <section className="bg-gradient-hero text-white py-20 px-4">
+        <section className="bg-gradient-hero text-white py-16 px-4">
           <div className="container mx-auto max-w-6xl text-center">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Simple Pricing, Powerful Results
@@ -225,7 +225,7 @@ export default function PricingPage() {
 
         {/* Pricing Cards Grid */}
         <section className="py-16 px-4 -mt-20">
-          <div className="container mx-auto max-w-7xl">
+          <div className="container mx-auto max-w-6xl">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               {pricingTiers.map((tier) => (
                 <Card 
@@ -340,7 +340,7 @@ export default function PricingPage() {
 
         {/* Feature Comparison Table */}
         <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
-          <div className="container mx-auto max-w-7xl">
+          <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">Compare All Features</h2>
               <p className="text-gray-600 dark:text-gray-400">
@@ -474,7 +474,7 @@ export default function PricingPage() {
 
         {/* Upgrade Triggers Section */}
         <section className="py-16 px-4">
-          <div className="container mx-auto max-w-7xl">
+          <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold mb-4">When to Upgrade</h2>
               <p className="text-gray-600 dark:text-gray-400">
@@ -639,7 +639,7 @@ export default function PricingPage() {
         </section>
 
         {/* Final CTA Banner */}
-        <section className="bg-gradient-cta text-white py-20 px-4">
+        <section className="bg-gradient-cta text-white py-16 px-4">
           <div className="container mx-auto max-w-4xl text-center">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
               Ready to Create Viral Content?

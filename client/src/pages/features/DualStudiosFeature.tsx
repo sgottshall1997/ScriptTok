@@ -142,7 +142,7 @@ export default function DualStudiosFeature() {
           }}
         />
 
-      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -162,7 +162,7 @@ export default function DualStudiosFeature() {
         className="bg-gray-50 dark:bg-gray-800"
       />
 
-      <section className="py-20 md:py-28 px-4 bg-white dark:bg-gray-900">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Perfect For Every Creator</h2>
@@ -263,7 +263,7 @@ export default function DualStudiosFeature() {
 
       <FAQAccordion faqs={faqs} className="bg-gray-50 dark:bg-gray-800" />
 
-      <section className="bg-gradient-cta text-white py-20 md:py-28 px-4">
+      <section className="bg-gradient-cta text-white py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Switch Studios?</h2>
           <p className="text-lg md:text-xl text-gray-200 mb-8">
@@ -284,7 +284,7 @@ export default function DualStudiosFeature() {
         </div>
       </section>
 
-      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-20 md:py-28 px-4">
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Get Hands-On?

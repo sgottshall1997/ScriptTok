@@ -540,7 +540,7 @@ export default function InstantScriptCreationFeature() {
       </section>
 
       {/* Before/After Comparison */}
-      <section className="py-20 md:py-28 bg-gray-50 dark:bg-gray-900">
+      <section className="py-16 bg-gray-50 dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">
             Manual Scripting vs AI-Powered Scripts
@@ -604,7 +604,7 @@ export default function InstantScriptCreationFeature() {
       </section>
 
       {/* Time Savings Calculator */}
-      <section className="py-20 md:py-28 bg-gradient-to-br from-violet-600 to-purple-600 dark:from-violet-800 dark:to-purple-800">
+      <section className="py-16 bg-gradient-to-br from-violet-600 to-purple-600 dark:from-violet-800 dark:to-purple-800">
         <div className="container mx-auto max-w-4xl px-4">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-white mb-12">
             Calculate Your Time Savings

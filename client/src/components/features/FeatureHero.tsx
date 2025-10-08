@@ -24,7 +24,7 @@ export function FeatureHero({
   return (
     <section
       className={cn(
-        "w-full bg-gradient-hero text-white py-16 md:py-24 px-4",
+        "w-full bg-gradient-hero text-white py-16 px-4",
         className
       )}
       data-testid="feature-hero"

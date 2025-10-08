@@ -37,7 +37,7 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
       {/* Navbar */}
       <nav className="bg-white border-b border-gray-200 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link href="/" className="flex items-center" data-testid="link-home">
@@ -231,7 +231,7 @@ const MarketingLayout: React.FC<MarketingLayoutProps> = ({ children }) => {
 
       {/* Footer */}
       <footer className="bg-white border-t border-gray-200 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
             <div className="text-sm text-gray-600">
               © {new Date().getFullYear()} Pheme. All rights reserved.

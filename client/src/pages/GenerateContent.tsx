@@ -1137,7 +1137,7 @@ ${config.hashtags.join(' ')}`;
   return (
     <TooltipProvider>
       <div className="min-h-screen bg-gray-50 pb-32">
-        <div className="max-w-7xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
+        <div className="max-w-6xl mx-auto p-4 md:p-6 space-y-6 md:space-y-8">
           {/* Header */}
           <div className="text-center space-y-2 px-2">
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900"> Pheme Content Generator</h1>

@@ -173,7 +173,7 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">From Trend to Script in 60 Seconds.</h2>
@@ -199,7 +199,7 @@ export default function LandingPage() {
       </section>
 
       {/* Tools Section */}
-      <section className="py-6 md:py-10 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Tools</h2>
@@ -228,7 +228,7 @@ export default function LandingPage() {
       </section>
 
       {/* Use Cases Section */}
-      <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Use Cases</h2>
@@ -252,7 +252,7 @@ export default function LandingPage() {
       </section>
 
       {/* Learn Section */}
-      <section className="py-6 md:py-10 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">Learn</h2>
@@ -276,7 +276,7 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
+      <section className="py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">
@@ -537,7 +537,7 @@ export default function LandingPage() {
       </section>
 
       {/* Final CTA Banner */}
-      <section className="bg-gradient-cta text-white py-20 md:py-28 px-4">
+      <section className="bg-gradient-cta text-white py-16 px-4">
         <div className="container mx-auto max-w-4xl text-center">
           <h2 className="text-3xl md:text-4xl font-bold mb-6">
             Ready to Go Viral?
