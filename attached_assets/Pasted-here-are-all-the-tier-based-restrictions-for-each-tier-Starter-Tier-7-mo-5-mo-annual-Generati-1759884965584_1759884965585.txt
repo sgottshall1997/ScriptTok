@@ -1,0 +1,83 @@
+here are all the tier-based restrictions for each tier:
+
+Starter Tier ($7/mo, $5/mo annual)
+Generation Limits
+GPT-4: 15/month
+Claude: 10/month
+Trend Analysis: 10/month
+Viral Score: Basic (GPT-4 only, number preview without breakdown)
+Feature Restrictions
+✅ 3 templates per category (hooks, storytelling, educational)
+✅ 3 niches (beauty, tech, fashion)
+✅ Last 10 history items
+❌ No bulk generation
+❌ No content export
+❌ No trend forecasting
+❌ No custom prompts
+❌ No affiliate studio access
+❌ No API access
+❌ No brand templates
+Creator Tier ($15/mo, $10/mo annual)
+Generation Limits
+GPT-4: 50/month
+Claude: 30/month
+Trend Analysis: 25/month
+Viral Score: Full scoring + basic AI suggestions
+Feature Restrictions
+✅ All viral templates (unlimited)
+✅ All 7 niches
+✅ Last 50 history items
+✅ Content export (CSV)
+✅ Trend forecasting (basic - hot/rising only)
+✅ Viral score with improvement tips
+❌ No bulk generation
+❌ No custom prompts
+❌ No affiliate studio access
+❌ No API access
+❌ No brand templates
+Pro Tier ($35/mo, $25/mo annual)
+Generation Limits
+GPT-4: 300/month
+Claude: 150/month
+Trend Analysis: 100/month
+Viral Score: Advanced (dual AI - Claude + GPT)
+Features Unlocked
+✅ Both studios (Viral + Affiliate)
+✅ Bulk generation (up to 10 items at once)
+✅ Full trend forecasting (hot/rising/upcoming/declining)
+✅ Custom prompts (save & reuse)
+✅ Unlimited history with advanced filtering
+✅ Priority support (24hr response)
+✅ Make.com webhook integration
+❌ No team features
+❌ No API access
+❌ No brand templates
+Agency Tier ($69/mo, $50/mo annual)
+Generation Limits
+GPT-4: 1000/month (shared across team)
+Claude: 500/month (shared across team)
+Trend Analysis: Unlimited
+Viral Score: Enterprise (with competitive analysis)
+Features Unlocked
+✅ Everything in Pro, PLUS:
+✅ 5 team seats
+✅ Brand templates
+✅ Full REST API access
+✅ Bulk scheduling (50+ items)
+✅ Analytics dashboard
+✅ Dedicated account manager
+✅ Custom integrations support
+✅ White-label reports
+Quick Reference by Feature
+Feature	Starter	Creator	Pro	Agency
+Templates	3 per category	All	All	All + Brand
+Niches	3	7	7	7
+History	10 items	50 items	Unlimited	Unlimited
+Bulk Generation	❌	❌	10 items	50+ items
+Content Export	❌	✅ CSV	✅ CSV	✅ + White-label
+Trend Forecasting	❌	Basic	Full	Full
+Affiliate Studio	❌	❌	✅	✅
+Custom Prompts	❌	❌	✅	✅
+API Access	❌	❌	❌	✅
+Team Seats	1	1	1	5
+These restrictions are enforced through the quotaService in server/services/quotaService.ts and checked via middleware in server/middleware/checkQuota.ts and server/middleware/checkFeatureAccess.ts.
