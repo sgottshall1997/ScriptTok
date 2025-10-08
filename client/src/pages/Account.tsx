@@ -15,7 +15,7 @@ export default function Account() {
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
   const { toast } = useToast();
   
-  const usageData = usageResponse?.data?.data;
+  const usageData = usageResponse?.data;
 
   const createCheckoutMutation = useMutation({
     mutationFn: async ({ tier, billingPeriod }: { tier: string; billingPeriod: 'monthly' | 'annual' }) => {
