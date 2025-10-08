@@ -38,6 +38,7 @@ import {
   DollarSign,
   type LucideIcon,
 } from "lucide-react";
+import PhemeLogo from "@/Pheme Logo/Pheme Logo.png";
 
 interface CardItem {
   icon: LucideIcon;
@@ -286,10 +287,12 @@ export function MarketingNav() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         {/* Logo */}
         <Link href="/">
-          <div className="flex items-center gap-2 cursor-pointer" data-testid="link-logo">
-            <span className="font-bold text-xl">
-              👼 Pheme
-            </span>
+          <div className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" data-testid="link-logo">
+            <img 
+              src={PhemeLogo} 
+              alt="Pheme" 
+              className="h-12 w-auto"
+            />
           </div>
         </Link>
 
