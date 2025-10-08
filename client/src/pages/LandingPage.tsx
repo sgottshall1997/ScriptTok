@@ -174,7 +174,7 @@ export default function LandingPage() {
 
       {/* Features Section */}
       <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">From Trend to Script in 60 Seconds.</h2>
             <SampleFlowDemonstration />
@@ -277,7 +277,7 @@ export default function LandingPage() {
 
       {/* Pricing Section */}
       <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
-        <div className="container mx-auto max-w-6xl">
+        <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl font-bold mb-2">
               Choose Your Plan
