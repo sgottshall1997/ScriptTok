@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FeatureHero,
   FAQAccordion,
+  HowItWorksSection,
 } from "@/components/features";
 import { useLocation } from "wouter";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
@@ -31,13 +32,37 @@ import {
   BarChart,
   Trophy,
   Building2,
+  BookOpen,
 } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from "@/components/Footer";
 
-export default function TemplateLibraryFeature() {
+export default function ProvenViralTemplatesFeature() {
   const [_, navigate] = useLocation();
   const { trackNavigateCTA, trackSignupCTA } = useCTATracking();
+
+  const steps = [
+    {
+      number: 1,
+      title: 'Choose Your Template',
+      description: 'Browse 85+ proven templates by niche, platform, or content type. Each template shows average views and conversion rates.',
+    },
+    {
+      number: 2,
+      title: 'Customize for Your Brand',
+      description: 'AI adapts the template to your product, niche, and brand voice in seconds. Adjust tone, pacing, and CTAs as needed.',
+    },
+    {
+      number: 3,
+      title: 'Generate & Refine',
+      description: 'Create viral-ready scripts instantly. Get AI suggestions, viral score feedback, and iterate until perfect.',
+    },
+    {
+      number: 4,
+      title: 'Save & Reuse',
+      description: 'Turn your best scripts into custom templates. Build a library of proven winners for unlimited reuse.',
+    },
+  ];
 
   const templatesByType = [
     { name: "Product Showcase", icon: ShoppingBag, description: "Highlight features and benefits" },
@@ -189,15 +214,15 @@ export default function TemplateLibraryFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Template Library - Create 50 Videos in the Time It Takes to Script 5 | Pheme</title>
-        <meta name="description" content="Save 90% of your time with proven templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency. See +$10K/month revenue impact." />
-        <meta property="og:title" content="Template Library - Create 50 Videos in the Time It Takes to Script 5 | Pheme" />
-        <meta property="og:description" content="Save 90% of your time with proven templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency. See +$10K/month revenue impact." />
+        <title>Proven Viral Templates - Create 50 Videos in the Time It Takes to Script 5 | Pheme</title>
+        <meta name="description" content="Save 90% of your time with proven viral templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency. See +$10K/month revenue impact." />
+        <meta property="og:title" content="Proven Viral Templates - Create 50 Videos in the Time It Takes to Script 5 | Pheme" />
+        <meta property="og:description" content="Save 90% of your time with proven viral templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency. See +$10K/month revenue impact." />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://pheme.com/features/template-library" />
+        <meta property="og:url" content="https://pheme.com/features/proven-viral-templates" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Template Library - Create 50 Videos in the Time It Takes to Script 5 | Pheme" />
-        <meta name="twitter:description" content="Save 90% of your time with proven templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency." />
+        <meta name="twitter:title" content="Proven Viral Templates - Create 50 Videos in the Time It Takes to Script 5 | Pheme" />
+        <meta name="twitter:description" content="Save 90% of your time with proven viral templates that convert at 2.5x industry average. Scale from 3 to 30+ posts per week while maintaining 95% brand consistency." />
       </Helmet>
 
       <div className="min-h-screen">
@@ -966,6 +991,28 @@ export default function TemplateLibraryFeature() {
               Learn How to Create Custom Templates →
             </Button>
           </div>
+        </div>
+      </section>
+
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Get Hands-On?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Explore the step-by-step guide and see exactly how to use this feature.
+          </p>
+          <Button
+            onClick={() => {
+              trackNavigateCTA("proven_viral_templates_cta", "template-library");
+              navigate("/tools/template-library");
+            }}
+            size="lg"
+            className="bg-violet-600 hover:bg-violet-700 text-white"
+            data-testid="button-try-template-library"
+          >
+            Try the Template Library →
+          </Button>
         </div>
       </section>
 

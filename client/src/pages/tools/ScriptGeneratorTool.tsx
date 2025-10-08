@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
 import { Layers, Lightbulb, Sparkles, CheckCircle, Zap, BookOpen, Target, Volume2, Share2, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export default function ScriptGeneratorTool() {
   const [, setLocation] = useLocation();
@@ -189,7 +190,7 @@ export default function ScriptGeneratorTool() {
               <Button
                 onClick={() => {
                   trackNavigateCTA("script_generator_benefits", "view_benefits");
-                  setLocation("/features/ai-script-generator");
+                  setLocation("/features/instant-script-creation");
                 }}
                 size="lg"
                 className="bg-green-600 hover:bg-green-700 text-white rounded-xl"

@@ -62,9 +62,9 @@ const featuresData: CardItem[] = [
   },
   {
     icon: Sparkles,
-    title: "AI Script Generator",
+    title: "Instant Script Creation",
     description: "Generate scroll-stopping hooks, stories, and CTAs with a single click.",
-    href: "/features/ai-script-generator"
+    href: "/features/instant-script-creation"
   },
   {
     icon: Flame,
@@ -74,9 +74,9 @@ const featuresData: CardItem[] = [
   },
   {
     icon: Library,
-    title: "Template Library",
+    title: "Proven Viral Templates",
     description: "Choose from 20+ plug-and-play templates for any niche or platform.",
-    href: "/features/template-library"
+    href: "/features/proven-viral-templates"
   },
   {
     icon: Target,

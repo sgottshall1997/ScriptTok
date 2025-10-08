@@ -36,8 +36,8 @@ import TrustSafetyPage from "@/pages/TrustSafety";
 
 // Feature Pages
 import DualStudiosFeature from "@/pages/features/DualStudiosFeature";
-import AIScriptGeneratorFeature from "@/pages/features/AIScriptGeneratorFeature";
-import TemplateLibraryFeature from "@/pages/features/TemplateLibraryFeature";
+import InstantScriptCreationFeature from "@/pages/features/InstantScriptCreationFeature";
+import ProvenViralTemplatesFeature from "@/pages/features/ProvenViralTemplatesFeature";
 import TrendDiscoveryFeature from "@/pages/features/TrendDiscoveryFeature";
 import ViralScoreFeature from "@/pages/features/ViralScoreFeature";
 import MultiPlatformFeature from "@/pages/features/MultiPlatformFeature";
@@ -81,11 +81,11 @@ function MainAppRouter() {
       <Route path="/features/dual-studios">
         <DualStudiosFeature />
       </Route>
-      <Route path="/features/ai-script-generator">
-        <AIScriptGeneratorFeature />
+      <Route path="/features/instant-script-creation">
+        <InstantScriptCreationFeature />
       </Route>
-      <Route path="/features/template-library">
-        <TemplateLibraryFeature />
+      <Route path="/features/proven-viral-templates">
+        <ProvenViralTemplatesFeature />
       </Route>
       <Route path="/features/trend-discovery">
         <TrendDiscoveryFeature />

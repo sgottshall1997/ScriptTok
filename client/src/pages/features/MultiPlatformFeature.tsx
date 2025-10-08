@@ -408,6 +408,28 @@ export default function MultiPlatformFeature() {
         </div>
       </section>
 
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Get Hands-On?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Explore the step-by-step guide and see exactly how to use this feature.
+          </p>
+          <Button
+            onClick={() => {
+              trackNavigateCTA("multi_platform_feature_cta", "dashboard");
+              navigate("/dashboard");
+            }}
+            size="lg"
+            className="bg-violet-600 hover:bg-violet-700 text-white"
+            data-testid="button-try-multi-platform"
+          >
+            Try Multi-Platform Optimization →
+          </Button>
+        </div>
+      </section>
+
       <Footer />
       </div>
     </>

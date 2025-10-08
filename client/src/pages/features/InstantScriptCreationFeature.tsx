@@ -31,7 +31,7 @@ import {
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from "@/components/Footer";
 
-export default function AIScriptGeneratorFeature() {
+export default function InstantScriptCreationFeature() {
   const [_, navigate] = useLocation();
   const { trackNavigateCTA, trackSignupCTA } = useCTATracking();
 
@@ -205,14 +205,14 @@ export default function AIScriptGeneratorFeature() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>AI Script Generator - Save 10+ Hours/Week & 3x Your Engagement | Pheme</title>
-        <meta name="description" content="Generate viral scripts that drive $5K+ monthly revenue. Save 10 hours per week, grow from 10K to 500K followers, and increase conversions by 40%. AI-powered script generation that delivers results." />
-        <meta property="og:title" content="AI Script Generator - Save 10+ Hours/Week & 3x Your Engagement | Pheme" />
+        <title>Instant Script Creation - Save 10+ Hours/Week & 3x Your Engagement | Pheme</title>
+        <meta name="description" content="Generate viral scripts that drive $5K+ monthly revenue. Save 10 hours per week, grow from 10K to 500K followers, and increase conversions by 40%. AI-powered instant script creation that delivers results." />
+        <meta property="og:title" content="Instant Script Creation - Save 10+ Hours/Week & 3x Your Engagement | Pheme" />
         <meta property="og:description" content="Generate viral scripts that drive $5K+ monthly revenue. Save 10 hours per week, grow from 10K to 500K followers, and increase conversions by 40%." />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://pheme.com/features/ai-script-generator" />
+        <meta property="og:url" content="https://pheme.com/features/instant-script-creation" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="AI Script Generator - Save 10+ Hours/Week & 3x Your Engagement | Pheme" />
+        <meta name="twitter:title" content="Instant Script Creation - Save 10+ Hours/Week & 3x Your Engagement | Pheme" />
         <meta name="twitter:description" content="Generate viral scripts that drive $5K+ monthly revenue. Save 10 hours per week, grow from 10K to 500K followers, and increase conversions by 40%." />
       </Helmet>
       
@@ -535,6 +535,28 @@ export default function AIScriptGeneratorFeature() {
           >
             <Zap className="mr-2 h-5 w-5" />
             Generate Your First Viral Script
+          </Button>
+        </div>
+      </section>
+
+      <section className="bg-gradient-to-r from-violet-50 to-purple-50 dark:from-violet-900/20 dark:to-purple-900/20 py-16 px-4">
+        <div className="container mx-auto max-w-4xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Ready to Get Hands-On?
+          </h2>
+          <p className="text-lg text-muted-foreground mb-8">
+            Explore the step-by-step guide and see exactly how to use this feature.
+          </p>
+          <Button
+            onClick={() => {
+              trackNavigateCTA("instant_script_creation_cta", "script-generator");
+              navigate("/tools/script-generator");
+            }}
+            size="lg"
+            className="bg-violet-600 hover:bg-violet-700 text-white"
+            data-testid="button-try-script-generator"
+          >
+            Try the Script Generator →
           </Button>
         </div>
       </section>

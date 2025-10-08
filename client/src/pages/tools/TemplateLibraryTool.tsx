@@ -4,7 +4,7 @@ import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
-import { Filter, Eye, Edit3, Save, Zap, Hash, Layers, Globe, BarChart3, Settings, ArrowRight, CheckCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { Filter, Eye, Edit3, Save, Zap, Hash, Layers, Globe, BarChart3, Settings, ArrowRight, CheckCircle, RefreshCw, AlertCircle, Sparkles } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
@@ -30,8 +30,8 @@ export default function TemplateLibraryTool() {
   };
 
   const handleFeaturePageCTA = () => {
-    trackNavigateCTA('template-library-feature-link', '/features/template-library');
-    setLocation('/features/template-library');
+    trackNavigateCTA('template-library-feature-link', '/features/proven-viral-templates');
+    setLocation('/features/proven-viral-templates');
   };
 
   const steps = [
