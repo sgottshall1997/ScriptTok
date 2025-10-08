@@ -17,6 +17,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { MarketingNav, featuresData, toolsData, useCasesData, learnData, pricingData } from "@/components/MarketingNav";
 import Footer from "@/components/Footer";
+import SampleFlowDemonstration from "@/components/SampleFlowDemonstration";
 
 interface GridCardProps {
   icon: LucideIcon;
@@ -176,6 +177,7 @@ export default function LandingPage() {
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">From Trend to Script in 60 Seconds.</h2>
+            <SampleFlowDemonstration />
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Everything you need to create viral content and grow your audience.
             </p>

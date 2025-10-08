@@ -1,0 +1,161 @@
+OBJECTIVE:
+Build an interactive, visual demonstration section on the landing page (client/src/pages/LandingPage.tsx) that showcases the complete content creation workflow from trend discovery to AI-rated output with storage and learning capabilities.
+
+SAMPLE FLOW TO DEMONSTRATE (8 STEPS):
+
+Step 1: Find Trend
+
+Display a trend discovery interface showing sample trending topics
+Example: "Glass Skin Routine" or "Tech Gadget Reviews" trending in beauty/tech niche
+Visual: Animated trending graph or search interface
+CTA: "Discover Trends" button
+Step 2: Select Trending Product
+
+Show a curated list of 3-4 trending products related to the selected trend
+Example products with images/thumbnails:
+"CeraVe Moisturizing Cream" (beauty)
+"iPhone 15 Pro" (tech)
+"Nike Air Force 1" (fashion)
+Visual: Product cards with trend indicators (🔥 icons, view counts)
+CTA: User clicks to select product
+Step 3: AI Pulls Trending Intelligence
+
+Animated display showing AI analyzing and extracting:
+Viral Hook: "POV: You discover the $12 moisturizer dermatologists don't want you to know about"
+Target Audience: "Gen Z and millennials (18-34), skincare enthusiasts, budget-conscious"
+Trending Angle: "Before/after transformation, dermatologist secrets, budget dupes"
+Best Time to Post: "Tuesday-Thursday 7-9 PM EST, Sunday 3-5 PM EST"
+Visual: Loading animation → Data cards appearing with check marks
+Show "Perplexity Intelligence" badge or AI processing indicator
+Step 4: Select Content Template Type
+
+Display template selector with popular options:
+"Short Video Script (15-30s)" ✨
+"Product Review" 📝
+"Influencer Caption" 💬
+"Comparison Post" ⚖️
+Visual: Template cards with icons and descriptions
+Highlight recommended template based on trend data
+Step 5: GPT Receives & Integrates Trending Data
+
+Show AI generation process with progress indicator
+Display how trending intelligence flows into the output:
+Viral hook → Integrated into opening line
+Target audience → Tone/language adaptation
+Trending angle → Content structure
+Best posting time → Included in caption metadata
+Visual: Data streams connecting to output box
+Example Generated Output:
+"POV: You discover the $12 moisturizer dermatologists don't want you to know about 🤫
+CeraVe just hit different! Been using it for 2 weeks and my skin is GLOWING ✨
+Perfect for anyone into glass skin routines - this is your sign to try it!
+Link in bio 🔗
+#glassskin #skincare #cerave #dermatologistapproved"
+Step 6: AI Reviews for Virality & Provides Feedback
+
+Display viral score analysis dashboard:
+Overall Viral Score: 87/100 (with color-coded gauge: green for 80+, yellow 60-79, red <60)
+Breakdown Scores:
+Hook Strength: 92/100 ✅
+Engagement Potential: 85/100 ✅
+Clarity: 88/100 ✅
+Length Optimization: 82/100 ✅
+Trending Elements: 90/100 ✅
+AI Recommendations (3-5 suggestions):
+"Add urgency word like 'NOW' to CTA for 5% boost"
+"Include trending sound suggestion for TikTok"
+"Consider adding question to increase comments"
+Visual: Circular progress gauge, breakdown bars, suggestion cards
+CTA: "Regenerate with AI Feedback" button (shows improved version with score increase)
+Show before/after scores when regenerated (e.g., 87 → 94)
+Step 7: Store in Content History with Metadata
+
+Animated "Saving to History" notification
+Display saved entry preview card showing:
+Output Text: Full generated script/caption
+AI Rating: Viral score with breakdown
+AI Feedback: Recommendations and analysis
+Product: CeraVe Moisturizing Cream
+Template: Short Video Script
+Timestamp: "Just now"
+Show "Personal Rating" interface (5-star system or thumbs up/down)
+Allow user to add notes/tags
+Visual: Card sliding into history panel with save animation
+Step 8: Future Learning - Use Top-Rated as Inspiration
+
+Display toggle: "Use Smart Style from Top-Rated Content" 🧠
+Show preview of learning system:
+Filter showing: "Your 5-Star Rated Scripts (12 found)"
+Pattern analysis: "Your top hooks use POV format 80% of the time"
+Structure insight: "Hook → Problem → Solution pattern scores highest"
+Visual: Toggle switch, analytics mini-dashboard
+Example text: "AI will learn from your best-performing content to match your winning style"
+CTA: "Enable Smart Learning" (premium feature badge)
+IMPLEMENTATION REQUIREMENTS:
+
+Visual Design:
+
+Use Tailwind CSS for modern, clean interface
+Implement smooth transitions between steps (fade-in, slide effects)
+Use shadcn/ui components for consistency
+Include micro-animations (check marks, progress bars, data flowing)
+Color scheme: Purple gradient for AI elements, green for success metrics
+Interactive Elements:
+
+Each step should be clickable/expandable for details
+Include "Try it yourself" CTAs that link to dashboard
+Show real data examples, not lorem ipsum
+Implement hover states revealing additional info
+Data Presentation:
+
+Use actual template names from shared/templateMetadata.ts
+Display real niche options from NICHES constant
+Show authentic viral score breakdown structure
+Include realistic trending products with proper formatting
+User Flow:
+
+Sequential step revelation (Steps 1→2→3... with scroll trigger or auto-play)
+Each step builds on previous (show data carrying forward)
+Include "Skip to Dashboard" floating CTA
+Mobile-responsive collapsible accordion for mobile view
+Integration Points:
+
+Link "Discover Trends" to /trending-ai-picks route
+Link "Select Template" to /tools/template-library route
+Link "View History" to /tools/history route
+Link "Smart Learning" to account page with feature highlight
+Technical Details:
+
+Create new component: <SampleFlowDemonstration /> in client/src/components/
+Import into LandingPage.tsx between Hero and Features sections
+Use React hooks for state management (step progression)
+Implement Intersection Observer for scroll-triggered animations
+Add "auto-play" mode that cycles through steps every 3 seconds
+Copy & Messaging:
+
+Section headline: "From Trending Topic to Viral Content in 60 Seconds"
+Subheading: "Watch how AI transforms trends into high-performing scripts with built-in virality analysis"
+Step labels clearly numbered (Step 1, Step 2, etc.)
+Include engagement stats: "94% viral accuracy" or "2x engagement boost"
+Additional Features:
+
+Add "Replay Demo" button at end
+Include "See Full Platform" CTA
+Show tier badges (features available in different plans)
+Easter egg: Clicking product images opens modal with full template preview
+SUCCESS CRITERIA:
+
+Clear visual representation of all 8 steps
+Smooth, engaging user experience
+Authentic data examples (no placeholder text)
+Mobile-responsive design
+Conversion-optimized CTAs at strategic points
+Demonstrates key platform differentiators: AI intelligence, viral scoring, learning system
+FILE LOCATIONS FOR REFERENCE:
+
+Landing page: client/src/pages/LandingPage.tsx
+Template metadata: shared/templateMetadata.ts
+Viral score display component: client/src/components/ViralScoreDisplay.tsx
+Content history utils: shared/contentHistoryUtils.ts
+Trending products API: server/api/trending/index.ts
+Build this demonstration to be the centerpiece of the landing page that converts visitors by showing the complete value proposition in action.
