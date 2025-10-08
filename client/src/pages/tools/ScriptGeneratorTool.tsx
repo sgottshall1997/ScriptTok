@@ -4,7 +4,7 @@ import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
-import { Layers, Lightbulb, Sparkles, CheckCircle, Zap, BookOpen, Target, Volume2, Share2 } from 'lucide-react';
+import { Layers, Lightbulb, Sparkles, CheckCircle, Zap, BookOpen, Target, Volume2, Share2, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 export default function ScriptGeneratorTool() {
@@ -171,6 +171,36 @@ export default function ScriptGeneratorTool() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Why Do AI Scripts Drive 3x More Engagement?
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Learn about the business value, proven ROI, and real creator success stories showing how AI-generated scripts save 10+ hours per week while increasing engagement and revenue.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  trackNavigateCTA("script_generator_benefits", "view_benefits");
+                  setLocation("/features/ai-script-generator");
+                }}
+                size="lg"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                data-testid="button-view-benefits"
+              >
+                <Sparkles className="mr-2 h-5 w-5" />
+                See Why AI Scripts Increase Engagement
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 

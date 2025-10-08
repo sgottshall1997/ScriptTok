@@ -25,7 +25,8 @@ import {
   Clock,
   Video,
   Image,
-  Database
+  Database,
+  BookOpen
 } from "lucide-react";
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from "@/components/Footer";
@@ -436,6 +437,36 @@ export default function TrendDiscoveryFeature() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-orange-200 dark:border-orange-800">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Want to See Exactly How This Works?
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Get a complete step-by-step guide showing you how to use Trend Discovery to get comprehensive research packages and generate viral content instantly.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  trackNavigateCTA("trend_discovery_guide", "view_guide");
+                  navigate("/tools/trend-discovery");
+                }}
+                size="lg"
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
+                data-testid="button-view-guide"
+              >
+                <BookOpen className="mr-2 h-5 w-5" />
+                See Step-by-Step Usage Guide
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 

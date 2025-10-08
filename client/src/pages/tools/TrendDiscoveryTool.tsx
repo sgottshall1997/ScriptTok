@@ -4,9 +4,10 @@ import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
-import { TrendingUp, Package, Users, Sparkles, Globe, Filter, BarChart3, Zap, Target, Clock, Video, Image, Database } from 'lucide-react';
+import { TrendingUp, Package, Users, Sparkles, Globe, Filter, BarChart3, Zap, Target, Clock, Video, Image, Database, ArrowRight } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 export default function TrendDiscoveryTool() {
   const [, setLocation] = useLocation();
@@ -318,6 +319,36 @@ export default function TrendDiscoveryTool() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Why Is Trend Discovery So Valuable?
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Discover the business value, ROI, and real success stories showing why creators save 10+ hours per week and 3x their engagement with comprehensive trend intelligence.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  trackNavigateCTA("trend_discovery_benefits", "view_benefits");
+                  setLocation("/features/trend-discovery");
+                }}
+                size="lg"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                data-testid="button-view-benefits"
+              >
+                <TrendingUp className="mr-2 h-5 w-5" />
+                See Why Trend Discovery Saves Time
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 

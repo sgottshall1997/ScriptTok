@@ -20,7 +20,9 @@ import {
   Lightbulb,
   TrendingUp,
   AlertCircle,
-  Award
+  Award,
+  BookOpen,
+  ArrowRight
 } from "lucide-react";
 import { useState } from "react";
 import { MarketingNav } from '@/components/MarketingNav';
@@ -431,6 +433,36 @@ export default function ViralScoreFeature() {
                   </div>
                 )}
               </div>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <section className="py-16 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-orange-200 dark:border-orange-800">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Want to See Exactly How to Optimize Your Score?
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Get a complete step-by-step guide showing you how to use the Viral Score Analyzer to predict content performance and optimize every element for maximum reach.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  trackNavigateCTA("viral_score_guide", "view_guide");
+                  navigate("/tools/viral-score-analyzer");
+                }}
+                size="lg"
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
+                data-testid="button-view-guide"
+              >
+                <BookOpen className="mr-2 h-5 w-5" />
+                See Step-by-Step Score Optimization Guide
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
             </div>
           </Card>
         </div>

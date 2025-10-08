@@ -4,10 +4,11 @@ import { useCTATracking } from '@/hooks/use-cta-tracking';
 import { MarketingNav } from '@/components/MarketingNav';
 import Footer from '@/components/Footer';
 import { ToolHero, HowItWorksSteps, ToolFeatureGrid, ToolFAQ, ToolCTA } from '@/components/tools';
-import { Filter, Eye, Zap, Hash, Layers, Globe, BarChart3 } from 'lucide-react';
-import { Card, CardContent } from '@/components/ui/card';
+import { Filter, Eye, Edit3, Save, Zap, Hash, Layers, Globe, BarChart3, Settings, ArrowRight, CheckCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 
 export default function TemplateLibraryTool() {
   const [, setLocation] = useLocation();
@@ -19,8 +20,8 @@ export default function TemplateLibraryTool() {
   };
 
   const handleSecondaryCTA = () => {
-    const topPerformersSection = document.querySelector('[data-testid="top-performers-section"]');
-    topPerformersSection?.scrollIntoView({ behavior: 'smooth' });
+    const howItWorksSection = document.querySelector('[data-testid="how-templates-work-section"]');
+    howItWorksSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleFinalCTA = () => {
@@ -28,21 +29,36 @@ export default function TemplateLibraryTool() {
     setLocation('/generate-content');
   };
 
+  const handleFeaturePageCTA = () => {
+    trackNavigateCTA('template-library-feature-link', '/features/template-library');
+    setLocation('/features/template-library');
+  };
+
   const steps = [
     {
       icon: Filter,
-      title: 'Filter & Browse',
-      description: 'Search by niche (beauty, tech, fitness, etc.), content type (unboxing, review, tutorial), or platform',
+      title: 'Step 1: Browse Pre-Built Templates',
+      description: 'Navigate to Template Library → Use filters to find templates by niche (Beauty, Tech, Fitness), platform (TikTok, Instagram, YouTube), or viral score (high-performing templates ranked by view count). Click any category to see available options.',
     },
     {
       icon: Eye,
-      title: 'Preview Examples',
-      description: 'View real examples, performance stats, and template structure before selecting',
+      title: 'Step 2: Preview Template Details',
+      description: 'Click "Preview" on any template to see: example script structure, viral hook format, story flow breakdown, CTA placement, average performance stats (views/engagement), and successful use cases. Review before selecting.',
+    },
+    {
+      icon: Edit3,
+      title: 'Step 3: Customize for Your Brand',
+      description: 'Click "Use Template" → AI loads template into editing interface → Modify tone settings (casual/professional), adjust hook style, customize CTA messaging, and set your brand voice. Variable placeholders auto-populate with your product/niche data.',
+    },
+    {
+      icon: Save,
+      title: 'Step 4: Save as Custom Template',
+      description: 'After customization, click "Save as Custom Template" → Name your template → Add to your personal library → Organize with tags (product type, campaign, season). Access anytime from "My Templates" section for instant reuse.',
     },
     {
       icon: Zap,
-      title: 'Customize & Generate',
-      description: 'One-click to load template into Script Generator with your product/topic - AI pre-fills everything',
+      title: 'Step 5: Generate Content with Template',
+      description: 'Select your saved template → Click "Generate Script" → AI applies template structure to your product/topic → Get complete script in seconds → Edit if needed → Export to Script Generator for final production.',
     },
   ];
 
@@ -50,32 +66,136 @@ export default function TemplateLibraryTool() {
     {
       icon: Hash,
       title: 'Niche-Specific Templates',
-      description: 'Templates tailored for beauty, tech, fashion, fitness, food, travel, pets',
+      description: 'Pre-built templates for Beauty, Tech, Fashion, Fitness, Food, Travel, Pets—each with niche-appropriate language and viral formulas',
     },
     {
       icon: Layers,
       title: 'Content Type Filtering',
-      description: 'Find templates by type: reviews, tutorials, unboxings, transformations',
+      description: 'Find templates by format: Product Showcase, Before/After, Tutorial, Review, Unboxing, Trending Hook—optimized for each style',
     },
     {
       icon: Globe,
       title: 'Platform Optimization',
-      description: 'Templates optimized for TikTok, Instagram, YouTube Shorts',
+      description: 'Templates pre-configured for TikTok (15-60s), Instagram Reels (15-90s), YouTube Shorts (15-60s) with platform-specific pacing',
     },
     {
       icon: BarChart3,
-      title: 'Performance Stats',
-      description: 'See average views, engagement rates, and conversion metrics',
+      title: 'Performance Stats Included',
+      description: 'Each template shows average views, engagement rates, conversion metrics, and success rate from real creators',
     },
     {
-      icon: Eye,
-      title: 'Preview Mode',
-      description: 'Preview template structure and examples before using',
+      icon: Edit3,
+      title: 'Visual Editing Interface',
+      description: 'Drag-and-drop editor with live preview, tone adjustments, hook customization, and CTA placement controls',
     },
     {
+      icon: Save,
+      title: 'Custom Template Library',
+      description: 'Save unlimited custom templates, organize with tags, share with team, import/export for collaboration',
+    },
+  ];
+
+  const templateWorkflow = {
+    structure: [
+      { element: 'Hook (0-3s)', description: 'Attention-grabbing opener with variable placeholder for trend/product' },
+      { element: 'Story Flow (3-30s)', description: 'Narrative arc with customizable beats: problem → solution → transformation' },
+      { element: 'CTA (30-45s)', description: 'Call-to-action optimized for platform (comment, link, follow)' },
+      { element: 'Tone Settings', description: 'Voice modifiers: casual, professional, humorous, educational' },
+    ],
+    variables: [
+      '[PRODUCT_NAME] → Auto-fills from your input',
+      '[NICHE_KEYWORD] → Pulls from selected category',
+      '[TREND_HOOK] → Matches current viral trends',
+      '[BRAND_VOICE] → Applies your tone settings',
+    ],
+    aiAdaptation: [
+      '1. Template loads with placeholder structure',
+      '2. AI analyzes your product/topic input',
+      '3. Replaces variables with niche-specific content',
+      '4. Adapts tone to match your brand settings',
+      '5. Optimizes pacing for selected platform',
+    ],
+  };
+
+  const interactiveExamples = [
+    {
+      title: 'Example 1: Generic → Brand-Specific',
+      before: 'GENERIC TEMPLATE: "This [PRODUCT_NAME] changed everything! Here\'s why..."',
+      after: 'YOUR BRAND: "This CeraVe Moisturizer saved my dry skin! Here\'s the 3-step routine that works..."',
+      description: 'AI replaced [PRODUCT_NAME] with your product, adapted hook for beauty niche, and added specific benefit (dry skin)',
+      actionSteps: [
+        '1. Select "Product Showcase" template',
+        '2. Enter product: "CeraVe Moisturizer"',
+        '3. Choose niche: "Beauty"',
+        '4. Click "Generate" → AI customizes instantly',
+      ],
+    },
+    {
+      title: 'Example 2: Viral Script → Reusable Template',
+      before: 'YOUR VIRAL SCRIPT: Specific story about iPhone 15 Pro review that got 2M views',
+      after: 'SAVED TEMPLATE: "Tech Product Deep Dive" - reusable structure for any tech product with proven viral formula',
+      description: 'Extracted successful elements (hook style, story beats, CTA) and turned them into a template with variables',
+      actionSteps: [
+        '1. Open your successful script in History',
+        '2. Click "Save as Template"',
+        '3. Replace specifics with variables: iPhone 15 → [PRODUCT_NAME]',
+        '4. Template now in "My Templates" for reuse',
+      ],
+    },
+    {
+      title: 'Example 3: Team Collaboration Workflow',
+      before: 'TEAM MEMBER A creates "Fitness Transformation" template with proven hook',
+      after: 'TEAM MEMBER B imports template → customizes for their client → saves variant → shares back to team library',
+      description: 'Export template as JSON → Share with team → Import → Customize → Re-save → Build template library together',
+      actionSteps: [
+        '1. Create/customize template → Click "Export"',
+        '2. Share .json file with team',
+        '3. Team member clicks "Import Template"',
+        '4. Customize for their use case → Save to shared library',
+      ],
+    },
+  ];
+
+  const practicalTips = [
+    {
+      category: 'Choosing the Right Template',
+      icon: CheckCircle,
+      tips: [
+        'Match content type to your goal: Product Showcase for sales, Tutorial for education, Before/After for transformations',
+        'Check performance stats: Templates with 1M+ avg views are proven winners',
+        'Consider platform: TikTok templates are punchier, YouTube Shorts allow more story depth',
+        'Review example scripts: Make sure the tone matches your brand before customizing',
+      ],
+    },
+    {
+      category: 'Customization for Viral Potential',
       icon: Zap,
-      title: 'Quick Customization',
-      description: 'Load into Script Generator with one click - AI fills in details',
+      tips: [
+        'Keep the proven hook structure, only swap in your product/topic',
+        'Adjust tone settings to match your audience (Gen Z = casual, B2B = professional)',
+        'Add trending audio/visual cues in the template notes section',
+        'Test 2-3 CTA variations: "Comment below" vs "Link in bio" vs "Follow for Part 2"',
+      ],
+    },
+    {
+      category: 'Template Organization Strategies',
+      icon: Layers,
+      tips: [
+        'Tag by campaign: "#BlackFriday", "#NewProductLaunch", "#SeasonalContent"',
+        'Create template sets: Pair complementary templates (Hook + Follow-up + Conversion)',
+        'Track performance: Note which templates drive best results in template description',
+        'Version control: Save iterations as "Template_v1", "Template_v2" to A/B test',
+      ],
+    },
+    {
+      category: 'Common Mistakes to Avoid',
+      icon: AlertCircle,
+      tips: [
+        '❌ Over-customizing: Don\'t change proven hook structures that work',
+        '❌ Wrong platform: Don\'t use 90s Instagram template for 15s TikTok',
+        '❌ Ignoring stats: Templates with low engagement need more editing, not just topic swap',
+        '❌ Not saving variants: Always save customized versions as new templates for reuse',
+      ],
     },
   ];
 
@@ -124,24 +244,28 @@ export default function TemplateLibraryTool() {
 
   const faqs = [
     {
-      question: 'How many templates are included?',
-      answer: 'We have 20+ templates across all niches and platforms. Pro users get access to advanced templates and can create custom ones.',
+      question: 'How do I access the template library?',
+      answer: 'Navigate to Dashboard → Click "Template Library" in the main menu → Browse templates by category or use the search bar. You can filter by niche, platform, or content type in the top toolbar.',
     },
     {
-      question: 'Can I create custom templates?',
-      answer: 'Pro users can save any successful script as a custom template for reuse. You can also modify existing templates.',
+      question: 'How do I customize a template step-by-step?',
+      answer: 'Select template → Click "Use Template" → In the editor: (1) Replace variable placeholders with your content, (2) Adjust tone settings in the sidebar, (3) Modify hook/CTA if needed, (4) Preview changes in real-time, (5) Click "Generate Script" when ready.',
     },
     {
-      question: 'Are templates niche-specific?',
-      answer: 'Yes! Templates are optimized for specific niches (beauty, tech, fitness, etc.) with niche-appropriate language and structure.',
+      question: 'How do I save my customized templates?',
+      answer: 'After editing, click "Save as Custom Template" → Enter a name and tags → Choose "My Templates" or "Team Library" → Click "Save". Access anytime from the Templates tab in your dashboard.',
     },
     {
-      question: 'Do templates work for both Viral and Affiliate modes?',
-      answer: 'Most templates work in both modes. Affiliate templates include product placement and CTA optimization, while viral templates focus on engagement.',
+      question: 'How do variables and placeholders work?',
+      answer: 'Templates contain variables like [PRODUCT_NAME] and [NICHE_KEYWORD]. When you input your product/topic, AI automatically replaces these with relevant content. You can also manually edit any variable in the template editor.',
     },
     {
-      question: 'Which templates perform best?',
-      answer: 'Our top performers are Viral Hook Opener (2.4M avg views), Before & After (3.1M avg views), and Product Unboxing (15.7% conversion).',
+      question: 'How do I import/export templates for team collaboration?',
+      answer: 'Export: Open template → Click "..." menu → "Export as JSON" → Share file. Import: Click "Import Template" → Upload .json file → Customize → Save to your library. Perfect for team sharing.',
+    },
+    {
+      question: 'What if a template doesn\'t match my exact use case?',
+      answer: 'Start with the closest match → Use the visual editor to restructure sections → Adjust tone/pacing → Save as a new custom template. You can also combine elements from multiple templates using copy/paste in the editor.',
     },
   ];
 
@@ -149,28 +273,206 @@ export default function TemplateLibraryTool() {
     <>
       <MarketingNav />
       <Helmet>
-        <title>Template Library - 20+ Proven Viral Templates | Pheme</title>
+        <title>How to Use Template Library - Step-by-Step Guide | Pheme</title>
         <meta
           name="description"
-          content="Browse 20+ proven viral templates for TikTok, Instagram, and YouTube. Pre-built formulas tested across millions of views. Filter by niche, content type, and platform."
+          content="Learn how to browse, customize, and save viral templates for TikTok, Instagram, and YouTube. Complete step-by-step guide with practical examples and best practices."
         />
-        <meta property="og:title" content="Template Library - 20+ Proven Viral Templates | Pheme" />
+        <meta property="og:title" content="How to Use Template Library - Step-by-Step Guide | Pheme" />
         <meta
           property="og:description"
-          content="Browse 20+ proven viral templates for TikTok, Instagram, and YouTube. Pre-built formulas tested across millions of views. Filter by niche, content type, and platform."
+          content="Learn how to browse, customize, and save viral templates for TikTok, Instagram, and YouTube. Complete step-by-step guide with practical examples and best practices."
         />
         <meta property="og:type" content="website" />
       </Helmet>
 
       <ToolHero
-        eyebrowText="TEMPLATE LIBRARY"
-        headline="20+ Proven Templates for Every Niche & Platform"
-        subheadline="Pre-built viral formulas and affiliate frameworks tested across millions of views - just customize and create"
-        primaryCTA={{ text: 'Browse All Templates', onClick: handlePrimaryCTA }}
-        secondaryCTA={{ text: 'See Top Performers', onClick: handleSecondaryCTA }}
+        eyebrowText="TEMPLATE LIBRARY - HOW TO USE IT"
+        headline="Step-by-Step Guide: Browse, Customize & Save Viral Templates"
+        subheadline="Learn exactly how to use pre-built templates, customize them for your brand, save reusable versions, and integrate with Script Generator—complete walkthrough with examples"
+        primaryCTA={{ text: 'Start Using Templates', onClick: handlePrimaryCTA }}
+        secondaryCTA={{ text: 'See How Templates Work', onClick: handleSecondaryCTA }}
       />
 
       <HowItWorksSteps steps={steps} />
+
+      {/* How Templates Work Section */}
+      <section className="py-16 md:py-20 bg-gradient-to-br from-violet-50 to-purple-50" data-testid="how-templates-work-section">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="how-templates-work-title">
+              How Templates Work: Technical Workflow
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Understanding template structure, variables, and AI adaptation process
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+            <Card className="border-2 border-violet-200" data-testid="template-structure-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Settings className="h-5 w-5 text-violet-600" />
+                  Template Structure
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {templateWorkflow.structure.map((item, index) => (
+                    <div key={index} className="bg-white rounded-lg p-4 border border-gray-200" data-testid={`structure-item-${index}`}>
+                      <h4 className="font-semibold text-gray-900 mb-1">{item.element}</h4>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="border-2 border-violet-200" data-testid="variable-placeholders-card">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Edit3 className="h-5 w-5 text-violet-600" />
+                  Variable Placeholders
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {templateWorkflow.variables.map((variable, index) => (
+                    <div key={index} className="flex items-start gap-2" data-testid={`variable-item-${index}`}>
+                      <Badge variant="secondary" className="mt-1">Auto</Badge>
+                      <p className="text-gray-700 text-sm">{variable}</p>
+                    </div>
+                  ))}
+                  <div className="mt-4 p-3 bg-violet-100 rounded-lg">
+                    <p className="text-sm text-violet-800">
+                      <strong>How it works:</strong> Type your product/topic → AI instantly replaces all variables → You get a customized script
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card className="border-2 border-violet-200" data-testid="ai-adaptation-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <RefreshCw className="h-5 w-5 text-violet-600" />
+                AI Adaptation Process
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+                {templateWorkflow.aiAdaptation.map((step, index) => (
+                  <div key={index} className="text-center" data-testid={`ai-step-${index}`}>
+                    <div className="bg-violet-100 rounded-full w-12 h-12 flex items-center justify-center mx-auto mb-3">
+                      <span className="text-violet-600 font-bold">{index + 1}</span>
+                    </div>
+                    <p className="text-sm text-gray-700">{step}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 p-4 bg-green-50 rounded-lg border border-green-200">
+                <p className="text-sm text-green-800 text-center">
+                  <strong>Performance Tracking:</strong> Each generated script tracks engagement → AI learns what works → Optimization loop improves templates over time
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Interactive Examples Section */}
+      <section className="py-16 md:py-20 bg-white" data-testid="interactive-examples-section">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="interactive-examples-title">
+              Interactive Examples: See It In Action
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Practical demonstrations showing exactly how to use templates in real scenarios
+            </p>
+          </div>
+
+          <div className="space-y-8">
+            {interactiveExamples.map((example, index) => (
+              <Card key={index} className="border-2 border-gray-200 hover:border-violet-300 transition-colors" data-testid={`example-card-${index}`}>
+                <CardContent className="p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-6" data-testid={`example-title-${index}`}>
+                    {example.title}
+                  </h3>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-red-50 rounded-lg p-6 border border-red-200" data-testid={`example-before-${index}`}>
+                      <Badge className="bg-red-600 text-white mb-3">Before</Badge>
+                      <p className="text-gray-800 font-mono text-sm">{example.before}</p>
+                    </div>
+
+                    <div className="bg-green-50 rounded-lg p-6 border border-green-200" data-testid={`example-after-${index}`}>
+                      <Badge className="bg-green-600 text-white mb-3">After</Badge>
+                      <p className="text-gray-800 font-mono text-sm">{example.after}</p>
+                    </div>
+                  </div>
+
+                  <div className="bg-violet-50 rounded-lg p-6 border border-violet-200 mb-6">
+                    <p className="text-violet-900" data-testid={`example-description-${index}`}>
+                      <strong>What happened:</strong> {example.description}
+                    </p>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-6">
+                    <h4 className="font-semibold text-gray-900 mb-3">Action Steps:</h4>
+                    <div className="space-y-2">
+                      {example.actionSteps.map((step, stepIndex) => (
+                        <div key={stepIndex} className="flex items-start gap-3" data-testid={`example-step-${index}-${stepIndex}`}>
+                          <ArrowRight className="h-5 w-5 text-violet-600 mt-0.5 flex-shrink-0" />
+                          <p className="text-gray-700">{step}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Practical Tips Section */}
+      <section className="py-16 md:py-20 bg-gray-50" data-testid="practical-tips-section">
+        <div className="container mx-auto px-4 max-w-7xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4" data-testid="practical-tips-title">
+              Practical Tips & Best Practices
+            </h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Actionable advice for choosing, customizing, organizing, and optimizing templates
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {practicalTips.map((tipCategory, index) => (
+              <Card key={index} className="border-2 border-gray-200" data-testid={`tip-category-${index}`}>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <tipCategory.icon className="h-5 w-5 text-violet-600" />
+                    {tipCategory.category}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <ul className="space-y-3">
+                    {tipCategory.tips.map((tip, tipIndex) => (
+                      <li key={tipIndex} className="flex items-start gap-3" data-testid={`tip-${index}-${tipIndex}`}>
+                        <span className="text-violet-600 mt-1">•</span>
+                        <p className="text-gray-700 text-sm">{tip}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
 
       <ToolFeatureGrid features={features} sectionTitle="Template Library Features" />
 
@@ -179,8 +481,9 @@ export default function TemplateLibraryTool() {
         <div className="container mx-auto px-4 max-w-7xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900" data-testid="categories-title">
-              Explore Templates by Category
+              Browse Templates by Category
             </h2>
+            <p className="text-gray-600 mt-2">Filter by niche, content type, or platform to find the perfect template</p>
           </div>
           
           <Tabs defaultValue="niche" className="w-full" data-testid="category-tabs">
@@ -248,6 +551,7 @@ export default function TemplateLibraryTool() {
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900" data-testid="top-performers-title">
               Top Performing Templates
             </h2>
+            <p className="text-gray-600 mt-2">Start with these proven high-performers for immediate results</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8" data-testid="top-performers-grid">
             {topPerformers.map((template, index) => (
@@ -271,11 +575,43 @@ export default function TemplateLibraryTool() {
         </div>
       </section>
 
+      {/* Cross-link to Feature Page */}
+      <section className="py-16 md:py-20 bg-gradient-to-r from-violet-600 to-purple-600" data-testid="feature-link-section">
+        <div className="container mx-auto px-4 max-w-5xl text-center">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            Why Templates Save 10+ Hours Per Week
+          </h2>
+          <p className="text-xl text-violet-100 mb-8">
+            Learn about template benefits, ROI, and success stories from creators using our library
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button
+              size="lg"
+              onClick={handleFeaturePageCTA}
+              className="bg-white text-violet-600 hover:bg-violet-50"
+              data-testid="feature-page-cta-1"
+            >
+              See Why Templates Save 10+ Hours Per Week →
+            </Button>
+            <Button
+              size="lg"
+              onClick={handleFeaturePageCTA}
+              variant="outline"
+              className="border-white text-white hover:bg-violet-700"
+              data-testid="feature-page-cta-2"
+            >
+              Learn About Template Benefits & ROI →
+            </Button>
+          </div>
+        </div>
+      </section>
+
       <ToolFAQ faqs={faqs} />
 
       <ToolCTA
-        headline="Start Using Proven Templates Today"
-        primaryCTA={{ text: 'Explore Templates', onClick: handleFinalCTA }}
+        headline="Ready to Start Using Templates?"
+        description="Browse 20+ proven templates, customize for your brand, and save hours on content creation"
+        primaryCTA={{ text: 'Access Template Library Now', onClick: handleFinalCTA }}
         gradient={true}
       />
 
