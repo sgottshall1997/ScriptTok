@@ -53,7 +53,7 @@ Pheme is a comprehensive content generation platform designed to create high-qua
 ## 📁 Project Structure
 
 ```
-scripttok/
+pheme/
 ├── client/                    # React frontend application
 │   ├── src/
 │   │   ├── components/       # Reusable UI components
@@ -131,7 +131,7 @@ npm run db:push    # Push database schema changes
 
 ## 🔐 Authentication System
 
-ScriptTok features a flexible two-environment authentication system designed to streamline development while maintaining production security. The system automatically detects the environment and applies the appropriate authentication strategy.
+Pheme features a flexible two-environment authentication system designed to streamline development while maintaining production security. The system automatically detects the environment and applies the appropriate authentication strategy.
 
 ### Overview
 
