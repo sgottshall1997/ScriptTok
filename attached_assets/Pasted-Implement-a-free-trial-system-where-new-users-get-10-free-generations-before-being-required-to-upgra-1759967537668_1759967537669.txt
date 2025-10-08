@@ -1,0 +1,38 @@
+Implement a free trial system where new users get 10 free generations before being required to upgrade. Here's what needs to be done:
+1. **Database Schema Updates:**
+   - Add a new field to track free trial generations used (if not already exists)
+   - Ensure the User table has a field to track if user is on free trial vs paid subscription
+2. **Free Trial Logic:**
+   - When a new user signs up (in identityService.ts), set them to 'free' tier initially with 10 free generations
+   - Track generation usage separately for free trial users
+   - After 10 generations are used, prevent further generations and show upgrade prompt
+3. **Quota Service Updates (server/services/quotaService.ts):**
+   - Add a new tier called 'free' with limit of 10 total generations (GPT + Claude combined)
+   - Modify checkModelQuota() to check if user is on free tier and has exceeded 10 generations
+   - Return appropriate error message directing to /pricing page when limit reached
+4. **Frontend Updates (client/src/pages/GenerateContent.tsx):**
+   - Display remaining free generations counter for free tier users (e.g., "5 of 10 free generations remaining")
+   - When user hits 0 remaining, show a modal/alert with:
+     - Message: "Your 10 free generations are complete! Upgrade to continue creating viral content."
+     - "View Pricing Plans" button that navigates to /pricing
+   - Disable generate button when free trial is exhausted
+5. **Identity Service Updates (server/services/identityService.ts):**
+   - Change new user creation to set subscriptionTier to 'free' instead of 'pro'
+   - Create initial subscription record with tier='free', limit=10
+6. **UI Indicators:**
+   - Add "FREE TRIAL" badge to UsageProgress component for free users
+   - Show "X/10 free generations used" in the usage statistics
+   - Add upgrade CTA in header/navigation for free tier users
+7. **Middleware Updates (server/middleware/checkQuota.ts):**
+   - Ensure quota checks properly block free tier users at 10 generations
+   - Return clear error message: "Free trial complete (10/10 generations used). Upgrade to continue at /pricing"
+8. **Migration Script:**
+   - Create a migration to add 'free' tier support to existing tier validation
+   - Ensure tier limits include: free=10, starter=15, creator=50, pro=300, agency=1000
+Key Requirements:
+- Free tier gets 10 total generations (combined GPT + Claude)
+- Clear messaging when trial ends
+- Smooth upgrade flow to pricing page
+- Existing paid users should not be affected
+- Dev mode should still work with DEV_USER_TIER environment variable
+Make sure all error messages and UI text are user-friendly and clearly direct users to upgrade when their free trial is complete
