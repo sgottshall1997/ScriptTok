@@ -33,13 +33,7 @@ export class QuotaService {
       
       console.log(`[QuotaService] No usage record found for user ${userId}, creating new record`);
       const user = await this.storage.getUser(userId);
-      let tier = user?.subscriptionTier || 'starter';
-      
-      // Backward compatibility: map legacy 'free' to 'starter'
-      if (tier === 'free') {
-        console.log(`[QuotaService] User ${userId} has legacy 'free' tier in usage creation, treating as 'starter'`);
-        tier = 'starter';
-      }
+      const tier = user?.subscriptionTier || 'starter';
       
       usage = await this.storage.createMonthlyUsage({
         userId,
@@ -114,13 +108,7 @@ export class QuotaService {
         return 'starter';
       }
       
-      let tier = user.subscriptionTier || 'starter';
-      
-      // Backward compatibility: map 'free' to 'starter'
-      if (tier === 'free') {
-        console.log(`[QuotaService] User ${userId} has legacy 'free' tier, treating as 'starter'`);
-        tier = 'starter';
-      }
+      const tier = user.subscriptionTier || 'starter';
       
       console.log(`[QuotaService] User ${userId} has tier: ${tier}`);
       return tier;
@@ -134,7 +122,8 @@ export class QuotaService {
     console.log(`[QuotaService] Getting GPT limit for tier: ${tier}`);
     
     switch (tier) {
-      case 'free': // backward compatibility
+      case 'free':
+        return 3; // Free tier: 3 total generations combined (GPT + Claude)
       case 'starter':
         return 15;
       case 'creator':
@@ -153,7 +142,8 @@ export class QuotaService {
     console.log(`[QuotaService] Getting Claude limit for tier: ${tier}`);
     
     switch (tier) {
-      case 'free': // backward compatibility
+      case 'free':
+        return 3; // Free tier: 3 total generations combined (GPT + Claude)
       case 'starter':
         return 10;
       case 'creator':
@@ -172,7 +162,8 @@ export class QuotaService {
     console.log(`[QuotaService] Getting trend analysis limit for tier: ${tier}`);
     
     switch (tier) {
-      case 'free': // backward compatibility
+      case 'free':
+        return 3; // Free tier gets limited trend analyses
       case 'starter':
         return 10;
       case 'creator':
@@ -187,6 +178,25 @@ export class QuotaService {
     }
   }
 
+  getTotalGenerationsLimit(tier: string): number {
+    console.log(`[QuotaService] Getting total generations limit for tier: ${tier}`);
+    
+    switch (tier) {
+      case 'free':
+        return 3; // Free tier: 3 total generations (GPT + Claude combined)
+      case 'starter':
+        return 25; // 15 GPT + 10 Claude
+      case 'creator':
+        return 80; // 50 GPT + 30 Claude
+      case 'pro':
+        return 450; // 300 GPT + 150 Claude
+      case 'agency':
+        return 1500; // 1000 GPT + 500 Claude
+      default:
+        return 25;
+    }
+  }
+
   getTierLimit(tier: string): number {
     return this.getGptLimit(tier);
   }
@@ -196,8 +206,28 @@ export class QuotaService {
       console.log(`[QuotaService] Checking ${modelType} quota for user ${userId}`);
       
       const tier = await this.getUserTier(userId);
-      const limit = modelType === 'gpt' ? this.getGptLimit(tier) : this.getClaudeLimit(tier);
       const usage = await this.getOrCreateMonthlyUsage(userId);
+      
+      // Special logic for free tier: combined quota of 3 total generations
+      if (tier === 'free') {
+        const totalUsed = usage.gptGenerationsUsed + usage.claudeGenerationsUsed;
+        const limit = this.getTotalGenerationsLimit(tier); // 3 total
+        const allowed = totalUsed < limit;
+        const remaining = Math.max(0, limit - totalUsed);
+        
+        console.log(`[QuotaService] FREE TIER ${modelType} quota check for user ${userId}: totalUsed=${totalUsed}, limit=${limit}, allowed=${allowed}, remaining=${remaining}`);
+        
+        return {
+          allowed,
+          used: totalUsed,
+          limit,
+          remaining,
+          tier
+        };
+      }
+      
+      // Regular per-model quota for paid tiers
+      const limit = modelType === 'gpt' ? this.getGptLimit(tier) : this.getClaudeLimit(tier);
       const used = modelType === 'gpt' ? usage.gptGenerationsUsed : usage.claudeGenerationsUsed;
       const allowed = used < limit;
       const remaining = Math.max(0, limit - used);
