@@ -74,18 +74,18 @@ export default function SampleFlowDemonstration() {
   };
 
   return (
-    <div className="my-12 w-full max-w-6xl mx-auto">
+    <div className="my-6 w-full max-w-6xl mx-auto">
       {/* Section Header */}
-      <div className="text-center mb-8">
-        <h3 className="text-2xl md:text-3xl font-bold mb-3 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+      <div className="text-center mb-6">
+        <h3 className="text-2xl md:text-3xl font-bold mb-2 bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
           From Trending Topic to Viral Content in 60 Seconds
         </h3>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+        <p className="text-gray-600 dark:text-gray-400 mb-4">
           Watch how AI transforms trends into high-performing scripts with built-in virality analysis
         </p>
         
         {/* Auto-play controls */}
-        <div className="flex items-center justify-center gap-4 mb-6">
+        <div className="flex items-center justify-center gap-4 mb-4">
           <Button
             onClick={() => setIsAutoPlay(!isAutoPlay)}
             variant={isAutoPlay ? "default" : "outline"}
@@ -108,7 +108,7 @@ export default function SampleFlowDemonstration() {
       </div>
 
       {/* Progress indicator */}
-      <div className="mb-8">
+      <div className="mb-6">
         <div className="flex justify-between mb-2">
           {steps.map((step) => (
             <button
@@ -140,7 +140,7 @@ export default function SampleFlowDemonstration() {
       </div>
 
       {/* Step Content */}
-      <div className="min-h-[400px]">
+      <div className="min-h-[350px]">
         {currentStep === 1 && <Step1FindTrend navigate={navigate} />}
         {currentStep === 2 && <Step2SelectProduct />}
         {currentStep === 3 && <Step3AIIntelligence />}
@@ -152,7 +152,7 @@ export default function SampleFlowDemonstration() {
       </div>
 
       {/* Navigation buttons */}
-      <div className="flex justify-between mt-8">
+      <div className="flex justify-center gap-4 mt-6">
         <Button
           onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
           disabled={currentStep === 1}
