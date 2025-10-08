@@ -20,6 +20,7 @@ import Footer from "@/components/Footer";
 import SampleFlowDemonstration from "@/components/SampleFlowDemonstration";
 import RotatingValueProps from "@/components/marketing/RotatingValueProps";
 import MetricsCounter from "@/components/marketing/MetricsCounter";
+import GradientDivider from "@/components/marketing/GradientDivider";
 
 interface GridCardProps {
   icon: LucideIcon;
@@ -172,8 +173,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <GradientDivider />
+
       {/* Features Section */}
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-12 md:py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">From Trend to Script in 60 Seconds.</h2>
@@ -198,8 +201,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <GradientDivider />
+
       {/* Tools Section */}
-      <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-12 md:py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">Tools</h2>
@@ -227,8 +232,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <GradientDivider />
+
       {/* Use Cases Section */}
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-12 md:py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">Use Cases</h2>
@@ -251,8 +258,10 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <GradientDivider />
+
       {/* Pricing Section */}
-      <section className="py-16 px-4 bg-white dark:bg-gray-900">
+      <section className="py-12 md:py-16 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-5">
             <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-2">
