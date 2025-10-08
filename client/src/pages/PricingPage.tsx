@@ -659,7 +659,7 @@ export default function PricingPage() {
                   data-testid="button-footer-start-free"
                 >
                   <Zap className="mr-2 h-5 w-5" />
-                  Start Free Today
+                  10 Free Generations
                 </Button>
               ) : (
                 <Button
