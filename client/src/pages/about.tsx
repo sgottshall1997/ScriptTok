@@ -101,14 +101,14 @@ const AboutPage: React.FC = () => {
     {
       icon: HelpCircle,
       title: 'FAQ',
-      description: 'Frequently asked questions about ScriptTok features',
+      description: 'Frequently asked questions about Pheme features',
       path: '/faq',
       category: 'Help'
     },
     {
       icon: MessageSquare,
       title: 'Contact',
-      description: 'Get support and provide feedback to improve ScriptTok',
+      description: 'Get support and provide feedback to improve Pheme',
       path: '/contact',
       category: 'Support'
     }
@@ -195,7 +195,7 @@ const AboutPage: React.FC = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* ScriptTok Intelligence Flow Diagram */}
+          {/* Pheme Intelligence Flow Diagram */}
           <div className="mb-8">
             <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200">
               <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-2">

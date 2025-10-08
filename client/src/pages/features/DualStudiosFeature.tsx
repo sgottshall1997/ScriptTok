@@ -83,7 +83,7 @@ export default function DualStudiosFeature() {
     {
       question: "Do I need separate accounts for each studio?",
       answer:
-        "No, both studios are included in your single ScriptTok account. Switch between them with one click using the studio selector in your dashboard.",
+        "No, both studios are included in your single Pheme account. Switch between them with one click using the studio selector in your dashboard.",
     },
     {
       question: "Are templates shared between both studios?",
@@ -116,9 +116,9 @@ export default function DualStudiosFeature() {
         <meta property="og:title" content="Dual Studios - Switch Between Viral & Affiliate Content | Pheme" />
         <meta property="og:description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://scripttok.com/features/dual-studios" />
+        <meta property="og:url" content="https://pheme.com/features/dual-studios" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Dual Studios - Switch Between Viral & Affiliate Content | ScriptTok" />
+        <meta name="twitter:title" content="Dual Studios - Switch Between Viral & Affiliate Content | Pheme" />
         <meta name="twitter:description" content="Toggle between viral and affiliate content studios instantly. Specialized AI modes optimized for organic engagement or high-converting campaigns." />
       </Helmet>
       

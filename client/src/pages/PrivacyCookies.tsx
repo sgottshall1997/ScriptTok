@@ -70,7 +70,7 @@ const PrivacyCookiesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Information We Collect Automatically</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li><strong>Usage Data:</strong> How you interact with ScriptTok features</li>
+                <li><strong>Usage Data:</strong> How you interact with Pheme features</li>
                 <li><strong>Device Information:</strong> Browser type, operating system, IP address</li>
                 <li><strong>Performance Data:</strong> Page load times, error logs, feature usage</li>
                 <li><strong>Analytics:</strong> Aggregated usage patterns and trends</li>
@@ -345,12 +345,12 @@ const PrivacyCookiesPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 mb-4">
-              ScriptTok is not intended for children under 13 years of age. We do not knowingly collect 
+              Pheme is not intended for children under 13 years of age. We do not knowingly collect 
               personal information from children under 13. If you are a parent or guardian and believe 
               your child has provided personal information, please contact us immediately.
             </p>
             <p className="text-gray-700">
-              Users between 13-18 years old should obtain parental consent before using ScriptTok.
+              Users between 13-18 years old should obtain parental consent before using Pheme.
             </p>
           </CardContent>
         </Card>
@@ -362,7 +362,7 @@ const PrivacyCookiesPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-gray-700 mb-4">
-              ScriptTok operates globally and may transfer your information to countries other than your own. 
+              Pheme operates globally and may transfer your information to countries other than your own. 
               We ensure appropriate safeguards are in place for international transfers, including:
             </p>
             <ul className="list-disc pl-6 text-gray-700 space-y-1">

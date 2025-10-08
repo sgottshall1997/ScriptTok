@@ -262,7 +262,7 @@ const CookiePreferencesPage: React.FC = () => {
                   Usage Analytics & Improvements
                 </Label>
                 <p className="text-sm text-gray-600 mt-1">
-                  These cookies help us understand how you use ScriptTok so we can improve the service. 
+                  These cookies help us understand how you use Pheme so we can improve the service. 
                   They collect anonymous usage data and help us fix bugs and optimize features.
                 </p>
                 <div className="mt-2">
@@ -294,7 +294,7 @@ const CookiePreferencesPage: React.FC = () => {
                   Do Not Sell My Personal Information
                 </Label>
                 <p className="text-sm text-gray-600 mt-1">
-                  For California residents: ScriptTok does not sell personal information. 
+                  For California residents: Pheme does not sell personal information. 
                   This setting ensures compliance with CCPA requirements and your privacy preferences.
                 </p>
                 <div className="mt-2">

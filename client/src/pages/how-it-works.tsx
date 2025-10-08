@@ -183,7 +183,7 @@ const HowItWorksPage: React.FC = () => {
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="item-1">
             <AccordionTrigger>
-              What niches does ScriptTok support?
+              What niches does Pheme support?
             </AccordionTrigger>
             <AccordionContent>
               Pheme supports 7 major niches: Beauty, Technology, Fashion, Fitness, Food, 
@@ -237,7 +237,7 @@ const HowItWorksPage: React.FC = () => {
           
           <AccordionItem value="item-6">
             <AccordionTrigger>
-              What makes ScriptTok different from other content generators?
+              What makes Pheme different from other content generators?
             </AccordionTrigger>
             <AccordionContent>
               Pheme helps creators win across platforms with Viral Score insights, tailored templates, 

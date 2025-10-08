@@ -887,3 +887,5 @@ export const scriptTokSections = phemeSections;
 export const getScriptTokSectionsByCategory = getPhemeSectionsByCategory;
 export const getScriptTokSectionByPath = getPhemeSectionByPath;
 export const getScriptTokSectionsByKeyword = getPhemeSectionsByKeyword;
+
+// Note: scriptTok exports kept for backwards compatibility only

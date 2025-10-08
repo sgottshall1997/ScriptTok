@@ -43,7 +43,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Copyright Policy</h3>
               <p className="text-gray-700 mb-4">
-                ScriptTok respects the intellectual property rights of others and expects our users to do the same. 
+                Pheme respects the intellectual property rights of others and expects our users to do the same. 
                 We respond to notices of alleged copyright infringement that comply with the Digital Millennium Copyright Act (DMCA).
               </p>
             </div>
@@ -67,7 +67,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Filing a DMCA Notice</h3>
               <p className="text-gray-700 mb-3">
-                If you believe that content on ScriptTok infringes your copyright, please provide our designated agent with the following information:
+                If you believe that content on Pheme infringes your copyright, please provide our designated agent with the following information:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>A physical or electronic signature of the copyright owner or authorized representative</li>
@@ -108,7 +108,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Repeat Infringer Policy</h3>
               <p className="text-gray-700">
-                ScriptTok will terminate the accounts of users who are repeat infringers in accordance with the DMCA 
+                Pheme will terminate the accounts of users who are repeat infringers in accordance with the DMCA 
                 and our Terms of Service.
               </p>
             </div>
@@ -127,7 +127,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Our Security Commitment</h3>
               <p className="text-gray-700 mb-4">
-                ScriptTok takes security seriously. We are committed to protecting our users' data and maintaining 
+                Pheme takes security seriously. We are committed to protecting our users' data and maintaining 
                 the integrity of our platform. We welcome security researchers and the community to help us 
                 identify and fix security vulnerabilities.
               </p>
@@ -241,7 +241,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Data Protection Regulations</h3>
               <p className="text-gray-700 mb-3">
-                ScriptTok complies with applicable data protection regulations including:
+                Pheme complies with applicable data protection regulations including:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>General Data Protection Regulation (GDPR) for EU users</li>
@@ -255,7 +255,7 @@ const LegalNoticesPage: React.FC = () => {
               <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
                 <h4 className="font-semibold text-purple-800 mb-2">Responsible AI Use</h4>
                 <p className="text-purple-700 mb-3">
-                  ScriptTok is committed to responsible AI development and deployment:
+                  Pheme is committed to responsible AI development and deployment:
                 </p>
                 <ul className="list-disc pl-6 text-purple-600 space-y-1">
                   <li>We use Claude AI by Anthropic, which follows strict AI safety guidelines</li>
@@ -279,7 +279,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Content Moderation</h3>
               <p className="text-gray-700 mb-3">
-                ScriptTok maintains content standards to ensure appropriate use:
+                Pheme maintains content standards to ensure appropriate use:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>AI systems include content filtering for harmful or inappropriate material</li>
@@ -300,7 +300,7 @@ const LegalNoticesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Law Enforcement Requests</h3>
               <p className="text-gray-700 mb-3">
-                ScriptTok may disclose user information in response to valid legal process, including:
+                Pheme may disclose user information in response to valid legal process, including:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>Subpoenas, court orders, and search warrants</li>

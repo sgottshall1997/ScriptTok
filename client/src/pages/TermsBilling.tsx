@@ -23,7 +23,7 @@ const TermsBillingPage: React.FC = () => {
               Terms of Service & Billing
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Complete terms of service, acceptable use policies, and billing terms for ScriptTok
+              Complete terms of service, acceptable use policies, and billing terms for Pheme
             </p>
             <p className="text-sm text-gray-500">
               Last updated: September 26, 2025
@@ -83,8 +83,8 @@ const TermsBillingPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">3. Intellectual Property</h3>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
-                <li>You retain ownership of content you create using ScriptTok</li>
-                <li>ScriptTok retains ownership of the platform, technology, and algorithms</li>
+                <li>You retain ownership of content you create using Pheme</li>
+                <li>Pheme retains ownership of the platform, technology, and algorithms</li>
                 <li>AI-generated content is provided "as-is" without guarantees of uniqueness</li>
                 <li>You may not reverse engineer, decompile, or attempt to extract our algorithms</li>
               </ul>
@@ -258,7 +258,7 @@ const TermsBillingPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Governing Law</h3>
               <p className="text-gray-700">
-                This agreement shall be governed by the laws of the jurisdiction where ScriptTok is operated, 
+                This agreement shall be governed by the laws of the jurisdiction where Pheme is operated, 
                 without regard to conflict of law principles.
               </p>
             </div>

@@ -16,7 +16,7 @@ const FAQPage: React.FC = () => {
       <div className="mb-8 text-center">
         <h1 className="text-3xl font-bold mb-3 text-gray-800">Frequently Asked Questions</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Find answers to common questions about ScriptTok and how it helps you create
+          Find answers to common questions about Pheme and how it helps you create
           viral content with AI-powered generation and viral score analysis.
         </p>
       </div>
@@ -106,7 +106,7 @@ const FAQPage: React.FC = () => {
               What niches are supported?
             </AccordionTrigger>
             <AccordionContent>
-              ScriptTok supports 7 major niches:
+              Pheme supports 7 major niches:
               <ul className="list-disc pl-6 mt-2 grid grid-cols-2 gap-2">
                 <li>Beauty & Skincare</li>
                 <li>Technology & Gadgets</li>
@@ -146,7 +146,7 @@ const FAQPage: React.FC = () => {
             </AccordionTrigger>
             <AccordionContent>
               <p className="mb-2">
-                ScriptTok offers viral templates designed for engagement:
+                Pheme offers viral templates designed for engagement:
               </p>
               <ul className="list-disc pl-6 grid grid-cols-2 gap-2">
                 <li>Product Reveals</li>

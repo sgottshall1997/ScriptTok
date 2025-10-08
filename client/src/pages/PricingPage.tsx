@@ -599,7 +599,7 @@ export default function PricingPage() {
                   Do you offer refunds?
                 </AccordionTrigger>
                 <AccordionContent className="text-gray-600 dark:text-gray-400" data-testid="faq-content-5">
-                  We offer a 14-day money-back guarantee on all paid plans. If you're not satisfied with ScriptTok, contact our support team within 14 days of your purchase for a full refund.
+                  We offer a 14-day money-back guarantee on all paid plans. If you're not satisfied with Pheme, contact our support team within 14 days of your purchase for a full refund.
                 </AccordionContent>
               </AccordionItem>
 
@@ -631,7 +631,7 @@ export default function PricingPage() {
               Ready to Create Viral Content?
             </h2>
             <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-2xl mx-auto">
-              Join thousands of creators using ScriptTok to generate scroll-stopping scripts
+              Join thousands of creators using Pheme to generate scroll-stopping scripts
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               {!isAuthenticated ? (

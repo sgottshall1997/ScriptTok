@@ -124,9 +124,9 @@ export default function ViralScoreFeature() {
         <meta property="og:title" content="AI Viral Score - Predict Content Performance | Pheme" />
         <meta property="og:description" content="Know your content will perform before you post. AI-powered viral prediction scores with actionable feedback to maximize reach." />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://scripttok.com/features/viral-score" />
+        <meta property="og:url" content="https://pheme.com/features/viral-score" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="AI Viral Score - Predict Content Performance | ScriptTok" />
+        <meta name="twitter:title" content="AI Viral Score - Predict Content Performance | Pheme" />
         <meta name="twitter:description" content="Know your content will perform before you post. AI-powered viral prediction scores with actionable feedback to maximize reach." />
       </Helmet>
       

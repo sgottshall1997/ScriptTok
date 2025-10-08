@@ -144,7 +144,7 @@ export default function Account() {
               
               {currentTier === 'agency' && (
                 <Button variant="outline" className="w-full" asChild>
-                  <a href="mailto:sales@scripttok.com">
+                  <a href="mailto:sales@pheme.com">
                     Contact Sales for Enterprise
                   </a>
                 </Button>

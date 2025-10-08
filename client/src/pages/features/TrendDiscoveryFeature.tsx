@@ -195,7 +195,7 @@ export default function TrendDiscoveryFeature() {
         <meta property="og:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | Pheme" />
         <meta property="og:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
         <meta property="og:type" content="article" />
-        <meta property="og:url" content="https://scripttok.com/features/trend-discovery" />
+        <meta property="og:url" content="https://pheme.com/features/trend-discovery" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Trend Discovery - Real-Time Viral Trends & Sounds | Pheme" />
         <meta name="twitter:description" content="Track trending sounds, hashtags, and topics across all platforms. Turn viral trends into ready-to-film scripts instantly." />
