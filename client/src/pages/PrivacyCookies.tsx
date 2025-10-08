@@ -23,7 +23,7 @@ const PrivacyCookiesPage: React.FC = () => {
               Privacy Policy & Cookies
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              How ScriptTok collects, uses, and protects your personal information and data
+              How Pheme collects, uses, and protects your personal information and data
             </p>
             <p className="text-sm text-gray-500">
               Last updated: September 26, 2025
@@ -41,7 +41,7 @@ const PrivacyCookiesPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-green-700">
-              ScriptTok is committed to protecting your privacy. We believe in transparency about how we collect, 
+              Pheme is committed to protecting your privacy. We believe in transparency about how we collect, 
               use, and share your information. This policy explains our practices in clear, understandable terms.
             </p>
           </CardContent>
@@ -138,7 +138,7 @@ const PrivacyCookiesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">We Do Not Sell Your Personal Information</h3>
               <p className="text-gray-700 mb-4">
-                ScriptTok does not sell, rent, or trade your personal information to third parties for monetary gain.
+                Pheme does not sell, rent, or trade your personal information to third parties for monetary gain.
               </p>
             </div>
 
@@ -157,13 +157,13 @@ const PrivacyCookiesPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">AI Partner Disclosure</h3>
               <p className="text-gray-700 mb-3">
-                ScriptTok uses Claude AI by Anthropic for content generation. When you generate content:
+                Pheme uses Claude AI by Anthropic for content generation. When you generate content:
               </p>
               <ul className="list-disc pl-6 text-gray-700 space-y-1">
                 <li>Your prompts are sent to Claude AI for processing</li>
                 <li>Claude AI generates content based on your inputs</li>
                 <li>We do not store your prompts with Claude AI beyond the generation session</li>
-                <li>Generated content is returned to you and stored in your ScriptTok account</li>
+                <li>Generated content is returned to you and stored in your Pheme account</li>
               </ul>
             </div>
           </CardContent>

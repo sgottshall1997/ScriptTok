@@ -131,7 +131,7 @@ const CookiePreferencesPage: React.FC = () => {
               Cookie Preferences
             </h1>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Manage your cookie preferences and privacy settings for ScriptTok
+              Manage your cookie preferences and privacy settings for Pheme
             </p>
           </div>
         </div>
