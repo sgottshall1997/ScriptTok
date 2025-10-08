@@ -59,7 +59,7 @@ function CTABar({ section }: { section: string }) {
   const [_, navigate] = useLocation();
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-4">
+    <div className="flex flex-col sm:flex-row gap-4 justify-center mt-3">
       <Button
         onClick={() => {
           trackNavigateCTA(section, 'talk_to_sales');
@@ -118,16 +118,16 @@ export default function LandingPage() {
       <MarketingNav />
 
       {/* Hero Section */}
-      <section className="relative bg-gradient-hero text-white py-8 px-4">
+      <section className="relative bg-gradient-hero text-white py-6 px-4">
         <div className="absolute inset-0 glow-purple opacity-30 pointer-events-none"></div>
         <div className="container mx-auto max-w-6xl text-center relative z-10">
-          <h1 className="text-display text-gradient-purple mb-3">
+          <h1 className="text-display text-gradient-purple mb-2">
             Make Your Voice Heard
           </h1>
-          <p className="text-lg md:text-xl text-gray-200 mb-5 max-w-3xl mx-auto">
+          <p className="text-lg md:text-xl text-gray-200 mb-4 max-w-3xl mx-auto">
             AI-powered scripts, trend discovery, and affiliate tools built for creators.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
             {!isAuthenticated ? (
               <Button
                 onClick={() => {
@@ -173,10 +173,10 @@ export default function LandingPage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-8 md:py-12 px-4 bg-white dark:bg-gray-900">
+      <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">From Trend to Script in 60 Seconds.</h2>
+          <div className="text-center mb-5">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">From Trend to Script in 60 Seconds.</h2>
             <SampleFlowDemonstration />
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Everything you need to create viral content and grow your audience.
@@ -199,10 +199,10 @@ export default function LandingPage() {
       </section>
 
       {/* Tools Section */}
-      <section className="py-8 md:py-12 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-6 md:py-10 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">Tools</h2>
+          <div className="text-center mb-5">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">Tools</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Powerful AI tools to streamline your content creation workflow.
             </p>
@@ -228,10 +228,10 @@ export default function LandingPage() {
       </section>
 
       {/* Use Cases Section */}
-      <section className="py-8 md:py-12 px-4 bg-white dark:bg-gray-900">
+      <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">Use Cases</h2>
+          <div className="text-center mb-5">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">Use Cases</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Perfect for creators, marketers, and teams of all sizes.
             </p>
@@ -252,10 +252,10 @@ export default function LandingPage() {
       </section>
 
       {/* Learn Section */}
-      <section className="py-8 md:py-12 px-4 bg-gray-50 dark:bg-gray-800">
+      <section className="py-6 md:py-10 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">Learn</h2>
+          <div className="text-center mb-5">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">Learn</h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Resources, templates, and community to help you succeed.
             </p>
@@ -276,10 +276,10 @@ export default function LandingPage() {
       </section>
 
       {/* Pricing Section */}
-      <section className="py-8 md:py-12 px-4 bg-white dark:bg-gray-900">
+      <section className="py-6 md:py-10 px-4 bg-white dark:bg-gray-900">
         <div className="container mx-auto max-w-7xl">
-          <div className="text-center mb-6">
-            <h2 className="text-3xl md:text-4xl font-bold mb-3">
+          <div className="text-center mb-5">
+            <h2 className="text-3xl md:text-4xl font-bold mb-2">
               Choose Your Plan
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400">
