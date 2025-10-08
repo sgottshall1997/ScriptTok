@@ -196,6 +196,7 @@ export default function TrendForecaster() {
                     niche={niche.id}
                     onProductClick={handleProductClick}
                     userTier={userTier}
+                    forecastingLevel={forecastingLevel}
                   />
                 )}
               </TabsContent>
@@ -275,12 +276,14 @@ function TrendCategories({
   forecast, 
   niche, 
   onProductClick,
-  userTier 
+  userTier,
+  forecastingLevel
 }: { 
   forecast: any; 
   niche: string;
   onProductClick: (product: string, niche: string) => void;
-  userTier: 'free' | 'pro';
+  userTier: 'starter' | 'creator' | 'pro' | 'agency';
+  forecastingLevel: 'none' | 'basic' | 'full';
 }) {
   if (!forecast) {
     return (
@@ -295,9 +298,9 @@ function TrendCategories({
   const findFirstTabWithData = () => {
     const trends = forecast.trends || {};
     if (trends.hot?.length > 0) return "hot";
-    if (trends.rising?.length > 0) return "rising";
-    if (trends.upcoming?.length > 0) return "upcoming";
-    if (trends.declining?.length > 0) return "declining";
+    if (forecastingLevel !== 'none' && trends.rising?.length > 0) return "rising";
+    if (forecastingLevel === 'full' && trends.upcoming?.length > 0) return "upcoming";
+    if (forecastingLevel === 'full' && trends.declining?.length > 0) return "declining";
     return "hot";
   };
 
@@ -305,22 +308,25 @@ function TrendCategories({
     return forecast.trends?.[category]?.length || 0;
   };
 
-  // Check if this niche should have limited trends for free users
-  const shouldLimitTrends = () => {
-    return userTier === 'free' && FREE_NICHES.includes(niche);
+  // Check if a category is blocked based on forecasting level
+  const isCategoryBlocked = (category: string) => {
+    if (forecastingLevel === 'full') return false; // Pro/Agency see everything
+    if (forecastingLevel === 'none') return category !== 'hot'; // Starter only sees hot
+    if (forecastingLevel === 'basic') return category === 'upcoming' || category === 'declining'; // Creator sees hot+rising only
+    return true;
   };
 
-  // Get limited trends array for free users (only first item)
-  const getLimitedTrends = (trends: any[] | undefined) => {
+  // Get limited trends array based on forecasting level
+  const getLimitedTrends = (trends: any[] | undefined, category: string) => {
     if (!trends) return [];
-    if (!shouldLimitTrends()) return trends;
-    return trends.slice(0, 1);
+    if (forecastingLevel === 'none' && category === 'hot') return trends.slice(0, 1); // Starter: 1 hot trend only
+    return trends;
   };
 
-  // Check if there are more trends available for pro users
-  const hasMoreTrends = (trends: any[] | undefined) => {
+  // Check if there are more trends available
+  const hasMoreTrends = (trends: any[] | undefined, category: string) => {
     if (!trends) return false;
-    return shouldLimitTrends() && trends.length > 1;
+    return forecastingLevel === 'none' && category === 'hot' && trends.length > 1;
   };
 
   // Data source information display
@@ -382,27 +388,31 @@ function TrendCategories({
     <Tabs defaultValue={findFirstTabWithData()} className="w-full">
       {getDataSourceInfo()}
       <TabsList className="grid w-full grid-cols-4">
-        <TabsTrigger value="hot">
+        <TabsTrigger value="hot" disabled={isCategoryBlocked('hot')}>
           <Flame className="h-4 w-4 mr-1" /> Hot {getTrendCount('hot') > 0 && <span className="ml-1 text-xs bg-red-100 text-red-600 px-1 rounded">({getTrendCount('hot')})</span>}
+          {isCategoryBlocked('hot') && <Lock className="h-3 w-3 ml-1" />}
         </TabsTrigger>
-        <TabsTrigger value="rising">
+        <TabsTrigger value="rising" disabled={isCategoryBlocked('rising')}>
           <TrendingUp className="h-4 w-4 mr-1" /> Rising {getTrendCount('rising') > 0 && <span className="ml-1 text-xs bg-green-100 text-green-600 px-1 rounded">({getTrendCount('rising')})</span>}
+          {isCategoryBlocked('rising') && <Lock className="h-3 w-3 ml-1" />}
         </TabsTrigger>
-        <TabsTrigger value="upcoming">
+        <TabsTrigger value="upcoming" disabled={isCategoryBlocked('upcoming')}>
           <Clock className="h-4 w-4 mr-1" /> Upcoming {getTrendCount('upcoming') > 0 && <span className="ml-1 text-xs bg-blue-100 text-blue-600 px-1 rounded">({getTrendCount('upcoming')})</span>}
+          {isCategoryBlocked('upcoming') && <Lock className="h-3 w-3 ml-1" />}
         </TabsTrigger>
-        <TabsTrigger value="declining">
+        <TabsTrigger value="declining" disabled={isCategoryBlocked('declining')}>
           <TrendingDown className="h-4 w-4 mr-1" /> Avoid {getTrendCount('declining') > 0 && <span className="ml-1 text-xs bg-gray-100 text-gray-600 px-1 rounded">({getTrendCount('declining')})</span>}
+          {isCategoryBlocked('declining') && <Lock className="h-3 w-3 ml-1" />}
         </TabsTrigger>
       </TabsList>
 
       <TabsContent value="hot" className="space-y-3 mt-4">
         {forecast.trends?.hot?.length > 0 ? (
           <>
-            {getLimitedTrends(forecast.trends.hot).map((item: any, i: number) => (
+            {getLimitedTrends(forecast.trends.hot, 'hot').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="hot" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.hot) && (
+            {hasMoreTrends(forecast.trends.hot, 'hot') && (
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
                 <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
                 <h4 className="font-semibold text-gray-900 mb-2">
@@ -433,10 +443,10 @@ function TrendCategories({
       <TabsContent value="rising" className="space-y-3 mt-4">
         {forecast.trends?.rising?.length > 0 ? (
           <>
-            {getLimitedTrends(forecast.trends.rising).map((item: any, i: number) => (
+            {getLimitedTrends(forecast.trends.rising, 'rising').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="rising" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.rising) && (
+            {hasMoreTrends(forecast.trends.rising, 'rising') && (
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
                 <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
                 <h4 className="font-semibold text-gray-900 mb-2">
@@ -467,10 +477,10 @@ function TrendCategories({
       <TabsContent value="upcoming" className="space-y-3 mt-4">
         {forecast.trends?.upcoming?.length > 0 ? (
           <>
-            {getLimitedTrends(forecast.trends.upcoming).map((item: any, i: number) => (
+            {getLimitedTrends(forecast.trends.upcoming, 'upcoming').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="upcoming" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.upcoming) && (
+            {hasMoreTrends(forecast.trends.upcoming, 'upcoming') && (
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
                 <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
                 <h4 className="font-semibold text-gray-900 mb-2">
@@ -501,10 +511,10 @@ function TrendCategories({
       <TabsContent value="declining" className="space-y-3 mt-4">
         {forecast.trends?.declining?.length > 0 ? (
           <>
-            {getLimitedTrends(forecast.trends.declining).map((item: any, i: number) => (
+            {getLimitedTrends(forecast.trends.declining, 'declining').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="declining" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.declining) && (
+            {hasMoreTrends(forecast.trends.declining, 'declining') && (
               <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
                 <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
                 <h4 className="font-semibold text-gray-900 mb-2">
