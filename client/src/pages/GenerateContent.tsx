@@ -2298,7 +2298,7 @@ ${config.hashtags.join(' ')}`;
                         <Button 
                           onClick={handleApplyAISuggestions}
                           disabled={isGenerating}
-                          className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+                          className="w-full bg-gradient-hero hover:opacity-90"
                           data-testid="button-apply-ai-suggestions"
                         >
                           {isGenerating ? (
@@ -2668,7 +2668,7 @@ ${config.hashtags.join(' ')}`;
                 setShowUpgradeDialog(false);
                 navigate('/pricing');
               }}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-hero hover:opacity-90"
               data-testid="button-upgrade-to-pro"
             >
               <Crown className="h-4 w-4 mr-2" />

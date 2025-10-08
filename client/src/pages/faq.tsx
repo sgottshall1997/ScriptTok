@@ -281,7 +281,7 @@ const FAQPage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/generate">
-                <Button size="lg" className="w-full sm:w-auto bg-gradient-to-r from-purple-600 to-pink-600">
+                <Button size="lg" className="w-full sm:w-auto bg-gradient-hero hover:opacity-90">
                   <Video className="mr-2 h-4 w-4" />
                   Generate Content
                 </Button>

@@ -247,7 +247,7 @@ export default function TrendForecaster() {
                 setShowUpgradeModal(false);
                 setLocation('/account');
               }}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-hero hover:opacity-90"
               data-testid="button-upgrade"
             >
               {upgradeTargetTier === 'creator' && <Crown className="h-4 w-4 mr-2" />}
@@ -417,7 +417,7 @@ function TrendCategories({
             </p>
             <Button
               onClick={() => window.location.href = '/account'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-hero hover:opacity-90"
               data-testid="upgrade-trend-forecasting"
             >
               <Crown className="h-4 w-4 mr-2" />
@@ -451,7 +451,7 @@ function TrendCategories({
             </p>
             <Button
               onClick={() => window.location.href = '/account'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-hero hover:opacity-90"
               data-testid="upgrade-trend-forecasting-rising"
             >
               <Crown className="h-4 w-4 mr-2" />
@@ -487,7 +487,7 @@ function TrendCategories({
             </p>
             <Button
               onClick={() => window.location.href = '/account'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-hero hover:opacity-90"
               data-testid="upgrade-trend-forecasting-upcoming"
             >
               <Crown className="h-4 w-4 mr-2" />
@@ -523,7 +523,7 @@ function TrendCategories({
             </p>
             <Button
               onClick={() => window.location.href = '/account'}
-              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              className="bg-gradient-hero hover:opacity-90"
               data-testid="upgrade-trend-forecasting-declining"
             >
               <Crown className="h-4 w-4 mr-2" />

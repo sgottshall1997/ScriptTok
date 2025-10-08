@@ -374,7 +374,7 @@ const Dashboard = () => {
                     </div>
                     <Link href="/account">
                       <Button 
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white whitespace-nowrap"
+                        className="bg-gradient-hero hover:opacity-90 text-white whitespace-nowrap"
                         data-testid="button-upgrade"
                         onClick={() => trackUpgradeCTA('dashboard_usage_widget', 'pro')}
                       >
@@ -846,7 +846,7 @@ const Dashboard = () => {
                       </p>
                       <Button
                         onClick={() => setLocation('/account')}
-                        className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                        className="bg-gradient-hero hover:opacity-90"
                         data-testid={`upgrade-${niche}-products`}
                       >
                         Upgrade to Pro

@@ -394,7 +394,7 @@ export function MarketingNav() {
               trackSignupCTA('nav');
               login();
             }}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90"
+            className="bg-gradient-hero text-white hover:opacity-90"
             data-testid="button-nav-get-started"
           >
             Get Started
@@ -422,7 +422,7 @@ export function MarketingNav() {
                     login();
                     setMobileMenuOpen(false);
                   }}
-                  className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white"
+                  className="w-full bg-gradient-hero text-white hover:opacity-90"
                   data-testid="button-mobile-get-started"
                 >
                   Get Started

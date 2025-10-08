@@ -187,7 +187,7 @@ export function ContentEvaluationPanel({
         Analyze virality, clarity, persuasiveness, and creativity scores with detailed insights.
       </p>
       <Link href="/account">
-        <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+        <Button className="bg-gradient-hero hover:opacity-90">
           <Crown className="w-4 h-4 mr-2" />
           Upgrade to Pro
         </Button>

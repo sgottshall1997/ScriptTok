@@ -314,7 +314,7 @@ export function TemplateSelector({
                     </p>
                     <Button
                       onClick={() => setLocation('/account')}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                      className="bg-gradient-hero hover:opacity-90"
                       data-testid="upgrade-marketing-templates"
                     >
                       <Crown className="h-4 w-4 mr-2" />
@@ -411,7 +411,7 @@ export function TemplateSelector({
                   </p>
                   <Button
                     onClick={() => setLocation('/account')}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                    className="bg-gradient-hero hover:opacity-90"
                     data-testid="upgrade-marketing-templates-single"
                   >
                     <Crown className="h-4 w-4 mr-2" />

@@ -229,7 +229,7 @@ function Step1FindTrend({ navigate }: { navigate: (path: string) => void }) {
         </div>
 
         <Button 
-          className="w-full mt-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90"
+          className="w-full mt-6 bg-gradient-hero text-white hover:opacity-90"
           onClick={() => navigate('/trending-ai-picks')}
           data-testid="button-discover-trends"
         >
@@ -597,7 +597,7 @@ function Step6ViralScore({ navigate }: { navigate: (path: string) => void }) {
         </div>
 
         <Button 
-          className="w-full mt-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90"
+          className="w-full mt-4 bg-gradient-hero text-white hover:opacity-90"
           onClick={() => navigate('/tools/viral-score-analyzer')}
           data-testid="button-analyze-score"
         >
@@ -780,7 +780,7 @@ function Step8SmartLearning({ navigate }: { navigate: (path: string) => void }) 
           </div>
 
           <Button 
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90"
+            className="w-full bg-gradient-hero text-white hover:opacity-90"
             onClick={() => navigate('/account')}
             data-testid="button-enable-smart-learning"
           >

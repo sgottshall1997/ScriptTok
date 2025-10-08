@@ -1069,7 +1069,7 @@ const EnhancedContentHistory = () => {
                         </div>
                         <Link href="/pricing">
                           <Button 
-                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-6 text-lg"
+                            className="w-full bg-gradient-hero hover:opacity-90 text-white font-semibold py-6 text-lg"
                             data-testid="button-upgrade-to-creator"
                           >
                             <Crown className="h-5 w-5 mr-2" />
@@ -1100,7 +1100,7 @@ const EnhancedContentHistory = () => {
                         </div>
                         <Link href="/pricing">
                           <Button 
-                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-6 text-lg"
+                            className="w-full bg-gradient-hero hover:opacity-90 text-white font-semibold py-6 text-lg"
                             data-testid="button-upgrade-to-pro"
                           >
                             <Crown className="h-5 w-5 mr-2" />
@@ -1132,7 +1132,7 @@ const EnhancedContentHistory = () => {
                         {isCreatorTier && "Upgrade to Pro for unlimited content history"}
                       </p>
                       <Link href="/pricing">
-                        <Button className="bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+                        <Button className="bg-gradient-hero hover:opacity-90 text-white">
                           <Crown className="h-4 w-4 mr-2" />
                           {isStarterTier ? "View Pricing" : "Upgrade to Pro"}
                         </Button>
@@ -1469,7 +1469,7 @@ const EnhancedContentHistory = () => {
           </CardHeader>
           <CardContent>
             <Link href="/pricing">
-              <Button className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white">
+              <Button className="w-full bg-gradient-hero hover:opacity-90 text-white">
                 <Crown className="h-4 w-4 mr-2" />
                 Upgrade to Creator - $15/mo
               </Button>
@@ -1491,7 +1491,7 @@ const EnhancedContentHistory = () => {
           </CardHeader>
           <CardContent>
             <Link href="/pricing">
-              <Button className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white">
+              <Button className="w-full bg-gradient-hero hover:opacity-90 text-white">
                 <Crown className="h-4 w-4 mr-2" />
                 Upgrade to Pro - $35/mo
               </Button>
