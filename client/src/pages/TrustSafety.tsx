@@ -41,7 +41,7 @@ const TrustSafetyPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-green-700">
-              ScriptTok is committed to creating a safe, accessible, and trustworthy platform for all users. 
+              Pheme is committed to creating a safe, accessible, and trustworthy platform for all users. 
               We believe in transparency, responsible AI use, and maintaining the highest standards of digital safety.
             </p>
           </CardContent>
@@ -59,7 +59,7 @@ const TrustSafetyPage: React.FC = () => {
             <div>
               <h3 className="text-lg font-semibold mb-3">Our Accessibility Commitment</h3>
               <p className="text-gray-700 mb-4">
-                ScriptTok is committed to ensuring digital accessibility for all users, including those with disabilities. 
+                Pheme is committed to ensuring digital accessibility for all users, including those with disabilities. 
                 We strive to continually improve the user experience for everyone and apply relevant accessibility standards.
               </p>
             </div>

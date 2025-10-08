@@ -41,7 +41,7 @@ const TermsBillingPage: React.FC = () => {
           </CardHeader>
           <CardContent>
             <p className="text-blue-700">
-              By accessing and using ScriptTok, you accept and agree to be bound by the terms and provision of this agreement. 
+              By accessing and using Pheme, you accept and agree to be bound by the terms and provision of this agreement. 
               If you do not agree to abide by the above, please do not use this service.
             </p>
           </CardContent>

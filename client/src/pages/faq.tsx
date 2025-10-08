@@ -65,7 +65,7 @@ const FAQPage: React.FC = () => {
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Getting Started</h2>
 
         <Accordion type="single" collapsible className="w-full">
-          <AccordionItem value="what-is-scripttok">
+          <AccordionItem value="what-is-pheme">
             <AccordionTrigger>
               What is Pheme?
             </AccordionTrigger>
@@ -78,11 +78,11 @@ const FAQPage: React.FC = () => {
 
           <AccordionItem value="how-does-it-work">
             <AccordionTrigger>
-              How does ScriptTok work?
+              How does Pheme work?
             </AccordionTrigger>
             <AccordionContent>
               <p className="mb-4">
-                ScriptTok works in four simple steps:
+                Pheme works in four simple steps:
               </p>
               <ol className="list-decimal pl-6 space-y-2">
                 <li>Select your content niche (beauty, tech, fashion, etc.)</li>
