@@ -305,8 +305,8 @@ export function MarketingNav() {
                 Features
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="w-[600px] p-4">
-                  <div className="grid grid-cols-2 gap-2">
+                <div className="w-full md:w-[600px] p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {featuresData.map((item) => (
                       <DropdownCard key={item.title} item={item} />
                     ))}
@@ -321,8 +321,8 @@ export function MarketingNav() {
                 Tools
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="w-[600px] p-4">
-                  <div className="grid grid-cols-2 gap-2">
+                <div className="w-full md:w-[600px] p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {toolsData.map((item) => (
                       <DropdownCard key={item.title} item={item} />
                     ))}
@@ -337,8 +337,8 @@ export function MarketingNav() {
                 Use Cases
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="w-[700px] p-4">
-                  <div className="grid grid-cols-3 gap-2">
+                <div className="w-full md:w-[700px] p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
                     {useCasesData.map((item) => (
                       <DropdownCard key={item.title} item={item} />
                     ))}
@@ -353,8 +353,8 @@ export function MarketingNav() {
                 Learn
               </NavigationMenuTrigger>
               <NavigationMenuContent>
-                <div className="w-[600px] p-4">
-                  <div className="grid grid-cols-2 gap-2">
+                <div className="w-full md:w-[600px] p-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {learnData.map((item) => (
                       <DropdownCard key={item.title} item={item} />
                     ))}

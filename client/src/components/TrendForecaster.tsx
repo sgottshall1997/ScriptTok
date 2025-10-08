@@ -152,7 +152,7 @@ export default function TrendForecaster() {
         </CardHeader>
         <CardContent>
           <Tabs value={selectedNiche} onValueChange={handleNicheChange} className="w-full">
-            <TabsList className="grid w-full grid-cols-7 mb-4">
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-4 md:grid-cols-7 mb-4">
               {NICHES.map((niche) => {
                 const locked = isNicheLocked(niche.id);
                 return (

@@ -1410,7 +1410,7 @@ ${config.hashtags.join(' ')}`;
               {productResearchLoading ? (
                 <div className="space-y-2">
                   <p className="text-sm text-purple-600">Discovering viral hooks, target audience, and trending angles...</p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
                     <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
                     <div className="h-2 bg-purple-200 rounded animate-pulse"></div>
@@ -1508,7 +1508,7 @@ ${config.hashtags.join(' ')}`;
               {trendResearchLoading ? (
                 <div className="space-y-2">
                   <p className="text-sm text-orange-600">Discovering viral hooks, trend insights, and trending angles...</p>
-                  <div className="grid grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                     <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
                     <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
                     <div className="h-2 bg-orange-200 rounded animate-pulse"></div>
@@ -1630,7 +1630,7 @@ ${config.hashtags.join(' ')}`;
               {trendCompetitorLoading ? (
                 <div className="space-y-2">
                   <p className="text-sm text-red-600">Finding top 5 viral videos about {viralTopic}...</p>
-                  <div className="grid grid-cols-5 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
                     {[...Array(5)].map((_, i) => (
                       <div key={i} className="h-16 bg-red-200 rounded animate-pulse"></div>
                     ))}
@@ -1694,7 +1694,7 @@ ${config.hashtags.join(' ')}`;
               {competitorLoading ? (
                 <div className="space-y-2">
                   <p className="text-sm text-purple-600">Finding top 5 viral videos about {selectedProduct}...</p>
-                  <div className="grid grid-cols-5 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
                     {[...Array(5)].map((_, i) => (
                       <div key={i} className="h-16 bg-purple-200 rounded animate-pulse"></div>
                     ))}
