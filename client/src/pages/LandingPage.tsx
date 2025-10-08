@@ -18,6 +18,8 @@ import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { MarketingNav, featuresData, toolsData, useCasesData, pricingData } from "@/components/MarketingNav";
 import Footer from "@/components/Footer";
 import SampleFlowDemonstration from "@/components/SampleFlowDemonstration";
+import RotatingValueProps from "@/components/marketing/RotatingValueProps";
+import MetricsCounter from "@/components/marketing/MetricsCounter";
 
 interface GridCardProps {
   icon: LucideIcon;
@@ -53,7 +55,7 @@ function GridCard({ icon: Icon, title, description, colorClass = "purple" }: Gri
   );
 }
 
-function CTABar({ section }: { section: string }) {
+function CTABar({ section, ctaText = "Get Started Free" }: { section: string; ctaText?: string }) {
   const { isAuthenticated, login } = useAuth();
   const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
   const [_, navigate] = useLocation();
@@ -83,7 +85,7 @@ function CTABar({ section }: { section: string }) {
           className="bg-gradient-hero text-white hover:opacity-90 rounded-xl btn-glow hover-lift"
           data-testid={`button-${section}-get-started`}
         >
-          Get Started Free
+          {ctaText}
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       ) : (
@@ -120,9 +122,8 @@ export default function LandingPage() {
       <section className="relative bg-gradient-hero text-white py-6 px-4">
         <div className="absolute inset-0 glow-purple opacity-30 pointer-events-none"></div>
         <div className="container mx-auto max-w-6xl text-center relative z-10">
-          <h1 className="text-display text-gradient-purple mb-2">
-            Make Your Voice Heard
-          </h1>
+          <RotatingValueProps />
+          <MetricsCounter />
           <p className="text-lg md:text-xl text-gray-200 mb-4 max-w-3xl mx-auto">
             AI-powered scripts, trend discovery, and affiliate tools built for creators.
           </p>
@@ -134,11 +135,11 @@ export default function LandingPage() {
                   login();
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
+                className="bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift transition-all-smooth"
                 data-testid="button-hero-start-free"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
-                <span>Start Free</span>
+                <span>Save 10 Hours/Week Free</span>
               </Button>
             ) : (
               <Button
@@ -147,7 +148,7 @@ export default function LandingPage() {
                   navigate('/dashboard');
                 }}
                 size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
+                className="bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift transition-all-smooth"
                 data-testid="button-hero-dashboard"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -161,7 +162,7 @@ export default function LandingPage() {
               }}
               size="lg"
               variant="outline"
-              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 rounded-xl font-semibold hover-lift transition-all-smooth"
+              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 hover:scale-105 rounded-xl font-semibold hover-lift transition-all-smooth"
               data-testid="button-hero-watch-demo"
             >
               <Video className="mr-2 h-5 w-5 flex-shrink-0" />
@@ -193,7 +194,7 @@ export default function LandingPage() {
             ))}
           </div>
           {/* Pheme features */}
-          <CTABar section="features" />
+          <CTABar section="features" ctaText="Generate Your First Viral Script" />
         </div>
       </section>
 
@@ -222,7 +223,7 @@ export default function LandingPage() {
               <span className="font-semibold">Other Tools:</span> Batch Builder • Model Router • Hashtag Generator • Caption Writer • Idea to Script
             </p>
           </div>
-          <CTABar section="tools" />
+          <CTABar section="tools" ctaText="Discover Trends Before They Peak" />
         </div>
       </section>
 
@@ -246,7 +247,7 @@ export default function LandingPage() {
               />
             ))}
           </div>
-          <CTABar section="use-cases" />
+          <CTABar section="use-cases" ctaText="Start Creating 10 Scripts Free" />
         </div>
       </section>
 
