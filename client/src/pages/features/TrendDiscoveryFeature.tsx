@@ -178,7 +178,7 @@ export default function TrendDiscoveryFeature() {
     },
     {
       question: "How are the 'best posting times' determined for each trend?",
-      answer: "Our AI analyzes millions of posts related to each specific trend to identify when it gets maximum engagement. Unlike generic 'best time to post' advice, these recommendations are tailored to each individual trend based on real performance data. You get specific day-of-week and time-of-day windows optimized for that trend.",
+      answer: "Our AI analyzes posts related to each specific trend to identify when it gets maximum engagement. Unlike generic 'best time to post' advice, these recommendations are tailored to each individual trend based on real performance data. You get specific day-of-week and time-of-day windows optimized for that trend.",
     },
     {
       question: "How detailed is the target audience data?",
@@ -190,7 +190,7 @@ export default function TrendDiscoveryFeature() {
     },
     {
       question: "How does this all flow into script generation?",
-      answer: "When you click 'Generate Script' on any trend, all the research data (viral hooks, target audience, trending angles, matched products, competitor insights, posting times) automatically feeds into our AI. The script is crafted using this comprehensive intelligence—hooks that are proven viral, angles that resonate with the audience, products presented with benefits your viewers care about, and CTAs modeled after top performers. It's data-backed content creation.",
+      answer: "When you click 'Generate Script' on any trend, all the research data (viral hooks, target audience, trending angles, matched products, competitor insights, posting times) automatically feeds into our AI. The script is crafted using this comprehensive intelligence—hooks that capture attention, angles that resonate with the audience, products presented with benefits your viewers care about, and CTAs modeled after top performers. It's data-backed content creation.",
     },
   ];
 

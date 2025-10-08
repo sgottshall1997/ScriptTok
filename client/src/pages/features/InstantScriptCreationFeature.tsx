@@ -54,7 +54,7 @@ export default function InstantScriptCreationFeature() {
     {
       icon: Sparkles,
       title: "Built-in Viral Elements",
-      description: "Scripts include attention-grabbing hooks, engaging story structures, and clear calls-to-action based on proven content patterns.",
+      description: "Scripts include attention-grabbing hooks, engaging story structures, and clear calls-to-action based on effective content patterns.",
     },
     {
       icon: Clock,

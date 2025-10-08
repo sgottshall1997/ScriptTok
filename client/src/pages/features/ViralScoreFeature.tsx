@@ -89,7 +89,7 @@ export default function ViralScoreFeature() {
   const faqs = [
     {
       question: "How accurate is the Viral Score?",
-      answer: "Our Viral Score is trained on millions of viral videos and has a proven correlation with actual performance. While no prediction is perfect, our AI accurately identifies key factors that drive engagement and virality.",
+      answer: "Our Viral Score analyzes key factors that influence engagement and virality. While no prediction is perfect, our AI examines elements like hook strength, story flow, and platform optimization to provide insights into your content's potential performance.",
     },
     {
       question: "Can I improve my score after generating a script?",
