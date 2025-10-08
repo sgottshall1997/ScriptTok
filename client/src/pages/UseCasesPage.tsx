@@ -1013,9 +1013,8 @@ export default function UseCasesPage() {
               className="text-lg md:text-xl text-violet-100 max-w-3xl mx-auto"
               data-testid="hero-subheadline"
             >
-              From viral TikToks to high-converting product videos, Pheme adapts to your unique content goals
+              From viral trends to high-converting videos, Pheme adapts to your unique content goals
             </p>
-
             {/* Primary CTA */}
             <div className="pt-4">
               <Button
