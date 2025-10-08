@@ -354,7 +354,7 @@ export class QuotaService {
   }
 
   canUseBrandTemplates(tier: string): boolean {
-    return tier === 'agency';
+    return tier === 'pro' || tier === 'agency';
   }
 
   getTeamSeats(tier: string): number {

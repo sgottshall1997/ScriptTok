@@ -80,8 +80,8 @@ export function checkFeatureAccess(feature: Feature) {
         case 'brandTemplates':
           hasAccess = quotaService.canUseBrandTemplates(tier);
           if (!hasAccess) {
-            errorMessage = 'Brand templates are only available on Agency plan';
-            suggestedTier = 'agency';
+            errorMessage = 'Brand templates are only available on Pro and Agency plans';
+            suggestedTier = 'pro';
           }
           break;
 

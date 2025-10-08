@@ -31,8 +31,8 @@ const NICHES = [
 ];
 
 // Niche access by tier
-const STARTER_NICHES = ['beauty'];  // Starter tier gets 1 niche
-const CREATOR_NICHES = ['beauty', 'tech', 'fashion'];  // Creator tier gets 3 niches
+const STARTER_NICHES = ['beauty', 'tech', 'fashion'];  // Starter tier gets 3 niches
+const CREATOR_NICHES = ['beauty', 'tech', 'fashion', 'fitness', 'food', 'travel', 'pet'];  // Creator tier gets all 7 niches
 // Pro and Agency tiers get all 7 niches
 
 export default function TrendForecaster() {
@@ -218,20 +218,20 @@ export default function TrendForecaster() {
             <AlertDialogDescription className="text-base pt-2">
               {userTier === 'starter' && (
                 <>
-                  <p className="mb-2">Starter users get 1 niche (Beauty). Upgrade to:</p>
+                  <p className="mb-2">Starter users get 3 niches (Beauty, Tech, Fashion). Upgrade to:</p>
                   <ul className="list-disc list-inside space-y-1">
-                    <li><strong>Creator ($15/mo):</strong> Get 3 niches + basic forecasting</li>
-                    <li><strong>Pro ($35/mo):</strong> Get all 7 niches + full forecasting</li>
+                    <li><strong>Creator ($15/mo):</strong> Get all 7 niches + basic forecasting</li>
+                    <li><strong>Pro ($35/mo):</strong> Get all 7 niches + full forecasting + more</li>
                     <li><strong>Agency ($69/mo):</strong> Everything + enterprise features</li>
                   </ul>
                 </>
               )}
               {userTier === 'creator' && (
                 <>
-                  <p className="mb-2">Creator users get 3 niches (Beauty, Tech, Fashion). Upgrade to:</p>
+                  <p className="mb-2">Creator users get all 7 niches. Upgrade for more features:</p>
                   <ul className="list-disc list-inside space-y-1">
-                    <li><strong>Pro ($35/mo):</strong> Get all 7 niches + advanced forecasting</li>
-                    <li><strong>Agency ($69/mo):</strong> Everything + enterprise features</li>
+                    <li><strong>Pro ($35/mo):</strong> Full forecasting + bulk generation + affiliate studio</li>
+                    <li><strong>Agency ($69/mo):</strong> Everything + API access + team seats</li>
                   </ul>
                 </>
               )}
@@ -311,7 +311,7 @@ function TrendCategories({
   // Check if a category is blocked based on forecasting level
   const isCategoryBlocked = (category: string) => {
     if (forecastingLevel === 'full') return false; // Pro/Agency see everything
-    if (forecastingLevel === 'none') return category !== 'hot'; // Starter only sees hot
+    if (forecastingLevel === 'none') return true; // Starter: ALL categories blocked (show upgrade prompt)
     if (forecastingLevel === 'basic') return category === 'upcoming' || category === 'declining'; // Creator sees hot+rising only
     return true;
   };
@@ -319,14 +319,13 @@ function TrendCategories({
   // Get limited trends array based on forecasting level
   const getLimitedTrends = (trends: any[] | undefined, category: string) => {
     if (!trends) return [];
-    if (forecastingLevel === 'none' && category === 'hot') return trends.slice(0, 1); // Starter: 1 hot trend only
+    if (forecastingLevel === 'none') return []; // Starter: NO trends shown
     return trends;
   };
 
   // Check if there are more trends available
   const hasMoreTrends = (trends: any[] | undefined, category: string) => {
-    if (!trends) return false;
-    return forecastingLevel === 'none' && category === 'hot' && trends.length > 1;
+    return false; // No partial trend display needed
   };
 
   // Data source information display
@@ -407,29 +406,29 @@ function TrendCategories({
       </TabsList>
 
       <TabsContent value="hot" className="space-y-3 mt-4">
-        {forecast.trends?.hot?.length > 0 ? (
+        {forecastingLevel === 'none' ? (
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+            <Lock className="h-12 w-12 mx-auto mb-3 text-purple-600" />
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Trend Forecasting Not Available on Starter Plan
+            </h4>
+            <p className="text-sm text-gray-600 mb-4">
+              Upgrade to Creator to unlock hot & rising trends, or Pro for full forecasting with upcoming & declining trends
+            </p>
+            <Button
+              onClick={() => window.location.href = '/account'}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              data-testid="upgrade-trend-forecasting"
+            >
+              <Crown className="h-4 w-4 mr-2" />
+              Upgrade to Access Trends
+            </Button>
+          </div>
+        ) : forecast.trends?.hot?.length > 0 ? (
           <>
             {getLimitedTrends(forecast.trends.hot, 'hot').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="hot" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.hot, 'hot') && (
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
-                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  {forecast.trends.hot.length - 1} More Hot Trends Available
-                </h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Upgrade to Creator to unlock all hot trends
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/account'}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  data-testid="upgrade-hot-trends"
-                >
-                  Upgrade to Creator
-                </Button>
-              </div>
-            )}
           </>
         ) : (
           <div className="text-center py-8 text-gray-500">
@@ -441,29 +440,29 @@ function TrendCategories({
       </TabsContent>
 
       <TabsContent value="rising" className="space-y-3 mt-4">
-        {forecast.trends?.rising?.length > 0 ? (
+        {forecastingLevel === 'none' ? (
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+            <Lock className="h-12 w-12 mx-auto mb-3 text-purple-600" />
+            <h4 className="font-semibold text-gray-900 mb-2">
+              Trend Forecasting Not Available on Starter Plan
+            </h4>
+            <p className="text-sm text-gray-600 mb-4">
+              Upgrade to Creator to unlock hot & rising trends, or Pro for full forecasting
+            </p>
+            <Button
+              onClick={() => window.location.href = '/account'}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              data-testid="upgrade-trend-forecasting-rising"
+            >
+              <Crown className="h-4 w-4 mr-2" />
+              Upgrade to Access Trends
+            </Button>
+          </div>
+        ) : forecast.trends?.rising?.length > 0 ? (
           <>
             {getLimitedTrends(forecast.trends.rising, 'rising').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="rising" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.rising, 'rising') && (
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
-                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  {forecast.trends.rising.length - 1} More Rising Trends Available
-                </h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Upgrade to Pro to unlock all trending insights for {niche}
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/account'}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  data-testid="upgrade-rising-trends"
-                >
-                  Upgrade to Pro
-                </Button>
-              </div>
-            )}
           </>
         ) : (
           <div className="text-center py-8 text-gray-500">
@@ -475,29 +474,31 @@ function TrendCategories({
       </TabsContent>
 
       <TabsContent value="upcoming" className="space-y-3 mt-4">
-        {forecast.trends?.upcoming?.length > 0 ? (
+        {forecastingLevel === 'none' || forecastingLevel === 'basic' ? (
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+            <Lock className="h-12 w-12 mx-auto mb-3 text-purple-600" />
+            <h4 className="font-semibold text-gray-900 mb-2">
+              {forecastingLevel === 'none' ? 'Trend Forecasting Not Available on Starter Plan' : 'Upcoming Trends Available on Pro Plan'}
+            </h4>
+            <p className="text-sm text-gray-600 mb-4">
+              {forecastingLevel === 'none' 
+                ? 'Upgrade to Creator for basic forecasting, or Pro for full forecasting with upcoming trends'
+                : 'Upgrade to Pro to unlock upcoming & declining trend analysis'}
+            </p>
+            <Button
+              onClick={() => window.location.href = '/account'}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              data-testid="upgrade-trend-forecasting-upcoming"
+            >
+              <Crown className="h-4 w-4 mr-2" />
+              Upgrade to {forecastingLevel === 'none' ? 'Access Trends' : 'Pro'}
+            </Button>
+          </div>
+        ) : forecast.trends?.upcoming?.length > 0 ? (
           <>
             {getLimitedTrends(forecast.trends.upcoming, 'upcoming').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="upcoming" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.upcoming, 'upcoming') && (
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
-                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  {forecast.trends.upcoming.length - 1} More Upcoming Trends Available
-                </h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Upgrade to Pro to unlock all trending insights for {niche}
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/account'}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  data-testid="upgrade-upcoming-trends"
-                >
-                  Upgrade to Pro
-                </Button>
-              </div>
-            )}
           </>
         ) : (
           <div className="text-center py-8 text-gray-500">
@@ -509,29 +510,31 @@ function TrendCategories({
       </TabsContent>
 
       <TabsContent value="declining" className="space-y-3 mt-4">
-        {forecast.trends?.declining?.length > 0 ? (
+        {forecastingLevel === 'none' || forecastingLevel === 'basic' ? (
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+            <Lock className="h-12 w-12 mx-auto mb-3 text-purple-600" />
+            <h4 className="font-semibold text-gray-900 mb-2">
+              {forecastingLevel === 'none' ? 'Trend Forecasting Not Available on Starter Plan' : 'Declining Trends Available on Pro Plan'}
+            </h4>
+            <p className="text-sm text-gray-600 mb-4">
+              {forecastingLevel === 'none' 
+                ? 'Upgrade to Creator for basic forecasting, or Pro for full forecasting with declining trends'
+                : 'Upgrade to Pro to unlock upcoming & declining trend analysis'}
+            </p>
+            <Button
+              onClick={() => window.location.href = '/account'}
+              className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              data-testid="upgrade-trend-forecasting-declining"
+            >
+              <Crown className="h-4 w-4 mr-2" />
+              Upgrade to {forecastingLevel === 'none' ? 'Access Trends' : 'Pro'}
+            </Button>
+          </div>
+        ) : forecast.trends?.declining?.length > 0 ? (
           <>
             {getLimitedTrends(forecast.trends.declining, 'declining').map((item: any, i: number) => (
               <TrendCard key={i} item={item} type="declining" niche={niche} onProductClick={onProductClick} />
             ))}
-            {hasMoreTrends(forecast.trends.declining, 'declining') && (
-              <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
-                <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
-                <h4 className="font-semibold text-gray-900 mb-2">
-                  {forecast.trends.declining.length - 1} More Trends to Avoid
-                </h4>
-                <p className="text-sm text-gray-600 mb-4">
-                  Upgrade to Pro to unlock all trending insights for {niche}
-                </p>
-                <Button
-                  onClick={() => window.location.href = '/account'}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
-                  data-testid="upgrade-declining-trends"
-                >
-                  Upgrade to Pro
-                </Button>
-              </div>
-            )}
           </>
         ) : (
           <div className="text-center py-8 text-gray-500">

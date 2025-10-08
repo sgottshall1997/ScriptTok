@@ -53,7 +53,7 @@ export function TemplateSelector({
   const isCreatorTier = tier === 'creator';
   const isProOrAgency = tier === 'pro' || tier === 'agency';
   
-  // Pro-only templates (locked for Starter/Creator users)
+  // Pro-only templates (locked for Starter users only - Creator gets all standard templates)
   const proOnlyTemplates: TemplateType[] = [
     'routine_kit',
     'seo_blog',
@@ -239,11 +239,11 @@ export function TemplateSelector({
                     const templateType = template as TemplateType;
                     const isSelected = selectedTemplates.includes(templateType);
                     // Lock if: 
-                    // 1) Starter/Creator: Pro-only template
+                    // 1) Starter ONLY: Pro-only template (Creator gets all standard templates per spec)
                     // 2) Starter: Beyond first 3 templates per section
                     // 3) Starter/Creator: Already has 1 template selected (no bulk generation)
                     const isLocked = (
-                      ((isStarterTier || isCreatorTier) && proOnlyTemplates.includes(templateType)) ||
+                      (isStarterTier && proOnlyTemplates.includes(templateType)) ||
                       (isStarterTier && indexInSection >= 3) ||
                       ((isStarterTier || isCreatorTier) && selectedTemplates.length >= 1 && !isSelected)
                     );
@@ -302,15 +302,15 @@ export function TemplateSelector({
                   })}
                 </div>
                 
-                {/* Upgrade CTA for Marketing Content Tools section */}
-                {sectionName === 'Marketing Content Tools' && (isStarterTier || isCreatorTier) && (
+                {/* Upgrade CTA for Marketing Content Tools section - Starter only */}
+                {sectionName === 'Marketing Content Tools' && isStarterTier && (
                   <div className="mt-4 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
                     <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
                     <h4 className="font-semibold text-gray-900 mb-2">
                       Unlock All Marketing Templates
                     </h4>
                     <p className="text-sm text-gray-600 mb-4">
-                      Upgrade to Pro to access SEO Blog Posts, Affiliate Emails, and Influencer Captions
+                      Upgrade to Creator for all standard templates, or Pro for brand templates
                     </p>
                     <Button
                       onClick={() => setLocation('/pricing')}
@@ -318,7 +318,7 @@ export function TemplateSelector({
                       data-testid="upgrade-marketing-templates"
                     >
                       <Crown className="h-4 w-4 mr-2" />
-                      Upgrade to Pro
+                      Upgrade to Creator
                     </Button>
                   </div>
                 )}
@@ -350,7 +350,7 @@ export function TemplateSelector({
                 {sectionTemplates.filter((template: string): template is TemplateType => options.includes(template as TemplateType)).map((template: TemplateType, indexInSection: number): React.ReactElement => {
                   const templateType = template;
                   const isLocked = (
-                    ((isStarterTier || isCreatorTier) && proOnlyTemplates.includes(templateType)) ||
+                    (isStarterTier && proOnlyTemplates.includes(templateType)) ||
                     (isStarterTier && indexInSection >= 3)
                   );
                   
@@ -399,15 +399,15 @@ export function TemplateSelector({
                 })}
               </div>
               
-              {/* Upgrade CTA for Marketing Content Tools section */}
-              {sectionName === 'Marketing Content Tools' && (isStarterTier || isCreatorTier) && (
+              {/* Upgrade CTA for Marketing Content Tools section - Starter only */}
+              {sectionName === 'Marketing Content Tools' && isStarterTier && (
                 <div className="mt-4 bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
                   <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
                   <h4 className="font-semibold text-gray-900 mb-2">
                     Unlock All Marketing Templates
                   </h4>
                   <p className="text-sm text-gray-600 mb-4">
-                    Upgrade to Pro to access SEO Blog Posts, Affiliate Emails, and Influencer Captions
+                    Upgrade to Creator for all standard templates, or Pro for brand templates
                   </p>
                   <Button
                     onClick={() => setLocation('/pricing')}
@@ -415,7 +415,7 @@ export function TemplateSelector({
                     data-testid="upgrade-marketing-templates-single"
                   >
                     <Crown className="h-4 w-4 mr-2" />
-                    Upgrade to Pro
+                    Upgrade to Creator
                   </Button>
                 </div>
               )}
