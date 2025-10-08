@@ -291,7 +291,7 @@ export function MarketingNav() {
             <img 
               src={PhemeLogo} 
               alt="Pheme" 
-              className="h-12 w-auto"
+              className="h-20 w-auto"
             />
           </div>
         </Link>
