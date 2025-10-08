@@ -54,8 +54,50 @@ select {
   -webkit-overflow-scrolling: touch;
 }
 
+/* Display Text Classes - For Hero Sections */
+.text-display {
+  font-size: 4.5rem; /* 72px */
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+@media (max-width: 768px) {
+  .text-display {
+    font-size: 2.5rem; /* 40px on mobile */
+  }
+}
+
+.text-display-sm {
+  font-size: 3rem; /* 48px */
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+@media (max-width: 768px) {
+  .text-display-sm {
+    font-size: 2rem; /* 32px on mobile */
+  }
+}
+
+/* Gradient Text Effect */
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.6) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-purple {
+  background: linear-gradient(135deg, #9333ea 0%, #c084fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 @layer utilities {
-  .text-gradient {
+  .text-gradient-utility {
     @apply text-transparent bg-clip-text;
   }
   
@@ -107,6 +149,51 @@ select {
     background: linear-gradient(to right, hsl(var(--purple-600)), hsl(var(--pink-600)));
     @apply text-transparent bg-clip-text;
   }
+}
+
+/* Glow Effects */
+.glow-purple {
+  box-shadow: 0 0 40px hsla(var(--primary), 0.3);
+}
+
+.glow-purple-sm {
+  box-shadow: 0 0 20px hsla(var(--primary), 0.2);
+}
+
+/* Backdrop Blur for Cards */
+.backdrop-blur-card {
+  backdrop-filter: blur(12px);
+  background: hsla(var(--background), 0.8);
+}
+
+/* Enhanced Shadow System */
+.shadow-card {
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+.shadow-card-hover {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+/* Smooth Transitions */
+.transition-all-smooth {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift {
+  transition: transform 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+}
+
+/* Button Glow on Hover */
+.btn-glow:hover {
+  box-shadow: 0 0 30px hsla(var(--primary), 0.5);
+  transform: translateY(-2px);
+  transition: all 0.3s ease;
 }
 
 @keyframes spin {
@@ -213,6 +300,14 @@ select {
   --sidebar-accent-foreground: 24 9.8% 10%;
   --sidebar-border: 20 5.9% 90%;
   --sidebar-ring: 20 14.3% 4.1%;
+  
+  /* Success Green Accents */
+  --success: 142 76% 36%;
+  --success-foreground: 138 76% 97%;
+  
+  /* Warning Orange Accents */
+  --warning: 38 92% 50%;
+  --warning-foreground: 48 96% 89%;
 }
 
 .dark {
