@@ -44,8 +44,8 @@ export default function TrendForecaster() {
   // Fetch usage data to determine tier
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
   const usage = usageResponse?.data;
-  const userTier = usage?.features?.tier || 'starter';
-  const forecastingLevel = usage?.features?.trendForecastingLevel || 'none';
+  const userTier = (usage?.features?.tier || 'starter') as 'starter' | 'creator' | 'pro' | 'agency';
+  const forecastingLevel = (usage?.features?.trendForecastingLevel || 'none') as 'none' | 'basic' | 'full';
   
   // Determine if a niche is locked based on tier
   const isNicheLocked = (nicheId: string) => {
