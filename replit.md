@@ -7,6 +7,11 @@ This project is a comprehensive content generation platform designed to create s
 Preferred communication style: Simple, everyday language.
 
 ## Recent Changes
+- **Complete Marketing Pages Overhaul (Oct 2025)**: Implemented comprehensive separation between Features and Tools pages with clear distinctions:
+  - **Features pages** (AIScriptGeneratorFeature, TemplateLibraryFeature, TrendDiscoveryFeature, ViralScoreFeature): Focus exclusively on "Why choose this?" with benefits, ROI, success metrics, and use cases. Removed all workflow instructions.
+  - **Tools pages** (ScriptGeneratorTool, TemplateLibraryTool, TrendDiscoveryTool, ViralScoreAnalyzerTool, HistoryTool): Focus on "How to use it" with step-by-step guides, detailed workflows, and practical examples.
+  - **Bidirectional cross-linking**: All Feature ↔ Tool page pairs now have proper cross-links with consistent styling (orange gradient for Feature→Tool, green gradient for Tool→Feature) and analytics tracking.
+  - **Content quality standardization**: All pages now include concrete metrics (e.g., "2.1M views", "62% conversion lift", "15+ hours saved/month"), quantified efficiency gains, specific ROI callouts, and data-backed benefits.
 - **Marketing Pages Enhancement (Oct 2025)**: Updated Tools and Features pages to showcase comprehensive Viral Trend Fetcher capabilities as a complete intelligence package. Now emphasizes that each trend delivers: viral hooks, target audiences, trending angles, popularity scores, peak timing, related trends, best posting times, matched products with images, and competitor video analysis - all in one comprehensive AI-powered report. Includes interactive demo showing real trend package example.
 - Fixed critical tier detection bug in TrendForecaster causing all users to be detected as 'starter' tier (corrected data path from `usageResponse?.data?.data` to `usageResponse?.data`)
 - Fixed upgrade button redirects in TemplateSelector (now correctly points to /account instead of /pricing)

@@ -170,10 +170,10 @@ export default function ViralScoreFeature() {
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              How Viral Scoring Works
+              Why Viral Scoring Delivers Predictable Success
             </h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Understand the science behind predicting viral content.
+              Data-driven insights that eliminate guesswork and maximize your content's viral potential.
             </p>
           </div>
 

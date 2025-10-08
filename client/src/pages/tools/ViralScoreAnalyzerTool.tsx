@@ -657,36 +657,30 @@ export default function ViralScoreAnalyzerTool() {
 
       <ToolFeatureGrid features={features} sectionTitle="Viral Score Analysis Features" />
 
-      {/* Cross-Link to Feature Page */}
-      <section className="py-16 md:py-20 bg-gradient-to-br from-violet-600 to-purple-700" data-testid="feature-crosslink-section">
-        <div className="container mx-auto px-4 max-w-4xl text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Want to Know WHY Viral Score Works?
-          </h2>
-          <p className="text-xl text-violet-100 mb-8 max-w-2xl mx-auto">
-            Discover the science, benefits, and success stories behind our viral score prediction system
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button
-              onClick={handleFeatureCTA}
-              size="lg"
-              className="bg-white text-violet-600 hover:bg-gray-100"
-              data-testid="feature-link-benefits"
-            >
-              Learn Why Viral Score Predicts Success
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <Button
-              onClick={handleFeatureCTA}
-              size="lg"
-              variant="outline"
-              className="border-2 border-white text-white hover:bg-white/10"
-              data-testid="feature-link-case-studies"
-            >
-              See Benefits & Case Studies
-              <Link2 className="ml-2 h-5 w-5" />
-            </Button>
-          </div>
+      <section className="py-16 px-4 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-green-200 dark:border-green-800">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Why Does Viral Score Predict Success So Accurately?
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Discover the science, proven ROI, and real creator success stories showing how viral scoring helps you know your content will perform before you post.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                onClick={handleFeatureCTA}
+                size="lg"
+                className="bg-green-600 hover:bg-green-700 text-white rounded-xl"
+                data-testid="button-view-benefits"
+              >
+                <TrendingUp className="mr-2 h-5 w-5" />
+                See Why Viral Score Increases ROI
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 

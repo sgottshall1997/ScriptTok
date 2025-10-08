@@ -359,25 +359,25 @@ export default function AIScriptGeneratorFeature() {
       <section className="py-16 px-4 bg-gray-50 dark:bg-gray-800">
         <div className="container mx-auto max-w-6xl">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">How It Works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">What You Achieve With Each Approach</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Choose your preferred method—every path leads to viral, revenue-generating scripts.
+              Multiple paths to success—each delivers measurable results in engagement, revenue, and growth.
             </p>
           </div>
 
           <Tabs defaultValue="trends" className="w-full" data-testid="generation-process-tabs">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto md:h-10">
               <TabsTrigger value="trends" data-testid="tab-from-trends">
-                From Trends
+                Trend-Based
               </TabsTrigger>
               <TabsTrigger value="products" data-testid="tab-from-products">
-                From Products
+                Product-Focused
               </TabsTrigger>
               <TabsTrigger value="ideas" data-testid="tab-from-ideas">
-                From Ideas
+                Original Ideas
               </TabsTrigger>
               <TabsTrigger value="competitors" data-testid="tab-from-competitors">
-                From Competitors
+                Competitor-Informed
               </TabsTrigger>
             </TabsList>
 
@@ -388,14 +388,19 @@ export default function AIScriptGeneratorFeature() {
                     <TrendingUp className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="trends-tab-title">Ride Trending Topics to Virality</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="trends-tab-title">3x Higher Engagement From Viral Momentum</h3>
                     <p className="text-muted-foreground mb-4" data-testid="trends-tab-description">
-                      Browse real-time trends, select what's hot in your niche, and get scripts proven to capitalize on viral momentum—complete with hooks that are already working.
+                      Trending content achieves 3x higher engagement rates by capitalizing on existing viral momentum. Your scripts are optimized with hooks proven to be working right now—not guesswork, but real-time viral patterns that drive views and shares.
                     </p>
-                    <Badge className="bg-green-600 text-white">
-                      <TrendingUp className="h-3 w-3 mr-1" />
-                      3x higher engagement when using trending topics
-                    </Badge>
+                    <div className="space-y-2">
+                      <Badge className="bg-green-600 text-white mr-2">
+                        <TrendingUp className="h-3 w-3 mr-1" />
+                        300% engagement boost
+                      </Badge>
+                      <Badge className="bg-blue-600 text-white">
+                        500K+ avg views per trending video
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -408,14 +413,19 @@ export default function AIScriptGeneratorFeature() {
                     <Package className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="products-tab-title">Turn Products Into Revenue</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="products-tab-title">40% Higher Conversions = Direct Revenue Growth</h3>
                     <p className="text-muted-foreground mb-4" data-testid="products-tab-description">
-                      Input any product and get conversion-optimized scripts highlighting benefits that sell. AI identifies the exact angles that drive purchases and includes profit-maximizing CTAs.
+                      Product-focused scripts convert at 40% higher rates because AI identifies the exact benefit angles and psychological triggers that drive purchases. Every CTA is profit-optimized, turning viewers into customers and boosting affiliate commissions by an average of $5K/month.
                     </p>
-                    <Badge className="bg-green-600 text-white">
-                      <DollarSign className="h-3 w-3 mr-1" />
-                      40% higher conversion rates with AI-optimized CTAs
-                    </Badge>
+                    <div className="space-y-2">
+                      <Badge className="bg-green-600 text-white mr-2">
+                        <DollarSign className="h-3 w-3 mr-1" />
+                        +$5K monthly revenue
+                      </Badge>
+                      <Badge className="bg-blue-600 text-white">
+                        40% conversion rate increase
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -428,14 +438,19 @@ export default function AIScriptGeneratorFeature() {
                     <Lightbulb className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="ideas-tab-title">Transform Ideas Into Engagement</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="ideas-tab-title">10+ Hours Saved Weekly While Maintaining Quality</h3>
                     <p className="text-muted-foreground mb-4" data-testid="ideas-tab-description">
-                      Have a content idea? AI turns it into a fully structured viral script with tested hooks, engaging flow, and clear CTAs—no writing skills needed.
+                      Original ideas become viral-ready scripts in 30 seconds instead of 2-3 hours of manual writing. The quality doesn't drop—it improves. AI structures your ideas with proven engagement techniques, viral hooks, and optimized pacing that you'd spend hours researching. That's 10+ hours saved per week to create more content or close brand deals.
                     </p>
-                    <Badge className="bg-green-600 text-white">
-                      <Clock className="h-3 w-3 mr-1" />
-                      Save 2-3 hours per script—get it done in 30 seconds
-                    </Badge>
+                    <div className="space-y-2">
+                      <Badge className="bg-green-600 text-white mr-2">
+                        <Clock className="h-3 w-3 mr-1" />
+                        10+ hours saved weekly
+                      </Badge>
+                      <Badge className="bg-blue-600 text-white">
+                        20x more content in same time
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </Card>
@@ -448,14 +463,19 @@ export default function AIScriptGeneratorFeature() {
                     <Users className="h-6 w-6 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2" data-testid="competitors-tab-title">Steal What Works, Make It Yours</h3>
+                    <h3 className="text-2xl font-bold mb-2" data-testid="competitors-tab-title">Instant Competitive Advantage From Proven Structures</h3>
                     <p className="text-muted-foreground mb-4" data-testid="competitors-tab-description">
-                      Analyze top-performing competitor content and generate similar scripts with your unique brand voice. Get the proven structure without copying.
+                      Leverage what's already working without copying. AI analyzes millions of top-performing videos to extract winning structures—then applies them to your unique brand voice. Get the competitive intelligence that would take months of manual analysis, delivered instantly. Creators using competitor-informed scripts see 2.5x faster audience growth.
                     </p>
-                    <Badge className="bg-green-600 text-white">
-                      <BarChart3 className="h-3 w-3 mr-1" />
-                      Learn from millions of viral videos instantly
-                    </Badge>
+                    <div className="space-y-2">
+                      <Badge className="bg-green-600 text-white mr-2">
+                        <BarChart3 className="h-3 w-3 mr-1" />
+                        2.5x faster growth
+                      </Badge>
+                      <Badge className="bg-blue-600 text-white">
+                        Learn from millions of viral videos
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               </Card>

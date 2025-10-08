@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   FeatureHero,
-  HowItWorksSection,
   FAQAccordion,
 } from "@/components/features";
 import { useLocation } from "wouter";
@@ -39,24 +38,6 @@ import Footer from "@/components/Footer";
 export default function TemplateLibraryFeature() {
   const [_, navigate] = useLocation();
   const { trackNavigateCTA, trackSignupCTA } = useCTATracking();
-
-  const steps = [
-    {
-      number: 1,
-      title: "Select Template",
-      description: "Browse by type, platform, niche, or duration to find the perfect template.",
-    },
-    {
-      number: 2,
-      title: "Customize Content",
-      description: "AI pre-fills the template with your brand voice, products, or trending topics.",
-    },
-    {
-      number: 3,
-      title: "Generate & Export",
-      description: "One-click generation creates your ready-to-record script instantly.",
-    },
-  ];
 
   const templatesByType = [
     { name: "Product Showcase", icon: ShoppingBag, description: "Highlight features and benefits" },
@@ -894,6 +875,36 @@ export default function TemplateLibraryFeature() {
               </Card>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="py-16 px-4 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-900/20 dark:to-red-900/20">
+        <div className="container mx-auto max-w-4xl">
+          <Card className="rounded-2xl p-8 md:p-12 border-2 border-orange-200 dark:border-orange-800">
+            <div className="text-center mb-6">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                Want to See Exactly How to Use Templates?
+              </h2>
+              <p className="text-lg text-muted-foreground">
+                Get a complete step-by-step guide showing you how to browse, customize, save, and reuse viral templates for maximum content efficiency.
+              </p>
+            </div>
+            <div className="flex justify-center">
+              <Button
+                onClick={() => {
+                  trackNavigateCTA("template_library_guide", "view_guide");
+                  navigate("/tools/template-library");
+                }}
+                size="lg"
+                className="bg-orange-600 hover:bg-orange-700 text-white rounded-xl"
+                data-testid="button-template-guide"
+              >
+                <BookOpen className="mr-2 h-5 w-5" />
+                See Step-by-Step Usage Guide
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </Card>
         </div>
       </section>
 
