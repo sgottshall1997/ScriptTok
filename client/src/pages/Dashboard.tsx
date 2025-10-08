@@ -311,7 +311,7 @@ const Dashboard = () => {
       </div>
 
       {/* 📊 Usage Widget */}
-      <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200" data-testid="card-usage-widget">
+      <Card className="rounded-2xl bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 shadow-sm hover:shadow-xl transition-all" data-testid="card-usage-widget">
         <CardHeader>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <CardTitle className="text-xl flex items-center gap-2">
@@ -374,7 +374,7 @@ const Dashboard = () => {
                     </div>
                     <Link href="/account">
                       <Button 
-                        className="bg-gradient-hero hover:opacity-90 text-white whitespace-nowrap"
+                        className="bg-gradient-hero hover:opacity-90 text-white whitespace-nowrap rounded-xl"
                         data-testid="button-upgrade"
                         onClick={() => trackUpgradeCTA('dashboard_usage_widget', 'pro')}
                       >
@@ -397,7 +397,7 @@ const Dashboard = () => {
       {/* Dashboard Overview Dropdown */}
       <Collapsible open={isDashboardInfoOpen} onOpenChange={setIsDashboardInfoOpen} className="w-full">
         <CollapsibleTrigger asChild>
-          <Card className="cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-purple-200 bg-purple-50 dark:bg-purple-950" data-testid="button-dashboard-info">
+          <Card className="rounded-2xl cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-2 border-purple-200 bg-purple-50 dark:bg-purple-950 shadow-sm hover:shadow-xl" data-testid="button-dashboard-info">
             <CardHeader className="pb-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -584,7 +584,7 @@ const Dashboard = () => {
 
       {/* DISABLED: Amazon Associates Links - Hidden when Amazon features are disabled */}
       {isAmazonEnabled() && (
-        <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+        <Card className="rounded-2xl bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 shadow-sm hover:shadow-xl transition-all">
           <CardHeader>
             <CardTitle className="text-lg text-green-800">💰 Amazon Associates Links</CardTitle>
             <p className="text-sm text-green-700">Quick access to your monetized affiliate links</p>
@@ -632,8 +632,8 @@ const Dashboard = () => {
       <TrendForecaster />
 
       {/* 3️⃣ AI-Powered Trending Picks (Unified) */}
-      <Card data-testid="card-unified-trending-picks" className="border-purple-100">
-        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 pb-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-lg">
+      <Card data-testid="card-unified-trending-picks" className="rounded-2xl border-2 border-purple-100 shadow-sm hover:shadow-xl transition-all">
+        <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0 pb-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-t-2xl">
           <div className="space-y-1">
             <CardTitle className="text-xl md:text-2xl font-bold text-purple-900">
               🔥 AI-Powered Trending Products
@@ -685,7 +685,7 @@ const Dashboard = () => {
               </CardContent>
             </Card>
           ) : (
-            <Card className="bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200" data-testid="card-amazon-status">
+            <Card className="rounded-2xl bg-gradient-to-r from-orange-50 to-yellow-50 border-2 border-orange-200 shadow-sm hover:shadow-xl transition-all" data-testid="card-amazon-status">
               <CardContent className="p-4">
                 <div className="flex items-center gap-3">
                   <ShoppingBag className="h-5 w-5 text-orange-600" />
@@ -732,7 +732,7 @@ const Dashboard = () => {
           {(selectedDataSource === 'perplexity' ? trendingLoading : allTrendingLoading) ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {Array(6).fill(0).map((_, i) => (
-                <Card key={i} className="p-3 md:p-4">
+                <Card key={i} className="rounded-2xl p-3 md:p-4 shadow-sm">
                   <div className="space-y-3">
                     <div className="h-4 bg-gray-200 rounded animate-pulse" />
                     <div className="h-3 bg-gray-200 rounded animate-pulse w-2/3" />
@@ -758,7 +758,7 @@ const Dashboard = () => {
                   {/* Products Grid */}
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                     {getLimitedNicheProducts(nicheProducts).map((product) => (
-                      <Card key={product.id} className="border border-gray-200 bg-white hover:shadow-md transition-shadow">
+                      <Card key={product.id} className="rounded-2xl border-2 border-gray-200 bg-white shadow-sm hover:shadow-xl transition-all">
                         <CardContent className="p-4">
                           <div className="space-y-4">
                             {/* Product Title */}
@@ -798,7 +798,7 @@ const Dashboard = () => {
                             <div className="flex gap-2 pt-2">
                               <Button 
                                 size="sm" 
-                                className="flex-1 bg-red-500 hover:bg-red-600 text-white"
+                                className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl"
                                 onClick={() => {
                                   const url = `/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`;
                                   console.log('🔄 Navigating to:', url);
@@ -815,7 +815,7 @@ const Dashboard = () => {
                                 <Button 
                                   size="sm" 
                                   variant="outline" 
-                                  className="border-gray-300"
+                                  className="border-gray-300 rounded-xl"
                                   onClick={() => refreshIndividualMutation.mutate({ productId: product.id, niche: product.niche })}
                                   disabled={refreshIndividualMutation.isPending}
                                 >
@@ -836,7 +836,7 @@ const Dashboard = () => {
 
                   {/* Upgrade CTA for this niche */}
                   {hasMoreProducts(nicheProducts) && (
-                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-lg p-6 text-center">
+                    <div className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 rounded-2xl p-6 text-center shadow-sm">
                       <Crown className="h-10 w-10 mx-auto mb-3 text-purple-600" />
                       <h4 className="font-semibold text-gray-900 mb-2">
                         {nicheProducts.length - 1} More {niche.charAt(0).toUpperCase() + niche.slice(1)} Products Available
@@ -846,7 +846,7 @@ const Dashboard = () => {
                       </p>
                       <Button
                         onClick={() => setLocation('/account')}
-                        className="bg-gradient-hero hover:opacity-90"
+                        className="bg-gradient-hero hover:opacity-90 rounded-xl"
                         data-testid={`upgrade-${niche}-products`}
                       >
                         Upgrade to Pro
@@ -873,7 +873,7 @@ const Dashboard = () => {
       {/* 3️⃣ Fast-Action Buttons Panel */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
         <Link href="/unified-generator" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
-          <Card className="hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:border-purple-300">
+          <Card className="rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-200 cursor-pointer bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200 hover:border-purple-300 shadow-sm">
             <CardContent className="p-6 md:p-8 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <Wand2 className="h-8 w-8 text-white" />
@@ -889,7 +889,7 @@ const Dashboard = () => {
         </Link>
 
         <Link href="/content-history" onClick={() => setTimeout(() => window.scrollTo(0, 0), 100)}>
-          <Card className="hover:shadow-lg hover:scale-105 transition-all duration-200 cursor-pointer bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 hover:border-emerald-300">
+          <Card className="rounded-2xl hover:shadow-xl hover:scale-105 transition-all duration-200 cursor-pointer bg-gradient-to-br from-emerald-50 to-teal-50 border-2 border-emerald-200 hover:border-emerald-300 shadow-sm">
             <CardContent className="p-6 md:p-8 text-center">
               <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <BarChart3 className="h-8 w-8 text-white" />

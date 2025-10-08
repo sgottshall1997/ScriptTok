@@ -159,18 +159,30 @@ export default function PricingPage() {
     }
   ];
 
+  // Stripe payment links
+  const stripeLinks = {
+    starter: {
+      monthly: "https://buy.stripe.com/14A00j0fg0hka1ZbtybbG00",
+      annual: "https://buy.stripe.com/00w00j6DE0hk3DB1SYbbG06"
+    },
+    creator: {
+      monthly: "https://buy.stripe.com/eVqaEXd22fcegqn416bbG01",
+      annual: "https://buy.stripe.com/cNi8wP0fg0hkgqnapubbG07"
+    },
+    pro: {
+      monthly: "https://buy.stripe.com/eVq9AT8LMc02a1Z7dibbG02",
+      annual: "https://buy.stripe.com/14A28r3rs6FI7TR416bbG03"
+    }
+  };
+
   const handleCTA = (tierId: string) => {
     switch (tierId) {
       case "starter":
-        trackSignupCTA(`pricing_${tierId}_card`);
-        if (!isAuthenticated) {
-          login();
-        }
-        break;
       case "creator":
       case "pro":
         trackUpgradeCTA(`pricing_${tierId}_card`, tierId);
-        window.location.href = '/account';
+        const paymentLink = stripeLinks[tierId as keyof typeof stripeLinks][isAnnual ? 'annual' : 'monthly'];
+        window.open(paymentLink, '_blank');
         break;
       case "agency":
         trackNavigateCTA(`pricing_${tierId}_card`, 'contact_sales');
