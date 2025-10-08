@@ -466,42 +466,42 @@ export default function LandingPage() {
                   <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-lg mb-3">
                     <Users className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                   </div>
-                  <h3 className="text-xl font-bold mb-1">Agency</h3>
-                  <div className="text-3xl font-bold mb-1">$69<span className="text-base font-normal text-gray-600 dark:text-gray-400">/mo</span></div>
-                  <div className="text-sm text-gray-500 dark:text-gray-500">or $50/mo annually - Save 28%</div>
+                  <h3 className="text-xl font-bold mb-2">Agency</h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-3">Teams and creators managing multiple brands</p>
+                  <div className="text-base font-semibold text-gray-900 dark:text-white mb-2">Custom volume based on your team's needs</div>
                 </div>
                 <ul className="space-y-2.5 mb-6 flex-1">
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>1000 GPT-4 + 500 Claude generations/month</span>
+                    <span>Everything in Pro</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Unlimited trend analyses</span>
+                    <span>Multiple team seats</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>5 team seats</span>
+                    <span>Bulk content generation & export</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Enterprise viral score + competitive analysis</span>
+                    <span>Custom prompt templates</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>API access</span>
+                    <span>Early access to experimental AI features</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Brand templates</span>
+                    <span>White-label or co-branded content</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Bulk scheduling (50+ items)</span>
+                    <span>Personalized support and setup</span>
                   </li>
                   <li className="flex items-start text-sm">
                     <Check className="h-4 w-4 text-green-600 mr-2 mt-0.5 flex-shrink-0" />
-                    <span>Dedicated account manager</span>
+                    <span>Flexible billing & partnership agreements</span>
                   </li>
                 </ul>
                 <Button
