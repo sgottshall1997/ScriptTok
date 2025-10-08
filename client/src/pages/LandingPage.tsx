@@ -92,12 +92,15 @@ function CTABar({ section, ctaText = "Get Started Free" }: { section: string; ct
         </Button>
       ) : (
         <Button
-          onClick={() => navigate('/dashboard')}
+          onClick={() => {
+            trackSignupCTA(section);
+            login();
+          }}
           size="lg"
           className="bg-gradient-hero text-white hover:opacity-90 rounded-xl btn-glow hover-lift"
-          data-testid={`button-${section}-dashboard`}
+          data-testid={`button-${section}-try-free`}
         >
-          Go to Dashboard
+          Try it for free
           <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       )}
@@ -150,14 +153,14 @@ export default function LandingPage() {
               <Button
                 onClick={() => {
                   trackSignupCTA('hero');
-                  navigate('/dashboard');
+                  login();
                 }}
                 size="lg"
                 className="bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift transition-all-smooth"
-                data-testid="button-hero-dashboard"
+                data-testid="button-hero-try-free"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
-                <span>Go to Dashboard</span>
+                <span>Try it for free</span>
               </Button>
             )}
             <Button
@@ -345,12 +348,15 @@ export default function LandingPage() {
                   </Button>
                 ) : (
                   <Button
-                    onClick={() => navigate('/dashboard')}
+                    onClick={() => {
+                      trackSignupCTA('pricing_starter');
+                      login();
+                    }}
                     className="w-full rounded-xl hover-lift transition-all-smooth"
                     variant="outline"
-                    data-testid="button-pricing-starter-dashboard"
+                    data-testid="button-pricing-starter-try-free"
                   >
-                    Go to Dashboard
+                    Try it for free
                   </Button>
                 )}
               </CardContent>
@@ -576,14 +582,14 @@ export default function LandingPage() {
               <Button
                 onClick={() => {
                   trackSignupCTA('footer_banner');
-                  navigate('/dashboard');
+                  login();
                 }}
                 size="lg"
                 className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
-                data-testid="button-footer-dashboard"
+                data-testid="button-footer-try-free"
               >
                 <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
-                <span>Go to Dashboard</span>
+                <span>Try it for free</span>
               </Button>
             )}
             <Button
