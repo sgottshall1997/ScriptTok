@@ -21,7 +21,7 @@ export default function RotatingValueProps() {
   }, []);
 
   return (
-    <div className="h-24 md:h-32 lg:h-36 flex items-center justify-center overflow-hidden">
+    <div className="h-28 md:h-36 lg:h-40 flex items-center justify-center mb-4">
       <AnimatePresence mode="wait">
         <motion.h1
           key={currentIndex}
@@ -29,7 +29,7 @@ export default function RotatingValueProps() {
           initial="enter"
           animate="center"
           exit="exit"
-          className="text-3xl md:text-4xl lg:text-5xl font-bold text-gradient-purple text-center px-4"
+          className="text-3xl md:text-4xl lg:text-5xl font-bold text-white text-center px-4"
           data-testid="rotating-value-prop"
         >
           {valueProp[currentIndex]}
