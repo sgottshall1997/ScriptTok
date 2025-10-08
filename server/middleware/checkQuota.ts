@@ -138,7 +138,20 @@ export const checkQuota = async (req: Request, res: Response, next: NextFunction
       let upgradeReason: string;
       let tierLimits: Record<string, number>;
       
-      if (usageType === 'gpt') {
+      // Special handling for free tier
+      if (tier === 'free') {
+        errorTitle = 'Free trial complete';
+        message = 'Your 3 free generations are complete! Upgrade to continue creating viral content.';
+        tierLimits = {
+          free: 3,
+          starter: quotaService.getGptLimit('starter') + quotaService.getClaudeLimit('starter'),
+          creator: quotaService.getGptLimit('creator') + quotaService.getClaudeLimit('creator'),
+          pro: quotaService.getGptLimit('pro') + quotaService.getClaudeLimit('pro'),
+          agency: quotaService.getGptLimit('agency') + quotaService.getClaudeLimit('agency')
+        };
+        suggestedTier = 'starter';
+        upgradeReason = 'Upgrade to Starter for 15 GPT + 10 Claude generations/month';
+      } else if (usageType === 'gpt') {
         errorTitle = 'GPT-4 generation limit reached';
         message = `You've used all ${quotaCheck.limit} GPT-4 generations this month on the ${tier.charAt(0).toUpperCase() + tier.slice(1)} plan.`;
         tierLimits = {
