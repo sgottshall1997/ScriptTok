@@ -276,6 +276,8 @@ export default function PricingPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">
                       {tier.philosophy}
                     </p>
+                    {tier.id === 'agency' && 
+                    }
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
@@ -659,7 +661,7 @@ export default function PricingPage() {
                   data-testid="button-footer-start-free"
                 >
                   <Zap className="mr-2 h-5 w-5" />
-                  10 Free Generations
+                  Try 5 Free Generations
                 </Button>
               ) : (
                 <Button
