@@ -276,8 +276,6 @@ export default function PricingPage() {
                     <p className="text-sm text-gray-600 dark:text-gray-400 italic mb-2">
                       {tier.philosophy}
                     </p>
-                    {tier.id === 'agency' && 
-                    }
                   </CardHeader>
                   
                   <CardContent className="space-y-4">
