@@ -4,6 +4,8 @@ dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import path from "path";
+import fs from "fs";
 import { requestTrackingMiddleware, errorTrackingMiddleware, performanceMonitoringMiddleware } from "./middleware/observability.middleware";
 import cron from "node-cron";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
@@ -57,6 +59,27 @@ app.use((req, res, next) => {
 
 (async () => {
   const server = await registerRoutes(app);
+
+  // Serve sitemap.xml and robots.txt before Vite's catch-all route
+  app.get('/sitemap.xml', (req, res) => {
+    const sitemapPath = path.resolve(import.meta.dirname, '..', 'client', 'public', 'sitemap.xml');
+    if (fs.existsSync(sitemapPath)) {
+      res.setHeader('Content-Type', 'application/xml');
+      res.sendFile(sitemapPath);
+    } else {
+      res.status(404).send('Sitemap not found');
+    }
+  });
+
+  app.get('/robots.txt', (req, res) => {
+    const robotsPath = path.resolve(import.meta.dirname, '..', 'client', 'public', 'robots.txt');
+    if (fs.existsSync(robotsPath)) {
+      res.setHeader('Content-Type', 'text/plain');
+      res.sendFile(robotsPath);
+    } else {
+      res.status(404).send('Robots.txt not found');
+    }
+  });
 
   // Wire error tracking middleware
   app.use(errorTrackingMiddleware('api'));
