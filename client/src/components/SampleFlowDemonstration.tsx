@@ -20,7 +20,6 @@ import {
   RotateCcw,
   Flame,
   Eye,
-  Zap,
   Info
 } from 'lucide-react';
 import { TEMPLATE_METADATA } from '@shared/templateMetadata';
@@ -260,14 +259,6 @@ export default function SampleFlowDemonstration() {
         >
           Next
           <ChevronRight className="w-4 h-4 ml-2" />
-        </Button>
-        <Button
-          disabled
-          className="bg-gradient-to-r from-purple-600 to-pink-600 text-white opacity-60 cursor-not-allowed"
-          data-testid="button-try-now"
-        >
-          <Zap className="w-4 h-4 mr-2" />
-          Try It Now - Generate Your First Script
         </Button>
       </div>
     </div>
