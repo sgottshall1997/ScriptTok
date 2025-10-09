@@ -334,13 +334,6 @@ export function MarketingNav() {
         {/* Desktop CTAs */}
         <div className="hidden lg:flex items-center gap-3">
           <Button
-            variant="ghost"
-            onClick={() => handleAuthAction('nav')}
-            data-testid="button-nav-login"
-          >
-            {isAuthenticated ? 'Dashboard' : 'Login'}
-          </Button>
-          <Button
             onClick={() => handleAuthAction('nav')}
             className="bg-gradient-hero text-white hover:opacity-90"
             data-testid="button-nav-get-started"
