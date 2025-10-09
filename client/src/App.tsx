@@ -54,6 +54,10 @@ import {
 // Use Cases Page
 import UseCasesPage from "@/pages/UseCasesPage";
 
+// Billing Pages
+import BillingSuccess from "@/pages/BillingSuccess";
+import BillingCancel from "@/pages/BillingCancel";
+
 import Layout from "@/components/Layout";
 import { initScraperConsole } from "./lib/scraperConsole";
 
@@ -75,6 +79,14 @@ function MainAppRouter() {
       {/* Pricing page */}
       <Route path="/pricing">
         <PricingPage />
+      </Route>
+
+      {/* Billing pages */}
+      <Route path="/billing/success">
+        <BillingSuccess />
+      </Route>
+      <Route path="/billing/cancel">
+        <BillingCancel />
       </Route>
 
       {/* Feature pages */}
