@@ -3,19 +3,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { User, Crown, Settings, ArrowRight, Check, X, Zap } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import { User, Crown, Settings, ArrowRight, Check, X, Zap, AlertTriangle } from 'lucide-react';
 import { TierBadge } from '@/components/TierBadge';
 import { UsageProgress } from '@/components/UsageProgress';
 import { useUsageData } from '@/hooks/useUsageData';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'wouter';
 import { apiRequest, queryClient } from '@/lib/queryClient';
+import { useState } from 'react';
 
 export default function Account() {
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
   const { toast } = useToast();
+  const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   
   const usageData = usageResponse?.data;
+
+  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
+    queryKey: ['/api/billing/subscription'],
+    enabled: usageData?.features.tier !== 'free',
+  });
 
   const createCheckoutMutation = useMutation({
     mutationFn: async ({ tier, billingPeriod }: { tier: string; billingPeriod: 'monthly' | 'annual' }) => {
@@ -64,8 +82,34 @@ export default function Account() {
     return currentIndex > 0 ? tiers[currentIndex - 1] : null;
   };
 
+  const cancelSubscriptionMutation = useMutation({
+    mutationFn: async () => {
+      const response = await apiRequest('POST', '/api/billing/cancel-subscription', {});
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/billing/subscription'] });
+      toast({
+        title: 'Subscription Canceled',
+        description: data.message || 'Your subscription will end at the end of the current billing period.',
+      });
+      setCancelDialogOpen(false);
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to cancel subscription',
+        variant: 'destructive'
+      });
+    }
+  });
+
   const handleUpgrade = (tier: string) => {
     createCheckoutMutation.mutate({ tier, billingPeriod: 'monthly' });
+  };
+
+  const handleCancelSubscription = () => {
+    cancelSubscriptionMutation.mutate();
   };
 
   if (usageLoading) {
@@ -128,6 +172,23 @@ export default function Account() {
               </div>
             </div>
 
+            {subscriptionData?.cancelAtPeriodEnd && (
+              <div className="p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                <div className="flex items-start gap-2">
+                  <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
+                  <div className="text-xs text-yellow-800">
+                    <p className="font-medium">Subscription ending</p>
+                    <p className="text-yellow-700">
+                      Your subscription will end on{' '}
+                      {subscriptionData?.currentPeriodEnd 
+                        ? new Date(subscriptionData.currentPeriodEnd).toLocaleDateString() 
+                        : 'the end of the current period'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="space-y-2 pt-2">
               {nextTier && (
                 <Button 
@@ -162,6 +223,35 @@ export default function Account() {
                   View All Plans
                 </Button>
               </Link>
+
+              {currentTier !== 'free' && !subscriptionData?.cancelAtPeriodEnd && (
+                <AlertDialog open={cancelDialogOpen} onOpenChange={setCancelDialogOpen}>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" className="w-full text-muted-foreground hover:text-destructive" data-testid="button-cancel-subscription">
+                      Cancel Subscription
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Cancel Subscription?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        Your subscription will remain active until the end of your current billing period.
+                        You'll lose access to premium features when the period ends.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleCancelSubscription}
+                        disabled={cancelSubscriptionMutation.isPending}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        {cancelSubscriptionMutation.isPending ? 'Canceling...' : 'Yes, Cancel'}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
           </CardContent>
         </Card>
