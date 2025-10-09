@@ -21,6 +21,7 @@ Preferred communication style: Simple, everyday language.
 - **API Design**: RESTful endpoints
 - **Rate Limiting**: Express rate limiter
 - **Middleware**: Request logging, error handling, CORS
+- **Authentication**: Modern OpenID Connect (OIDC) flow with Passport.js and session-based authentication using PostgreSQL session storage. Supports legacy header-based authentication for backward compatibility.
 
 ### Key Components
 - **4-Tier Subscription System**: Production-ready Starter/Creator/Pro/Agency tier system with granular quota tracking and feature gating.
