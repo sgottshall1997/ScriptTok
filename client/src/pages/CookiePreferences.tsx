@@ -1,55 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Link } from "wouter";
-import { ArrowLeft, Cookie, Shield, BarChart3, Settings, CheckCircle } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  Cookie, 
+  Shield, 
+  BarChart3, 
+  Settings, 
+  CheckCircle, 
+  Trash2, 
+  AlertTriangle 
+} from 'lucide-react';
+import { 
+  getConsent, 
+  setConsent, 
+  revokeConsent, 
+  clearCookies,
+  type CookieConsent 
+} from '@/lib/cookieConsent';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
-declare global {
-  interface Window {
-    gtag?: (command: string, action: string, params: Record<string, string>) => void;
-  }
-}
-
-declare const gtag: typeof window.gtag;
-
-interface CookiePreferences {
-  essential: boolean;
-  functional: boolean;
-  analytics: boolean;
-  doNotSell: boolean;
-}
-
-const CookiePreferencesPage: React.FC = () => {
-  const [preferences, setPreferences] = useState<CookiePreferences>({
-    essential: true, // Always true, cannot be disabled
-    functional: true,
-    analytics: true,
-    doNotSell: false,
+const CookiePreferencesPage = () => {
+  const [preferences, setPreferences] = useState({
+    analytics: false,
+    marketing: false,
   });
   
   const [saved, setSaved] = useState(false);
+  const [currentConsent, setCurrentConsent] = useState<CookieConsent | null>(null);
 
-  // Load preferences from localStorage on component mount
   useEffect(() => {
-    const storedPreferences = localStorage.getItem('cookiePreferences');
-    if (storedPreferences) {
-      try {
-        const parsed = JSON.parse(storedPreferences);
-        setPreferences({
-          ...parsed,
-          essential: true, // Essential cookies always enabled
-        });
-      } catch (error) {
-        console.error('Error parsing stored cookie preferences:', error);
-      }
+    const consent = getConsent();
+    setCurrentConsent(consent);
+    if (consent) {
+      setPreferences({
+        analytics: consent.analytics,
+        marketing: consent.marketing,
+      });
     }
   }, []);
 
-  const handlePreferenceChange = (key: keyof CookiePreferences, value: boolean) => {
-    if (key === 'essential') return; // Cannot change essential cookies
-    
+  const handlePreferenceChange = (key: 'analytics' | 'marketing', value: boolean) => {
     setPreferences(prev => ({
       ...prev,
       [key]: value
@@ -57,94 +61,77 @@ const CookiePreferencesPage: React.FC = () => {
   };
 
   const savePreferences = () => {
-    // Save to localStorage
-    localStorage.setItem('cookiePreferences', JSON.stringify(preferences));
-    
-    // Apply preferences to actual cookies
-    applyCookiePreferences(preferences);
-    
+    setConsent(preferences);
+    setCurrentConsent({ ...preferences, timestamp: Date.now() });
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+    window.location.reload();
   };
 
   const acceptAll = () => {
     const allAccepted = {
-      essential: true,
-      functional: true,
       analytics: true,
-      doNotSell: false,
+      marketing: true,
     };
     setPreferences(allAccepted);
-    localStorage.setItem('cookiePreferences', JSON.stringify(allAccepted));
-    applyCookiePreferences(allAccepted);
+    setConsent(allAccepted);
+    setCurrentConsent({ ...allAccepted, timestamp: Date.now() });
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+    window.location.reload();
   };
 
   const rejectAll = () => {
     const onlyEssential = {
-      essential: true,
-      functional: false,
       analytics: false,
-      doNotSell: true,
+      marketing: false,
     };
     setPreferences(onlyEssential);
-    localStorage.setItem('cookiePreferences', JSON.stringify(onlyEssential));
-    applyCookiePreferences(onlyEssential);
+    setConsent(onlyEssential);
+    setCurrentConsent({ ...onlyEssential, timestamp: Date.now() });
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
+    window.location.reload();
   };
 
-  const applyCookiePreferences = (prefs: CookiePreferences) => {
-    // In a real implementation, this would:
-    // 1. Enable/disable analytics cookies
-    // 2. Enable/disable functional cookies
-    // 3. Set CCPA opt-out flags
-    // 4. Update any third-party service configurations
-    
-    console.log('Applying cookie preferences:', prefs);
-    
-    // Example: Disable analytics if not consented
-    if (!prefs.analytics) {
-      // Disable Google Analytics, other analytics services
-      if (typeof gtag !== 'undefined') {
-        gtag('consent', 'update', {
-          'analytics_storage': 'denied'
-        });
-      }
-    } else {
-      if (typeof gtag !== 'undefined') {
-        gtag('consent', 'update', {
-          'analytics_storage': 'granted'
-        });
-      }
-    }
+  const handleClearAllCookies = () => {
+    revokeConsent();
+    setPreferences({ analytics: false, marketing: false });
+    setCurrentConsent(null);
+    setSaved(true);
+    setTimeout(() => {
+      setSaved(false);
+      window.location.reload();
+    }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 py-8">
       <div className="max-w-4xl mx-auto px-4 space-y-8">
         
-        {/* Header */}
         <div className="text-center space-y-4">
           <Link href="/">
-            <Button variant="outline" className="mb-4">
+            <Button variant="outline" className="mb-4" data-testid="button-back">
               <ArrowLeft className="h-4 w-4 mr-2" />
               Back to Dashboard
             </Button>
           </Link>
           
           <div className="space-y-2">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-gray-100">
               Cookie Preferences
             </h1>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Manage your cookie preferences and privacy settings for Pheme
             </p>
+            {currentConsent && (
+              <p className="text-sm text-gray-500 dark:text-gray-500">
+                Last updated: {new Date(currentConsent.timestamp).toLocaleString()}
+              </p>
+            )}
           </div>
         </div>
 
-        {/* Success Message */}
         {saved && (
           <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20">
             <CardContent className="py-4">
@@ -158,7 +145,6 @@ const CookiePreferencesPage: React.FC = () => {
           </Card>
         )}
 
-        {/* Quick Actions */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -171,91 +157,91 @@ const CookiePreferencesPage: React.FC = () => {
               <Button 
                 onClick={acceptAll}
                 className="bg-green-600 hover:bg-green-700 dark:bg-green-600 dark:hover:bg-green-700"
+                data-testid="button-accept-all"
               >
                 Accept All Cookies
               </Button>
               <Button 
                 onClick={rejectAll}
                 variant="outline"
+                data-testid="button-reject-all"
               >
                 Reject All (Essential Only)
               </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="destructive" 
+                    className="flex items-center"
+                    data-testid="button-clear-all-trigger"
+                  >
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Clear All Cookies
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle className="flex items-center gap-2">
+                      <AlertTriangle className="h-5 w-5 text-orange-500" />
+                      Clear All Cookies?
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This will remove all cookies and reset your preferences. You may be logged out 
+                      and lose your personalized settings. This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel data-testid="button-cancel-clear">Cancel</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={handleClearAllCookies}
+                      className="bg-red-600 hover:bg-red-700"
+                      data-testid="button-confirm-clear"
+                    >
+                      Clear All Cookies
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
           </CardContent>
         </Card>
 
-        {/* Essential Cookies */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <Shield className="h-5 w-5 mr-2" />
-              Essential Cookies
+              Necessary Cookies (Always Active)
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <Label htmlFor="essential" className="text-base font-medium">
+                <Label className="text-base font-medium">
                   Required for Basic Functionality
                 </Label>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   These cookies are necessary for the website to function properly and cannot be disabled. 
                   They include authentication, security, and basic navigation features.
                 </p>
-                <div className="mt-2">
-                  <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded">Authentication</span>
-                  <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded ml-2">Security</span>
-                  <span className="text-xs bg-gray-100 dark:bg-gray-800 px-2 py-1 rounded ml-2">Session Management</span>
+                <div className="mt-3 space-y-2">
+                  <div className="border-l-4 border-gray-500 pl-3">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">connect.sid, session_*</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">Authentication and session management</p>
+                  </div>
                 </div>
               </div>
               <div className="ml-4">
                 <Switch
-                  id="essential"
-                  checked={preferences.essential}
+                  checked={true}
                   disabled={true}
                   className="data-[state=checked]:bg-gray-600"
+                  data-testid="switch-necessary"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Functional Cookies */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Cookie className="h-5 w-5 mr-2" />
-              Functional Cookies
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between">
-              <div className="flex-1">
-                <Label htmlFor="functional" className="text-base font-medium">
-                  Enhanced User Experience
-                </Label>
-                <p className="text-sm text-gray-600 mt-1">
-                  These cookies enhance your experience by remembering your preferences, settings, 
-                  and personalizing content recommendations. They are not required but improve usability.
-                </p>
-                <div className="mt-2">
-                  <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-blue-800 dark:text-blue-200">Preferences</span>
-                  <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-blue-800 dark:text-blue-200 ml-2">Personalization</span>
-                  <span className="text-xs bg-blue-100 dark:bg-blue-900 px-2 py-1 rounded text-blue-800 dark:text-blue-200 ml-2">Language Settings</span>
-                </div>
-              </div>
-              <div className="ml-4">
-                <Switch
-                  id="functional"
-                  checked={preferences.functional}
-                  onCheckedChange={(checked) => handlePreferenceChange('functional', checked)}
-                />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Analytics Cookies */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -269,14 +255,23 @@ const CookiePreferencesPage: React.FC = () => {
                 <Label htmlFor="analytics" className="text-base font-medium">
                   Usage Analytics & Improvements
                 </Label>
-                <p className="text-sm text-gray-600 mt-1">
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
                   These cookies help us understand how you use Pheme so we can improve the service. 
                   They collect anonymous usage data and help us fix bugs and optimize features.
                 </p>
-                <div className="mt-2">
-                  <span className="text-xs bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-purple-800 dark:text-purple-200">Page Views</span>
-                  <span className="text-xs bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-purple-800 dark:text-purple-200 ml-2">Feature Usage</span>
-                  <span className="text-xs bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-purple-800 dark:text-purple-200 ml-2">Performance</span>
+                <div className="mt-3 space-y-2">
+                  <div className="border-l-4 border-purple-500 pl-3">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">_ga (Google Analytics)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">Distinguishes unique users • Duration: 2 years</p>
+                  </div>
+                  <div className="border-l-4 border-purple-500 pl-3">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">_gid (Google Analytics)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">Stores page visit data • Duration: 24 hours</p>
+                  </div>
+                  <div className="border-l-4 border-purple-500 pl-3">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">_gat (Google Analytics)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">Throttles request rate • Duration: 1 minute</p>
+                  </div>
                 </div>
               </div>
               <div className="ml-4">
@@ -284,99 +279,61 @@ const CookiePreferencesPage: React.FC = () => {
                   id="analytics"
                   checked={preferences.analytics}
                   onCheckedChange={(checked) => handlePreferenceChange('analytics', checked)}
+                  data-testid="switch-analytics"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* CCPA Do Not Sell */}
         <Card>
           <CardHeader>
-            <CardTitle>California Consumer Privacy Act (CCPA)</CardTitle>
+            <CardTitle className="flex items-center">
+              <Cookie className="h-5 w-5 mr-2" />
+              Marketing Cookies
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <Label htmlFor="doNotSell" className="text-base font-medium">
-                  Do Not Sell My Personal Information
+                <Label htmlFor="marketing" className="text-base font-medium">
+                  Advertising & Personalization
                 </Label>
-                <p className="text-sm text-gray-600 mt-1">
-                  For California residents: Pheme does not sell personal information. 
-                  This setting ensures compliance with CCPA requirements and your privacy preferences.
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  These cookies are used to deliver personalized advertisements and track campaign performance. 
+                  They help us show you relevant content and measure ad effectiveness.
                 </p>
-                <div className="mt-2">
-                  <span className="text-xs bg-red-100 dark:bg-red-900 px-2 py-1 rounded text-red-800 dark:text-red-200">CCPA Compliance</span>
-                  <span className="text-xs bg-red-100 dark:bg-red-900 px-2 py-1 rounded text-red-800 dark:text-red-200 ml-2">No Data Sales</span>
+                <div className="mt-3 space-y-2">
+                  <div className="border-l-4 border-blue-500 pl-3">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">_fbp, _fbc, fr (Meta Pixel)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">Facebook advertising tracking • Duration: 3 months</p>
+                  </div>
+                  <div className="border-l-4 border-pink-500 pl-3">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300">_ttp (TikTok Pixel)</p>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">TikTok advertising tracking • Duration: 13 months</p>
+                  </div>
                 </div>
               </div>
               <div className="ml-4">
                 <Switch
-                  id="doNotSell"
-                  checked={preferences.doNotSell}
-                  onCheckedChange={(checked) => handlePreferenceChange('doNotSell', checked)}
+                  id="marketing"
+                  checked={preferences.marketing}
+                  onCheckedChange={(checked) => handlePreferenceChange('marketing', checked)}
+                  data-testid="switch-marketing"
                 />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Cookie Details */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Cookie Details & Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="text-left p-3 font-medium">Cookie Type</th>
-                    <th className="text-left p-3 font-medium">Purpose</th>
-                    <th className="text-left p-3 font-medium">Duration</th>
-                    <th className="text-left p-3 font-medium">Third Party</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  <tr>
-                    <td className="p-3">Session</td>
-                    <td className="p-3">User authentication and security</td>
-                    <td className="p-3">Session</td>
-                    <td className="p-3">No</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3">Preferences</td>
-                    <td className="p-3">Remember user settings and choices</td>
-                    <td className="p-3">1 year</td>
-                    <td className="p-3">No</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3">Analytics</td>
-                    <td className="p-3">Usage statistics and performance monitoring</td>
-                    <td className="p-3">2 years</td>
-                    <td className="p-3">Yes (Google Analytics)</td>
-                  </tr>
-                  <tr>
-                    <td className="p-3">Security</td>
-                    <td className="p-3">Fraud prevention and security monitoring</td>
-                    <td className="p-3">6 months</td>
-                    <td className="p-3">No</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Save Preferences */}
         <Card>
           <CardContent className="py-6">
             <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
               <div>
-                <p className="text-gray-700">
-                  Your preferences will be saved locally and applied immediately.
+                <p className="text-gray-700 dark:text-gray-300">
+                  Your preferences will be saved and applied immediately. The page will reload to apply changes.
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-500 dark:text-gray-500">
                   You can change these settings anytime by returning to this page.
                 </p>
               </div>
@@ -384,6 +341,7 @@ const CookiePreferencesPage: React.FC = () => {
                 onClick={savePreferences}
                 className="w-full sm:w-auto"
                 size="lg"
+                data-testid="button-save-preferences"
               >
                 Save Cookie Preferences
               </Button>
@@ -391,8 +349,7 @@ const CookiePreferencesPage: React.FC = () => {
           </CardContent>
         </Card>
 
-        {/* Additional Information */}
-        <Card className="bg-gray-900 text-white">
+        <Card className="bg-gray-900 dark:bg-gray-800 text-white">
           <CardContent className="text-center py-8">
             <h3 className="text-xl font-semibold mb-2">Need More Information?</h3>
             <p className="text-gray-300 mb-4">
@@ -400,12 +357,17 @@ const CookiePreferencesPage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Link href="/privacy-cookies">
-                <Button variant="secondary" size="lg">
+                <Button variant="secondary" size="lg" data-testid="button-privacy-policy">
                   Privacy Policy
                 </Button>
               </Link>
               <Link href="/contact">
-                <Button variant="outline" size="lg" className="text-gray-300 border-gray-600 hover:bg-gray-800">
+                <Button 
+                  variant="outline" 
+                  size="lg" 
+                  className="text-gray-300 border-gray-600 hover:bg-gray-800"
+                  data-testid="button-contact"
+                >
                   Contact Privacy Team
                 </Button>
               </Link>

@@ -60,6 +60,8 @@ import BillingCancel from "@/pages/BillingCancel";
 
 import Layout from "@/components/Layout";
 import { initScraperConsole } from "./lib/scraperConsole";
+import { CookieConsent } from "@/components/CookieConsent";
+import { initializeConsent } from "@/lib/cookieConsent";
 
 function Router() {
   // Track page views when routes change
@@ -205,8 +207,11 @@ function MainAppRouter() {
 }
 
 function App() {
-  // Initialize Google Analytics and scraper console when app loads
+  // Initialize Google Analytics, scraper console, and cookie consent when app loads
   useEffect(() => {
+    // Initialize cookie consent system
+    initializeConsent();
+    
     // Verify required environment variable is present for GA
     if (!import.meta.env.VITE_GA_MEASUREMENT_ID) {
       console.warn('Missing required Google Analytics key: VITE_GA_MEASUREMENT_ID');
@@ -224,6 +229,7 @@ function App() {
       <AuthProvider>
         <TooltipProvider>
           <Toaster />
+          <CookieConsent />
           <Router />
         </TooltipProvider>
       </AuthProvider>

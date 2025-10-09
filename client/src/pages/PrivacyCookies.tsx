@@ -270,6 +270,105 @@ const PrivacyCookiesPage: React.FC = () => {
             </div>
 
             <div>
+              <h3 className="text-lg font-semibold mb-3">Cookies We Use</h3>
+              <p className="text-gray-700 mb-4">
+                Below is a detailed list of all cookies used on Pheme, including their purpose and duration:
+              </p>
+
+              <div className="space-y-4">
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Google Analytics Cookies (Analytics)</h4>
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-purple-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">_ga</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Distinguishes unique users and calculates visitor, session, and campaign data
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 2 years
+                      </p>
+                    </div>
+                    <div className="border-l-4 border-purple-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">_gid</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Stores and updates a unique value for each page visited
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 24 hours
+                      </p>
+                    </div>
+                    <div className="border-l-4 border-purple-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">_gat</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Throttles request rate to limit data collection on high traffic sites
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 1 minute
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">Meta Pixel Cookies (Marketing)</h4>
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-blue-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">_fbp</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Stores and tracks visits across websites for Facebook advertising
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 3 months
+                      </p>
+                    </div>
+                    <div className="border-l-4 border-blue-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">_fbc</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Stores the last visit and click ID from Facebook ads
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 3 months
+                      </p>
+                    </div>
+                    <div className="border-l-4 border-blue-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">fr</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Delivers, measures, and improves the relevancy of Facebook ads
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 3 months
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3">TikTok Pixel Cookies (Marketing)</h4>
+                  <div className="space-y-3">
+                    <div className="border-l-4 border-pink-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">_ttp</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Tracks user behavior and conversions for TikTok advertising
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 13 months
+                      </p>
+                    </div>
+                    <div className="border-l-4 border-pink-500 pl-3">
+                      <p className="font-medium text-sm text-gray-900 dark:text-gray-100">_tt_enable_cookie</p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Purpose:</strong> Enables TikTok cookie tracking functionality
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <strong>Duration:</strong> 13 months
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div>
               <h3 className="text-lg font-semibold mb-3">Managing Cookies</h3>
               <p className="text-gray-700 mb-3">
                 You can control cookies through your browser settings and our cookie preferences:
