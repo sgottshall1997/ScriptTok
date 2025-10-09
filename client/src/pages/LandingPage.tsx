@@ -16,6 +16,7 @@ import {
 import { useLocation } from "wouter";
 import { useAuth } from "@/components/AuthProvider";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
+import { useToast } from "@/hooks/use-toast";
 import { MarketingNav, featuresData, toolsData, useCasesData, pricingData } from "@/components/MarketingNav";
 import Footer from "@/components/Footer";
 import SampleFlowDemonstration from "@/components/SampleFlowDemonstration";
@@ -100,8 +101,10 @@ function CTABar({ section, ctaText = "Get Started Free" }: { section: string; ct
 
 export default function LandingPage() {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { isAuthenticated, login } = useAuth();
-  const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
+  const { trackSignupCTA, trackNavigateCTA, trackUpgradeCTA } = useCTATracking();
+  const { toast } = useToast();
   const [_, navigate] = useLocation();
 
   // Helper function to handle login or dashboard redirect
@@ -111,6 +114,58 @@ export default function LandingPage() {
     } else {
       trackSignupCTA(source);
       login();
+    }
+  };
+
+  // Handle pricing tier clicks with Stripe checkout
+  const handlePricingCTA = async (tierId: string) => {
+    if (tierId === "agency") {
+      trackNavigateCTA(`pricing_${tierId}_card`, 'contact_sales');
+      navigate('/contact');
+      return;
+    }
+
+    if (!isAuthenticated) {
+      trackSignupCTA(`pricing_${tierId}_card`);
+      login();
+      return;
+    }
+
+    trackUpgradeCTA(`pricing_${tierId}_card`, tierId === 'pro' || tierId === 'creator' ? tierId : undefined);
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('/api/billing/create-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          tier: tierId,
+          billingPeriod: isAnnual ? 'annual' : 'monthly'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const data = await response.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL received from server');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Checkout Error",
+        description: "Failed to start checkout. Please try again or contact support.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
     }
   };
 
@@ -304,12 +359,13 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <Button
-                  onClick={() => handleAuthAction('pricing_starter')}
+                  onClick={() => handlePricingCTA('starter')}
+                  disabled={isLoading}
                   className="w-full rounded-xl hover-lift transition-all-smooth"
                   variant="outline"
-                  data-testid={`button-pricing-starter-${isAuthenticated ? 'dashboard' : 'trial'}`}
+                  data-testid="button-pricing-starter"
                 >
-                  {isAuthenticated ? 'Go to Dashboard' : 'Start Free Trial'}
+                  {isLoading ? 'Loading...' : isAuthenticated ? 'Upgrade to Starter' : 'Start Free Trial'}
                 </Button>
               </CardContent>
             </Card>
@@ -356,14 +412,12 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <Button
-                  onClick={() => {
-                    trackNavigateCTA('pricing_creator', 'get_creator');
-                    navigate('/account');
-                  }}
+                  onClick={() => handlePricingCTA('creator')}
+                  disabled={isLoading}
                   className="w-full bg-purple-600 hover:bg-purple-700 text-white rounded-xl btn-glow hover-lift"
                   data-testid="button-pricing-creator"
                 >
-                  Get Creator
+                  {isLoading ? 'Loading...' : 'Get Creator'}
                 </Button>
               </CardContent>
             </Card>
@@ -418,14 +472,12 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <Button
-                  onClick={() => {
-                    trackNavigateCTA('pricing_pro', 'upgrade_pro');
-                    navigate('/account');
-                  }}
+                  onClick={() => handlePricingCTA('pro')}
+                  disabled={isLoading}
                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl btn-glow hover-lift"
                   data-testid="button-pricing-pro"
                 >
-                  Upgrade to Pro
+                  {isLoading ? 'Loading...' : 'Upgrade to Pro'}
                 </Button>
               </CardContent>
             </Card>
@@ -476,15 +528,13 @@ export default function LandingPage() {
                   </li>
                 </ul>
                 <Button
-                  onClick={() => {
-                    trackNavigateCTA('pricing_agency', 'contact_sales');
-                    navigate('/contact');
-                  }}
+                  onClick={() => handlePricingCTA('agency')}
+                  disabled={isLoading}
                   className="w-full rounded-xl hover-lift transition-all-smooth"
                   variant="outline"
                   data-testid="button-pricing-agency"
                 >
-                  Contact Sales
+                  {isLoading ? 'Loading...' : 'Contact Sales'}
                 </Button>
               </CardContent>
             </Card>
