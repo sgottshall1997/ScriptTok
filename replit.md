@@ -22,7 +22,7 @@ Preferred communication style: Simple, everyday language.
 - **Rate Limiting**: Express rate limiter
 - **Middleware**: Request logging, error handling, CORS
 - **Authentication**: Modern OpenID Connect (OIDC) flow with Passport.js and session-based authentication using PostgreSQL session storage. Supports legacy header-based authentication for backward compatibility.
-- **Payment Processing**: Stripe integration via /api/billing/create-checkout endpoint for secure subscription management. All upgrade flows properly authenticated with loading states and error handling.
+- **Payment Processing**: Production Stripe integration with real checkout sessions. Configured price IDs for Starter/Creator/Pro tiers (monthly/annual). Stripe webhooks handle subscription lifecycle. Success/cancel pages provide user feedback. Agency tier configured for one-off payments.
 
 ### Key Components
 - **4-Tier Subscription System**: Production-ready Starter/Creator/Pro/Agency tier system with granular quota tracking and feature gating.
