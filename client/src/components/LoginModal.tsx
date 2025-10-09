@@ -41,36 +41,9 @@ export function LoginModal({ open, onOpenChange }: LoginModalProps) {
       return;
     }
     
-    handleReplitLogin();
-  }
-
-  function handleReplitLogin() {
-    setIsLoading(true);
-    
-    window.addEventListener("message", authComplete);
-    const authWindow = window.open(
-      "https://replit.com/auth_with_repl_site?domain=" + location.host,
-      "_blank",
-      "modal=yes, width=350, height=500"
-    );
-    
-    function authComplete(e: MessageEvent) {
-      // Security: Verify message origin is from Replit
-      if (e.origin !== "https://replit.com") return;
-      if (e.data !== "auth_complete") return;
-      window.removeEventListener("message", authComplete);
-      authWindow?.close();
-      location.reload(); // Reload to pick up authenticated state
-    }
-
-    // Handle if user closes the popup without completing auth
-    const checkClosed = setInterval(() => {
-      if (authWindow?.closed) {
-        clearInterval(checkClosed);
-        window.removeEventListener("message", authComplete);
-        setIsLoading(false);
-      }
-    }, 500);
+    // Modern Replit Auth: redirect to OpenID Connect login flow
+    console.log('[LoginModal] Redirecting to Replit Auth login flow');
+    window.location.href = '/api/login';
   }
 
   return (

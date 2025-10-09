@@ -5,7 +5,6 @@ import { identityService } from '../services/identityService';
 declare global {
   namespace Express {
     interface Request {
-      user?: AuthResult;
       internalUserId?: number;
     }
   }
@@ -23,11 +22,44 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
   try {
     console.log(`[AuthGuard] Processing authentication for ${req.method} ${req.path}`);
 
+    // First, check for session-based authentication (OIDC via passport)
+    if (req.isAuthenticated && req.isAuthenticated() && req.user) {
+      console.log(`[AuthGuard] ✅ Session-based authentication found (OIDC)`);
+      
+      const sessionUser = req.user as AuthResult;
+      console.log(`[AuthGuard] ✅ Authentication successful via session:`, {
+        userId: sessionUser.userId,
+        email: sessionUser.email || '(not provided)',
+        name: sessionUser.name || '(not provided)',
+        tierHint: sessionUser.tierHint || '(not set)'
+      });
+
+      // Find or create user - automatically creates new users on first login
+      const provider = isProduction ? 'replit' : 'dev';
+      const email = sessionUser.email || `${sessionUser.userId}@${provider}.local`;
+
+      const internalUserId = await identityService.findOrCreateUser(
+        provider,
+        sessionUser.userId,
+        email,
+        sessionUser.name,
+        sessionUser.profileImage
+      );
+
+      req.internalUserId = internalUserId;
+      console.log(`[AuthGuard] ✅ Internal user ID attached from session: ${internalUserId}`);
+
+      next();
+      return;
+    }
+
+    // Fallback to header-based authentication (legacy)
+    console.log(`[AuthGuard] No session found, trying header-based auth`);
     const authResult = await verifyAuth(req);
 
     if (authResult) {
       req.user = authResult;
-      console.log(`[AuthGuard] ✅ Authentication successful:`, {
+      console.log(`[AuthGuard] ✅ Authentication successful via headers:`, {
         userId: authResult.userId,
         email: authResult.email || '(not provided)',
         name: authResult.name || '(not provided)',
@@ -47,7 +79,7 @@ export const authGuard = async (req: Request, res: Response, next: NextFunction)
       );
 
       req.internalUserId = internalUserId;
-      console.log(`[AuthGuard] ✅ Internal user ID attached: ${internalUserId}`);
+      console.log(`[AuthGuard] ✅ Internal user ID attached from headers: ${internalUserId}`);
 
       next();
       return;

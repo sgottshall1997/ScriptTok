@@ -84,26 +84,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   async function handleLogout() {
     try {
-      console.log('[AuthProvider] Logout requested');
+      console.log('[AuthProvider] Logout requested - redirecting to Replit logout');
       setIsLoading(true);
       
-      const response = await fetch('/api/auth/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
-      
-      if (response.ok) {
-        setUser(null);
-        console.log('[AuthProvider] ✅ Logout successful');
-        
-        // Reload page to clear any cached state
-        window.location.reload();
-      } else {
-        console.error('[AuthProvider] ❌ Logout failed:', response.status);
-      }
+      // Redirect to OpenID Connect logout endpoint
+      // This will log out of Replit and redirect back to the app
+      window.location.href = '/api/logout';
     } catch (error) {
       console.error('[AuthProvider] ❌ Logout error:', error);
-    } finally {
       setIsLoading(false);
     }
   }

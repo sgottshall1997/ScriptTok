@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 
+// Auth imports
+import { setupAuth } from "./replitAuth";
+
 // Middleware imports
 import { authGuard } from "./middleware/authGuard";
 import { checkQuota } from "./middleware/checkQuota";
@@ -42,6 +45,9 @@ import { validateContent } from "./services/contentValidator";
 import { getValidationLogs, getTemplateMetrics, getOverallMetrics } from "./services/validationLogger";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Set up Replit OpenID Connect authentication
+  await setupAuth(app);
+  
   // Auth routes (handles authentication internally)
   app.use('/api/auth', authRouter);
   
