@@ -62,6 +62,15 @@ function CTABar({ section, ctaText = "Get Started Free" }: { section: string; ct
   const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
   const [_, navigate] = useLocation();
 
+  const handleAuthAction = () => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      trackSignupCTA(section);
+      login();
+    }
+  };
+
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center mt-3">
       <Button
@@ -77,33 +86,15 @@ function CTABar({ section, ctaText = "Get Started Free" }: { section: string; ct
         <MessageSquare className="mr-2 h-5 w-5" />
         Talk to Sales
       </Button>
-      {!isAuthenticated ? (
-        <Button
-          onClick={() => {
-            trackSignupCTA(section);
-            login();
-          }}
-          size="lg"
-          className="bg-gradient-hero text-white hover:opacity-90 rounded-xl btn-glow hover-lift"
-          data-testid={`button-${section}-get-started`}
-        >
-          {ctaText}
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-      ) : (
-        <Button
-          onClick={() => {
-            trackSignupCTA(section);
-            login();
-          }}
-          size="lg"
-          className="bg-gradient-hero text-white hover:opacity-90 rounded-xl btn-glow hover-lift"
-          data-testid={`button-${section}-try-free`}
-        >
-          Try it for free
-          <ArrowRight className="ml-2 h-5 w-5" />
-        </Button>
-      )}
+      <Button
+        onClick={handleAuthAction}
+        size="lg"
+        className="bg-gradient-hero text-white hover:opacity-90 rounded-xl btn-glow hover-lift"
+        data-testid={`button-${section}-${isAuthenticated ? 'dashboard' : 'get-started'}`}
+      >
+        {isAuthenticated ? 'Go to Dashboard' : ctaText}
+        <ArrowRight className="ml-2 h-5 w-5" />
+      </Button>
     </div>
   );
 }
@@ -113,6 +104,16 @@ export default function LandingPage() {
   const { isAuthenticated, login } = useAuth();
   const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
   const [_, navigate] = useLocation();
+
+  // Helper function to handle login or dashboard redirect
+  const handleAuthAction = (source: string) => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      trackSignupCTA(source);
+      login();
+    }
+  };
 
   // Color rotation for cards
   const featureColors = ["purple", "red", "yellow", "green", "blue", "orange"];
@@ -136,33 +137,15 @@ export default function LandingPage() {
             AI-powered scripts, trend discovery, and affiliate tools built for creators.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            {!isAuthenticated ? (
-              <Button
-                onClick={() => {
-                  trackSignupCTA('hero');
-                  login();
-                }}
-                size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift transition-all-smooth"
-                data-testid="button-hero-start-free"
-              >
-                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
-                <span>Save 10 Hours/Week Free</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  trackSignupCTA('hero');
-                  login();
-                }}
-                size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift transition-all-smooth"
-                data-testid="button-hero-try-free"
-              >
-                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
-                <span>Try it for free</span>
-              </Button>
-            )}
+            <Button
+              onClick={() => handleAuthAction('hero')}
+              size="lg"
+              className="bg-white text-purple-600 hover:bg-gray-100 hover:scale-105 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift transition-all-smooth"
+              data-testid={`button-hero-${isAuthenticated ? 'dashboard' : 'start-free'}`}
+            >
+              <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
+              <span>{isAuthenticated ? 'Go to Dashboard' : 'Save 10 Hours/Week Free'}</span>
+            </Button>
             <Button
               onClick={() => {
                 trackNavigateCTA('hero', 'watch_demo');
@@ -334,31 +317,14 @@ export default function LandingPage() {
                     <span>Basic viral score</span>
                   </li>
                 </ul>
-                {!isAuthenticated ? (
-                  <Button
-                    onClick={() => {
-                      trackSignupCTA('pricing_starter');
-                      login();
-                    }}
-                    className="w-full rounded-xl hover-lift transition-all-smooth"
-                    variant="outline"
-                    data-testid="button-pricing-starter"
-                  >
-                    Start Free Trial
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      trackSignupCTA('pricing_starter');
-                      login();
-                    }}
-                    className="w-full rounded-xl hover-lift transition-all-smooth"
-                    variant="outline"
-                    data-testid="button-pricing-starter-try-free"
-                  >
-                    Try it for free
-                  </Button>
-                )}
+                <Button
+                  onClick={() => handleAuthAction('pricing_starter')}
+                  className="w-full rounded-xl hover-lift transition-all-smooth"
+                  variant="outline"
+                  data-testid={`button-pricing-starter-${isAuthenticated ? 'dashboard' : 'trial'}`}
+                >
+                  {isAuthenticated ? 'Go to Dashboard' : 'Start Free Trial'}
+                </Button>
               </CardContent>
             </Card>
 
@@ -565,33 +531,15 @@ export default function LandingPage() {
             Creators are using Pheme to grow faster and work smarter.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            {!isAuthenticated ? (
-              <Button
-                onClick={() => {
-                  trackSignupCTA('footer_banner');
-                  login();
-                }}
-                size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
-                data-testid="button-footer-start-free"
-              >
-                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
-                <span>Start Free</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={() => {
-                  trackSignupCTA('footer_banner');
-                  login();
-                }}
-                size="lg"
-                className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
-                data-testid="button-footer-try-free"
-              >
-                <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
-                <span>Try it for free</span>
-              </Button>
-            )}
+            <Button
+              onClick={() => handleAuthAction('footer_banner')}
+              size="lg"
+              className="bg-white text-purple-600 hover:bg-gray-100 rounded-xl font-semibold glow-purple-sm btn-glow hover-lift"
+              data-testid={`button-footer-${isAuthenticated ? 'dashboard' : 'start-free'}`}
+            >
+              <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
+              <span>{isAuthenticated ? 'Go to Dashboard' : 'Start Free'}</span>
+            </Button>
             <Button
               onClick={() => {
                 trackNavigateCTA('footer_banner', 'talk_sales');

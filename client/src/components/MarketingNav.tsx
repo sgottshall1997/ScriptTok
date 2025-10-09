@@ -237,10 +237,20 @@ function DropdownCard({ item }: { item: CardItem }) {
 }
 
 export function MarketingNav() {
-  const { login } = useAuth();
+  const { login, isAuthenticated } = useAuth();
   const { trackSignupCTA, trackNavigateCTA } = useCTATracking();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [, navigate] = useLocation();
+
+  // Helper function to handle login or dashboard redirect
+  const handleAuthAction = (source: string) => {
+    if (isAuthenticated) {
+      navigate('/dashboard');
+    } else {
+      trackSignupCTA(source);
+      login();
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -325,23 +335,17 @@ export function MarketingNav() {
         <div className="hidden lg:flex items-center gap-3">
           <Button
             variant="ghost"
-            onClick={() => {
-              trackNavigateCTA('nav', 'login');
-              login();
-            }}
+            onClick={() => handleAuthAction('nav')}
             data-testid="button-nav-login"
           >
-            Login
+            {isAuthenticated ? 'Dashboard' : 'Login'}
           </Button>
           <Button
-            onClick={() => {
-              trackSignupCTA('nav');
-              login();
-            }}
+            onClick={() => handleAuthAction('nav')}
             className="bg-gradient-hero text-white hover:opacity-90"
             data-testid="button-nav-get-started"
           >
-            Get Started
+            {isAuthenticated ? 'Go to Dashboard' : 'Get Started'}
           </Button>
         </div>
 
@@ -362,26 +366,24 @@ export function MarketingNav() {
               <div className="flex flex-col gap-2 pb-4 border-b">
                 <Button
                   onClick={() => {
-                    trackSignupCTA('mobile_nav');
-                    login();
+                    handleAuthAction('mobile_nav');
                     setMobileMenuOpen(false);
                   }}
                   className="w-full bg-gradient-hero text-white hover:opacity-90"
                   data-testid="button-mobile-get-started"
                 >
-                  Get Started
+                  {isAuthenticated ? 'Go to Dashboard' : 'Get Started'}
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => {
-                    trackNavigateCTA('mobile_nav', 'login');
-                    login();
+                    handleAuthAction('mobile_nav');
                     setMobileMenuOpen(false);
                   }}
                   className="w-full"
                   data-testid="button-mobile-login"
                 >
-                  Login
+                  {isAuthenticated ? 'Dashboard' : 'Login'}
                 </Button>
               </div>
 
