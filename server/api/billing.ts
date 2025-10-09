@@ -201,6 +201,22 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
     if (subscription?.stripeCustomerId) {
       customerId = subscription.stripeCustomerId;
       console.log(`[BillingAPI] Using existing Stripe customer: ${customerId}`);
+      
+      // If we have a fallback email, clear it from the Stripe customer
+      if (!isRealEmail) {
+        try {
+          const existingCustomer = await stripe.customers.retrieve(customerId);
+          if (existingCustomer && !existingCustomer.deleted) {
+            const customerEmail = (existingCustomer as any).email;
+            if (customerEmail && customerEmail.endsWith('@replit.local')) {
+              await stripe.customers.update(customerId, { email: '' });
+              console.log(`[BillingAPI] ✅ Cleared fallback email from Stripe customer: ${customerId}`);
+            }
+          }
+        } catch (error) {
+          console.error('[BillingAPI] Error updating customer email:', error);
+        }
+      }
     } else {
       const customer = await stripe.customers.create({
         // Only pass email if it's a real email, not a fallback
@@ -224,10 +240,13 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
     // Create session with either Stripe price ID or inline price data
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
-      // Let Stripe collect email if we don't have a real one
-      customer_email: customerEmail,
       mode: 'subscription',
       payment_method_types: ['card'],
+      // Allow email collection/update for customers without a real email
+      customer_update: !isRealEmail ? {
+        name: 'auto',
+        address: 'auto'
+      } : undefined,
       line_items: priceId ? [
         {
           price: priceId,
