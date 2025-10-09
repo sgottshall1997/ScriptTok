@@ -113,8 +113,6 @@ export default function SampleFlowDemonstration() {
             onClick={handleReplay}
             variant="outline"
             size="sm"
-            disabled
-            className="opacity-60 cursor-not-allowed"
             data-testid="button-replay-demo"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
@@ -249,17 +247,15 @@ export default function SampleFlowDemonstration() {
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
         <Button
           onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-          disabled
+          disabled={currentStep === 1}
           variant="outline"
-          className="opacity-60 cursor-not-allowed"
           data-testid="button-prev-step"
         >
           Previous
         </Button>
         <Button
           onClick={() => setCurrentStep(Math.min(8, currentStep + 1))}
-          disabled
-          className="opacity-60 cursor-not-allowed"
+          disabled={currentStep === 8}
           data-testid="button-next-step"
         >
           Next
