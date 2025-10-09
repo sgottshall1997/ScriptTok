@@ -683,6 +683,25 @@ router.post('/webhook', async (req: Request, res: Response) => {
 
         console.log(`[BillingAPI] Processing subscription.deleted for customer ${stripeCustomerId}`);
         
+        // Find user by Stripe customer ID
+        const userSubscription = await storage.getUserSubscriptionByCustomerId(stripeCustomerId);
+        
+        if (userSubscription) {
+          const userId = userSubscription.userId;
+          
+          // Update subscription status to 'cancelled'
+          await storage.updateSubscription(userId, {
+            status: 'cancelled'
+          });
+          
+          // Downgrade user to free tier
+          await storage.updateUserTier(userId, 'free');
+          
+          console.log(`[BillingAPI] ✅ Downgraded user ${userId} to free tier after subscription deletion`);
+        } else {
+          console.error(`[BillingAPI] ❌ No subscription found for customer ${stripeCustomerId}`);
+        }
+        
         break;
       }
 

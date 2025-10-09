@@ -30,7 +30,12 @@ export default function Account() {
   
   const usageData = usageResponse?.data;
 
-  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery({
+  const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery<{
+    tier: string;
+    status: string;
+    currentPeriodEnd: string | null;
+    cancelAtPeriodEnd: boolean;
+  }>({
     queryKey: ['/api/billing/subscription'],
     enabled: usageData?.features.tier !== 'free',
   });

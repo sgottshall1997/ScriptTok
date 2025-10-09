@@ -70,6 +70,7 @@ export interface IStorage {
 
   // Subscription operations
   getUserSubscription(userId: number): Promise<Subscription | undefined>;
+  getUserSubscriptionByCustomerId(customerId: string): Promise<Subscription | undefined>;
   createSubscription(subscription: InsertSubscription): Promise<Subscription>;
   updateSubscription(userId: number, updates: Partial<InsertSubscription>): Promise<Subscription | undefined>;
 
@@ -415,6 +416,10 @@ export class MemStorage implements IStorage {
     return this.subscriptionsData.find(s => s.userId === userId);
   }
 
+  async getUserSubscriptionByCustomerId(customerId: string): Promise<Subscription | undefined> {
+    return this.subscriptionsData.find(s => s.stripeCustomerId === customerId);
+  }
+
   async createSubscription(subscription: InsertSubscription): Promise<Subscription> {
     const newSubscription: Subscription = {
       ...subscription,
@@ -729,6 +734,12 @@ export class DatabaseStorage implements IStorage {
   async getUserSubscription(userId: number): Promise<Subscription | undefined> {
     const result = await db.select().from(subscriptions)
       .where(eq(subscriptions.userId, userId));
+    return result[0];
+  }
+
+  async getUserSubscriptionByCustomerId(customerId: string): Promise<Subscription | undefined> {
+    const result = await db.select().from(subscriptions)
+      .where(eq(subscriptions.stripeCustomerId, customerId));
     return result[0];
   }
 
