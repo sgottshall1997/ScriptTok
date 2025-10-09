@@ -20,13 +20,11 @@ import {
   RotateCcw,
   Flame,
   Eye,
-  ArrowRight,
-  Zap
+  Zap,
+  Info
 } from 'lucide-react';
-import { useLocation } from 'wouter';
 import { TEMPLATE_METADATA } from '@shared/templateMetadata';
 import { staggerChildren, scaleIn } from '@/lib/animations';
-import { useCTATracking } from '@/hooks/use-cta-tracking';
 
 interface Step {
   id: number;
@@ -51,8 +49,6 @@ export default function SampleFlowDemonstration() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isAutoPlay, setIsAutoPlay] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const [_, navigate] = useLocation();
-  const { trackNavigateCTA } = useCTATracking();
 
   useEffect(() => {
     if (!isAutoPlay || isHovering) return;
@@ -73,11 +69,6 @@ export default function SampleFlowDemonstration() {
   const handleReplay = () => {
     setCurrentStep(1);
     setIsAutoPlay(true);
-  };
-
-  const handleTryNow = () => {
-    trackNavigateCTA('sample-flow-demo', 'generate-content');
-    navigate('/generate-content');
   };
 
   return (
@@ -122,11 +113,24 @@ export default function SampleFlowDemonstration() {
             onClick={handleReplay}
             variant="outline"
             size="sm"
+            disabled
+            className="opacity-60 cursor-not-allowed"
             data-testid="button-replay-demo"
           >
             <RotateCcw className="w-4 h-4 mr-2" />
             Replay
           </Button>
+        </motion.div>
+
+        {/* Demo Preview Badge */}
+        <motion.div
+          className="flex items-center justify-center gap-2 text-sm text-gray-500 dark:text-gray-400 mb-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Info className="w-4 h-4" />
+          <span>Demo Preview - Buttons Not Active</span>
         </motion.div>
       </div>
 
@@ -230,14 +234,14 @@ export default function SampleFlowDemonstration() {
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
           >
-            {currentStep === 1 && <Step1FindTrend navigate={navigate} />}
+            {currentStep === 1 && <Step1FindTrend />}
             {currentStep === 2 && <Step2SelectProduct />}
             {currentStep === 3 && <Step3AIIntelligence />}
-            {currentStep === 4 && <Step4SelectTemplate navigate={navigate} />}
+            {currentStep === 4 && <Step4SelectTemplate />}
             {currentStep === 5 && <Step5GenerateContent />}
-            {currentStep === 6 && <Step6ViralScore navigate={navigate} />}
-            {currentStep === 7 && <Step7SaveHistory navigate={navigate} />}
-            {currentStep === 8 && <Step8SmartLearning navigate={navigate} />}
+            {currentStep === 6 && <Step6ViralScore />}
+            {currentStep === 7 && <Step7SaveHistory />}
+            {currentStep === 8 && <Step8SmartLearning />}
           </motion.div>
         </AnimatePresence>
       </div>
@@ -245,23 +249,25 @@ export default function SampleFlowDemonstration() {
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-6">
         <Button
           onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-          disabled={currentStep === 1}
+          disabled
           variant="outline"
+          className="opacity-60 cursor-not-allowed"
           data-testid="button-prev-step"
         >
           Previous
         </Button>
         <Button
           onClick={() => setCurrentStep(Math.min(8, currentStep + 1))}
-          disabled={currentStep === 8}
+          disabled
+          className="opacity-60 cursor-not-allowed"
           data-testid="button-next-step"
         >
           Next
           <ChevronRight className="w-4 h-4 ml-2" />
         </Button>
         <Button
-          onClick={handleTryNow}
-          className="bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:opacity-90 hover:scale-105 transition-all shadow-lg hover:shadow-purple-500/50"
+          disabled
+          className="bg-gradient-to-r from-purple-600 to-pink-600 text-white opacity-60 cursor-not-allowed"
           data-testid="button-try-now"
         >
           <Zap className="w-4 h-4 mr-2" />
@@ -272,7 +278,7 @@ export default function SampleFlowDemonstration() {
   );
 }
 
-function Step1FindTrend({ navigate }: { navigate: (path: string) => void }) {
+function Step1FindTrend() {
   return (
     <motion.div
       initial={{ scale: 0.95, opacity: 0 }}
@@ -333,8 +339,8 @@ function Step1FindTrend({ navigate }: { navigate: (path: string) => void }) {
           </div>
 
           <Button 
-            className="w-full mt-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:opacity-90"
-            onClick={() => navigate('/trending-ai-picks')}
+            className="w-full mt-6 bg-gradient-to-r from-purple-600 to-blue-600 text-white opacity-60 cursor-not-allowed"
+            disabled
             data-testid="button-discover-trends"
           >
             <TrendingUp className="w-4 h-4 mr-2" />
@@ -520,7 +526,7 @@ function Step3AIIntelligence() {
   );
 }
 
-function Step4SelectTemplate({ navigate }: { navigate: (path: string) => void }) {
+function Step4SelectTemplate() {
   const [selectedTemplate, setSelectedTemplate] = useState('short_video');
 
   const templates = [
@@ -589,8 +595,8 @@ function Step4SelectTemplate({ navigate }: { navigate: (path: string) => void })
           </motion.div>
 
           <Button 
-            className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white hover:opacity-90"
-            onClick={() => navigate('/tools/template-library')}
+            className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white opacity-60 cursor-not-allowed"
+            disabled
             data-testid="button-view-templates"
           >
             <FileText className="w-4 h-4 mr-2" />
@@ -669,7 +675,7 @@ function Step5GenerateContent() {
   );
 }
 
-function Step6ViralScore({ navigate }: { navigate: (path: string) => void }) {
+function Step6ViralScore() {
   return (
     <motion.div
       initial={{ scale: 0.95, opacity: 0 }}
@@ -746,8 +752,8 @@ function Step6ViralScore({ navigate }: { navigate: (path: string) => void }) {
           </div>
 
           <Button 
-            className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white hover:opacity-90"
-            onClick={() => navigate('/tools/viral-score-analyzer')}
+            className="w-full mt-6 bg-gradient-to-r from-green-600 to-blue-600 text-white opacity-60 cursor-not-allowed"
+            disabled
             data-testid="button-analyze-score"
           >
             <BarChart3 className="w-4 h-4 mr-2" />
@@ -759,7 +765,7 @@ function Step6ViralScore({ navigate }: { navigate: (path: string) => void }) {
   );
 }
 
-function Step7SaveHistory({ navigate }: { navigate: (path: string) => void }) {
+function Step7SaveHistory() {
   return (
     <motion.div
       initial={{ scale: 0.95, opacity: 0 }}
@@ -806,8 +812,8 @@ function Step7SaveHistory({ navigate }: { navigate: (path: string) => void }) {
           </div>
 
           <Button 
-            className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:opacity-90"
-            onClick={() => navigate('/tools/history')}
+            className="w-full mt-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white opacity-60 cursor-not-allowed"
+            disabled
             data-testid="button-view-history"
           >
             <Save className="w-4 h-4 mr-2" />
@@ -819,7 +825,7 @@ function Step7SaveHistory({ navigate }: { navigate: (path: string) => void }) {
   );
 }
 
-function Step8SmartLearning({ navigate }: { navigate: (path: string) => void }) {
+function Step8SmartLearning() {
   return (
     <motion.div
       initial={{ scale: 0.95, opacity: 0 }}
