@@ -194,12 +194,17 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
     let customerId = '';
     const subscription = await storage.getUserSubscription(internalUserId);
     
+    // Check if email is a fallback (ends with @replit.local) or null
+    const isRealEmail = user.email && !user.email.endsWith('@replit.local');
+    const customerEmail: string | undefined = isRealEmail ? (user.email || undefined) : undefined;
+    
     if (subscription?.stripeCustomerId) {
       customerId = subscription.stripeCustomerId;
       console.log(`[BillingAPI] Using existing Stripe customer: ${customerId}`);
     } else {
       const customer = await stripe.customers.create({
-        email: user.email || undefined,
+        // Only pass email if it's a real email, not a fallback
+        email: customerEmail,
         metadata: {
           userId: internalUserId.toString()
         }
@@ -219,6 +224,8 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
     // Create session with either Stripe price ID or inline price data
     const sessionConfig: Stripe.Checkout.SessionCreateParams = {
       customer: customerId,
+      // Let Stripe collect email if we don't have a real one
+      customer_email: customerEmail,
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: priceId ? [
