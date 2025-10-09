@@ -365,7 +365,7 @@ export default function LandingPage() {
                   variant="outline"
                   data-testid="button-pricing-starter"
                 >
-                  {isLoading ? 'Loading...' : isAuthenticated ? 'Upgrade to Starter' : 'Start Free Trial'}
+                  {isLoading ? 'Loading...' : isAuthenticated ? 'Get Starter' : 'Start Free Trial'}
                 </Button>
               </CardContent>
             </Card>
@@ -477,7 +477,7 @@ export default function LandingPage() {
                   className="w-full bg-green-600 hover:bg-green-700 text-white rounded-xl btn-glow hover-lift"
                   data-testid="button-pricing-pro"
                 >
-                  {isLoading ? 'Loading...' : 'Upgrade to Pro'}
+                  {isLoading ? 'Loading...' : 'Get Pro'}
                 </Button>
               </CardContent>
             </Card>

@@ -9,6 +9,11 @@ import cron from "node-cron";
 import { pullPerplexityTrends } from "./services/perplexityTrendFetcher";
 
 const app = express();
+
+// Stripe webhook needs raw body for signature verification
+// This MUST come before express.json() to intercept the webhook route
+app.use('/api/billing/webhook', express.raw({ type: 'application/json' }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

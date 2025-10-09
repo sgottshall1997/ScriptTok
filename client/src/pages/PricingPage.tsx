@@ -62,7 +62,7 @@ export default function PricingPage() {
         { text: "Custom prompts", included: false },
         { text: "API access", included: false }
       ],
-      cta: "Start Free",
+      cta: "Get Starter",
       ctaVariant: "outline" as const,
       popular: false
     },
@@ -125,7 +125,7 @@ export default function PricingPage() {
         { text: "API access", included: false },
         { text: "Brand templates", included: false }
       ],
-      cta: "Upgrade to Pro",
+      cta: "Get Pro",
       ctaVariant: "default" as const,
       popular: false,
       emphasized: true
