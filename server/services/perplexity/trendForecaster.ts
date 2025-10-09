@@ -768,11 +768,11 @@ function validateTrendCompleteness(trends: TrendForecast, niche?: Niche): {
   // Enhanced logging
   console.log(`🎯 TrendForecaster validation summary for ${niche}:`, {
     complete: isComplete,
-    categoriesWithData: categoriesWithData.length,
+    categoriesWithDataCount: categoriesWithData.length,
+    categoriesWithData: categoriesWithData,
     missing: missingCategories,
     insufficient: insufficientCategories,
     totalInvalid: invalidTrends.length,
-    categoriesWithData: categoriesWithData,
     detailedCounts: Object.keys(details).map(cat =>
       `${cat}: ${details[cat].valid}/${details[cat].count} valid`
     ).join(', ')
