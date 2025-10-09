@@ -25,6 +25,12 @@ export default function Account() {
     onSuccess: (data) => {
       if (data.url) {
         window.location.href = data.url;
+      } else {
+        toast({
+          title: 'Checkout Error',
+          description: 'Failed to create checkout session. Please try again or contact support.',
+          variant: 'destructive'
+        });
       }
     },
     onError: (error: any) => {

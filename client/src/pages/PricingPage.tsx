@@ -23,14 +23,17 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/components/AuthProvider";
 import { useCTATracking } from "@/hooks/use-cta-tracking";
+import { useToast } from "@/hooks/use-toast";
 import { Helmet } from "react-helmet";
 import { MarketingNav } from "@/components/MarketingNav";
 import Footer from "@/components/Footer";
 
 export default function PricingPage() {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const { isAuthenticated, login } = useAuth();
   const { trackSignupCTA, trackUpgradeCTA, trackNavigateCTA } = useCTATracking();
+  const { toast } = useToast();
 
   const pricingTiers = [
     {
@@ -159,35 +162,54 @@ export default function PricingPage() {
     }
   ];
 
-  // Stripe payment links
-  const stripeLinks = {
-    starter: {
-      monthly: "https://buy.stripe.com/14A00j0fg0hka1ZbtybbG00",
-      annual: "https://buy.stripe.com/00w00j6DE0hk3DB1SYbbG06"
-    },
-    creator: {
-      monthly: "https://buy.stripe.com/eVqaEXd22fcegqn416bbG01",
-      annual: "https://buy.stripe.com/cNi8wP0fg0hkgqnapubbG07"
-    },
-    pro: {
-      monthly: "https://buy.stripe.com/eVq9AT8LMc02a1Z7dibbG02",
-      annual: "https://buy.stripe.com/14A28r3rs6FI7TR416bbG03"
+  const handleCTA = async (tierId: string) => {
+    if (tierId === "agency") {
+      trackNavigateCTA(`pricing_${tierId}_card`, 'contact_sales');
+      window.location.href = '/contact';
+      return;
     }
-  };
 
-  const handleCTA = (tierId: string) => {
-    switch (tierId) {
-      case "starter":
-      case "creator":
-      case "pro":
-        trackUpgradeCTA(`pricing_${tierId}_card`, tierId);
-        const paymentLink = stripeLinks[tierId as keyof typeof stripeLinks][isAnnual ? 'annual' : 'monthly'];
-        window.open(paymentLink, '_blank');
-        break;
-      case "agency":
-        trackNavigateCTA(`pricing_${tierId}_card`, 'contact_sales');
-        window.location.href = '/contact';
-        break;
+    if (!isAuthenticated) {
+      trackSignupCTA(`pricing_${tierId}_card`);
+      login();
+      return;
+    }
+
+    trackUpgradeCTA(`pricing_${tierId}_card`, tierId);
+    setIsLoading(true);
+    
+    try {
+      const response = await fetch('/api/billing/create-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({
+          tier: tierId,
+          billingPeriod: isAnnual ? 'annual' : 'monthly'
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to create checkout session');
+      }
+
+      const data = await response.json();
+      
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL received from server');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Checkout Error",
+        description: "Failed to start checkout. Please try again or contact support.",
+        variant: "destructive",
+      });
+      setIsLoading(false);
     }
   };
 
@@ -338,9 +360,10 @@ export default function PricingPage() {
                             : ''
                       }`}
                       variant={tier.ctaVariant}
+                      disabled={isLoading}
                       data-testid={`button-${tier.id}-cta`}
                     >
-                      {tier.cta}
+                      {isLoading ? 'Processing...' : tier.cta}
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </CardContent>
