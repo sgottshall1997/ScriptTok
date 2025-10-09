@@ -659,6 +659,10 @@ router.post('/webhook', async (req: Request, res: Response) => {
           console.log(`[BillingAPI] ✅ Created new subscription for user ${userId}`);
         }
 
+        // Also update the users table subscription_tier column
+        await storage.updateUserTier(userIdNum, tier);
+        console.log(`[BillingAPI] ✅ Updated user tier to ${tier} for user ${userId}`);
+
         break;
       }
 
