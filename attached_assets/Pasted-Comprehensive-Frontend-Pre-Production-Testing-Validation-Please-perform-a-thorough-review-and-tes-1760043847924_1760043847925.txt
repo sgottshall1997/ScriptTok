@@ -1,0 +1,106 @@
+Comprehensive Frontend Pre-Production Testing & Validation
+
+Please perform a thorough review and testing of the entire frontend application. Check and fix the following:
+
+1. Navigation & Routing Tests
+Verify ALL navigation links point to their correct destinations:
+Header/nav links (every single one)
+Footer links (legal pages, social media, etc.)
+CTA buttons throughout the app
+Sidebar navigation items
+Breadcrumb links
+Card/feature links on landing pages
+Tool page navigation
+Feature page navigation
+Ensure clicking any link/route automatically scrolls to the top of the new page
+Test all internal routing (dashboard, account, pricing, features, tools, legal pages)
+Verify external links open in new tabs where appropriate
+Check that 404/not-found page works correctly
+2. Authentication & Protected Routes
+Test login/logout flow completely
+Verify protected routes redirect to login when unauthenticated
+Check that authenticated users can access all appropriate pages
+Ensure user profile displays correctly in header
+Test dev mode vs production mode authentication flows
+3. Responsive Design & Mobile
+Test all pages on mobile viewport (375px width)
+Test on tablet viewport (768px width)
+Test on desktop viewport (1920px width)
+Verify mobile menu/hamburger works correctly
+Check that all buttons, forms, and interactive elements are accessible on mobile
+Ensure no horizontal scrolling issues
+4. Forms & User Input
+Test all form validations (required fields, URL formats, etc.)
+Verify error messages display correctly
+Check success messages after form submissions
+Test all dropdowns, selects, checkboxes, and radio buttons
+Verify placeholder text is helpful and accurate
+Test textarea/input character limits where applicable
+5. Interactive Elements
+Test all buttons have proper loading states
+Verify modals/dialogs open and close correctly
+Check tooltips and popovers display properly
+Test accordions expand/collapse
+Verify tabs switch content correctly
+Check all hover states work as expected
+Test keyboard navigation (Tab, Enter, Escape keys)
+6. Content & Copy
+Check for any lorem ipsum or placeholder text
+Verify all headings are descriptive and accurate
+Check that feature descriptions match actual functionality
+Ensure pricing information is correct and up-to-date
+Verify tier badges display correct tier names (Starter/Creator/Pro/Agency)
+7. Accessibility (a11y)
+Verify all images have alt text
+Check that all interactive elements have proper aria-labels
+Ensure proper heading hierarchy (h1 → h2 → h3, no skips)
+Test that all forms have associated labels
+Verify color contrast meets WCAG standards
+Check keyboard-only navigation works throughout
+8. Performance & Loading States
+Verify loading spinners show during async operations
+Check that skeleton screens appear while data loads
+Test error states display properly when API calls fail
+Ensure no console errors in browser dev tools
+Check that images load properly and have fallbacks
+9. Tier System & Upgrade Flows
+Verify tier restrictions display correctly (locked features, usage limits)
+Test all "Upgrade" CTAs navigate to correct pages (/pricing or /account)
+Check that tier badges show correct colors and text
+Verify usage progress bars display accurate data
+Test that feature gates show appropriate messages
+10. Legal & Compliance Pages
+Verify all legal pages render correctly (Privacy, Terms, Cookies, etc.)
+Check that cookie consent banner displays and functions
+Test cookie preferences save correctly
+Verify GDPR/compliance notices are visible
+Check that contact page form works
+11. Analytics & Tracking
+Verify Google Analytics is configured (check for GA_MEASUREMENT_ID warnings)
+Test that page view events fire correctly
+Check conversion tracking on key actions (signups, upgrades, etc.)
+Verify CTA click tracking works
+12. Edge Cases & Error Handling
+Test behavior with no internet connection
+Verify graceful degradation when APIs fail
+Check empty states (no content, no history, etc.)
+Test with very long text inputs
+Verify handling of special characters in forms
+Test rapid clicking/double submissions
+13. Cross-Browser Testing (if possible)
+Test in Chrome/Chromium
+Test in Firefox
+Test in Safari/WebKit
+14. Final Checks
+Remove any console.log statements
+Check for any TODO comments that need addressing
+Verify all environment variables are properly configured
+Test the complete user journey from landing → signup → content generation
+Ensure no broken images or missing assets
+Verify social media links point to correct profiles
+Fix any issues found and provide a summary of:
+
+Issues discovered and fixed
+Any remaining issues that need manual attention
+Recommendations for improvements
+Confirmation that all critical paths work correctly

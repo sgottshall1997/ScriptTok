@@ -239,10 +239,8 @@ const GenerateContent = () => {
         const result = await response.json();
         if (result.success) {
           setProductResearch(result.data.research);
-          console.log('🔍 Product research loaded:', result.data.research);
         }
       } else {
-        console.log('Product research API not available, using fallback');
         setProductResearch(null);
       }
 
@@ -291,7 +289,6 @@ const GenerateContent = () => {
         const result = await response.json();
         if (result.success) {
           setCompetitorVideos(result.data.competitors);
-          console.log('🎯 Competitor intel loaded:', result.data.competitors);
         }
       }
     } catch (error) {
@@ -354,10 +351,8 @@ const GenerateContent = () => {
         const result = await response.json();
         if (result.success) {
           setTrendResearch(result.data.research);
-          console.log('🔥 Trend research loaded:', result.data.research);
         }
       } else {
-        console.log('Trend research API not available, using fallback');
         setTrendResearch(null);
       }
     } catch (error) {
@@ -408,7 +403,6 @@ const GenerateContent = () => {
         const result = await response.json();
         if (result.success) {
           setTrendCompetitorVideos(result.data.competitors);
-          console.log('🔥 Trend competitor intel loaded:', result.data.competitors);
         }
       }
     } catch (error) {
@@ -476,9 +470,9 @@ const GenerateContent = () => {
     fetchPromptStructure();
   }, [selectedTemplates, selectedNiche, tone]);
 
-  // Debug: Log viralInspo state changes
+  // Track viral inspiration changes
   useEffect(() => {
-    console.log('🎯 Viral inspiration updated:', viralInspo);
+    // Viral inspiration state updated
   }, [viralInspo]);
 
   // Copy to clipboard helper
@@ -837,9 +831,6 @@ ${config.hashtags.join(' ')}`;
         duration: 4000,
       });
     }
-    
-    console.log("Template source:", templateSource);
-    console.log("Selected template:", finalTemplateType);
 
     setIsGenerating(true);
     
@@ -961,7 +952,6 @@ ${config.hashtags.join(' ')}`;
 
       if (response.ok) {
         const result = await response.json();
-        console.log('API Response:', result); // Debug log
         
         if (result.success && result.data) {
           // Extract content from the API response structure
@@ -982,7 +972,6 @@ ${config.hashtags.join(' ')}`;
           // Set viral score if available
           if (result.data.viralScore) {
             setViralScore(result.data.viralScore);
-            console.log('🎯 Viral score loaded:', result.data.viralScore);
           }
           
           // Generate TikTok caption for saving to history

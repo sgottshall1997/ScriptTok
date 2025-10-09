@@ -53,7 +53,6 @@ export const trackEvent = (
   value?: number
 ) => {
   if (typeof window === 'undefined' || !window.gtag) {
-    console.log('Analytics not initialized or window not available');
     return;
   }
   

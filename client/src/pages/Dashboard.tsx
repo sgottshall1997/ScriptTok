@@ -187,22 +187,6 @@ const Dashboard = () => {
       perplexityProducts.push(...uniqueProducts);
     });
 
-    // Debug logging to see what products we're getting
-    console.log('🔍 Dashboard Debug - Balanced Perplexity products:', perplexityProducts.length);
-    perplexityProducts.forEach((p, i) => {
-      console.log(`  ${i+1}. ${p.title} (${p.niche}) - Created: ${p.createdAt}`);
-    });
-
-    // Show products by niche for clarity
-    const byNiche = perplexityProducts.reduce((acc, p) => {
-      if (!acc[p.niche]) acc[p.niche] = [];
-      acc[p.niche].push(p.title);
-      return acc;
-    }, {} as Record<string, string[]>);
-
-    console.log('🎯 Products by niche on dashboard:', byNiche);
-    console.log('📊 Products count by niche:', Object.entries(byNiche).map(([niche, products]) => `${niche}: ${products.length}`).join(', '));
-
     return perplexityProducts; // Return all products (up to 21)
   };
 
@@ -819,7 +803,6 @@ const Dashboard = () => {
                                 className="flex-1 bg-red-500 hover:bg-red-600 text-white rounded-xl"
                                 onClick={() => {
                                   const url = `/bulk-content-generation?product=${encodeURIComponent(product.title)}&niche=${product.niche}&autopopulate=true`;
-                                  console.log('🔄 Navigating to:', url);
                                   trackEvent('trending_product_click', 'bulk_generator', `${product.niche}_${product.title}`, 1);
                                   setLocation(url);
                                   // Scroll to top after navigation

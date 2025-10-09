@@ -10,6 +10,8 @@ export function useAnalytics() {
     if (location !== prevLocationRef.current) {
       trackPageView(location);
       prevLocationRef.current = location;
+      // Auto-scroll to top on navigation
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   }, [location]);
 };

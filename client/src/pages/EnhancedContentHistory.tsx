@@ -155,11 +155,7 @@ const EnhancedContentHistory = () => {
 
     // Add database history if available (these can be rated)
     if (dbHistory && Array.isArray(dbHistory)) {
-      console.log('🔧 DEBUG: Raw dbHistory received:', dbHistory.length, 'items');
-      console.log('🔧 DEBUG: First item raw:', dbHistory[0]);
-
       const dbHistoryConverted = dbHistory.map((item: any) => {
-        console.log('🔧 DEBUG: Processing item with ID:', item.id, 'type:', typeof item.id);
 
         // Handle null/undefined values from database
         const parsedGeneratedOutput = item.generatedOutput ? 
@@ -206,17 +202,14 @@ const EnhancedContentHistory = () => {
           source: 'database'
         };
 
-        console.log('🔧 DEBUG: Converted item databaseId:', convertedItem.databaseId, 'type:', typeof convertedItem.databaseId);
         return convertedItem;
       });
 
-      console.log('🔧 DEBUG: Total converted items:', dbHistoryConverted.length);
       combinedHistory.push(...dbHistoryConverted);
     }
 
     // Only show database entries on this page since they support rating
     // Local storage entries are shown on other pages but not here
-    console.log('🔧 DEBUG: Final combined history length:', combinedHistory.length);
 
     // Sort by timestamp (newest first)
     combinedHistory.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -253,17 +246,9 @@ const EnhancedContentHistory = () => {
 
     // Apply sorting
     if (sortBy !== 'newest') {
-      console.log('🔍 SORTING DEBUG: sortBy =', sortBy);
-      console.log('🔍 SORTING DEBUG: evaluationData keys =', Object.keys(evaluationData));
-      console.log('🔍 SORTING DEBUG: first few evaluation entries =', Object.values(evaluationData).slice(0, 2));
-
       filtered = [...filtered].sort((a, b) => {
         const aEvals = evaluationData[a.id] || {};
         const bEvals = evaluationData[b.id] || {};
-
-        console.log(`🔍 SORTING DEBUG: Comparing ${a.id} vs ${b.id}`);
-        console.log(`🔍 SORTING DEBUG: aEvals =`, aEvals);
-        console.log(`🔍 SORTING DEBUG: bEvals =`, bEvals);
 
         switch (sortBy) {
           case 'viral-highest':
