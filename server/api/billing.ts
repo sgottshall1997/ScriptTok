@@ -10,7 +10,18 @@ const router = Router();
 const DISABLE_BILLING = process.env.DISABLE_BILLING === '1';
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
-const APP_URL = process.env.APP_URL || 'http://localhost:5000';
+
+// Use Replit domain if available, otherwise fallback to localhost
+const getReplitDomain = () => {
+  const replitDomains = process.env.REPLIT_DOMAINS;
+  if (replitDomains) {
+    const domains = replitDomains.split(',');
+    return `https://${domains[0]}`;
+  }
+  return 'http://localhost:5000';
+};
+
+const APP_URL = process.env.APP_URL || getReplitDomain();
 
 let stripe: Stripe | null = null;
 

@@ -20,8 +20,22 @@ if (!process.env.DATABASE_URL) {
   );
 }
 
+// Convert direct Neon connection to pooled connection if needed
+const getDatabaseUrl = () => {
+  const url = process.env.DATABASE_URL!; // Safe because we check above
+  
+  // If it's a Neon direct connection (not already pooled), convert to pooled
+  if (url.includes('.neon.tech') && !url.includes('-pooler')) {
+    const pooledUrl = url.replace(/(@[\w-]+)\./, '$1-pooler.');
+    console.log('[DB] 🔄 Using Neon pooled connection (handles auto-suspend)');
+    return pooledUrl;
+  }
+  
+  return url;
+};
+
 export const pool = new Pool({ 
-  connectionString: process.env.DATABASE_URL,
+  connectionString: getDatabaseUrl(),
   max: 20,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 10000,
