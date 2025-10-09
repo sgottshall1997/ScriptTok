@@ -5,7 +5,6 @@ import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import {
   Zap,
-  Video,
   ArrowRight,
   Check,
   Star,
@@ -145,19 +144,6 @@ export default function LandingPage() {
             >
               <Zap className="mr-2 h-5 w-5 flex-shrink-0" />
               <span>{isAuthenticated ? 'Go to Dashboard' : 'Save 10 Hours/Week Free'}</span>
-            </Button>
-            <Button
-              onClick={() => {
-                trackNavigateCTA('hero', 'watch_demo');
-                navigate('/how-it-works');
-              }}
-              size="lg"
-              variant="outline"
-              className="border-2 border-white bg-transparent text-white hover:bg-white hover:text-purple-600 hover:scale-105 rounded-xl font-semibold hover-lift transition-all-smooth"
-              data-testid="button-hero-watch-demo"
-            >
-              <Video className="mr-2 h-5 w-5 flex-shrink-0" />
-              <span>Watch Demo</span>
             </Button>
           </div>
         </div>
