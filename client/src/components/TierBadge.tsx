@@ -9,6 +9,11 @@ interface TierBadgeProps {
 
 export function TierBadge({ tier, size = 'md', className }: TierBadgeProps) {
   const tierConfig: Record<string, { icon: string; colorClass: string; label: string }> = {
+    free: { 
+      icon: '🎁', 
+      colorClass: 'bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white border-pink-600', 
+      label: 'FREE TRIAL' 
+    },
     starter: { 
       icon: '🌱', 
       colorClass: 'bg-green-600 hover:bg-green-700 text-white border-green-600', 

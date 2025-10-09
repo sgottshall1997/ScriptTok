@@ -13,7 +13,7 @@ export interface UsageData {
     trends: number;
   };
   features: {
-    tier: 'starter' | 'creator' | 'pro' | 'agency';
+    tier: 'free' | 'starter' | 'creator' | 'pro' | 'agency';
     viralScoreType: string;
     canBulkGenerate: boolean;
     bulkGenerationLimit: number;

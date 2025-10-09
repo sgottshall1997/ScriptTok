@@ -43,7 +43,7 @@ import { createQuotaService } from '../services/quotaService';
 export async function createTestUser(
   storage: IStorage,
   email: string = 'test@example.com',
-  tier: 'starter' | 'creator' | 'pro' | 'agency' = 'starter'
+  tier: 'free' | 'starter' | 'creator' | 'pro' | 'agency' = 'starter'
 ): Promise<User> {
   console.log(`[TestAuth] Creating test user with email: ${email}, tier: ${tier}`);
   

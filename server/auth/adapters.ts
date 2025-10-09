@@ -3,7 +3,7 @@ export type AuthResult = {
   email?: string; 
   name?: string;
   profileImage?: string;
-  tierHint?: 'starter' | 'creator' | 'pro' | 'agency'
+  tierHint?: 'free' | 'starter' | 'creator' | 'pro' | 'agency'
 };
 
 export type VerifyFn = (req: any) => Promise<AuthResult | null>;

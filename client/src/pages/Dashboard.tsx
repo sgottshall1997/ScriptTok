@@ -247,7 +247,8 @@ const Dashboard = () => {
   // Check if user should see limited products (starter tier)
   const shouldLimitProducts = () => {
     if (!usageData?.features) return false;
-    return usageData.features.tier === 'starter';
+    // Free tier and starter tier have the same UI limitations
+    return usageData.features.tier === 'starter' || usageData.features.tier === 'free';
   };
 
   // Get limited products for a niche (1 for free, all for pro)
@@ -338,23 +339,40 @@ const Dashboard = () => {
           ) : usageData ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <UsageProgress
-                  used={usageData.usage.gptGenerationsUsed}
-                  limit={usageData.limits.gpt}
-                  label="GPT Generations"
-                />
-
-                <UsageProgress
-                  used={usageData.usage.claudeGenerationsUsed}
-                  limit={usageData.limits.claude}
-                  label="Claude Generations"
-                />
-
-                <UsageProgress
-                  used={usageData.usage.trendAnalysesUsed}
-                  limit={usageData.limits.trends}
-                  label="Trend Analyses"
-                />
+                {usageData.features.tier === 'free' ? (
+                  <>
+                    {/* Free tier: Combined total generations counter */}
+                    <UsageProgress
+                      used={usageData.usage.gptGenerationsUsed + usageData.usage.claudeGenerationsUsed}
+                      limit={3}
+                      label="Total Generations"
+                    />
+                    <UsageProgress
+                      used={usageData.usage.trendAnalysesUsed}
+                      limit={usageData.limits.trends}
+                      label="Trend Analyses"
+                    />
+                  </>
+                ) : (
+                  <>
+                    {/* Paid tiers: Separate GPT and Claude counters */}
+                    <UsageProgress
+                      used={usageData.usage.gptGenerationsUsed}
+                      limit={usageData.limits.gpt}
+                      label="GPT Generations"
+                    />
+                    <UsageProgress
+                      used={usageData.usage.claudeGenerationsUsed}
+                      limit={usageData.limits.claude}
+                      label="Claude Generations"
+                    />
+                    <UsageProgress
+                      used={usageData.usage.trendAnalysesUsed}
+                      limit={usageData.limits.trends}
+                      label="Trend Analyses"
+                    />
+                  </>
+                )}
               </div>
 
               {/* Upgrade CTA for users approaching limits */}

@@ -49,7 +49,7 @@ export function TemplateSelector({
   const usageLoading = usageResponse?.isLoading;
   
   // Determine tier-based restrictions
-  const isStarterTier = tier === 'starter';
+  const isStarterTier = tier === 'starter' || tier === 'free'; // Free tier has same restrictions as starter
   const isCreatorTier = tier === 'creator';
   const isProOrAgency = tier === 'pro' || tier === 'agency';
   

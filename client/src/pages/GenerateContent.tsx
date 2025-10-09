@@ -1128,8 +1128,8 @@ ${config.hashtags.join(' ')}`;
     { id: 'pets', name: 'Pets', color: 'bg-yellow-100 text-yellow-800', starterAllowed: false },
   ];
   
-  // Filter niches based on tier (Starter tier limited to beauty, tech, fashion)
-  const niches = tier === 'starter' 
+  // Filter niches based on tier (Free and Starter tiers limited to beauty, tech, fashion)
+  const niches = (tier === 'starter' || tier === 'free')
     ? allNiches.filter(niche => niche.starterAllowed)
     : allNiches;
 
@@ -1154,7 +1154,7 @@ ${config.hashtags.join(' ')}`;
                   {/* Tier Badge */}
                   <div className="flex items-center gap-3">
                     <TierBadge tier={tier} size="md" />
-                    {(tier === 'starter' || tier === 'creator') && (
+                    {(tier === 'free' || tier === 'starter' || tier === 'creator') && (
                       <Link href="/pricing">
                         <Button variant="outline" size="sm" className="gap-2" data-testid="button-upgrade-cta">
                           <Crown className="h-4 w-4" />
@@ -1166,24 +1166,45 @@ ${config.hashtags.join(' ')}`;
 
                   {/* Quota Counters */}
                   <div className="flex flex-col md:flex-row items-center gap-3 w-full md:w-auto">
-                    <UsageProgress
-                      used={usage?.gptGenerationsUsed || 0}
-                      limit={limits?.gpt || 0}
-                      label="GPT-4"
-                      className="w-full md:w-48"
-                    />
-                    <UsageProgress
-                      used={usage?.claudeGenerationsUsed || 0}
-                      limit={limits?.claude || 0}
-                      label="Claude"
-                      className="w-full md:w-48"
-                    />
-                    <UsageProgress
-                      used={usage?.trendAnalysesUsed || 0}
-                      limit={limits?.trends || 0}
-                      label="Trends"
-                      className="w-full md:w-48"
-                    />
+                    {tier === 'free' ? (
+                      <>
+                        {/* Free tier: Combined total generations counter */}
+                        <UsageProgress
+                          used={(usage?.gptGenerationsUsed || 0) + (usage?.claudeGenerationsUsed || 0)}
+                          limit={3}
+                          label="Total Generations"
+                          className="w-full md:w-48"
+                        />
+                        <UsageProgress
+                          used={usage?.trendAnalysesUsed || 0}
+                          limit={limits?.trends || 0}
+                          label="Trends"
+                          className="w-full md:w-48"
+                        />
+                      </>
+                    ) : (
+                      <>
+                        {/* Paid tiers: Separate GPT and Claude counters */}
+                        <UsageProgress
+                          used={usage?.gptGenerationsUsed || 0}
+                          limit={limits?.gpt || 0}
+                          label="GPT-4"
+                          className="w-full md:w-48"
+                        />
+                        <UsageProgress
+                          used={usage?.claudeGenerationsUsed || 0}
+                          limit={limits?.claude || 0}
+                          label="Claude"
+                          className="w-full md:w-48"
+                        />
+                        <UsageProgress
+                          used={usage?.trendAnalysesUsed || 0}
+                          limit={limits?.trends || 0}
+                          label="Trends"
+                          className="w-full md:w-48"
+                        />
+                      </>
+                    )}
                   </div>
                 </div>
               </CardContent>
@@ -1972,7 +1993,7 @@ ${config.hashtags.join(' ')}`;
                 value={aiModel} 
                 onValueChange={(value: 'chatgpt' | 'claude' | 'both') => {
                   // Only Pro and Agency can use 'both' (model comparison)
-                  if (value === 'both' && (tier === 'starter' || tier === 'creator')) {
+                  if (value === 'both' && (tier === 'free' || tier === 'starter' || tier === 'creator')) {
                     toast({
                       title: "Pro Feature 👑",
                       description: "AI Model Comparison is available on Pro and Agency tiers. Upgrade to compare outputs!",
@@ -1995,10 +2016,10 @@ ${config.hashtags.join(' ')}`;
                     🧠 Claude - {remaining?.claude || 0} / {limits?.claude || 0} remaining
                     {remaining?.claude === 0 && ' (Limit Reached)'}
                   </SelectItem>
-                  <SelectItem value="both" disabled={tier === 'starter' || tier === 'creator'}>
-                    {(tier === 'starter' || tier === 'creator') ? <Lock className="h-3 w-3 inline mr-1" /> : null}
+                  <SelectItem value="both" disabled={tier === 'free' || tier === 'starter' || tier === 'creator'}>
+                    {(tier === 'free' || tier === 'starter' || tier === 'creator') ? <Lock className="h-3 w-3 inline mr-1" /> : null}
                     ⚡ Both - Compare AI models side-by-side
-                    {(tier === 'starter' || tier === 'creator') && ' (Pro/Agency Only)'}
+                    {(tier === 'free' || tier === 'starter' || tier === 'creator') && ' (Pro/Agency Only)'}
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -2104,8 +2125,8 @@ ${config.hashtags.join(' ')}`;
               {/* Bulk Generation Feature Gates */}
               {features && (
                 <>
-                  {/* Starter/Creator: Bulk Generation Locked */}
-                  {(tier === 'starter' || tier === 'creator') && (selectedTemplates.length > 1 || aiModel === 'both') && (
+                  {/* Free/Starter/Creator: Bulk Generation Locked */}
+                  {(tier === 'free' || tier === 'starter' || tier === 'creator') && (selectedTemplates.length > 1 || aiModel === 'both') && (
                     <Alert className="mt-3 bg-yellow-50 border-yellow-200">
                       <Lock className="h-4 w-4 text-yellow-600" />
                       <AlertTitle className="text-yellow-800">Bulk Generation Locked</AlertTitle>
@@ -2156,9 +2177,9 @@ ${config.hashtags.join(' ')}`;
                 (contentMode === 'affiliate' && !selectedProduct) || 
                 (contentMode === 'viral' && !viralTopic) || 
                 selectedTemplates.length === 0 ||
-                // Bulk generation restrictions for Starter/Creator
-                ((tier === 'starter' || tier === 'creator') && selectedTemplates.length > 1) ||
-                ((tier === 'starter' || tier === 'creator') && aiModel === 'both') ||
+                // Bulk generation restrictions for Free/Starter/Creator
+                ((tier === 'free' || tier === 'starter' || tier === 'creator') && selectedTemplates.length > 1) ||
+                ((tier === 'free' || tier === 'starter' || tier === 'creator') && aiModel === 'both') ||
                 // Quota exhausted checks
                 (aiModel === 'chatgpt' && remaining?.gpt === 0) ||
                 (aiModel === 'claude' && remaining?.claude === 0)

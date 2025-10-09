@@ -169,23 +169,40 @@ export default function Account() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <UsageProgress
-              used={usageData.usage.gptGenerationsUsed}
-              limit={usageData.limits.gpt}
-              label="GPT-4 Generations"
-            />
-            
-            <UsageProgress
-              used={usageData.usage.claudeGenerationsUsed}
-              limit={usageData.limits.claude}
-              label="Claude Generations"
-            />
-            
-            <UsageProgress
-              used={usageData.usage.trendAnalysesUsed}
-              limit={usageData.limits.trends}
-              label="Trend Analyses"
-            />
+            {currentTier === 'free' ? (
+              <>
+                {/* Free tier: Combined total generations counter */}
+                <UsageProgress
+                  used={usageData.usage.gptGenerationsUsed + usageData.usage.claudeGenerationsUsed}
+                  limit={3}
+                  label="Total Generations"
+                />
+                <UsageProgress
+                  used={usageData.usage.trendAnalysesUsed}
+                  limit={usageData.limits.trends}
+                  label="Trend Analyses"
+                />
+              </>
+            ) : (
+              <>
+                {/* Paid tiers: Separate GPT and Claude counters */}
+                <UsageProgress
+                  used={usageData.usage.gptGenerationsUsed}
+                  limit={usageData.limits.gpt}
+                  label="GPT-4 Generations"
+                />
+                <UsageProgress
+                  used={usageData.usage.claudeGenerationsUsed}
+                  limit={usageData.limits.claude}
+                  label="Claude Generations"
+                />
+                <UsageProgress
+                  used={usageData.usage.trendAnalysesUsed}
+                  limit={usageData.limits.trends}
+                  label="Trend Analyses"
+                />
+              </>
+            )}
 
             {(usageData.remaining.gpt < 5 || usageData.remaining.claude < 5 || usageData.remaining.trends < 5) && nextTier && (
               <div className="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">

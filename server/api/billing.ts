@@ -109,10 +109,10 @@ router.post('/create-checkout', authGuard, async (req: Request, res: Response) =
     }
 
     // Validate tier
-    const validTiers = ['starter', 'creator', 'pro', 'agency'];
+    const validTiers = ['free', 'starter', 'creator', 'pro', 'agency'];
     if (!validTiers.includes(tier)) {
       console.error('[BillingAPI] ❌ Invalid tier requested:', tier);
-      return res.status(400).json({ error: 'Invalid tier. Must be one of: starter, creator, pro, agency' });
+      return res.status(400).json({ error: 'Invalid tier. Must be one of: free, starter, creator, pro, agency' });
     }
 
     // Validate billing period
