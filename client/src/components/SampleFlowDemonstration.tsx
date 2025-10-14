@@ -930,7 +930,7 @@ function Step8SmartLearning() {
             <div className="flex-1">
               <h3 className="text-xl font-semibold mb-2">Step 8: AI Smart Learning</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                AI learns from your best content to improve future generations
+                Claude AI learns from ratings to improve suggestions and content quality
               </p>
             </div>
           </div>
@@ -941,54 +941,75 @@ function Step8SmartLearning() {
             initial="hidden"
             animate="visible"
           >
+            {/* Claude AI Suggestions */}
             <motion.div 
               className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800"
               variants={scaleIn}
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex items-center gap-2 mb-2">
-                <Check className="w-5 h-5 text-green-600" />
-                <h4 className="font-semibold">Pattern Learned</h4>
+                <Brain className="w-5 h-5 text-purple-600" />
+                <h4 className="font-semibold">Claude AI Suggestions Stored</h4>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                "POV" hooks generate 45% more engagement for beauty content
+                "Start with problem-solution hooks" saved for beauty niche (85% success rate)
               </p>
             </motion.div>
 
+            {/* Rating Feedback Loop */}
             <motion.div 
-              className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800"
+              className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
               variants={scaleIn}
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex items-center gap-2 mb-2">
-                <Check className="w-5 h-5 text-green-600" />
-                <h4 className="font-semibold">Optimized Timing</h4>
+                <Star className="w-5 h-5 text-blue-600" />
+                <h4 className="font-semibold">Rating Feedback Applied</h4>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Your audience is most active Tuesday-Thursday 7-9 PM
+                High-rated content patterns updated suggestion effectiveness from 72% → 85%
               </p>
             </motion.div>
 
+            {/* Smart Style Toggle */}
             <motion.div 
-              className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg border border-purple-200 dark:border-purple-800"
+              className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg border border-green-200 dark:border-green-800"
               variants={scaleIn}
               whileHover={{ scale: 1.02 }}
             >
               <div className="flex items-center gap-2 mb-2">
                 <Check className="w-5 h-5 text-green-600" />
-                <h4 className="font-semibold">Style Preference</h4>
+                <h4 className="font-semibold">Smart Style Enabled</h4>
               </div>
               <p className="text-sm text-gray-700 dark:text-gray-300">
-                Conversational tone performs 32% better for your niche
+                Next generation will use top-rated hooks and structures from your best content
+              </p>
+              <Badge className="mt-2 bg-green-100 text-green-800">⭐ Smart Style</Badge>
+            </motion.div>
+
+            {/* Pattern Learning */}
+            <motion.div 
+              className="p-4 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"
+              variants={scaleIn}
+              whileHover={{ scale: 1.02 }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <TrendingUp className="w-5 h-5 text-orange-600" />
+                <h4 className="font-semibold">Pattern Learning Active</h4>
+              </div>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                Analyzing: conversational tone + "POV" hooks = higher engagement for your niche
               </p>
             </motion.div>
           </motion.div>
 
-          <div className="mt-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg text-center">
-            <Sparkles className="w-6 h-6 text-purple-600 mx-auto mb-2" />
-            <p className="text-sm font-medium">
-              AI will use these insights to create even better content next time!
-            </p>
+          <div className="mt-6 p-4 bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30 rounded-lg">
+            <div className="flex items-center gap-3">
+              <Sparkles className="w-6 h-6 text-purple-600" />
+              <p className="text-sm font-medium">
+                Toggle Smart Style in the generator to use these learned insights!
+              </p>
+            </div>
           </div>
         </CardContent>
       </Card>
