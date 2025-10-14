@@ -1,0 +1,195 @@
+Please perform a thorough security audit and functional testing of all subscription tier restrictions, quota enforcement, and feature gates across the entire application. Test and verify the following:
+
+1. Tier System Structure Validation
+Verify the 4-tier system is properly configured: free, starter, creator, pro, agency
+Check that legacy free tier users are correctly mapped to starter tier
+Confirm tier badge displays match actual user tier in database
+Verify tier information is consistent across all pages (Dashboard, Account, Pricing)
+2. Generation Quota Enforcement Testing
+Free Tier (3 total generations trial):
+Test that free users get exactly 3 total generations (GPT + Claude combined)
+Verify quota blocks generation after 3 uses
+Check that error message says "Free trial complete! Your 3 free generations are complete"
+Confirm upgrade CTA points to Starter plan
+Test that trend analysis quota is enforced (3 analyses)
+Starter Tier ($7/mo or $5/mo annual):
+Verify 15 GPT-4 generations/month limit
+Verify 10 Claude generations/month limit
+Verify 10 trend analyses/month limit
+Test that limits are tracked separately (not combined like free tier)
+Check quota exceeded messages are tier-specific
+Creator Tier ($15/mo or $10/mo annual):
+Verify 50 GPT-4 generations/month
+Verify 30 Claude generations/month
+Verify 25 trend analyses/month
+Test content export functionality is enabled (CSV)
+Verify basic trend forecasting is accessible (hot/rising only)
+Pro Tier ($35/mo or $25/mo annual):
+Verify 300 GPT-4 generations/month
+Verify 150 Claude generations/month
+Verify 100 trend analyses/month
+Test bulk generation works (up to 10 items)
+Verify Affiliate Studio access is granted
+Test full trend forecasting (hot/rising/upcoming/declining)
+Verify custom prompts can be saved
+Test Make.com webhook functionality
+Agency Tier (Custom pricing):
+Verify 1000 GPT-4 generations/month
+Verify 500 Claude generations/month
+Verify unlimited trend analyses
+Test bulk generation (50+ items)
+Verify API access is enabled
+Test team seats functionality (5 seats)
+Verify brand templates are accessible
+3. Feature Gate Testing
+Test that the following features are properly restricted:
+
+Bulk Generation:
+
+Block for Free, Starter, Creator tiers
+Show "Bulk generation is a Pro feature" message
+Allow for Pro (10 items) and Agency (50+ items)
+Test that checkBulkPermission middleware blocks unauthorized requests
+Content Export:
+
+Block for Free and Starter
+Allow CSV export for Creator, Pro, Agency
+Verify canExportContent(tier) function works correctly
+Affiliate Studio:
+
+Block for Free, Starter, Creator tiers
+Show "Only available on Pro and Agency plans" message
+Allow access for Pro and Agency
+Test /affiliate-studio route protection
+Trend Forecasting:
+
+Block for Free and Starter (show "none")
+Allow "basic" for Creator (hot/rising only)
+Allow "full" for Pro and Agency (all trend types)
+Verify checkTrendForecastingAccess middleware
+Viral Score Types:
+
+Free/Starter: Basic score only (number, no breakdown)
+Creator: Full score + basic AI suggestions
+Pro: Advanced dual-AI score (Claude + GPT)
+Agency: Enterprise score with all features
+Template Access:
+
+Free/Starter: 3 templates per category
+Creator/Pro/Agency: All templates unlocked
+Verify getUnlockedTemplateCount(tier) enforcement
+Niche Access:
+
+Free/Starter: 3 niches (beauty, tech, fashion)
+Creator/Pro/Agency: All 7 niches
+Verify getUnlockedNiches(tier) returns correct niches
+Test that UI blocks selection of locked niches
+History Limits:
+
+Free/Starter: Last 10 items only
+Creator: Last 50 items
+Pro/Agency: Unlimited history
+Verify getHistoryLimit(tier) enforcement in UI
+4. Middleware & Security Testing
+Auth & Quota Flow:
+
+Test that authGuard → checkQuota → generation flow works correctly
+Verify 429 status code returned when quota exceeded
+Test that checkModelQuota distinguishes between GPT and Claude
+Verify checkTrendAnalysisQuota works independently
+Test bypass mode works in development (BYPASS_LIMITS=1)
+Feature Access Middleware:
+
+Test checkFeatureAccess('affiliate') blocks correctly
+Test checkFeatureAccess('bulk') with different tiers
+Test checkFeatureAccess('export') restrictions
+Test checkFeatureAccess('api') for Agency only
+Verify error responses include suggestedTier and upgradeUrl
+Generation Safeguards:
+
+Test that validateGenerationRequest blocks unauthorized sources
+Verify manual UI requests are always allowed
+Test that automated/webhook requests are properly validated
+Check that generation source detection works (detectGenerationContext)
+5. UI/UX Feature Restriction Display
+Dashboard:
+
+Verify tier badge displays correctly
+Check that locked features show lock icons
+Test that upgrade CTAs appear for restricted features
+Verify usage progress bars show correct limits
+Generate Content Page:
+
+Test that bulk count selector is disabled for non-Pro users
+Verify AI model selector is available to all tiers
+Check that niche selector only shows unlocked niches
+Test template selector limits based on tier
+Account Page:
+
+Verify subscription tier displays correctly
+Test that usage statistics match actual limits
+Check that upgrade/downgrade options are appropriate
+Verify billing period toggle (monthly/annual) works
+Pricing Page:
+
+Test that tier comparison table is accurate
+Verify all feature limits match quota service
+Check that monthly/annual toggle updates prices correctly
+Test checkout flow for each tier
+6. Quota Reset & Billing Cycle Testing
+Verify quotas reset on the 1st of each month
+Test that currentPeriod() returns correct YYYY-MM format
+Check that new monthly usage records are created automatically
+Test that tier changes update usage limits immediately
+Verify subscription status affects quota availability
+7. Error Handling & User Messaging
+Quota Exceeded Messages:
+
+Free tier: "Free trial complete! Upgrade to Starter for 25 generations/month"
+Starter: Show specific model exceeded (GPT or Claude) + upgrade to Creator
+Creator: Show upgrade to Pro with higher limits
+Pro: Show upgrade to Agency option
+Feature Blocked Messages:
+
+Include current tier, suggested tier, and upgrade URL
+Show tier-specific benefits in upgrade message
+Verify all CTAs navigate to correct pages (/pricing or /account)
+API Error Responses:
+
+Test 401 for unauthenticated requests
+Test 403 for feature access denial
+Test 429 for quota exceeded
+Verify error responses include helpful upgrade information
+8. Edge Cases & Security
+Test behavior when user has 0 remaining quota
+Verify partial generations don't decrement quota
+Test concurrent request handling (race conditions)
+Check that client-side restrictions match server-side enforcement
+Verify that URL manipulation can't bypass tier restrictions
+Test that tier downgrade properly restricts features
+Check that expired subscriptions are handled correctly
+9. Database Consistency
+Verify users.subscriptionTier matches subscriptions.tier
+Check that monthly usage records have correct userTier
+Test that tier changes update all relevant tables
+Verify referential integrity between users and subscriptions
+10. Analytics & Tracking
+Test that quota exceeded events are tracked
+Verify upgrade CTA clicks are logged
+Check that tier-specific conversions are recorded
+Test that blocked feature attempts are tracked for analytics
+Expected Deliverables:
+
+List of all tier restrictions tested with pass/fail status
+Any security vulnerabilities or bypass methods discovered
+Inconsistencies between UI display and actual enforcement
+Missing or incorrect error messages
+Recommendations for improvements
+Confirmation that all critical tier gates are secure
+Priority Areas:
+
+Generation quota enforcement (highest priority)
+Feature access blocking (high priority)
+UI/UX consistency with backend (medium priority)
+Error messaging clarity (medium priority)
+Please systematically test each tier and feature, document any issues found, and provide a summary report with specific findings and recommendations.
