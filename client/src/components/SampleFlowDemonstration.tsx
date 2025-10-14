@@ -20,7 +20,10 @@ import {
   RotateCcw,
   Flame,
   Eye,
-  Info
+  Info,
+  MessageSquare,
+  Zap,
+  Star
 } from 'lucide-react';
 import { TEMPLATE_METADATA } from '@shared/templateMetadata';
 import { staggerChildren, scaleIn } from '@/lib/animations';
