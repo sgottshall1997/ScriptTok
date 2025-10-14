@@ -32,7 +32,7 @@ export interface CTAMetadata {
   ctaType?: CTAType;
   ctaLocation?: string;
   ctaText?: string;
-  plan?: 'pro' | 'creator' | 'free';
+  plan?: 'free' | 'starter' | 'creator' | 'pro' | 'agency';
   generationType?: 'viral' | 'affiliate';
   niche?: string;
   [key: string]: any;

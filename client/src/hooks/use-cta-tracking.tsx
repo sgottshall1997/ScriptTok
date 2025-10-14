@@ -31,7 +31,7 @@ export function useCTATracking() {
   );
 
   const trackUpgradeCTA = useCallback(
-    (ctaLocation: string, plan?: 'pro' | 'creator') => {
+    (ctaLocation: string, plan?: 'starter' | 'creator' | 'pro' | 'agency') => {
       trackCTA('upgrade', ctaLocation, {
         ctaType: 'upgrade' as CTAType,
         plan,
