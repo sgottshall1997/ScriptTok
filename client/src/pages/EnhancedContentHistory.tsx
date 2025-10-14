@@ -300,6 +300,24 @@ const EnhancedContentHistory = () => {
     return scores.reduce((sum, score) => sum + score, 0) / scores.length;
   };
 
+  // Calculate overall statistics
+  const calculateStats = () => {
+    const totalSaved = history.length;
+    
+    // Calculate average score from all viral scores
+    const scoresWithValues = history
+      .map(entry => entry.viralScoreOverall || entry.viralScore?.overall || 0)
+      .filter(score => score > 0);
+    
+    const averageScore = scoresWithValues.length > 0
+      ? Math.round(scoresWithValues.reduce((sum, score) => sum + score, 0) / scoresWithValues.length)
+      : 0;
+    
+    return { totalSaved, averageScore };
+  };
+
+  const stats = calculateStats();
+
   // Enhanced content extraction function
   const extractCleanContent = (content: any): string => {
     if (!content) return 'No content available';
@@ -803,6 +821,26 @@ const EnhancedContentHistory = () => {
               You have access to your complete content history with no limits.
             </AlertDescription>
           </Alert>
+        )}
+
+        {/* Stats Cards */}
+        {history.length > 0 && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <Card>
+              <CardContent className="p-6">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Saved</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">{stats.totalSaved}</div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-6">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Avg. Score</div>
+                <div className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+                  {stats.averageScore > 0 ? stats.averageScore : '-'}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         )}
 
         <div className="flex justify-between items-center mb-4">

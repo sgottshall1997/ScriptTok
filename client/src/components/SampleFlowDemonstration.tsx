@@ -860,31 +860,41 @@ function Step7SaveHistory() {
             <div className="flex-1">
               <h3 className="text-xl font-semibold mb-2">Step 7: Save to Content Library</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Organize and access all your viral content in one place
+                Track performance with stats and access your complete content history
               </p>
             </div>
           </div>
 
-          <div className="space-y-3">
-            <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Check className="w-5 h-5 text-green-600" />
-                <div>
-                  <div className="font-semibold">Content Saved Successfully</div>
-                  <div className="text-sm text-gray-600 dark:text-gray-400">CeraVe Glass Skin Script</div>
-                </div>
-              </div>
-              <Badge className="bg-blue-600 text-white">Score: 92</Badge>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="text-sm font-medium mb-1">Total Saved</div>
+          <div className="space-y-4">
+            {/* Stats Cards */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Total Saved</div>
                 <div className="text-2xl font-bold">47</div>
               </div>
-              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
-                <div className="text-sm font-medium mb-1">Avg. Score</div>
+              <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                <div className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">Avg. Score</div>
                 <div className="text-2xl font-bold">89</div>
+              </div>
+            </div>
+
+            {/* Sample Content Card */}
+            <div className="p-4 bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <ShoppingBag className="w-5 h-5 text-blue-600" />
+                  <span className="font-semibold">CeraVe Moisturizing Cream</span>
+                </div>
+                <Badge className="bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300">
+                  Score: 81
+                </Badge>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                POV: You discover the $12 moisturizer that dermatologists don't want you to know about 🤫...
+              </p>
+              <div className="flex gap-2 mt-3">
+                <Badge variant="outline" className="text-xs">beauty</Badge>
+                <Badge variant="outline" className="text-xs">Claude AI</Badge>
               </div>
             </div>
           </div>
@@ -894,7 +904,7 @@ function Step7SaveHistory() {
             disabled
             data-testid="button-view-history"
           >
-            <Save className="w-4 h-4 mr-2" />
+            <Eye className="w-4 h-4 mr-2" />
             View Content Library
           </Button>
         </CardContent>
