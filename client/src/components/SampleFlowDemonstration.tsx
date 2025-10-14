@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   TrendingUp, 
   Search, 
@@ -23,7 +24,9 @@ import {
   Info,
   MessageSquare,
   Zap,
-  Star
+  Star,
+  Target,
+  Ruler
 } from 'lucide-react';
 import { TEMPLATE_METADATA } from '@shared/templateMetadata';
 import { staggerChildren, scaleIn } from '@/lib/animations';
@@ -682,7 +685,7 @@ function Step6ViralScore() {
             <div className="flex-1">
               <h3 className="text-xl font-semibold mb-2">Step 6: AI Viral Score Analysis</h3>
               <p className="text-gray-600 dark:text-gray-400">
-                Get instant feedback on viral potential and engagement metrics
+                Get instant feedback with dual-AI analysis (Claude + GPT-4)
               </p>
             </div>
           </div>
@@ -696,85 +699,134 @@ function Step6ViralScore() {
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200, damping: 10 }}
               >
-                92
+                81
               </motion.div>
-              <Badge className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-none">
-                Excellent
-              </Badge>
+              <p className="text-sm text-gray-600 dark:text-gray-400 mt-2">Powered by Claude + GPT-4</p>
             </div>
 
-            {/* Metric Breakdown */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <BarChart3 className="w-4 h-4" />
-                Metric Breakdown
-              </h4>
-              
-              <motion.div 
-                className="space-y-3"
-                variants={staggerChildren}
-                initial="hidden"
-                animate="visible"
-              >
-                {/* Engagement Potential */}
-                <motion.div variants={scaleIn} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <MessageSquare className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium">Engagement Potential</span>
-                    </div>
-                    <span className="font-bold">91</span>
-                  </div>
-                  <Progress value={91} className="h-2" indicatorClassName="bg-green-500" />
-                </motion.div>
+            {/* Tabs for Breakdown, AI Suggestions, and Comparison */}
+            <Tabs defaultValue="breakdown" className="w-full">
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="breakdown">Breakdown</TabsTrigger>
+                <TabsTrigger value="suggestions">AI Suggestions</TabsTrigger>
+                <TabsTrigger value="comparison">Comparison</TabsTrigger>
+              </TabsList>
 
-                {/* Hook Strength */}
-                <motion.div variants={scaleIn} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <Zap className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium">Hook Strength</span>
+              {/* Breakdown Tab */}
+              <TabsContent value="breakdown" className="space-y-3 mt-4">
+                <motion.div 
+                  className="space-y-3"
+                  variants={staggerChildren}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  {/* Engagement Potential */}
+                  <motion.div variants={scaleIn} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <MessageSquare className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium">Engagement Potential</span>
+                      </div>
+                      <span className="font-bold">100</span>
                     </div>
-                    <span className="font-bold">95</span>
-                  </div>
-                  <Progress value={95} className="h-2" indicatorClassName="bg-green-500" />
-                </motion.div>
+                    <Progress value={100} className="h-2" indicatorClassName="bg-green-500" />
+                  </motion.div>
 
-                {/* Trending Alignment */}
-                <motion.div variants={scaleIn} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <TrendingUp className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                      <span className="font-medium">Trending Alignment</span>
+                  {/* Hook Strength */}
+                  <motion.div variants={scaleIn} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Zap className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium">Hook Strength</span>
+                      </div>
+                      <span className="font-bold">65</span>
                     </div>
-                    <span className="font-bold">88</span>
-                  </div>
-                  <Progress value={88} className="h-2" indicatorClassName="bg-green-500" />
-                </motion.div>
-              </motion.div>
-            </div>
+                    <Progress value={65} className="h-2" indicatorClassName="bg-yellow-500" />
+                  </motion.div>
 
-            {/* AI Suggestions */}
-            <div className="space-y-3">
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                <Sparkles className="w-4 h-4" />
-                AI Suggestions
-              </h4>
-              <div className="space-y-2">
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  {/* Trending Alignment */}
+                  <motion.div variants={scaleIn} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <TrendingUp className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium">Trending Alignment</span>
+                      </div>
+                      <span className="font-bold">100</span>
+                    </div>
+                    <Progress value={100} className="h-2" indicatorClassName="bg-green-500" />
+                  </motion.div>
+
+                  {/* Clarity */}
+                  <motion.div variants={scaleIn} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Target className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium">Clarity</span>
+                      </div>
+                      <span className="font-bold">88</span>
+                    </div>
+                    <Progress value={88} className="h-2" indicatorClassName="bg-green-500" />
+                  </motion.div>
+
+                  {/* Length Optimization */}
+                  <motion.div variants={scaleIn} className="space-y-1">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Ruler className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                        <span className="font-medium">Length Optimization</span>
+                      </div>
+                      <span className="font-bold">55</span>
+                    </div>
+                    <Progress value={55} className="h-2" indicatorClassName="bg-yellow-500" />
+                  </motion.div>
+                </motion.div>
+              </TabsContent>
+
+              {/* AI Suggestions Tab */}
+              <TabsContent value="suggestions" className="space-y-3 mt-4">
+                <div className="p-4 bg-purple-50 dark:bg-purple-900/20 border border-purple-200 dark:border-purple-800 rounded-lg">
                   <div className="flex items-start gap-2">
-                    <Star className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-blue-900 dark:text-blue-100">Strong hook! Consider adding trending hashtags for better reach.</span>
+                    <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-semibold text-sm text-purple-900 dark:text-purple-100 mb-1">Claude</p>
+                      <p className="text-sm text-purple-800 dark:text-purple-200">Great content! Consider testing different hooks for even better performance</p>
+                    </div>
                   </div>
                 </div>
-                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                  <div className="flex items-start gap-2">
-                    <Star className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-                    <span className="text-sm text-blue-900 dark:text-blue-100">Perfect length for TikTok. Post at 7-9 PM for maximum engagement.</span>
+              </TabsContent>
+
+              {/* Comparison Tab */}
+              <TabsContent value="comparison" className="space-y-4 mt-4">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100">Performance Comparison</h4>
+                
+                {/* Your Score */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">Your Score</span>
+                    <span className="font-bold">81</span>
                   </div>
+                  <Progress value={81} className="h-2" indicatorClassName="bg-blue-500" />
                 </div>
-              </div>
-            </div>
+
+                {/* Platform Average */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">Platform Average</span>
+                    <span className="font-bold">65</span>
+                  </div>
+                  <Progress value={65} className="h-2" indicatorClassName="bg-gray-500" />
+                </div>
+
+                {/* Top 10% Performers */}
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium">Top 10% Performers</span>
+                    <span className="font-bold">85</span>
+                  </div>
+                  <Progress value={85} className="h-2" indicatorClassName="bg-green-500" />
+                </div>
+              </TabsContent>
+            </Tabs>
           </div>
 
           <Button 
