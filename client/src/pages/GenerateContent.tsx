@@ -94,7 +94,7 @@ const GenerateContent = () => {
   const { toast } = useToast();
   const { trackFeatureBlocked } = useCTATracking();
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
-  const usageData = usageResponse?.data;
+  const usageData = usageResponse?.data?.data;
   const tier = usageData?.features.tier || 'starter';
   const usage = usageData?.usage;
   const limits = usageData?.limits;

@@ -28,7 +28,7 @@ export default function Account() {
   const { toast } = useToast();
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   
-  const usageData = usageResponse?.data;
+  const usageData = usageResponse?.data?.data;
 
   const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery<{
     tier: string;
