@@ -578,7 +578,7 @@ export default function InstantScriptCreationFeature() {
                 <div className="h-12 w-12 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center mr-4">
                   <Zap className="h-6 w-6 text-green-600 dark:text-green-400" />
                 </div>
-                <h3 className="text-2xl font-bold">With ScriptTok</h3>
+                <h3 className="text-2xl font-bold">With Pheme</h3>
               </div>
               <ul className="space-y-4">
                 <li className="flex items-start">
