@@ -684,58 +684,94 @@ function Step6ViralScore() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <div className="text-center p-6 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-lg">
+          <div className="space-y-6">
+            {/* Overall Score */}
+            <div className="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg border-2 border-green-200 dark:border-green-800">
               <motion.div 
-                className="text-6xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent mb-2"
+                className="text-5xl font-bold text-green-600 dark:text-green-400 mb-2"
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 200, damping: 10 }}
               >
                 92
               </motion.div>
-              <p className="text-sm text-gray-600 dark:text-gray-400">Viral Score</p>
+              <Badge className="bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 border-none">
+                Excellent
+              </Badge>
             </div>
 
-            <motion.div 
-              className="grid grid-cols-2 gap-3"
-              variants={staggerChildren}
-              initial="hidden"
-              animate="visible"
-            >
+            {/* Metric Breakdown */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <BarChart3 className="w-4 h-4" />
+                Metric Breakdown
+              </h4>
+              
               <motion.div 
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                variants={scaleIn}
-                whileHover={{ scale: 1.05 }}
+                className="space-y-3"
+                variants={staggerChildren}
+                initial="hidden"
+                animate="visible"
               >
-                <div className="text-2xl font-bold text-green-600">95%</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Hook Strength</div>
+                {/* Engagement Potential */}
+                <motion.div variants={scaleIn} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <MessageSquare className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="font-medium">Engagement Potential</span>
+                    </div>
+                    <span className="font-bold">91</span>
+                  </div>
+                  <Progress value={91} className="h-2" indicatorClassName="bg-green-500" />
+                </motion.div>
+
+                {/* Hook Strength */}
+                <motion.div variants={scaleIn} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="font-medium">Hook Strength</span>
+                    </div>
+                    <span className="font-bold">95</span>
+                  </div>
+                  <Progress value={95} className="h-2" indicatorClassName="bg-green-500" />
+                </motion.div>
+
+                {/* Trending Alignment */}
+                <motion.div variants={scaleIn} className="space-y-1">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-2">
+                      <TrendingUp className="w-4 h-4 text-gray-600 dark:text-gray-400" />
+                      <span className="font-medium">Trending Alignment</span>
+                    </div>
+                    <span className="font-bold">88</span>
+                  </div>
+                  <Progress value={88} className="h-2" indicatorClassName="bg-green-500" />
+                </motion.div>
               </motion.div>
-              <motion.div 
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                variants={scaleIn}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="text-2xl font-bold text-blue-600">88%</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Trend Alignment</div>
-              </motion.div>
-              <motion.div 
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                variants={scaleIn}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="text-2xl font-bold text-purple-600">91%</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Engagement Rate</div>
-              </motion.div>
-              <motion.div 
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg"
-                variants={scaleIn}
-                whileHover={{ scale: 1.05 }}
-              >
-                <div className="text-2xl font-bold text-orange-600">2.1M</div>
-                <div className="text-xs text-gray-600 dark:text-gray-400">Est. Reach</div>
-              </motion.div>
-            </motion.div>
+            </div>
+
+            {/* AI Suggestions */}
+            <div className="space-y-3">
+              <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                AI Suggestions
+              </h4>
+              <div className="space-y-2">
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Star className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-blue-900 dark:text-blue-100">Strong hook! Consider adding trending hashtags for better reach.</span>
+                  </div>
+                </div>
+                <div className="p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <div className="flex items-start gap-2">
+                    <Star className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+                    <span className="text-sm text-blue-900 dark:text-blue-100">Perfect length for TikTok. Post at 7-9 PM for maximum engagement.</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <Button 

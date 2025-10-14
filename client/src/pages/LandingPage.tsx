@@ -255,9 +255,6 @@ export default function LandingPage() {
             ))}
           </div>
           <div className="mt-8 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
-              <span className="font-semibold">Other Tools:</span> Batch Builder • Model Router • Hashtag Generator • Caption Writer • Idea to Script
-            </p>
           </div>
           <CTABar section="tools" ctaText="Discover Trends Before They Peak" />
         </div>
@@ -285,7 +282,7 @@ export default function LandingPage() {
               />
             ))}
           </div>
-          <CTABar section="use-cases" ctaText="Start Creating 10 Scripts Free" />
+          <CTABar section="use-cases" ctaText="Start Creating Scripts Free" />
         </div>
       </section>
 
@@ -299,7 +296,7 @@ export default function LandingPage() {
               Choose Your Plan
             </h2>
             <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-              Start for Free - 10 Generations on Us
+              Start for Free
             </p>
             
             {/* Monthly/Annual Toggle */}
