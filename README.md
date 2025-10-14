@@ -1,86 +1,265 @@
 # 🎬 Pheme
 
-**AI-powered dual content generator for viral and affiliate content**
+**AI-powered content creation for social media**
 
-Pheme is a comprehensive content generation platform designed to create high-quality social media content across various niches and platforms using multiple AI models. The platform features two distinct content studios: **Viral Content Studio** for trend-based viral content and **Affiliate Content Studio** for product-focused content, both powered by advanced AI research capabilities.
+Pheme is a comprehensive AI-powered content generation platform designed to create high-quality social media content across various niches and platforms. The platform features **Dual Studios**: a **Viral Content Studio** for trend-based viral content and an **Affiliate Content Studio** for product-focused content with affiliate integration, all powered by advanced AI models (OpenAI GPT-4, Anthropic Claude, and Perplexity AI).
+
+---
 
 ## ✨ Features Overview
 
-### 🔥 Dual Content Generation Modes
-- **Viral Content Studio**: Trend-based viral content with Perplexity-powered research
-- **Affiliate Content Studio**: Product-focused content with intelligent research capabilities
+### 🔥 Dual Content Studios
 
-### 🚀 Core Features
+#### Viral Content Studio
+- **Trend-based viral content** without product requirements
+- Powered by Perplexity API for real-time trend discovery
+- Templates: Viral Hooks, Short Scripts, Storytime, Duet/Reaction, Listicles, Challenges, Caption + Hashtags
+
+#### Affiliate Content Studio (Pro+ Tier)
+- **Product-focused content** with affiliate integration
+- Intelligent product research capabilities
+- Templates: Affiliate Email, Influencer Caption, Product Comparison, Routine Guide, SEO Blog, Short Video Scripts
+
+### 🚀 Core Capabilities
+
 - **AI-Powered Trend Discovery**: Real-time trending topic analysis using Perplexity API
-- **Multi-Template System**: Diverse content templates for both viral and affiliate content
-- **Real-Time Viral Score Analysis**: AI-driven content quality assessment and scoring
-- **Content History & Analytics**: Comprehensive tracking and performance monitoring
+- **Multi-Template System**: 14+ diverse content templates for viral and affiliate content
+- **Real-Time Viral Score Analysis**: Dual AI evaluation (Claude + GPT-4) for comprehensive quality assessment
+- **Content History & Analytics**: Track performance and export data (CSV/JSON based on tier)
 - **Multi-Platform Optimization**: Content adapted for TikTok, Instagram, YouTube, Twitter, and Facebook
 - **Smart AI Model Routing**: Intelligent routing between OpenAI, Claude, and Perplexity
-- **Trend Forecasting**: Advanced trend prediction and analysis system
-- **Bulk Content Generation**: Automated batch content creation with scheduling
+- **Trend Forecasting**: Advanced trend prediction and analysis (Creator+ tier)
+- **Bulk Content Generation**: Automated batch creation with scheduling (Pro: 10 items, Agency: 50 items)
 - **Content Evaluation System**: Dual AI evaluation for comprehensive quality assessment
+
+### 🛠️ Available Tools
+
+1. **Script Generator Tool** - Generate viral and affiliate content with AI
+2. **Trend Discovery Tool** - Discover trending topics and products
+3. **Template Library Tool** - Browse and use content templates
+4. **History Tool** - View and manage content history
+5. **Viral Score Analyzer Tool** - Analyze content viral potential
+
+---
+
+## 💰 Pricing & Subscription Tiers
+
+### Starter - $7/month (or $5/month annual)
+Perfect for individuals getting started with AI content creation.
+
+**Generation Limits:**
+- 15 GPT-4 generations/month
+- 10 Claude generations/month
+- 10 trend analyses/month
+- Basic Viral Score (GPT-4 only)
+
+**Features:**
+- ✅ 3 templates per category (hooks, storytelling, educational)
+- ✅ 3 niches (beauty, tech, fashion)
+- ✅ Last 10 content items in history
+- ✅ Viral Score preview (number only, no breakdown)
+- ❌ Bulk generation
+- ❌ Content export
+- ❌ Trend forecasting
+- ❌ Affiliate Studio
+
+### Creator - $15/month (or $10/month annual) ⭐ Most Popular
+Perfect for aspiring influencers and content creators.
+
+**Generation Limits:**
+- 50 GPT-4 generations/month
+- 30 Claude generations/month
+- 25 trend analyses/month
+- Full Viral Score + basic AI suggestions
+
+**Features:**
+- ✅ All viral templates (unlimited)
+- ✅ All 7 niches
+- ✅ Full history (last 50 items)
+- ✅ Content export (CSV)
+- ✅ Trend forecasting (basic - hot/rising only)
+- ✅ Viral score with AI tips
+- ❌ Bulk generation
+- ❌ Affiliate Studio
+- ❌ Custom prompts
+
+### Pro - $35/month (or $25/month annual)
+For power users and agencies needing unlimited creation.
+
+**Generation Limits:**
+- 300 GPT-4 generations/month
+- 150 Claude generations/month
+- 100 trend analyses/month
+- Advanced Viral Score (dual AI - Claude + GPT)
+
+**Features:**
+- ✅ BOTH Studios (Viral + Affiliate)
+- ✅ Bulk generation (10 items at once)
+- ✅ Full trend forecasting (hot/rising/upcoming/declining)
+- ✅ Custom prompts (save & reuse)
+- ✅ Unlimited history with filters
+- ✅ Priority support (24hr response)
+- ✅ Make.com webhook integration
+- ✅ Brand templates (save & reuse)
+- ❌ Team features
+- ❌ API access
+
+### Agency - Custom Pricing
+For teams and creators managing multiple brands.
+
+**Generation Limits:**
+- 1,000 GPT-4 generations/month (custom volume available)
+- 500 Claude generations/month (custom volume available)
+- Unlimited trend analyses
+- Full dual AI scoring system
+
+**Features:**
+- ✅ Everything in Pro
+- ✅ Bulk generation (50 items at once)
+- ✅ JSON export for workflows
+- ✅ API access for custom integrations
+- ✅ Team management features
+- ✅ Dedicated account manager
+- ✅ Custom integrations
+- ✅ White-label options
+
+### Free Tier (Deprecated, Trial Only)
+- 3 total AI generations (combined GPT + Claude)
+- Automatically assigned to new users as trial
+- Limited feature access
+
+---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
 - **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **UI Library**: Shadcn/ui (Radix UI primitives)
+- **Build Tool**: Vite (fast, modern build tool)
+- **UI Library**: Shadcn/ui (built on Radix UI primitives)
 - **Styling**: Tailwind CSS with custom design system
 - **State Management**: TanStack React Query v5
-- **Routing**: Wouter
+- **Routing**: Wouter (lightweight router)
 - **Form Handling**: React Hook Form with Zod validation
+- **Analytics**: Custom analytics with GA integration
 
 ### Backend
 - **Runtime**: Node.js with ES modules
 - **Framework**: Express.js with TypeScript
-- **Database**: PostgreSQL with Drizzle ORM (Neon serverless provider)
-- **API Design**: RESTful endpoints with rate limiting
-- **Caching**: Redis-compatible caching layer with file-based fallback
+- **Database**: PostgreSQL (Neon serverless provider)
+- **ORM**: Drizzle ORM for type-safe database interactions
 - **Middleware**: Morgan logging, CORS, Express rate limiter
+- **API Design**: RESTful endpoints with comprehensive error handling
 
 ### AI Services
 - **OpenAI API**: GPT-4 and GPT-3.5 for content generation
-- **Anthropic Claude**: Primary AI provider for content generation and diversity
-- **Perplexity API**: Trend discovery and viral content inspiration
+- **Anthropic Claude**: Primary AI provider for content generation and evaluation
+- **Perplexity API**: Real-time trend discovery and viral content research
 
-### Database & Infrastructure
-- **Neon Database**: Serverless PostgreSQL hosting
-- **Drizzle ORM**: Type-safe database interactions
-- **Redis Caching**: Performance optimization (optional)
+### Billing & Payments
+- **Stripe Integration**: Production-ready checkout sessions
+- **Webhook Handling**: Automated subscription lifecycle management
+- **Price IDs**: Configured for Starter/Creator/Pro tiers (monthly/annual)
+
+### Authentication
+- **Development Mode**: Auto-login with DEV_USER_ID/EMAIL, unlimited quotas
+- **Production Mode**: Replit Auth with header-based authentication
+- **Session Management**: PostgreSQL-backed session storage
+
+---
 
 ## 📁 Project Structure
 
 ```
 pheme/
-├── client/                    # React frontend application
+├── client/                     # React frontend application
 │   ├── src/
-│   │   ├── components/       # Reusable UI components
-│   │   ├── pages/           # Page components
-│   │   ├── lib/             # Utilities and configurations
-│   │   └── hooks/           # Custom React hooks
-├── server/                   # Express.js backend
-│   ├── api/                 # API route handlers
-│   ├── services/            # Business logic and external API integrations
-│   ├── cache/               # Caching layer implementation
-│   └── amazon/              # Amazon PA-API integration (optional)
-├── shared/                   # Shared types and schemas
-│   ├── schema.ts            # Database schema definitions
-│   └── constants.ts         # Shared constants
-├── tests/                    # Test suites
-│   ├── e2e/                 # End-to-end tests (Playwright)
-│   ├── integration/         # Integration tests
-│   └── unit/                # Unit tests (Vitest)
-└── migrations/              # Database migration files
+│   │   ├── components/        # Reusable UI components
+│   │   │   ├── ui/           # Shadcn/ui components
+│   │   │   ├── features/     # Feature-specific components
+│   │   │   ├── marketing/    # Marketing components
+│   │   │   └── tools/        # Tool-specific components
+│   │   ├── pages/            # Page components
+│   │   │   ├── features/     # Feature pages
+│   │   │   └── tools/        # Tool pages
+│   │   ├── hooks/            # Custom React hooks
+│   │   └── lib/              # Utilities and configurations
+├── server/                    # Express.js backend
+│   ├── api/                  # API route handlers
+│   │   ├── billing.ts        # Stripe billing endpoints
+│   │   ├── generateContent.ts # Content generation
+│   │   ├── trending.ts       # Trending products
+│   │   ├── history.ts        # Content history
+│   │   ├── auth.ts           # Authentication
+│   │   ├── perplexity-trends.ts # Perplexity integration
+│   │   ├── product-research.ts # Product research
+│   │   ├── trend-forecast.ts  # Trend forecasting
+│   │   └── trend-history.ts   # Trend history
+│   ├── services/             # Business logic
+│   │   ├── quotaService.ts   # Quota management
+│   │   ├── identityService.ts # User identity
+│   │   ├── contentGenerator.ts # Content generation
+│   │   ├── viralScoreAnalyzer.ts # Viral scoring
+│   │   └── perplexity/       # Perplexity services
+│   ├── middleware/           # Express middleware
+│   │   ├── authGuard.ts      # Authentication guard
+│   │   ├── checkQuota.ts     # Quota checking
+│   │   └── checkFeatureAccess.ts # Feature gating
+│   └── prompts/              # AI prompt templates
+├── shared/                    # Shared types and schemas
+│   ├── schema.ts             # Database schema (Drizzle)
+│   ├── constants.ts          # Application constants
+│   └── templateMetadata.ts   # Template definitions
+├── tests/                     # Test suites
+│   ├── e2e/                  # Playwright E2E tests
+│   ├── integration/          # Integration tests
+│   └── unit/                 # Vitest unit tests
+└── migrations/               # Database migrations
 ```
+
+---
+
+## 🎨 Content Templates
+
+### Viral Content Templates (No Product Required)
+1. **Viral Hooks** - 10 scroll-stopping hooks (3-8 words each)
+2. **Viral Short Script** - 15-30s scripts (Hook/Build/Payoff/Button structure)
+3. **Viral Storytime** - 90-150 word authentic story scripts
+4. **Viral Duet/Reaction** - Script outlines for stitching/reacting
+5. **Viral Listicle** - Top 3-5 format with titles and explanations
+6. **Viral Challenge** - Participation ideas with steps and variations
+7. **Viral Caption + Hashtags** - 3 captions plus broad/niche hashtag sets
+
+### Affiliate Content Templates (Product-Focused, Pro+ Only)
+1. **Affiliate Email** - Persuasive email sections (100-150 words)
+2. **Influencer Caption** - Authentic social media posts (100-200 words)
+3. **Product Comparison** - Comprehensive comparison guides (600-800 words)
+4. **Routine Guide** - Step-by-step routine guides (500-700 words)
+5. **SEO Blog Post** - Search-optimized blog posts (1000+ words)
+6. **Short Video Script** - Viral-optimized scripts for TikTok/Reels/Shorts (15-60s)
+7. **Universal Short Video** - Comprehensive video scripts
+
+---
+
+## 🌍 Supported Niches
+
+Pheme supports **7 specialized niches**:
+
+1. 💄 **Beauty** - Beauty and personal care products
+2. ⚡ **Tech** - Technology and gadgets
+3. 👗 **Fashion** - Clothing and accessories
+4. 💪 **Fitness** - Fitness equipment and supplements
+5. 🍎 **Food** - Food and cooking products
+6. ✈️ **Travel** - Travel gear and accessories
+7. 🐾 **Pets** - Pet products and accessories
+
+---
 
 ## 🚀 Installation & Setup
 
 ### Prerequisites
-- Node.js 18+ 
+- Node.js 18+
 - PostgreSQL database (or Neon account)
-- API keys for OpenAI, Claude, and Perplexity
+- API keys for OpenAI, Anthropic Claude, and Perplexity
 
 ### Quick Start
 
@@ -100,7 +279,7 @@ pheme/
    cp .env.example .env
    ```
    
-   Configure your environment variables (see [Environment Variables](#environment-variables) section)
+   Configure your environment variables (see [Environment Variables](#-environment-variables) section)
 
 4. **Database setup**
    ```bash
@@ -112,667 +291,457 @@ pheme/
    npm run dev
    ```
 
-The application will be available at `http://localhost:3000`
+The application will be available at `http://localhost:5000`
 
-## 🔧 Running the Application
+---
 
-### Development Scripts
+## 🔧 Environment Variables
+
+### Core Application Settings
+
 ```bash
-npm run dev        # Start development server
-npm run build      # Build for production
-npm start          # Start production server
-npm run check      # Type checking
-npm run db:push    # Push database schema changes
+# Application Environment
+APP_ENV=development                    # "development" or "production"
+APP_URL=http://localhost:5000         # Application URL
+
+# Frontend API Base (for Vite)
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-### Available Ports
-- **Frontend & Backend**: Port 3000 (unified server)
-- **Database**: Configured via `DATABASE_URL`
+### Development Mode Flags
 
-## 🔐 Authentication System
+```bash
+# Bypass usage limits in development (1=enabled, 0=disabled)
+BYPASS_LIMITS=1                        # Dev: 1 = unlimited | Prod: 0 = enforce limits
 
-Pheme features a flexible two-environment authentication system designed to streamline development while maintaining production security. The system automatically detects the environment and applies the appropriate authentication strategy.
+# Disable billing in development (1=disabled, 0=enabled)
+DISABLE_BILLING=1                      # Dev: 1 = mock billing | Prod: 0 = Stripe billing
 
-### Overview
-
-The authentication system operates in two distinct modes:
-
-- **Development Mode** (`APP_ENV=development` or not set): Auto-login with configurable dev user, bypassed quotas, and mock billing
-- **Production Mode** (`APP_ENV=production`): Replit Auth integration with enforced quotas and Stripe billing
-
-The system automatically detects the environment based on the `APP_ENV` variable and switches between modes seamlessly, requiring no code changes.
-
-### Development Mode Setup
-
-Development mode is designed for rapid iteration without authentication friction. When `APP_ENV` is set to `development` (or not set), the system automatically bypasses authentication requirements.
-
-#### Required Environment Variables
-
-```env
-# Environment mode (triggers dev features)
-APP_ENV=development
-
-# Development user credentials (auto-injected on every request)
+# Development user credentials (DEV MODE ONLY)
 DEV_USER_ID=00000000-0000-0000-0000-000000000001
-DEV_USER_EMAIL=dev@scripttok.local
+DEV_USER_EMAIL=dev@pheme.local
 DEV_USER_NAME=Dev User
-
-# Development bypass flags
-BYPASS_LIMITS=1        # Skip quota enforcement (unlimited generations)
-DISABLE_BILLING=1      # Run billing in mock mode (no Stripe calls)
 ```
 
-#### Auto-Login Behavior
+### Database Configuration
 
-In development mode:
-1. Every API request automatically receives the dev user credentials from environment variables
-2. No login flow or authentication UI is required
-3. The dev user is created with **Pro tier** subscription automatically
-4. All protected routes allow access without checking credentials
+```bash
+# PostgreSQL connection string
+DATABASE_URL=postgresql://username:password@host:port/database
 
-#### Creating Development Users
-
-To create additional test users during development, use the test utilities:
-
-```typescript
-import { createTestUser } from './server/utils/testAuth';
-
-// Create a test user with free tier
-const freeUser = await createTestUser(storage, 'test@example.com', 'free');
-
-// Create a test user with pro tier
-const proUser = await createTestUser(storage, 'pro@example.com', 'pro');
+# Session secret for authentication
+SESSION_SECRET=your_secure_session_secret
 ```
 
-The `createDevUser()` utility creates the default dev user from environment variables:
+### AI Service Keys
 
-```typescript
-import { createDevUser } from './server/utils/testAuth';
+```bash
+# OpenAI API Key
+OPENAI_API_KEY=your_openai_api_key_here
 
-// Creates dev user with DEV_USER_ID, DEV_USER_EMAIL, DEV_USER_NAME
-const devUser = await createDevUser(storage);
+# Anthropic Claude API Key
+ANTHROPIC_API_KEY=your_anthropic_api_key_here
+
+# Perplexity API Key (for trend discovery)
+PERPLEXITY_API_KEY=your_perplexity_api_key
 ```
 
-### Production Mode Setup
+### Stripe Billing (Production Only)
 
-Production mode enforces full authentication and authorization with Replit Auth integration.
+```bash
+# Stripe Secret Key (live key in prod, test key in dev)
+STRIPE_SECRET_KEY=sk_test_your_stripe_secret_key
 
-#### Required Environment Variables
+# Stripe Publishable Key (for frontend)
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_publishable_key
 
-```env
-# Environment mode (enables production features)
-APP_ENV=production
-
-# Billing configuration (if using Stripe)
-STRIPE_SECRET_KEY=sk_live_your_stripe_secret_key
+# Stripe Webhook Secret (for webhook signature verification)
 STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 
-# Database (production instance)
-DATABASE_URL=postgresql://user:pass@production-host:5432/scripttok
-
-# Session configuration
-SESSION_SECRET=your_secure_random_session_secret
+# Stripe Price IDs for subscription tiers
+STRIPE_PRICE_ID_STARTER_MONTHLY=price_xxx
+STRIPE_PRICE_ID_STARTER_ANNUAL=price_xxx
+STRIPE_PRICE_ID_CREATOR_MONTHLY=price_xxx
+STRIPE_PRICE_ID_CREATOR_ANNUAL=price_xxx
+STRIPE_PRICE_ID_PRO_MONTHLY=price_xxx
+STRIPE_PRICE_ID_PRO_ANNUAL=price_xxx
 ```
 
-#### Replit Auth Integration
+### Replit Auth (Production Only)
 
-Replit Auth is automatically enabled when deployed on Replit in production mode. The system reads authentication data from Replit-provided headers:
+Replit Auth is automatically configured in production via headers:
+- `X-Replit-User-Id`
+- `X-Replit-User-Name`
+- `X-Replit-User-Email`
+- `X-Replit-User-Profile-Image`
 
-- `X-Replit-User-Id` - Unique user identifier
-- `X-Replit-User-Name` - User's display name
-- `X-Replit-User-Email` - User's email address
-- `X-Replit-User-Profile-Image` - Profile image URL
+No additional configuration needed.
 
-**No additional configuration is required** - these headers are automatically provided by Replit's infrastructure.
+### Integration Webhooks
 
-#### Authentication Flow
+```bash
+# Make.com Webhook Integration
+MAKE_WEBHOOK_URL=https://hook.us2.make.com/your_webhook_url
 
-1. User accesses the application (no manual login required on Replit)
-2. Replit automatically provides user information via headers
-3. The auth middleware (`authGuard`) verifies the headers
-4. If user doesn't exist in the database, they are automatically created with **Free tier**
-5. User identity is attached to the request (`req.user` and `req.internalUserId`)
-6. Protected routes proceed with authenticated user context
+# Email Service (CookAIng Marketing Engine)
+BREVO_API_KEY=your_brevo_api_key_here
+RESEND_API_KEY=your_resend_api_key_here
+```
 
-#### Automatic User Creation
+---
 
-On first login, the system:
-1. Reads user information from Replit headers
-2. Creates a new user record in the database
-3. Sets up a Free tier subscription (10 generations/month)
-4. Associates the Replit user ID with the internal user ID
+## 📡 API Endpoints
+
+### Authentication Endpoints
+
+```
+GET  /api/auth/me              # Get current user
+POST /api/auth/logout          # Logout user
+```
+
+### Billing & Subscription Endpoints
+
+```
+GET  /api/billing/subscription        # Get user subscription details
+GET  /api/billing/usage              # Get usage statistics
+POST /api/billing/create-checkout    # Create Stripe checkout session
+POST /api/billing/webhook            # Stripe webhook handler
+GET  /api/billing/cancel             # Cancel subscription
+POST /api/billing/update             # Update subscription
+```
+
+### Content Generation Endpoints
+
+```
+POST /api/generate-content           # Generate content
+GET  /api/history                    # Get content history
+GET  /api/history/:id                # Get specific content item
+DELETE /api/history/:id              # Delete content item
+```
+
+### Trending & Research Endpoints
+
+```
+GET  /api/trending/products          # Get trending products
+POST /api/trending/refresh           # Refresh trending data
+GET  /api/perplexity-trends          # Get Perplexity trends
+POST /api/perplexity-trends/analyze  # Analyze trends
+GET  /api/product-research           # Research products
+GET  /api/trend-forecast             # Get trend forecasts (Creator+ tier)
+GET  /api/trending-categorized       # Get categorized trends
+```
+
+### Trend History Endpoints
+
+```
+GET  /api/trend-history              # Get trend history
+POST /api/trend-history              # Save trend to history
+GET  /api/trend-history/:id          # Get specific trend
+DELETE /api/trend-history/:id        # Delete trend from history
+```
+
+### Statistics & Monitoring
+
+```
+GET  /api/statistics                 # Get platform statistics
+GET  /api/scraper-status            # Get scraper health status
+GET  /api/perplexity-status         # Get Perplexity service status
+```
+
+---
+
+## 🔐 Authentication & Authorization
+
+### Development Mode
+- **Auto-login** with `DEV_USER_ID` and `DEV_USER_EMAIL`
+- **Unlimited quotas** when `BYPASS_LIMITS=1`
+- **Mock billing** when `DISABLE_BILLING=1`
+- No authentication required for testing
+
+### Production Mode
+- **Replit Auth** via HTTP headers
+- **Tier-based quotas** enforced by `quotaService`
+- **Stripe billing** for subscription management
+- Session-based authentication with PostgreSQL storage
 
 ### Quota System
 
-ScriptTok enforces tier-based monthly generation limits to manage AI costs and encourage upgrades.
+**Model-Specific Limits by Tier:**
 
-#### Tier Limits
+| Tier     | GPT-4/month | Claude/month | Trends/month | Viral Score       |
+|----------|-------------|--------------|--------------|-------------------|
+| Free     | 3 (combined total)      |              |              | Basic             |
+| Starter  | 15          | 10           | 10           | Basic (GPT-4 only)|
+| Creator  | 50          | 30           | 25           | Full + AI tips    |
+| Pro      | 300         | 150          | 100          | Advanced (Dual AI)|
+| Agency   | 1,000       | 500          | Unlimited    | Advanced (Dual AI)|
 
-| Tier | Monthly Limit | Price |
-|------|--------------|-------|
-| **Free** | 10 generations | $0 |
-| **Pro** | 500 generations | $20/month |
+### Feature Gates
 
-#### How Quota Tracking Works
+**Tier-Based Feature Access:**
 
-1. **Monthly Periods**: Quotas reset on the 1st of each month
-2. **Usage Tracking**: Each content generation increments the user's monthly usage counter
-3. **Enforcement Point**: The `checkQuota` middleware runs before content generation endpoints
-4. **Bypass Mode**: Set `BYPASS_LIMITS=1` in development to skip enforcement
+| Feature              | Starter | Creator | Pro | Agency |
+|----------------------|---------|---------|-----|--------|
+| Viral Studio         | ✅      | ✅      | ✅  | ✅     |
+| Affiliate Studio     | ❌      | ❌      | ✅  | ✅     |
+| Bulk Generation      | ❌      | ❌      | ✅ (10) | ✅ (50) |
+| Trend Forecasting    | ❌      | ✅ (basic) | ✅ (full) | ✅ (full) |
+| Content Export       | ❌      | ✅ (CSV) | ✅ (CSV) | ✅ (JSON) |
+| API Access           | ❌      | ❌      | ❌  | ✅     |
+| Custom Prompts       | ❌      | ❌      | ✅  | ✅     |
+| Make.com Webhook     | ❌      | ❌      | ✅  | ✅     |
 
-#### Quota Enforcement
+---
 
-The quota check happens in this order:
+## 📊 Quota Management
 
+### How Quotas Work
+
+1. **Monthly Reset**: Quotas reset on the 1st of each month
+2. **Model-Specific Tracking**: GPT-4 and Claude tracked separately
+3. **Trend Analysis Limits**: Perplexity API calls tracked independently
+4. **Soft Limits**: Users notified at 80% usage
+5. **Hard Limits**: Generation blocked at 100% usage
+
+### Checking Quotas
+
+```javascript
+// Frontend: Check quota before generation
+const { data: usage } = useQuery({
+  queryKey: ['/api/billing/usage'],
+});
+
+// Backend: Automatic quota check via middleware
+app.use('/api/generate-content', authGuard, checkQuota, generateContentRouter);
 ```
-Request → authGuard → checkQuota → Content Generation
-          ↓           ↓
-       Verify User  Check Limit
-                     ↓
-              Allow or Block (429)
-```
 
-When quota is exceeded, the API returns a `429 Too Many Requests` response:
+---
 
-```json
-{
-  "error": "Quota exceeded",
-  "message": "You've used 10 of 10 generations this month. Upgrade to Pro for 500/month.",
-  "used": 10,
-  "limit": 10,
-  "tier": "free",
-  "upgradeUrl": "/billing/upgrade"
-}
-```
+## 🧪 Testing
 
-#### Checking Usage
-
-Get current usage via the billing API:
+### End-to-End Tests (Playwright)
 
 ```bash
-GET /api/billing/usage
-
-Response:
-{
-  "used": 7,
-  "limit": 10,
-  "remaining": 3,
-  "tier": "free"
-}
+npm run test:e2e              # Run all E2E tests
+npm run test:e2e:ui           # Run with UI mode
+npm run test:e2e:debug        # Debug mode
 ```
 
-### Billing Integration
+### Unit Tests (Vitest)
 
-ScriptTok uses Stripe for Pro subscription payments, with a mock mode for development.
-
-#### Stripe Configuration
-
-To enable Stripe billing in production:
-
-```env
-DISABLE_BILLING=0                      # Enable real Stripe integration
-STRIPE_SECRET_KEY=sk_live_...         # Stripe secret key
-STRIPE_WEBHOOK_SECRET=whsec_...       # Webhook signing secret
-APP_URL=https://your-domain.com       # For redirect URLs
+```bash
+npm run test                  # Run all unit tests
+npm run test:unit             # Run unit tests only
+npm run test:coverage         # Generate coverage report
 ```
 
-#### Mock Mode (Development)
+### Integration Tests
 
-In development, set `DISABLE_BILLING=1` to run billing without Stripe:
-
-```env
-DISABLE_BILLING=1
+```bash
+npm run test:integration      # Run integration tests
 ```
 
-Mock mode returns simulated responses for all billing operations:
-- Checkout sessions return mock URLs
-- Subscription queries return mock data
-- No actual Stripe API calls are made
+---
 
-#### Available Billing Endpoints
+## 🚢 Deployment
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/api/billing/subscription` | GET | Get current subscription status |
-| `/api/billing/usage` | GET | Get monthly usage stats |
-| `/api/billing/create-checkout` | POST | Create Stripe checkout session for Pro upgrade |
-| `/api/billing/cancel-subscription` | POST | Cancel subscription at period end |
-| `/api/billing/webhook` | POST | Stripe webhook handler (no auth) |
+### Replit Deployment (Recommended)
 
-#### Webhook Setup
+Pheme is optimized for Replit deployment:
 
-To handle subscription events from Stripe:
+1. **Automatic Database**: Neon PostgreSQL auto-configured
+2. **Environment Variables**: Set via Replit Secrets
+3. **Authentication**: Replit Auth auto-enabled in production
+4. **Zero Configuration**: No additional setup required
 
-1. **Add Webhook Endpoint** in Stripe Dashboard:
-   ```
-   https://your-domain.com/api/billing/webhook
+### Manual Deployment
+
+1. **Build the application**
+   ```bash
+   npm run build
    ```
 
-2. **Select Events to Listen For**:
-   - `checkout.session.completed` - New subscription created
-   - `customer.subscription.updated` - Subscription modified
-   - `customer.subscription.deleted` - Subscription cancelled
+2. **Set environment variables**
+   - `APP_ENV=production`
+   - Configure all production API keys
+   - Set Stripe keys and webhook secrets
 
-3. **Copy Webhook Secret** and add to environment:
-   ```env
-   STRIPE_WEBHOOK_SECRET=whsec_abc123...
+3. **Run database migrations**
+   ```bash
+   npm run db:push
    ```
 
-4. The webhook handler automatically:
-   - Verifies webhook signatures
-   - Updates user subscriptions in the database
-   - Activates Pro tier access
+4. **Start the production server**
+   ```bash
+   npm start
+   ```
 
-### Environment Variables Reference
+---
 
-#### Authentication Variables
+## 🔗 Webhook Integrations
 
-| Variable | Description | Required | Default | Example |
-|----------|-------------|----------|---------|---------|
-| `APP_ENV` | Environment mode | Optional | `development` | `production` |
-| `DEV_USER_ID` | Dev user ID (dev only) | Dev Only | `00000000-0000-0000-0000-000000000001` | Any UUID |
-| `DEV_USER_EMAIL` | Dev user email (dev only) | Dev Only | `dev@scripttok.local` | `dev@example.com` |
-| `DEV_USER_NAME` | Dev user name (dev only) | Dev Only | `Dev User` | `John Developer` |
-| `SESSION_SECRET` | Session encryption secret | Required | - | Random string 32+ chars |
+### Make.com Integration
 
-#### Quota & Billing Variables
+Pheme integrates with Make.com for content distribution:
 
-| Variable | Description | Required | Default | Example |
-|----------|-------------|----------|---------|---------|
-| `BYPASS_LIMITS` | Skip quota enforcement (dev) | Optional | `0` | `1` (dev), `0` (prod) |
-| `DISABLE_BILLING` | Disable Stripe integration | Optional | `0` | `1` (dev), `0` (prod) |
-| `STRIPE_SECRET_KEY` | Stripe API secret key | Prod Only | - | `sk_live_...` or `sk_test_...` |
-| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret | Prod Only | - | `whsec_...` |
-| `VITE_STRIPE_PUBLISHABLE_KEY` | Stripe public key (frontend) | Prod Only | - | `pk_live_...` or `pk_test_...` |
-| `STRIPE_PRICE_ID_PRO` | Stripe price ID for Pro tier | Prod Only | - | `price_...` |
-| `APP_URL` | Application base URL | Required | `http://localhost:5000` | `https://app.scripttok.com` |
+1. **Content Distribution**: Auto-send generated content to social platforms
+2. **Scheduling**: Schedule content posts across platforms
+3. **Analytics**: Track performance metrics
+4. **Custom Workflows**: Create custom automation workflows
 
-#### Database Variables
-
-| Variable | Description | Required | Default | Example |
-|----------|-------------|----------|---------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | Required | - | `postgresql://user:pass@host:5432/db` |
-
-### Testing & Development Utilities
-
-The `server/utils/testAuth.ts` module provides utilities for testing authentication and quota systems.
-
-#### Creating Test Users
-
-```typescript
-import { createTestUser, createDevUser } from './server/utils/testAuth';
-import { storage } from './server/storage';
-
-// Create a test user with specific tier
-const freeUser = await createTestUser(storage, 'test@example.com', 'free');
-const proUser = await createTestUser(storage, 'pro@test.com', 'pro');
-
-// Create the default dev user from environment variables
-const devUser = await createDevUser(storage);
-```
-
-#### Simulating Quota Usage
-
-```typescript
-import { simulateQuotaUsage, validateQuotaEnforcement } from './server/utils/testAuth';
-
-// Simulate using 5 generations
-const stats = await simulateQuotaUsage(storage, userId, 5);
-console.log(`Used: ${stats.used}, Remaining: ${stats.remaining}`);
-
-// Check quota status
-const quota = await validateQuotaEnforcement(storage, userId);
-if (quota.allowed) {
-  console.log(`User can generate ${quota.remaining} more items`);
-} else {
-  console.log(`Quota exceeded: ${quota.used}/${quota.limit}`);
-}
-```
-
-#### Resetting Quota for Testing
-
-```typescript
-import { resetUserQuota } from './server/utils/testAuth';
-
-// Reset user's monthly usage to 0
-const success = await resetUserQuota(storage, userId);
-if (success) {
-  console.log('Quota reset successfully');
-}
-```
-
-#### Running in Different Modes
-
-**Development Mode (Unrestricted)**:
+**Setup:**
 ```bash
-# .env configuration
-APP_ENV=development
-BYPASS_LIMITS=1
-DISABLE_BILLING=1
-DEV_USER_ID=00000000-0000-0000-0000-000000000001
-DEV_USER_EMAIL=dev@scripttok.local
-DEV_USER_NAME=Dev User
-
-# Start server
-npm run dev
+MAKE_WEBHOOK_URL=https://hook.us2.make.com/your_webhook_url
 ```
 
-**Production Mode (Enforced)**:
+### Stripe Webhooks
+
+Automated subscription lifecycle management:
+
+1. **subscription.created** - New subscription started
+2. **subscription.updated** - Subscription tier changed
+3. **subscription.deleted** - Subscription cancelled
+4. **invoice.payment_succeeded** - Payment successful
+5. **invoice.payment_failed** - Payment failed
+
+**Setup:**
 ```bash
-# .env configuration
-APP_ENV=production
-BYPASS_LIMITS=0
-DISABLE_BILLING=0
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-DATABASE_URL=postgresql://prod-connection-string
-
-# Start server
-npm start
+STRIPE_WEBHOOK_SECRET=whsec_your_webhook_secret
 ```
 
-**Hybrid Mode (Quota Testing in Development)**:
+---
+
+## 📧 CookAIng Marketing Engine
+
+Comprehensive multi-channel marketing platform integrated into Pheme:
+
+### Email Marketing (Brevo)
+- Automated email campaigns
+- Subscriber management
+- A/B testing
+- Analytics and reporting
+
+### Social Media (Buffer)
+- Multi-platform scheduling
+- Content calendar
+- Performance analytics
+- Team collaboration
+
+### Blog Publishing (Notion)
+- SEO-optimized blog posts
+- Content management
+- Publishing automation
+- Performance tracking
+
+### Push Notifications (OneSignal)
+- Real-time notifications
+- Segmented campaigns
+- Engagement tracking
+- Multi-platform delivery
+
+**Configuration:**
 ```bash
-# .env configuration
-APP_ENV=development
-BYPASS_LIMITS=0        # Enforce quotas even in dev
-DISABLE_BILLING=1      # But keep billing mocked
-DEV_USER_EMAIL=dev@scripttok.local
-
-# Start server
-npm run dev
+BREVO_API_KEY=your_brevo_api_key_here
+BUFFER_ACCESS_TOKEN=your_buffer_token
+NOTION_API_KEY=your_notion_key
+ONESIGNAL_APP_ID=your_onesignal_app_id
 ```
 
-This hybrid mode is useful for testing quota enforcement logic without requiring full authentication or Stripe integration.
+---
 
-### Frontend Authentication Flow
+## 🐛 Troubleshooting
 
-The frontend implements a complete authentication UI with automatic dev/prod switching, protected routes, and seamless login experience.
+### Common Issues
 
-#### Components
+#### 1. Generation Quota Exceeded
+**Error**: "Monthly quota exceeded for GPT-4"
+**Solution**: 
+- Check usage: `GET /api/billing/usage`
+- Upgrade tier or wait for monthly reset
+- Use Claude as alternative (separate quota)
 
-**LoginModal** (`client/src/components/LoginModal.tsx`)
-- Dialog-based login UI using shadcn/ui components
-- Opens Replit Auth in popup window (350x500)
-- Listens for `auth_complete` message from popup
-- Auto-reloads page to pick up authenticated state
-- Props: `open: boolean`, `onOpenChange: (open: boolean) => void`
+#### 2. Stripe Webhook Verification Failed
+**Error**: "Webhook signature verification failed"
+**Solution**:
+- Verify `STRIPE_WEBHOOK_SECRET` is correct
+- Check webhook endpoint URL in Stripe dashboard
+- Ensure endpoint is `/api/billing/webhook`
 
-**ProtectedRoute** (`client/src/components/ProtectedRoute.tsx`)
-- Wraps routes requiring authentication
-- Shows loading skeleton while checking auth
-- Shows login prompt if not authenticated
-- Renders children when authenticated
-- Usage: `<ProtectedRoute><Dashboard /></ProtectedRoute>`
+#### 3. Database Connection Failed
+**Error**: "Cannot connect to database"
+**Solution**:
+- Verify `DATABASE_URL` is correct
+- Check database is running
+- Run migrations: `npm run db:push`
 
-**AuthProvider** (`client/src/components/AuthProvider.tsx`)
-- React context providing auth state to entire app
-- Calls `/api/auth/me` on mount to check authentication
-- Provides `user`, `isLoading`, `isAuthenticated` state
-- Provides `login()` and `logout()` functions
-- Auto-detects dev/prod mode from environment
+#### 4. Development Mode Not Working
+**Error**: "Authentication required"
+**Solution**:
+- Set `APP_ENV=development`
+- Set `DEV_USER_ID` and `DEV_USER_EMAIL`
+- Restart server: `npm run dev`
 
-#### User Experience
+#### 5. Perplexity API Rate Limit
+**Error**: "Perplexity API rate limit exceeded"
+**Solution**:
+- Check API key quota
+- Reduce trend analysis frequency
+- Upgrade Perplexity plan
 
-**Development Mode (APP_ENV=development)**:
-- No login required - user is auto-authenticated
-- Dev mode badge visible in top-right corner
-- Console logs show dev user details
-- All features accessible immediately
+### Debug Mode
 
-**Production Mode (APP_ENV=production)**:
-- Landing page shows "Start for Free" button
-- Button opens LoginModal with Replit Auth
-- After login, user redirected to dashboard
-- Header shows user profile with logout option
-- Protected routes require authentication
+Enable detailed logging:
 
-#### Protected Routes
-
-The following routes require authentication:
-- `/dashboard` - Main dashboard
-- `/generate` - Content generation
-- `/content-history` - Generated content history
-- `/trend-history` - Trend analysis history
-- `/account` - User account settings
-
-Public routes (no auth required):
-- `/` - Landing page
-- `/about`, `/how-it-works`, `/faq`, `/contact`
-- `/privacy`, `/terms`, `/compliance`
-- All legal pages
-
-#### Auth-Aware UI Components
-
-**Landing Page** (`client/src/pages/LandingPage.tsx`)
-- NOT authenticated: "Start for Free" button → opens login modal
-- IS authenticated: "Go to Dashboard" button → navigates to /dashboard
-
-**Layout Header** (`client/src/components/Layout.tsx`)
-- NOT authenticated: "Sign In" button → opens login modal
-- IS authenticated: User avatar/name with dropdown menu containing logout
-
-**Dev Mode Indicator**
-- Shows amber "Dev Mode" badge when `APP_ENV=development`
-- Located in header area for visibility
-- Helps developers identify current environment
-
-#### Testing the Flow
-
-**Test Dev Mode**:
-1. Set `APP_ENV=development` in .env
-2. Start app with `npm run dev`
-3. You're automatically logged in as dev user
-4. Dev mode badge visible in header
-5. All routes accessible without login
-
-**Test Production Mode**:
-1. Set `APP_ENV=production` in .env (or don't set it on Replit)
-2. Visit landing page - should see "Start for Free"
-3. Click button to open login modal
-4. Login with Replit Auth
-5. Redirected to dashboard with user profile in header
-
-**Test Protected Routes**:
-1. In production mode (no auth), try visiting `/dashboard` directly
-2. Should see login prompt: "Sign in to continue"
-3. Click "Sign In" button to open login modal
-4. After authentication, content displays
-
-## 🌐 API Endpoints
-
-### Content Generation
-- `POST /api/generate-content` - Single content generation
-- `POST /api/generate-content/unified` - Unified content generation system
-- `GET /api/content-generation/templates` - List available templates
-- `POST /api/content-generation/bulk/start` - Start bulk generation job
-
-### Trending Data
-- `GET /api/trending` - Fetch trending products by niche
-- `GET /api/trend-forecast/:niche` - Get trend forecasts
-- `POST /api/trending/refresh` - Refresh trending data
-- `GET /api/trending-emojis-hashtags/:niche` - Get trending hashtags
-
-### Analytics & Monitoring
-- `GET /api/analytics/overview` - AI model metrics overview
-- `GET /api/history` - Content generation history
-- `GET /api/ai-analytics/claude` - Claude AI analytics
-- `GET /api/ai-analytics/openai` - OpenAI analytics
-- `GET /api/ai-analytics/perplexity` - Perplexity analytics
-
-### System Status
-- `GET /api/gatekeeper/status` - Generation gatekeeper status
-- `GET /api/amazon/status` - Amazon PA-API status (if enabled)
-- `GET /health` - General health check
-
-## 🔐 Environment Variables
-
-### Required Variables
-```env
-# Database Configuration
-DATABASE_URL=postgresql://username:password@localhost:5432/scripttok
-
-# AI Service API Keys
-OPENAI_API_KEY=sk-...
-ANTHROPIC_API_KEY=sk-ant-...
-PERPLEXITY_API_KEY=pplx-...
-
-# Server Configuration
-NODE_ENV=development
-PORT=3000
-```
-
-### Optional Variables
-```env
-# Caching
-REDIS_URL=redis://localhost:6379
-
-# Amazon PA-API (if enabling Amazon features)
-ENABLE_AMAZON_FEATURES=false
-AMAZON_ACCESS_KEY_ID=your-access-key
-AMAZON_SECRET_ACCESS_KEY=your-secret-key
-AMAZON_PARTNER_TAG=your-partner-tag
-
-# Analytics
-VITE_GA_MEASUREMENT_ID=G-XXXXXXXXXX
-
-# Webhooks
-MAKE_WEBHOOK_URL=https://hook.make.com/...
-```
-
-### Replit Environment
-When deploying on Replit, environment variables are managed through the Secrets tab in your Repl. The following secrets are automatically available:
-- `ANTHROPIC_API_KEY`
-- `OPENAI_API_KEY`
-- Database credentials are auto-configured
-
-## 📝 Content Generation Modes
-
-### 🔥 Viral Content Studio
-The Viral Content Studio focuses on creating trending, viral content by:
-- **Trend Analysis**: Real-time trending topic discovery via Perplexity API
-- **Viral Score Calculation**: AI-powered content evaluation for viral potential
-- **Template Variety**: Multiple viral content templates (storytelling, hooks, trending formats)
-- **Platform Optimization**: Content adapted for maximum engagement on each platform
-
-### 💰 Affiliate Content Studio  
-The Affiliate Content Studio specializes in product-focused content by:
-- **Product Research**: Intelligent product discovery and analysis
-- **Affiliate Integration**: Smart affiliate link integration and optimization
-- **Conversion Optimization**: Content designed for maximum conversion rates
-- **Product Templates**: Specialized templates for product reviews, comparisons, and promotions
-
-### 🤖 AI Model Routing
-The system intelligently routes requests between:
-- **Claude (Primary)**: High-quality content generation and analysis
-- **OpenAI GPT-4**: Creative content and diverse writing styles
-- **Perplexity**: Research, trend discovery, and factual content
-
-## 🎯 Key Features Detail
-
-### Trend Forecasting & Analysis
-- **Real-time Data**: Live trending topic discovery across multiple sources
-- **Niche-Specific Trends**: Targeted trend analysis for beauty, tech, fashion, fitness, food, travel, and pets
-- **Viral Prediction**: AI-powered viral potential scoring
-- **Trend History**: Comprehensive trend tracking and historical analysis
-
-### Content Evaluation & Scoring
-- **Dual AI Evaluation**: Content assessed by both Claude and OpenAI
-- **Quality Metrics**: Comprehensive scoring across multiple dimensions
-- **Performance Tracking**: Historical performance data and insights
-- **Smart Recommendations**: AI-generated improvement suggestions
-
-### Template System
-- **Dynamic Templates**: Adaptable content templates for various niches
-- **Platform-Specific**: Optimized templates for each social media platform
-- **Custom Variables**: Flexible template system with smart variable injection
-- **Performance-Based**: Templates optimized based on historical performance data
-
-### Multi-Platform Content Adaptation
-- **TikTok**: Short-form video scripts with hooks and trending elements
-- **Instagram**: Story, reel, and post content with hashtag optimization
-- **YouTube**: Long-form content with SEO optimization
-- **Twitter**: Concise, engaging tweet threads and single posts
-- **Facebook**: Community-focused content with engagement drivers
-
-## 🧪 Development
-
-### Testing Setup
 ```bash
-# Run all tests
-npm test
-
-# Run E2E tests
-npx playwright test
-
-# Run unit tests
-npm run test:unit
-
-# Run integration tests
-npm run test:integration
+DEBUG=pheme:* npm run dev
 ```
 
-### Code Structure & Conventions
-- **TypeScript**: Strict type checking enabled
-- **ESM Modules**: Modern ES module syntax
-- **Drizzle ORM**: Type-safe database operations
-- **Zod Validation**: Schema validation for API requests
-- **Component Architecture**: Reusable component design patterns
-
-### Database Migrations
+View logs:
 ```bash
-# Push schema changes to database
-npm run db:push
-
-# Force push schema changes (if warnings)
-npm run db:push --force
+tail -f logs/info.log      # Info logs
+tail -f logs/error.log     # Error logs
+tail -f logs/warn.log      # Warning logs
 ```
 
-**⚠️ Important**: Always use `npm run db:push` for schema changes. Never manually write SQL migrations.
+---
 
-## 🚀 Deployment
+## 📝 Development Scripts
 
-### Replit Deployment
-1. **Create New Repl**: Import from GitHub repository
-2. **Configure Secrets**: Add required API keys in the Secrets tab
-3. **Database Setup**: Use Replit's built-in PostgreSQL database
-4. **Deploy**: Use Replit's one-click deployment
-
-### Production Considerations
-- **Environment Variables**: Ensure all required variables are set
-- **Database**: Use a production PostgreSQL instance (Neon recommended)
-- **Caching**: Configure Redis for production caching
-- **Monitoring**: Set up logging and error tracking
-- **Rate Limiting**: Configure appropriate rate limits for API endpoints
-
-### Build Configuration
 ```bash
-# Production build
-npm run build
-
-# Start production server
-npm start
+npm run dev                # Start development server (port 5000)
+npm run build              # Build for production
+npm start                  # Start production server
+npm run check              # TypeScript type checking
+npm run db:push            # Push schema changes to database
+npm run db:studio          # Open Drizzle Studio (database GUI)
+npm run test               # Run all tests
+npm run test:e2e           # Run E2E tests (Playwright)
+npm run test:unit          # Run unit tests (Vitest)
+npm run lint               # Run ESLint
+npm run format             # Format code with Prettier
 ```
+
+---
 
 ## 🤝 Contributing
 
-### Development Guidelines
-- **Code Style**: Follow existing TypeScript and React patterns
-- **Testing**: Add tests for new features and bug fixes
-- **Documentation**: Update documentation for significant changes
-- **Type Safety**: Maintain strict TypeScript compliance
+We welcome contributions! Please follow these guidelines:
 
-### How to Contribute
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-### Reporting Issues
-- Use GitHub Issues for bug reports and feature requests
-- Include detailed reproduction steps for bugs
-- Provide environment information and error logs
+### Development Guidelines
+
+- Follow TypeScript best practices
+- Write tests for new features
+- Update documentation
+- Follow existing code style
+- Add meaningful commit messages
+
+---
 
 ## 📄 License
 
@@ -780,14 +749,47 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-## 🔗 Links
+## 🙏 Acknowledgments
 
-- **Documentation**: [Full API Documentation](docs/api.md)
-- **Support**: [GitHub Issues](https://github.com/your-username/scripttok/issues)
-- **Contributing**: [Contributing Guidelines](CONTRIBUTING.md)
+- **OpenAI** - GPT-4 and GPT-3.5 models
+- **Anthropic** - Claude AI models
+- **Perplexity** - Trend discovery API
+- **Stripe** - Payment processing
+- **Neon** - Serverless PostgreSQL
+- **Replit** - Deployment platform
+- **Shadcn/ui** - UI component library
 
 ---
 
-<div align="center">
-  <strong>Built with ❤️ for content creators worldwide</strong>
-</div>
+## 📞 Support
+
+- **Documentation**: [https://docs.pheme.ai](https://docs.pheme.ai)
+- **Email**: support@pheme.ai
+- **Discord**: [Join our community](https://discord.gg/pheme)
+- **Twitter**: [@PhemeAI](https://twitter.com/PhemeAI)
+
+---
+
+## 🗺️ Roadmap
+
+### Q1 2025
+- [ ] Team collaboration features (Agency tier)
+- [ ] Video content generation (integration with Pictory.ai)
+- [ ] Advanced analytics dashboard
+- [ ] Multi-language support
+
+### Q2 2025
+- [ ] Mobile app (iOS/Android)
+- [ ] Chrome extension
+- [ ] LinkedIn content optimization
+- [ ] AI voice-over generation
+
+### Q3 2025
+- [ ] Zapier integration
+- [ ] Custom AI model training
+- [ ] White-label solution
+- [ ] Enterprise SSO
+
+---
+
+**Built with ❤️ by the Pheme Team**
