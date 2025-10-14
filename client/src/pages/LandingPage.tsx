@@ -84,7 +84,7 @@ function CTABar({ section, ctaText = "Get Started Free" }: { section: string; ct
         data-testid={`button-${section}-talk-sales`}
       >
         <MessageSquare className="mr-2 h-5 w-5" />
-        Talk to Sales
+        Send us a message
       </Button>
       <Button
         onClick={handleAuthAction}
@@ -584,7 +584,7 @@ export default function LandingPage() {
               data-testid="button-footer-talk-sales"
             >
               <MessageSquare className="mr-2 h-5 w-5 flex-shrink-0" />
-              <span>Talk to Sales</span>
+              <span>Send us a message</span>
             </Button>
           </div>
         </div>
