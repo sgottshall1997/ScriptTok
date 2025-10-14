@@ -347,28 +347,31 @@ function AdvancedViralScore({ score, scoreData }: { score: number; scoreData: Vi
           </TabsContent>
         </Tabs>
 
-        <Alert className="border-dashed border-amber-300 bg-amber-50" data-testid="upgrade-prompt-agency">
-          <Crown className="h-4 w-4 text-amber-600" />
-          <AlertDescription className="text-amber-900">
-            <p className="font-semibold mb-2">Upgrade to Agency for Enterprise Features</p>
-            <p className="text-sm mb-2">Unlock competitive benchmarking and team tools:</p>
-            <ul className="space-y-1 mb-3 text-sm">
-              <li>✓ Competitive industry benchmarking</li>
-              <li>✓ A/B test recommendations</li>
-              <li>✓ Multi-platform predictions</li>
-              <li>✓ Team collaboration tools</li>
-            </ul>
-            <Button 
-              variant="default" 
-              size="sm"
-              className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600"
-              onClick={() => setLocation('/pricing')}
-              data-testid="button-upgrade-agency"
-            >
-              Upgrade to Agency - $75/mo
-            </Button>
-          </AlertDescription>
-        </Alert>
+        {/* Temporarily hidden - Agency upgrade banner */}
+        {false && (
+          <Alert className="border-dashed border-amber-300 bg-amber-50" data-testid="upgrade-prompt-agency">
+            <Crown className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-900">
+              <p className="font-semibold mb-2">Upgrade to Agency for Enterprise Features</p>
+              <p className="text-sm mb-2">Unlock competitive benchmarking and team tools:</p>
+              <ul className="space-y-1 mb-3 text-sm">
+                <li>✓ Competitive industry benchmarking</li>
+                <li>✓ A/B test recommendations</li>
+                <li>✓ Multi-platform predictions</li>
+                <li>✓ Team collaboration tools</li>
+              </ul>
+              <Button 
+                variant="default" 
+                size="sm"
+                className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600"
+                onClick={() => setLocation('/pricing')}
+                data-testid="button-upgrade-agency"
+              >
+                Upgrade to Agency - $75/mo
+              </Button>
+            </AlertDescription>
+          </Alert>
+        )}
       </CardContent>
     </Card>
   );

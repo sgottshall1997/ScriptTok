@@ -161,6 +161,7 @@ const GenerateContent = () => {
     chatgpt: GeneratedContent | null;
   } | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState({ current: 0, total: 0, estimatedTimeRemaining: 0 });
   const [showPlatformCaptions, setShowPlatformCaptions] = useState(true);
   const [useSmartStyle, setUseSmartStyle] = useState(false);
   const [aiModel, setAiModel] = useState<'chatgpt' | 'claude' | 'both'>('claude'); // AI model selection
@@ -741,10 +742,15 @@ ${config.hashtags.join(' ')}`;
     if (selectedTemplates.length > 1) {
       setIsGenerating(true);
       setMultiTemplateResults([]);
+      const totalItems = selectedTemplates.length;
+      const startTime = Date.now();
+      
+      // Initialize progress
+      setGenerationProgress({ current: 0, total: totalItems, estimatedTimeRemaining: 0 });
       
       toast({
         title: "🚀 Multi-Template Generation",
-        description: `Generating content for ${selectedTemplates.length} templates...`,
+        description: `Generating content for ${totalItems} templates...`,
         duration: 3000,
       });
 
@@ -755,6 +761,18 @@ ${config.hashtags.join(' ')}`;
         for (let i = 0; i < selectedTemplates.length; i++) {
           const templateType = selectedTemplates[i];
           const uniqueId = `${templateType}-${Date.now()}-${i}`;
+          
+          // Update progress BEFORE starting generation to show current item
+          const elapsedTime = (Date.now() - startTime) / 1000; // in seconds
+          const avgTimePerItem = i > 0 ? elapsedTime / i : 15; // Use 15s as initial estimate
+          const itemsRemaining = totalItems - i;
+          const estimatedTimeRemaining = Math.ceil(avgTimePerItem * itemsRemaining);
+          
+          setGenerationProgress({ 
+            current: i + 1, 
+            total: totalItems, 
+            estimatedTimeRemaining 
+          });
           
           const response = await fetch('/api/generate-content', {
             method: 'POST',
@@ -811,6 +829,7 @@ ${config.hashtags.join(' ')}`;
         });
       } finally {
         setIsGenerating(false);
+        setGenerationProgress({ current: 0, total: 0, estimatedTimeRemaining: 0 });
       }
       return;
     }
@@ -2189,7 +2208,16 @@ ${config.hashtags.join(' ')}`;
               {isGenerating ? (
                 <>
                   <RefreshCw className="h-5 w-5 mr-2 animate-spin" />
-                  Generating Content...
+                  {generationProgress.total > 0 ? (
+                    <span>
+                      Generating {generationProgress.current} of {generationProgress.total}
+                      {generationProgress.estimatedTimeRemaining > 0 && 
+                        ` - Est. ${generationProgress.estimatedTimeRemaining}s remaining`
+                      }
+                    </span>
+                  ) : (
+                    'Generating Content...'
+                  )}
                 </>
               ) : (
                 <>
