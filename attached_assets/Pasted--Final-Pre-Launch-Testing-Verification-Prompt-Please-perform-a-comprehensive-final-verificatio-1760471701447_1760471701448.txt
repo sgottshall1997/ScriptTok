@@ -1,0 +1,197 @@
+# 🚀 Final Pre-Launch Testing & Verification Prompt
+Please perform a comprehensive final verification of the Pheme application to ensure it's production-ready for new users. Test all critical systems, UI/UX quality, and user flows.
+---
+## 1. 🔐 Subscription Tier System Testing
+### Test All 4 Tiers:
+- **Starter Tier ($7/mo or $5/mo annual)**
+  - Verify 15 GPT-4 + 10 Claude generations/month quota
+  - Confirm 10 trend analyses/month limit
+  - Check 3 niches restriction (beauty, tech, fashion)
+  - Verify 3 templates per category limit
+  - Confirm last 10 items history limit
+  - Ensure export is blocked (Creator+ feature)
+- **Creator Tier ($15/mo or $10/mo annual)**
+  - Verify 50 GPT-4 + 30 Claude generations/month quota
+  - Confirm 25 trend analyses/month limit
+  - Check all 7 niches unlocked
+  - Verify all templates unlocked
+  - Confirm last 50 items history limit
+  - Test CSV export functionality (should work)
+  - Verify JSON export is blocked (Agency feature)
+- **Pro Tier ($35/mo or $25/mo annual)**
+  - Verify 300 GPT-4 + 150 Claude generations/month quota
+  - Confirm 100 trend analyses/month limit
+  - Test bulk generation (10 items max)
+  - Verify AI model comparison (both GPT + Claude)
+  - Check unlimited history access
+  - Test Affiliate Studio access (should work)
+  - Verify CSV export works
+- **Agency Tier ($69/mo or $50/mo annual)**
+  - Verify 1000 GPT-4 + 500 Claude generations/month quota
+  - Confirm unlimited trend analyses
+  - Test bulk generation (50 items max)
+  - Verify all advanced features unlocked
+  - Test JSON export (should work)
+  - Check API access (Agency only)
+### Quota Enforcement:
+- Test quota exceeded behavior for each model (GPT/Claude)
+- Verify proper error messages with upgrade CTAs
+- Check quota reset on monthly billing cycle
+- Test tier-based feature restrictions show upgrade prompts
+### Upgrade/Downgrade Flows:
+- Test Stripe checkout creation for each tier
+- Verify upgrade CTAs navigate to correct pages
+- Check billing success/cancel redirect pages
+- Test subscription cancellation flow
+- Verify tier changes update features immediately
+---
+## 2. 🎨 UI/UX Quality Verification
+### Visual Consistency:
+- ✅ Check all pages use max-w-6xl containers
+- ✅ Verify consistent spacing (py-16 sections, gap-4/6/8 grids)
+- ✅ Test gradient hero buttons (purple-to-blue gradient)
+- ✅ Verify rounded-2xl cards throughout
+- ✅ Check tier badge colors match (Starter=green, Creator=purple, Pro=blue, Agency=gradient)
+### Dark Mode:
+- Toggle dark mode and verify all pages render correctly
+- Check text contrast meets WCAG AA (4.5:1 minimum)
+- Verify all interactive elements have dark variants
+- Test dark mode on: Dashboard, GenerateContent, Account, Pricing, Landing
+### Responsive Design:
+- Test mobile layout (320px-640px width)
+- Test tablet layout (640px-1024px width)
+- Test desktop layout (≥1024px width)
+- Verify no horizontal scrolling on any screen size
+- Check mobile menu works (MarketingNav sheet drawer)
+### Accessibility:
+- Tab through all pages (keyboard navigation)
+- Verify focus indicators visible
+- Check aria-labels on icon buttons
+- Test screen reader compatibility (semantic HTML)
+---
+## 3. 🧪 Critical User Flow Testing
+### New User Onboarding:
+1. Sign up as new user → Should auto-assign to Starter tier (not 'free')
+2. Navigate to Dashboard → Check welcome message and tier badge
+3. View usage counters → Verify 0/15 GPT, 0/10 Claude, 0/10 Trends
+4. Go to Generate Content → Test creating first script
+### Content Generation Flow:
+1. **Viral Studio Mode:**
+   - Enter viral topic
+   - Select niche (or universal)
+   - Choose template
+   - Run Trend Analysis (check quota decrement)
+   - Generate content (check GPT/Claude quota decrement)
+   - Verify viral score displays
+   - Check content saves to history
+2. **Affiliate Studio Mode (Pro+ only):**
+   - Enter product name
+   - Run Product Research (Perplexity)
+   - View Competitor Intel
+   - Generate affiliate content
+   - Verify affiliate link included
+   - Check saves to history
+### History & Export:
+1. Navigate to Enhanced Content History
+2. Verify tier-based history limits (10/50/unlimited)
+3. Test CSV export (Creator+)
+4. Test JSON export (Agency only)
+5. Check locked items show upgrade prompts
+6. Verify delete and bulk delete work
+### Upgrade Journey:
+1. As Starter user, try to use Pro feature (bulk generation)
+2. Verify upgrade dialog shows with correct CTA
+3. Click upgrade → Should redirect to /pricing
+4. Select Pro tier → Test Stripe checkout flow
+5. After upgrade → Verify features unlock immediately
+---
+## 4. ⚡ Performance & Error Handling
+### Loading States:
+- Verify skeleton loaders show during data fetch
+- Check spinner animations on button actions
+- Test "isGenerating" state disables buttons correctly
+### Error Scenarios:
+- Test quota exceeded → Proper toast notification
+- Test API failure → User-friendly error message
+- Test missing data → Graceful fallback (optional chaining)
+- Test network errors → Retry mechanisms
+### Analytics Tracking:
+- Verify page views tracked (check console)
+- Test CTA click tracking (signup, upgrade, generate)
+- Check conversion events fire (generation_started, upgrade_clicked)
+- Verify cookie consent respected
+---
+## 5. 🔒 Security & Data Integrity
+### Authentication:
+- Test login/logout flow
+- Verify protected routes redirect to login
+- Check auth state persists on refresh
+### Database Consistency:
+- Verify users.subscriptionTier matches subscriptions.tier
+- Check monthly usage records created correctly
+- Test quota updates reflect in database
+### Feature Gates:
+- Test middleware blocks unauthorized features (checkFeatureAccess)
+- Verify API endpoints respect tier restrictions
+- Check frontend UI hides/disables restricted features
+---
+## 6. 📱 Cross-Browser Testing
+Test on:
+- ✅ Chrome (latest)
+- ✅ Firefox (latest)
+- ✅ Safari (if accessible)
+- ✅ Edge (latest)
+---
+## 7. 🎯 Final Checklist
+### Must Pass:
+- [ ] All 4 tiers have correct quotas and features
+- [ ] Quota enforcement works (blocks on limit)
+- [ ] Upgrade CTAs navigate correctly
+- [ ] Stripe checkout creates sessions successfully
+- [ ] UI is visually consistent across all pages
+- [ ] Dark mode works without contrast issues
+- [ ] Mobile responsive (no horizontal scroll)
+- [ ] Keyboard navigation works (tab order)
+- [ ] Analytics tracking functional
+- [ ] Content generation saves to history
+- [ ] Export features respect tier restrictions
+- [ ] Error handling graceful (no crashes)
+- [ ] Loading states show properly
+- [ ] Database updates reflect correctly
+### Nice to Have (Warnings OK):
+- [ ] All console warnings addressed
+- [ ] TypeScript strict mode passes
+- [ ] No deprecated dependencies
+- [ ] SEO meta tags present
+---
+## 8. 🚨 Critical Bug Report
+If you find any issues:
+**Format:**
+SEVERITY: [Critical/High/Medium/Low]
+LOCATION: [File path:line number]
+ISSUE: [Description]
+REPRODUCTION: [Steps to reproduce]
+EXPECTED: [What should happen]
+ACTUAL: [What actually happens]
+FIX: [Recommended solution]
+
+---
+## 9. ✅ Sign-Off
+After completing all tests, provide:
+1. **Overall Grade:** [A/B/C/D/F]
+2. **Production Ready:** [YES/NO/WITH FIXES]
+3. **Critical Issues Found:** [Number]
+4. **Blocking Issues:** [List or NONE]
+5. **Recommendations:** [Top 3 improvements]
+**Final Verdict:**
+- [ ] ✅ APPROVED FOR PRODUCTION LAUNCH
+- [ ] ⚠️ APPROVED WITH MINOR FIXES
+- [ ] ❌ NOT READY - CRITICAL ISSUES FOUND
+---
+## Notes for Agent:
+- Use the existing test accounts and data
+- Document each test result clearly
+- Flag any inconsistency immediately
+- Compare actual behavior to TIER_SYSTEM_TEST_REPORT.md expectations
+- Reference SECURITY_AUDIT_REPORT.md for security checklist
+- Check UI_UX_STANDARDIZATION_REPORT.md for design compliance

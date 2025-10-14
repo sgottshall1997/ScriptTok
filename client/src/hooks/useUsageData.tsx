@@ -39,10 +39,10 @@ export interface UsageResponse {
   data: UsageData;
 }
 
-export const useUsageData = (): UseQueryResult<UsageResponse> => {
-  return useQuery<UsageResponse>({
+export const useUsageData = () => {
+  return useQuery({
     queryKey: ['/api/billing/usage'],
-    queryFn: async () => {
+    queryFn: async (): Promise<UsageResponse> => {
       const res = await fetch('/api/billing/usage', {
         credentials: 'include',
       });
