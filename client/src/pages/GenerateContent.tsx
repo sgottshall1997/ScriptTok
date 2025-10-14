@@ -37,6 +37,7 @@ import {
   Lock
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { TemplateSelector } from "@/components/TemplateSelector";
 import { UsageStatistics } from "@/components/UsageStatistics";
 import { ViralScoreDisplay } from "@/components/ViralScoreDisplay";
@@ -91,6 +92,7 @@ interface GeneratedContent {
 const GenerateContent = () => {
   const [location] = useLocation();
   const { toast } = useToast();
+  const { trackFeatureBlocked } = useCTATracking();
   const { data: usageResponse, isLoading: usageLoading } = useUsageData();
   const usageData = usageResponse?.data;
   const tier = usageData?.features.tier || 'starter';
@@ -1983,6 +1985,15 @@ ${config.hashtags.join(' ')}`;
                 onValueChange={(value: 'chatgpt' | 'claude' | 'both') => {
                   // Only Pro and Agency can use 'both' (model comparison)
                   if (value === 'both' && (tier === 'free' || tier === 'starter' || tier === 'creator')) {
+                    // Track blocked feature attempt
+                    trackFeatureBlocked(
+                      'AI Model Comparison',
+                      tier,
+                      'pro',
+                      'generate_content_ai_model_selector',
+                      'Compare GPT-4 and Claude side-by-side'
+                    );
+                    
                     toast({
                       title: "Pro Feature 👑",
                       description: "AI Model Comparison is available on Pro and Agency tiers. Upgrade to compare outputs!",

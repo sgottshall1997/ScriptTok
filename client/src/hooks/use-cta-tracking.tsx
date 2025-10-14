@@ -61,11 +61,32 @@ export function useCTATracking() {
     [trackCTA]
   );
 
+  const trackFeatureBlocked = useCallback(
+    (
+      feature: string,
+      currentTier: string,
+      requiredTier: string,
+      ctaLocation?: string,
+      upgradeReason?: string
+    ) => {
+      // Use the centralized trackCTA function to ensure proper analytics pipeline
+      trackCTA('feature_blocked', ctaLocation || location, {
+        ctaType: 'upgrade' as CTAType, // Feature blocks are conversion opportunities
+        feature,
+        currentTier,
+        requiredTier,
+        upgradeReason,
+      });
+    },
+    [trackCTA, location]
+  );
+
   return {
     trackCTA,
     trackSignupCTA,
     trackUpgradeCTA,
     trackGenerateCTA,
     trackNavigateCTA,
+    trackFeatureBlocked,
   };
 }

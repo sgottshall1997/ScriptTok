@@ -12,6 +12,7 @@ export const ConversionEvents = {
   TEMPLATE_SELECTED: 'template_selected',
   CONTENT_EXPORTED: 'content_exported',
   DEMO_WATCHED: 'demo_watched',
+  FEATURE_BLOCKED: 'feature_blocked',
 } as const;
 
 export type ConversionEventType = typeof ConversionEvents[keyof typeof ConversionEvents];
@@ -35,5 +36,9 @@ export interface CTAMetadata {
   plan?: 'free' | 'starter' | 'creator' | 'pro' | 'agency';
   generationType?: 'viral' | 'affiliate';
   niche?: string;
+  feature?: string;
+  currentTier?: string;
+  requiredTier?: string;
+  upgradeReason?: string;
   [key: string]: any;
 }

@@ -35,6 +35,7 @@ import {
   Lock
 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
+import { useCTATracking } from "@/hooks/use-cta-tracking";
 import { useQuery } from '@tanstack/react-query';
 import { ContentHistoryManager } from '@shared/contentHistoryUtils';
 import { ContentGenerationEntry } from '@shared/contentGenerationHistory';
@@ -50,6 +51,7 @@ import { Info } from 'lucide-react';
 
 const EnhancedContentHistory = () => {
   const { toast } = useToast();
+  const { trackFeatureBlocked } = useCTATracking();
   const [history, setHistory] = useState<ContentGenerationEntry[]>([]);
   const [filteredHistory, setFilteredHistory] = useState<ContentGenerationEntry[]>([]);
   const [expandedCards, setExpandedCards] = useState<Record<string, boolean>>({});
@@ -671,6 +673,15 @@ const EnhancedContentHistory = () => {
   const handleExport = (format: 'csv' | 'json') => {
     // Starter tier cannot export
     if (isStarterTier) {
+      // Track blocked feature using centralized analytics
+      trackFeatureBlocked(
+        `Content Export (${format.toUpperCase()})`,
+        userTier,
+        'creator',
+        'content_history_export_button',
+        'Download content history for analysis'
+      );
+      
       toast({
         title: "Creator+ Feature",
         description: "Export is available on Creator tier and above. Upgrade to unlock!",
@@ -681,6 +692,15 @@ const EnhancedContentHistory = () => {
 
     // Agency tier can export JSON, Creator/Pro can only export CSV
     if (format === 'json' && !isAgencyTier) {
+      // Track blocked feature using centralized analytics
+      trackFeatureBlocked(
+        'JSON Export',
+        userTier,
+        'agency',
+        'content_history_json_export',
+        'Advanced JSON export for developers'
+      );
+      
       toast({
         title: "Agency Feature",
         description: "JSON export is available on Agency tier. Upgrade to unlock!",
