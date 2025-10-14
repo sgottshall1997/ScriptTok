@@ -28,7 +28,7 @@ export default function Account() {
   const { toast } = useToast();
   const [cancelDialogOpen, setCancelDialogOpen] = useState(false);
   
-  const usageData = usageResponse?.data?.data;
+  const usageData = usageResponse?.data;
 
   const { data: subscriptionData, isLoading: subscriptionLoading } = useQuery<{
     tier: string;
@@ -37,7 +37,7 @@ export default function Account() {
     cancelAtPeriodEnd: boolean;
   }>({
     queryKey: ['/api/billing/subscription'],
-    enabled: usageData?.features.tier !== 'free',
+    enabled: usageData?.features?.tier !== 'free',
   });
 
   const createCheckoutMutation = useMutation({
