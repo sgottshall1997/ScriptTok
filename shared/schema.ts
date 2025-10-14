@@ -19,7 +19,7 @@ export const users = pgTable("users", {
   status: text("status").notNull().default("active"), // active, suspended
   lastLogin: timestamp("last_login"),
   preferences: jsonb("preferences"), // User-specific preferences
-  subscriptionTier: text("subscription_tier").notNull().default("free"), // 'free' or 'pro'
+  subscriptionTier: text("subscription_tier").notNull().default("free"), // Valid tiers: 'free' (trial), 'starter', 'creator', 'pro', 'agency'
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });

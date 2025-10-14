@@ -25,7 +25,7 @@ Preferred communication style: Simple, everyday language.
 - **Payment Processing**: Production Stripe integration with real checkout sessions. Configured price IDs for Starter/Creator/Pro tiers (monthly/annual). Stripe webhooks handle subscription lifecycle. Success/cancel pages provide user feedback. Agency tier configured for one-off payments.
 
 ### Key Components
-- **4-Tier Subscription System**: Production-ready Starter/Creator/Pro/Agency tier system with granular quota tracking and feature gating.
+- **5-Tier Subscription System**: Production-ready free trial + paid tier system with granular quota tracking and feature gating. Free tier (3 combined AI generations) automatically assigned to new users as trial. Paid tiers: Starter/Creator/Pro/Agency with progressive quotas and features.
 - **Dual-Mode Content Generation**: Viral Content Studio for universal content and Affiliate Studio for product-focused content with affiliate links. Supports multi-AI providers, niche-specific and universal templates, platform-specific and bulk generation.
 - **Data Storage Solutions**: PostgreSQL for primary storage, Drizzle for schema management, stores content history and trending products.
 - **Smart Style System**: Integrates user ratings and AI evaluations for content quality assessment.

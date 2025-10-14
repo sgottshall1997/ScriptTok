@@ -175,7 +175,7 @@ export default function PricingPage() {
       return;
     }
 
-    trackUpgradeCTA(`pricing_${tierId}_card`, tierId);
+    trackUpgradeCTA(`pricing_${tierId}_card`, tierId as 'starter' | 'creator' | 'pro' | 'agency');
     setIsLoading(true);
     
     try {
@@ -230,9 +230,16 @@ export default function PricingPage() {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
               Simple Pricing, Powerful Results
             </h1>
-            <p className="text-lg md:text-xl text-gray-200 mb-8 max-w-3xl mx-auto">
+            <p className="text-lg md:text-xl text-gray-200 mb-4 max-w-3xl mx-auto">
               Choose the plan that fits your content creation goals. Start free, upgrade anytime.
             </p>
+            
+            {/* Free Trial Banner */}
+            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-6 py-3 mb-8">
+              <Sparkles className="h-5 w-5 text-yellow-300" />
+              <span className="text-white font-medium">New users get 3 free AI generations to try the platform!</span>
+              <Sparkles className="h-5 w-5 text-yellow-300" />
+            </div>
             
             {/* Monthly/Annual Toggle */}
             <div className="flex items-center justify-center gap-4 mb-12">
