@@ -36,6 +36,7 @@ import {
   Video,
   FileText,
   DollarSign,
+  Rocket,
   type LucideIcon,
 } from "lucide-react";
 import PhemeLogo from "@/Pheme Logo/Pheme Logo.png";
@@ -189,14 +190,26 @@ const useCasesData: CardItem[] = [
 const pricingData: CardItem[] = [
   {
     icon: Zap,
-    title: "Free Plan",
-    description: "Start creating with 5 daily generations and core templates.",
+    title: "Free Trial",
+    description: "Start with 3 free AI generations to test the platform.",
+    href: "/pricing"
+  },
+  {
+    icon: Rocket,
+    title: "Starter Plan",
+    description: "15 GPT + 10 Claude generations/month. Perfect for beginners.",
     href: "/pricing"
   },
   {
     icon: Flame,
-    title: "Pro Plan",
-    description: "Unlimited access, trend engine, and analytics dashboard.",
+    title: "Creator & Pro Plans",
+    description: "50-300 generations/month with bulk creation and advanced features.",
+    href: "/pricing"
+  },
+  {
+    icon: Users,
+    title: "Agency Plan",
+    description: "Custom volume and team features for agencies and brands.",
     href: "/pricing"
   },
 ];

@@ -121,9 +121,9 @@ export default function PricingPage() {
         { text: "Unlimited history", included: true, detail: "with filters" },
         { text: "Priority support", included: true, detail: "24hr response" },
         { text: "Make.com webhook", included: true },
+        { text: "Brand templates", included: true, detail: "save & reuse" },
         { text: "Team features", included: false },
-        { text: "API access", included: false },
-        { text: "Brand templates", included: false }
+        { text: "API access", included: false }
       ],
       cta: "Get Pro",
       ctaVariant: "default" as const,
