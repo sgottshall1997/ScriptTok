@@ -1198,7 +1198,35 @@ const EnhancedContentHistory = () => {
                   )}
                   <div className="flex-1">
                     <div className="flex justify-between items-start mb-2">
-                      <CardTitle className="text-xl">📦 {entry.productName}</CardTitle>
+                      <div className="flex items-center gap-2">
+                        <CardTitle className="text-xl">📦 {entry.productName}</CardTitle>
+                        {(() => {
+                          const evals = evaluationData[entry.id];
+                          if (!evals) return null;
+
+                          const gptRating = evals.chatgpt ? calculateAverageRating(evals.chatgpt) : null;
+                          const claudeRating = evals.claude ? calculateAverageRating(evals.claude) : null;
+                          
+                          // Calculate total rating (average of both if available)
+                          let totalRating = null;
+                          if (gptRating && claudeRating) {
+                            totalRating = (gptRating + claudeRating) / 2;
+                          } else if (gptRating) {
+                            totalRating = gptRating;
+                          } else if (claudeRating) {
+                            totalRating = claudeRating;
+                          }
+
+                          if (!totalRating) return null;
+
+                          return (
+                            <div className="flex items-center gap-1 bg-gradient-to-r from-purple-50 to-pink-50 px-3 py-1 rounded-full border border-purple-200">
+                              <span className="text-purple-600 font-medium text-sm">AI Rating:</span>
+                              <span className="text-purple-800 font-bold text-sm">{totalRating.toFixed(1)}</span>
+                            </div>
+                          );
+                        })()}
+                      </div>
 
                       {/* AI Ratings Display */}
                       <div className="flex items-center gap-3 text-sm">
