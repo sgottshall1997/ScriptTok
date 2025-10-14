@@ -1202,19 +1202,31 @@ const EnhancedContentHistory = () => {
                         <CardTitle className="text-xl">📦 {entry.productName}</CardTitle>
                         {(() => {
                           const evals = evaluationData[entry.id];
-                          if (!evals) return null;
-
-                          const gptRating = evals.chatgpt ? calculateAverageRating(evals.chatgpt) : null;
-                          const claudeRating = evals.claude ? calculateAverageRating(evals.claude) : null;
                           
-                          // Calculate total rating (average of both if available)
+                          // Try to get evaluation ratings first
                           let totalRating = null;
-                          if (gptRating && claudeRating) {
-                            totalRating = (gptRating + claudeRating) / 2;
-                          } else if (gptRating) {
-                            totalRating = gptRating;
-                          } else if (claudeRating) {
-                            totalRating = claudeRating;
+                          let isEvaluationRating = false;
+                          
+                          if (evals) {
+                            const gptRating = evals.chatgpt ? calculateAverageRating(evals.chatgpt) : null;
+                            const claudeRating = evals.claude ? calculateAverageRating(evals.claude) : null;
+                            
+                            // Calculate total rating (average of both if available)
+                            if (gptRating && claudeRating) {
+                              totalRating = (gptRating + claudeRating) / 2;
+                              isEvaluationRating = true;
+                            } else if (gptRating) {
+                              totalRating = gptRating;
+                              isEvaluationRating = true;
+                            } else if (claudeRating) {
+                              totalRating = claudeRating;
+                              isEvaluationRating = true;
+                            }
+                          }
+                          
+                          // Fallback to viral score if no evaluation ratings
+                          if (!totalRating && entry.viralScoreOverall) {
+                            totalRating = entry.viralScoreOverall;
                           }
 
                           if (!totalRating) return null;
