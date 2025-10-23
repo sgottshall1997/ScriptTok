@@ -180,18 +180,18 @@ export default function LandingPage() {
       <Helmet>
         <title>Pheme - AI-Powered Content Creation for Social Media | Viral Scripts & Affiliate Tools</title>
         <meta name="description" content="Create viral social media content in seconds with Pheme's AI-powered script generation, trend discovery, and affiliate tools. Built for TikTok, Instagram, YouTube creators. Start free!" />
-        <link rel="canonical" href="https://www.phemeai.io/" />
+        <link rel="canonical" href="https://phemeai.io/" />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.phemeai.io/" />
+        <meta property="og:url" content="https://phemeai.io/" />
         <meta property="og:title" content="Pheme - AI-Powered Content Creation for Social Media" />
         <meta property="og:description" content="Create viral social media content in seconds with Pheme's AI-powered script generation, trend discovery, and affiliate tools." />
         <meta property="og:site_name" content="Pheme" />
         
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://www.phemeai.io/" />
+        <meta property="twitter:url" content="https://phemeai.io/" />
         <meta property="twitter:title" content="Pheme - AI-Powered Content Creation for Social Media" />
         <meta property="twitter:description" content="Create viral social media content in seconds with Pheme's AI-powered script generation, trend discovery, and affiliate tools." />
         
@@ -207,8 +207,8 @@ export default function LandingPage() {
             "@type": "Organization",
             "name": "Pheme",
             "description": "AI-powered content creation platform for social media creators",
-            "url": "https://www.phemeai.io",
-            "logo": "https://www.phemeai.io/logo.png",
+            "url": "https://phemeai.io",
+            "logo": "https://phemeai.io/logo.png",
             "foundingDate": "2024",
             "sameAs": [
               "https://twitter.com/PhemeAI"

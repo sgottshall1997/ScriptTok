@@ -120,18 +120,18 @@ const AboutPage: React.FC = () => {
       <Helmet>
         <title>About Pheme - AI Content Creation Platform | Our Story & Mission</title>
         <meta name="description" content="Learn about Pheme, the AI-powered content creation platform helping creators build viral content for TikTok, Instagram, and YouTube. Discover our mission, features, and technology." />
-        <link rel="canonical" href="https://www.phemeai.io/about" />
+        <link rel="canonical" href="https://phemeai.io/about" />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://www.phemeai.io/about" />
+        <meta property="og:url" content="https://phemeai.io/about" />
         <meta property="og:title" content="About Pheme - AI Content Creation Platform" />
         <meta property="og:description" content="Learn about Pheme, the AI-powered content creation platform helping creators build viral content for social media." />
         <meta property="og:site_name" content="Pheme" />
         
         {/* Twitter */}
         <meta property="twitter:card" content="summary_large_image" />
-        <meta property="twitter:url" content="https://www.phemeai.io/about" />
+        <meta property="twitter:url" content="https://phemeai.io/about" />
         <meta property="twitter:title" content="About Pheme - AI Content Creation Platform" />
         <meta property="twitter:description" content="Learn about Pheme, the AI-powered content creation platform helping creators build viral content for social media." />
         
