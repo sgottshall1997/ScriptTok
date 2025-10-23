@@ -132,6 +132,20 @@ function MainAppRouter() {
       <Route path="/use-cases">
         <UseCasesPage />
       </Route>
+
+      {/* Support/Marketing pages - No Layout (no sidebar) */}
+      <Route path="/how-it-works">
+        <HowItWorksPage />
+      </Route>
+      <Route path="/about">
+        <AboutPage />
+      </Route>
+      <Route path="/faq">
+        <FAQPage />
+      </Route>
+      <Route path="/contact">
+        <ContactPage />
+      </Route>
       
       {/* App pages with Layout */}
       <Route>
@@ -182,12 +196,6 @@ function MainAppRouter() {
                   <Account />
                 </ProtectedRoute>
               </Route>
-              
-              {/* Support pages */}
-              <Route path="/how-it-works" component={HowItWorksPage} />
-              <Route path="/about" component={AboutPage} />
-              <Route path="/faq" component={FAQPage} />
-              <Route path="/contact" component={ContactPage} />
               
               {/* New Legal Pages */}
               <Route path="/terms-billing" component={TermsBillingPage} />
