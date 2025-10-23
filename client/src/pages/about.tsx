@@ -1,4 +1,5 @@
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -116,6 +117,28 @@ const AboutPage: React.FC = () => {
 
   return (
     <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+      <Helmet>
+        <title>About Pheme - AI Content Creation Platform | Our Story & Mission</title>
+        <meta name="description" content="Learn about Pheme, the AI-powered content creation platform helping creators build viral content for TikTok, Instagram, and YouTube. Discover our mission, features, and technology." />
+        <link rel="canonical" href="https://www.phemeai.io/about" />
+        
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://www.phemeai.io/about" />
+        <meta property="og:title" content="About Pheme - AI Content Creation Platform" />
+        <meta property="og:description" content="Learn about Pheme, the AI-powered content creation platform helping creators build viral content for social media." />
+        <meta property="og:site_name" content="Pheme" />
+        
+        {/* Twitter */}
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://www.phemeai.io/about" />
+        <meta property="twitter:title" content="About Pheme - AI Content Creation Platform" />
+        <meta property="twitter:description" content="Learn about Pheme, the AI-powered content creation platform helping creators build viral content for social media." />
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+      </Helmet>
+      
       {/* Header Section */}
       <div className="text-center mb-12">
         <div className="flex items-center justify-center mb-4">
