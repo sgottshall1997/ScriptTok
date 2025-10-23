@@ -8,21 +8,34 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Link } from 'wouter';
-import { ChevronRight, HelpCircle, Info, Video, Zap, BarChart3 } from 'lucide-react';
+import { ChevronRight, HelpCircle, Info, Video, Zap, BarChart3, Home } from 'lucide-react';
 
 const FAQPage: React.FC = () => {
   return (
-    <div className="container mx-auto p-4 md:p-6 max-w-4xl">
-      <div className="mb-8 text-center">
+    <>
+      {/* Navigation Header */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Link href="/" data-testid="link-home">
+            <Button variant="ghost" className="flex items-center gap-2 hover:bg-violet-50">
+              <Home className="h-4 w-4" />
+              <span className="font-medium">Home</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <div className="container mx-auto p-4 md:p-6 max-w-4xl">
+        <div className="mb-8 text-center">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-gray-800">Frequently Asked Questions</h1>
         <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
           Find answers to common questions about Pheme and how it helps you create
           viral content with AI-powered generation and viral score analysis.
         </p>
-      </div>
+        </div>
 
-      {/* FAQ Categories */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        {/* FAQ Categories */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <Card className="text-center hover:shadow-md transition-shadow">
           <CardHeader>
             <div className="mx-auto w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
@@ -60,7 +73,7 @@ const FAQPage: React.FC = () => {
         </Card>
       </div>
 
-      {/* General FAQs */}
+        {/* General FAQs */}
       <div className="mb-12">
         <h2 className="text-3xl md:text-4xl lg:text-display-sm font-bold mb-6 text-gray-800">Getting Started</h2>
 
@@ -270,7 +283,7 @@ const FAQPage: React.FC = () => {
         </Accordion>
       </div>
 
-      {/* Still Have Questions Section */}
+        {/* Still Have Questions Section */}
       <Card className="bg-gradient-to-r from-purple-50 to-pink-50 border-none shadow-md">
         <CardContent className="p-8">
           <div className="text-center">
@@ -303,6 +316,7 @@ const FAQPage: React.FC = () => {
 
 
     </div>
+    </>
   );
 };
 

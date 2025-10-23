@@ -116,8 +116,21 @@ const AboutPage: React.FC = () => {
   ];
 
   return (
-    <div className="container mx-auto p-4 md:p-6 max-w-6xl">
-      <Helmet>
+    <>
+      {/* Navigation Header */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Link href="/" data-testid="link-home">
+            <Button variant="ghost" className="flex items-center gap-2 hover:bg-violet-50">
+              <Home className="h-4 w-4" />
+              <span className="font-medium">Home</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <div className="container mx-auto p-4 md:p-6 max-w-6xl">
+        <Helmet>
         <title>About Pheme - AI Content Creation Platform | Our Story & Mission</title>
         <meta name="description" content="Learn about Pheme, the AI-powered content creation platform helping creators build viral content for TikTok, Instagram, and YouTube. Discover our mission, features, and technology." />
         <link rel="canonical" href="https://phemeai.io/about" />
@@ -842,6 +855,7 @@ const AboutPage: React.FC = () => {
         </Card>
       </div>
     </div>
+    </>
   );
 };
 

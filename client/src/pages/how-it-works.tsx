@@ -19,12 +19,26 @@ import {
   TrendingUp,
   Brain,
   Target,
-  Play
+  Play,
+  Home
 } from 'lucide-react';
 
 const HowItWorksPage: React.FC = () => {
   return (
-    <div className="container mx-auto p-4 md:p-6 max-w-5xl">
+    <>
+      {/* Navigation Header */}
+      <div className="border-b border-gray-200 bg-white sticky top-0 z-10 shadow-sm">
+        <div className="container mx-auto px-4 py-3 flex items-center justify-between">
+          <Link href="/" data-testid="link-home">
+            <Button variant="ghost" className="flex items-center gap-2 hover:bg-violet-50">
+              <Home className="h-4 w-4" />
+              <span className="font-medium">Home</span>
+            </Button>
+          </Link>
+        </div>
+      </div>
+
+      <div className="container mx-auto p-4 md:p-6 max-w-5xl">
       <div className="mb-12">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-3 text-gray-800">How Pheme Works</h1>
         <p className="text-lg md:text-xl text-gray-600 max-w-3xl">
@@ -288,6 +302,7 @@ const HowItWorksPage: React.FC = () => {
 
 
     </div>
+    </>
   );
 };
 
