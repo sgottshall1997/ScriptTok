@@ -40,9 +40,9 @@ Preferred communication style: Simple, everyday language.
 The platform utilizes Shadcn/ui components on Radix UI primitives, styled with Tailwind CSS, featuring a violet/purple gradient theme, neutral backgrounds, and consistent component styling. It includes a MarketingLayout for marketing pages, enhanced analytics, trending product auto-population, confirmation toasts, and integrated legal documentation.
 
 ### SEO Implementation (October 2025)
-- **Landing Page**: Comprehensive SEO with canonical URL (https://www.phemeai.io/), Organization and SoftwareApplication JSON-LD structured data, Open Graph tags, Twitter Card metadata, and optimized title/description.
-- **About Page**: Distinct SEO metadata with canonical URL (https://www.phemeai.io/about), unique title/description, Open Graph and Twitter Card tags.
-- **Technical Setup**: All SEO metadata implemented using react-helmet for dynamic head management.
+- **Landing Page**: Comprehensive SEO with canonical URL (https://phemeai.io/), Organization and SoftwareApplication JSON-LD structured data, Open Graph tags, Twitter Card metadata, and optimized title/description.
+- **About Page**: Distinct SEO metadata with canonical URL (https://phemeai.io/about), unique title/description, Open Graph and Twitter Card tags.
+- **Technical Setup**: All SEO metadata implemented using react-helmet for dynamic head management. All URLs configured without www subdomain to match Google Search Console configuration.
 
 ### Technical Implementations
 - **AI Model Routing**: Routes content generation requests to appropriate AI models, emphasizing Claude AI.
